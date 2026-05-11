@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+
+website:
+  title: "Awesome *De Novo* Peptide Sequencing"
+  description: "An interactive, data-driven map of deep-learning approaches to *de novo* peptide sequencing — not a historical survey of the field."
+  repo-url: https://github.com/BioGeek/awesome_de_novo_peptide_sequencing
+  repo-actions: [edit, issue]
+  page-navigation: false
+  back-to-top-navigation: true
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    toc-title: "On this page"
+    code-tools: false
+    code-fold: true
+    code-summary: "Show data query"
+    fig-responsive: true
+    grid:
+      body-width: 1100px
+    include-in-header:
+      - text: |
+          <meta name="description" content="An interactive, data-driven map of deep-learning approaches to de novo peptide sequencing — not a historical survey of the field.">
+          <meta property="og:title" content="Awesome De Novo Peptide Sequencing">
+          <meta property="og:description" content="Interactive map of deep-learning de novo peptide sequencing papers, models, authors, and venues.">
