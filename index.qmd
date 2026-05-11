@@ -8,7 +8,8 @@ execute:
 
 ```{python}
 #| label: load-data
-#| include: false
+#| echo: false
+#| output: false
 import sqlite3
 import pandas as pd
 from pathlib import Path
