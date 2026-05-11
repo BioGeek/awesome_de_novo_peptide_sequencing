@@ -19,8 +19,6 @@ format:
     toc-depth: 2
     toc-title: "On this page"
     code-tools: false
-    code-fold: true
-    code-summary: "Show data query"
     fig-responsive: true
     grid:
       body-width: 1100px

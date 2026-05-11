@@ -1,0 +1,536 @@
+---
+title: "Awesome *De Novo* Peptide Sequencing"
+subtitle: "An interactive, data-driven map of deep-learning approaches — not a historical survey of the field."
+execute:
+  echo: false
+  freeze: false
+---
+
+```{python}
+#| label: load-data
+#| include: false
+import sqlite3
+import pandas as pd
+from pathlib import Path
+
+DB = Path(__file__).parent / "denovo.db" if "__file__" in dir() else Path("denovo.db")
+conn = sqlite3.connect(DB)
+
+pubs = pd.read_sql(
+    """
+    SELECT p.id, p.title, p.publication_date AS date, p.publication_type AS type,
+           p.publisher, p.journal, p.doi, p.url,
+           (SELECT GROUP_CONCAT(a.name, ', ')
+              FROM publication_author pa JOIN author a ON a.id = pa.author_id
+              WHERE pa.publication_id = p.id
+              ORDER BY pa.author_order) AS authors,
+           (SELECT GROUP_CONCAT(alg.name, ', ')
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id) AS models,
+           (SELECT alg.repository
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id LIMIT 1) AS repo
+    FROM publication p
+    ORDER BY p.publication_date
+    """,
+    conn,
+)
+pubs["year"] = pd.to_datetime(pubs["date"], errors="coerce").dt.year
+
+top_authors = pd.read_sql(
+    """
+    SELECT a.name, COUNT(pa.publication_id) AS publications
+    FROM author a JOIN publication_author pa ON a.id = pa.author_id
+    GROUP BY a.id
+    ORDER BY publications DESC
+    LIMIT 20
+    """,
+    conn,
+)
+
+geo = pd.read_sql(
+    """
+    SELECT c.name AS country,
+           COUNT(DISTINCT af.id) AS affiliations,
+           COUNT(DISTINCT aa.author_id) AS authors
+    FROM country c
+    JOIN affiliation af ON af.country_id = c.id
+    LEFT JOIN author_affiliation aa ON aa.affiliation_id = af.id
+    GROUP BY c.id
+    ORDER BY authors DESC
+    """,
+    conn,
+)
+
+institutions = pd.read_sql(
+    """
+    SELECT af.name AS institution, c.name AS country,
+           COUNT(DISTINCT aa.author_id) AS authors
+    FROM affiliation af
+    JOIN country c ON af.country_id = c.id
+    JOIN author_affiliation aa ON aa.affiliation_id = af.id
+    GROUP BY af.name
+    ORDER BY authors DESC
+    LIMIT 15
+    """,
+    conn,
+)
+
+coauth_edges = pd.read_sql(
+    """
+    SELECT a1.name AS source, a2.name AS target, COUNT(*) AS weight
+    FROM publication_author pa1
+    JOIN publication_author pa2 ON pa1.publication_id = pa2.publication_id
+    JOIN author a1 ON a1.id = pa1.author_id
+    JOIN author a2 ON a2.id = pa2.author_id
+    WHERE pa1.author_id < pa2.author_id
+      AND pa1.author_id IN (
+          SELECT author_id FROM publication_author
+          GROUP BY author_id HAVING COUNT(*) >= 3
+      )
+      AND pa2.author_id IN (
+          SELECT author_id FROM publication_author
+          GROUP BY author_id HAVING COUNT(*) >= 3
+      )
+    GROUP BY a1.name, a2.name
+    """,
+    conn,
+)
+
+author_affs = pd.read_sql(
+    """
+    SELECT a.name AS author, aff.name AS affiliation
+    FROM author a
+    JOIN author_affiliation aa ON a.id = aa.author_id
+    JOIN affiliation aff ON aa.affiliation_id = aff.id
+    WHERE a.id IN (
+        SELECT author_id FROM publication_author
+        GROUP BY author_id HAVING COUNT(*) >= 3
+    )
+    """,
+    conn,
+)
+
+algorithms = pd.read_sql(
+    """
+    SELECT alg.name AS model,
+           alg.algorithm_family AS family,
+           alg.short_description AS description,
+           alg.repository AS repo,
+           MIN(p.publication_date) AS first_pub
+    FROM algorithm alg
+    LEFT JOIN publication_algorithm pal ON alg.id = pal.algorithm_id
+    LEFT JOIN publication p ON pal.publication_id = p.id
+    GROUP BY alg.id
+    ORDER BY first_pub
+    """,
+    conn,
+)
+
+venues = pd.read_sql(
+    """
+    SELECT journal AS venue, publication_type AS type, COUNT(*) AS papers
+    FROM publication
+    WHERE journal IS NOT NULL
+    GROUP BY journal, publication_type
+    ORDER BY papers DESC
+    """,
+    conn,
+)
+
+conn.close()
+
+ojs_define(
+    pubs=pubs,
+    top_authors=top_authors,
+    geo=geo,
+    institutions=institutions,
+    coauth_edges=coauth_edges,
+    author_affs=author_affs,
+    algorithms=algorithms,
+    venues=venues,
+)
+```
+
+```{ojs}
+//| echo: false
+import { aq, op } from "@uwdata/arquero"
+
+pubs_t = transpose(pubs).map(r => ({ ...r, year: +r.year, date: r.date ? new Date(r.date) : null }))
+top_authors_t = transpose(top_authors)
+geo_t = transpose(geo)
+institutions_t = transpose(institutions)
+coauth_edges_t = transpose(coauth_edges)
+author_affs_t = transpose(author_affs)
+algorithms_t = transpose(algorithms).map(r => ({ ...r, first_pub: r.first_pub ? new Date(r.first_pub) : null }))
+venues_t = transpose(venues)
+
+// Derived counters — everything flows from the data, no hardcoded numbers.
+n_papers = pubs_t.length
+n_models = algorithms_t.length
+n_authors = new Set(pubs_t.flatMap(p => (p.authors ?? "").split(", ").filter(Boolean))).size
+n_countries = geo_t.length
+years_with_pubs = pubs_t.map(p => p.year).filter(y => Number.isFinite(y))
+first_year = Math.min(...years_with_pubs)
+last_year  = Math.max(...years_with_pubs)
+n_preprints = pubs_t.filter(p => p.type === "preprint").length
+n_peer_reviewed = pubs_t.filter(p => p.type === "peer-reviewed").length
+families = Array.from(new Set(algorithms_t.map(a => a.family).filter(Boolean)))
+```
+
+```{ojs}
+//| echo: false
+html`<div class="hero-grid">
+  <div class="hero-stat"><div class="hero-num">${n_papers}</div><div class="hero-lbl">papers</div></div>
+  <div class="hero-stat"><div class="hero-num">${n_models}</div><div class="hero-lbl">models</div></div>
+  <div class="hero-stat"><div class="hero-num">${n_authors}</div><div class="hero-lbl">authors</div></div>
+  <div class="hero-stat"><div class="hero-num">${n_countries}</div><div class="hero-lbl">countries</div></div>
+</div>`
+```
+
+```{=html}
+<style>
+.hero-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.hero-stat { text-align: center; padding: 1rem; background: #f6f8fa; border-radius: 0.5rem; }
+.hero-num { font-size: 2.5rem; font-weight: 700; color: #1f6feb; line-height: 1; }
+.hero-lbl { font-size: 0.9rem; color: #57606a; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
+</style>
+```
+
+```{ojs}
+//| echo: false
+md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** deep-learning models for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`
+```
+
+::: {.scope-banner}
+**Scope.** This site tracks papers that apply **deep learning** to *de novo* peptide sequencing. It is **not** a historical survey of the field — pre-deep-learning approaches (PEAKS, Lutefisk, PepNovo, NovoHMM, …) are deliberately out of scope. Want a paper added? See [Contributing](#contributing).
+:::
+
+## The wave
+
+The first deep-learning paper for *de novo* peptide sequencing appeared in **${first_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how young this corner of the field is.
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  marginLeft: 50,
+  height: 320,
+  x: { label: "Year", tickFormat: "d" },
+  y: { label: "Papers", grid: true },
+  color: { legend: true, scheme: "blues" },
+  marks: [
+    Plot.barY(pubs_t.filter(p => Number.isFinite(p.year)), {
+      x: "year",
+      y: { reduce: "count" },
+      fill: "type",
+      tip: true,
+      sort: { color: { value: "-y" } }
+    }),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+## The architectures
+
+Deep-learning *de novo* sequencing has cycled through several architectural families. Toggle a family to focus on its lineage; hover a dot to read the model's signature contribution.
+
+```{ojs}
+//| echo: false
+viewof family_filter = Inputs.checkbox(
+  families,
+  { label: "Families", value: families }
+)
+```
+
+```{ojs}
+//| echo: false
+{
+  const data = algorithms_t.filter(d => d.first_pub && d.family && family_filter.includes(d.family))
+  return Plot.plot({
+    height: Math.max(280, families.length * 60),
+    marginLeft: 130,
+    marginRight: 40,
+    x: { type: "time", label: "First publication" },
+    y: { domain: families, label: null, padding: 0.6 },
+    color: { domain: families, scheme: "tableau10", legend: false },
+    marks: [
+      Plot.dot(data, {
+        x: "first_pub",
+        y: "family",
+        fill: "family",
+        r: 7,
+        stroke: "white",
+        strokeWidth: 1.5,
+        tip: true,
+        title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub?.toISOString().slice(0,10) ?? ""}`
+      }),
+      Plot.text(data, {
+        x: "first_pub",
+        y: "family",
+        text: "model",
+        dy: -14,
+        fontSize: 10,
+        fontWeight: "bold",
+        fill: "family"
+      })
+    ]
+  })
+}
+```
+
+## Where the work happens
+
+Authors and the institutions behind them span **${n_countries}** countries.
+
+```{ojs}
+//| echo: false
+viewof country_metric = Inputs.radio(
+  ["authors", "affiliations"],
+  { label: "Show", value: "authors" }
+)
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  marginLeft: 140,
+  height: Math.max(280, geo_t.length * 22),
+  x: { label: country_metric === "authors" ? "Distinct authors" : "Distinct affiliations", grid: true },
+  y: { label: null },
+  marks: [
+    Plot.barX(geo_t, {
+      x: country_metric,
+      y: "country",
+      fill: "steelblue",
+      sort: { y: "x", reverse: true },
+      tip: true
+    }),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+### Top institutions
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  marginLeft: 280,
+  height: Math.max(260, institutions_t.length * 26),
+  x: { label: "Distinct authors", grid: true },
+  y: { label: null },
+  marks: [
+    Plot.barX(institutions_t, {
+      x: "authors",
+      y: d => `${d.institution} — ${d.country}`,
+      fill: "country",
+      sort: { y: "x", reverse: true },
+      tip: true
+    }),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+## Who's driving it
+
+The chart shows the twenty most-published authors. The network below it shows how authors with **≥ 3 papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  marginLeft: 180,
+  height: Math.max(260, top_authors_t.length * 22),
+  x: { label: "Papers", grid: true },
+  y: { label: null },
+  marks: [
+    Plot.barX(top_authors_t, {
+      x: "publications",
+      y: "name",
+      fill: "#1f6feb",
+      sort: { y: "x", reverse: true },
+      tip: true
+    }),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+```{ojs}
+//| echo: false
+network_chart = {
+  const width = 1000
+  const height = 600
+
+  // Author → primary affiliation (most common one)
+  const aff_by_author = d3.rollup(
+    author_affs_t,
+    v => v[0].affiliation,
+    d => d.author
+  )
+
+  const nodes_by_name = new Map()
+  for (const e of coauth_edges_t) {
+    for (const n of [e.source, e.target]) {
+      if (!nodes_by_name.has(n)) {
+        nodes_by_name.set(n, { id: n, affiliation: aff_by_author.get(n) ?? "Unknown", degree: 0 })
+      }
+    }
+    nodes_by_name.get(e.source).degree += e.weight
+    nodes_by_name.get(e.target).degree += e.weight
+  }
+  const nodes = Array.from(nodes_by_name.values())
+  const links = coauth_edges_t.map(e => ({ source: e.source, target: e.target, weight: e.weight }))
+
+  const affs = Array.from(new Set(nodes.map(n => n.affiliation))).sort()
+  const color = d3.scaleOrdinal(d3.schemeTableau10.concat(d3.schemeSet3)).domain(affs)
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(60).strength(d => 0.1 + 0.05 * d.weight))
+    .force("charge", d3.forceManyBody().strength(-180))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collide", d3.forceCollide().radius(d => 4 + Math.sqrt(d.degree)))
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif; cursor: grab;")
+
+  const g = svg.append("g")
+
+  svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
+
+  const link = g.append("g")
+    .attr("stroke-opacity", 0.4)
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("stroke", "#999")
+    .attr("stroke-width", d => Math.sqrt(d.weight))
+
+  const node = g.append("g")
+    .selectAll("circle")
+    .data(nodes)
+    .join("circle")
+    .attr("r", d => 4 + Math.sqrt(d.degree))
+    .attr("fill", d => color(d.affiliation))
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.2)
+    .call(drag(sim))
+
+  node.append("title").text(d => `${d.id}\n${d.affiliation}\n${d.degree} co-author links`)
+
+  const label = g.append("g")
+    .attr("pointer-events", "none")
+    .selectAll("text")
+    .data(nodes)
+    .join("text")
+    .text(d => d.id)
+    .attr("dx", 7)
+    .attr("dy", 3)
+    .attr("font-size", 9)
+    .attr("fill", "#222")
+
+  sim.on("tick", () => {
+    link
+      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
+    node.attr("cx", d => d.x).attr("cy", d => d.y)
+    label.attr("x", d => d.x).attr("y", d => d.y)
+  })
+
+  invalidation.then(() => sim.stop())
+
+  function drag(simulation) {
+    return d3.drag()
+      .on("start", (ev, d) => { if (!ev.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
+      .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y })
+      .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
+  }
+
+  return svg.node()
+}
+```
+
+## Where it appears
+
+Most papers in this space appear first on bioRxiv or arXiv. Toggle preprints vs. peer-reviewed to see how the venue distribution shifts.
+
+```{ojs}
+//| echo: false
+viewof venue_type = Inputs.radio(
+  ["all", "preprint", "peer-reviewed"],
+  { label: "Publication type", value: "all" }
+)
+```
+
+```{ojs}
+//| echo: false
+{
+  const filtered = venue_type === "all" ? venues_t : venues_t.filter(v => v.type === venue_type)
+  const grouped = Array.from(
+    d3.rollup(filtered, vs => d3.sum(vs, v => v.papers), v => v.venue),
+    ([venue, papers]) => ({ venue, papers })
+  ).sort((a, b) => d3.descending(a.papers, b.papers)).slice(0, 15)
+
+  return Plot.plot({
+    marginLeft: 180,
+    height: Math.max(260, grouped.length * 24),
+    x: { label: "Papers", grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(grouped, {
+        x: "papers",
+        y: "venue",
+        fill: "#6f42c1",
+        sort: { y: "x", reverse: true },
+        tip: true
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
+```
+
+## Browse all papers
+
+```{ojs}
+//| echo: false
+viewof search = Inputs.search(pubs_t, { placeholder: `Search ${n_papers} papers…` })
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(search, {
+  columns: ["year", "models", "title", "authors", "journal", "type", "doi"],
+  header: { year: "Year", models: "Model(s)", title: "Title", authors: "Authors", journal: "Venue", type: "Type", doi: "DOI" },
+  format: {
+    title: (t, i) => {
+      const row = search[i]
+      const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
+      return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+    },
+    authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a,
+    doi: d => d ? htl.html`<a href="https://doi.org/${d}" target="_blank" rel="noopener">${d}</a>` : ""
+  },
+  sort: "year",
+  reverse: true,
+  rows: 25,
+  width: { year: 60, type: 100, models: 130 }
+})
+```
+
+## Contributing {#contributing}
+
+This site is generated from a small SQLite database (`denovo.db`), seeded from `related_literature.csv` via `populate_remaining.py`. To propose a new paper:
+
+1. Add a row to `related_literature.csv` with model name, title, authors, date, publisher, and (if available) repository / model weights / PDF URL.
+2. Run `uv run python populate_remaining.py` to ingest, then `sqlite3 denovo.db .dump > denovo.sql` to regenerate the human-readable dump.
+3. Open a PR. The GitHub Action will rebuild the site and publish to `gh-pages` on merge.
+
+---
+
+::: {.text-muted}
+This page tracks **deep-learning** approaches to *de novo* peptide sequencing only. Pre-deep-learning methods are out of scope. Source data and code: [GitHub](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing) — rebuilt automatically on every push to `main`.
+:::
