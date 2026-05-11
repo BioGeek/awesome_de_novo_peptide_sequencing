@@ -267,6 +267,8 @@ INSERT INTO author VALUES(259,'Samuel E. Miller',NULL);
 INSERT INTO author VALUES(260,'Adriana I. Rizzo',NULL);
 INSERT INTO author VALUES(261,'Jacob R. Waldbauer',NULL);
 INSERT INTO author VALUES(262,'Xianglilan Zhang',NULL);
+INSERT INTO author VALUES(263,'Yuanliang Zhang',NULL);
+INSERT INTO author VALUES(264,'Lequan Yu',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -911,6 +913,7 @@ INSERT INTO algorithm VALUES(55,'DeepNovo V2','https://github.com/volpato30/Deep
 INSERT INTO algorithm VALUES(56,'DeepNovo-DIA','https://github.com/nh2tran/DeepNovo-DIA',NULL,NULL,'CNN + RNN','First de novo for DIA');
 INSERT INTO algorithm VALUES(57,'PostNovo',NULL,NULL,NULL,'CNN + RNN','FDR-controlled ensembling');
 INSERT INTO algorithm VALUES(58,'DeepNovo','https://github.com/nh2tran/DeepNovo',NULL,NULL,'CNN + RNN','First DL model (CNN+LSTM)');
+INSERT INTO algorithm VALUES(59,'CausalNovo','https://anonymous.4open.science/r/CausalNovo-C134',NULL,NULL,NULL,'Causality-informed framework');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -985,6 +988,7 @@ INSERT INTO publication VALUES(60,'Deep learning enables de novo peptide sequenc
 INSERT INTO publication VALUES(61,'Postnovo: Postprocessing Enables Accurate and FDR-Controlled de Novo Peptide Sequencing','2018-10-02','10.1021/acs.jproteome.8b00278','Journal of Proteome Research',NULL,'https://doi.org/10.1021/acs.jproteome.8b00278','Journal of Proteome Research','peer-reviewed');
 INSERT INTO publication VALUES(62,'De novo peptide sequencing by deep learning','2017-07-18','10.1073/pnas.1705691114','PNAS',NULL,'https://doi.org/10.1073/pnas.1705691114','PNAS','peer-reviewed');
 INSERT INTO publication VALUES(63,'De novo mass spectrometry peptide sequencing with a transformer model','2023-02-09','10.1038/s42256-023-00624-6','Springer Nature',NULL,NULL,'Nature Machine Intelligence','peer-reviewed');
+INSERT INTO publication VALUES(64,'CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework','2026-02-14',NULL,'OpenReview',NULL,NULL,'ICLR 2026','preprint');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1058,6 +1062,7 @@ INSERT INTO publication_algorithm VALUES(61,57);
 INSERT INTO publication_algorithm VALUES(62,58);
 INSERT INTO publication_algorithm VALUES(49,12);
 INSERT INTO publication_algorithm VALUES(63,12);
+INSERT INTO publication_algorithm VALUES(64,59);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1489,11 +1494,17 @@ INSERT INTO publication_author VALUES(62,262,2);
 INSERT INTO publication_author VALUES(62,105,3);
 INSERT INTO publication_author VALUES(62,252,4);
 INSERT INTO publication_author VALUES(62,107,5);
+INSERT INTO publication_author VALUES(64,115,1);
+INSERT INTO publication_author VALUES(64,116,2);
+INSERT INTO publication_author VALUES(64,263,3);
+INSERT INTO publication_author VALUES(64,264,4);
+INSERT INTO publication_author VALUES(64,119,5);
+INSERT INTO publication_author VALUES(64,120,6);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',16);
 INSERT INTO sqlite_sequence VALUES('city',55);
 INSERT INTO sqlite_sequence VALUES('affiliation',119);
-INSERT INTO sqlite_sequence VALUES('author',262);
-INSERT INTO sqlite_sequence VALUES('algorithm',58);
-INSERT INTO sqlite_sequence VALUES('publication',63);
+INSERT INTO sqlite_sequence VALUES('author',264);
+INSERT INTO sqlite_sequence VALUES('algorithm',59);
+INSERT INTO sqlite_sequence VALUES('publication',64);
 COMMIT;
