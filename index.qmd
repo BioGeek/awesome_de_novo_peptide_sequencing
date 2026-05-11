@@ -247,31 +247,106 @@ viewof family_filter = Inputs.checkbox(
 
 ```{ojs}
 //| echo: false
-{
-  const data = algorithms_t.filter(d => d.first_pub && d.family && family_filter.includes(d.family))
+innovations_timeline = {
+  // Notebook-style band order: oldest paradigm at the bottom, newest at the top.
+  const band_order = ["CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion"]
+  const band_color = {
+    "CNN + RNN":         "#4C72B0",
+    "Transformer (AR)":  "#DD8452",
+    "GNN":               "#937860",
+    "CNN":               "#8172B3",
+    "Transformer (NAR)": "#55A868",
+    "Diffusion":         "#C44E52"
+  }
+  // Tiers chosen to spread labels both above and below the band center.
+  const Y_TIERS = [0.5, 0.8, 0.2, 0.9, 0.1, 0.65, 0.35, 0.95, 0.05, 0.72, 0.28, 0.85, 0.15, 0.58, 0.42]
+  const MIN_GAP_DAYS = 180
+
+  // Only include bands actually represented in the data AND surviving the family-filter checkboxes.
+  const present = new Set(algorithms_t.filter(a => a.first_pub && a.family).map(a => a.family))
+  const visible_bands = band_order.filter(f => present.has(f) && family_filter.includes(f))
+
+  // Each band gets unit height, ordered bottom-to-top.
+  const bands = visible_bands.map((family, i) => ({ family, y0: i, y1: i + 1, center: i + 0.5 }))
+  const band_index = new Map(bands.map(b => [b.family, b]))
+
+  // Assign each model a tier so labels at similar dates don't overlap.
+  const rows = algorithms_t
+    .filter(a => a.first_pub && band_index.has(a.family))
+    .slice()
+    .sort((a, b) => a.first_pub - b.first_pub)
+  const last_date_at_tier = new Map()
+  const items = []
+  for (const row of rows) {
+    let placed = false
+    for (let ti = 0; ti < Y_TIERS.length; ti++) {
+      const key = `${row.family}|${ti}`
+      const last = last_date_at_tier.get(key)
+      if (last === undefined || (row.first_pub - last) / 86400000 >= MIN_GAP_DAYS) {
+        last_date_at_tier.set(key, row.first_pub)
+        const band = band_index.get(row.family)
+        items.push({ ...row, y: band.y0 + Y_TIERS[ti], y_frac: Y_TIERS[ti] })
+        placed = true
+        break
+      }
+    }
+    if (!placed) {
+      const band = band_index.get(row.family)
+      items.push({ ...row, y: band.y0 + 0.5, y_frac: 0.5 })
+    }
+  }
+
+  const all_dates = algorithms_t.filter(a => a.first_pub).map(a => a.first_pub)
+  const x_min = d3.min(all_dates)
+  const x_max = d3.max(all_dates)
+
   return Plot.plot({
-    height: Math.max(280, families.length * 60),
-    marginLeft: 130,
-    marginRight: 40,
-    x: { type: "time", label: "First publication" },
-    y: { domain: families, label: null, padding: 0.6 },
-    color: { domain: families, scheme: "tableau10", legend: false },
+    width: 1400,
+    height: Math.max(420, bands.length * 110),
+    marginLeft: 140,
+    marginRight: 60,
+    marginBottom: 40,
+    x: { type: "time", label: "First publication →", domain: [d3.timeMonth.offset(x_min, -3), d3.timeMonth.offset(x_max, 3)], grid: true },
+    y: { domain: [0, bands.length], axis: null },
+    color: { domain: band_order, range: band_order.map(f => band_color[f]), legend: false },
     marks: [
-      Plot.dot(data, {
+      // Background band per family (tinted)
+      Plot.rect(bands, {
+        x1: () => x_min, x2: () => x_max,
+        y1: "y0", y2: "y1",
+        fill: "family",
+        fillOpacity: 0.09
+      }),
+      // Thin separators between bands
+      Plot.ruleY(bands.flatMap(b => [b.y0, b.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
+      // Left-edge family label
+      Plot.text(bands, {
+        x: () => d3.timeMonth.offset(x_min, -3),
+        y: "center",
+        text: "family",
+        textAnchor: "end",
+        dx: -8,
+        fontSize: 12,
+        fontWeight: "bold",
+        fill: "family"
+      }),
+      // Dots
+      Plot.dot(items, {
         x: "first_pub",
-        y: "family",
+        y: "y",
         fill: "family",
         r: 7,
         stroke: "white",
         strokeWidth: 1.5,
         tip: true,
-        title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub?.toISOString().slice(0,10) ?? ""}`
+        title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
-      Plot.text(data, {
+      // Labels offset above or below the dot depending on its band-fraction
+      Plot.text(items, {
         x: "first_pub",
-        y: "family",
+        y: "y",
         text: "model",
-        dy: -14,
+        dy: d => d.y_frac >= 0.5 ? -12 : 12,
         fontSize: 10,
         fontWeight: "bold",
         fill: "family"
