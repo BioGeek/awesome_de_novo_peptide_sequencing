@@ -216,18 +216,18 @@ The first deep-learning paper for *de novo* peptide sequencing appeared in **${f
 //| echo: false
 Plot.plot({
   marginLeft: 50,
-  height: 320,
-  x: { label: "Year", tickFormat: "d" },
+  height: 360,
+  x: { label: "Year", tickFormat: "d", interval: 1 },
   y: { label: "Papers", grid: true },
-  color: { legend: true, scheme: "blues" },
+  color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis"] },
   marks: [
-    Plot.barY(pubs_t.filter(p => Number.isFinite(p.year)), {
-      x: "year",
-      y: { reduce: "count" },
-      fill: "type",
-      tip: true,
-      sort: { color: { value: "-y" } }
-    }),
+    Plot.barY(
+      pubs_t.filter(p => Number.isFinite(p.year)),
+      Plot.groupX(
+        { y: "count" },
+        { x: "year", fill: "type", tip: true }
+      )
+    ),
     Plot.ruleY([0])
   ]
 })
