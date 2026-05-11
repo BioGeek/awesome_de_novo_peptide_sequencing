@@ -341,12 +341,26 @@ innovations_timeline = {
         tip: true,
         title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
-      // Labels offset above or below the dot depending on its band-fraction
-      Plot.text(items, {
+      // Labels anchored above the dot (top half of band)
+      Plot.text(items.filter(d => d.y_frac >= 0.5), {
         x: "first_pub",
         y: "y",
         text: "model",
-        dy: d => d.y_frac >= 0.5 ? -12 : 12,
+        textAnchor: "middle",
+        lineAnchor: "bottom",
+        dy: -10,
+        fontSize: 10,
+        fontWeight: "bold",
+        fill: "family"
+      }),
+      // Labels anchored below the dot (bottom half of band)
+      Plot.text(items.filter(d => d.y_frac < 0.5), {
+        x: "first_pub",
+        y: "y",
+        text: "model",
+        textAnchor: "middle",
+        lineAnchor: "top",
+        dy: 10,
         fontSize: 10,
         fontWeight: "bold",
         fill: "family"
