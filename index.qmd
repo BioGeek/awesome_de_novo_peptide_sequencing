@@ -299,20 +299,23 @@ innovations_timeline = {
   const all_dates = algorithms_t.filter(a => a.first_pub).map(a => a.first_pub)
   const x_min = d3.min(all_dates)
   const x_max = d3.max(all_dates)
+  // Pad each side so labels at the temporal extremes (DeepNovo, DiffuNovo) stay inside the band.
+  const x_pad_min = d3.timeMonth.offset(x_min, -8)
+  const x_pad_max = d3.timeMonth.offset(x_max, 8)
 
-  return Plot.plot({
+  const chart = Plot.plot({
     width: 1400,
     height: Math.max(420, bands.length * 110),
     marginLeft: 140,
     marginRight: 60,
     marginBottom: 40,
-    x: { type: "time", label: "First publication →", domain: [d3.timeMonth.offset(x_min, -3), d3.timeMonth.offset(x_max, 3)], grid: true },
+    x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, bands.length], axis: null },
     color: { domain: band_order, range: band_order.map(f => band_color[f]), legend: false },
     marks: [
-      // Background band per family (tinted)
+      // Background band per family — extends to the padded x domain so edge labels stay inside.
       Plot.rect(bands, {
-        x1: () => x_min, x2: () => x_max,
+        x1: () => x_pad_min, x2: () => x_pad_max,
         y1: "y0", y2: "y1",
         fill: "family",
         fillOpacity: 0.09
@@ -321,7 +324,7 @@ innovations_timeline = {
       Plot.ruleY(bands.flatMap(b => [b.y0, b.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
       // Left-edge family label
       Plot.text(bands, {
-        x: () => d3.timeMonth.offset(x_min, -3),
+        x: () => x_pad_min,
         y: "center",
         text: "family",
         textAnchor: "end",
@@ -367,7 +370,34 @@ innovations_timeline = {
       })
     ]
   })
+
+  // Wrap in a horizontally-scrollable container with a fullscreen button.
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${chart}</div>
+  </div>`
 }
+```
+
+```{=html}
+<style>
+.chart-wrap { position: relative; }
+.chart-wrap:fullscreen { background: white; padding: 2rem; overflow: auto; }
+.chart-wrap:fullscreen .chart-scroll { width: 100%; height: 100%; display: flex; align-items: center; }
+.chart-wrap:fullscreen svg { max-width: 100% !important; max-height: 100% !important; height: auto !important; width: auto !important; }
+.chart-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.fs-btn {
+  position: absolute; top: 8px; right: 8px; z-index: 10;
+  padding: 4px 10px; font-size: 12px;
+  background: white; border: 1px solid #d0d7de; border-radius: 4px;
+  cursor: pointer; color: #57606a;
+}
+.fs-btn:hover { background: #f6f8fa; border-color: #afb8c1; }
+</style>
 ```
 
 ## Where the work happens
