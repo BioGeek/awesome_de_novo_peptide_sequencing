@@ -41,4 +41,28 @@ When adding rows by hand, always go through `populate_remaining.py`'s `get_or_cr
 
 ## Working with the notebook
 
-`plots.ipynb` writes PNGs into `plots/` via `plt.savefig(...)`. Re-running the notebook overwrites them; commit the regenerated PNGs alongside any data change so the rendered figures stay in sync with the DB.
+`plots.ipynb` is kept as an offline exploration / sanity-check tool only. It writes PNGs into `plots/` via `plt.savefig(...)` but those PNGs are **not committed** — the interactive Quarto site (`index.qmd`) replaces them. Use the notebook for ad-hoc SQL exploration or to cross-check what the Quarto site renders.
+
+## The Quarto site
+
+`index.qmd` + `_quarto.yml` produce an interactive site published to GitHub Pages at https://biogeek.github.io/awesome_de_novo_peptide_sequencing/. Architecture:
+
+- A **single Python chunk** at the top of `index.qmd` queries `denovo.db` and calls `ojs_define(...)` for each dataset (publications, top authors, geography, institutions, co-authorship edges, author affiliations, algorithms, venues).
+- **OJS cells** call Quarto's built-in `transpose()` to convert column-oriented data into row-oriented arrays, then render with **Observable Plot** (bars / scatter / timeline) and **d3-force** (co-authorship network). Every counter, axis label, and prose number flows from those datasets — never hardcode anything in the .qmd.
+- `.github/workflows/publish.yml` rebuilds on every push to `main` and pushes to the `gh-pages` branch via `quarto-actions/publish@v2`. Cache is via `astral-sh/setup-uv@v3`; no PAT needed (uses `GITHUB_TOKEN`).
+
+### Editorial conventions
+
+- **Italicize *de novo*** in every piece of user-facing copy (page title, subtitle, prose, chart titles, README). In markdown: `*de novo*`. In HTML cells: `<em>de novo</em>`. Don't italicize it inside copied paper titles, DB string literals, or identifiers.
+- **State the scope** ("deep learning only, not a historical survey") in the page subtitle, the hero scope banner, the meta description, and the footer.
+
+### Local dev
+
+```bash
+uv run quarto preview        # live-reload at http://localhost:4200
+uv run quarto render         # one-shot build into _site/
+```
+
+### Updating data → updating the site
+
+Edit `related_literature.csv` → `uv run python populate_remaining.py` → `sqlite3 denovo.db .dump > denovo.sql` → commit both `denovo.db` and `denovo.sql` → push to `main`. The Action rebuilds and republishes within ~2-3 minutes. **No manual `plt.savefig` step anymore.**
