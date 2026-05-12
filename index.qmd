@@ -502,65 +502,137 @@ Plot.plot({
 ```{ojs}
 //| echo: false
 network_chart = {
-  const width = 1000
-  const height = 600
+  const width = 1400
+  const height = 760
+  const LEGEND_H = 110
+  const PLOT_H = height - LEGEND_H
 
-  // Author → primary affiliation (most common one)
-  const aff_by_author = d3.rollup(
+  // All affiliations per author (an author can have multiple).
+  const affs_by_author = d3.rollup(
     author_affs_t,
-    v => v[0].affiliation,
+    v => Array.from(new Set(v.map(d => d.affiliation))).sort(),
     d => d.author
   )
 
-  const nodes_by_name = new Map()
-  for (const e of coauth_edges_t) {
-    for (const n of [e.source, e.target]) {
-      if (!nodes_by_name.has(n)) {
-        nodes_by_name.set(n, { id: n, affiliation: aff_by_author.get(n) ?? "Unknown", degree: 0 })
-      }
-    }
-    nodes_by_name.get(e.source).degree += e.weight
-    nodes_by_name.get(e.target).degree += e.weight
-  }
-  const nodes = Array.from(nodes_by_name.values())
+  // Nodes from the edges (we only render authors with ≥3 papers; that's what coauth_edges_t holds).
+  const node_set = new Set()
+  for (const e of coauth_edges_t) { node_set.add(e.source); node_set.add(e.target) }
+  const nodes = Array.from(node_set, name => ({
+    id: name,
+    affiliations: affs_by_author.get(name) ?? ["Unknown"],
+    degree: 0
+  }))
+  const node_by_name = new Map(nodes.map(n => [n.id, n]))
   const links = coauth_edges_t.map(e => ({ source: e.source, target: e.target, weight: e.weight }))
+  for (const l of links) {
+    node_by_name.get(l.source).degree += l.weight
+    node_by_name.get(l.target).degree += l.weight
+  }
+  const max_deg = d3.max(nodes, n => n.degree) || 1
 
-  const affs = Array.from(new Set(nodes.map(n => n.affiliation))).sort()
-  const color = d3.scaleOrdinal(d3.schemeTableau10.concat(d3.schemeSet3)).domain(affs)
+  // Unique affiliations sorted for legend + a 22-slot palette so we don't run out of colors.
+  const all_affs = Array.from(new Set(nodes.flatMap(n => n.affiliations))).sort()
+  const palette = d3.schemeTableau10.concat(d3.schemeSet3)
+  const color = d3.scaleOrdinal().domain(all_affs).range(all_affs.map((_, i) => palette[i % palette.length]))
+
+  // Primary affiliation = the one shared with most neighbors (for edge coloring).
+  const adj = new Map(nodes.map(n => [n.id, []]))
+  for (const l of links) { adj.get(l.source).push(l.target); adj.get(l.target).push(l.source) }
+  const primary_aff = new Map()
+  for (const n of nodes) {
+    if (n.affiliations.length === 1) { primary_aff.set(n.id, n.affiliations[0]); continue }
+    let best = n.affiliations[0], best_count = -1
+    for (const aff of n.affiliations) {
+      const c = adj.get(n.id).reduce((acc, nb) => acc + (node_by_name.get(nb).affiliations.includes(aff) ? 1 : 0), 0)
+      if (c > best_count) { best = aff; best_count = c }
+    }
+    primary_aff.set(n.id, best)
+  }
+
+  // Within-component clustering force: pull nodes of the same primary-aff together.
+  const aff_centers = new Map()
+  for (const aff of all_affs) {
+    const i = all_affs.indexOf(aff)
+    aff_centers.set(aff, [
+      width / 2 + Math.cos(i * 2 * Math.PI / all_affs.length) * width * 0.3,
+      PLOT_H / 2 + Math.sin(i * 2 * Math.PI / all_affs.length) * PLOT_H * 0.35
+    ])
+  }
+
+  const NODE_R = d => 8 + 10 * Math.sqrt(d.degree / max_deg)
 
   const sim = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(60).strength(d => 0.1 + 0.05 * d.weight))
-    .force("charge", d3.forceManyBody().strength(-180))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collide", d3.forceCollide().radius(d => 4 + Math.sqrt(d.degree)))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(70).strength(d => 0.2 + 0.04 * d.weight))
+    .force("charge", d3.forceManyBody().strength(-220))
+    .force("collide", d3.forceCollide().radius(d => NODE_R(d) + 4))
+    .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
+    .force("aff_x", d3.forceX(d => aff_centers.get(primary_aff.get(d.id))[0]).strength(0.05))
+    .force("aff_y", d3.forceY(d => aff_centers.get(primary_aff.get(d.id))[1]).strength(0.05))
 
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif; cursor: grab;")
+    .attr("style", "max-width: 100%; height: auto; font: 11px sans-serif; cursor: grab;")
+
+  // Title
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 22)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 16)
+    .attr("font-weight", "bold")
+    .attr("fill", "#24292f")
+    .text("Co-authorship network — authors with ≥ 3 papers, pie nodes for multi-affiliation")
 
   const g = svg.append("g")
-
   svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
 
+  // Edges: tint same-primary-affiliation edges with the affiliation color; others gray.
   const link = g.append("g")
-    .attr("stroke-opacity", 0.4)
+    .attr("stroke-opacity", 0.45)
     .selectAll("line")
     .data(links)
     .join("line")
-    .attr("stroke", "#999")
-    .attr("stroke-width", d => Math.sqrt(d.weight))
+    .attr("stroke", d => {
+      const a = primary_aff.get(d.source.id ?? d.source)
+      const b = primary_aff.get(d.target.id ?? d.target)
+      return a && a === b ? color(a) : "#bbb"
+    })
+    .attr("stroke-width", d => Math.max(1, Math.sqrt(d.weight) * 0.8))
 
-  const node = g.append("g")
-    .selectAll("circle")
+  // Node groups (one <g> per author; contains either a circle or pie slices).
+  const node_g = g.append("g")
+    .selectAll("g.node")
     .data(nodes)
-    .join("circle")
-    .attr("r", d => 4 + Math.sqrt(d.degree))
-    .attr("fill", d => color(d.affiliation))
-    .attr("stroke", "#fff")
-    .attr("stroke-width", 1.2)
+    .join("g")
+    .attr("class", "node")
     .call(drag(sim))
 
-  node.append("title").text(d => `${d.id}\n${d.affiliation}\n${d.degree} co-author links`)
+  node_g.append("title").text(d =>
+    `${d.id}\n${d.affiliations.join(" + ")}\n${d.degree} co-author links`
+  )
+
+  // Render each node: single circle if 1 affiliation, pie wedges if multiple.
+  node_g.each(function (d) {
+    const r = NODE_R(d)
+    const sel = d3.select(this)
+    if (d.affiliations.length === 1) {
+      sel.append("circle")
+        .attr("r", r)
+        .attr("fill", color(d.affiliations[0]))
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+    } else {
+      const arc = d3.arc().innerRadius(0).outerRadius(r)
+      const pie = d3.pie().value(1).sort(null)(d.affiliations.map(a => ({ aff: a })))
+      sel.selectAll("path")
+        .data(pie)
+        .join("path")
+        .attr("d", arc)
+        .attr("fill", p => color(p.data.aff))
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1)
+    }
+  })
 
   const label = g.append("g")
     .attr("pointer-events", "none")
@@ -568,18 +640,43 @@ network_chart = {
     .data(nodes)
     .join("text")
     .text(d => d.id)
-    .attr("dx", 7)
+    .attr("font-size", 10)
+    .attr("font-weight", 500)
+    .attr("fill", "#1d2330")
+    .attr("dx", d => NODE_R(d) + 3)
     .attr("dy", 3)
-    .attr("font-size", 9)
-    .attr("fill", "#222")
 
   sim.on("tick", () => {
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
-    node.attr("cx", d => d.x).attr("cy", d => d.y)
+    node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
     label.attr("x", d => d.x).attr("y", d => d.y)
   })
+
+  // Affiliation legend at the bottom.
+  const legend_g = svg.append("g")
+    .attr("transform", `translate(40, ${PLOT_H + 10})`)
+  legend_g.append("text")
+    .attr("x", 0).attr("y", 0)
+    .attr("font-weight", "bold")
+    .attr("font-size", 12)
+    .attr("fill", "#57606a")
+    .text(`Affiliation (${all_affs.length})`)
+  const cols_per_row = 5
+  legend_g.selectAll("g.leg-item")
+    .data(all_affs)
+    .join("g")
+    .attr("class", "leg-item")
+    .attr("transform", (_, i) => `translate(${(i % cols_per_row) * 260}, ${20 + Math.floor(i / cols_per_row) * 18})`)
+    .call(s => {
+      s.append("circle").attr("r", 6).attr("cx", 6).attr("cy", -4).attr("fill", color)
+      s.append("text")
+        .attr("x", 18).attr("y", 0)
+        .attr("font-size", 11)
+        .attr("fill", "#24292f")
+        .text(d => d.length > 32 ? d.slice(0, 30) + "…" : d)
+    })
 
   invalidation.then(() => sim.stop())
 
@@ -590,7 +687,14 @@ network_chart = {
       .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
   }
 
-  return svg.node()
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${svg.node()}</div>
+  </div>`
 }
 ```
 
