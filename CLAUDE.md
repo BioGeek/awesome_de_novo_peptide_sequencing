@@ -41,7 +41,7 @@ When adding rows by hand, always check whether the entity already exists before 
 
 ## The Quarto site
 
-`index.qmd` + `_quarto.yml` produce an interactive site published to GitHub Pages at https://biogeek.github.io/awesome_de_novo_peptide_sequencing/. Architecture:
+`index.qmd` + `_quarto.yml` produce an interactive site published to GitHub Pages at <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>. Architecture:
 
 - A **single Python chunk** at the top of `index.qmd` queries `denovo.db` and calls `ojs_define(...)` for each dataset (publications, top authors, geography, institutions, co-authorship edges, author affiliations, algorithms, venues).
 - **OJS cells** call Quarto's built-in `transpose()` to convert column-oriented data into row-oriented arrays, then render with **Observable Plot** (bars / scatter / timeline) and **d3-force** (co-authorship network). Every counter, axis label, and prose number flows from those datasets — never hardcode anything in the .qmd.

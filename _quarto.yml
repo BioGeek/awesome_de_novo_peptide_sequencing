@@ -7,6 +7,7 @@ project:
 website:
   title: "Awesome *De Novo* Peptide Sequencing"
   description: "An interactive, data-driven map of deep-learning approaches to *de novo* peptide sequencing — not a historical survey of the field."
+  site-url: https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/
   repo-url: https://github.com/BioGeek/awesome_de_novo_peptide_sequencing
   repo-actions: [edit, issue]
   page-navigation: false

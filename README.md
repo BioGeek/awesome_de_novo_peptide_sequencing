@@ -2,7 +2,7 @@
 
 An interactive, data-driven map of **deep-learning** approaches to *de novo* peptide sequencing.
 
-🌐 **Live site:** https://biogeek.github.io/awesome_de_novo_peptide_sequencing/
+🌐 **Live site:** <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>
 
 ## Scope
 
