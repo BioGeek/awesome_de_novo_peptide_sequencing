@@ -2,5 +2,6 @@
 _site/
 .quarto/
 _freeze/
+plots/
 
 /.quarto/
