@@ -306,6 +306,8 @@ INSERT INTO author VALUES(300,'Kun He',NULL);
 INSERT INTO author VALUES(301,'Long Wu',NULL);
 INSERT INTO author VALUES(302,'Jianyun Liu',NULL);
 INSERT INTO author VALUES(303,'Yonggang Lu',NULL);
+INSERT INTO author VALUES(304,'Jemma Daniel',NULL);
+INSERT INTO author VALUES(305,'Henrik Servais Janssen Knudsen',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1033,6 +1035,7 @@ INSERT INTO algorithm VALUES(65,'MSNovo',NULL,NULL,NULL,'Graph / DP','Mass-array
 INSERT INTO algorithm VALUES(66,'pNovo',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','First HCD-focused de novo','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(67,'pNovo+',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','Complementary HCD + ETD spectra','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decision tree','Real-time decision-tree scoring','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(69,'Winnow',NULL,NULL,NULL,NULL,'NN rescoring + decoy-free FDR','post-processor',1,'both');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1117,6 +1120,7 @@ INSERT INTO publication VALUES(70,'MSNovo: A Dynamic Programming Algorithm for d
 INSERT INTO publication VALUES(71,'pNovo: De novo Peptide Sequencing and Identification Using HCD Spectra','2010-05-07','10.1021/pr100182k','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/pr100182k','Journal of Proteome Research','peer-reviewed');
 INSERT INTO publication VALUES(72,'pNovo+: De Novo Peptide Sequencing Using Complementary HCD and ETD Tandem Mass Spectra','2013-02-01','10.1021/pr3006843','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/pr3006843','Journal of Proteome Research','peer-reviewed');
 INSERT INTO publication VALUES(73,'Novor: Real-Time Peptide de Novo Sequencing Software','2015-06-30','10.1007/s13361-015-1204-0','Springer',NULL,'https://link.springer.com/article/10.1007/s13361-015-1204-0','Journal of The American Society for Mass Spectrometry','peer-reviewed');
+INSERT INTO publication VALUES(74,'De novo peptide sequencing rescoring and FDR estimation with Winnow','2025-09-29','10.48550/arXiv.2509.24952','arXiv',NULL,'https://arxiv.org/abs/2509.24952','arXiv','preprint');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1200,6 +1204,7 @@ INSERT INTO publication_algorithm VALUES(70,65);
 INSERT INTO publication_algorithm VALUES(71,66);
 INSERT INTO publication_algorithm VALUES(72,67);
 INSERT INTO publication_algorithm VALUES(73,68);
+INSERT INTO publication_algorithm VALUES(74,69);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1689,11 +1694,21 @@ INSERT INTO publication_author VALUES(72,292,9);
 INSERT INTO publication_author VALUES(72,258,10);
 INSERT INTO publication_author VALUES(72,298,11);
 INSERT INTO publication_author VALUES(53,303,3);
+INSERT INTO publication_author VALUES(74,3,1);
+INSERT INTO publication_author VALUES(74,304,2);
+INSERT INTO publication_author VALUES(74,305,3);
+INSERT INTO publication_author VALUES(74,5,4);
+INSERT INTO publication_author VALUES(74,1,5);
+INSERT INTO publication_author VALUES(74,14,6);
+INSERT INTO publication_author VALUES(74,18,7);
+INSERT INTO publication_author VALUES(74,19,8);
+INSERT INTO publication_author VALUES(74,15,9);
+INSERT INTO publication_author VALUES(74,2,10);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',17);
 INSERT INTO sqlite_sequence VALUES('city',60);
 INSERT INTO sqlite_sequence VALUES('affiliation',133);
-INSERT INTO sqlite_sequence VALUES('author',303);
-INSERT INTO sqlite_sequence VALUES('algorithm',68);
-INSERT INTO sqlite_sequence VALUES('publication',73);
+INSERT INTO sqlite_sequence VALUES('author',305);
+INSERT INTO sqlite_sequence VALUES('algorithm',69);
+INSERT INTO sqlite_sequence VALUES('publication',74);
 COMMIT;
