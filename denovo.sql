@@ -301,6 +301,10 @@ INSERT INTO author VALUES(293,'Le-Heng Wang',NULL);
 INSERT INTO author VALUES(294,'Chao Liu',NULL);
 INSERT INTO author VALUES(295,'Zuo-Fei Yuan',NULL);
 INSERT INTO author VALUES(298,'Meng-Qiu Dong',NULL);
+INSERT INTO author VALUES(299,'Haifeng Chen',NULL);
+INSERT INTO author VALUES(300,'Kun He',NULL);
+INSERT INTO author VALUES(301,'Long Wu',NULL);
+INSERT INTO author VALUES(302,'Jianyun Li',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1598,13 +1602,23 @@ INSERT INTO publication_author VALUES(71,295,8);
 INSERT INTO publication_author VALUES(71,49,9);
 INSERT INTO publication_author VALUES(71,258,10);
 INSERT INTO publication_author VALUES(71,298,11);
-INSERT INTO publication_author VALUES(72,40,1);
 INSERT INTO publication_author VALUES(73,234,1);
+INSERT INTO publication_author VALUES(72,40,1);
+INSERT INTO publication_author VALUES(72,299,2);
+INSERT INTO publication_author VALUES(72,300,3);
+INSERT INTO publication_author VALUES(72,301,4);
+INSERT INTO publication_author VALUES(72,291,5);
+INSERT INTO publication_author VALUES(72,290,6);
+INSERT INTO publication_author VALUES(72,302,7);
+INSERT INTO publication_author VALUES(72,256,8);
+INSERT INTO publication_author VALUES(72,292,9);
+INSERT INTO publication_author VALUES(72,258,10);
+INSERT INTO publication_author VALUES(72,298,11);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',16);
 INSERT INTO sqlite_sequence VALUES('city',55);
 INSERT INTO sqlite_sequence VALUES('affiliation',119);
-INSERT INTO sqlite_sequence VALUES('author',298);
+INSERT INTO sqlite_sequence VALUES('author',302);
 INSERT INTO sqlite_sequence VALUES('algorithm',68);
 INSERT INTO sqlite_sequence VALUES('publication',73);
 COMMIT;
