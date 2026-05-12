@@ -260,7 +260,10 @@ innovations_timeline = {
   }
   // Tiers chosen to spread labels both above and below the band center.
   const Y_TIERS = [0.5, 0.8, 0.2, 0.9, 0.1, 0.65, 0.35, 0.95, 0.05, 0.72, 0.28, 0.85, 0.15, 0.58, 0.42]
-  const MIN_GAP_DAYS = 180
+  // 270 days ≈ 9 months. Long model names like "DeepNovo Peptidome" are ~150 px wide;
+  // at the current x scale that's roughly 9 months of horizontal space, so anything
+  // closer than this should land on a separate tier to avoid label collisions.
+  const MIN_GAP_DAYS = 270
 
   // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
   const band_heights = {
