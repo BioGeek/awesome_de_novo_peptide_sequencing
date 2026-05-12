@@ -27,27 +27,6 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      # quarto-actions/publish@v2 refuses to push to a gh-pages branch that
-      # doesn't already exist on the remote. Bootstrap it once on first run
-      # with an empty .nojekyll commit so the publish step has somewhere to go.
-      - name: Bootstrap gh-pages branch if missing
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if git ls-remote --heads origin gh-pages | grep -q refs/heads/gh-pages; then
-            echo "gh-pages already exists on origin — nothing to do."
-            exit 0
-          fi
-          echo "gh-pages missing on origin — creating empty orphan branch."
-          tmp=$(mktemp -d)
-          git -C "$tmp" init -q -b gh-pages
-          git -C "$tmp" config user.name  "github-actions[bot]"
-          git -C "$tmp" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          : > "$tmp/.nojekyll"
-          git -C "$tmp" add .nojekyll
-          git -C "$tmp" commit -q -m "Initialize gh-pages branch"
-          git -C "$tmp" push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
-
       - name: Render and publish to gh-pages
         uses: quarto-dev/quarto-actions/publish@v2
         with:
