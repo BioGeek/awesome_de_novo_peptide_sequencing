@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.37">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Awesome De Novo Peptide Sequencing</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -21,8 +24,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +37,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -57,21 +61,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-12898c5bf75946a034c072a15908ede6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-2e52dc60286fd618a0f9ebeef3b36d1a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -101,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
 <link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="description" content="An interactive, data-driven map of deep-learning approaches to de novo peptide sequencing — not a historical survey of the field.">
@@ -111,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body>
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
@@ -160,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script type="ojs-define">{"contents": [{"name": "pubs", "value": {"id": [62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 49, 52, 51, 50, 63, 48, 47, 46, 45, 44, 43, 1, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 6, 5, 4, 2, 3, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 64, 7], "title": ["De novo peptide sequencing by deep learning", "Postnovo: Postprocessing Enables Accurate and FDR-Controlled de Novo Peptide Sequencing", "Deep learning enables de novo peptide sequencing from data-independent-acquisition mass spectrometry", "DeepNovoV2: Better de novo peptide sequencing with deep learning", "pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework", "Peptide Sequencing with Deep Learning", "De Novo Peptide Sequencing Reveals Many Cyclopeptides in the Human Gut and Other Environments", "Personalized deep learning of individual immunopeptidomes to identify neoantigens for cancer vaccines", "Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution devices", "Deep Novo A+: Improving the Deep Learning Model for De Novo Peptide Sequencing with Additional Ion Types and Validation Set", "De novo mass spectrometry peptide sequencing with a transformer model", "DePS: An improved deep learning model for de novo peptide sequencing", "Uncovering Hidden Members and Functions of the Soil Microbiome Using De Novo Metaproteomics", "NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning", "De novo mass spectrometry peptide sequencing with a transformer model", "Denovo-GCN: De Novo Peptide Sequencing by Graph Convolutional Neural Networks", "PaSER Novor: Real-time de novo sequencing for 4D-Proteomics applications", "PGPointNovo: an efficient neural network-based tool for parallel de novo peptide sequencing", "BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method", "DpNovo: A DEEP LEARNING MODEL COMBINED WITH DYNAMIC PROGRAMMING FOR DE NOVO PEPTIDE SEQUENCING", "Glycopeptide database search and de novo sequencing with PEAKS GlycanFinder enable highly sensitive glycoproteomics", "De novo peptide sequencing with InstaNovo: Accurate, database-free peptide identification for large scale proteomics experiments", "SeqNovo: De Novo Peptide Sequencing Prediction in IoMT via Seq2Seq", "Mitigating the missing-fragmentation problem in de novo peptide sequencing with a two-stage graph-based deep learning model", "A complete mass spectrometry-based immunopeptidomics pipeline for neoantigen identification and validation", "Accurate de novo peptide sequencing using fully convolutional neural networks", "ContraNovo: A Contrastive Learning Approach to Enhance De Novo Peptide Sequencing", "Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo peptide sequencing", "MARS an improved de novo peptide candidate selection method for non-canonical antigen target discovery in cancer", "A learned score function improves the power of mass spectrometry database search", "Introducing \u03c0-HelixNovo for practical large-scale de novo peptide sequencing", "Bidirectional de novo peptide sequencing using a transformer model", "AdaNovo: Adaptive De Novo Peptide Sequencing with Conditional Mutual Information", "pXg: Comprehensive Identification of Noncanonical MHC-I-Associated Peptides From De Novo Peptide Sequencing Using RNA-Seq Reads", "Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry", "A transformer model for de novo sequencing of data independent acquisition mass spectrometry data", "PowerNovo: de novo peptide sequencing via tandem mass spectrometry using an ensemble of transformer and BERT models", "TransNovo", "Sequence-to-sequence translation from mass spectra to peptides with a transformer model", "Transforming de novo peptide sequencing by explainable AI", "RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing", "Disentangling the Complex Multiplexed DIA Spectra in De Novo Peptide Sequencing", "ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing", "\u03c0-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing", "Distilling Non-Autoregressive Model Knowledge for Autoregressive De Novo Peptide Sequencing", "XA-Novo: an accurate and high-throughput mass spectrometry-based de novo sequencing technology for monoclonal antibodies and antibody mixtures", "A transformer-based semi-autoregressive framework for high-speed and accurate de novo peptide sequencing", "PepGo: a deep learning and tree search-based model for de novo peptide sequencing", "DiNovo: high-coverage, high-confidence de novo peptide sequencing using mirror proteases and deep learning", "Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra", "InstaNovo enables diffusion-powered de novo peptide sequencing in large-scale proteomics experiments", "InstaNovo-P: A de novo peptide sequencing model for phosphoproteomics", "Latent Imputation before Prediction: A New Computational Paradigm for De Novo Peptide Sequencing", "Curriculum Learning for Biological Sequence Prediction: The Case of De Novo Peptide Sequencing", "MassNet: billion-scale AI-friendly mass spectral corpus enables robust de novo peptide sequencing", "Zero-Shot De Novo Peptide Sequencing with Open Post-Translational Modification Discovery", "DiffNovo: A Transformer-Diffusion Model for De Novo Peptide Sequencing", "Improvements to CasaNovo, a deep learning de novo peptide sequencer", "Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing", "Modanovo: A Unified Model for Post-Translational Modification-Aware de Novo Sequencing Using Experimental Spectra from In Vivo and Synthetic Peptides", "Bidirectional Representations Augmented Autoregressive Biological Sequence Generation: Applications in De Novo Peptide Sequencing", "Accurate de novo sequencing of the modified proteome with OmniNovo", "CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework", "Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control"], "date": ["2017-07-18", "2018-10-02", "2018-12-20", "2019-05-22", "2019-07-24", "2020-01-01", "2020-01-22", "2020-11-16", "2021-03-18", "2022-02-01", "2022-02-07", "2022-03-16", "2022-07-06", "2022-08-01", "2023-02-09", "2023-04-05", "2023-04-20", "2023-04-25", "2023-05-14", "2023-07-07", "2023-07-08", "2023-08-30", "2023-10-04", "2023-10-19", "2023-11-09", "2023-12-02", "2023-12-18", "2024-01-02", "2024-01-22", "2024-02-07", "2024-02-10", "2024-02-28", "2024-03-15", "2024-04-01", "2024-04-09", "2024-06-04", "2024-07-01", "2024-07-15", "2024-07-30", "2024-08-04", "2024-11-20", "2024-11-24", "2024-11-27", "2025-01-02", "2025-02-05", "2025-02-07", "2025-02-14", "2025-02-24", "2025-03-20", "2025-03-28", "2025-04-01", "2025-05-14", "2025-05-23", "2025-06-16", "2025-06-26", "2025-06-27", "2025-07-24", "2025-07-26", "2025-08-15", "2025-09-16", "2025-10-17", "2025-12-13", "2026-02-14", "2026-02-23"], "type": ["peer-reviewed", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "thesis", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "preprint", "preprint", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "preprint", "thesis", "peer-reviewed", "preprint", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "preprint", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "preprint", "preprint", "peer-reviewed", "preprint", "peer-reviewed", "preprint", "ML conference", "preprint", "ML conference", "peer-reviewed", "preprint", "preprint", "peer-reviewed", "preprint", "preprint", "preprint", "peer-reviewed", "preprint", "preprint", "preprint", "preprint", "preprint", "peer-reviewed", "preprint", "thesis", "preprint", "preprint", "preprint", "preprint", "preprint"], "publisher": ["PNAS", "Journal of Proteome Research", "Nature Methods", "arXiv", "Bioinformatics", "PhD thesis", "Cell Systems", "Nature Machine Intelligence", "Nature Machine Intelligence", "Current Bioinformatics", "Cold Spring Harbor Laboratory", "arXiv", "Journal of Proteome Research", null, "Springer Nature", "MDPI Applied Sciences", null, "Bioinformatics Advances", "bioRxiv", "MSc thesis", "Nature Communications", "Cold Spring Harbor Laboratory", "IEEE Journal of Biomedical and Health Informatics", "Nature Machine Intelligence", "Research Square", "Nature Communications", "arXiv", "Nature Communications", "Nature Communications", "bioRxiv", "Briefings in Bioinformatics", "PLoS Computational Biology", null, "Molecular and Cellular Proteomics", "arXiv", "bioRxiv", "Scientific Reports", null, "Nature Communications", "Research Square", "ICLR 2025", "arXiv", "ICLR 2025", "Nature Communications", "OpenReview, bioRxiv", "Research Square", "Nature communications biology", "bioRxiv", "Cold Spring Harbor Laboratory", "bioRxiv", "Nature Machine Intelligence", "bioRxiv", "arXiv", "arXiv", "bioRxiv", "Research Square", "Bioinformatics and Computational Biology: 17th International Conference", "Cold Spring Harbor Laboratory", "PhD thesis", "bioRxiv", "arXiv", "arXiv", "OpenReview", "arXiv"], "journal": ["PNAS", "Journal of Proteome Research", "Nature Methods", "arXiv", "Bioinformatics", null, "Cell Systems", "Nature Machine Intelligence", "Nature Machine Intelligence", "Current Bioinformatics", "bioRxiv", "arXiv", "Journal of Proteome Research", "Journal of Proteome Research", "Nature Machine Intelligence", "Applied Sciences (MDPI)", null, "Bioinformatics Advances", "bioRxiv", null, "Nature Communications", "bioRxiv", "IEEE Journal of Biomedical and Health Informatics", "Nature Machine Intelligence", "Research Square", "Nature Communications", "AAAI 2024", "Nature Communications", "Nature Communications", "bioRxiv", "Briefings in Bioinformatics", "PLoS Computational Biology", "ICML 2024", "Molecular and Cellular Proteomics", "arXiv", "bioRxiv", "Scientific Reports", null, "Nature Communications", "Research Square", "ICLR 2025", "arXiv", "ICLR 2025", "Nature Communications", "ICLR 2025", "Research Square", "Communications Biology", "bioRxiv", "bioRxiv", "bioRxiv", "Nature Machine Intelligence", "bioRxiv", "ICML 2025", "ICML 2025", "bioRxiv", "Research Square", "Bioinformatics and Computational Biology (BICOB 2025)", "bioRxiv", null, "bioRxiv", "NeurIPS 2025", "arXiv", "ICLR 2026", "AAAI 2026"], "doi": ["10.1073/pnas.1705691114", "10.1021/acs.jproteome.8b00278", "10.1038/s41592-018-0260-3", "10.48550/arXiv.1904.08514", "10.1093/bioinformatics/btz366", null, "10.1016/j.cels.2019.11.007", "10.1038/s42256-020-00260-4", "10.1038/s42256-021-00304-3", "10.2174/1574893615666200204112347", "10.1101/2022.02.07.479481", "10.48550/arXiv.2203.08820", "10.1021/acs.jproteome.2c00334", "10.1021/acs.jproteome.2c00062", "10.1038/s42256-023-00624-6", "10.3390/app13074604", null, "10.1093/bioadv/vbad057", "10.1101/2023.05.12.540277", null, "10.1038/s41467-023-39699-5", "10.1101/2023.08.30.555055", "10.1109/JBHI.2023.3322277", "10.1038/s42256-023-00738-x", "10.21203/rs.3.rs-3548498/v1", "10.1038/s41467-023-43010-x", "10.1609/aaai.v38i1.27765", "10.1038/s41467-023-44323-7", "10.1038/s41467-023-44460-z", "10.1101/2024.01.26.577425", "10.1093/bib/bbae019", "10.1371/journal.pcbi.1011892", "10.48550/arXiv.2403.07013", "10.1016/j.mcpro.2024.100743", "10.48550/arXiv.2305.14920", "10.1101/2024.06.03.597251", "10.1038/s41598-024-65861-0", null, "10.1038/s41467-024-49731-x", "10.21203/rs.3.rs-4716013/v1", null, "10.48550/arXiv.2411.15684", null, "10.1038/s41467-024-55021-3", null, "10.21203/rs.3.rs-5858891/v1", "10.1038/s42003-025-07584-0", "10.1101/2025.02.24.640018", "10.1101/2025.03.20.643920", "10.1101/2025.03.28.645943", "10.1038/s42256-025-01019-5", "10.1101/2025.05.14.654049", "10.48550/arXiv.2505.17524", "10.48550/arXiv.2506.13485", "10.1101/2025.06.20.660691", "10.21203/rs.3.rs-6950964/v1", "10.1007/978-3-031-94039-2_8", "10.1101/2025.07.25.666826", null, "10.1101/2025.09.12.675784", "10.48550/arXiv.2510.08169", "10.48550/arXiv.2512.12272", null, "10.1609/aaai.v40i1.36968"], "url": ["https://doi.org/10.1073/pnas.1705691114", "https://doi.org/10.1021/acs.jproteome.8b00278", "https://doi.org/10.1038/s41592-018-0260-3", "https://arxiv.org/abs/1904.08514", "https://doi.org/10.1093/bioinformatics/btz366", "https://uwspace.uwaterloo.ca/items/58cef361-a66f-4fe2-a4aa-018da0c4762d", "https://doi.org/10.1016/j.cels.2019.11.007", "https://doi.org/10.1038/s42256-020-00260-4", "https://doi.org/10.1038/s42256-021-00304-3", "https://www.eurekaselect.com/article/104202", "https://www.biorxiv.org/content/10.1101/2022.02.07.479481v1", "https://arxiv.org/abs/2203.08820", "https://doi.org/10.1021/acs.jproteome.2c00334", "https://doi.org/10.1021/acs.jproteome.2c00062", null, "https://doi.org/10.3390/app13074604", "https://www.bruker.com/en/news-and-events/news/2023/bruker-launches-de-novo-sequencing-for-immunopeptidomics.html", "https://doi.org/10.1093/bioadv/vbad057", "https://www.biorxiv.org/content/10.1101/2023.05.12.540277v1", "https://ir.lib.uwo.ca/etd/9373", "https://doi.org/10.1038/s41467-023-39699-5", "https://www.biorxiv.org/content/10.1101/2023.08.30.555055v3", null, "https://doi.org/10.1038/s42256-023-00738-x", null, "https://doi.org/10.1038/s41467-023-43010-x", "https://ojs.aaai.org/index.php/AAAI/article/view/27765", "https://doi.org/10.1038/s41467-023-44323-7", "https://doi.org/10.1038/s41467-023-44460-z", "https://www.biorxiv.org/content/10.1101/2024.01.26.577425v1", "https://doi.org/10.1093/bib/bbae019", "https://doi.org/10.1371/journal.pcbi.1011892", "https://arxiv.org/abs/2403.07013", "https://doi.org/10.1016/j.mcpro.2024.100743", "https://arxiv.org/abs/2305.14920", "https://www.biorxiv.org/content/10.1101/2024.06.03.597251v1", "https://doi.org/10.1038/s41598-024-65861-0", "https://github.com/ThatMatin/TransNovo", "https://doi.org/10.1038/s41467-024-49731-x", null, "https://openreview.net/forum?id=87B3zDRMjv", "https://arxiv.org/abs/2411.15684", "https://openreview.net/forum?id=uQnvYP7yX9", "https://doi.org/10.1038/s41467-024-55021-3", "https://openreview.net/forum?id=I2ZYngkRW6", null, "https://doi.org/10.1038/s42003-025-07584-0", "https://www.biorxiv.org/content/10.1101/2025.02.24.640018v1", "https://www.biorxiv.org/content/10.1101/2025.03.20.643920v1", "https://www.biorxiv.org/content/10.1101/2025.03.28.645943v1", "https://doi.org/10.1038/s42256-025-01019-5", "https://www.biorxiv.org/content/10.1101/2025.05.14.654049v1", "https://arxiv.org/abs/2505.17524", "https://arxiv.org/abs/2506.13485", "https://www.biorxiv.org/content/10.1101/2025.06.20.660691v1", null, null, "https://www.biorxiv.org/content/10.1101/2025.07.25.666826v1", "https://dspacemainprd01.lib.uwaterloo.ca/server/api/core/bitstreams/2cd3373a-a4cd-4536-8cec-464a86330205/content", "https://www.biorxiv.org/content/10.1101/2025.09.12.675784v1", "https://arxiv.org/abs/2510.08169", "https://arxiv.org/abs/2512.12272", "https://openreview.net/forum?id=55GsILa8c9", "https://ojs.aaai.org/index.php/AAAI/article/view/36968"], "authors": ["Lei Xin, Ming Li, Ngoc Hieu Tran, Baozhen Shan, Xianglilan Zhang", "Samuel E. Miller, Adriana I. Rizzo, Jacob R. Waldbauer", "Ngoc Hieu Tran, Rui Qiao", "Lei Xin, Ming Li, Ali Ghodsi, Ngoc Hieu Tran, Rui Qiao, Baozhen Shan", "Hao Chi, Hao Yang, Wen-Feng Zeng, Wen-Jing Zhou, Si-Min He", "Rui Qiao", "Bahar Behsaz, Hosein Mohimani", "Lei Xin, Ming Li, Ngoc Hieu Tran, Rui Qiao, Xin Chen, Baozhen Shan", "Ngoc Hieu Tran, Rui Qiao", "Lei Di, Yongxing He", "William E. Fondrie, Melih Yilmaz, Sewoong Oh, Wout Bittremieux, William Stafford Noble", "Cheng Ge, Yi Lu, Jia Qu, Liangxu Xie, Feng Wang, Hong Zhang, Ren Kong, Shan Chang", "Joon-Yong Lee, Hugh D. Mitchell", "Seunghyuk Choi, Eunok Paek, Jangho Seo", null, "Ruitao Wu, Haipeng Wang, Xiang Zhang, Runtao Wang", "Rui Zhang, Qixin Liu, Mingjie Xie, Dennis Trede, Tharan Srikumar, Jonathan Krieger, Bin Ma, George Rosenberger", "Xiaofang Xu, Chunde Yang, Qiang He, Kunxian Shu, Yuan Xinpu, Zhiguang Chen, Yunping Zhu, Tao Chen", "Tiannan Guo, Siyu Wu, Zhongzhi Luan, Zhenxin Fu, Qunying Wang", "Yizhou Li", "Qianqiu Zhang, Weiping Sun", "Kevin Eloff, Konstantinos Kalogeropoulos, Amandla Mabona, Oliver Morell, Jakob Berg Jespersen, Wesley Williams, Sam P. B. van Beljouw, Marcin J. Skwark, Andreas Hougaard Laustsen, Stan J. J. Brouns, Anne Ljungars, Erwin M. Schoof, Jeroen Van Goey, Ulrich auf dem Keller, Karim Beguir, Nicolas Lopez Carranza, Timothy P. Jenkins", "Ke Wang, Mingjia Zhu", "Zeping Mao, Lei Xin, Ming Li, Ruixue Zhang", "Ming Li, Ngoc Hieu Tran", "Kaiyuan Liu, Yuzhen Ye, Sujun Li, Haixu Tang", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Siqi Sun, Zhi Jin, Nanqing Dong, Tianze Ling, Wanli Ouyang, Cheng Chang", "Mathias Wilhelm, Daniela Klaproth-Andrade, Julien Gagneur, Johannes Hingerl, Nicholas H. Smith, Jakob Tr\u00e4uble", "Hanqing Liao, Carolina Barra, Zhicheng Zhou, Xu Peng, Isaac Woodhouse, Arun Tailor, Robert Parker, Alexia Carr\u00e9, Persephone Borrow, Michael J. Hogan, Wayne Paes, Laurence C. Eisenlohr, Roberto Mallone, Morten Nielsen, Nicola Ternette", "Varun Ananth, Justin Sanders, Melih Yilmaz, Sewoong Oh, William Stafford Noble", "Tianze Ling, Boyan Sun, Leyuan Li, Cheng Chang, Yu Wang, Zhendong Liang, Tingpeng Yang, Linhai Xie, Yonghong He, Fan Xu, Xiansong Huang, Fuchu He", "Sangjeong Lee, Hyunwoo Kim", "Shaorong Chen, Jingbo Zhou, Jun Xia, Tianze Ling, Wenjie Du, Stan Z. Li, Sizhe Liu", "Seunghyuk Choi, Eunok Paek", "Shiva Ebrahimi, Xuan Guo", "Justin Sanders, Bo Wen, Michael J. MacCoss, Sewoong Oh, William Stafford Noble, Paul Rudnick, Rich Johnson, Christine C. Wu", "Denis V. Petrovskiy, Kirill S. Nikolsky, Liudmila I. Kulikova, Vladimir R. Rudnev, Tatiana V. Butkova, Kristina A. Malsagova, Arthur T. Kopylov, Anna L. Kaysheva", "Matin Ahmadi", "Varun Ananth, William E. Fondrie, Melih Yilmaz, Sewoong Oh, Wout Bittremieux, William Stafford Noble, Rowan Nelson", "Tianze Ling, Cheng Chang, Yu Wang, Zhendong Liang, Tingpeng Yang, Linhai Xie, Yonghong He", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Jiaqi Wei, Zijie Qiu, Siqi Sun, Zhi Jin, Nanqing Dong, Kai Zou", "Zheng Ma, Zeping Mao, Lei Xin, Ming Li, Ruixue Zhang, Jiazhen Chen, Paul Shan, Ali Ghodsi", "Shaorong Chen, Jingbo Zhou, Jun Xia, Lecheng Zhang, Zhangyang Gao, Bozhen Hu, Cheng Tan, Wenjie Du, Stan Z. Li", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Zijie Qiu, Siqi Sun, Zhi Jin, Nanqing Dong, Tianze Ling, Boyan Sun, Guangshuai Wang, Guibin Wang, Leyuan Li, Muhammad Abdul-Mageed, Laks V.S. Lakshmanan, Wanli Ouyang, Cheng Chang", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Jiaqi Wei, Zijie Qiu, Siqi Sun, Zhi Jin, Nanqing Dong", "Yueting Xiong, Wenbin Jiang, Jin Xiao, Qingfang Bu, Jingyi Wang, Zhenjian Jiang, Ling Luo, Xiaoqing Chen, Yijie Qiu, Yangtao Wu, Fan Liu, Rongshan Yu, Ning-Shao Xia, Quan Yuan", "Yang Zhao, Shuo Wang, Jinze Huang, Bo Meng, Dong An, Xiang Fang, Yaoguang Wei, Xinhua Dai", "Yuqi Chang, Siqi Liu, Karsten Kristiansen", "Zixuan Cao, Xueli Peng, Di Zhang, Piyu Zhou, Li Kang, Hao Chi, Ruitao Wu, Zhiyuan Cheng, Yao Zhang, Jiaxin Dai, Yanchang Li, Lijin Yao, Xinming Li, Jinghan Yang, Haipeng Wang, Ping Xu, Yan Fu", "Joel Lapin, Alfred Nilsson, Mathias Wilhelm, Lukas K\u00e4ll", "Kevin Eloff, Konstantinos Kalogeropoulos, Amandla Mabona, Oliver Morell, Rachel Catzel, Esperanza Rivera-de-Torre, Jakob Berg Jespersen, Wesley Williams, Sam P. B. van Beljouw, Marcin J. Skwark, Andreas Hougaard Laustsen, Stan J. J. Brouns, Anne Ljungars, Erwin M. Schoof, Jeroen Van Goey, Ulrich auf dem Keller, Karim Beguir, Nicolas Lopez Carranza, Timothy P. Jenkins", "Kevin Eloff, Konstantinos Kalogeropoulos, Amandla Mabona, Rachel Catzel, Erwin M. Schoof, Jeroen Van Goey, Nicolas Lopez Carranza, Timothy P. Jenkins, Jesper Lauridsen, Pathmanaban Ramasamy, Vahap Canbay, Paul Fullwood, Jennifer Ferguson, Annekatrine Kirketerp-M\u00f8ller, Ida Sofie Goldschmidt, Tine Claeys, Sam van Puyenbroeck, Lennart Martens, Chiara Francavilla", "Ye Du, Chen Yang, Nanxi Yu, Wanyu Lin, Qian Zhao, Shujun Wang", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Jiaqi Wei, Zijie Qiu, Siqi Sun, Nanqing Dong", "Zhiqiang Gao, Xiang Zhang, Jiaqi Wei, Tiannan Guo, Siqi Sun, Nanqing Dong, Jun A, Xiaofan Zhang, Te Zhang, Yamin Deng, Pu Liu, Zongxiang Nie, Yi Chen", "Zeping Mao, Chao Peng, Yuling Chen, Ping Wu, Qianqiu Zhang, Lei Xin, Haiteng Deng, Ming Li", "Shiva Ebrahimi, Jiancheng Li, Xuan Guo", "Daniela Klaproth-Andrade, Gwenneth Straub, Varun Ananth, William E. Fondrie, Chris Hsu, Michael Riffle, Justin Sanders, Bo Wen, Lingwen Xu, Melih Yilmaz, Michael J. MacCoss, Sewoong Oh, Wout Bittremieux, William Stafford Noble", "Zheng Ma", "Mathias Wilhelm, Daniela Klaproth-Andrade, Yanik Bruns, Wassim Gabriel, Christian Nix, Valter Bergant, Andreas Pichlmair, Julien Gagneur", "Zhiqiang Gao, Xiang Zhang, Sheng Xu, Jiaqi Wei, Zijie Qiu, Siqi Sun, Zhi Jin, Nanqing Dong", "Yuhan Chen, Shang Qu, Zhiqiang Gao, Yuejin Yang, Xiang Zhang, Sheng Xu, Xinjie Mao, Liujia Qian, Jiaqi Wei, Zijie Qiu, Chenyu You, Lei Bai, Ning Ding, Tiannan Guo, Bowen Zhou, Siqi Sun", "Ye Du, Chen Yang, Qian Zhao, Shujun Wang, Yuanliang Zhang, Lequan Yu", "Shaorong Chen, Jingbo Zhou, Jun Xia"], "models": ["DeepNovo", "PostNovo", "DeepNovo-DIA", "DeepNovo V2", "pNovo 3", null, "CycloNovo", "DeepNovoAA", "PointNovo", "Deep Novo A+", "Casanovo", "DePS", "Kaiko", "NovoRank", "Casanovo", "Denovo-GCN", "PaSER Novor", "PGPointNovo", "BiATNovo", "DpNovo", "GlycanFinder", "InstaNovo, InstaNovo+", "SeqNovo", "GraphNovo", "DeepNovo Peptidome", "PepNet", "ContraNovo", "Spectralis", "MARS", "Casanovo-DB", "\u03c0-HelixNovo", "NovoB", "AdaNovo", "pXg", "DiaTrans", "Cascadia", "PowerNovo", "TransNovo", "\u03c0-xNovo", "\u03c0-xNovo", "RankNovo", "DiaNovo", "ReNovo", "\u03c0-PrimeNovo", "XA-Novo", "XA-Novo", "TSARseqNovo", "PepGo", "DiNovo", "Pairwise", "InstaNovo, InstaNovo+", "InstaNovo-P", "LIPNovo", "RefineNovo", "XuanjiNovo", "RNovA", "DiffNovo", "Casanovo", "DIANovo", "Modanovo", "CrossNovo", "OmniNovo", "CausalNovo", "DiffuNovo"], "repo": ["https://github.com/nh2tran/DeepNovo", null, "https://github.com/nh2tran/DeepNovo-DIA", "https://github.com/volpato30/DeepNovoV2", "http://pfind.org/software/pNovo/index.html", null, "https://github.com/bbehsaz/cyclonovo", "https://github.com/nh2tran/DeepNovoAA", "https://github.com/irleader/PointNovo", null, "https://github.com/Noble-Lab/casanovo", null, "https://github.com/PNNL-Comp-Mass-Spec/Kaiko", "https://github.com/HanyangBISLab/NovoRank", "https://github.com/Noble-Lab/casanovo", null, null, "https://github.com/shallFun4Learning/PGPointNovo", null, null, null, "https://github.com/instadeepai/instanovo", null, "https://github.com/AmadeusloveIris/Graphnovo", null, "https://github.com/lkytal/PepNet", "https://github.com/BEAM-Labs/ContraNovo", "https://github.com/gagneurlab/spectralis", null, null, "https://github.com/PHOENIXcenter/pi-HelixNovo", "https://github.com/ProteomeTeam/NovoB", null, "https://github.com/progistar/pXg", "https://github.com/Biocomputing-Research-Group/Casanovo-DIA", null, "https://github.com/protdb/PowerNovo", "https://github.com/ThatMatin/TransNovo", "https://github.com/PHOENIXcenter/pi-xNovo", "https://github.com/PHOENIXcenter/pi-xNovo", null, "https://github.com/hearthewind/dianovo", null, "https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo", "https://github.com/biocc/SP-MEGD_Fusion", "https://github.com/biocc/SP-MEGD_Fusion", "https://github.com/qiyueliuhuo8/TSARseqNovo", "https://github.com/alifare/PepGo/tree/main", "https://github.com/YanFuGroup/DiNovo", "https://github.com/statisticalbiotechnology/pairwise", "https://github.com/instadeepai/instanovo", "https://github.com/InstaDeepAI/InstaNovo-P", "https://github.com/usr922/LIPNovo", "https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo", "https://github.com/guomics-lab/MassNet-DDA", "https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference", "https://github.com/Biocomputing-Research-Group/DiffNovo", "https://github.com/Noble-Lab/casanovo", null, "https://github.com/gagneurlab/Modanovo", "https://github.com/BEAM-Labs/denovo", null, "https://anonymous.4open.science/r/CausalNovo-C134", null], "year": [2017, 2018, 2018, 2019, 2019, 2020, 2020, 2020, 2021, 2022, 2022, 2022, 2022, 2022, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2023, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2026, 2026]}}, {"name": "top_authors", "value": {"name": ["Xiang Zhang", "Siqi Sun", "Zhiqiang Gao", "Ming Li", "Nanqing Dong", "Sheng Xu", "Ngoc Hieu Tran", "Lei Xin", "Zijie Qiu", "Jiaqi Wei", "Rui Qiao", "Tianze Ling", "William Stafford Noble", "Sewoong Oh", "Zhi Jin", "Cheng Chang", "Melih Yilmaz", "Baozhen Shan", "Zeping Mao", "Wout Bittremieux"], "publications": [9, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4, 4, 3, 3, 3]}}, {"name": "geo", "value": {"country": ["China", "USA", "Canada", "UK", "Denmark", "Germany", "Russia", "Belgium", "South Korea", "Netherlands", "France", "Sweden", "Slovenia", "UAE", "Australia", "Switzerland"], "affiliations": [56, 17, 8, 4, 5, 11, 1, 5, 2, 3, 2, 1, 1, 1, 1, 1], "authors": [127, 35, 25, 19, 17, 13, 8, 5, 5, 3, 3, 2, 1, 1, 1, 1]}}, {"name": "institutions", "value": {"institution": ["Westlake University", "Shanghai Artificial Intelligence Laboratory", "Technical University of Denmark", "University of Washington", "Beijing Institute of Lifeomics", "Technical University of Munich", "University of Chinese Academy of Sciences", "Chinese Academy of Sciences", "University of Waterloo", "Xiamen University", "Tsinghua University", "University of Oxford", "Institute of Biomedical Chemistry", "InstaDeep Ltd", "Shandong University of Technology"], "country": ["China", "China", "Denmark", "USA", "China", "Germany", "China", "China", "Canada", "China", "China", "UK", "Russia", "UK", "China"], "authors": [18, 18, 15, 14, 14, 12, 11, 11, 10, 9, 9, 8, 8, 8, 7]}}, {"name": "coauth_edges", "value": {"source": ["Amandla Mabona", "Amandla Mabona", "Amandla Mabona", "Amandla Mabona", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Erwin M. Schoof", "Erwin M. Schoof", "Erwin M. Schoof", "Jeroen Van Goey", "Jeroen Van Goey", "Jiaqi Wei", "Jiaqi Wei", "Jiaqi Wei", "Jiaqi Wei", "Jiaqi Wei", "Jingbo Zhou", "Jingbo Zhou", "Jun Xia", "Justin Sanders", "Justin Sanders", "Justin Sanders", "Justin Sanders", "Kevin Eloff", "Kevin Eloff", "Kevin Eloff", "Kevin Eloff", "Kevin Eloff", "Kevin Eloff", "Konstantinos Kalogeropoulos", "Konstantinos Kalogeropoulos", "Konstantinos Kalogeropoulos", "Konstantinos Kalogeropoulos", "Konstantinos Kalogeropoulos", "Lei Xin", "Lei Xin", "Lei Xin", "Lei Xin", "Mathias Wilhelm", "Melih Yilmaz", "Melih Yilmaz", "Melih Yilmaz", "Ming Li", "Ming Li", "Ming Li", "Nanqing Dong", "Nanqing Dong", "Ngoc Hieu Tran", "Ngoc Hieu Tran", "Nicolas Lopez Carranza", "Rui Qiao", "Sewoong Oh", "Sewoong Oh", "Shaorong Chen", "Shaorong Chen", "Shaorong Chen", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Sheng Xu", "Siqi Sun", "Siqi Sun", "Siqi Sun", "Siqi Sun", "Tiannan Guo", "Tiannan Guo", "Tianze Ling", "Varun Ananth", "Varun Ananth", "Varun Ananth", "Varun Ananth", "Varun Ananth", "Varun Ananth", "William E. Fondrie", "William E. Fondrie", "William E. Fondrie", "William E. Fondrie", "William E. Fondrie", "Wout Bittremieux", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Zeping Mao", "Zeping Mao", "Zhi Jin", "Zhi Jin", "Zhi Jin", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zhiqiang Gao", "Zijie Qiu", "Zijie Qiu", "Zijie Qiu", "Zijie Qiu", "Zijie Qiu", "Zijie Qiu"], "target": ["Erwin M. Schoof", "Jeroen Van Goey", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Justin Sanders", "Melih Yilmaz", "Sewoong Oh", "Varun Ananth", "William E. Fondrie", "William Stafford Noble", "Wout Bittremieux", "Jeroen Van Goey", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Nanqing Dong", "Siqi Sun", "Tiannan Guo", "Zhi Jin", "Zijie Qiu", "Jun Xia", "Tianze Ling", "Tianze Ling", "Melih Yilmaz", "Sewoong Oh", "William Stafford Noble", "Wout Bittremieux", "Amandla Mabona", "Erwin M. Schoof", "Jeroen Van Goey", "Konstantinos Kalogeropoulos", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Amandla Mabona", "Erwin M. Schoof", "Jeroen Van Goey", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Baozhen Shan", "Ming Li", "Ngoc Hieu Tran", "Rui Qiao", "Daniela Klaproth-Andrade", "Sewoong Oh", "William Stafford Noble", "Wout Bittremieux", "Baozhen Shan", "Ngoc Hieu Tran", "Rui Qiao", "Cheng Chang", "Tianze Ling", "Baozhen Shan", "Rui Qiao", "Timothy P. Jenkins", "Baozhen Shan", "William Stafford Noble", "Wout Bittremieux", "Jingbo Zhou", "Jun Xia", "Tianze Ling", "Cheng Chang", "Jiaqi Wei", "Nanqing Dong", "Siqi Sun", "Tiannan Guo", "Tianze Ling", "Zhi Jin", "Zijie Qiu", "Cheng Chang", "Nanqing Dong", "Tianze Ling", "Zhi Jin", "Nanqing Dong", "Siqi Sun", "Cheng Chang", "Justin Sanders", "Melih Yilmaz", "Sewoong Oh", "William E. Fondrie", "William Stafford Noble", "Wout Bittremieux", "Justin Sanders", "Melih Yilmaz", "Sewoong Oh", "William Stafford Noble", "Wout Bittremieux", "William Stafford Noble", "Cheng Chang", "Jiaqi Wei", "Nanqing Dong", "Sheng Xu", "Siqi Sun", "Tiannan Guo", "Tianze Ling", "Zhi Jin", "Zijie Qiu", "Lei Xin", "Ming Li", "Cheng Chang", "Nanqing Dong", "Tianze Ling", "Cheng Chang", "Jiaqi Wei", "Nanqing Dong", "Sheng Xu", "Siqi Sun", "Tiannan Guo", "Tianze Ling", "Xiang Zhang", "Zhi Jin", "Zijie Qiu", "Cheng Chang", "Nanqing Dong", "Siqi Sun", "Tiannan Guo", "Tianze Ling", "Zhi Jin"], "weight": [3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 5, 6, 2, 3, 5, 3, 1, 1, 2, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 3, 2, 2, 4, 4, 3, 3, 4, 2, 2, 2, 3, 4, 3, 2, 5, 3, 3, 3, 1, 2, 5, 6, 7, 1, 2, 5, 6, 2, 7, 2, 5, 1, 2, 4, 2, 3, 3, 2, 3, 2, 1, 3, 3, 3, 3, 3, 2, 6, 7, 7, 8, 2, 2, 5, 6, 3, 3, 2, 5, 2, 2, 6, 7, 7, 8, 2, 2, 8, 5, 6, 1, 5, 6, 1, 1, 4]}}, {"name": "author_affs", "value": {"author": ["Kevin Eloff", "Konstantinos Kalogeropoulos", "Amandla Mabona", "Erwin M. Schoof", "Jeroen Van Goey", "Nicolas Lopez Carranza", "Timothy P. Jenkins", "Mathias Wilhelm", "Mathias Wilhelm", "Mathias Wilhelm", "Mathias Wilhelm", "Shaorong Chen", "Shaorong Chen", "Shaorong Chen", "Jingbo Zhou", "Jingbo Zhou", "Jingbo Zhou", "Jun Xia", "Jun Xia", "Jun Xia", "Zhiqiang Gao", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Xiang Zhang", "Sheng Xu", "Sheng Xu", "Jiaqi Wei", "Jiaqi Wei", "Zijie Qiu", "Zijie Qiu", "Tiannan Guo", "Tiannan Guo", "Tiannan Guo", "Tiannan Guo", "Tiannan Guo", "Tiannan Guo", "Siqi Sun", "Siqi Sun", "Zhi Jin", "Zhi Jin", "Nanqing Dong", "Daniela Klaproth-Andrade", "Daniela Klaproth-Andrade", "Varun Ananth", "William E. Fondrie", "Justin Sanders", "Melih Yilmaz", "Sewoong Oh", "Wout Bittremieux", "Wout Bittremieux", "William Stafford Noble", "William Stafford Noble", "Zeping Mao", "Lei Xin", "Ming Li", "Tianze Ling", "Tianze Ling", "Tianze Ling", "Tianze Ling", "Cheng Chang", "Cheng Chang", "Cheng Chang", "Ngoc Hieu Tran", "Rui Qiao", "Baozhen Shan"], "affiliation": ["InstaDeep Ltd", "Technical University of Denmark", "InstaDeep Ltd", "Technical University of Denmark", "InstaDeep Ltd", "InstaDeep Ltd", "Technical University of Denmark", "Technical University of Munich", "Technical University of Munich", "Technical University of Munich", "Technical University of Munich", "Zhejiang University", "Westlake University", "Westlake University", "Zhejiang University", "Westlake University", "Westlake University", "The Hong Kong University of Science and Technology (Guangzhou)", "The Hong Kong University of Science and Technology", "Westlake University", "Shanghai Artificial Intelligence Laboratory", "Shandong University of Technology", "Shanghai Artificial Intelligence Laboratory", "Fudan University", "University of British Columbia", "Shanghai Artificial Intelligence Laboratory", "Fudan University", "Shanghai Artificial Intelligence Laboratory", "Zhejiang University", "Shanghai Artificial Intelligence Laboratory", "Fudan University", "Westlake University", "Westlake University", "Westlake University", "Westlake University", "Westlake University", "Westlake Institute for Advanced Study", "Shanghai Artificial Intelligence Laboratory", "Fudan University", "Shanghai Artificial Intelligence Laboratory", "Soochow University", "Shanghai Artificial Intelligence Laboratory", "Technical University of Munich", "Technical University of Munich", "University of Washington", "Talus Bioscience", "University of Washington", "University of Washington", "University of Washington", "University of Antwerp", "University of California San Diego", "University of Washington", "University of Washington", "University of Waterloo", "Bioinformatics Solutions Inc.", "University of Waterloo", "Tsinghua University", "Tsinghua University", "Beijing Institute of Lifeomics", "Beijing Institute of Lifeomics", "Beijing Institute of Lifeomics", "Beijing Institute of Lifeomics", "Beijing Institute of Lifeomics", "University of Waterloo", "University of Waterloo", "Bioinformatics Solutions Inc."]}}, {"name": "algorithms", "value": {"model": ["DeepNovo", "PostNovo", "DeepNovo-DIA", "DeepNovo V2", "pNovo 3", "CycloNovo", "DeepNovoAA", "PointNovo", "Deep Novo A+", "Casanovo", "DePS", "Kaiko", "NovoRank", "Denovo-GCN", "PaSER Novor", "PGPointNovo", "BiATNovo", "DpNovo", "GlycanFinder", "InstaNovo", "InstaNovo+", "SeqNovo", "GraphNovo", "DeepNovo Peptidome", "PepNet", "ContraNovo", "Spectralis", "MARS", "Casanovo-DB", "\u03c0-HelixNovo", "NovoB", "AdaNovo", "pXg", "DiaTrans", "Cascadia", "PowerNovo", "TransNovo", "\u03c0-xNovo", "RankNovo", "DiaNovo", "ReNovo", "\u03c0-PrimeNovo", "XA-Novo", "TSARseqNovo", "PepGo", "DiNovo", "Pairwise", "InstaNovo-P", "LIPNovo", "RefineNovo", "XuanjiNovo", "RNovA", "DiffNovo", "DIANovo", "Modanovo", "CrossNovo", "OmniNovo", "CausalNovo", "DiffuNovo"], "family": ["CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "CNN + RNN", "Transformer (AR)", "CNN + RNN", "CNN + RNN", "CNN + RNN", "GNN", "Transformer (AR)", "CNN + RNN", "Transformer (AR)", "Transformer (AR)", "CNN", "Transformer (AR)", "Diffusion", "Transformer (AR)", "GNN", "CNN + RNN", "CNN", "Transformer (AR)", "CNN", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (NAR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (AR)", "Transformer (NAR)", "Transformer (NAR)", "Transformer (AR)", "Transformer (NAR)", "GNN", "Transformer (AR)", "Transformer (NAR)", "Transformer (NAR)", null, "Diffusion"], "description": ["First DL model (CNN+LSTM)", "FDR-controlled ensembling", "First de novo for DIA", "Improved CNN+LSTM model", "Learning-to-rank + pDeep", "Cyclopeptide sequencing", "Immunopeptidome neoantigen discovery", "Point-set network", "Improved DeepNovo model", "First Transformer", "Improved deep learning model", "Metaproteomics", "Spectral clustering refinement", "GCN on spectrum graph", "Real-time 4D-proteomics", "Parallel GPU-based PointNovo", "Bidirectional self-attention", "Transformer + dynamic programming", "Glycopeptide sequencing", "Knapsack beam search", "Multinomial diffusion", "Seq2Seq for IoMT", "Missing fragments", "Immunopeptidomics pipeline", "Temporal convolutional network", "Contrastive learning", "AA-gapped convolutional layer", "Non-canonical antigen selection", "Database search scoring", "Complementary spectra", "Bidirectional decoding", "Mutual info for PTMs", "MHC-I noncanonical peptides", "Transformer for DIA", "Transformer for DIA", "Transformer + BERT ensemble", "Transformer-based sequencing", "Explainable AI sequencing", "Universal reranking", "Multiplexed DIA spectra", "Retrieval-based sequencing", "NAR Transformer (CTC)", "NAR knowledge distillation", "Semi-autoregressive", "Tree search-based decoding", "Mirror proteases + DL", "Mass difference attention", "Phosphoproteomics", "Latent imputation", "Curriculum learning", "Billion-scale pretraining", "Zero-shot open PTM discovery", "Transformer-diffusion model", "Graph-based DIA sequencing", "Unified PTM-aware model", "AR + NAR hybrid", "PTM-aware NAR", "Causality-informed framework", "Regressor-guided diffusion"], "repo": ["https://github.com/nh2tran/DeepNovo", null, "https://github.com/nh2tran/DeepNovo-DIA", "https://github.com/volpato30/DeepNovoV2", "http://pfind.org/software/pNovo/index.html", "https://github.com/bbehsaz/cyclonovo", "https://github.com/nh2tran/DeepNovoAA", "https://github.com/irleader/PointNovo", null, "https://github.com/Noble-Lab/casanovo", null, "https://github.com/PNNL-Comp-Mass-Spec/Kaiko", "https://github.com/HanyangBISLab/NovoRank", null, null, "https://github.com/shallFun4Learning/PGPointNovo", null, null, null, "https://github.com/instadeepai/instanovo", "https://github.com/instadeepai/instanovo", null, "https://github.com/AmadeusloveIris/Graphnovo", null, "https://github.com/lkytal/PepNet", "https://github.com/BEAM-Labs/ContraNovo", "https://github.com/gagneurlab/spectralis", null, null, "https://github.com/PHOENIXcenter/pi-HelixNovo", "https://github.com/ProteomeTeam/NovoB", null, "https://github.com/progistar/pXg", "https://github.com/Biocomputing-Research-Group/Casanovo-DIA", null, "https://github.com/protdb/PowerNovo", "https://github.com/ThatMatin/TransNovo", "https://github.com/PHOENIXcenter/pi-xNovo", null, "https://github.com/hearthewind/dianovo", null, "https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo", "https://github.com/biocc/SP-MEGD_Fusion", "https://github.com/qiyueliuhuo8/TSARseqNovo", "https://github.com/alifare/PepGo/tree/main", "https://github.com/YanFuGroup/DiNovo", "https://github.com/statisticalbiotechnology/pairwise", "https://github.com/InstaDeepAI/InstaNovo-P", "https://github.com/usr922/LIPNovo", "https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo", "https://github.com/guomics-lab/MassNet-DDA", "https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference", "https://github.com/Biocomputing-Research-Group/DiffNovo", null, "https://github.com/gagneurlab/Modanovo", "https://github.com/BEAM-Labs/denovo", null, "https://anonymous.4open.science/r/CausalNovo-C134", null], "first_pub": ["2017-07-18", "2018-10-02", "2018-12-20", "2019-05-22", "2019-07-24", "2020-01-22", "2020-11-16", "2021-03-18", "2022-02-01", "2022-02-07", "2022-03-16", "2022-07-06", "2022-08-01", "2023-04-05", "2023-04-20", "2023-04-25", "2023-05-14", "2023-07-07", "2023-07-08", "2023-08-30", "2023-08-30", "2023-10-04", "2023-10-19", "2023-11-09", "2023-12-02", "2023-12-18", "2024-01-02", "2024-01-22", "2024-02-07", "2024-02-10", "2024-02-28", "2024-03-15", "2024-04-01", "2024-04-09", "2024-06-04", "2024-07-01", "2024-07-15", "2024-07-30", "2024-11-20", "2024-11-24", "2024-11-27", "2025-01-02", "2025-02-05", "2025-02-14", "2025-02-24", "2025-03-20", "2025-03-28", "2025-05-14", "2025-05-23", "2025-06-16", "2025-06-26", "2025-06-27", "2025-07-24", "2025-08-15", "2025-09-16", "2025-10-17", "2025-12-13", "2026-02-14", "2026-02-23"]}}, {"name": "venues", "value": {"venue": ["bioRxiv", "Nature Communications", "Nature Machine Intelligence", "arXiv", "Research Square", "Journal of Proteome Research", "ICLR 2025", "ICML 2025", "AAAI 2024", "AAAI 2026", "Applied Sciences (MDPI)", "Bioinformatics", "Bioinformatics Advances", "Bioinformatics and Computational Biology (BICOB 2025)", "Briefings in Bioinformatics", "Cell Systems", "Communications Biology", "Current Bioinformatics", "ICLR 2025", "ICLR 2026", "ICML 2024", "IEEE Journal of Biomedical and Health Informatics", "Molecular and Cellular Proteomics", "Nature Methods", "NeurIPS 2025", "PLoS Computational Biology", "PNAS", "Scientific Reports"], "type": ["preprint", "peer-reviewed", "peer-reviewed", "preprint", "preprint", "peer-reviewed", "ML conference", "preprint", "preprint", "preprint", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "peer-reviewed", "preprint", "preprint", "preprint", "peer-reviewed", "peer-reviewed", "peer-reviewed", "preprint", "peer-reviewed", "peer-reviewed", "peer-reviewed"], "papers": [12, 6, 5, 5, 4, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}}]}</script>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb1" data-startfrom="158" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 157;"><span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">"@uwdata/arquero"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="158" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 157;"><span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { aq<span class="op">,</span> op } <span class="im">from</span> <span class="st">"@uwdata/arquero"</span></span>
 <span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>pubs_t <span class="op">=</span> <span class="fu">transpose</span>(pubs)<span class="op">.</span><span class="fu">map</span>(r <span class="kw">=&gt;</span> ({ <span class="op">...</span>r<span class="op">,</span> <span class="dt">year</span><span class="op">:</span> <span class="op">+</span>r<span class="op">.</span><span class="at">year</span><span class="op">,</span> <span class="dt">date</span><span class="op">:</span> r<span class="op">.</span><span class="at">date</span> <span class="op">?</span> <span class="kw">new</span> <span class="bu">Date</span>(r<span class="op">.</span><span class="at">date</span>) <span class="op">:</span> <span class="kw">null</span> }))</span>
 <span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>top_authors_t <span class="op">=</span> <span class="fu">transpose</span>(top_authors)</span>
@@ -181,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>last_year  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="op">...</span>years_with_pubs)</span>
 <span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>n_preprints <span class="op">=</span> pubs_t<span class="op">.</span><span class="fu">filter</span>(p <span class="kw">=&gt;</span> p<span class="op">.</span><span class="at">type</span> <span class="op">===</span> <span class="st">"preprint"</span>)<span class="op">.</span><span class="at">length</span></span>
 <span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>n_peer_reviewed <span class="op">=</span> pubs_t<span class="op">.</span><span class="fu">filter</span>(p <span class="kw">=&gt;</span> p<span class="op">.</span><span class="at">type</span> <span class="op">===</span> <span class="st">"peer-reviewed"</span>)<span class="op">.</span><span class="at">length</span></span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>families <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(<span class="kw">new</span> <span class="bu">Set</span>(algorithms_t<span class="op">.</span><span class="fu">map</span>(a <span class="kw">=&gt;</span> a<span class="op">.</span><span class="at">family</span>)<span class="op">.</span><span class="fu">filter</span>(<span class="bu">Boolean</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>families <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(<span class="kw">new</span> <span class="bu">Set</span>(algorithms_t<span class="op">.</span><span class="fu">map</span>(a <span class="kw">=&gt;</span> a<span class="op">.</span><span class="at">family</span>)<span class="op">.</span><span class="fu">filter</span>(<span class="bu">Boolean</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-1-1" data-nodetype="declaration">
@@ -317,12 +322,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="183" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 182;"><span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a><span class="fu">html</span><span class="vs">`&lt;div class="hero-grid"&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="183" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 182;"><span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a><span class="fu">html</span><span class="vs">`&lt;div class="hero-grid"&gt;</span></span>
 <span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;div class="hero-stat"&gt;&lt;div class="hero-num"&gt;</span><span class="sc">${</span>n_papers<span class="sc">}</span><span class="vs">&lt;/div&gt;&lt;div class="hero-lbl"&gt;papers&lt;/div&gt;&lt;/div&gt;</span></span>
 <span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;div class="hero-stat"&gt;&lt;div class="hero-num"&gt;</span><span class="sc">${</span>n_models<span class="sc">}</span><span class="vs">&lt;/div&gt;&lt;div class="hero-lbl"&gt;models&lt;/div&gt;&lt;/div&gt;</span></span>
 <span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;div class="hero-stat"&gt;&lt;div class="hero-num"&gt;</span><span class="sc">${</span>n_authors<span class="sc">}</span><span class="vs">&lt;/div&gt;&lt;div class="hero-lbl"&gt;authors&lt;/div&gt;&lt;/div&gt;</span></span>
 <span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;div class="hero-stat"&gt;&lt;div class="hero-num"&gt;</span><span class="sc">${</span>n_countries<span class="sc">}</span><span class="vs">&lt;/div&gt;&lt;div class="hero-lbl"&gt;countries&lt;/div&gt;&lt;/div&gt;</span></span>
-<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/div&gt;`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/div&gt;`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-2" data-nodetype="expression">
 
@@ -337,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 .scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
 </style>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb3" data-startfrom="203" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 202;"><span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`Since **</span><span class="sc">${</span>first_year<span class="sc">}</span><span class="vs">**, **</span><span class="sc">${</span>n_papers<span class="sc">}</span><span class="vs">** papers have introduced **</span><span class="sc">${</span>n_models<span class="sc">}</span><span class="vs">** deep-learning models for *de novo* peptide sequencing, written by **</span><span class="sc">${</span>n_authors<span class="sc">}</span><span class="vs">** authors across **</span><span class="sc">${</span>n_countries<span class="sc">}</span><span class="vs">** countries. Of those papers, **</span><span class="sc">${</span>n_preprints<span class="sc">}</span><span class="vs">** are preprints and **</span><span class="sc">${</span>n_peer_reviewed<span class="sc">}</span><span class="vs">** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="203" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 202;"><span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="fu">md</span><span class="vs">`Since **</span><span class="sc">${</span>first_year<span class="sc">}</span><span class="vs">**, **</span><span class="sc">${</span>n_papers<span class="sc">}</span><span class="vs">** papers have introduced **</span><span class="sc">${</span>n_models<span class="sc">}</span><span class="vs">** deep-learning models for *de novo* peptide sequencing, written by **</span><span class="sc">${</span>n_authors<span class="sc">}</span><span class="vs">** authors across **</span><span class="sc">${</span>n_countries<span class="sc">}</span><span class="vs">** countries. Of those papers, **</span><span class="sc">${</span>n_preprints<span class="sc">}</span><span class="vs">** are preprints and **</span><span class="sc">${</span>n_peer_reviewed<span class="sc">}</span><span class="vs">** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-3" data-nodetype="expression">
 
@@ -351,7 +356,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="the-wave">The wave</h2>
 <p>The first deep-learning paper for <em>de novo</em> peptide sequencing appeared in <strong><span><span id="ojs-element-id-1"></span></span></strong>. Activity has accelerated sharply since — most published work is still preprints, reflecting how young this corner of the field is.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb4" data-startfrom="216" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 215;"><span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="216" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 215;"><span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
 <span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span></span>
 <span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span></span>
 <span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"Year"</span><span class="op">,</span> <span class="dt">tickFormat</span><span class="op">:</span> <span class="st">"d"</span><span class="op">,</span> <span class="dt">interval</span><span class="op">:</span> <span class="dv">1</span> }<span class="op">,</span></span>
@@ -367,7 +372,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
 <span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])</span>
 <span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-4" data-nodetype="expression">
 
@@ -379,10 +384,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="the-architectures">The architectures</h2>
 <p>Deep-learning <em>de novo</em> sequencing has cycled through several architectural families. Toggle a family to focus on its lineage; hover a dot to read the model’s signature contribution.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb5" data-startfrom="241" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 240;"><span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>viewof family_filter <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">checkbox</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="241" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 240;"><span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>viewof family_filter <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">checkbox</span>(</span>
 <span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>  families<span class="op">,</span></span>
 <span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>  { <span class="dt">label</span><span class="op">:</span> <span class="st">"Families"</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> families }</span>
-<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-5" data-nodetype="declaration">
 
@@ -390,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb6" data-startfrom="249" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 248;"><span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>innovations_timeline <span class="op">=</span> {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="249" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 248;"><span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>innovations_timeline <span class="op">=</span> {</span>
 <span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Notebook-style band order: oldest paradigm at the bottom, newest at the top.</span></span>
 <span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> band_order <span class="op">=</span> [<span class="st">"CNN + RNN"</span><span class="op">,</span> <span class="st">"Transformer (AR)"</span><span class="op">,</span> <span class="st">"GNN"</span><span class="op">,</span> <span class="st">"CNN"</span><span class="op">,</span> <span class="st">"Transformer (NAR)"</span><span class="op">,</span> <span class="st">"Diffusion"</span>]</span>
 <span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> band_color <span class="op">=</span> {</span>
@@ -544,7 +549,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a><span class="vs">    "&gt;⛶ Fullscreen&lt;/button&gt;</span></span>
 <span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div class="chart-scroll"&gt;</span><span class="sc">${</span>chart<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
 <span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span></span>
-<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-6" data-nodetype="declaration">
 
@@ -570,10 +575,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="where-the-work-happens">Where the work happens</h2>
 <p>Authors and the institutions behind them span <strong><span><span id="ojs-element-id-2"></span></span></strong> countries.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb7" data-startfrom="429" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 428;"><span id="cb7-429"><a href="#cb7-429" aria-hidden="true" tabindex="-1"></a>viewof country_metric <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb7" data-startfrom="429" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 428;"><span id="cb7-429"><a href="#cb7-429" aria-hidden="true" tabindex="-1"></a>viewof country_metric <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>(</span>
 <span id="cb7-430"><a href="#cb7-430" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"authors"</span><span class="op">,</span> <span class="st">"affiliations"</span>]<span class="op">,</span></span>
 <span id="cb7-431"><a href="#cb7-431" aria-hidden="true" tabindex="-1"></a>  { <span class="dt">label</span><span class="op">:</span> <span class="st">"Show"</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> <span class="st">"authors"</span> }</span>
-<span id="cb7-432"><a href="#cb7-432" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-432"><a href="#cb7-432" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-7" data-nodetype="declaration">
 
@@ -581,7 +586,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb8" data-startfrom="437" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 436;"><span id="cb8-437"><a href="#cb8-437" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb8" data-startfrom="437" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 436;"><span id="cb8-437"><a href="#cb8-437" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
 <span id="cb8-438"><a href="#cb8-438" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">140</span><span class="op">,</span></span>
 <span id="cb8-439"><a href="#cb8-439" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="dv">280</span><span class="op">,</span> geo_t<span class="op">.</span><span class="at">length</span> <span class="op">*</span> <span class="dv">22</span>)<span class="op">,</span></span>
 <span id="cb8-440"><a href="#cb8-440" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> country_metric <span class="op">===</span> <span class="st">"authors"</span> <span class="op">?</span> <span class="st">"Distinct authors"</span> <span class="op">:</span> <span class="st">"Distinct affiliations"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
@@ -596,7 +601,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-449"><a href="#cb8-449" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
 <span id="cb8-450"><a href="#cb8-450" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
 <span id="cb8-451"><a href="#cb8-451" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb8-452"><a href="#cb8-452" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-452"><a href="#cb8-452" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-8" data-nodetype="expression">
 
@@ -606,7 +611,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="top-institutions" class="level3">
 <h3 class="anchored" data-anchor-id="top-institutions">Top institutions</h3>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb9" data-startfrom="459" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 458;"><span id="cb9-459"><a href="#cb9-459" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb9" data-startfrom="459" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 458;"><span id="cb9-459"><a href="#cb9-459" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
 <span id="cb9-460"><a href="#cb9-460" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">280</span><span class="op">,</span></span>
 <span id="cb9-461"><a href="#cb9-461" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="dv">260</span><span class="op">,</span> institutions_t<span class="op">.</span><span class="at">length</span> <span class="op">*</span> <span class="dv">26</span>)<span class="op">,</span></span>
 <span id="cb9-462"><a href="#cb9-462" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"Distinct authors"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
@@ -621,7 +626,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-471"><a href="#cb9-471" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
 <span id="cb9-472"><a href="#cb9-472" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
 <span id="cb9-473"><a href="#cb9-473" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb9-474"><a href="#cb9-474" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-474"><a href="#cb9-474" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-9" data-nodetype="expression">
 
@@ -634,7 +639,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="whos-driving-it">Who’s driving it</h2>
 <p>The chart shows the twenty most-published authors. The network below it shows how authors with <strong>≥ 3 papers</strong> are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb10" data-startfrom="483" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 482;"><span id="cb10-483"><a href="#cb10-483" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb10" data-startfrom="483" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 482;"><span id="cb10-483"><a href="#cb10-483" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
 <span id="cb10-484"><a href="#cb10-484" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">180</span><span class="op">,</span></span>
 <span id="cb10-485"><a href="#cb10-485" aria-hidden="true" tabindex="-1"></a>  <span class="dt">height</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="dv">260</span><span class="op">,</span> top_authors_t<span class="op">.</span><span class="at">length</span> <span class="op">*</span> <span class="dv">22</span>)<span class="op">,</span></span>
 <span id="cb10-486"><a href="#cb10-486" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"Papers"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
@@ -649,7 +654,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-495"><a href="#cb10-495" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
 <span id="cb10-496"><a href="#cb10-496" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
 <span id="cb10-497"><a href="#cb10-497" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb10-498"><a href="#cb10-498" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-498"><a href="#cb10-498" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-10" data-nodetype="expression">
 
@@ -657,7 +662,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb11" data-startfrom="503" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 502;"><span id="cb11-503"><a href="#cb11-503" aria-hidden="true" tabindex="-1"></a>network_chart <span class="op">=</span> {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb11" data-startfrom="503" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 502;"><span id="cb11-503"><a href="#cb11-503" aria-hidden="true" tabindex="-1"></a>network_chart <span class="op">=</span> {</span>
 <span id="cb11-504"><a href="#cb11-504" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> width <span class="op">=</span> <span class="dv">1400</span></span>
 <span id="cb11-505"><a href="#cb11-505" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> height <span class="op">=</span> <span class="dv">760</span></span>
 <span id="cb11-506"><a href="#cb11-506" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> LEGEND_H <span class="op">=</span> <span class="dv">110</span></span>
@@ -851,7 +856,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-694"><a href="#cb11-694" aria-hidden="true" tabindex="-1"></a><span class="vs">    "&gt;⛶ Fullscreen&lt;/button&gt;</span></span>
 <span id="cb11-695"><a href="#cb11-695" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div class="chart-scroll"&gt;</span><span class="sc">${</span>svg<span class="op">.</span><span class="fu">node</span>()<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
 <span id="cb11-696"><a href="#cb11-696" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span></span>
-<span id="cb11-697"><a href="#cb11-697" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-697"><a href="#cb11-697" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-11" data-nodetype="declaration">
 
@@ -862,7 +867,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="models-and-the-authors-behind-them">Models and the authors behind them</h3>
 <p>This second view rewires the same network as a <strong>bipartite</strong> graph: every prolific author (≥ 3 papers) is linked to the <strong>models</strong> they helped publish. Algorithm nodes are diamonds colored by their architecture family — so you can see which research groups own which slice of the architectural landscape.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb12" data-startfrom="706" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 705;"><span id="cb12-706"><a href="#cb12-706" aria-hidden="true" tabindex="-1"></a>author_algo_network <span class="op">=</span> {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb12" data-startfrom="706" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 705;"><span id="cb12-706"><a href="#cb12-706" aria-hidden="true" tabindex="-1"></a>author_algo_network <span class="op">=</span> {</span>
 <span id="cb12-707"><a href="#cb12-707" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> width <span class="op">=</span> <span class="dv">1400</span></span>
 <span id="cb12-708"><a href="#cb12-708" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> height <span class="op">=</span> <span class="dv">760</span></span>
 <span id="cb12-709"><a href="#cb12-709" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> LEGEND_H <span class="op">=</span> <span class="dv">90</span></span>
@@ -1072,7 +1077,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-913"><a href="#cb12-913" aria-hidden="true" tabindex="-1"></a><span class="vs">    "&gt;⛶ Fullscreen&lt;/button&gt;</span></span>
 <span id="cb12-914"><a href="#cb12-914" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div class="chart-scroll"&gt;</span><span class="sc">${</span>svg<span class="op">.</span><span class="fu">node</span>()<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
 <span id="cb12-915"><a href="#cb12-915" aria-hidden="true" tabindex="-1"></a><span class="vs">  &lt;/div&gt;`</span></span>
-<span id="cb12-916"><a href="#cb12-916" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-916"><a href="#cb12-916" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-12" data-nodetype="declaration">
 
@@ -1085,10 +1090,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="where-it-appears">Where it appears</h2>
 <p>Most papers in this space appear first on bioRxiv or arXiv. Toggle preprints vs.&nbsp;peer-reviewed to see how the venue distribution shifts.</p>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb13" data-startfrom="925" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 924;"><span id="cb13-925"><a href="#cb13-925" aria-hidden="true" tabindex="-1"></a>viewof venue_type <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb13" data-startfrom="925" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 924;"><span id="cb13-925"><a href="#cb13-925" aria-hidden="true" tabindex="-1"></a>viewof venue_type <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>(</span>
 <span id="cb13-926"><a href="#cb13-926" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"all"</span><span class="op">,</span> <span class="st">"preprint"</span><span class="op">,</span> <span class="st">"peer-reviewed"</span>]<span class="op">,</span></span>
 <span id="cb13-927"><a href="#cb13-927" aria-hidden="true" tabindex="-1"></a>  { <span class="dt">label</span><span class="op">:</span> <span class="st">"Publication type"</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> <span class="st">"all"</span> }</span>
-<span id="cb13-928"><a href="#cb13-928" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-928"><a href="#cb13-928" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-13" data-nodetype="declaration">
 
@@ -1096,7 +1101,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb14" data-startfrom="933" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 932;"><span id="cb14-933"><a href="#cb14-933" aria-hidden="true" tabindex="-1"></a>{</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb14" data-startfrom="933" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 932;"><span id="cb14-933"><a href="#cb14-933" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb14-934"><a href="#cb14-934" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> filtered <span class="op">=</span> venue_type <span class="op">===</span> <span class="st">"all"</span> <span class="op">?</span> venues_t <span class="op">:</span> venues_t<span class="op">.</span><span class="fu">filter</span>(v <span class="kw">=&gt;</span> v<span class="op">.</span><span class="at">type</span> <span class="op">===</span> venue_type)</span>
 <span id="cb14-935"><a href="#cb14-935" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> grouped <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(</span>
 <span id="cb14-936"><a href="#cb14-936" aria-hidden="true" tabindex="-1"></a>    d3<span class="op">.</span><span class="fu">rollup</span>(filtered<span class="op">,</span> vs <span class="kw">=&gt;</span> d3<span class="op">.</span><span class="fu">sum</span>(vs<span class="op">,</span> v <span class="kw">=&gt;</span> v<span class="op">.</span><span class="at">papers</span>)<span class="op">,</span> v <span class="kw">=&gt;</span> v<span class="op">.</span><span class="at">venue</span>)<span class="op">,</span></span>
@@ -1119,7 +1124,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-953"><a href="#cb14-953" aria-hidden="true" tabindex="-1"></a>      Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
 <span id="cb14-954"><a href="#cb14-954" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb14-955"><a href="#cb14-955" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb14-956"><a href="#cb14-956" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-956"><a href="#cb14-956" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-14" data-nodetype="expression">
 
@@ -1130,7 +1135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="browse-all-papers" class="level2">
 <h2 class="anchored" data-anchor-id="browse-all-papers">Browse all papers</h2>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb15" data-startfrom="963" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 962;"><span id="cb15-963"><a href="#cb15-963" aria-hidden="true" tabindex="-1"></a>viewof search <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">search</span>(pubs_t<span class="op">,</span> { <span class="dt">placeholder</span><span class="op">:</span> <span class="vs">`Search </span><span class="sc">${</span>n_papers<span class="sc">}</span><span class="vs"> papers…`</span> })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb15" data-startfrom="963" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 962;"><span id="cb15-963"><a href="#cb15-963" aria-hidden="true" tabindex="-1"></a>viewof search <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">search</span>(pubs_t<span class="op">,</span> { <span class="dt">placeholder</span><span class="op">:</span> <span class="vs">`Search </span><span class="sc">${</span>n_papers<span class="sc">}</span><span class="vs"> papers…`</span> })</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-15" data-nodetype="declaration">
 
@@ -1138,7 +1143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code hidden" id="cb16" data-startfrom="968" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 967;"><span id="cb16-968"><a href="#cb16-968" aria-hidden="true" tabindex="-1"></a>Inputs<span class="op">.</span><span class="fu">table</span>(search<span class="op">,</span> {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb16" data-startfrom="968" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 967;"><span id="cb16-968"><a href="#cb16-968" aria-hidden="true" tabindex="-1"></a>Inputs<span class="op">.</span><span class="fu">table</span>(search<span class="op">,</span> {</span>
 <span id="cb16-969"><a href="#cb16-969" aria-hidden="true" tabindex="-1"></a>  <span class="dt">columns</span><span class="op">:</span> [<span class="st">"year"</span><span class="op">,</span> <span class="st">"models"</span><span class="op">,</span> <span class="st">"title"</span><span class="op">,</span> <span class="st">"authors"</span><span class="op">,</span> <span class="st">"journal"</span><span class="op">,</span> <span class="st">"type"</span><span class="op">,</span> <span class="st">"doi"</span>]<span class="op">,</span></span>
 <span id="cb16-970"><a href="#cb16-970" aria-hidden="true" tabindex="-1"></a>  <span class="dt">header</span><span class="op">:</span> { <span class="dt">year</span><span class="op">:</span> <span class="st">"Year"</span><span class="op">,</span> <span class="dt">models</span><span class="op">:</span> <span class="st">"Model(s)"</span><span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">"Title"</span><span class="op">,</span> <span class="dt">authors</span><span class="op">:</span> <span class="st">"Authors"</span><span class="op">,</span> <span class="dt">journal</span><span class="op">:</span> <span class="st">"Venue"</span><span class="op">,</span> <span class="dt">type</span><span class="op">:</span> <span class="st">"Type"</span><span class="op">,</span> <span class="dt">doi</span><span class="op">:</span> <span class="st">"DOI"</span> }<span class="op">,</span></span>
 <span id="cb16-971"><a href="#cb16-971" aria-hidden="true" tabindex="-1"></a>  <span class="dt">format</span><span class="op">:</span> {</span>
@@ -1155,7 +1160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-982"><a href="#cb16-982" aria-hidden="true" tabindex="-1"></a>  <span class="dt">reverse</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
 <span id="cb16-983"><a href="#cb16-983" aria-hidden="true" tabindex="-1"></a>  <span class="dt">rows</span><span class="op">:</span> <span class="dv">25</span><span class="op">,</span></span>
 <span id="cb16-984"><a href="#cb16-984" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> { <span class="dt">year</span><span class="op">:</span> <span class="dv">60</span><span class="op">,</span> <span class="dt">type</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span> <span class="dt">models</span><span class="op">:</span> <span class="dv">130</span> }</span>
-<span id="cb16-985"><a href="#cb16-985" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-985"><a href="#cb16-985" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-16" data-nodetype="expression">
 
@@ -1169,7 +1174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><p>Edit <code>denovo.db</code> directly with any SQLite tool (<code>sqlite3</code> CLI, <a href="https://sqlitebrowser.org/">DB Browser for SQLite</a>, …). A new paper typically needs rows in <code>publication</code>, <code>publication_author</code>, and <code>publication_algorithm</code>; a new model also needs a row in <code>algorithm</code>. Affiliations cascade through <code>country → city → affiliation</code> and link to authors via <code>author_affiliation</code>.</p></li>
 <li><p>Regenerate the human-readable SQL dump so the diff is reviewable:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> denovo.db .dump <span class="op">&gt;</span> denovo.sql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> denovo.db .dump <span class="op">&gt;</span> denovo.sql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Open a PR with both <code>denovo.db</code> and <code>denovo.sql</code>. The GitHub Action will rebuild the site and publish to <code>gh-pages</code> on merge — typically live within ~3 minutes.</p></li>
 </ol>
 <hr>
@@ -1198,236 +1203,243 @@ window._ojs.selfContained = false;
 window._ojs.runtime.interpretFromScriptTags();
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jeroen\.vangoey\.be\/awesome_de_novo_peptide_sequencing\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1435,185 +1447,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 </div> <!-- /content -->
 
 
