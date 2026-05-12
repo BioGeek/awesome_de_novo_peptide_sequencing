@@ -1025,7 +1025,6 @@ INSERT INTO publication_algorithm VALUES(22,21);
 INSERT INTO publication_algorithm VALUES(23,22);
 INSERT INTO publication_algorithm VALUES(24,23);
 INSERT INTO publication_algorithm VALUES(25,24);
-INSERT INTO publication_algorithm VALUES(26,24);
 INSERT INTO publication_algorithm VALUES(27,25);
 INSERT INTO publication_algorithm VALUES(28,26);
 INSERT INTO publication_algorithm VALUES(29,27);
@@ -1063,6 +1062,7 @@ INSERT INTO publication_algorithm VALUES(62,58);
 INSERT INTO publication_algorithm VALUES(49,12);
 INSERT INTO publication_algorithm VALUES(63,12);
 INSERT INTO publication_algorithm VALUES(64,59);
+INSERT INTO publication_algorithm VALUES(26,12);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
