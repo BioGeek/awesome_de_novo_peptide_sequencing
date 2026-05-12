@@ -339,8 +339,16 @@ viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", v
 //| echo: false
 innovations_timeline = {
   // Notebook-style band order: oldest paradigm at the bottom, newest at the top.
-  const band_order = ["CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion"]
+  // Classical (non-DL) bands sit at the bottom: graph/DP → random forest →
+  // learning-to-rank → CNN+RNN → ... → diffusion.
+  const band_order = [
+    "Graph / DP", "Random Forest", "Learning-to-rank",
+    "CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion"
+  ]
   const band_color = {
+    "Graph / DP":        "#6c757d",
+    "Random Forest":     "#a5673f",
+    "Learning-to-rank":  "#5f6b7a",
     "CNN + RNN":         "#4C72B0",
     "Transformer (AR)":  "#DD8452",
     "GNN":               "#937860",
@@ -357,6 +365,9 @@ innovations_timeline = {
 
   // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
   const band_heights = {
+    "Graph / DP":        1.2,
+    "Random Forest":     1.2,
+    "Learning-to-rank":  1.2,
     "CNN + RNN":         2.0,
     "Transformer (AR)":  6.0,
     "GNN":               1.2,
@@ -393,8 +404,10 @@ innovations_timeline = {
 
   // Assign each model a tier so labels at similar dates don't overlap; the tier fraction
   // is interpreted relative to the *band's* height so taller bands spread further apart.
+  // The band_index check is a safety net for any future family name that's not yet listed
+  // in band_order — without it the chart would crash on .y0 of undefined.
   const rows = algorithms_t
-    .filter(matches_filters)
+    .filter(a => matches_filters(a) && band_index.has(a.family))
     .slice()
     .sort((a, b) => a.first_pub - b.first_pub)
   const last_date_at_tier = new Map()
