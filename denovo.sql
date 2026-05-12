@@ -960,6 +960,8 @@ INSERT INTO author_affiliation VALUES(49,116);
 INSERT INTO author_affiliation VALUES(49,19);
 INSERT INTO author_affiliation VALUES(51,116);
 INSERT INTO author_affiliation VALUES(293,116);
+INSERT INTO author_affiliation VALUES(304,1);
+INSERT INTO author_affiliation VALUES(305,2);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
