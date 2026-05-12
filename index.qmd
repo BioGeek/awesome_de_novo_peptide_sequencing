@@ -262,15 +262,33 @@ innovations_timeline = {
   const Y_TIERS = [0.5, 0.8, 0.2, 0.9, 0.1, 0.65, 0.35, 0.95, 0.05, 0.72, 0.28, 0.85, 0.15, 0.58, 0.42]
   const MIN_GAP_DAYS = 180
 
+  // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
+  const band_heights = {
+    "CNN + RNN":         2.0,
+    "Transformer (AR)":  6.0,
+    "GNN":               1.2,
+    "CNN":               1.2,
+    "Transformer (NAR)": 1.6,
+    "Diffusion":         1.2
+  }
+
   // Only include bands actually represented in the data AND surviving the family-filter checkboxes.
   const present = new Set(algorithms_t.filter(a => a.first_pub && a.family).map(a => a.family))
   const visible_bands = band_order.filter(f => present.has(f) && family_filter.includes(f))
 
-  // Each band gets unit height, ordered bottom-to-top.
-  const bands = visible_bands.map((family, i) => ({ family, y0: i, y1: i + 1, center: i + 0.5 }))
+  // Stack bands bottom-to-top, each at its own height.
+  let y_cursor = 0
+  const bands = visible_bands.map(family => {
+    const h = band_heights[family] ?? 1.2
+    const band = { family, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h / 2, height: h }
+    y_cursor += h
+    return band
+  })
+  const total_height = y_cursor
   const band_index = new Map(bands.map(b => [b.family, b]))
 
-  // Assign each model a tier so labels at similar dates don't overlap.
+  // Assign each model a tier so labels at similar dates don't overlap; the tier fraction
+  // is interpreted relative to the *band's* height so taller bands spread further apart.
   const rows = algorithms_t
     .filter(a => a.first_pub && band_index.has(a.family))
     .slice()
@@ -285,14 +303,14 @@ innovations_timeline = {
       if (last === undefined || (row.first_pub - last) / 86400000 >= MIN_GAP_DAYS) {
         last_date_at_tier.set(key, row.first_pub)
         const band = band_index.get(row.family)
-        items.push({ ...row, y: band.y0 + Y_TIERS[ti], y_frac: Y_TIERS[ti] })
+        items.push({ ...row, y: band.y0 + band.height * Y_TIERS[ti], y_frac: Y_TIERS[ti] })
         placed = true
         break
       }
     }
     if (!placed) {
       const band = band_index.get(row.family)
-      items.push({ ...row, y: band.y0 + 0.5, y_frac: 0.5 })
+      items.push({ ...row, y: band.center, y_frac: 0.5 })
     }
   }
 
@@ -305,12 +323,12 @@ innovations_timeline = {
 
   const chart = Plot.plot({
     width: 1400,
-    height: Math.max(420, bands.length * 110),
+    height: Math.max(420, total_height * 70),
     marginLeft: 140,
     marginRight: 60,
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
-    y: { domain: [0, bands.length], axis: null },
+    y: { domain: [0, total_height], axis: null },
     color: { domain: band_order, range: band_order.map(f => band_color[f]), legend: false },
     marks: [
       // Background band per family — extends to the padded x domain so edge labels stay inside.
