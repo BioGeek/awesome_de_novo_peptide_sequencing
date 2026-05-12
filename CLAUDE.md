@@ -8,9 +8,8 @@ A curated knowledge base of deep-learning de novo peptide sequencing models. The
 
 - `denovo.db` — SQLite database (the source of truth) holding publications, algorithms, authors, affiliations, cities, countries, and the join tables that link them.
 - `denovo.sql` — full SQL dump of `denovo.db`, committed alongside the binary so diffs are reviewable in git. Treat `denovo.sql` as the canonical, human-readable representation; regenerate it after any DB write.
-- `related_literature.csv` — the raw paper list that seeds the DB.
-- `plots.ipynb` — Jupyter notebook that connects to `denovo.db`, runs SQL, and renders the figures in `plots/`.
-- `populate_remaining.py` — one-shot ingestion script that reads `related_literature.csv` and inserts new rows into `denovo.db` via idempotent `get_or_create_*` helpers (country → city → affiliation → author → algorithm → publication, with join-table linking).
+- `plots.ipynb` — Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only — not published).
+- `index.qmd` + `_quarto.yml` — the Quarto site that renders interactive charts straight from `denovo.db`.
 
 ## Common commands
 
@@ -25,9 +24,6 @@ sqlite3 denovo.db .dump > denovo.sql
 # Rebuild denovo.db from the dump (e.g. after pulling a commit that changed denovo.sql)
 rm denovo.db && sqlite3 denovo.db < denovo.sql
 
-# Re-run the ingestion script (idempotent — safe to re-run)
-uv run python populate_remaining.py
-
 # Quick inspection
 sqlite3 denovo.db ".tables"
 sqlite3 denovo.db "SELECT name, algorithm_family FROM algorithm ORDER BY name;"
@@ -37,7 +33,7 @@ sqlite3 denovo.db "SELECT name, algorithm_family FROM algorithm ORDER BY name;"
 
 Nine tables: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `publication`, `publication_algorithm`, `publication_author`. Authors connect to publications via `publication_author` and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`. `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`) added after initial schema creation. `publication.publication_type` is a string constrained by convention to `'preprint'` or `'peer-reviewed'`.
 
-When adding rows by hand, always go through `populate_remaining.py`'s `get_or_create_*` pattern (or replicate it) so existing entities are reused — author names and affiliation `(name, department)` pairs are matched as natural keys, not by ID.
+When adding rows by hand, always check whether the entity already exists before inserting — author names and affiliation `(name, department)` pairs are the natural keys, not the surrogate IDs. A typical insert path for a new paper is: `country` → `city` → `affiliation` → `author` → `author_affiliation` → `algorithm` → `publication` → `publication_author` (with `author_order` set per author) → `publication_algorithm`. See any of the previously committed paper insertions (e.g. the `CausalNovo` commit) for the standard `INSERT … SELECT id FROM …` pattern.
 
 ## Working with the notebook
 
@@ -65,4 +61,4 @@ uv run quarto render         # one-shot build into _site/
 
 ### Updating data → updating the site
 
-Edit `related_literature.csv` → `uv run python populate_remaining.py` → `sqlite3 denovo.db .dump > denovo.sql` → commit both `denovo.db` and `denovo.sql` → push to `main`. The Action rebuilds and republishes within ~2-3 minutes. **No manual `plt.savefig` step anymore.**
+Edit `denovo.db` directly (sqlite3 CLI / DB Browser / any SQLite tool) → `sqlite3 denovo.db .dump > denovo.sql` → commit both `denovo.db` and `denovo.sql` → push to `main`. The Action rebuilds and republishes within ~2-3 minutes. **No manual `plt.savefig` step anymore.**

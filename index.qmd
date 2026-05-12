@@ -1,6 +1,6 @@
 ---
 title: "Awesome *De Novo* Peptide Sequencing"
-subtitle: "An interactive, data-driven map of deep-learning approaches — not a historical survey of the field."
+subtitle: "An interactive, data-driven map of deep-learning approaches."
 execute:
   echo: false
   freeze: false
@@ -988,11 +988,14 @@ Inputs.table(search, {
 
 ## Contributing {#contributing}
 
-This site is generated from a small SQLite database (`denovo.db`), seeded from `related_literature.csv` via `populate_remaining.py`. To propose a new paper:
+This site is generated from a small SQLite database (`denovo.db`) that is the **source of truth**. To propose a new paper:
 
-1. Add a row to `related_literature.csv` with model name, title, authors, date, publisher, and (if available) repository / model weights / PDF URL.
-2. Run `uv run python populate_remaining.py` to ingest, then `sqlite3 denovo.db .dump > denovo.sql` to regenerate the human-readable dump.
-3. Open a PR. The GitHub Action will rebuild the site and publish to `gh-pages` on merge.
+1. Edit `denovo.db` directly with any SQLite tool (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), …). A new paper typically needs rows in `publication`, `publication_author`, and `publication_algorithm`; a new model also needs a row in `algorithm`. Affiliations cascade through `country → city → affiliation` and link to authors via `author_affiliation`.
+2. Regenerate the human-readable SQL dump so the diff is reviewable:
+   ```bash
+   sqlite3 denovo.db .dump > denovo.sql
+   ```
+3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action will rebuild the site and publish to `gh-pages` on merge — typically live within ~3 minutes.
 
 ---
 
