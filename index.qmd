@@ -970,6 +970,7 @@ Inputs.table(search, {
   columns: ["year", "models", "title", "authors", "journal", "type", "doi"],
   header: { year: "Year", models: "Model(s)", title: "Title", authors: "Authors", journal: "Venue", type: "Type", doi: "DOI" },
   format: {
+    year: y => y == null ? "" : String(y),
     title: (t, i) => {
       const row = search[i]
       const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
