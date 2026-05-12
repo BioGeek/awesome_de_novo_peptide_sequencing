@@ -1089,27 +1089,45 @@ viewof search = Inputs.search(pubs_t, { placeholder: `Search ${n_papers} papers�
 
 ```{ojs}
 //| echo: false
-Inputs.table(search, {
-  columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "type"],
-  header: {
-    year: "Year", models: "Method(s)", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
-    title: "Title", authors: "Authors", journal: "Venue", type: "Type"
-  },
-  format: {
-    year: y => y == null ? "" : String(y),
-    is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
-    title: (t, i) => {
-      const row = search[i]
-      const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
-      return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+{
+  const table = Inputs.table(search, {
+    columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "type", "repo"],
+    header: {
+      year: "Year", models: "Method(s)", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
+      title: "Title", authors: "Authors", journal: "Venue", type: "Type", repo: "Code"
     },
-    authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a
-  },
-  sort: "year",
-  reverse: true,
-  rows: 25,
-  width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70 }
-})
+    format: {
+      year: y => y == null ? "" : String(y),
+      is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
+      title: (t, i) => {
+        const row = search[i]
+        const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
+        return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+      },
+      authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a,
+      repo: r => {
+        if (!r) return ""
+        // The repository column holds either a single URL or two whitespace-separated URLs
+        // (a few RNovA-style entries). Render up to three short link chips.
+        const urls = String(r).split(/\s+/).filter(s => /^https?:\/\//.test(s)).slice(0, 3)
+        if (!urls.length) return ""
+        return htl.html`${urls.map(u => htl.html`<a href="${u}" target="_blank" rel="noopener" title="${u}" style="margin-right:4px">↗</a>`)}`
+      }
+    },
+    sort: "year",
+    reverse: true,
+    rows: 25,
+    width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70, repo: 60 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
+  </div>`
+}
 ```
 
 ## Contributing {#contributing}
