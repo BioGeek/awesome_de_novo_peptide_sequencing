@@ -1,6 +1,6 @@
 ---
 title: "Awesome *De Novo* Peptide Sequencing"
-subtitle: "An interactive, data-driven map of deep-learning approaches."
+subtitle: "A comprehensive, interactive map of the field — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike."
 execute:
   echo: false
   freeze: false
@@ -201,16 +201,16 @@ html`<div class="hero-grid">
 
 ```{ojs}
 //| echo: false
-md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** deep-learning models for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`
+md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** methods for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`
 ```
 
 ::: {.scope-banner}
-**Scope.** This site tracks papers that apply **deep learning** to *de novo* peptide sequencing. It is **not** a historical survey of the field — pre-deep-learning approaches (PEAKS, Lutefisk, PepNovo, NovoHMM, …) are deliberately out of scope. Want a paper added? See [Contributing](#contributing).
+**Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), and **adjacent** tools (database-search hybrids, glycopeptide pipelines). Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
 ## The wave
 
-The first deep-learning paper for *de novo* peptide sequencing appeared in **${first_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how young this corner of the field is.
+The earliest paper tracked here appeared in **${first_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how fast this field moves.
 
 ```{ojs}
 //| echo: false
@@ -1000,5 +1000,5 @@ This site is generated from a small SQLite database (`denovo.db`) that is the **
 ---
 
 ::: {.text-muted}
-This page tracks **deep-learning** approaches to *de novo* peptide sequencing only. Pre-deep-learning methods are out of scope. Source data and code: [GitHub](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing) — rebuilt automatically on every push to `main`.
+This page is a comprehensive map of *de novo* peptide sequencing — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike. Source data and code: [GitHub](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing) — rebuilt automatically on every push to `main`.
 :::

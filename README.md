@@ -1,12 +1,18 @@
 # Awesome *De Novo* Peptide Sequencing
 
-An interactive, data-driven map of **deep-learning** approaches to *de novo* peptide sequencing.
+A comprehensive, interactive map of the *de novo* peptide sequencing field — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike.
 
 🌐 **Live site:** <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>
 
 ## Scope
 
-This repository tracks papers that apply **deep learning** to *de novo* peptide sequencing. It is **not** a historical survey of the field — pre-deep-learning approaches (PEAKS, Lutefisk, PepNovo, NovoHMM, …) are deliberately out of scope.
+The repository tracks the *de novo* peptide sequencing field broadly. Every paper is classified by:
+
+- **`kind`** — `algorithm` (core sequencer), `post-processor` (re-ranker / FDR / refinement), `downstream-application` (uses de novo output for biology, e.g. neoantigen discovery), `adjacent` (DB search hybrids, glycopeptide tools), or `meta` (reviews / theses / benchmarks).
+- **`is_deep_learning`** — `TRUE` / `FALSE` — so readers can compare DL-based and classical approaches side by side.
+- **`acquisition_mode`** — `DDA`, `DIA`, `both`, or *not applicable*.
+
+Classical methods (PEAKS, Lutefisk, PepNovo, NovoHMM, pNovo 3, …) belong here as much as the modern Transformer-based sequencers. Filtering on the live site lets you drill into any subset.
 
 ## What's here
 

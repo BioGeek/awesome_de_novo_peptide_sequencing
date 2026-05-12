@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A curated knowledge base of deep-learning de novo peptide sequencing models. The "code" is mostly data plumbing around two artifacts:
+A curated knowledge base covering the *de novo* peptide sequencing field — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike. The "code" is mostly data plumbing around two artifacts:
 
 - `denovo.db` — SQLite database (the source of truth) holding publications, algorithms, authors, affiliations, cities, countries, and the join tables that link them.
 - `denovo.sql` — full SQL dump of `denovo.db`, committed alongside the binary so diffs are reviewable in git. Treat `denovo.sql` as the canonical, human-readable representation; regenerate it after any DB write.
@@ -50,7 +50,17 @@ When adding rows by hand, always check whether the entity already exists before 
 ### Editorial conventions
 
 - **Italicize *de novo*** in every piece of user-facing copy (page title, subtitle, prose, chart titles, README). In markdown: `*de novo*`. In HTML cells: `<em>de novo</em>`. Don't italicize it inside copied paper titles, DB string literals, or identifiers.
-- **State the scope** ("deep learning only, not a historical survey") in the page subtitle, the hero scope banner, the meta description, and the footer.
+- **Scope is comprehensive** — frame the site as a map of the whole field (algorithms + post-processors + downstream apps + adjacent tools, DL and classical alike). Do **not** re-introduce a "deep-learning only" disclaimer; previous versions had one and it's been removed.
+
+### Classification taxonomy
+
+Every `algorithm` row carries three classifier columns:
+
+- `kind` — `'algorithm'`, `'post-processor'`, `'downstream-application'`, `'adjacent'`, or `'meta'`.
+- `is_deep_learning` — `1` (TRUE), `0` (FALSE), or NULL.
+- `acquisition_mode` — `'DDA'`, `'DIA'`, `'both'`, or NULL.
+
+When adding a new entry, fill all three. The site's filters (and the hero counters) depend on them.
 
 ### Local dev
 
