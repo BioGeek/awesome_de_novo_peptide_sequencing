@@ -30,7 +30,18 @@ pubs = pd.read_sql(
               WHERE pal.publication_id = p.id) AS models,
            (SELECT alg.repository
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id LIMIT 1) AS repo
+              WHERE pal.publication_id = p.id LIMIT 1) AS repo,
+           -- pick the dominant kind / DL flag / acquisition mode of the publication's
+           -- model(s); for the vast majority of papers there's a single linked model.
+           (SELECT alg.kind
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id LIMIT 1) AS kind,
+           (SELECT alg.is_deep_learning
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id LIMIT 1) AS is_dl,
+           (SELECT alg.acquisition_mode
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id LIMIT 1) AS acquisition
     FROM publication p
     ORDER BY p.publication_date
     """,
@@ -118,6 +129,9 @@ algorithms = pd.read_sql(
            alg.algorithm_family AS family,
            alg.short_description AS description,
            alg.repository AS repo,
+           alg.kind AS kind,
+           alg.is_deep_learning AS is_dl,
+           alg.acquisition_mode AS acquisition,
            MIN(p.publication_date) AS first_pub
     FROM algorithm alg
     LEFT JOIN publication_algorithm pal ON alg.id = pal.algorithm_id
@@ -163,7 +177,11 @@ geo_t = transpose(geo)
 institutions_t = transpose(institutions)
 coauth_edges_t = transpose(coauth_edges)
 author_affs_t = transpose(author_affs)
-algorithms_t = transpose(algorithms).map(r => ({ ...r, first_pub: r.first_pub ? new Date(r.first_pub) : null }))
+algorithms_t = transpose(algorithms).map(r => ({
+  ...r,
+  first_pub: r.first_pub ? new Date(r.first_pub) : null,
+  is_dl: r.is_dl == null ? null : !!r.is_dl   // SQLite INTEGER 0/1 → JS boolean
+}))
 venues_t = transpose(venues)
 
 // Derived counters — everything flows from the data, no hardcoded numbers.
@@ -177,16 +195,68 @@ last_year  = Math.max(...years_with_pubs)
 n_preprints = pubs_t.filter(p => p.type === "preprint").length
 n_peer_reviewed = pubs_t.filter(p => p.type === "peer-reviewed").length
 families = Array.from(new Set(algorithms_t.map(a => a.family).filter(Boolean)))
+
+// Classification breakdowns (kind / DL / acquisition).
+n_dl     = algorithms_t.filter(a => a.is_dl === true).length
+n_non_dl = algorithms_t.filter(a => a.is_dl === false).length
+kinds_present     = Array.from(new Set(algorithms_t.map(a => a.kind).filter(Boolean))).sort()
+acq_modes_present = Array.from(new Set(algorithms_t.map(a => a.acquisition).filter(Boolean))).sort()
+kind_counts = kinds_present.map(k => ({ kind: k, n: algorithms_t.filter(a => a.kind === k).length }))
+acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filter(a => a.acquisition === m).length }))
 ```
 
 ```{ojs}
 //| echo: false
 html`<div class="hero-grid">
   <div class="hero-stat"><div class="hero-num">${n_papers}</div><div class="hero-lbl">papers</div></div>
-  <div class="hero-stat"><div class="hero-num">${n_models}</div><div class="hero-lbl">models</div></div>
+  <div class="hero-stat"><div class="hero-num">${n_models}</div><div class="hero-lbl">methods</div></div>
   <div class="hero-stat"><div class="hero-num">${n_authors}</div><div class="hero-lbl">authors</div></div>
   <div class="hero-stat"><div class="hero-num">${n_countries}</div><div class="hero-lbl">countries</div></div>
 </div>`
+```
+
+```{ojs}
+//| echo: false
+{
+  const kind_label = {
+    "algorithm": "Algorithms",
+    "post-processor": "Post-processors",
+    "downstream-application": "Downstream apps",
+    "adjacent": "Adjacent",
+    "meta": "Meta"
+  }
+  return html`<div class="breakdown-grid">
+    <div class="breakdown-cell">
+      <div class="breakdown-title">By kind</div>
+      ${kind_counts.map(k => html`<div class="breakdown-row">
+        <span class="bk-num">${k.n}</span>
+        <span class="bk-bar"><span class="bk-fill" style="width:${100 * k.n / n_models}%"></span></span>
+        <span class="bk-lbl">${kind_label[k.kind] ?? k.kind}</span>
+      </div>`)}
+    </div>
+    <div class="breakdown-cell">
+      <div class="breakdown-title">By approach</div>
+      <div class="breakdown-row">
+        <span class="bk-num">${n_dl}</span>
+        <span class="bk-bar"><span class="bk-fill" style="width:${100 * n_dl / n_models}%; background:#1f6feb"></span></span>
+        <span class="bk-lbl">Deep learning</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bk-num">${n_non_dl}</span>
+        <span class="bk-bar"><span class="bk-fill" style="width:${100 * n_non_dl / n_models}%; background:#6f42c1"></span></span>
+        <span class="bk-lbl">Classical</span>
+      </div>
+    </div>
+    <div class="breakdown-cell">
+      <div class="breakdown-title">By acquisition</div>
+      ${acq_counts.map(m => html`<div class="breakdown-row">
+        <span class="bk-num">${m.n}</span>
+        <span class="bk-bar"><span class="bk-fill" style="width:${100 * m.n / n_models}%; background:#1a7f37"></span></span>
+        <span class="bk-lbl">${m.acquisition}</span>
+      </div>`)}
+    </div>
+  </div>`
+}
 ```
 
 ```{=html}
@@ -196,6 +266,14 @@ html`<div class="hero-grid">
 .hero-num { font-size: 2.5rem; font-weight: 700; color: #1f6feb; line-height: 1; }
 .hero-lbl { font-size: 0.9rem; color: #57606a; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
+.breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0.75rem 0 1.5rem; }
+.breakdown-cell { padding: 0.85rem 1rem; background: #f6f8fa; border-radius: 0.5rem; }
+.breakdown-title { font-size: 0.8rem; color: #57606a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-weight: 600; }
+.breakdown-row { display: grid; grid-template-columns: 2.2rem 1fr auto; align-items: center; gap: 0.5rem; margin: 0.25rem 0; font-size: 0.9rem; }
+.bk-num { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; color: #24292f; }
+.bk-bar { display: inline-block; height: 8px; background: #e7eaee; border-radius: 4px; position: relative; overflow: hidden; }
+.bk-fill { display: block; height: 100%; background: #1f6feb; border-radius: 4px; }
+.bk-lbl { font-size: 0.85rem; color: #424a53; }
 </style>
 ```
 
@@ -235,14 +313,26 @@ Plot.plot({
 
 ## The architectures
 
-Deep-learning *de novo* sequencing has cycled through several architectural families. Toggle a family to focus on its lineage; hover a dot to read the model's signature contribution.
+*De novo* sequencing has cycled through several methodological families — first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution.
 
 ```{ojs}
 //| echo: false
-viewof family_filter = Inputs.checkbox(
-  families,
-  { label: "Families", value: families }
-)
+viewof family_filter = Inputs.checkbox(families, { label: "Families", value: families })
+```
+
+```{ojs}
+//| echo: false
+viewof kind_filter = Inputs.checkbox(kinds_present, { label: "Kind", value: kinds_present })
+```
+
+```{ojs}
+//| echo: false
+viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "Approach", value: "all" })
+```
+
+```{ojs}
+//| echo: false
+viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
 ```
 
 ```{ojs}
@@ -275,9 +365,20 @@ innovations_timeline = {
     "Diffusion":         1.2
   }
 
-  // Only include bands actually represented in the data AND surviving the family-filter checkboxes.
-  const present = new Set(algorithms_t.filter(a => a.first_pub && a.family).map(a => a.family))
-  const visible_bands = band_order.filter(f => present.has(f) && family_filter.includes(f))
+  // Apply every filter (family, kind, approach, acquisition) up front.
+  const matches_filters = a => {
+    if (!a.first_pub || !a.family) return false
+    if (!family_filter.includes(a.family)) return false
+    if (!kind_filter.includes(a.kind)) return false
+    if (dl_filter === "DL only"        && a.is_dl !== true)  return false
+    if (dl_filter === "Classical only" && a.is_dl !== false) return false
+    if (a.acquisition && !acq_filter.includes(a.acquisition)) return false
+    return true
+  }
+
+  // Only include bands that have at least one surviving model.
+  const present = new Set(algorithms_t.filter(matches_filters).map(a => a.family))
+  const visible_bands = band_order.filter(f => present.has(f))
 
   // Stack bands bottom-to-top, each at its own height.
   let y_cursor = 0
@@ -293,7 +394,7 @@ innovations_timeline = {
   // Assign each model a tier so labels at similar dates don't overlap; the tier fraction
   // is interpreted relative to the *band's* height so taller bands spread further apart.
   const rows = algorithms_t
-    .filter(a => a.first_pub && band_index.has(a.family))
+    .filter(matches_filters)
     .slice()
     .sort((a, b) => a.first_pub - b.first_pub)
   const last_date_at_tier = new Map()
@@ -967,22 +1068,25 @@ viewof search = Inputs.search(pubs_t, { placeholder: `Search ${n_papers} papers�
 ```{ojs}
 //| echo: false
 Inputs.table(search, {
-  columns: ["year", "models", "title", "authors", "journal", "type", "doi"],
-  header: { year: "Year", models: "Model(s)", title: "Title", authors: "Authors", journal: "Venue", type: "Type", doi: "DOI" },
+  columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "type"],
+  header: {
+    year: "Year", models: "Method(s)", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
+    title: "Title", authors: "Authors", journal: "Venue", type: "Type"
+  },
   format: {
     year: y => y == null ? "" : String(y),
+    is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
     title: (t, i) => {
       const row = search[i]
       const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
       return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
     },
-    authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a,
-    doi: d => d ? htl.html`<a href="https://doi.org/${d}" target="_blank" rel="noopener">${d}</a>` : ""
+    authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a
   },
   sort: "year",
   reverse: true,
   rows: 25,
-  width: { year: 60, type: 100, models: 130 }
+  width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70 }
 })
 ```
 
