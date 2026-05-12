@@ -304,7 +304,7 @@ INSERT INTO author VALUES(298,'Meng-Qiu Dong',NULL);
 INSERT INTO author VALUES(299,'Haifeng Chen',NULL);
 INSERT INTO author VALUES(300,'Kun He',NULL);
 INSERT INTO author VALUES(301,'Long Wu',NULL);
-INSERT INTO author VALUES(302,'Jianyun Li',NULL);
+INSERT INTO author VALUES(302,'Jianyun Liu',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -521,6 +521,8 @@ INSERT INTO affiliation VALUES(116,'Chinese Academy of Sciences','Key Laboratory
 INSERT INTO affiliation VALUES(117,'University of Waterloo','Department of Electrical & Computer Engineering',9,24);
 INSERT INTO affiliation VALUES(118,'Beijing Institute of Microbiology and Epidemiology','State Key Laboratory of Pathogen and Biosecurity',2,9);
 INSERT INTO affiliation VALUES(119,'University of Chicago','Department of the Geophysical Sciences',8,55);
+INSERT INTO affiliation VALUES(120,'National Institute of Biological Sciences, Beijing',NULL,2,9);
+INSERT INTO affiliation VALUES(121,'Beihang University','Laboratory of Intelligent Recognition and Image Processing, Beijing Key Laboratory of Digital Media',2,9);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -884,6 +886,17 @@ INSERT INTO author_affiliation VALUES(260,119);
 INSERT INTO author_affiliation VALUES(261,119);
 INSERT INTO author_affiliation VALUES(262,43);
 INSERT INTO author_affiliation VALUES(262,118);
+INSERT INTO author_affiliation VALUES(299,116);
+INSERT INTO author_affiliation VALUES(300,116);
+INSERT INTO author_affiliation VALUES(301,116);
+INSERT INTO author_affiliation VALUES(290,116);
+INSERT INTO author_affiliation VALUES(299,19);
+INSERT INTO author_affiliation VALUES(300,19);
+INSERT INTO author_affiliation VALUES(301,19);
+INSERT INTO author_affiliation VALUES(291,120);
+INSERT INTO author_affiliation VALUES(292,120);
+INSERT INTO author_affiliation VALUES(298,120);
+INSERT INTO author_affiliation VALUES(302,121);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1617,7 +1630,7 @@ INSERT INTO publication_author VALUES(72,298,11);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',16);
 INSERT INTO sqlite_sequence VALUES('city',55);
-INSERT INTO sqlite_sequence VALUES('affiliation',119);
+INSERT INTO sqlite_sequence VALUES('affiliation',121);
 INSERT INTO sqlite_sequence VALUES('author',302);
 INSERT INTO sqlite_sequence VALUES('algorithm',68);
 INSERT INTO sqlite_sequence VALUES('publication',73);
