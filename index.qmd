@@ -339,14 +339,18 @@ viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", v
 //| echo: false
 innovations_timeline = {
   // Notebook-style band order: oldest paradigm at the bottom, newest at the top.
-  // Classical (non-DL) bands sit at the bottom: graph/DP → random forest →
-  // learning-to-rank → CNN+RNN → ... → diffusion.
+  // Classical (non-DL) bands sit at the bottom: heuristic → graph/DP → HMM →
+  // decision tree → random forest → learning-to-rank → CNN+RNN → ... → diffusion.
   const band_order = [
-    "Graph / DP", "Random Forest", "Learning-to-rank",
+    "Heuristic", "Graph / DP", "HMM", "Decision tree",
+    "Random Forest", "Learning-to-rank",
     "CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion"
   ]
   const band_color = {
+    "Heuristic":         "#8a96a0",
     "Graph / DP":        "#6c757d",
+    "HMM":               "#4d6a8c",
+    "Decision tree":     "#7b6f43",
     "Random Forest":     "#a5673f",
     "Learning-to-rank":  "#5f6b7a",
     "CNN + RNN":         "#4C72B0",
@@ -364,8 +368,13 @@ innovations_timeline = {
   const MIN_GAP_DAYS = 270
 
   // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
+  // Graph / DP now holds seven classical algorithms (Sherenga, PEAKS, PepNovo, MSNovo,
+  // pNovo, pNovo+, CycloNovo) so it needs a taller swimlane.
   const band_heights = {
-    "Graph / DP":        1.2,
+    "Heuristic":         1.0,
+    "Graph / DP":        2.5,
+    "HMM":               1.0,
+    "Decision tree":     1.0,
     "Random Forest":     1.2,
     "Learning-to-rank":  1.2,
     "CNN + RNN":         2.0,
