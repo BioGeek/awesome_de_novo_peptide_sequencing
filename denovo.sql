@@ -269,6 +269,38 @@ INSERT INTO author VALUES(261,'Jacob R. Waldbauer',NULL);
 INSERT INTO author VALUES(262,'Xianglilan Zhang',NULL);
 INSERT INTO author VALUES(263,'Yuanliang Zhang',NULL);
 INSERT INTO author VALUES(264,'Lequan Yu',NULL);
+INSERT INTO author VALUES(265,'J. Alex Taylor',NULL);
+INSERT INTO author VALUES(266,'Richard S. Johnson',NULL);
+INSERT INTO author VALUES(267,'Vlado Dancík',NULL);
+INSERT INTO author VALUES(268,'Theresa A. Addona',NULL);
+INSERT INTO author VALUES(269,'Karl R. Clauser',NULL);
+INSERT INTO author VALUES(270,'James E. Vath',NULL);
+INSERT INTO author VALUES(271,'Pavel A. Pevzner',NULL);
+INSERT INTO author VALUES(272,'Kaizhong Zhang',NULL);
+INSERT INTO author VALUES(273,'Christopher Hendrie',NULL);
+INSERT INTO author VALUES(274,'Chengzhi Liang',NULL);
+INSERT INTO author VALUES(275,'Amanda Doherty-Kirby',NULL);
+INSERT INTO author VALUES(276,'Gilles Lajoie',NULL);
+INSERT INTO author VALUES(277,'Ari Frank',NULL);
+INSERT INTO author VALUES(278,'Bernd Fischer',NULL);
+INSERT INTO author VALUES(279,'Volker Roth',NULL);
+INSERT INTO author VALUES(280,'Franz Roos',NULL);
+INSERT INTO author VALUES(281,'Jonas Grossmann',NULL);
+INSERT INTO author VALUES(282,'Sacha Baginsky',NULL);
+INSERT INTO author VALUES(283,'Peter Widmayer',NULL);
+INSERT INTO author VALUES(284,'Wilhelm Gruissem',NULL);
+INSERT INTO author VALUES(285,'Joachim M. Buhmann',NULL);
+INSERT INTO author VALUES(286,'Lihua Mo',NULL);
+INSERT INTO author VALUES(287,'Dejian Dutta',NULL);
+INSERT INTO author VALUES(288,'Yunhu Wan',NULL);
+INSERT INTO author VALUES(289,'Ting Chen',NULL);
+INSERT INTO author VALUES(290,'Rui-Xiang Sun',NULL);
+INSERT INTO author VALUES(291,'Bing Yang',NULL);
+INSERT INTO author VALUES(292,'Chun-Qing Song',NULL);
+INSERT INTO author VALUES(293,'Le-Heng Wang',NULL);
+INSERT INTO author VALUES(294,'Chao Liu',NULL);
+INSERT INTO author VALUES(295,'Zuo-Fei Yuan',NULL);
+INSERT INTO author VALUES(298,'Meng-Qiu Dong',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -914,6 +946,15 @@ INSERT INTO algorithm VALUES(56,'DeepNovo-DIA','https://github.com/nh2tran/DeepN
 INSERT INTO algorithm VALUES(57,'PostNovo',NULL,NULL,NULL,'Random Forest','FDR-controlled ensembling','post-processor',0,'DDA');
 INSERT INTO algorithm VALUES(58,'DeepNovo','https://github.com/nh2tran/DeepNovo',NULL,NULL,'CNN + RNN','First DL model (CNN+LSTM)','algorithm',1,'DDA');
 INSERT INTO algorithm VALUES(59,'CausalNovo','https://anonymous.4open.science/r/CausalNovo-C134',NULL,NULL,'Transformer (AR)','Causality-informed framework','algorithm',1,'DDA');
+INSERT INTO algorithm VALUES(60,'Lutefisk',NULL,NULL,'https://www.proteomesoftware.com/','Heuristic','First widely-used heuristic de novo tool','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(61,'Sherenga',NULL,NULL,NULL,'Graph / DP','Graph-theoretic de novo (foundational)','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(62,'PEAKS',NULL,NULL,'https://www.bioinfor.com/peaks-de-novo/','Graph / DP','Commercial DP-based de novo','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(63,'PepNovo',NULL,NULL,'http://proteomics.ucsd.edu/Software/PepNovo/','Graph / DP','Probabilistic network + DP','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(64,'NovoHMM',NULL,NULL,NULL,'HMM','Generative HMM scoring','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(65,'MSNovo',NULL,NULL,NULL,'Graph / DP','Mass-array dynamic programming','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(66,'pNovo',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','First HCD-focused de novo','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(67,'pNovo+',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','Complementary HCD + ETD spectra','algorithm',0,'DDA');
+INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decision tree','Real-time decision-tree scoring','algorithm',0,'DDA');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -989,6 +1030,15 @@ INSERT INTO publication VALUES(61,'Postnovo: Postprocessing Enables Accurate and
 INSERT INTO publication VALUES(62,'De novo peptide sequencing by deep learning','2017-07-18','10.1073/pnas.1705691114','PNAS',NULL,'https://doi.org/10.1073/pnas.1705691114','PNAS','peer-reviewed');
 INSERT INTO publication VALUES(63,'De novo mass spectrometry peptide sequencing with a transformer model','2023-02-09','10.1038/s42256-023-00624-6','Springer Nature',NULL,NULL,'Nature Machine Intelligence','peer-reviewed');
 INSERT INTO publication VALUES(64,'CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework','2026-02-14',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=55GsILa8c9','ICLR 2026','preprint');
+INSERT INTO publication VALUES(65,'Sequence database searches via de novo peptide sequencing by tandem mass spectrometry','1997-09-01',NULL,'Wiley',NULL,'https://pubmed.ncbi.nlm.nih.gov/9296266/','Rapid Communications in Mass Spectrometry','peer-reviewed');
+INSERT INTO publication VALUES(66,'De novo peptide sequencing via tandem mass spectrometry','1999-01-01','10.1089/106652799318300','Mary Ann Liebert',NULL,'https://www.liebertpub.com/doi/abs/10.1089/106652799318300','Journal of Computational Biology','peer-reviewed');
+INSERT INTO publication VALUES(67,'PEAKS: powerful software for peptide de novo sequencing by tandem mass spectrometry','2003-10-15','10.1002/rcm.1196','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/rcm.1196','Rapid Communications in Mass Spectrometry','peer-reviewed');
+INSERT INTO publication VALUES(68,'PepNovo: de novo peptide sequencing via probabilistic network modeling','2005-02-15','10.1021/ac048788h','American Chemical Society',NULL,'https://pubs.acs.org/doi/abs/10.1021/ac048788h','Analytical Chemistry','peer-reviewed');
+INSERT INTO publication VALUES(69,'NovoHMM: A Hidden Markov Model for de Novo Peptide Sequencing','2005-11-15','10.1021/ac0508853','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/ac0508853','Analytical Chemistry','peer-reviewed');
+INSERT INTO publication VALUES(70,'MSNovo: A Dynamic Programming Algorithm for de Novo Peptide Sequencing via Tandem Mass Spectrometry','2007-06-15','10.1021/ac070039n','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/ac070039n','Analytical Chemistry','peer-reviewed');
+INSERT INTO publication VALUES(71,'pNovo: De novo Peptide Sequencing and Identification Using HCD Spectra','2010-05-07','10.1021/pr100182k','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/pr100182k','Journal of Proteome Research','peer-reviewed');
+INSERT INTO publication VALUES(72,'pNovo+: De Novo Peptide Sequencing Using Complementary HCD and ETD Tandem Mass Spectra','2013-02-01','10.1021/pr3006843','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/pr3006843','Journal of Proteome Research','peer-reviewed');
+INSERT INTO publication VALUES(73,'Novor: Real-Time Peptide de Novo Sequencing Software','2015-06-30','10.1007/s13361-015-1204-0','Springer',NULL,'https://link.springer.com/article/10.1007/s13361-015-1204-0','Journal of The American Society for Mass Spectrometry','peer-reviewed');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1063,6 +1113,15 @@ INSERT INTO publication_algorithm VALUES(49,12);
 INSERT INTO publication_algorithm VALUES(63,12);
 INSERT INTO publication_algorithm VALUES(64,59);
 INSERT INTO publication_algorithm VALUES(26,12);
+INSERT INTO publication_algorithm VALUES(65,60);
+INSERT INTO publication_algorithm VALUES(66,61);
+INSERT INTO publication_algorithm VALUES(67,62);
+INSERT INTO publication_algorithm VALUES(68,63);
+INSERT INTO publication_algorithm VALUES(69,64);
+INSERT INTO publication_algorithm VALUES(70,65);
+INSERT INTO publication_algorithm VALUES(71,66);
+INSERT INTO publication_algorithm VALUES(72,67);
+INSERT INTO publication_algorithm VALUES(73,68);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1500,11 +1559,52 @@ INSERT INTO publication_author VALUES(64,263,3);
 INSERT INTO publication_author VALUES(64,264,4);
 INSERT INTO publication_author VALUES(64,119,5);
 INSERT INTO publication_author VALUES(64,120,6);
+INSERT INTO publication_author VALUES(65,265,1);
+INSERT INTO publication_author VALUES(65,266,2);
+INSERT INTO publication_author VALUES(66,267,1);
+INSERT INTO publication_author VALUES(66,268,2);
+INSERT INTO publication_author VALUES(66,269,3);
+INSERT INTO publication_author VALUES(66,270,4);
+INSERT INTO publication_author VALUES(66,271,5);
+INSERT INTO publication_author VALUES(67,234,1);
+INSERT INTO publication_author VALUES(67,272,2);
+INSERT INTO publication_author VALUES(67,273,3);
+INSERT INTO publication_author VALUES(67,274,4);
+INSERT INTO publication_author VALUES(67,107,5);
+INSERT INTO publication_author VALUES(67,275,6);
+INSERT INTO publication_author VALUES(67,276,7);
+INSERT INTO publication_author VALUES(68,277,1);
+INSERT INTO publication_author VALUES(68,271,2);
+INSERT INTO publication_author VALUES(69,278,1);
+INSERT INTO publication_author VALUES(69,279,2);
+INSERT INTO publication_author VALUES(69,280,3);
+INSERT INTO publication_author VALUES(69,281,4);
+INSERT INTO publication_author VALUES(69,282,5);
+INSERT INTO publication_author VALUES(69,283,6);
+INSERT INTO publication_author VALUES(69,284,7);
+INSERT INTO publication_author VALUES(69,285,8);
+INSERT INTO publication_author VALUES(70,286,1);
+INSERT INTO publication_author VALUES(70,287,2);
+INSERT INTO publication_author VALUES(70,288,3);
+INSERT INTO publication_author VALUES(70,289,4);
+INSERT INTO publication_author VALUES(71,40,1);
+INSERT INTO publication_author VALUES(71,290,2);
+INSERT INTO publication_author VALUES(71,291,3);
+INSERT INTO publication_author VALUES(71,292,4);
+INSERT INTO publication_author VALUES(71,293,5);
+INSERT INTO publication_author VALUES(71,294,6);
+INSERT INTO publication_author VALUES(71,51,7);
+INSERT INTO publication_author VALUES(71,295,8);
+INSERT INTO publication_author VALUES(71,49,9);
+INSERT INTO publication_author VALUES(71,258,10);
+INSERT INTO publication_author VALUES(71,298,11);
+INSERT INTO publication_author VALUES(72,40,1);
+INSERT INTO publication_author VALUES(73,234,1);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',16);
 INSERT INTO sqlite_sequence VALUES('city',55);
 INSERT INTO sqlite_sequence VALUES('affiliation',119);
-INSERT INTO sqlite_sequence VALUES('author',264);
-INSERT INTO sqlite_sequence VALUES('algorithm',59);
-INSERT INTO sqlite_sequence VALUES('publication',64);
+INSERT INTO sqlite_sequence VALUES('author',298);
+INSERT INTO sqlite_sequence VALUES('algorithm',68);
+INSERT INTO sqlite_sequence VALUES('publication',73);
 COMMIT;
