@@ -698,6 +698,225 @@ network_chart = {
 }
 ```
 
+### Models and the authors behind them
+
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ 3 papers) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family — so you can see which research groups own which slice of the architectural landscape.
+
+```{ojs}
+//| echo: false
+author_algo_network = {
+  const width = 1400
+  const height = 760
+  const LEGEND_H = 90
+  const PLOT_H = height - LEGEND_H
+
+  // Same prolific-author filter as the co-auth network (authors with ≥ 3 papers).
+  const prolific = new Set(coauth_edges_t.flatMap(e => [e.source, e.target]))
+
+  // Author → algorithm edges, weighted by number of papers connecting them.
+  const edge_w = new Map()  // key: `${author}|${algo}`
+  for (const p of pubs_t) {
+    if (!p.authors || !p.models) continue
+    const authors = String(p.authors).split(",").map(s => s.trim()).filter(Boolean)
+    const models  = String(p.models).split(",").map(s => s.trim()).filter(Boolean)
+    for (const a of authors) {
+      if (!prolific.has(a)) continue
+      for (const m of models) {
+        const key = a + "<<|>>" + m
+        edge_w.set(key, (edge_w.get(key) ?? 0) + 1)
+      }
+    }
+  }
+
+  const algo_meta = new Map(algorithms_t.map(a => [a.model, a]))
+  const links = []
+  const author_set = new Set()
+  const algo_set = new Set()
+  for (const [k, w] of edge_w) {
+    const [a, m] = k.split("<<|>>")
+    author_set.add(a); algo_set.add(m)
+    links.push({ source: a, target: m, weight: w })
+  }
+
+  const nodes = [
+    ...Array.from(author_set, name => ({ id: name, kind: "author", degree: 0 })),
+    ...Array.from(algo_set, name => {
+      const meta = algo_meta.get(name)
+      return { id: name, kind: "algo", family: meta?.family ?? "Unknown", degree: 0 }
+    })
+  ]
+  const node_by_name = new Map(nodes.map(n => [n.id, n]))
+  for (const l of links) {
+    node_by_name.get(l.source).degree += l.weight
+    node_by_name.get(l.target).degree += l.weight
+  }
+
+  // Color palette: gray for authors, family color for algorithms.
+  const family_color = {
+    "CNN + RNN":         "#4C72B0",
+    "Transformer (AR)":  "#DD8452",
+    "GNN":               "#937860",
+    "CNN":               "#8172B3",
+    "Transformer (NAR)": "#55A868",
+    "Diffusion":         "#C44E52",
+    "Unknown":           "#999999"
+  }
+  const nodeFill = d => d.kind === "author" ? "#cdd6e0" : (family_color[d.family] ?? "#999")
+  const nodeStroke = d => d.kind === "author" ? "#8a94a3" : "#222"
+  const max_algo_deg = d3.max(nodes.filter(n => n.kind === "algo"), n => n.degree) || 1
+  const max_auth_deg = d3.max(nodes.filter(n => n.kind === "author"), n => n.degree) || 1
+  const nodeR = d => d.kind === "author"
+    ? 5 + 8 * Math.sqrt(d.degree / max_auth_deg)
+    : 9 + 14 * Math.sqrt(d.degree / max_algo_deg)
+
+  // Pull algorithm nodes toward a central ring so they cluster by family.
+  const families_seen = Array.from(new Set(nodes.filter(n => n.kind === "algo").map(n => n.family))).sort()
+  const family_target = new Map()
+  for (let i = 0; i < families_seen.length; i++) {
+    const angle = i * 2 * Math.PI / families_seen.length
+    family_target.set(families_seen[i], [
+      width / 2 + Math.cos(angle) * width * 0.25,
+      PLOT_H / 2 + Math.sin(angle) * PLOT_H * 0.30
+    ])
+  }
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 60 + 8 / d.weight).strength(0.35))
+    .force("charge", d3.forceManyBody().strength(d => d.kind === "algo" ? -350 : -90))
+    .force("collide", d3.forceCollide().radius(d => nodeR(d) + 4))
+    .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
+    .force("fam_x", d3.forceX(d => d.kind === "algo" ? family_target.get(d.family)[0] : width / 2).strength(d => d.kind === "algo" ? 0.08 : 0.01))
+    .force("fam_y", d3.forceY(d => d.kind === "algo" ? family_target.get(d.family)[1] : PLOT_H / 2).strength(d => d.kind === "algo" ? 0.08 : 0.01))
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto; font: 11px sans-serif; cursor: grab;")
+
+  svg.append("text")
+    .attr("x", width / 2).attr("y", 22)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 16)
+    .attr("font-weight", "bold")
+    .attr("fill", "#24292f")
+    .text("Authors ↔ models — diamonds are algorithms colored by family, circles are authors")
+
+  const g = svg.append("g")
+  svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
+
+  const link = g.append("g")
+    .attr("stroke", "#aaa")
+    .attr("stroke-opacity", 0.45)
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("stroke-width", d => Math.max(0.8, Math.sqrt(d.weight) * 0.7))
+
+  const node_g = g.append("g")
+    .selectAll("g.node")
+    .data(nodes)
+    .join("g")
+    .attr("class", "node")
+    .call(drag(sim))
+
+  node_g.append("title").text(d => d.kind === "algo"
+    ? `${d.id} (algorithm)\nFamily: ${d.family}\n${d.degree} author links`
+    : `${d.id} (author)\n${d.degree} model links`
+  )
+
+  // Authors as circles; algorithms as diamonds (rotated squares).
+  node_g.each(function (d) {
+    const sel = d3.select(this)
+    const r = nodeR(d)
+    if (d.kind === "author") {
+      sel.append("circle")
+        .attr("r", r)
+        .attr("fill", nodeFill(d))
+        .attr("stroke", nodeStroke(d))
+        .attr("stroke-width", 1.2)
+    } else {
+      sel.append("rect")
+        .attr("x", -r).attr("y", -r)
+        .attr("width", r * 2).attr("height", r * 2)
+        .attr("transform", "rotate(45)")
+        .attr("fill", nodeFill(d))
+        .attr("stroke", nodeStroke(d))
+        .attr("stroke-width", 1.5)
+    }
+  })
+
+  const label = g.append("g")
+    .attr("pointer-events", "none")
+    .selectAll("text")
+    .data(nodes)
+    .join("text")
+    .text(d => d.id)
+    .attr("font-size", d => d.kind === "algo" ? 12 : 9)
+    .attr("font-weight", d => d.kind === "algo" ? "bold" : 500)
+    .attr("fill", d => d.kind === "algo" ? "#0b0d12" : "#3b4150")
+    .attr("dx", d => nodeR(d) + 3)
+    .attr("dy", 3)
+
+  sim.on("tick", () => {
+    link
+      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
+    node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
+    label.attr("x", d => d.x).attr("y", d => d.y)
+  })
+
+  // Legend: algorithm-family colors + the author swatch.
+  const legend_g = svg.append("g").attr("transform", `translate(40, ${PLOT_H + 15})`)
+  legend_g.append("text")
+    .attr("x", 0).attr("y", 0)
+    .attr("font-weight", "bold")
+    .attr("font-size", 12)
+    .attr("fill", "#57606a")
+    .text("Algorithm family")
+  const legend_items = families_seen.map(f => ({ label: f, fill: family_color[f] ?? "#999", shape: "diamond" }))
+    .concat([{ label: "Author (size = # model links)", fill: "#cdd6e0", shape: "circle" }])
+  legend_g.selectAll("g.leg-item")
+    .data(legend_items)
+    .join("g")
+    .attr("class", "leg-item")
+    .attr("transform", (_, i) => `translate(${(i % 5) * 260}, ${22 + Math.floor(i / 5) * 22})`)
+    .call(s => {
+      s.append(d => d.shape === "diamond"
+        ? document.createElementNS("http://www.w3.org/2000/svg", "rect")
+        : document.createElementNS("http://www.w3.org/2000/svg", "circle"))
+        .attr("transform", d => d.shape === "diamond" ? "rotate(45) translate(0,0)" : null)
+        .each(function (d) {
+          const el = d3.select(this)
+          if (d.shape === "diamond") el.attr("x", -7).attr("y", -7).attr("width", 14).attr("height", 14)
+          else el.attr("r", 7).attr("cx", 0).attr("cy", 0)
+          el.attr("fill", d.fill).attr("stroke", d.fill === "#cdd6e0" ? "#8a94a3" : "#222").attr("stroke-width", 1.2)
+        })
+      s.append("text")
+        .attr("x", 14).attr("y", 4)
+        .attr("font-size", 11)
+        .attr("fill", "#24292f")
+        .text(d => d.label)
+    })
+
+  invalidation.then(() => sim.stop())
+
+  function drag(simulation) {
+    return d3.drag()
+      .on("start", (ev, d) => { if (!ev.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
+      .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y })
+      .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
+  }
+
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${svg.node()}</div>
+  </div>`
+}
+```
+
 ## Where it appears
 
 Most papers in this space appear first on bioRxiv or arXiv. Toggle preprints vs. peer-reviewed to see how the venue distribution shifts.
