@@ -286,6 +286,45 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 **Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), and **adjacent** tools (database-search hybrids, glycopeptide pipelines). Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
+::: {.global-filters}
+**Filters** — apply to *The wave*, *The architectures*, top authors, top venues, and Browse-all. Reset by re-checking all boxes / picking *all*.
+:::
+
+```{ojs}
+//| echo: false
+viewof kind_filter = Inputs.checkbox(kinds_present, { label: "Kind", value: kinds_present })
+```
+
+```{ojs}
+//| echo: false
+viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "Approach", value: "all" })
+```
+
+```{ojs}
+//| echo: false
+viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
+```
+
+```{ojs}
+//| echo: false
+// Single predicate every downstream chart can apply.
+pubs_matches_filter = p => {
+  if (p.kind && !kind_filter.includes(p.kind)) return false
+  if (dl_filter === "DL only"        && !(p.is_dl === 1 || p.is_dl === true))  return false
+  if (dl_filter === "Classical only" && !(p.is_dl === 0 || p.is_dl === false)) return false
+  if (p.acquisition && !acq_filter.includes(p.acquisition)) return false
+  return true
+}
+pubs_filtered = pubs_t.filter(pubs_matches_filter)
+n_papers_filtered = pubs_filtered.length
+```
+
+```{=html}
+<style>
+.global-filters { padding: 0.5rem 1rem; background: #f0f6ff; border-left: 4px solid #1f6feb; border-radius: 0 0.25rem 0.25rem 0; margin: 1rem 0 0.5rem; font-size: 0.92rem; color: #24292f; }
+</style>
+```
+
 ## The wave
 
 The earliest paper tracked here appeared in **${first_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how fast this field moves.
@@ -296,11 +335,11 @@ Plot.plot({
   marginLeft: 50,
   height: 360,
   x: { label: "Year", tickFormat: "d", interval: 1 },
-  y: { label: "Papers", grid: true },
+  y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
   color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis"] },
   marks: [
     Plot.barY(
-      pubs_t.filter(p => Number.isFinite(p.year)),
+      pubs_filtered.filter(p => Number.isFinite(p.year)),
       Plot.groupX(
         { y: "count" },
         { x: "year", fill: "type", tip: true }
@@ -318,21 +357,6 @@ Plot.plot({
 ```{ojs}
 //| echo: false
 viewof family_filter = Inputs.checkbox(families, { label: "Families", value: families })
-```
-
-```{ojs}
-//| echo: false
-viewof kind_filter = Inputs.checkbox(kinds_present, { label: "Kind", value: kinds_present })
-```
-
-```{ojs}
-//| echo: false
-viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "Approach", value: "all" })
-```
-
-```{ojs}
-//| echo: false
-viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
 ```
 
 ```{ojs}
@@ -604,22 +628,36 @@ The chart shows the twenty most-published authors. The network below it shows ho
 
 ```{ojs}
 //| echo: false
-Plot.plot({
-  marginLeft: 180,
-  height: Math.max(260, top_authors_t.length * 22),
-  x: { label: "Papers", grid: true },
-  y: { label: null },
-  marks: [
-    Plot.barX(top_authors_t, {
-      x: "publications",
-      y: "name",
-      fill: "#1f6feb",
-      sort: { y: "x", reverse: true },
-      tip: true
-    }),
-    Plot.ruleX([0])
-  ]
-})
+{
+  // Re-aggregate top authors from the currently-filtered pubs (so the chart
+  // reacts to the global Kind / Approach / Acquisition filters).
+  const counts = new Map()
+  for (const p of pubs_filtered) {
+    for (const a of (p.authors ?? "").split(", ").filter(Boolean)) {
+      counts.set(a, (counts.get(a) ?? 0) + 1)
+    }
+  }
+  const top = Array.from(counts, ([name, publications]) => ({ name, publications }))
+    .sort((a, b) => b.publications - a.publications)
+    .slice(0, 20)
+
+  return Plot.plot({
+    marginLeft: 180,
+    height: Math.max(260, top.length * 22),
+    x: { label: `Papers in current filter (${pubs_filtered.length} total)`, grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(top, {
+        x: "publications",
+        y: "name",
+        fill: "#1f6feb",
+        sort: { y: "x", reverse: true },
+        tip: true
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
 ```
 
 ```{ojs}
@@ -1055,9 +1093,11 @@ viewof venue_type = Inputs.radio(
 ```{ojs}
 //| echo: false
 {
-  const filtered = venue_type === "all" ? venues_t : venues_t.filter(v => v.type === venue_type)
+  // Re-aggregate venues from the globally-filtered pubs so the chart respects
+  // Kind / Approach / Acquisition, then apply the section's preprint/peer-reviewed radio.
+  const subset = pubs_filtered.filter(p => venue_type === "all" || p.type === venue_type)
   const grouped = Array.from(
-    d3.rollup(filtered, vs => d3.sum(vs, v => v.papers), v => v.venue),
+    d3.rollup(subset.filter(p => p.journal), v => v.length, p => p.journal),
     ([venue, papers]) => ({ venue, papers })
   ).sort((a, b) => d3.descending(a.papers, b.papers)).slice(0, 15)
 
@@ -1084,7 +1124,7 @@ viewof venue_type = Inputs.radio(
 
 ```{ojs}
 //| echo: false
-viewof search = Inputs.search(pubs_t, { placeholder: `Search ${n_papers} papers…` })
+viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filtered.length} papers (filtered)…` })
 ```
 
 ```{ojs}
