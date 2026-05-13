@@ -286,8 +286,9 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 **Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), and **adjacent** tools (database-search hybrids, glycopeptide pipelines). Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
-::: {.global-filters}
-**Filters** — apply to *The wave*, *The architectures*, top authors, top venues, and Browse-all. Reset by re-checking all boxes / picking *all*.
+::::: {.sticky-filters}
+::: {.sticky-filters-header}
+🎚️ **Filters** — Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll.
 :::
 
 ```{ojs}
@@ -304,6 +305,7 @@ viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "
 //| echo: false
 viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
 ```
+:::::
 
 ```{ojs}
 //| echo: false
@@ -321,7 +323,34 @@ n_papers_filtered = pubs_filtered.length
 
 ```{=html}
 <style>
-.global-filters { padding: 0.5rem 1rem; background: #f0f6ff; border-left: 4px solid #1f6feb; border-radius: 0 0.25rem 0.25rem 0; margin: 1rem 0 0.5rem; font-size: 0.92rem; color: #24292f; }
+.sticky-filters {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.5rem 0.85rem;
+  margin: 1rem 0;
+  border: 1px solid #d0d7de;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem 1.5rem;
+}
+.sticky-filters .cell { margin: 0; }
+.sticky-filters-header {
+  flex-basis: 100%;
+  font-size: 0.88rem;
+  color: #424a53;
+  padding: 0.15rem 0 0.25rem;
+  border-bottom: 1px dashed #d0d7de;
+  margin-bottom: 0.25rem;
+}
+.sticky-filters-header p { margin: 0; }
+.sticky-filters form { margin: 0 !important; }
 </style>
 ```
 
