@@ -107,20 +107,19 @@ pub_authorship = pd.read_sql(
 
 coauth_edges = pd.read_sql(
     """
-    SELECT a1.name AS source, a2.name AS target, COUNT(*) AS weight
+    SELECT a1.name   AS source,
+           a2.name   AS target,
+           COUNT(*)  AS weight,
+           ac1.pubs  AS source_pubs,
+           ac2.pubs  AS target_pubs
     FROM publication_author pa1
     JOIN publication_author pa2 ON pa1.publication_id = pa2.publication_id
     JOIN author a1 ON a1.id = pa1.author_id
     JOIN author a2 ON a2.id = pa2.author_id
+    JOIN (SELECT author_id, COUNT(*) AS pubs FROM publication_author GROUP BY author_id) ac1 ON ac1.author_id = pa1.author_id
+    JOIN (SELECT author_id, COUNT(*) AS pubs FROM publication_author GROUP BY author_id) ac2 ON ac2.author_id = pa2.author_id
     WHERE pa1.author_id < pa2.author_id
-      AND pa1.author_id IN (
-          SELECT author_id FROM publication_author
-          GROUP BY author_id HAVING COUNT(*) >= 3
-      )
-      AND pa2.author_id IN (
-          SELECT author_id FROM publication_author
-          GROUP BY author_id HAVING COUNT(*) >= 3
-      )
+      AND ac1.pubs >= 2 AND ac2.pubs >= 2
     GROUP BY a1.name, a2.name
     """,
     conn,
@@ -827,7 +826,15 @@ viewof country_metric = Inputs.radio(
 
 ## Who's driving it
 
-The chart shows the twenty most-published authors. The network below it shows how authors with **≥ 3 papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.
+The chart shows the twenty most-published authors. The network below it shows how prolific authors are connected through co-authorship — pick a publication threshold to expand or tighten the graph. Drag a node to reshape the layout, or hover to highlight a neighborhood.
+
+```{ojs}
+//| echo: false
+viewof coauth_threshold = Inputs.radio(
+  [2, 3],
+  { label: "Show authors with ≥ N papers", value: 3 }
+)
+```
 
 ```{ojs}
 //| echo: false
@@ -878,16 +885,21 @@ network_chart = {
     d => d.author
   )
 
-  // Nodes from the edges (we only render authors with ≥3 papers; that's what coauth_edges_t holds).
+  // SQL ships every coauth edge where both authors have ≥ 2 papers; here we
+  // further filter to the user's chosen threshold (≥ 2 or ≥ 3) so the graph
+  // can be loosened to see weaker collaborations.
+  const edges = coauth_edges_t.filter(
+    e => (e.source_pubs ?? 0) >= coauth_threshold && (e.target_pubs ?? 0) >= coauth_threshold
+  )
   const node_set = new Set()
-  for (const e of coauth_edges_t) { node_set.add(e.source); node_set.add(e.target) }
+  for (const e of edges) { node_set.add(e.source); node_set.add(e.target) }
   const nodes = Array.from(node_set, name => ({
     id: name,
     affiliations: affs_by_author.get(name) ?? ["Unknown"],
     degree: 0
   }))
   const node_by_name = new Map(nodes.map(n => [n.id, n]))
-  const links = coauth_edges_t.map(e => ({ source: e.source, target: e.target, weight: e.weight }))
+  const links = edges.map(e => ({ source: e.source, target: e.target, weight: e.weight }))
   for (const l of links) {
     node_by_name.get(l.source).degree += l.weight
     node_by_name.get(l.target).degree += l.weight
@@ -945,7 +957,7 @@ network_chart = {
     .attr("font-size", 16)
     .attr("font-weight", "bold")
     .attr("fill", "#24292f")
-    .text("Co-authorship network — authors with ≥ 3 papers, pie nodes for multi-affiliation")
+    .text(`Co-authorship network — authors with ≥ ${coauth_threshold} papers (${nodes.length} authors, ${links.length} edges), pie nodes for multi-affiliation`)
 
   const g = svg.append("g")
   svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
@@ -1074,8 +1086,14 @@ author_algo_network = {
   const LEGEND_H = 90
   const PLOT_H = height - LEGEND_H
 
-  // Same prolific-author filter as the co-auth network (authors with ≥ 3 papers).
-  const prolific = new Set(coauth_edges_t.flatMap(e => [e.source, e.target]))
+  // Prolific authors (≥ 3 papers) — kept fixed here independent of the co-auth
+  // threshold radio above, because the bipartite chart loses meaning if every
+  // single-paper collaborator gets a model node attached.
+  const prolific = new Set(
+    coauth_edges_t
+      .filter(e => (e.source_pubs ?? 0) >= 3 && (e.target_pubs ?? 0) >= 3)
+      .flatMap(e => [e.source, e.target])
+  )
 
   // Author → algorithm edges, weighted by number of papers connecting them.
   // When a publication carries a version tag (Casanovo v1/v2/v5), the edge
