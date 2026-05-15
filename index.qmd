@@ -1201,14 +1201,18 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
 
 ## Contributing {#contributing}
 
-This site is generated from a small SQLite database (`denovo.db`) that is the **source of truth**. To propose a new paper:
+**Easiest path:** [**open a GitHub issue**](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/issues/new) with a link to the paper (DOI / arXiv / bioRxiv / OpenReview / …) and I'll wire it into the database. Corrections are equally welcome — wrong author lists, missing affiliations, mis-classified *kind* / *DL* / *acquisition*, broken hyperlinks, anything that looks off.
 
-1. Edit `denovo.db` directly with any SQLite tool (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), …). A new paper typically needs rows in `publication`, `publication_author`, and `publication_algorithm`; a new model also needs a row in `algorithm`. Affiliations cascade through `country → city → affiliation` and link to authors via `author_affiliation`.
+### Advanced: edit the database directly
+
+The site is generated from `denovo.db` (SQLite, the source of truth). If you're comfortable with SQL:
+
+1. Edit `denovo.db` with any SQLite tool (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), DataGrip, …). A new paper typically needs rows in `publication`, `publication_author`, and `publication_algorithm`; a new model also needs a row in `algorithm` (set `kind`, `is_deep_learning`, `acquisition_mode`). Affiliations cascade through `country → city → affiliation` and link to authors via `author_affiliation`.
 2. Regenerate the human-readable SQL dump so the diff is reviewable:
    ```bash
    sqlite3 denovo.db .dump > denovo.sql
    ```
-3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action will rebuild the site and publish to `gh-pages` on merge — typically live within ~3 minutes.
+3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge — typically live within ~3 minutes.
 
 ---
 

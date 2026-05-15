@@ -12,7 +12,6 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every pape
 - **`is_deep_learning`** — `TRUE` / `FALSE` — so readers can compare DL-based and classical approaches side by side.
 - **`acquisition_mode`** — `DDA`, `DIA`, `both`, or *not applicable*.
 
-Classical methods (PEAKS, Lutefisk, PepNovo, NovoHMM, pNovo 3, …) belong here as much as the modern Transformer-based sequencers. Filtering on the live site lets you drill into any subset.
 
 ## What's here
 
@@ -21,11 +20,15 @@ Classical methods (PEAKS, Lutefisk, PepNovo, NovoHMM, pNovo 3, …) belong here 
 - **`index.qmd` + `_quarto.yml`** — the Quarto site (single-page narrative with interactive charts powered by Observable JS).
 - **`plots.ipynb`** — Jupyter notebook for offline exploration / sanity checks (static matplotlib figures, not published).
 
-## Contributing a paper
+## Contributing
 
-Edit `denovo.db` directly — any SQLite tool works (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), DataGrip, …). A new paper typically needs:
+**Easiest:** [open an issue](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/issues/new) with a link to the paper (DOI, arXiv, bioRxiv, OpenReview, …) and I'll wire it into the database for you. Corrections — wrong author lists, missing affiliations, mis-classified `kind` / `is_deep_learning` / `acquisition_mode`, broken links, you name it — are equally welcome via issue.
 
-- One row in **`algorithm`** if the model is new (set `name`, `repository`, `algorithm_family`, `short_description`).
+### Advanced: edit the database directly
+
+If you're comfortable with SQLite, the source of truth is `denovo.db` and you can edit it with any tool — `sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), DataGrip. A new paper typically needs:
+
+- One row in **`algorithm`** if the model is new (set `name`, `repository`, `algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`).
 - One row in **`publication`** (`title`, `publication_date`, `doi`, `publisher`, `url`, `journal`, `publication_type`).
 - One row per author in **`publication_author`** with the `author_order` field set.
 - One row in **`publication_algorithm`** connecting the new publication to its model(s).
