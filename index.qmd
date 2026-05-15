@@ -20,7 +20,7 @@ conn = sqlite3.connect(DB)
 pubs = pd.read_sql(
     """
     SELECT p.id, p.title, p.publication_date AS date, p.publication_type AS type,
-           p.publisher, p.journal, p.doi, p.url,
+           p.publisher, p.journal, p.doi, p.url, p.version,
            (SELECT GROUP_CONCAT(a.name, ', ')
               FROM publication_author pa JOIN author a ON a.id = pa.author_id
               WHERE pa.publication_id = p.id
@@ -1529,20 +1529,24 @@ How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. 
 ```{ojs}
 //| echo: false
 lifecycle_rows = {
-  // Group publications by their linked method name (using `models` from pubs_t).
-  // A pub without a model link is bucketed under a per-pub synthetic key so it
-  // doesn't accidentally pair with another stand-alone pub.
-  const by_method = new Map()
+  // Group publications by (method name, version). A pub without a model link
+  // is bucketed under a per-pub synthetic key so it can't accidentally pair
+  // with another stand-alone pub. Versioned publications (currently Casanovo
+  // v1 / v2 / v5) are bucketed by `${method}|${version}` so each version
+  // release pairs independently rather than collapsing into a single Casanovo
+  // row.
+  const by_group = new Map()
   for (const p of pubs_filtered) {
-    const key = (p.models ?? "").split(",")[0]?.trim() || `_pub_${p.id}`
-    if (!by_method.has(key)) by_method.set(key, [])
-    by_method.get(key).push(p)
+    const method = (p.models ?? "").split(",")[0]?.trim() || `_pub_${p.id}`
+    const key    = p.version ? `${method}|${p.version}` : method
+    if (!by_group.has(key)) by_group.set(key, { method, version: p.version || null, pubs: [] })
+    by_group.get(key).pubs.push(p)
   }
 
   const POST_PREPRINT = new Set(["peer-reviewed", "ML conference", "thesis"])
 
   const rows = []
-  for (const [method, pubs] of by_method.entries()) {
+  for (const { method, version, pubs } of by_group.values()) {
     // Sort each method's pubs by date.
     const sorted = pubs.slice().sort((a, b) => (a.date ?? 0) - (b.date ?? 0))
     const preprints = sorted.filter(p => p.type === "preprint")
@@ -1558,6 +1562,7 @@ lifecycle_rows = {
         const gap_months = gap_days / 30.44
         rows.push({
           method,
+          version,
           status: "paired",
           preprint_date: pp.date,
           preprint_title: pp.title,
@@ -1570,6 +1575,7 @@ lifecycle_rows = {
       } else {
         rows.push({
           method,
+          version,
           status: "preprint-only",
           preprint_date: pp.date,
           preprint_title: pp.title,
@@ -1585,6 +1591,7 @@ lifecycle_rows = {
       if (claimed.has(p.id)) continue
       rows.push({
         method,
+        version,
         status: "peer-reviewed-only",
         preprint_date: null,
         preprint_title: null,
@@ -1633,9 +1640,10 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 //| echo: false
 {
   const table = Inputs.table(lifecycle_search, {
-    columns: ["method", "status", "preprint_date", "peer_date", "gap_months"],
+    columns: ["method", "version", "status", "preprint_date", "peer_date", "gap_months"],
     header: {
       method:        "Method",
+      version:       "Version",
       status:        "Status",
       preprint_date: "Preprint",
       peer_date:     "Peer-reviewed",
@@ -1661,7 +1669,7 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
       gap_months: g => g == null ? "" : `${g.toFixed(1)} mo`
     },
     rows: 25,
-    width: { method: 220, status: 160, preprint_date: 110, peer_date: 110, gap_months: 110 }
+    width: { method: 200, version: 70, status: 160, preprint_date: 110, peer_date: 110, gap_months: 110 }
   })
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
@@ -1677,29 +1685,14 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 ```{ojs}
 //| echo: false
 {
-  // Some methods (Casanovo, Lutefisk) have multiple paired publications; if we
-  // y='method' the bars stack visually and the apparent gap becomes the sum.
-  // Give each pairing a unique y label so every row renders as its own bar.
-  const method_counts = new Map()
-  for (const r of lifecycle_rows.filter(r => r.status === "paired")) {
-    method_counts.set(r.method, (method_counts.get(r.method) ?? 0) + 1)
-  }
-  // Use a "year-aware" label whenever the same method appears more than once.
-  // Pull the year robustly: preprint_date may arrive as Date or as a string,
-  // depending on how Quarto serialized the row through the data chunk.
-  const yearOf = d => {
-    if (!d) return ""
-    if (d instanceof Date) return d.getFullYear()
-    const m = String(d).match(/^(\d{4})/)
-    return m ? m[1] : ""
-  }
+  // Label = method + version (when versioned). Casanovo's three versions then
+  // get their own y-axis rows; everything else stays as just the method name.
   const paired = lifecycle_rows
     .filter(r => r.status === "paired")
-    .map(r => {
-      const dup = (method_counts.get(r.method) ?? 0) > 1
-      const yr  = yearOf(r.preprint_date)
-      return { ...r, label: dup && yr ? `${r.method} (${yr})` : r.method }
-    })
+    .map(r => ({
+      ...r,
+      label: r.version ? `${r.method} ${r.version}` : r.method
+    }))
   if (!paired.length) {
     return html`<p style="color:#57606a; font-style:italic;">No paired methods in the current filter.</p>`
   }
@@ -1739,9 +1732,9 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
   }))
   const table = Inputs.table(search_with_if, {
-    columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
+    columns: ["year", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
     header: {
-      year: "Year", models: "Method(s)", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
+      year: "Year", models: "Method(s)", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
       title: "Title", authors: "Authors", journal: "Venue", citedness: "IF₂ᵧᵣ", type: "Type", repo: "Code"
     },
     format: {
@@ -1766,7 +1759,7 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     sort: "year",
     reverse: true,
     rows: 25,
-    width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
+    width: { year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
