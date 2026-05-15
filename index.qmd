@@ -1679,20 +1679,27 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 {
   // Some methods (Casanovo, Lutefisk) have multiple paired publications; if we
   // y='method' the bars stack visually and the apparent gap becomes the sum.
-  // Disambiguate the y-label per pairing so every pairing gets its own bar.
+  // Give each pairing a unique y label so every row renders as its own bar.
   const method_counts = new Map()
   for (const r of lifecycle_rows.filter(r => r.status === "paired")) {
     method_counts.set(r.method, (method_counts.get(r.method) ?? 0) + 1)
   }
+  // Use a "year-aware" label whenever the same method appears more than once.
+  // Pull the year robustly: preprint_date may arrive as Date or as a string,
+  // depending on how Quarto serialized the row through the data chunk.
+  const yearOf = d => {
+    if (!d) return ""
+    if (d instanceof Date) return d.getFullYear()
+    const m = String(d).match(/^(\d{4})/)
+    return m ? m[1] : ""
+  }
   const paired = lifecycle_rows
     .filter(r => r.status === "paired")
-    .map(r => ({
-      ...r,
-      // Tag pairings with the preprint year only when the method has more than one.
-      label: method_counts.get(r.method) > 1 && r.preprint_date
-        ? `${r.method} (${r.preprint_date.getFullYear()})`
-        : r.method
-    }))
+    .map(r => {
+      const dup = (method_counts.get(r.method) ?? 0) > 1
+      const yr  = yearOf(r.preprint_date)
+      return { ...r, label: dup && yr ? `${r.method} (${yr})` : r.method }
+    })
   if (!paired.length) {
     return html`<p style="color:#57606a; font-style:italic;">No paired methods in the current filter.</p>`
   }
@@ -1703,10 +1710,11 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
     y: { label: null },
     marks: [
       Plot.barX(paired, {
-        x: "gap_months",
+        x1: 0,
+        x2: "gap_months",   // explicit x1/x2 bypasses Plot's auto stackX transform
         y: "label",
         fill: "#1f6feb",
-        sort: { y: "x", reverse: true },
+        sort: { y: "x2", reverse: true },
         tip: true
       }),
       Plot.ruleX([0])
