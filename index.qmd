@@ -1677,7 +1677,22 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 ```{ojs}
 //| echo: false
 {
-  const paired = lifecycle_rows.filter(r => r.status === "paired")
+  // Some methods (Casanovo, Lutefisk) have multiple paired publications; if we
+  // y='method' the bars stack visually and the apparent gap becomes the sum.
+  // Disambiguate the y-label per pairing so every pairing gets its own bar.
+  const method_counts = new Map()
+  for (const r of lifecycle_rows.filter(r => r.status === "paired")) {
+    method_counts.set(r.method, (method_counts.get(r.method) ?? 0) + 1)
+  }
+  const paired = lifecycle_rows
+    .filter(r => r.status === "paired")
+    .map(r => ({
+      ...r,
+      // Tag pairings with the preprint year only when the method has more than one.
+      label: method_counts.get(r.method) > 1 && r.preprint_date
+        ? `${r.method} (${r.preprint_date.getFullYear()})`
+        : r.method
+    }))
   if (!paired.length) {
     return html`<p style="color:#57606a; font-style:italic;">No paired methods in the current filter.</p>`
   }
@@ -1689,7 +1704,7 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
     marks: [
       Plot.barX(paired, {
         x: "gap_months",
-        y: "method",
+        y: "label",
         fill: "#1f6feb",
         sort: { y: "x", reverse: true },
         tip: true
