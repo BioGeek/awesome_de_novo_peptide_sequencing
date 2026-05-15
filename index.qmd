@@ -1841,7 +1841,7 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
 
 ```{ojs}
 //| echo: false
-{
+viewof selected_pubs = {
   // Decorate each row with the venue's OpenAlex 2-year citedness (or null).
   const search_with_if = search.map(r => ({
     ...r,
@@ -1877,7 +1877,10 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     rows: 25,
     width: { year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
-  return html`<div class="chart-wrap">
+  // Reflect the inner Inputs.table's value/input on the fullscreen wrapper so
+  // `viewof selected_pubs` exposes the rows the user has ticked — used by the
+  // BibTeX download button below.
+  const wrapper = html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
       const el = this.parentElement;
       if (document.fullscreenElement) document.exitFullscreen();
@@ -1885,7 +1888,75 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${table}</div>
   </div>`
+  Object.defineProperty(wrapper, "value", { get: () => table.value })
+  table.addEventListener("input", e => wrapper.dispatchEvent(new CustomEvent("input", { bubbles: false })))
+  return wrapper
 }
+```
+
+```{ojs}
+//| echo: false
+{
+  // Format one publication as a BibTeX entry. Entry type picked from
+  // publication_type; key is a stable first-author-lastname + year + title-word slug.
+  const slug = s => (s ?? "").toString().toLowerCase().replace(/[^a-z0-9]+/g, "")
+  const escape = s => (s ?? "").toString().replace(/[{}\\]/g, "\\$&")
+  const entry_type_of = t => ({
+    "ML conference": "inproceedings",
+    "thesis":        "phdthesis",
+    "preprint":      "misc",
+    "commentary":    "misc"
+  })[t] ?? "article"
+  const to_bibtex = p => {
+    const author_list = (p.authors ?? "").split(",").map(s => s.trim()).filter(Boolean)
+    const first_last  = author_list[0]?.split(/\s+/).pop() ?? "anon"
+    const title_word  = (p.title ?? "ref").split(/\s+/).find(w => w.length > 3) ?? "ref"
+    const key = `${slug(first_last)}${p.year ?? ""}${slug(title_word)}`
+    const fields = []
+    if (p.title)   fields.push(`  title   = {${escape(p.title)}}`)
+    if (author_list.length) fields.push(`  author  = {${author_list.map(escape).join(" and ")}}`)
+    if (p.year)    fields.push(`  year    = {${p.year}}`)
+    if (p.journal) fields.push(`  journal = {${escape(p.journal)}}`)
+    if (p.doi)     fields.push(`  doi     = {${escape(p.doi)}}`)
+    if (p.url)     fields.push(`  url     = {${escape(p.url)}}`)
+    if (p.type === "preprint") fields.push(`  note    = {preprint}`)
+    return `@${entry_type_of(p.type)}{${key},\n${fields.join(",\n")}\n}`
+  }
+  const handle_download = () => {
+    if (!selected_pubs.length) return
+    const text = selected_pubs.map(to_bibtex).join("\n\n") + "\n"
+    const blob = new Blob([text], { type: "application/x-bibtex;charset=utf-8" })
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = `de-novo-papers-${new Date().toISOString().slice(0,10)}.bib`
+    document.body.appendChild(a); a.click(); a.remove()
+    URL.revokeObjectURL(a.href)
+  }
+  const disabled = selected_pubs.length === 0
+  const btn = html`<button class="download-btn" ?disabled=${disabled}>
+    ⬇ Download ${selected_pubs.length || "—"} selected as BibTeX
+  </button>`
+  btn.disabled = disabled
+  btn.onclick = handle_download
+  return html`<div style="margin: 0.5rem 0 1rem; display: flex; gap: 0.75rem; align-items: center;">
+    ${btn}
+    <span style="color:#57606a; font-size: 0.9em;">Tick rows in the table above to enable.</span>
+  </div>`
+}
+```
+
+```{=html}
+<style>
+.download-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #0969da; color: white;
+  border: none; border-radius: 6px;
+  cursor: pointer;
+}
+.download-btn:disabled { background: #adb5bd; cursor: not-allowed; }
+.download-btn:not(:disabled):hover { background: #0860c7; }
+</style>
 ```
 
 ## Browse all authors
