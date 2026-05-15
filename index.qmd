@@ -88,6 +88,23 @@ institutions = pd.read_sql(
     conn,
 )
 
+pub_authorship = pd.read_sql(
+    """
+    SELECT pa.publication_id AS pub_id,
+           a.id              AS author_id,
+           a.name            AS author,
+           af.id             AS affiliation_id,
+           af.name           AS affiliation,
+           c.name            AS country
+    FROM publication_author pa
+    JOIN author a              ON a.id = pa.author_id
+    LEFT JOIN author_affiliation aa ON aa.author_id = a.id
+    LEFT JOIN affiliation af   ON af.id = aa.affiliation_id
+    LEFT JOIN country c        ON c.id = af.country_id
+    """,
+    conn,
+)
+
 coauth_edges = pd.read_sql(
     """
     SELECT a1.name AS source, a2.name AS target, COUNT(*) AS weight
@@ -198,6 +215,7 @@ ojs_define(
     top_authors=top_authors,
     geo=geo,
     institutions=institutions,
+    pub_authorship=pub_authorship,
     coauth_edges=coauth_edges,
     author_affs=author_affs,
     algorithms=algorithms,
@@ -216,6 +234,7 @@ pubs_t = transpose(pubs).map(r => ({ ...r, year: +r.year, date: r.date ? new Dat
 top_authors_t = transpose(top_authors)
 geo_t = transpose(geo)
 institutions_t = transpose(institutions)
+pub_authorship_t = transpose(pub_authorship)
 coauth_edges_t = transpose(coauth_edges)
 author_affs_t = transpose(author_affs)
 algorithms_t = transpose(algorithms).map(r => ({
@@ -721,44 +740,89 @@ viewof country_metric = Inputs.radio(
 
 ```{ojs}
 //| echo: false
-Plot.plot({
-  marginLeft: 140,
-  height: Math.max(280, geo_t.length * 22),
-  x: { label: country_metric === "authors" ? "Distinct authors" : "Distinct affiliations", grid: true },
-  y: { label: null },
-  marks: [
-    Plot.barX(geo_t, {
-      x: country_metric,
-      y: "country",
-      fill: "steelblue",
-      sort: { y: "x", reverse: true },
-      tip: true
-    }),
-    Plot.ruleX([0])
-  ]
-})
+{
+  // Per-country distinct authors / affiliations, recomputed from the currently
+  // filtered pubs so the chart reacts to the global Kind / Approach /
+  // Acquisition filters. Falls back to the unfiltered geo_t totals when no
+  // filter has been applied (avoids an empty chart on first paint).
+  const pub_ids = new Set(pubs_filtered.map(p => p.id))
+  const authors_by_country = new Map()
+  const affs_by_country    = new Map()
+  for (const r of pub_authorship_t) {
+    if (!pub_ids.has(r.pub_id) || !r.country) continue
+    if (!authors_by_country.has(r.country)) authors_by_country.set(r.country, new Set())
+    if (!affs_by_country.has(r.country))    affs_by_country.set(r.country,    new Set())
+    authors_by_country.get(r.country).add(r.author_id)
+    affs_by_country.get(r.country).add(r.affiliation_id)
+  }
+  const rows = Array.from(authors_by_country.keys()).map(country => ({
+    country,
+    authors:      authors_by_country.get(country).size,
+    affiliations: affs_by_country.get(country).size
+  })).filter(r => r[country_metric] > 0)
+
+  return Plot.plot({
+    marginLeft: 140,
+    width: 1100,
+    height: Math.max(280, rows.length * 22),
+    x: { label: country_metric === "authors" ? `Distinct authors (${pubs_filtered.length} papers)` : `Distinct affiliations (${pubs_filtered.length} papers)`, grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(rows, {
+        x: country_metric,
+        y: "country",
+        fill: "steelblue",
+        sort: { y: "x", reverse: true },
+        tip: true
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
 ```
 
 ### Top institutions
 
 ```{ojs}
 //| echo: false
-Plot.plot({
-  marginLeft: 280,
-  height: Math.max(260, institutions_t.length * 26),
-  x: { label: "Distinct authors", grid: true },
-  y: { label: null },
-  marks: [
-    Plot.barX(institutions_t, {
-      x: "authors",
-      y: d => `${d.institution} — ${d.country}`,
-      fill: "country",
-      sort: { y: "x", reverse: true },
-      tip: true
-    }),
-    Plot.ruleX([0])
-  ]
-})
+{
+  // Top-15 institutions by distinct authors, recomputed from filtered pubs so
+  // the chart tracks the global Kind / Approach / Acquisition filters.
+  const pub_ids = new Set(pubs_filtered.map(p => p.id))
+  const authors_by_inst = new Map()  // affiliation → Set(author_id)
+  const country_of      = new Map()  // affiliation → country (for color)
+  for (const r of pub_authorship_t) {
+    if (!pub_ids.has(r.pub_id) || !r.affiliation) continue
+    if (!authors_by_inst.has(r.affiliation)) authors_by_inst.set(r.affiliation, new Set())
+    authors_by_inst.get(r.affiliation).add(r.author_id)
+    if (r.country) country_of.set(r.affiliation, r.country)
+  }
+  const rows = Array.from(authors_by_inst, ([institution, authors]) => ({
+    institution,
+    country: country_of.get(institution) ?? "—",
+    authors: authors.size
+  }))
+    .sort((a, b) => b.authors - a.authors)
+    .slice(0, 15)
+
+  return Plot.plot({
+    marginLeft: 280,
+    width: 1100,
+    height: Math.max(260, rows.length * 26),
+    x: { label: `Distinct authors (${pubs_filtered.length} papers)`, grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(rows, {
+        x: "authors",
+        y: d => `${d.institution} — ${d.country}`,
+        fill: "country",
+        sort: { y: "x", reverse: true },
+        tip: true
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
 ```
 
 ## Who's driving it
