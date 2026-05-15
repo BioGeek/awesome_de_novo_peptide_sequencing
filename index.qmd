@@ -455,10 +455,10 @@ innovations_timeline = {
     "Random Forest":     1.2,
     "Learning-to-rank":  1.2,
     "CNN + RNN":         2.0,
-    "Transformer (AR)":  6.0,
+    "Transformer (AR)":  8.0,
     "GNN":               1.2,
     "CNN":               1.2,
-    "Transformer (NAR)": 1.6,
+    "Transformer (NAR)": 2.5,
     "Diffusion":         1.2
   }
 
