@@ -435,10 +435,8 @@ innovations_timeline = {
   }
   // Tiers chosen to spread labels both above and below the band center.
   const Y_TIERS = [0.5, 0.8, 0.2, 0.9, 0.1, 0.65, 0.35, 0.95, 0.05, 0.72, 0.28, 0.85, 0.15, 0.58, 0.42]
-  // 270 days ≈ 9 months. Long model names like "DeepNovo Peptidome" are ~150 px wide;
-  // at the current x scale that's roughly 9 months of horizontal space, so anything
-  // closer than this should land on a separate tier to avoid label collisions.
-  const MIN_GAP_DAYS = 270
+  // MIN_GAP_DAYS is computed dynamically below from the actual x-range so it self-tunes
+  // when more years of data come in (e.g. older classical methods extending back to 1997).
 
   // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
   // Graph / DP now holds seven classical algorithms (Sherenga, PEAKS, PepNovo, MSNovo,
@@ -487,6 +485,23 @@ innovations_timeline = {
   // Assign each model a tier so labels at similar dates don't overlap; the tier fraction
   // is interpreted relative to the *band's* height so taller bands spread further apart.
   // The band_index check is a safety net for any future family name that's not yet listed
+  // X-range computed first so MIN_GAP_DAYS can self-tune to the actual scale.
+  const all_dates = algorithms_t.filter(a => a.first_pub).map(a => a.first_pub)
+  const x_min = d3.min(all_dates)
+  const x_max = d3.max(all_dates)
+  // Pad each side so labels at the temporal extremes (DeepNovo, DiffuNovo) stay inside the band.
+  const x_pad_min = d3.timeMonth.offset(x_min, -8)
+  const x_pad_max = d3.timeMonth.offset(x_max, 8)
+
+  // Dynamic MIN_GAP_DAYS: how many days of horizontal space a "wide-ish" label needs.
+  // Chart canvas is 1400 px wide; with marginLeft=140 and marginRight=60 the plot area
+  // is ~1200 px. LABEL_RESERVE_PX is the worst-case label width we want to clear.
+  const PLOT_WIDTH_PX  = 1200
+  const LABEL_RESERVE_PX = 110   // generous for names like "DeepNovo Peptidome", "Charge Derivatization"
+  const total_days = (x_pad_max - x_pad_min) / 86400000
+  const px_per_day = PLOT_WIDTH_PX / total_days
+  const MIN_GAP_DAYS = LABEL_RESERVE_PX / px_per_day
+
   // in band_order — without it the chart would crash on .y0 of undefined.
   const rows = algorithms_t
     .filter(a => matches_filters(a) && band_index.has(a.family))
@@ -512,13 +527,6 @@ innovations_timeline = {
       items.push({ ...row, y: band.center, y_frac: 0.5 })
     }
   }
-
-  const all_dates = algorithms_t.filter(a => a.first_pub).map(a => a.first_pub)
-  const x_min = d3.min(all_dates)
-  const x_max = d3.max(all_dates)
-  // Pad each side so labels at the temporal extremes (DeepNovo, DiffuNovo) stay inside the band.
-  const x_pad_min = d3.timeMonth.offset(x_min, -8)
-  const x_pad_max = d3.timeMonth.offset(x_max, 8)
 
   const chart = Plot.plot({
     width: 1400,
