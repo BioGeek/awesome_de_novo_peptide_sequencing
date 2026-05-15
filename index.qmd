@@ -273,6 +273,13 @@ n_countries = geo_t.length
 years_with_pubs = pubs_t.map(p => p.year).filter(y => Number.isFinite(y))
 first_year = Math.min(...years_with_pubs)
 last_year  = Math.max(...years_with_pubs)
+// First year a paper using deep learning appears in the catalog — anchors the
+// "wave" prose so the DL inflection point reads from data, not a constant.
+dl_algo_names = new Set(algorithms_t.filter(a => a.is_dl === true).map(a => a.model))
+first_dl_year = Math.min(...pubs_t
+  .filter(p => Number.isFinite(p.year) && (p.models ?? "").split(",").map(s => s.trim()).some(m => dl_algo_names.has(m)))
+  .map(p => p.year)
+)
 n_preprints = pubs_t.filter(p => p.type === "preprint").length
 n_peer_reviewed = pubs_t.filter(p => p.type === "peer-reviewed").length
 families = Array.from(new Set(algorithms_t.map(a => a.family).filter(Boolean)))
@@ -439,7 +446,7 @@ n_papers_filtered = pubs_filtered.length
 
 ## The wave
 
-The earliest paper tracked here appeared in **${first_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how fast this field moves.
+The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since — most published work is still preprints, reflecting how fast this field moves.
 
 ```{ojs}
 //| echo: false
