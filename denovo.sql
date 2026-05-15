@@ -344,6 +344,7 @@ INSERT INTO country VALUES(15,'Australia');
 INSERT INTO country VALUES(16,'Switzerland');
 INSERT INTO country VALUES(17,'Slovakia');
 INSERT INTO country VALUES(18,'Thailand');
+INSERT INTO country VALUES(19,'Singapore');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -413,6 +414,8 @@ INSERT INTO city VALUES(58,'Košice',17);
 INSERT INTO city VALUES(59,'Zurich',16);
 INSERT INTO city VALUES(60,'Lanzhou',2);
 INSERT INTO city VALUES(61,'Bangkok',18);
+INSERT INTO city VALUES(62,'Changsha',2);
+INSERT INTO city VALUES(63,'Singapore',19);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -565,6 +568,8 @@ INSERT INTO affiliation VALUES(135,'Chulalongkorn University','Computational Mol
 INSERT INTO affiliation VALUES(136,'Chulalongkorn University','Research Affairs, Faculty of Medicine and King Chulalongkorn Memorial Hospital',18,61);
 INSERT INTO affiliation VALUES(137,'The Wistar Institute','Proteomics and Metabolomics Facility',8,38);
 INSERT INTO affiliation VALUES(138,'The Wistar Institute','Center for Systems and Computational Biology',8,38);
+INSERT INTO affiliation VALUES(139,'Hunan University',NULL,2,62);
+INSERT INTO affiliation VALUES(140,'National University of Singapore',NULL,19,63);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -992,6 +997,18 @@ INSERT INTO author_affiliation VALUES(311,134);
 INSERT INTO author_affiliation VALUES(311,135);
 INSERT INTO author_affiliation VALUES(312,135);
 INSERT INTO author_affiliation VALUES(312,136);
+INSERT INTO author_affiliation VALUES(313,24);
+INSERT INTO author_affiliation VALUES(313,140);
+INSERT INTO author_affiliation VALUES(314,23);
+INSERT INTO author_affiliation VALUES(183,71);
+INSERT INTO author_affiliation VALUES(315,139);
+INSERT INTO author_affiliation VALUES(316,71);
+INSERT INTO author_affiliation VALUES(211,52);
+INSERT INTO author_affiliation VALUES(250,52);
+INSERT INTO author_affiliation VALUES(100,52);
+INSERT INTO author_affiliation VALUES(317,52);
+INSERT INTO author_affiliation VALUES(318,52);
+INSERT INTO author_affiliation VALUES(319,52);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1800,9 +1817,9 @@ INSERT INTO publication_author VALUES(80,105,7);
 INSERT INTO publication_author VALUES(80,107,8);
 INSERT INTO publication_author VALUES(80,252,9);
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',18);
-INSERT INTO sqlite_sequence VALUES('city',61);
-INSERT INTO sqlite_sequence VALUES('affiliation',138);
+INSERT INTO sqlite_sequence VALUES('country',19);
+INSERT INTO sqlite_sequence VALUES('city',63);
+INSERT INTO sqlite_sequence VALUES('affiliation',140);
 INSERT INTO sqlite_sequence VALUES('author',319);
 INSERT INTO sqlite_sequence VALUES('algorithm',75);
 INSERT INTO sqlite_sequence VALUES('publication',80);
