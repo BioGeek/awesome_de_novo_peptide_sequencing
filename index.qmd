@@ -448,7 +448,7 @@ Plot.plot({
   height: 360,
   x: { label: "Year", tickFormat: "d", interval: 1 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
-  color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis"] },
+  color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis", "commentary"] },
   marks: [
     Plot.barY(
       pubs_filtered.filter(p => Number.isFinite(p.year)),
