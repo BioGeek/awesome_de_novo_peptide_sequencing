@@ -2180,6 +2180,15 @@ INSERT INTO publication_author VALUES(101,388,7);
 INSERT INTO publication_author VALUES(101,389,8);
 INSERT INTO publication_author VALUES(101,276,9);
 INSERT INTO publication_author VALUES(101,234,10);
+CREATE TABLE publication_citation (
+    citing_id INTEGER NOT NULL,
+    cited_id  INTEGER NOT NULL,
+    source    TEXT    NOT NULL,  -- 'crossref', 'semanticscholar', 'both'
+    PRIMARY KEY (citing_id, cited_id),
+    FOREIGN KEY (citing_id) REFERENCES publication(id) ON DELETE CASCADE,
+    FOREIGN KEY (cited_id)  REFERENCES publication(id) ON DELETE CASCADE,
+    CHECK (citing_id != cited_id)
+);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',19);
 INSERT INTO sqlite_sequence VALUES('city',73);
@@ -2187,4 +2196,5 @@ INSERT INTO sqlite_sequence VALUES('affiliation',161);
 INSERT INTO sqlite_sequence VALUES('author',389);
 INSERT INTO sqlite_sequence VALUES('algorithm',92);
 INSERT INTO sqlite_sequence VALUES('publication',101);
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
