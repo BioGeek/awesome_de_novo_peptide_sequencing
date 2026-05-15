@@ -445,6 +445,7 @@ The earliest paper tracked here appeared in **${first_year}**. Activity has acce
 //| echo: false
 Plot.plot({
   marginLeft: 50,
+  width: 1100,
   height: 360,
   x: { label: "Year", tickFormat: "d", interval: 1 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
