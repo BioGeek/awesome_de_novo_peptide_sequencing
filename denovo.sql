@@ -1038,6 +1038,7 @@ INSERT INTO algorithm VALUES(66,'pNovo',NULL,NULL,'http://pfind.org/software/pNo
 INSERT INTO algorithm VALUES(67,'pNovo+',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','Complementary HCD + ETD spectra','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decision tree','Real-time decision-tree scoring','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(69,'Winnow',NULL,NULL,NULL,NULL,'NN rescoring + decoy-free FDR','post-processor',1,'both');
+INSERT INTO algorithm VALUES(70,'Xia 2025 Survey',NULL,NULL,NULL,NULL,'Systematic review of DL de novo','meta',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1123,6 +1124,7 @@ INSERT INTO publication VALUES(71,'pNovo: De novo Peptide Sequencing and Identif
 INSERT INTO publication VALUES(72,'pNovo+: De Novo Peptide Sequencing Using Complementary HCD and ETD Tandem Mass Spectra','2013-02-01','10.1021/pr3006843','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/pr3006843','Journal of Proteome Research','peer-reviewed');
 INSERT INTO publication VALUES(73,'Novor: Real-Time Peptide de Novo Sequencing Software','2015-06-30','10.1007/s13361-015-1204-0','Springer',NULL,'https://link.springer.com/article/10.1007/s13361-015-1204-0','Journal of The American Society for Mass Spectrometry','peer-reviewed');
 INSERT INTO publication VALUES(74,'De novo peptide sequencing rescoring and FDR estimation with Winnow','2025-09-29','10.48550/arXiv.2509.24952','arXiv',NULL,'https://arxiv.org/abs/2509.24952','arXiv','preprint');
+INSERT INTO publication VALUES(75,'A Comprehensive and Systematic Review for Deep Learning-Based De Novo Peptide Sequencing','2025-08-01',NULL,'IJCAI',NULL,'https://www.ijcai.org/proceedings/2025/1191','IJCAI 2025','ML conference');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1207,6 +1209,7 @@ INSERT INTO publication_algorithm VALUES(71,66);
 INSERT INTO publication_algorithm VALUES(72,67);
 INSERT INTO publication_algorithm VALUES(73,68);
 INSERT INTO publication_algorithm VALUES(74,69);
+INSERT INTO publication_algorithm VALUES(75,70);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1706,11 +1709,16 @@ INSERT INTO publication_author VALUES(74,18,7);
 INSERT INTO publication_author VALUES(74,19,8);
 INSERT INTO publication_author VALUES(74,15,9);
 INSERT INTO publication_author VALUES(74,2,10);
+INSERT INTO publication_author VALUES(75,57,1);
+INSERT INTO publication_author VALUES(75,56,2);
+INSERT INTO publication_author VALUES(75,55,3);
+INSERT INTO publication_author VALUES(75,143,4);
+INSERT INTO publication_author VALUES(75,157,5);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',17);
 INSERT INTO sqlite_sequence VALUES('city',60);
 INSERT INTO sqlite_sequence VALUES('affiliation',133);
 INSERT INTO sqlite_sequence VALUES('author',305);
-INSERT INTO sqlite_sequence VALUES('algorithm',69);
-INSERT INTO sqlite_sequence VALUES('publication',74);
+INSERT INTO sqlite_sequence VALUES('algorithm',70);
+INSERT INTO sqlite_sequence VALUES('publication',75);
 COMMIT;
