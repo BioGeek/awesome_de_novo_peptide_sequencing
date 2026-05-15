@@ -310,6 +310,18 @@ INSERT INTO author VALUES(304,'Jemma Daniel',NULL);
 INSERT INTO author VALUES(305,'Henrik Servais Janssen Knudsen',NULL);
 INSERT INTO author VALUES(306,'Carlo Melendez',NULL);
 INSERT INTO author VALUES(307,'Marina Pominova',NULL);
+INSERT INTO author VALUES(308,'Korrawe Karunratanakul',NULL);
+INSERT INTO author VALUES(309,'Hsin-Yao Tang',NULL);
+INSERT INTO author VALUES(310,'David W. Speicher',NULL);
+INSERT INTO author VALUES(311,'Ekapol Chuangsuwanich',NULL);
+INSERT INTO author VALUES(312,'Sira Sriswasdi',NULL);
+INSERT INTO author VALUES(313,'Yue Liu',NULL);
+INSERT INTO author VALUES(314,'Jianwei Yin',NULL);
+INSERT INTO author VALUES(315,'Hongxin Xiang',NULL);
+INSERT INTO author VALUES(316,'Zicheng Liu',NULL);
+INSERT INTO author VALUES(317,'Shengying Pan',NULL);
+INSERT INTO author VALUES(318,'Qing Zhang',NULL);
+INSERT INTO author VALUES(319,'Wenting Li',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -331,6 +343,7 @@ INSERT INTO country VALUES(14,'France');
 INSERT INTO country VALUES(15,'Australia');
 INSERT INTO country VALUES(16,'Switzerland');
 INSERT INTO country VALUES(17,'Slovakia');
+INSERT INTO country VALUES(18,'Thailand');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -399,6 +412,7 @@ INSERT INTO city VALUES(57,'Cambridge',8);
 INSERT INTO city VALUES(58,'Košice',17);
 INSERT INTO city VALUES(59,'Zurich',16);
 INSERT INTO city VALUES(60,'Lanzhou',2);
+INSERT INTO city VALUES(61,'Bangkok',18);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -546,6 +560,11 @@ INSERT INTO affiliation VALUES(130,'Lanzhou University','School of Life Science'
 INSERT INTO affiliation VALUES(131,'University of Western Ontario','Department of Computer Science',9,42);
 INSERT INTO affiliation VALUES(132,'University of Western Ontario','Department of Biochemistry',9,42);
 INSERT INTO affiliation VALUES(133,'The University of Hong Kong',NULL,2,17);
+INSERT INTO affiliation VALUES(134,'Chulalongkorn University','Department of Computer Engineering, Faculty of Engineering',18,61);
+INSERT INTO affiliation VALUES(135,'Chulalongkorn University','Computational Molecular Biology Group, Faculty of Medicine',18,61);
+INSERT INTO affiliation VALUES(136,'Chulalongkorn University','Research Affairs, Faculty of Medicine and King Chulalongkorn Memorial Hospital',18,61);
+INSERT INTO affiliation VALUES(137,'The Wistar Institute','Proteomics and Metabolomics Facility',8,38);
+INSERT INTO affiliation VALUES(138,'The Wistar Institute','Center for Systems and Computational Biology',8,38);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -966,6 +985,13 @@ INSERT INTO author_affiliation VALUES(304,1);
 INSERT INTO author_affiliation VALUES(305,2);
 INSERT INTO author_affiliation VALUES(306,47);
 INSERT INTO author_affiliation VALUES(307,46);
+INSERT INTO author_affiliation VALUES(308,134);
+INSERT INTO author_affiliation VALUES(309,137);
+INSERT INTO author_affiliation VALUES(310,138);
+INSERT INTO author_affiliation VALUES(311,134);
+INSERT INTO author_affiliation VALUES(311,135);
+INSERT INTO author_affiliation VALUES(312,135);
+INSERT INTO author_affiliation VALUES(312,136);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1044,6 +1070,10 @@ INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decisi
 INSERT INTO algorithm VALUES(69,'Winnow',NULL,NULL,NULL,NULL,'NN rescoring + decoy-free FDR','post-processor',1,'both');
 INSERT INTO algorithm VALUES(70,'Xia 2025 Survey',NULL,NULL,NULL,NULL,'Systematic review of DL de novo','meta',NULL,NULL);
 INSERT INTO algorithm VALUES(71,'Bittremieux 2024 Review',NULL,NULL,NULL,NULL,'Review of DL de novo methods','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(72,'SMSNet','https://github.com/cmb-chula/SMSNet',NULL,NULL,'CNN + RNN','Sequence-Mask-Search seq2seq','algorithm',1,'DDA');
+INSERT INTO algorithm VALUES(73,'NovoBench',NULL,NULL,NULL,NULL,'NeurIPS benchmark for DL de novo','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(74,'SearchNovo','https://github.com/junxia97/SearchNovo',NULL,NULL,'Transformer (AR)','DB-search + de novo fusion','adjacent',1,'DDA');
+INSERT INTO algorithm VALUES(75,'NovoBoard','https://github.com/nh2tran/NovoBoard',NULL,NULL,NULL,'Decoy-based FDR + accuracy framework','post-processor',0,'DDA');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1131,6 +1161,10 @@ INSERT INTO publication VALUES(73,'Novor: Real-Time Peptide de Novo Sequencing S
 INSERT INTO publication VALUES(74,'De novo peptide sequencing rescoring and FDR estimation with Winnow','2025-09-29','10.48550/arXiv.2509.24952','arXiv',NULL,'https://arxiv.org/abs/2509.24952','arXiv','preprint');
 INSERT INTO publication VALUES(75,'A Comprehensive and Systematic Review for Deep Learning-Based De Novo Peptide Sequencing','2025-08-01',NULL,'IJCAI',NULL,'https://www.ijcai.org/proceedings/2025/1191','IJCAI 2025','ML conference');
 INSERT INTO publication VALUES(76,'Deep Learning Methods for De Novo Peptide Sequencing','2024-11-29','10.1002/mas.21919','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/mas.21919','Mass Spectrometry Reviews','peer-reviewed');
+INSERT INTO publication VALUES(77,'Uncovering Thousands of New Peptides with Sequence-Mask-Search Hybrid De Novo Peptide Sequencing Framework','2019-12-01','10.1074/mcp.TIR119.001656','ASBMB',NULL,'https://www.mcponline.org/article/S1535-9476(20)31650-9/fulltext','Molecular & Cellular Proteomics','peer-reviewed');
+INSERT INTO publication VALUES(78,'NovoBench: Benchmarking Deep Learning-based De Novo Peptide Sequencing Methods in Proteomics','2024-06-16','10.48550/arXiv.2406.11906','arXiv',NULL,'https://arxiv.org/abs/2406.11906','NeurIPS 2024','ML conference');
+INSERT INTO publication VALUES(79,'Bridging the Gap between Database Search and De Novo Peptide Sequencing with SearchNovo','2025-01-22',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=SjMtxqdQ73','ICLR 2025','ML conference');
+INSERT INTO publication VALUES(80,'NovoBoard: A Comprehensive Framework for Evaluating the False Discovery Rate and Accuracy of De Novo Peptide Sequencing','2024-04-16','10.1016/j.mcpro.2025.100939','ASBMB',NULL,'https://www.mcponline.org/article/S1535-9476(24)00139-7/fulltext','Molecular & Cellular Proteomics','peer-reviewed');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1217,6 +1251,10 @@ INSERT INTO publication_algorithm VALUES(73,68);
 INSERT INTO publication_algorithm VALUES(74,69);
 INSERT INTO publication_algorithm VALUES(75,70);
 INSERT INTO publication_algorithm VALUES(76,71);
+INSERT INTO publication_algorithm VALUES(77,72);
+INSERT INTO publication_algorithm VALUES(78,73);
+INSERT INTO publication_algorithm VALUES(79,74);
+INSERT INTO publication_algorithm VALUES(80,75);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1730,11 +1768,42 @@ INSERT INTO publication_author VALUES(76,89,6);
 INSERT INTO publication_author VALUES(76,90,7);
 INSERT INTO publication_author VALUES(76,92,8);
 INSERT INTO publication_author VALUES(76,96,9);
+INSERT INTO publication_author VALUES(77,308,1);
+INSERT INTO publication_author VALUES(77,309,2);
+INSERT INTO publication_author VALUES(77,310,3);
+INSERT INTO publication_author VALUES(77,311,4);
+INSERT INTO publication_author VALUES(77,312,5);
+INSERT INTO publication_author VALUES(78,56,1);
+INSERT INTO publication_author VALUES(78,55,2);
+INSERT INTO publication_author VALUES(78,57,3);
+INSERT INTO publication_author VALUES(78,183,4);
+INSERT INTO publication_author VALUES(78,143,5);
+INSERT INTO publication_author VALUES(78,156,6);
+INSERT INTO publication_author VALUES(78,313,7);
+INSERT INTO publication_author VALUES(78,314,8);
+INSERT INTO publication_author VALUES(78,157,9);
+INSERT INTO publication_author VALUES(79,57,1);
+INSERT INTO publication_author VALUES(79,183,2);
+INSERT INTO publication_author VALUES(79,56,3);
+INSERT INTO publication_author VALUES(79,55,4);
+INSERT INTO publication_author VALUES(79,315,5);
+INSERT INTO publication_author VALUES(79,316,6);
+INSERT INTO publication_author VALUES(79,313,7);
+INSERT INTO publication_author VALUES(79,157,8);
+INSERT INTO publication_author VALUES(80,211,1);
+INSERT INTO publication_author VALUES(80,250,2);
+INSERT INTO publication_author VALUES(80,100,3);
+INSERT INTO publication_author VALUES(80,317,4);
+INSERT INTO publication_author VALUES(80,318,5);
+INSERT INTO publication_author VALUES(80,319,6);
+INSERT INTO publication_author VALUES(80,105,7);
+INSERT INTO publication_author VALUES(80,107,8);
+INSERT INTO publication_author VALUES(80,252,9);
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',17);
-INSERT INTO sqlite_sequence VALUES('city',60);
-INSERT INTO sqlite_sequence VALUES('affiliation',133);
-INSERT INTO sqlite_sequence VALUES('author',307);
-INSERT INTO sqlite_sequence VALUES('algorithm',71);
-INSERT INTO sqlite_sequence VALUES('publication',76);
+INSERT INTO sqlite_sequence VALUES('country',18);
+INSERT INTO sqlite_sequence VALUES('city',61);
+INSERT INTO sqlite_sequence VALUES('affiliation',138);
+INSERT INTO sqlite_sequence VALUES('author',319);
+INSERT INTO sqlite_sequence VALUES('algorithm',75);
+INSERT INTO sqlite_sequence VALUES('publication',80);
 COMMIT;
