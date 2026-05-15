@@ -76,7 +76,10 @@ def fetch_semantic_scholar_refs(doi: str | None, title: str) -> list[dict]:
                 timeout=20,
             )
             r.raise_for_status()
-            data = r.json().get("data") or []
+            body = r.json()
+            if not isinstance(body, dict):
+                return []
+            data = body.get("data") or []
             if not data:
                 return []
             # Confirm the search hit looks like our paper before pulling refs.
@@ -85,7 +88,7 @@ def fetch_semantic_scholar_refs(doi: str | None, title: str) -> list[dict]:
                 return []
             paper_id = data[0]["paperId"]
             time.sleep(SS_DELAY)
-        except requests.RequestException:
+        except (requests.RequestException, ValueError):
             return []
 
     if not paper_id:
@@ -99,8 +102,12 @@ def fetch_semantic_scholar_refs(doi: str | None, title: str) -> list[dict]:
             timeout=30,
         )
         r.raise_for_status()
-        return [item.get("citedPaper") or {} for item in r.json().get("data", [])]
-    except requests.RequestException:
+        body = r.json()
+        if not isinstance(body, dict):
+            return []
+        data = body.get("data") or []
+        return [item.get("citedPaper") or {} for item in data]
+    except (requests.RequestException, ValueError):
         return []
 
 
@@ -191,12 +198,21 @@ def match_reference(
 ) -> int | None:
     """Resolve a single reference to a publication id in our DB.
 
-    DOI exact-match wins. Otherwise fuzzy title match against every paper in
-    the DB (token-set ratio ≥ FUZZY_THRESHOLD). Fuzzy matches go into
-    audit_rows for human review.
+    Matching priority:
+    1. DOI exact-match into the DB ⇒ that paper.
+    2. DOI present but NOT in the DB ⇒ this reference is a different paper;
+       skip it entirely. Fuzzy title matching here would produce false
+       positives like Medzihradszky's "Lessons in de novo peptide
+       sequencing" being matched to Sherenga's "De novo peptide sequencing
+       via tandem mass spectrometry".
+    3. No DOI ⇒ try exact normalized-title; otherwise fuzzy title.
+       Fuzzy hits are logged to audit_rows for human review.
     """
-    if ref_doi and ref_doi in by_doi:
-        return by_doi[ref_doi]
+    if ref_doi:
+        if ref_doi in by_doi:
+            return by_doi[ref_doi]
+        # DOI conclusively identifies a different paper — don't fuzzy-match.
+        return None
     if not ref_title:
         return None
     norm = normalize_title(ref_title)

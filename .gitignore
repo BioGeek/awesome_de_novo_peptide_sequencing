@@ -3,5 +3,6 @@ _site/
 .quarto/
 _freeze/
 plots/
+citation_audit.csv
 
 /.quarto/
