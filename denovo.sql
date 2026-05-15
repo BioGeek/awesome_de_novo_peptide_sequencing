@@ -1257,6 +1257,7 @@ INSERT INTO algorithm VALUES(85,'Robust FL-Sequencing',NULL,NULL,NULL,'Heuristic
 INSERT INTO algorithm VALUES(86,'UVnovo',NULL,NULL,NULL,'Graph / DP','UV photodissociation de novo','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(87,'AbNovoBench',NULL,NULL,NULL,NULL,'Monoclonal antibody de novo benchmark','meta',NULL,NULL);
 INSERT INTO algorithm VALUES(88,'Noble 2024 commentary',NULL,NULL,NULL,NULL,'Behind-the-paper post on benchmark wrangling','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(89,'9-species benchmark (Wen & Noble 2024)',NULL,NULL,NULL,NULL,'Multi-species PSM benchmark for ML training','meta',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1365,6 +1366,7 @@ INSERT INTO publication VALUES(94,'Highly Robust de Novo Full-Length Protein Seq
 INSERT INTO publication VALUES(95,'UVnovo: A de Novo Sequencing Algorithm Using Single Series of Fragment Ions via Chromophore Tagging and 351 nm Ultraviolet Photodissociation Mass Spectrometry','2016-04-26','10.1021/acs.analchem.6b00261','ACS',NULL,'https://pubs.acs.org/doi/10.1021/acs.analchem.6b00261','Analytical Chemistry','peer-reviewed');
 INSERT INTO publication VALUES(96,'AbNovoBench: a resource and benchmarking platform for monoclonal antibody de novo sequencing','2026-02-02','10.64898/2026.02.02.703105','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.02.02.703105v2','bioRxiv','preprint');
 INSERT INTO publication VALUES(97,'Wrangling a de novo sequencing benchmark','2024-11-12',NULL,'Springer Nature Communities',NULL,'https://communities.springernature.com/posts/wrangling-a-de-novo-sequencing-benchmark','Springer Nature Communities (Behind the Paper)','commentary');
+INSERT INTO publication VALUES(98,'A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models','2024-11-08','10.1038/s41597-024-04068-4','Springer Nature',NULL,'https://www.nature.com/articles/s41597-024-04068-4','Scientific Data','peer-reviewed');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1472,6 +1474,7 @@ INSERT INTO publication_algorithm VALUES(94,85);
 INSERT INTO publication_algorithm VALUES(95,86);
 INSERT INTO publication_algorithm VALUES(96,87);
 INSERT INTO publication_algorithm VALUES(97,88);
+INSERT INTO publication_algorithm VALUES(98,89);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2112,11 +2115,13 @@ INSERT INTO publication_author VALUES(96,374,11);
 INSERT INTO publication_author VALUES(96,142,12);
 INSERT INTO publication_author VALUES(96,140,13);
 INSERT INTO publication_author VALUES(97,96,1);
+INSERT INTO publication_author VALUES(98,90,1);
+INSERT INTO publication_author VALUES(98,96,2);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',19);
 INSERT INTO sqlite_sequence VALUES('city',71);
 INSERT INTO sqlite_sequence VALUES('affiliation',159);
 INSERT INTO sqlite_sequence VALUES('author',374);
-INSERT INTO sqlite_sequence VALUES('algorithm',88);
-INSERT INTO sqlite_sequence VALUES('publication',97);
+INSERT INTO sqlite_sequence VALUES('algorithm',89);
+INSERT INTO sqlite_sequence VALUES('publication',98);
 COMMIT;
