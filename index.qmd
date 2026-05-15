@@ -1541,8 +1541,21 @@ lifecycle_rows = {
 
 ```{ojs}
 //| echo: false
-viewof lifecycle_search = Inputs.search(lifecycle_rows, {
-  placeholder: `Search ${lifecycle_rows.length} lifecycle rows (filtered)…`
+viewof lifecycle_status_filter = Inputs.checkbox(
+  ["paired", "preprint-only", "peer-reviewed-only"],
+  { label: "Show status", value: ["paired"] }
+)
+```
+
+```{ojs}
+//| echo: false
+lifecycle_visible_rows = lifecycle_rows.filter(r => lifecycle_status_filter.includes(r.status))
+```
+
+```{ojs}
+//| echo: false
+viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
+  placeholder: `Search ${lifecycle_visible_rows.length} lifecycle rows (filtered)…`
 })
 ```
 
