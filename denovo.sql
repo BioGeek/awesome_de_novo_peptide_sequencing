@@ -388,9 +388,9 @@ INSERT INTO author VALUES(382,'Pelagia Kyriakidou',NULL);
 INSERT INTO author VALUES(383,'Frido Welker',NULL);
 INSERT INTO author VALUES(384,'Jürgen Cox',NULL);
 INSERT INTO author VALUES(385,'Jing Zhang',NULL);
-INSERT INTO author VALUES(386,'Weiming Chen',NULL);
+INSERT INTO author VALUES(386,'Weiwu Chen',NULL);
 INSERT INTO author VALUES(387,'Denis Yuen',NULL);
-INSERT INTO author VALUES(388,'Weiwu Zhang',NULL);
+INSERT INTO author VALUES(388,'Weiming Zhang',NULL);
 INSERT INTO author VALUES(389,'Zefeng Zhang',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1334,8 +1334,8 @@ INSERT INTO publication VALUES(25,'Transforming de novo peptide sequencing by ex
 INSERT INTO publication VALUES(26,'Sequence-to-sequence translation from mass spectra to peptides with a transformer model','2024-07-30','10.1038/s41467-024-49731-x','Nature Communications',NULL,'https://doi.org/10.1038/s41467-024-49731-x','Nature Communications','peer-reviewed');
 INSERT INTO publication VALUES(27,'TransNovo','2024-07-15',NULL,NULL,NULL,'https://github.com/ThatMatin/TransNovo',NULL,'preprint');
 INSERT INTO publication VALUES(28,'PowerNovo: de novo peptide sequencing via tandem mass spectrometry using an ensemble of transformer and BERT models','2024-07-01','10.1038/s41598-024-65861-0','Scientific Reports',NULL,'https://doi.org/10.1038/s41598-024-65861-0','Scientific Reports','peer-reviewed');
-INSERT INTO publication VALUES(29,'A transformer model for de novo sequencing of data independent acquisition mass spectrometry data','2024-06-04','10.1101/2024.06.03.597251','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2024.06.03.597251v1','bioRxiv','preprint');
-INSERT INTO publication VALUES(30,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2024-04-09','10.48550/arXiv.2305.14920','arXiv',NULL,'https://arxiv.org/abs/2305.14920','arXiv','preprint');
+INSERT INTO publication VALUES(29,'A transformer model for de novo sequencing of data independent acquisition mass spectrometry data','2025-07-01','10.1038/s41592-025-02718-y','Springer Nature',NULL,'https://www.nature.com/articles/s41592-025-02718-y','Nature Methods','peer-reviewed');
+INSERT INTO publication VALUES(30,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2024-04-09','10.48550/arXiv.2402.11363','arXiv',NULL,'https://arxiv.org/abs/2402.11363','arXiv','preprint');
 INSERT INTO publication VALUES(31,'pXg: Comprehensive Identification of Noncanonical MHC-I-Associated Peptides From De Novo Peptide Sequencing Using RNA-Seq Reads','2024-04-01','10.1016/j.mcpro.2024.100743','Molecular and Cellular Proteomics',NULL,'https://doi.org/10.1016/j.mcpro.2024.100743','Molecular and Cellular Proteomics','peer-reviewed');
 INSERT INTO publication VALUES(32,'AdaNovo: Adaptive De Novo Peptide Sequencing with Conditional Mutual Information','2024-03-15','10.48550/arXiv.2403.07013','arXiv',NULL,'https://arxiv.org/abs/2403.07013','ICML 2024','preprint');
 INSERT INTO publication VALUES(33,'Bidirectional de novo peptide sequencing using a transformer model','2024-02-28','10.1371/journal.pcbi.1011892','PLoS Computational Biology',NULL,'https://doi.org/10.1371/journal.pcbi.1011892','PLoS Computational Biology','peer-reviewed');
@@ -1350,7 +1350,7 @@ INSERT INTO publication VALUES(41,'Mitigating the missing-fragmentation problem 
 INSERT INTO publication VALUES(42,'SeqNovo: De Novo Peptide Sequencing Prediction in IoMT via Seq2Seq','2023-10-04','10.1109/JBHI.2023.3321780','IEEE Journal of Biomedical and Health Informatics',NULL,'https://ieeexplore.ieee.org/document/10271529','IEEE Journal of Biomedical and Health Informatics','peer-reviewed');
 INSERT INTO publication VALUES(43,'Glycopeptide database search and de novo sequencing with PEAKS GlycanFinder enable highly sensitive glycoproteomics','2023-07-08','10.1038/s41467-023-39699-5','Nature Communications',NULL,'https://doi.org/10.1038/s41467-023-39699-5','Nature Communications','peer-reviewed');
 INSERT INTO publication VALUES(44,'DpNovo: A DEEP LEARNING MODEL COMBINED WITH DYNAMIC PROGRAMMING FOR DE NOVO PEPTIDE SEQUENCING','2023-07-07',NULL,'MSc thesis',NULL,'https://uwo.scholaris.ca/items/84378bf5-f2d9-45d6-8264-10823888cb9a',NULL,'thesis');
-INSERT INTO publication VALUES(45,'BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method','2023-05-14','10.1101/2023.05.12.540277','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.05.12.540277v1','bioRxiv','preprint');
+INSERT INTO publication VALUES(45,'BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method','2023-05-11','10.1101/2023.05.11.540352','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.05.11.540352','bioRxiv','preprint');
 INSERT INTO publication VALUES(46,'PGPointNovo: an efficient neural network-based tool for parallel de novo peptide sequencing','2023-04-25','10.1093/bioadv/vbad057','Bioinformatics Advances',NULL,'https://doi.org/10.1093/bioadv/vbad057','Bioinformatics Advances','peer-reviewed');
 INSERT INTO publication VALUES(47,'PaSER Novor: Real-time de novo sequencing for 4D-Proteomics applications','2023-04-20',NULL,NULL,NULL,'https://www.bruker.com/en/news-and-events/news/2023/bruker-launches-de-novo-sequencing-for-immunopeptidomics.html',NULL,'preprint');
 INSERT INTO publication VALUES(48,'Denovo-GCN: De Novo Peptide Sequencing by Graph Convolutional Neural Networks','2023-04-05','10.3390/app13074604','MDPI Applied Sciences',NULL,'https://doi.org/10.3390/app13074604','Applied Sciences (MDPI)','peer-reviewed');
@@ -1792,10 +1792,10 @@ INSERT INTO publication_author VALUES(29,89,1);
 INSERT INTO publication_author VALUES(29,90,2);
 INSERT INTO publication_author VALUES(29,178,3);
 INSERT INTO publication_author VALUES(29,179,4);
-INSERT INTO publication_author VALUES(29,180,5);
-INSERT INTO publication_author VALUES(29,94,6);
-INSERT INTO publication_author VALUES(29,93,7);
-INSERT INTO publication_author VALUES(29,96,8);
+INSERT INTO publication_author VALUES(29,180,6);
+INSERT INTO publication_author VALUES(29,94,7);
+INSERT INTO publication_author VALUES(29,93,8);
+INSERT INTO publication_author VALUES(29,96,9);
 INSERT INTO publication_author VALUES(30,97,1);
 INSERT INTO publication_author VALUES(30,99,2);
 INSERT INTO publication_author VALUES(31,181,1);
@@ -2180,6 +2180,7 @@ INSERT INTO publication_author VALUES(101,388,7);
 INSERT INTO publication_author VALUES(101,389,8);
 INSERT INTO publication_author VALUES(101,276,9);
 INSERT INTO publication_author VALUES(101,234,10);
+INSERT INTO publication_author VALUES(29,88,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
