@@ -27,11 +27,18 @@ rm denovo.db && sqlite3 denovo.db < denovo.sql
 # Quick inspection
 sqlite3 denovo.db ".tables"
 sqlite3 denovo.db "SELECT name, algorithm_family FROM algorithm ORDER BY name;"
+
+# Rebuild the citation graph from Crossref + Semantic Scholar (offline, ~30 min)
+uv run python build_citations.py
 ```
 
 ## Schema shape (read before editing data)
 
-Nine tables: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `publication`, `publication_algorithm`, `publication_author`. Authors connect to publications via `publication_author` and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`. `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`) added after initial schema creation. `publication.publication_type` is a string; the SQL column comment names only `'preprint'` / `'peer-reviewed'` but the actual values in use now include `'thesis'`, `'ML conference'`, and `'commentary'`.
+Ten tables: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Authors connect to publications via `publication_author` and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`) added after initial schema creation. `publication.publication_type` is a string; the SQL column comment names only `'preprint'` / `'peer-reviewed'` but the actual values in use now include `'thesis'`, `'ML conference'`, and `'commentary'`.
+
+## Citation graph
+
+`build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or fuzzy-title match (token-set ratio ≥ 92), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI — it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
 
 When adding rows by hand, always check whether the entity already exists before inserting — author names and affiliation `(name, department)` pairs are the natural keys, not the surrogate IDs. A typical insert path for a new paper is: `country` → `city` → `affiliation` → `author` → `author_affiliation` → `algorithm` → `publication` → `publication_author` (with `author_order` set per author) → `publication_algorithm`. See any of the previously committed paper insertions (e.g. the `CausalNovo` commit) for the standard `INSERT … SELECT id FROM …` pattern.
 

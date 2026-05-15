@@ -171,6 +171,15 @@ author_details = pd.read_sql(
     conn,
 )
 
+# Citation edges from Crossref + Semantic Scholar (built offline via
+# build_citations.py). Each edge tagged with its provenance.
+citations = pd.read_sql(
+    """
+    SELECT citing_id, cited_id, source FROM publication_citation
+    """,
+    conn,
+)
+
 conn.close()
 
 ojs_define(
@@ -183,6 +192,7 @@ ojs_define(
     algorithms=algorithms,
     venues=venues,
     author_details=author_details,
+    citations=citations,
 )
 ```
 
@@ -203,6 +213,7 @@ algorithms_t = transpose(algorithms).map(r => ({
 }))
 venues_t = transpose(venues)
 author_details_t = transpose(author_details)
+citations_t      = transpose(citations)
 
 // Derived counters — everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
@@ -1123,6 +1134,180 @@ author_algo_network = {
         .attr("font-size", 11)
         .attr("fill", "#24292f")
         .text(d => d.label)
+    })
+
+  invalidation.then(() => sim.stop())
+
+  function drag(simulation) {
+    return d3.drag()
+      .on("start", (ev, d) => { if (!ev.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
+      .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y })
+      .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
+  }
+
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${svg.node()}</div>
+  </div>`
+}
+```
+
+### How the field cites itself
+
+A directed citation graph between papers in this catalog. Edges were resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), then matched back to publications via DOI-exact and fuzzy-title (token-set ratio ≥ 92). Only intra-catalog citations show up — references to papers outside the catalog are filtered out. Arrows point from the citing paper to the cited paper.
+
+```{ojs}
+//| echo: false
+citation_graph = {
+  if (!citations_t.length) {
+    return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
+      No citation edges yet. Run <code>uv run python build_citations.py</code> to populate the graph.
+    </p>`
+  }
+
+  const width  = 1400
+  const height = 760
+
+  // Per-publication metadata for node tooltips and coloring.
+  const pub_by_id = new Map(pubs_t.map(p => [p.id, p]))
+
+  // Build the node set from the edge endpoints (isolated pubs are dropped).
+  const node_ids = new Set()
+  for (const e of citations_t) { node_ids.add(e.citing_id); node_ids.add(e.cited_id) }
+  const nodes = Array.from(node_ids, id => {
+    const p = pub_by_id.get(id) ?? {}
+    return {
+      id,
+      title:  p.title ?? `#${id}`,
+      year:   p.year,
+      kind:   p.kind ?? "unknown",
+      is_dl:  p.is_dl,
+      models: p.models ?? "",
+      in_deg: 0,
+      out_deg: 0
+    }
+  })
+  const node_by_id = new Map(nodes.map(n => [n.id, n]))
+  const links = citations_t.map(e => ({
+    source: e.citing_id, target: e.cited_id, source_kind: e.source
+  }))
+  for (const l of links) {
+    node_by_id.get(l.source).out_deg += 1
+    node_by_id.get(l.target).in_deg  += 1
+  }
+
+  // Coloring by kind — same palette as the breakdown panel.
+  const kind_color = {
+    "algorithm":              "#1f6feb",
+    "post-processor":         "#bf8700",
+    "downstream-application": "#1a7f37",
+    "adjacent":               "#a371f7",
+    "review":                 "#cf222e",
+    "benchmark":              "#0969da",
+    "meta":                   "#8c959f",
+    "unknown":                "#8c959f"
+  }
+  const max_in = d3.max(nodes, n => n.in_deg) || 1
+  const nodeR = d => 4 + 12 * Math.sqrt(d.in_deg / max_in)
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link",    d3.forceLink(links).id(d => d.id).distance(60).strength(0.12))
+    .force("charge",  d3.forceManyBody().strength(-140))
+    .force("collide", d3.forceCollide().radius(d => nodeR(d) + 4))
+    .force("center",  d3.forceCenter(width / 2, height / 2))
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto; font: 11px sans-serif; cursor: grab;")
+
+  // Arrowhead marker for directed edges.
+  svg.append("defs").append("marker")
+    .attr("id", "cite-arrow")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 10)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .attr("fill", "#999")
+
+  svg.append("text")
+    .attr("x", width / 2).attr("y", 22)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 16)
+    .attr("font-weight", "bold")
+    .attr("fill", "#24292f")
+    .text(`Citation graph — ${nodes.length} papers, ${links.length} intra-catalog edges`)
+
+  const g = svg.append("g")
+  svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
+
+  const link = g.append("g")
+    .attr("stroke-opacity", 0.4)
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("stroke", d => d.source_kind === "both" ? "#374151" : "#999")
+    .attr("stroke-width", d => d.source_kind === "both" ? 1.4 : 0.9)
+    .attr("marker-end", "url(#cite-arrow)")
+
+  const node = g.append("g")
+    .selectAll("circle")
+    .data(nodes)
+    .join("circle")
+    .attr("r", nodeR)
+    .attr("fill", d => kind_color[d.kind] ?? "#999")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.2)
+    .call(drag(sim))
+
+  node.append("title").text(d =>
+    `${d.models || "(no model)"} — ${d.title}\nyear: ${d.year}\nkind: ${d.kind}\n${d.in_deg} cited by · ${d.out_deg} cites`
+  )
+
+  // Label only the most-cited nodes to keep the canvas readable.
+  const label_threshold = Math.max(2, d3.quantile(nodes.map(n => n.in_deg).sort((a, b) => a - b), 0.85) || 2)
+  const label = g.append("g")
+    .attr("pointer-events", "none")
+    .selectAll("text")
+    .data(nodes.filter(n => n.in_deg >= label_threshold))
+    .join("text")
+    .text(d => d.models?.split(",")[0]?.trim() || d.title.slice(0, 28))
+    .attr("font-size", 10)
+    .attr("font-weight", 600)
+    .attr("fill", "#1d2330")
+    .attr("dx", d => nodeR(d) + 3)
+    .attr("dy", 3)
+
+  sim.on("tick", () => {
+    link
+      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
+    node.attr("cx", d => d.x).attr("cy", d => d.y)
+    label.attr("x", d => d.x).attr("y", d => d.y)
+  })
+
+  // Legend at the bottom.
+  const legend_kinds = Array.from(new Set(nodes.map(n => n.kind))).sort()
+  const legend_g = svg.append("g").attr("transform", `translate(40, ${height - 25})`)
+  legend_g.selectAll("g.leg")
+    .data(legend_kinds)
+    .join("g")
+    .attr("class", "leg")
+    .attr("transform", (_, i) => `translate(${i * 170}, 0)`)
+    .call(s => {
+      s.append("circle").attr("r", 6).attr("cx", 6).attr("cy", -4).attr("fill", k => kind_color[k] ?? "#999")
+      s.append("text")
+        .attr("x", 18).attr("y", 0)
+        .attr("font-size", 11)
+        .attr("fill", "#24292f")
+        .text(k => k)
     })
 
   invalidation.then(() => sim.stop())
