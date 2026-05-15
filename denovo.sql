@@ -392,6 +392,15 @@ INSERT INTO author VALUES(386,'Weiwu Chen',NULL);
 INSERT INTO author VALUES(387,'Denis Yuen',NULL);
 INSERT INTO author VALUES(388,'Weiming Zhang',NULL);
 INSERT INTO author VALUES(389,'Zefeng Zhang',NULL);
+INSERT INTO author VALUES(390,'Chengxin Dai',NULL);
+INSERT INTO author VALUES(391,'Yi Liu',NULL);
+INSERT INTO author VALUES(392,'Yang Qiu',NULL);
+INSERT INTO author VALUES(393,'Huali Xu',NULL);
+INSERT INTO author VALUES(394,'Qingyuan Zhang',NULL);
+INSERT INTO author VALUES(395,'Xiaowei Huang',NULL);
+INSERT INTO author VALUES(396,'Timo Sachsenberg',NULL);
+INSERT INTO author VALUES(397,'Mingze Bai',NULL);
+INSERT INTO author VALUES(398,'Yasset Perez-Riverol',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -500,6 +509,8 @@ INSERT INTO city VALUES(72,'Canberra',15);
 INSERT INTO city VALUES(73,'Martinsried',4);
 INSERT INTO city VALUES(74,'Bergen',20);
 INSERT INTO city VALUES(75,'Dhaka',21);
+INSERT INTO city VALUES(76,'Tübingen',4);
+INSERT INTO city VALUES(77,'Hinxton',7);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -680,6 +691,11 @@ INSERT INTO affiliation VALUES(163,'North South University','Department of Elect
 INSERT INTO affiliation VALUES(164,'Ludwig-Maximilians-Universität München','Department of Earth and Environmental Sciences',4,21);
 INSERT INTO affiliation VALUES(165,'University of Copenhagen','Evolutionary Genomics Section, Globe Institute',3,3);
 INSERT INTO affiliation VALUES(166,'University of Bergen','Department of Biological and Medical Psychology',20,74);
+INSERT INTO affiliation VALUES(167,'International Academy of Phronesis Medicine (Guangdong)',NULL,2,16);
+INSERT INTO affiliation VALUES(168,'Peking Union Medical College Hospital','Stem cell and Regenerative Medicine Lab, Institute of Clinical Medicine, State Key Laboratory of Complex, Severe, and Rare Diseases',2,9);
+INSERT INTO affiliation VALUES(169,'University of Tübingen','Department of Computer Science, Applied Bioinformatics',4,76);
+INSERT INTO affiliation VALUES(170,'Chongqing University of Posts and Telecommunications','Chongqing Key Laboratory of Big Data for Bio Intelligence',2,43);
+INSERT INTO affiliation VALUES(171,'European Molecular Biology Laboratory','European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus',7,77);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1212,6 +1228,20 @@ INSERT INTO author_affiliation VALUES(381,164);
 INSERT INTO author_affiliation VALUES(383,165);
 INSERT INTO author_affiliation VALUES(384,166);
 INSERT INTO author_affiliation VALUES(387,43);
+INSERT INTO author_affiliation VALUES(390,70);
+INSERT INTO author_affiliation VALUES(391,70);
+INSERT INTO author_affiliation VALUES(392,70);
+INSERT INTO author_affiliation VALUES(393,70);
+INSERT INTO author_affiliation VALUES(166,167);
+INSERT INTO author_affiliation VALUES(188,167);
+INSERT INTO author_affiliation VALUES(390,167);
+INSERT INTO author_affiliation VALUES(391,167);
+INSERT INTO author_affiliation VALUES(394,167);
+INSERT INTO author_affiliation VALUES(395,167);
+INSERT INTO author_affiliation VALUES(391,168);
+INSERT INTO author_affiliation VALUES(396,169);
+INSERT INTO author_affiliation VALUES(397,170);
+INSERT INTO author_affiliation VALUES(398,171);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1311,6 +1341,7 @@ INSERT INTO algorithm VALUES(89,'9-species benchmark (Wen & Noble 2024)',NULL,NU
 INSERT INTO algorithm VALUES(90,'DPST','https://github.com/Yan98/DPST',NULL,NULL,'Transformer (AR)','Amino-acid-aware transformer','algorithm',1,'DDA');
 INSERT INTO algorithm VALUES(91,'MaxNovo',NULL,NULL,'https://www.maxquant.org/','Graph / DP','MaxQuant spectrum-graph de novo','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(92,'PEAKS DB',NULL,NULL,'https://www.bioinfor.com/peaksdb/','Graph / DP','De-novo-assisted DB search','adjacent',0,'DDA');
+INSERT INTO algorithm VALUES(93,'π-MSNet',NULL,NULL,NULL,NULL,'Billion-scale AI-ready proteomics data portal','adjacent',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1434,6 +1465,8 @@ INSERT INTO publication VALUES(110,'PepNet: A Fully Convolutional Neural Network
 INSERT INTO publication VALUES(111,'Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo peptide sequencing','2023-01-06','10.1101/2023.01.05.522752','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2023.01.05.522752v1','bioRxiv','preprint');
 INSERT INTO publication VALUES(112,'MARS: Improved De Novo Peptide Candidate Selection for Non-Canonical Antigen Target Discovery in Cancer','2022-08-04','10.21203/rs.3.rs-1890352/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-1890352/v1','Research Square','preprint');
 INSERT INTO publication VALUES(113,'A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models','2024-08-30','10.26434/chemrxiv-2024-z5b8m','ChemRxiv',NULL,'https://chemrxiv.org/engage/chemrxiv/article-details/66d24fef20ac769e5f672ad0','ChemRxiv','preprint');
+INSERT INTO publication VALUES(114,'Introducing PandaNovo for practical large-scale de novo peptide sequencing','2023-07-16','10.1101/2023.07.15.549133','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2023.07.15.549133v1','bioRxiv','preprint');
+INSERT INTO publication VALUES(115,'π-MSNet: A billion-scale, AI-ready living proteomics data portal','2026-04-13','10.64898/2026.04.13.718149','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.04.13.718149v1','bioRxiv','preprint');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1557,6 +1590,8 @@ INSERT INTO publication_algorithm VALUES(110,37);
 INSERT INTO publication_algorithm VALUES(111,35);
 INSERT INTO publication_algorithm VALUES(112,34);
 INSERT INTO publication_algorithm VALUES(113,89);
+INSERT INTO publication_algorithm VALUES(114,32);
+INSERT INTO publication_algorithm VALUES(115,93);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2322,6 +2357,32 @@ INSERT INTO publication_author VALUES(112,202,14);
 INSERT INTO publication_author VALUES(112,203,15);
 INSERT INTO publication_author VALUES(113,90,1);
 INSERT INTO publication_author VALUES(113,96,2);
+INSERT INTO publication_author VALUES(114,143,2);
+INSERT INTO publication_author VALUES(114,144,3);
+INSERT INTO publication_author VALUES(114,147,9);
+INSERT INTO publication_author VALUES(114,151,12);
+INSERT INTO publication_author VALUES(114,163,11);
+INSERT INTO publication_author VALUES(114,164,4);
+INSERT INTO publication_author VALUES(114,165,1);
+INSERT INTO publication_author VALUES(114,166,7);
+INSERT INTO publication_author VALUES(114,167,8);
+INSERT INTO publication_author VALUES(114,186,5);
+INSERT INTO publication_author VALUES(114,187,6);
+INSERT INTO publication_author VALUES(114,188,10);
+INSERT INTO publication_author VALUES(115,390,1);
+INSERT INTO publication_author VALUES(115,391,2);
+INSERT INTO publication_author VALUES(115,143,3);
+INSERT INTO publication_author VALUES(115,392,4);
+INSERT INTO publication_author VALUES(115,393,5);
+INSERT INTO publication_author VALUES(115,394,6);
+INSERT INTO publication_author VALUES(115,395,7);
+INSERT INTO publication_author VALUES(115,226,8);
+INSERT INTO publication_author VALUES(115,396,9);
+INSERT INTO publication_author VALUES(115,397,10);
+INSERT INTO publication_author VALUES(115,188,11);
+INSERT INTO publication_author VALUES(115,398,12);
+INSERT INTO publication_author VALUES(115,166,13);
+INSERT INTO publication_author VALUES(115,151,14);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3021,10 +3082,10 @@ INSERT INTO journal_impact VALUES('Scientific Reports','S196734849',4.2455594306
 INSERT INTO journal_impact VALUES('Applied Sciences (MDPI)','S4210205812',3.14091738161183542,218,88035,2026);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',21);
-INSERT INTO sqlite_sequence VALUES('city',75);
-INSERT INTO sqlite_sequence VALUES('affiliation',166);
-INSERT INTO sqlite_sequence VALUES('author',389);
-INSERT INTO sqlite_sequence VALUES('algorithm',92);
-INSERT INTO sqlite_sequence VALUES('publication',113);
+INSERT INTO sqlite_sequence VALUES('city',77);
+INSERT INTO sqlite_sequence VALUES('affiliation',171);
+INSERT INTO sqlite_sequence VALUES('author',407);
+INSERT INTO sqlite_sequence VALUES('algorithm',93);
+INSERT INTO sqlite_sequence VALUES('publication',115);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
