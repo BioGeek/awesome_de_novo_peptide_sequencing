@@ -1452,6 +1452,171 @@ viewof venue_type = Inputs.radio(
 }
 ```
 
+## Publication lifecycle
+
+How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. For each algorithm, every preprint is paired greedily with the earliest following peer-reviewed publication (peer-reviewed / ML-conference / thesis all count as "post-preprint"). The Status column then tells you whether each row is **paired** (lifecycle complete), **preprint-only** (still in flight), or **peer-reviewed-only** (published without a preprint we have on file).
+
+```{ojs}
+//| echo: false
+lifecycle_rows = {
+  // Group publications by their linked method name (using `models` from pubs_t).
+  // A pub without a model link is bucketed under a per-pub synthetic key so it
+  // doesn't accidentally pair with another stand-alone pub.
+  const by_method = new Map()
+  for (const p of pubs_filtered) {
+    const key = (p.models ?? "").split(",")[0]?.trim() || `_pub_${p.id}`
+    if (!by_method.has(key)) by_method.set(key, [])
+    by_method.get(key).push(p)
+  }
+
+  const POST_PREPRINT = new Set(["peer-reviewed", "ML conference", "thesis"])
+
+  const rows = []
+  for (const [method, pubs] of by_method.entries()) {
+    // Sort each method's pubs by date.
+    const sorted = pubs.slice().sort((a, b) => (a.date ?? 0) - (b.date ?? 0))
+    const preprints = sorted.filter(p => p.type === "preprint")
+    const peers     = sorted.filter(p => POST_PREPRINT.has(p.type))
+
+    // Greedy: each preprint claims the earliest unclaimed later peer-reviewed pub.
+    const claimed = new Set()
+    for (const pp of preprints) {
+      const target = peers.find(p => !claimed.has(p.id) && (p.date ?? 0) >= (pp.date ?? 0))
+      if (target) {
+        claimed.add(target.id)
+        const gap_days = ((target.date ?? 0) - (pp.date ?? 0)) / 86400000
+        const gap_months = gap_days / 30.44
+        rows.push({
+          method,
+          status: "paired",
+          preprint_date: pp.date,
+          preprint_title: pp.title,
+          preprint_url:   pp.url || (pp.doi ? `https://doi.org/${pp.doi}` : null),
+          peer_date:  target.date,
+          peer_title: target.title,
+          peer_url:   target.url || (target.doi ? `https://doi.org/${target.doi}` : null),
+          gap_months: Math.round(gap_months * 10) / 10
+        })
+      } else {
+        rows.push({
+          method,
+          status: "preprint-only",
+          preprint_date: pp.date,
+          preprint_title: pp.title,
+          preprint_url:   pp.url || (pp.doi ? `https://doi.org/${pp.doi}` : null),
+          peer_date:  null,
+          peer_title: null,
+          peer_url:   null,
+          gap_months: null
+        })
+      }
+    }
+    for (const p of peers) {
+      if (claimed.has(p.id)) continue
+      rows.push({
+        method,
+        status: "peer-reviewed-only",
+        preprint_date: null,
+        preprint_title: null,
+        preprint_url: null,
+        peer_date:  p.date,
+        peer_title: p.title,
+        peer_url:   p.url || (p.doi ? `https://doi.org/${p.doi}` : null),
+        gap_months: null
+      })
+    }
+  }
+  // Order: paired first (by gap, shortest → longest), then preprint-only by
+  // preprint date (oldest first = candidates for follow-up), then
+  // peer-reviewed-only by year.
+  const status_rank = { "paired": 0, "preprint-only": 1, "peer-reviewed-only": 2 }
+  return rows.sort((a, b) => {
+    const s = status_rank[a.status] - status_rank[b.status]
+    if (s !== 0) return s
+    if (a.status === "paired") return a.gap_months - b.gap_months
+    return (a.preprint_date ?? a.peer_date ?? 0) - (b.preprint_date ?? b.peer_date ?? 0)
+  })
+}
+```
+
+```{ojs}
+//| echo: false
+viewof lifecycle_search = Inputs.search(lifecycle_rows, {
+  placeholder: `Search ${lifecycle_rows.length} lifecycle rows (filtered)…`
+})
+```
+
+```{ojs}
+//| echo: false
+{
+  const table = Inputs.table(lifecycle_search, {
+    columns: ["method", "status", "preprint_date", "peer_date", "gap_months"],
+    header: {
+      method:        "Method",
+      status:        "Status",
+      preprint_date: "Preprint",
+      peer_date:     "Peer-reviewed",
+      gap_months:    "Gap (months)"
+    },
+    format: {
+      preprint_date: (d, i) => {
+        const row = lifecycle_search[i]
+        if (!d) return ""
+        const label = d.toISOString().slice(0, 7)
+        return row.preprint_url
+          ? htl.html`<a href="${row.preprint_url}" target="_blank" rel="noopener" title="${row.preprint_title}">${label}</a>`
+          : label
+      },
+      peer_date: (d, i) => {
+        const row = lifecycle_search[i]
+        if (!d) return ""
+        const label = d.toISOString().slice(0, 7)
+        return row.peer_url
+          ? htl.html`<a href="${row.peer_url}" target="_blank" rel="noopener" title="${row.peer_title}">${label}</a>`
+          : label
+      },
+      gap_months: g => g == null ? "" : `${g.toFixed(1)} mo`
+    },
+    rows: 25,
+    width: { method: 220, status: 160, preprint_date: 110, peer_date: 110, gap_months: 110 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
+  </div>`
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const paired = lifecycle_rows.filter(r => r.status === "paired")
+  if (!paired.length) {
+    return html`<p style="color:#57606a; font-style:italic;">No paired methods in the current filter.</p>`
+  }
+  return Plot.plot({
+    marginLeft: 200,
+    height: Math.max(220, paired.length * 20),
+    x: { label: "Preprint → peer-reviewed gap (months)", grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(paired, {
+        x: "gap_months",
+        y: "method",
+        fill: "#1f6feb",
+        sort: { y: "x", reverse: true },
+        tip: true
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
+```
+
 ## Browse all papers
 
 ```{ojs}
