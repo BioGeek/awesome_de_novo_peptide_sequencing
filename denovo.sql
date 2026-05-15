@@ -1423,6 +1423,8 @@ INSERT INTO publication VALUES(99,'DPST: De Novo Peptide Sequencing with Amino-A
 INSERT INTO publication VALUES(100,'Spectrum graph-based de-novo sequencing algorithm MaxNovo achieves high peptide identification rates in collisional dissociation MS/MS spectra','2021-09-04','10.1101/2021.09.04.458985','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2021.09.04.458985v1','bioRxiv','preprint');
 INSERT INTO publication VALUES(101,'PEAKS DB: De Novo Sequencing Assisted Database Search for Sensitive and Accurate Peptide Identification','2012-04-01','10.1074/mcp.M111.010587','ASBMB',NULL,'https://www.mcponline.org/article/S1535-9476(20)30468-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed');
 INSERT INTO publication VALUES(102,'De novo mass spectrometry peptide sequencing with a transformer model','2022-07-17',NULL,'PMLR',NULL,'https://proceedings.mlr.press/v162/yilmaz22a.html','ICML 2022','ML conference');
+INSERT INTO publication VALUES(103,'A transformer model for de novo sequencing of data independent acquisition mass spectrometry data','2024-06-04','10.1101/2024.06.03.597251','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2024.06.03.597251v1','bioRxiv','preprint');
+INSERT INTO publication VALUES(104,'XA-Novo: an accurate and high-throughput mass spectrometry-based de novo sequencing technology for monoclonal antibodies and antibody mixtures','2025-02-07','10.21203/rs.3.rs-5858891/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-5858891/v1','Research Square','preprint');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1535,6 +1537,8 @@ INSERT INTO publication_algorithm VALUES(99,90);
 INSERT INTO publication_algorithm VALUES(100,91);
 INSERT INTO publication_algorithm VALUES(101,92);
 INSERT INTO publication_algorithm VALUES(102,12);
+INSERT INTO publication_algorithm VALUES(103,27);
+INSERT INTO publication_algorithm VALUES(104,19);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2204,6 +2208,28 @@ INSERT INTO publication_author VALUES(102,86,2);
 INSERT INTO publication_author VALUES(102,95,3);
 INSERT INTO publication_author VALUES(102,94,4);
 INSERT INTO publication_author VALUES(102,96,5);
+INSERT INTO publication_author VALUES(103,89,1);
+INSERT INTO publication_author VALUES(103,90,2);
+INSERT INTO publication_author VALUES(103,178,3);
+INSERT INTO publication_author VALUES(103,179,4);
+INSERT INTO publication_author VALUES(103,180,5);
+INSERT INTO publication_author VALUES(103,94,6);
+INSERT INTO publication_author VALUES(103,93,7);
+INSERT INTO publication_author VALUES(103,96,8);
+INSERT INTO publication_author VALUES(104,129,1);
+INSERT INTO publication_author VALUES(104,130,2);
+INSERT INTO publication_author VALUES(104,131,3);
+INSERT INTO publication_author VALUES(104,132,4);
+INSERT INTO publication_author VALUES(104,133,5);
+INSERT INTO publication_author VALUES(104,134,6);
+INSERT INTO publication_author VALUES(104,135,7);
+INSERT INTO publication_author VALUES(104,136,8);
+INSERT INTO publication_author VALUES(104,137,9);
+INSERT INTO publication_author VALUES(104,138,10);
+INSERT INTO publication_author VALUES(104,139,11);
+INSERT INTO publication_author VALUES(104,140,12);
+INSERT INTO publication_author VALUES(104,141,13);
+INSERT INTO publication_author VALUES(104,142,14);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -2876,6 +2902,6 @@ INSERT INTO sqlite_sequence VALUES('city',75);
 INSERT INTO sqlite_sequence VALUES('affiliation',166);
 INSERT INTO sqlite_sequence VALUES('author',389);
 INSERT INTO sqlite_sequence VALUES('algorithm',92);
-INSERT INTO sqlite_sequence VALUES('publication',102);
+INSERT INTO sqlite_sequence VALUES('publication',104);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
