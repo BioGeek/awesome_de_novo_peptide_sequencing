@@ -1211,6 +1211,7 @@ INSERT INTO author_affiliation VALUES(379,163);
 INSERT INTO author_affiliation VALUES(381,164);
 INSERT INTO author_affiliation VALUES(383,165);
 INSERT INTO author_affiliation VALUES(384,166);
+INSERT INTO author_affiliation VALUES(387,43);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
