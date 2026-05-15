@@ -2988,6 +2988,14 @@ INSERT INTO publication_citation VALUES(101,65,'both');
 INSERT INTO publication_citation VALUES(101,67,'crossref');
 INSERT INTO publication_citation VALUES(101,68,'both');
 INSERT INTO publication_citation VALUES(101,69,'both');
+CREATE TABLE journal_impact (
+    journal           TEXT PRIMARY KEY,
+    openalex_id       TEXT,
+    two_yr_citedness  REAL,
+    h_index           INTEGER,
+    works_count       INTEGER,
+    year_collected    INTEGER NOT NULL
+);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',21);
 INSERT INTO sqlite_sequence VALUES('city',75);
