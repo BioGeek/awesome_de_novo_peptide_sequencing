@@ -153,6 +153,24 @@ venues = pd.read_sql(
     conn,
 )
 
+# All authors with their affiliations and countries — fuels the Browse-authors table.
+author_details = pd.read_sql(
+    """
+    SELECT a.id AS id, a.name AS name, a.email AS email,
+           (SELECT GROUP_CONCAT(DISTINCT af.name || COALESCE(' / ' || af.department, ''))
+              FROM author_affiliation aa JOIN affiliation af ON af.id = aa.affiliation_id
+              WHERE aa.author_id = a.id) AS affiliations,
+           (SELECT GROUP_CONCAT(DISTINCT c.name)
+              FROM author_affiliation aa
+              JOIN affiliation af ON af.id = aa.affiliation_id
+              JOIN country c ON c.id = af.country_id
+              WHERE aa.author_id = a.id) AS countries
+    FROM author a
+    ORDER BY a.name
+    """,
+    conn,
+)
+
 conn.close()
 
 ojs_define(
@@ -164,6 +182,7 @@ ojs_define(
     author_affs=author_affs,
     algorithms=algorithms,
     venues=venues,
+    author_details=author_details,
 )
 ```
 
@@ -183,6 +202,7 @@ algorithms_t = transpose(algorithms).map(r => ({
   is_dl: r.is_dl == null ? null : !!r.is_dl   // SQLite INTEGER 0/1 → JS boolean
 }))
 venues_t = transpose(venues)
+author_details_t = transpose(author_details)
 
 // Derived counters — everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
@@ -1187,6 +1207,75 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     reverse: true,
     rows: 25,
     width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70, repo: 60 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
+  </div>`
+}
+```
+
+## Browse all authors
+
+Aggregated from the currently-filtered set of papers. Searching is case-insensitive across every column (name, affiliation, country, methods).
+
+```{ojs}
+//| echo: false
+authors_table_rows = {
+  // Roll up authors across the filtered pubs, tagging each with the
+  // model names and kinds they touched in that subset.
+  const detail = new Map(author_details_t.map(d => [d.name, d]))
+  const counts = new Map()   // name → { papers, models:Set, kinds:Set }
+  for (const p of pubs_filtered) {
+    const ms = (p.models ?? "").split(", ").filter(Boolean)
+    for (const a of (p.authors ?? "").split(", ").filter(Boolean)) {
+      const slot = counts.get(a) ?? { papers: 0, models: new Set(), kinds: new Set() }
+      slot.papers += 1
+      for (const m of ms) slot.models.add(m)
+      if (p.kind) slot.kinds.add(p.kind)
+      counts.set(a, slot)
+    }
+  }
+  return Array.from(counts, ([name, v]) => ({
+    name,
+    papers:       v.papers,
+    methods:      Array.from(v.models).sort().join(", "),
+    kinds:        Array.from(v.kinds).sort().join(", "),
+    affiliations: detail.get(name)?.affiliations ?? "",
+    countries:    detail.get(name)?.countries ?? ""
+  })).sort((a, b) => b.papers - a.papers || a.name.localeCompare(b.name))
+}
+```
+
+```{ojs}
+//| echo: false
+viewof author_search = Inputs.search(authors_table_rows, {
+  placeholder: `Search ${authors_table_rows.length} authors (filtered)…`
+})
+```
+
+```{ojs}
+//| echo: false
+{
+  const table = Inputs.table(author_search, {
+    columns: ["name", "papers", "methods", "kinds", "affiliations", "countries"],
+    header: {
+      name: "Author", papers: "Papers", methods: "Method(s)",
+      kinds: "Kind(s)", affiliations: "Affiliation(s)", countries: "Country / countries"
+    },
+    format: {
+      papers:       n => n == null ? "" : String(n),
+      affiliations: s => !s ? "" : (s.length > 80 ? s.slice(0, 80) + "…" : s),
+      methods:      s => !s ? "" : (s.length > 60 ? s.slice(0, 60) + "…" : s)
+    },
+    sort: "papers",
+    reverse: true,
+    rows: 25,
+    width: { name: 180, papers: 70, methods: 220, kinds: 130, affiliations: 320, countries: 120 }
   })
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
