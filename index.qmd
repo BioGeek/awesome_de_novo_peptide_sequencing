@@ -446,7 +446,10 @@ n_papers_filtered = pubs_filtered.length
 
 ## The wave
 
-The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since — **${n_peer_reviewed}** papers have made it through peer review, alongside **${n_preprints}** preprints still in the publication pipeline.
+```{ojs}
+//| echo: false
+md`The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since — **${n_peer_reviewed}** papers have made it through peer review, alongside **${n_preprints}** preprints still in the publication pipeline.`
+```
 
 ```{ojs}
 //| echo: false
