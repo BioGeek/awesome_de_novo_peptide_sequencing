@@ -180,6 +180,17 @@ citations = pd.read_sql(
     conn,
 )
 
+# OpenAlex 2-year mean citedness per peer-reviewed venue (built offline via
+# build_journal_metrics.py). Methodologically equivalent to the JCR Impact
+# Factor formula but computed over the open Crossref-aggregated citation graph.
+journal_impact = pd.read_sql(
+    """
+    SELECT journal, two_yr_citedness, h_index, year_collected
+    FROM journal_impact
+    """,
+    conn,
+)
+
 conn.close()
 
 ojs_define(
@@ -193,6 +204,7 @@ ojs_define(
     venues=venues,
     author_details=author_details,
     citations=citations,
+    journal_impact=journal_impact,
 )
 ```
 
@@ -214,6 +226,9 @@ algorithms_t = transpose(algorithms).map(r => ({
 venues_t = transpose(venues)
 author_details_t = transpose(author_details)
 citations_t      = transpose(citations)
+journal_impact_t = transpose(journal_impact)
+// Lookup table: journal name → 2yr citedness, for fast joins in OJS cells.
+journal_impact_by_name = new Map(journal_impact_t.map(j => [j.journal, j]))
 
 // Derived counters — everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
@@ -1452,6 +1467,61 @@ viewof venue_type = Inputs.radio(
 }
 ```
 
+### Venue citedness (open-data analog of the Impact Factor)
+
+Two-year mean citedness from **OpenAlex** (`summary_stats.2yr_mean_citedness`). Methodologically equivalent to the Clarivate Impact Factor formula — mean citations in year *t* to articles published in years *t-1* and *t-2* — but computed over OpenAlex's open Crossref-aggregated citation graph rather than the paywalled Web of Science one. Conferences and preprint servers are omitted (their non-rolling publication schedule makes the metric misleading). Built offline via `build_journal_metrics.py`; refresh annually.
+
+```{ojs}
+//| echo: false
+viewof venue_if_search = Inputs.search(journal_impact_t, {
+  placeholder: `Search ${journal_impact_t.length} venues…`
+})
+```
+
+```{ojs}
+//| echo: false
+{
+  // Decorate each venue row with the catalog's paper count for that venue,
+  // so users can spot where heavy curation overlaps with high-citedness venues.
+  const paper_counts = new Map()
+  for (const p of pubs_t) {
+    if (!p.journal) continue
+    paper_counts.set(p.journal, (paper_counts.get(p.journal) ?? 0) + 1)
+  }
+  const rows = venue_if_search.map(v => ({
+    ...v,
+    papers_in_catalog: paper_counts.get(v.journal) ?? 0
+  }))
+  const table = Inputs.table(rows, {
+    columns: ["journal", "two_yr_citedness", "h_index", "papers_in_catalog", "year_collected"],
+    header: {
+      journal:           "Venue",
+      two_yr_citedness:  "IF₂ᵧᵣ (OpenAlex)",
+      h_index:           "h-index",
+      papers_in_catalog: "Papers in catalog",
+      year_collected:    "Year collected"
+    },
+    format: {
+      two_yr_citedness: c => c == null ? "" : c.toFixed(2),
+      h_index:          v => v == null ? "" : String(v),
+      year_collected:   y => y == null ? "" : String(y)
+    },
+    sort: "two_yr_citedness",
+    reverse: true,
+    rows: 30,
+    width: { two_yr_citedness: 130, h_index: 90, papers_in_catalog: 140, year_collected: 130 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
+  </div>`
+}
+```
+
 ## Publication lifecycle
 
 How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. For each algorithm, every preprint is paired greedily with the earliest following peer-reviewed publication (peer-reviewed / ML-conference / thesis all count as "post-preprint"). The Status column then tells you whether each row is **paired** (lifecycle complete), **preprint-only** (still in flight), or **peer-reviewed-only** (published without a preprint we have on file).
@@ -1640,17 +1710,23 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
 ```{ojs}
 //| echo: false
 {
-  const table = Inputs.table(search, {
-    columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "type", "repo"],
+  // Decorate each row with the venue's OpenAlex 2-year citedness (or null).
+  const search_with_if = search.map(r => ({
+    ...r,
+    citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
+  }))
+  const table = Inputs.table(search_with_if, {
+    columns: ["year", "models", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
     header: {
       year: "Year", models: "Method(s)", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
-      title: "Title", authors: "Authors", journal: "Venue", type: "Type", repo: "Code"
+      title: "Title", authors: "Authors", journal: "Venue", citedness: "IF₂ᵧᵣ", type: "Type", repo: "Code"
     },
     format: {
       year: y => y == null ? "" : String(y),
       is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
+      citedness: c => c == null ? "" : c.toFixed(1),
       title: (t, i) => {
-        const row = search[i]
+        const row = search_with_if[i]
         const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
         return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
       },
@@ -1667,7 +1743,7 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
     sort: "year",
     reverse: true,
     rows: 25,
-    width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70, repo: 60 }
+    width: { year: 60, type: 100, models: 130, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
