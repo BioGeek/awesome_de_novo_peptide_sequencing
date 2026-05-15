@@ -1158,49 +1158,44 @@ author_algo_network = {
 
 ### How the field cites itself
 
-A directed citation graph between papers in this catalog. Edges were resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), then matched back to publications via DOI-exact and fuzzy-title (token-set ratio ≥ 92). Only intra-catalog citations show up — references to papers outside the catalog are filtered out. Arrows point from the citing paper to the cited paper.
+A chronological citation arc diagram. Papers are placed left-to-right by publication date and stratified vertically by `kind`; within each row, the most-cited papers float to the top. Each arc connects a citing paper (right end) to a paper it cites (left end), curving upward above the row. **Hover any paper** to highlight the citations into it (red) and out of it (blue), and dim everything else.
+
+Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), matched back to publications via DOI-exact (and, for refs without a DOI, fuzzy-title with token-set ratio ≥ 92). Only intra-catalog citations are drawn — references to papers outside the catalog are filtered out.
 
 ```{ojs}
 //| echo: false
-citation_graph = {
+citation_arcs = {
   if (!citations_t.length) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
       No citation edges yet. Run <code>uv run python build_citations.py</code> to populate the graph.
     </p>`
   }
 
-  const width  = 1400
-  const height = 760
+  // ===== Layout parameters =====
+  const width  = 1600
+  const height = 720
+  const marginTop    = 30
+  const marginBottom = 60
+  const marginLeft   = 130
+  const marginRight  = 30
+  const innerWidth   = width  - marginLeft - marginRight
+  const innerHeight  = height - marginTop  - marginBottom
 
-  // Per-publication metadata for node tooltips and coloring.
+  // ===== Per-publication node data =====
   const pub_by_id = new Map(pubs_t.map(p => [p.id, p]))
+  const cite_count = new Map()  // pub_id → in-degree (times cited)
+  for (const e of citations_t) cite_count.set(e.cited_id, (cite_count.get(e.cited_id) ?? 0) + 1)
 
-  // Build the node set from the edge endpoints (isolated pubs are dropped).
-  const node_ids = new Set()
-  for (const e of citations_t) { node_ids.add(e.citing_id); node_ids.add(e.cited_id) }
-  const nodes = Array.from(node_ids, id => {
-    const p = pub_by_id.get(id) ?? {}
-    return {
-      id,
-      title:  p.title ?? `#${id}`,
-      year:   p.year,
-      kind:   p.kind ?? "unknown",
-      is_dl:  p.is_dl,
-      models: p.models ?? "",
-      in_deg: 0,
-      out_deg: 0
-    }
-  })
-  const node_by_id = new Map(nodes.map(n => [n.id, n]))
-  const links = citations_t.map(e => ({
-    source: e.citing_id, target: e.cited_id, source_kind: e.source
-  }))
-  for (const l of links) {
-    node_by_id.get(l.source).out_deg += 1
-    node_by_id.get(l.target).in_deg  += 1
-  }
-
-  // Coloring by kind — same palette as the breakdown panel.
+  // Y-strata by kind. Same order as the breakdown panel; benchmarks/reviews/meta share a row.
+  const KIND_ORDER = [
+    { kind: "algorithm",              label: "Algorithms" },
+    { kind: "post-processor",         label: "Post-processors" },
+    { kind: "downstream-application", label: "Downstream apps" },
+    { kind: "adjacent",               label: "Adjacent" },
+    { kind: "review",                 label: "Reviews / surveys" },
+    { kind: "benchmark",              label: "Benchmarks" },
+    { kind: "meta",                   label: "Meta" }
+  ]
   const kind_color = {
     "algorithm":              "#1f6feb",
     "post-processor":         "#bf8700",
@@ -1211,113 +1206,190 @@ citation_graph = {
     "meta":                   "#8c959f",
     "unknown":                "#8c959f"
   }
+  const row_h = innerHeight / KIND_ORDER.length
+  const row_index = new Map(KIND_ORDER.map((d, i) => [d.kind, i]))
+
+  // Only include papers that participate in ≥ 1 edge.
+  const involved = new Set()
+  for (const e of citations_t) { involved.add(e.citing_id); involved.add(e.cited_id) }
+  const nodes = Array.from(involved, id => {
+    const p = pub_by_id.get(id) ?? {}
+    const d = p.date instanceof Date ? p.date : new Date(p.date ?? Date.now())
+    return {
+      id,
+      title:  p.title ?? `#${id}`,
+      year:   p.year,
+      date:   d,
+      kind:   p.kind ?? "unknown",
+      models: p.models ?? "",
+      in_deg: cite_count.get(id) ?? 0
+    }
+  }).filter(n => n.date instanceof Date && !isNaN(n.date))
+
+  // X scale: publication date.
+  const x_extent = d3.extent(nodes, n => n.date)
+  const x_pad    = (x_extent[1] - x_extent[0]) * 0.02 || 1e9
+  const xScale   = d3.scaleTime()
+    .domain([new Date(+x_extent[0] - x_pad), new Date(+x_extent[1] + x_pad)])
+    .range([0, innerWidth])
+
+  // Within-row jitter: rank papers in each row by date so they bucket into vertical lanes.
   const max_in = d3.max(nodes, n => n.in_deg) || 1
-  const nodeR = d => 4 + 12 * Math.sqrt(d.in_deg / max_in)
+  for (const n of nodes) {
+    const ri  = row_index.get(n.kind) ?? KIND_ORDER.length - 1
+    const top = ri * row_h + 16
+    const bot = (ri + 1) * row_h - 16
+    // Top of row = most-cited; spread less-cited papers downward.
+    const r = 1 - Math.sqrt(n.in_deg / max_in)
+    n.y = top + r * (bot - top)
+    n.x = xScale(n.date)
+  }
+  const node_by_id = new Map(nodes.map(n => [n.id, n]))
+  const links = citations_t
+    .map(e => ({ source: node_by_id.get(e.citing_id), target: node_by_id.get(e.cited_id), source_kind: e.source }))
+    .filter(l => l.source && l.target)
 
-  const sim = d3.forceSimulation(nodes)
-    .force("link",    d3.forceLink(links).id(d => d.id).distance(60).strength(0.12))
-    .force("charge",  d3.forceManyBody().strength(-140))
-    .force("collide", d3.forceCollide().radius(d => nodeR(d) + 4))
-    .force("center",  d3.forceCenter(width / 2, height / 2))
-
+  // ===== Draw =====
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto; font: 11px sans-serif; cursor: grab;")
+    .attr("style", "max-width: 100%; height: auto; font: 11px sans-serif;")
 
-  // Arrowhead marker for directed edges.
-  svg.append("defs").append("marker")
-    .attr("id", "cite-arrow")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 10)
-    .attr("refY", 0)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .append("path")
-    .attr("d", "M0,-5L10,0L0,5")
-    .attr("fill", "#999")
+  const root = svg.append("g").attr("transform", `translate(${marginLeft}, ${marginTop})`)
 
+  // Row backgrounds + labels
+  root.selectAll("g.row")
+    .data(KIND_ORDER)
+    .join("g")
+    .attr("class", "row")
+    .call(g => {
+      g.append("rect")
+        .attr("x", 0)
+        .attr("y", (_, i) => i * row_h)
+        .attr("width", innerWidth)
+        .attr("height", row_h)
+        .attr("fill", d => kind_color[d.kind] ?? "#999")
+        .attr("fill-opacity", 0.05)
+      g.append("text")
+        .attr("x", -8)
+        .attr("y", (_, i) => i * row_h + row_h / 2 + 4)
+        .attr("text-anchor", "end")
+        .attr("font-size", 12)
+        .attr("font-weight", "bold")
+        .attr("fill", d => kind_color[d.kind] ?? "#999")
+        .text(d => d.label)
+    })
+
+  // Time axis
+  root.append("g")
+    .attr("transform", `translate(0, ${innerHeight})`)
+    .call(d3.axisBottom(xScale).ticks(d3.timeYear.every(2)).tickFormat(d3.timeFormat("%Y")))
+    .selectAll("text")
+    .attr("font-size", 11)
+
+  // Title
   svg.append("text")
-    .attr("x", width / 2).attr("y", 22)
+    .attr("x", width / 2).attr("y", 20)
     .attr("text-anchor", "middle")
-    .attr("font-size", 16)
+    .attr("font-size", 15)
     .attr("font-weight", "bold")
     .attr("fill", "#24292f")
-    .text(`Citation graph — ${nodes.length} papers, ${links.length} intra-catalog edges`)
+    .text(`Citation flow — ${nodes.length} papers, ${links.length} intra-catalog citations (citing → cited)`)
 
-  const g = svg.append("g")
-  svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
+  // Citation arcs. Cubic-Bezier curving upward (above the baseline).
+  function arcPath(d) {
+    const x1 = d.source.x, y1 = d.source.y
+    const x2 = d.target.x, y2 = d.target.y
+    const mx = (x1 + x2) / 2
+    // Lift the control points by a fraction of the horizontal span.
+    const lift = Math.min(180, Math.abs(x1 - x2) * 0.6)
+    const cy1 = Math.min(y1, y2) - lift
+    const cy2 = cy1
+    return `M ${x1} ${y1} C ${mx} ${cy1}, ${mx} ${cy2}, ${x2} ${y2}`
+  }
 
-  const link = g.append("g")
-    .attr("stroke-opacity", 0.4)
-    .selectAll("line")
+  const arc_layer = root.append("g").attr("class", "arcs").attr("fill", "none")
+  const arc = arc_layer.selectAll("path")
     .data(links)
-    .join("line")
-    .attr("stroke", d => d.source_kind === "both" ? "#374151" : "#999")
-    .attr("stroke-width", d => d.source_kind === "both" ? 1.4 : 0.9)
-    .attr("marker-end", "url(#cite-arrow)")
+    .join("path")
+    .attr("d", arcPath)
+    .attr("stroke", "#94a3b8")
+    .attr("stroke-opacity", 0.18)
+    .attr("stroke-width", d => d.source_kind === "both" ? 0.9 : 0.6)
 
-  const node = g.append("g")
-    .selectAll("circle")
+  // Nodes
+  const nodeR = d => 3 + 5 * Math.sqrt(d.in_deg / max_in)
+  const node_layer = root.append("g").attr("class", "nodes")
+  const node = node_layer.selectAll("circle")
     .data(nodes)
     .join("circle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
     .attr("r", nodeR)
     .attr("fill", d => kind_color[d.kind] ?? "#999")
     .attr("stroke", "#fff")
-    .attr("stroke-width", 1.2)
-    .call(drag(sim))
+    .attr("stroke-width", 0.8)
+    .attr("cursor", "pointer")
 
   node.append("title").text(d =>
-    `${d.models || "(no model)"} — ${d.title}\nyear: ${d.year}\nkind: ${d.kind}\n${d.in_deg} cited by · ${d.out_deg} cites`
+    `${d.models || "(no model)"} — ${d.title}
+year: ${d.year ?? ""}
+kind: ${d.kind}
+cited by ${d.in_deg} papers in the catalog`
   )
 
-  // Label only the most-cited nodes to keep the canvas readable.
-  const label_threshold = Math.max(2, d3.quantile(nodes.map(n => n.in_deg).sort((a, b) => a - b), 0.85) || 2)
-  const label = g.append("g")
-    .attr("pointer-events", "none")
-    .selectAll("text")
-    .data(nodes.filter(n => n.in_deg >= label_threshold))
+  // Labels: only the top in-degree papers (one per row, so labels are legible).
+  const top_per_row = new Map()
+  for (const n of nodes.slice().sort((a, b) => b.in_deg - a.in_deg)) {
+    const r = n.kind
+    if (!top_per_row.has(r)) top_per_row.set(r, [])
+    if (top_per_row.get(r).length < 5 && n.in_deg >= 4) top_per_row.get(r).push(n)
+  }
+  const labelled = Array.from(top_per_row.values()).flat()
+  const label_layer = root.append("g").attr("class", "labels").attr("pointer-events", "none")
+  label_layer.selectAll("text")
+    .data(labelled)
     .join("text")
-    .text(d => d.models?.split(",")[0]?.trim() || d.title.slice(0, 28))
+    .text(d => (d.models?.split(",")[0]?.trim()) || d.title.slice(0, 22))
+    .attr("x", d => d.x)
+    .attr("y", d => d.y - nodeR(d) - 4)
+    .attr("text-anchor", "middle")
     .attr("font-size", 10)
     .attr("font-weight", 600)
     .attr("fill", "#1d2330")
-    .attr("dx", d => nodeR(d) + 3)
-    .attr("dy", 3)
 
-  sim.on("tick", () => {
-    link
-      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
-    node.attr("cx", d => d.x).attr("cy", d => d.y)
-    label.attr("x", d => d.x).attr("y", d => d.y)
-  })
-
-  // Legend at the bottom.
-  const legend_kinds = Array.from(new Set(nodes.map(n => n.kind))).sort()
-  const legend_g = svg.append("g").attr("transform", `translate(40, ${height - 25})`)
-  legend_g.selectAll("g.leg")
-    .data(legend_kinds)
-    .join("g")
-    .attr("class", "leg")
-    .attr("transform", (_, i) => `translate(${i * 170}, 0)`)
-    .call(s => {
-      s.append("circle").attr("r", 6).attr("cx", 6).attr("cy", -4).attr("fill", k => kind_color[k] ?? "#999")
-      s.append("text")
-        .attr("x", 18).attr("y", 0)
-        .attr("font-size", 11)
-        .attr("fill", "#24292f")
-        .text(k => k)
-    })
-
-  invalidation.then(() => sim.stop())
-
-  function drag(simulation) {
-    return d3.drag()
-      .on("start", (ev, d) => { if (!ev.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
-      .on("drag", (ev, d) => { d.fx = ev.x; d.fy = ev.y })
-      .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
+  // ===== Hover behaviour =====
+  // Precompute neighborhood maps.
+  const out_edges = new Map()
+  const in_edges  = new Map()
+  for (const l of links) {
+    if (!out_edges.has(l.source.id)) out_edges.set(l.source.id, [])
+    if (!in_edges.has (l.target.id)) in_edges.set (l.target.id, [])
+    out_edges.get(l.source.id).push(l)
+    in_edges.get (l.target.id).push(l)
   }
+
+  node.on("mouseenter", function (_, focus) {
+    const ins  = new Set((in_edges.get(focus.id)  ?? []).map(l => l.source.id))
+    const outs = new Set((out_edges.get(focus.id) ?? []).map(l => l.target.id))
+    arc
+      .attr("stroke", l => {
+        if (l.target.id === focus.id) return "#cf222e"   // who cites this paper
+        if (l.source.id === focus.id) return "#1f6feb"   // who this paper cites
+        return "#94a3b8"
+      })
+      .attr("stroke-opacity", l => (l.source.id === focus.id || l.target.id === focus.id) ? 0.85 : 0.04)
+      .attr("stroke-width",   l => (l.source.id === focus.id || l.target.id === focus.id) ? 1.4 : 0.4)
+    node.attr("opacity", d => {
+      if (d.id === focus.id) return 1
+      if (ins.has(d.id) || outs.has(d.id)) return 1
+      return 0.22
+    })
+  })
+  node.on("mouseleave", function () {
+    arc.attr("stroke", "#94a3b8").attr("stroke-opacity", 0.18)
+        .attr("stroke-width", d => d.source_kind === "both" ? 0.9 : 0.6)
+    node.attr("opacity", 1)
+  })
 
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
