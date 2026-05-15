@@ -3049,6 +3049,23 @@ INSERT INTO publication_citation VALUES(101,65,'both');
 INSERT INTO publication_citation VALUES(101,67,'crossref');
 INSERT INTO publication_citation VALUES(101,68,'both');
 INSERT INTO publication_citation VALUES(101,69,'both');
+INSERT INTO publication_citation VALUES(30,44,'semanticscholar');
+INSERT INTO publication_citation VALUES(30,110,'semanticscholar');
+INSERT INTO publication_citation VALUES(103,11,'crossref');
+INSERT INTO publication_citation VALUES(103,30,'crossref');
+INSERT INTO publication_citation VALUES(103,38,'crossref');
+INSERT INTO publication_citation VALUES(103,45,'crossref');
+INSERT INTO publication_citation VALUES(105,11,'crossref');
+INSERT INTO publication_citation VALUES(105,65,'crossref');
+INSERT INTO publication_citation VALUES(107,38,'crossref');
+INSERT INTO publication_citation VALUES(107,102,'crossref');
+INSERT INTO publication_citation VALUES(107,105,'crossref');
+INSERT INTO publication_citation VALUES(107,114,'crossref');
+INSERT INTO publication_citation VALUES(108,65,'both');
+INSERT INTO publication_citation VALUES(108,102,'semanticscholar');
+INSERT INTO publication_citation VALUES(108,105,'crossref');
+INSERT INTO publication_citation VALUES(109,57,'crossref');
+INSERT INTO publication_citation VALUES(111,65,'both');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,

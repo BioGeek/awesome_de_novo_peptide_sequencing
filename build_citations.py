@@ -15,6 +15,7 @@ token-set ratio >= 0.92 over normalized titles).
 
 from __future__ import annotations
 
+import argparse
 import csv
 import re
 import sqlite3
@@ -111,7 +112,34 @@ def fetch_semantic_scholar_refs(doi: str | None, title: str) -> list[dict]:
         return []
 
 
+def already_processed_ids(cur: sqlite3.Cursor) -> set[int]:
+    """Pub ids we've already queried, derived from existing build artifacts."""
+    seen: set[int] = set()
+    # Anything with at least one resolved outgoing edge is definitely processed.
+    for (cid,) in cur.execute("SELECT DISTINCT citing_id FROM publication_citation"):
+        seen.add(int(cid))
+    # Anything in the audit CSV is also processed (fuzzy-matched references logged).
+    if AUDIT_PATH.exists():
+        with AUDIT_PATH.open(encoding="utf-8") as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                try:
+                    seen.add(int(row["citing_pub_id"]))
+                except (KeyError, ValueError):
+                    pass
+    return seen
+
+
 def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--skip-processed", action="store_true",
+                    help="Skip pubs already in publication_citation or citation_audit.csv. "
+                         "Useful for incremental refreshes after adding new papers.")
+    ap.add_argument("--only", type=str, default=None,
+                    help="Comma-separated publication ids to process exclusively "
+                         "(overrides --skip-processed).")
+    args = ap.parse_args()
+
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON")
     cur  = conn.cursor()
@@ -119,7 +147,19 @@ def main() -> int:
     pubs = cur.execute(
         "SELECT id, title, doi FROM publication ORDER BY id"
     ).fetchall()
-    print(f"Loaded {len(pubs)} publications from the DB.")
+    total = len(pubs)
+
+    if args.only:
+        wanted = {int(x) for x in args.only.split(",") if x.strip()}
+        pubs = [p for p in pubs if p[0] in wanted]
+        print(f"--only filter: {len(pubs)}/{total} publications selected.")
+    elif args.skip_processed:
+        seen = already_processed_ids(cur)
+        pubs = [p for p in pubs if p[0] not in seen]
+        print(f"--skip-processed: {len(pubs)}/{total} new publications to process "
+              f"({len(seen)} already queried).")
+    else:
+        print(f"Loaded {len(pubs)} publications from the DB.")
 
     # Lookup tables: DOI → pub_id, normalized_title → pub_id
     by_doi   = {(d or "").lower(): pid for pid, _, d in pubs if d}
@@ -175,15 +215,19 @@ def main() -> int:
     conn.commit()
     conn.close()
 
-    # ---- Write audit CSV ----
+    # ---- Write audit CSV (append; preserve prior entries so --skip-processed
+    # can still detect previously-queried pubs after re-runs).
     if audit_rows:
-        with AUDIT_PATH.open("w", newline="", encoding="utf-8") as fh:
+        new_file = not AUDIT_PATH.exists()
+        with AUDIT_PATH.open("a", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, fieldnames=list(audit_rows[0].keys()))
-            w.writeheader()
+            if new_file:
+                w.writeheader()
             w.writerows(audit_rows)
-        print(f"Wrote {len(audit_rows)} fuzzy-match audit rows to {AUDIT_PATH}.")
+        verb = "Wrote" if new_file else "Appended"
+        print(f"{verb} {len(audit_rows)} fuzzy-match audit rows to {AUDIT_PATH}.")
     else:
-        print("No fuzzy matches; no audit file written.")
+        print("No new fuzzy matches in this run.")
     return 0
 
 
