@@ -434,7 +434,13 @@ innovations_timeline = {
     "Diffusion":         "#C44E52"
   }
   // Tiers chosen to spread labels both above and below the band center.
-  const Y_TIERS = [0.5, 0.8, 0.2, 0.9, 0.1, 0.65, 0.35, 0.95, 0.05, 0.72, 0.28, 0.85, 0.15, 0.58, 0.42]
+  // 25 interleaved tier positions (the previous 15 ran out for the 2024-2026
+  // Transformer (AR) burst, dropping ~6 models onto the center-line fallback).
+  const Y_TIERS = [
+    0.5, 0.8, 0.2, 0.9, 0.1, 0.7, 0.3, 0.6, 0.4,
+    0.85, 0.15, 0.95, 0.05, 0.75, 0.25, 0.65, 0.35, 0.55, 0.45,
+    0.88, 0.12, 0.78, 0.22, 0.58, 0.42
+  ]
   // MIN_GAP_DAYS is computed dynamically below from the actual x-range so it self-tunes
   // when more years of data come in (e.g. older classical methods extending back to 1997).
 
@@ -493,14 +499,16 @@ innovations_timeline = {
   const x_pad_min = d3.timeMonth.offset(x_min, -8)
   const x_pad_max = d3.timeMonth.offset(x_max, 8)
 
-  // Dynamic MIN_GAP_DAYS: how many days of horizontal space a "wide-ish" label needs.
-  // Chart canvas is 1400 px wide; with marginLeft=140 and marginRight=60 the plot area
-  // is ~1200 px. LABEL_RESERVE_PX is the worst-case label width we want to clear.
-  const PLOT_WIDTH_PX  = 1200
-  const LABEL_RESERVE_PX = 110   // generous for names like "DeepNovo Peptidome", "Charge Derivatization"
+  // MIN_GAP_DAYS: how many days of horizontal space we want between two labels on
+  // the same tier. We compute it from the actual x-scale (so the spacing self-tunes
+  // when the timeline extends) but cap it so dense bursts (e.g. 2024-2026 Transformer
+  // (AR) papers) don't all fall through to the center-line fallback.
+  const PLOT_WIDTH_PX  = 1200          // chart 1400 minus left+right margins
+  const LABEL_RESERVE_PX = 70          // median label width across all current entries
+  const MAX_GAP_DAYS = 550              // cap ~1.5 yr — beyond this dense bands burst
   const total_days = (x_pad_max - x_pad_min) / 86400000
   const px_per_day = PLOT_WIDTH_PX / total_days
-  const MIN_GAP_DAYS = LABEL_RESERVE_PX / px_per_day
+  const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
 
   // in band_order — without it the chart would crash on .y0 of undefined.
   const rows = algorithms_t
