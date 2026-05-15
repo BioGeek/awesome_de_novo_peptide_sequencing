@@ -308,6 +308,8 @@ INSERT INTO author VALUES(302,'Jianyun Liu',NULL);
 INSERT INTO author VALUES(303,'Yonggang Lu',NULL);
 INSERT INTO author VALUES(304,'Jemma Daniel',NULL);
 INSERT INTO author VALUES(305,'Henrik Servais Janssen Knudsen',NULL);
+INSERT INTO author VALUES(306,'Carlo Melendez',NULL);
+INSERT INTO author VALUES(307,'Marina Pominova',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -962,6 +964,8 @@ INSERT INTO author_affiliation VALUES(51,116);
 INSERT INTO author_affiliation VALUES(293,116);
 INSERT INTO author_affiliation VALUES(304,1);
 INSERT INTO author_affiliation VALUES(305,2);
+INSERT INTO author_affiliation VALUES(306,47);
+INSERT INTO author_affiliation VALUES(307,46);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1039,6 +1043,7 @@ INSERT INTO algorithm VALUES(67,'pNovo+',NULL,NULL,'http://pfind.org/software/pN
 INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decision tree','Real-time decision-tree scoring','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(69,'Winnow',NULL,NULL,NULL,NULL,'NN rescoring + decoy-free FDR','post-processor',1,'both');
 INSERT INTO algorithm VALUES(70,'Xia 2025 Survey',NULL,NULL,NULL,NULL,'Systematic review of DL de novo','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(71,'Bittremieux 2024 Review',NULL,NULL,NULL,NULL,'Review of DL de novo methods','meta',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1125,6 +1130,7 @@ INSERT INTO publication VALUES(72,'pNovo+: De Novo Peptide Sequencing Using Comp
 INSERT INTO publication VALUES(73,'Novor: Real-Time Peptide de Novo Sequencing Software','2015-06-30','10.1007/s13361-015-1204-0','Springer',NULL,'https://link.springer.com/article/10.1007/s13361-015-1204-0','Journal of The American Society for Mass Spectrometry','peer-reviewed');
 INSERT INTO publication VALUES(74,'De novo peptide sequencing rescoring and FDR estimation with Winnow','2025-09-29','10.48550/arXiv.2509.24952','arXiv',NULL,'https://arxiv.org/abs/2509.24952','arXiv','preprint');
 INSERT INTO publication VALUES(75,'A Comprehensive and Systematic Review for Deep Learning-Based De Novo Peptide Sequencing','2025-08-01',NULL,'IJCAI',NULL,'https://www.ijcai.org/proceedings/2025/1191','IJCAI 2025','ML conference');
+INSERT INTO publication VALUES(76,'Deep Learning Methods for De Novo Peptide Sequencing','2024-11-29','10.1002/mas.21919','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/mas.21919','Mass Spectrometry Reviews','peer-reviewed');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1210,6 +1216,7 @@ INSERT INTO publication_algorithm VALUES(72,67);
 INSERT INTO publication_algorithm VALUES(73,68);
 INSERT INTO publication_algorithm VALUES(74,69);
 INSERT INTO publication_algorithm VALUES(75,70);
+INSERT INTO publication_algorithm VALUES(76,71);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1714,11 +1721,20 @@ INSERT INTO publication_author VALUES(75,56,2);
 INSERT INTO publication_author VALUES(75,55,3);
 INSERT INTO publication_author VALUES(75,143,4);
 INSERT INTO publication_author VALUES(75,157,5);
+INSERT INTO publication_author VALUES(76,95,1);
+INSERT INTO publication_author VALUES(76,85,2);
+INSERT INTO publication_author VALUES(76,86,3);
+INSERT INTO publication_author VALUES(76,306,4);
+INSERT INTO publication_author VALUES(76,307,5);
+INSERT INTO publication_author VALUES(76,89,6);
+INSERT INTO publication_author VALUES(76,90,7);
+INSERT INTO publication_author VALUES(76,92,8);
+INSERT INTO publication_author VALUES(76,96,9);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',17);
 INSERT INTO sqlite_sequence VALUES('city',60);
 INSERT INTO sqlite_sequence VALUES('affiliation',133);
-INSERT INTO sqlite_sequence VALUES('author',305);
-INSERT INTO sqlite_sequence VALUES('algorithm',70);
-INSERT INTO sqlite_sequence VALUES('publication',75);
+INSERT INTO sqlite_sequence VALUES('author',307);
+INSERT INTO sqlite_sequence VALUES('algorithm',71);
+INSERT INTO sqlite_sequence VALUES('publication',76);
 COMMIT;
