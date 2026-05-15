@@ -471,6 +471,7 @@ INSERT INTO city VALUES(66,'Bethesda',8);
 INSERT INTO city VALUES(67,'Thousand Oaks',8);
 INSERT INTO city VALUES(68,'Uppsala',6);
 INSERT INTO city VALUES(69,'Dortmund',4);
+INSERT INTO city VALUES(70,'Frankfurt am Main',4);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -639,6 +640,8 @@ INSERT INTO affiliation VALUES(151,'Jinan University','Big Data Decision Institu
 INSERT INTO affiliation VALUES(152,'Jinan University','Institute of Life and Health Engineering',2,16);
 INSERT INTO affiliation VALUES(153,'Chinese Academy of Sciences','Guangzhou Institutes of Biomedicine and Health',2,16);
 INSERT INTO affiliation VALUES(154,'Leibniz-Institut für Analytische Wissenschaften (ISAS)',NULL,4,69);
+INSERT INTO affiliation VALUES(155,'Senckenberg Gesellschaft für Naturforschung','Biodiversity and Climate Research Centre',4,70);
+INSERT INTO affiliation VALUES(156,'Goethe University','Faculty of Biological Science, Institute for Ecology, Evolution and Diversity, Department of Molecular Ecology',4,70);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1138,6 +1141,8 @@ INSERT INTO author_affiliation VALUES(365,153);
 INSERT INTO author_affiliation VALUES(366,152);
 INSERT INTO author_affiliation VALUES(367,152);
 INSERT INTO author_affiliation VALUES(368,152);
+INSERT INTO author_affiliation VALUES(332,155);
+INSERT INTO author_affiliation VALUES(332,156);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2070,8 +2075,8 @@ INSERT INTO publication_author VALUES(95,362,5);
 INSERT INTO publication_author VALUES(95,363,6);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',19);
-INSERT INTO sqlite_sequence VALUES('city',69);
-INSERT INTO sqlite_sequence VALUES('affiliation',154);
+INSERT INTO sqlite_sequence VALUES('city',70);
+INSERT INTO sqlite_sequence VALUES('affiliation',156);
 INSERT INTO sqlite_sequence VALUES('author',368);
 INSERT INTO sqlite_sequence VALUES('algorithm',86);
 INSERT INTO sqlite_sequence VALUES('publication',95);
