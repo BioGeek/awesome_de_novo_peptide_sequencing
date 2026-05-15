@@ -56,7 +56,7 @@ When adding rows by hand, always check whether the entity already exists before 
 
 Every `algorithm` row carries three classifier columns:
 
-- `kind` — `'algorithm'`, `'post-processor'`, `'downstream-application'`, `'adjacent'`, or `'meta'`.
+- `kind` — `'algorithm'`, `'post-processor'`, `'downstream-application'`, `'adjacent'`, `'review'`, `'benchmark'`, or `'meta'` (residual catch-all for commentaries / theses-without-method).
 - `is_deep_learning` — `1` (TRUE), `0` (FALSE), or NULL.
 - `acquisition_mode` — `'DDA'`, `'DIA'`, `'both'`, or NULL.
 

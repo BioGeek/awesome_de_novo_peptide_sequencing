@@ -243,6 +243,8 @@ html`<div class="hero-grid">
     "post-processor": "Post-processors",
     "downstream-application": "Downstream apps",
     "adjacent": "Adjacent",
+    "review": "Reviews / surveys",
+    "benchmark": "Benchmarks",
     "meta": "Meta"
   }
   return html`<div class="breakdown-grid">
@@ -303,7 +305,7 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 ```
 
 ::: {.scope-banner}
-**Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), and **adjacent** tools (database-search hybrids, glycopeptide pipelines). Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
+**Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
 ::::: {.sticky-filters}

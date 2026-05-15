@@ -1238,13 +1238,13 @@ INSERT INTO algorithm VALUES(66,'pNovo',NULL,NULL,'http://pfind.org/software/pNo
 INSERT INTO algorithm VALUES(67,'pNovo+',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','Complementary HCD + ETD spectra','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(68,'Novor',NULL,NULL,'https://novor.cloud/','Decision tree','Real-time decision-tree scoring','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(69,'Winnow',NULL,NULL,NULL,NULL,'NN rescoring + decoy-free FDR','post-processor',1,'both');
-INSERT INTO algorithm VALUES(70,'Xia 2025 Survey',NULL,NULL,NULL,NULL,'Systematic review of DL de novo','meta',NULL,NULL);
-INSERT INTO algorithm VALUES(71,'Bittremieux 2024 Review',NULL,NULL,NULL,NULL,'Review of DL de novo methods','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(70,'Xia 2025 Survey',NULL,NULL,NULL,NULL,'Systematic review of DL de novo','review',NULL,NULL);
+INSERT INTO algorithm VALUES(71,'Bittremieux 2024 Review',NULL,NULL,NULL,NULL,'Review of DL de novo methods','review',NULL,NULL);
 INSERT INTO algorithm VALUES(72,'SMSNet','https://github.com/cmb-chula/SMSNet',NULL,NULL,'CNN + RNN','Sequence-Mask-Search seq2seq','algorithm',1,'DDA');
-INSERT INTO algorithm VALUES(73,'NovoBench',NULL,NULL,NULL,NULL,'NeurIPS benchmark for DL de novo','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(73,'NovoBench',NULL,NULL,NULL,NULL,'NeurIPS benchmark for DL de novo','benchmark',NULL,NULL);
 INSERT INTO algorithm VALUES(74,'SearchNovo','https://github.com/junxia97/SearchNovo',NULL,NULL,'Transformer (AR)','DB-search + de novo fusion','adjacent',1,'DDA');
-INSERT INTO algorithm VALUES(75,'NovoBoard','https://github.com/nh2tran/NovoBoard',NULL,NULL,NULL,'Decoy-based FDR + accuracy framework','post-processor',0,'DDA');
-INSERT INTO algorithm VALUES(76,'Wen 2020 Review',NULL,NULL,NULL,NULL,'Broad DL-in-proteomics review (de novo is one of several topics)','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(75,'NovoBoard','https://github.com/nh2tran/NovoBoard',NULL,NULL,NULL,'Decoy-based FDR + accuracy framework','benchmark',0,'DDA');
+INSERT INTO algorithm VALUES(76,'Wen 2020 Review',NULL,NULL,NULL,NULL,'Broad DL-in-proteomics review (de novo is one of several topics)','review',NULL,NULL);
 INSERT INTO algorithm VALUES(77,'Open-pNovo',NULL,NULL,'http://pfind.org/software/pNovo/','Graph / DP','pNovo with thousands of PTMs','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(78,'pSite',NULL,NULL,NULL,NULL,'AA confidence + site localization','post-processor',0,'DDA');
 INSERT INTO algorithm VALUES(79,'DeNovo Synergy',NULL,NULL,NULL,NULL,'Combining multiple de novo tools','post-processor',0,'DDA');
@@ -1255,9 +1255,9 @@ INSERT INTO algorithm VALUES(83,'Charge Derivatization (An 2013)',NULL,NULL,NULL
 INSERT INTO algorithm VALUES(84,'2D Fragment Correlation',NULL,NULL,NULL,'Heuristic','2D fragment correlation MS','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(85,'Robust FL-Sequencing',NULL,NULL,NULL,'Heuristic','Full-length protein sequencing','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(86,'UVnovo',NULL,NULL,NULL,'Graph / DP','UV photodissociation de novo','algorithm',0,'DDA');
-INSERT INTO algorithm VALUES(87,'AbNovoBench',NULL,NULL,NULL,NULL,'Monoclonal antibody de novo benchmark','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(87,'AbNovoBench',NULL,NULL,NULL,NULL,'Monoclonal antibody de novo benchmark','benchmark',NULL,NULL);
 INSERT INTO algorithm VALUES(88,'Noble 2024 commentary',NULL,NULL,NULL,NULL,'Behind-the-paper post on benchmark wrangling','meta',NULL,NULL);
-INSERT INTO algorithm VALUES(89,'9-species benchmark (Wen & Noble 2024)',NULL,NULL,NULL,NULL,'Multi-species PSM benchmark for ML training','meta',NULL,NULL);
+INSERT INTO algorithm VALUES(89,'9-species benchmark (Wen & Noble 2024)',NULL,NULL,NULL,NULL,'Multi-species PSM benchmark for ML training','benchmark',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,

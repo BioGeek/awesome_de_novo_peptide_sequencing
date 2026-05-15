@@ -8,7 +8,7 @@ A comprehensive, interactive map of the *de novo* peptide sequencing field — a
 
 The repository tracks the *de novo* peptide sequencing field broadly. Every paper is classified by:
 
-- **`kind`** — `algorithm` (core sequencer), `post-processor` (re-ranker / FDR / refinement), `downstream-application` (uses de novo output for biology, e.g. neoantigen discovery), `adjacent` (DB search hybrids, glycopeptide tools), or `meta` (reviews / theses / benchmarks).
+- **`kind`** — one of: `algorithm` (core sequencer), `post-processor` (re-ranker / FDR / refinement), `downstream-application` (uses de novo output for biology, e.g. neoantigen discovery), `adjacent` (DB search hybrids, glycopeptide tools), `review` (literature survey), `benchmark` (evaluation framework / dataset), or `meta` (everything else: commentaries, theses without a method, …).
 - **`is_deep_learning`** — `TRUE` / `FALSE` — so readers can compare DL-based and classical approaches side by side.
 - **`acquisition_mode`** — `DDA`, `DIA`, `both`, or *not applicable*.
 
