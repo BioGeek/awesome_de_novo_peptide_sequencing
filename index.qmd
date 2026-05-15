@@ -1173,8 +1173,8 @@ citation_arcs = {
 
   // ===== Layout parameters =====
   const width  = 1600
-  const height = 720
-  const marginTop    = 30
+  const height = 820
+  const marginTop    = 120          // extra headroom for arc apexes near the top rows
   const marginBottom = 60
   const marginLeft   = 130
   const marginRight  = 30
@@ -1183,18 +1183,24 @@ citation_arcs = {
 
   // ===== Per-publication node data =====
   const pub_by_id = new Map(pubs_t.map(p => [p.id, p]))
-  const cite_count = new Map()  // pub_id → in-degree (times cited)
-  for (const e of citations_t) cite_count.set(e.cited_id, (cite_count.get(e.cited_id) ?? 0) + 1)
+  const cite_count = new Map()  // pub_id → in-degree (times cited by other catalog papers)
+  const cite_out   = new Map()  // pub_id → out-degree (papers in catalog it cites)
+  for (const e of citations_t) {
+    cite_count.set(e.cited_id,  (cite_count.get(e.cited_id) ?? 0) + 1)
+    cite_out.set(e.citing_id, (cite_out.get(e.citing_id) ?? 0) + 1)
+  }
 
-  // Y-strata by kind. Same order as the breakdown panel; benchmarks/reviews/meta share a row.
+  // Y-strata by kind. Meta types at the top, core algorithms at the bottom — so
+  // arcs (which always curve upward) have the most headroom for citations heading
+  // *into* heavily-cited algorithm-row papers.
   const KIND_ORDER = [
-    { kind: "algorithm",              label: "Algorithms" },
-    { kind: "post-processor",         label: "Post-processors" },
-    { kind: "downstream-application", label: "Downstream apps" },
-    { kind: "adjacent",               label: "Adjacent" },
-    { kind: "review",                 label: "Reviews / surveys" },
+    { kind: "meta",                   label: "Meta" },
     { kind: "benchmark",              label: "Benchmarks" },
-    { kind: "meta",                   label: "Meta" }
+    { kind: "review",                 label: "Reviews / surveys" },
+    { kind: "adjacent",               label: "Adjacent" },
+    { kind: "downstream-application", label: "Downstream apps" },
+    { kind: "post-processor",         label: "Post-processors" },
+    { kind: "algorithm",              label: "Algorithms" }
   ]
   const kind_color = {
     "algorithm":              "#1f6feb",
@@ -1222,7 +1228,8 @@ citation_arcs = {
       date:   d,
       kind:   p.kind ?? "unknown",
       models: p.models ?? "",
-      in_deg: cite_count.get(id) ?? 0
+      in_deg: cite_count.get(id) ?? 0,
+      out_deg: cite_out.get(id) ?? 0
     }
   }).filter(n => n.date instanceof Date && !isNaN(n.date))
 
@@ -1334,7 +1341,8 @@ citation_arcs = {
     `${d.models || "(no model)"} — ${d.title}
 year: ${d.year ?? ""}
 kind: ${d.kind}
-cited by ${d.in_deg} papers in the catalog`
+cited by ${d.in_deg} papers in the catalog
+cites ${d.out_deg} papers in the catalog`
   )
 
   // Labels: only the top in-degree papers (one per row, so labels are legible).
