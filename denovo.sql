@@ -415,6 +415,8 @@ INSERT INTO country VALUES(16,'Switzerland');
 INSERT INTO country VALUES(17,'Slovakia');
 INSERT INTO country VALUES(18,'Thailand');
 INSERT INTO country VALUES(19,'Singapore');
+INSERT INTO country VALUES(20,'Norway');
+INSERT INTO country VALUES(21,'Bangladesh');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -496,6 +498,8 @@ INSERT INTO city VALUES(70,'Frankfurt am Main',4);
 INSERT INTO city VALUES(71,'Harbin',2);
 INSERT INTO city VALUES(72,'Canberra',15);
 INSERT INTO city VALUES(73,'Martinsried',4);
+INSERT INTO city VALUES(74,'Bergen',20);
+INSERT INTO city VALUES(75,'Dhaka',21);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -669,8 +673,13 @@ INSERT INTO affiliation VALUES(156,'Goethe University','Faculty of Biological Sc
 INSERT INTO affiliation VALUES(157,'Xiamen University','The First Affiliated Hospital of Xiamen University, School of Medicine',2,29);
 INSERT INTO affiliation VALUES(158,'Harbin Medical University','College of Bioinformatics Science and Technology',2,71);
 INSERT INTO affiliation VALUES(159,'Aginome Scientific',NULL,2,29);
-INSERT INTO affiliation VALUES(160,'Australian National University','School of Computing',15,72);
-INSERT INTO affiliation VALUES(161,'Max Planck Institute of Biochemistry',NULL,4,73);
+INSERT INTO affiliation VALUES(160,'Australian National University','Biological Data Science Institute (BDSI)',15,72);
+INSERT INTO affiliation VALUES(161,'Max Planck Institute of Biochemistry','Computational Systems Biochemistry Research Group',4,73);
+INSERT INTO affiliation VALUES(162,'CSIRO','Agriculture and Food',15,72);
+INSERT INTO affiliation VALUES(163,'North South University','Department of Electrical and Computer Engineering',21,75);
+INSERT INTO affiliation VALUES(164,'Ludwig-Maximilians-Universität München','Department of Earth and Environmental Sciences',4,21);
+INSERT INTO affiliation VALUES(165,'University of Copenhagen','Evolutionary Genomics Section, Globe Institute',3,3);
+INSERT INTO affiliation VALUES(166,'University of Bergen','Department of Biological and Medical Psychology',20,74);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1183,19 +1192,25 @@ INSERT INTO author_affiliation VALUES(373,158);
 INSERT INTO author_affiliation VALUES(140,159);
 INSERT INTO author_affiliation VALUES(375,160);
 INSERT INTO author_affiliation VALUES(376,160);
-INSERT INTO author_affiliation VALUES(377,160);
 INSERT INTO author_affiliation VALUES(378,160);
-INSERT INTO author_affiliation VALUES(379,160);
 INSERT INTO author_affiliation VALUES(380,160);
 INSERT INTO author_affiliation VALUES(381,161);
 INSERT INTO author_affiliation VALUES(382,161);
-INSERT INTO author_affiliation VALUES(383,161);
 INSERT INTO author_affiliation VALUES(384,161);
 INSERT INTO author_affiliation VALUES(385,52);
 INSERT INTO author_affiliation VALUES(386,52);
 INSERT INTO author_affiliation VALUES(387,52);
 INSERT INTO author_affiliation VALUES(388,52);
 INSERT INTO author_affiliation VALUES(389,52);
+INSERT INTO author_affiliation VALUES(375,162);
+INSERT INTO author_affiliation VALUES(376,162);
+INSERT INTO author_affiliation VALUES(377,162);
+INSERT INTO author_affiliation VALUES(378,162);
+INSERT INTO author_affiliation VALUES(380,162);
+INSERT INTO author_affiliation VALUES(379,163);
+INSERT INTO author_affiliation VALUES(381,164);
+INSERT INTO author_affiliation VALUES(383,165);
+INSERT INTO author_affiliation VALUES(384,166);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2848,9 +2863,9 @@ INSERT INTO publication_citation VALUES(101,67,'crossref');
 INSERT INTO publication_citation VALUES(101,68,'both');
 INSERT INTO publication_citation VALUES(101,69,'both');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',19);
-INSERT INTO sqlite_sequence VALUES('city',73);
-INSERT INTO sqlite_sequence VALUES('affiliation',161);
+INSERT INTO sqlite_sequence VALUES('country',21);
+INSERT INTO sqlite_sequence VALUES('city',75);
+INSERT INTO sqlite_sequence VALUES('affiliation',166);
 INSERT INTO sqlite_sequence VALUES('author',389);
 INSERT INTO sqlite_sequence VALUES('algorithm',92);
 INSERT INTO sqlite_sequence VALUES('publication',101);
