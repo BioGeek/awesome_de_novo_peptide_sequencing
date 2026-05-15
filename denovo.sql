@@ -1422,6 +1422,7 @@ INSERT INTO publication VALUES(98,'A multi-species benchmark for training and va
 INSERT INTO publication VALUES(99,'DPST: De Novo Peptide Sequencing with Amino-Acid-Aware Transformers','2022-03-23','10.48550/arXiv.2203.13132','arXiv',NULL,'https://arxiv.org/abs/2203.13132','arXiv','preprint');
 INSERT INTO publication VALUES(100,'Spectrum graph-based de-novo sequencing algorithm MaxNovo achieves high peptide identification rates in collisional dissociation MS/MS spectra','2021-09-04','10.1101/2021.09.04.458985','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2021.09.04.458985v1','bioRxiv','preprint');
 INSERT INTO publication VALUES(101,'PEAKS DB: De Novo Sequencing Assisted Database Search for Sensitive and Accurate Peptide Identification','2012-04-01','10.1074/mcp.M111.010587','ASBMB',NULL,'https://www.mcponline.org/article/S1535-9476(20)30468-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed');
+INSERT INTO publication VALUES(102,'De novo mass spectrometry peptide sequencing with a transformer model','2022-07-17',NULL,'PMLR',NULL,'https://proceedings.mlr.press/v162/yilmaz22a.html','ICML 2022','ML conference');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1533,6 +1534,7 @@ INSERT INTO publication_algorithm VALUES(57,51);
 INSERT INTO publication_algorithm VALUES(99,90);
 INSERT INTO publication_algorithm VALUES(100,91);
 INSERT INTO publication_algorithm VALUES(101,92);
+INSERT INTO publication_algorithm VALUES(102,12);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2197,6 +2199,11 @@ INSERT INTO publication_author VALUES(101,389,8);
 INSERT INTO publication_author VALUES(101,276,9);
 INSERT INTO publication_author VALUES(101,234,10);
 INSERT INTO publication_author VALUES(29,88,5);
+INSERT INTO publication_author VALUES(102,92,1);
+INSERT INTO publication_author VALUES(102,86,2);
+INSERT INTO publication_author VALUES(102,95,3);
+INSERT INTO publication_author VALUES(102,94,4);
+INSERT INTO publication_author VALUES(102,96,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -2869,6 +2876,6 @@ INSERT INTO sqlite_sequence VALUES('city',75);
 INSERT INTO sqlite_sequence VALUES('affiliation',166);
 INSERT INTO sqlite_sequence VALUES('author',389);
 INSERT INTO sqlite_sequence VALUES('algorithm',92);
-INSERT INTO sqlite_sequence VALUES('publication',101);
+INSERT INTO sqlite_sequence VALUES('publication',102);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
