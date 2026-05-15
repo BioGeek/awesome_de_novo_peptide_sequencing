@@ -223,6 +223,41 @@ algorithms_t = transpose(algorithms).map(r => ({
   first_pub: r.first_pub ? new Date(r.first_pub) : null,
   is_dl: r.is_dl == null ? null : !!r.is_dl   // SQLite INTEGER 0/1 → JS boolean
 }))
+
+// Version-aware view of algorithms: any algorithm whose joined publications
+// carry a `version` tag (currently Casanovo v1 / v2 / v5) is expanded into one
+// row per version, each with its own first_pub date and a label like
+// "Casanovo v2". Drives the architectures timeline so successive releases of
+// the same method appear as distinct dots instead of collapsing onto the
+// earliest one. All other downstream cells (counters, bipartite network,
+// browse table) keep using `algorithms_t` and remain one-row-per-algorithm.
+algorithms_versioned_t = {
+  const pubs_for = new Map()
+  for (const p of pubs_t) {
+    for (const m of (p.models ?? "").split(",").map(s => s.trim()).filter(Boolean)) {
+      if (!pubs_for.has(m)) pubs_for.set(m, [])
+      pubs_for.get(m).push(p)
+    }
+  }
+  const out = []
+  for (const r of algorithms_t) {
+    const its_pubs = pubs_for.get(r.model) ?? []
+    const versions = Array.from(new Set(its_pubs.map(p => p.version).filter(Boolean))).sort()
+    if (versions.length === 0) { out.push({ ...r, base_model: r.model }); continue }
+    for (const v of versions) {
+      const dates = its_pubs.filter(p => p.version === v).map(p => p.date).filter(Boolean)
+      const earliest = dates.length ? new Date(Math.min(...dates.map(d => +d))) : r.first_pub
+      out.push({ ...r, model: `${r.model} ${v}`, version: v, base_model: r.model, first_pub: earliest })
+    }
+    const unversioned = its_pubs.filter(p => !p.version)
+    if (unversioned.length) {
+      const dates = unversioned.map(p => p.date).filter(Boolean)
+      const earliest = dates.length ? new Date(Math.min(...dates.map(d => +d))) : r.first_pub
+      out.push({ ...r, base_model: r.model, first_pub: earliest })
+    }
+  }
+  return out
+}
 venues_t = transpose(venues)
 author_details_t = transpose(author_details)
 citations_t      = transpose(citations)
@@ -502,7 +537,7 @@ innovations_timeline = {
   }
 
   // Only include bands that have at least one surviving model.
-  const present = new Set(algorithms_t.filter(matches_filters).map(a => a.family))
+  const present = new Set(algorithms_versioned_t.filter(matches_filters).map(a => a.family))
   const visible_bands = band_order.filter(f => present.has(f))
 
   // Stack bands bottom-to-top, each at its own height.
@@ -520,7 +555,7 @@ innovations_timeline = {
   // is interpreted relative to the *band's* height so taller bands spread further apart.
   // The band_index check is a safety net for any future family name that's not yet listed
   // X-range computed first so MIN_GAP_DAYS can self-tune to the actual scale.
-  const all_dates = algorithms_t.filter(a => a.first_pub).map(a => a.first_pub)
+  const all_dates = algorithms_versioned_t.filter(a => a.first_pub).map(a => a.first_pub)
   const x_min = d3.min(all_dates)
   const x_max = d3.max(all_dates)
   // Pad each side so labels at the temporal extremes (DeepNovo, DiffuNovo) stay inside the band.
@@ -539,7 +574,7 @@ innovations_timeline = {
   const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
 
   // in band_order — without it the chart would crash on .y0 of undefined.
-  const rows = algorithms_t
+  const rows = algorithms_versioned_t
     .filter(a => matches_filters(a) && band_index.has(a.family))
     .slice()
     .sort((a, b) => a.first_pub - b.first_pub)
@@ -968,7 +1003,10 @@ author_algo_network = {
   const prolific = new Set(coauth_edges_t.flatMap(e => [e.source, e.target]))
 
   // Author → algorithm edges, weighted by number of papers connecting them.
+  // When a publication carries a version tag (Casanovo v1/v2/v5), the edge
+  // points at the version-suffixed label so each release becomes its own node.
   const edge_w = new Map()  // key: `${author}|${algo}`
+  const algo_to_base = new Map()  // versioned label → base algorithm name (for family lookup)
   for (const p of pubs_t) {
     if (!p.authors || !p.models) continue
     const authors = String(p.authors).split(",").map(s => s.trim()).filter(Boolean)
@@ -976,7 +1014,9 @@ author_algo_network = {
     for (const a of authors) {
       if (!prolific.has(a)) continue
       for (const m of models) {
-        const key = a + "<<|>>" + m
+        const label = p.version ? `${m} ${p.version}` : m
+        algo_to_base.set(label, m)
+        const key = a + "<<|>>" + label
         edge_w.set(key, (edge_w.get(key) ?? 0) + 1)
       }
     }
@@ -995,7 +1035,8 @@ author_algo_network = {
   const nodes = [
     ...Array.from(author_set, name => ({ id: name, kind: "author", degree: 0 })),
     ...Array.from(algo_set, name => {
-      const meta = algo_meta.get(name)
+      const base = algo_to_base.get(name) ?? name
+      const meta = algo_meta.get(base)
       return { id: name, kind: "algo", family: meta?.family ?? "Unknown", degree: 0 }
     })
   ]
