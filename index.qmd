@@ -1291,7 +1291,7 @@ author_algo_network = {
 
 A chronological citation arc diagram. Papers are placed left-to-right by publication date and stratified vertically by `kind`; within each row, the most-cited papers float to the top. Each arc connects a citing paper (right end) to a paper it cites (left end), curving upward above the row. **Hover any paper** to highlight the citations into it (red) and out of it (blue), and dim everything else.
 
-Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), matched back to publications via DOI-exact (and, for refs without a DOI, fuzzy-title with token-set ratio ≥ 92). Only intra-catalog citations are drawn — references to papers outside the catalog are filtered out.
+Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), matched back to publications via DOI-exact (and, for refs without a DOI, fuzzy-title with token-set ratio ≥ 92). Only intra-catalog citations are drawn — references to papers outside the catalog are filtered out. Every arrow runs *citing → cited*, so the arrowhead always lands on the older paper.
 
 ```{ojs}
 //| echo: false
@@ -1445,6 +1445,18 @@ citation_arcs = {
     return `M ${x1} ${y1} C ${mx} ${cy1}, ${mx} ${cy2}, ${x2} ${y2}`
   }
 
+  // Arrowhead markers. We need one per arc color (default/red/blue) because
+  // SVG markers inherit their fill from the marker itself, not the path's
+  // stroke. Refs get swapped on hover so the marker color matches the arc.
+  const defs = svg.append("defs")
+  const mk_marker = (id, color) => defs.append("marker")
+    .attr("id", id).attr("viewBox", "0 0 10 10").attr("refX", 9).attr("refY", 5)
+    .attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto-start-reverse")
+    .append("path").attr("d", "M0,0 L10,5 L0,10 z").attr("fill", color)
+  mk_marker("arr-default", "#94a3b8")
+  mk_marker("arr-red",     "#cf222e")
+  mk_marker("arr-blue",    "#1f6feb")
+
   const arc_layer = root.append("g").attr("class", "arcs").attr("fill", "none")
   const arc = arc_layer.selectAll("path")
     .data(links)
@@ -1453,6 +1465,7 @@ citation_arcs = {
     .attr("stroke", "#94a3b8")
     .attr("stroke-opacity", 0.18)
     .attr("stroke-width", d => d.source_kind === "both" ? 0.9 : 0.6)
+    .attr("marker-end", "url(#arr-default)")
 
   // Nodes
   const nodeR = d => 3 + 5 * Math.sqrt(d.in_deg / max_in)
@@ -1516,6 +1529,11 @@ cites ${d.out_deg} papers in the catalog`
         if (l.source.id === focus.id) return "#1f6feb"   // who this paper cites
         return "#94a3b8"
       })
+      .attr("marker-end", l => {
+        if (l.target.id === focus.id) return "url(#arr-red)"
+        if (l.source.id === focus.id) return "url(#arr-blue)"
+        return "url(#arr-default)"
+      })
       .attr("stroke-opacity", l => (l.source.id === focus.id || l.target.id === focus.id) ? 0.85 : 0.04)
       .attr("stroke-width",   l => (l.source.id === focus.id || l.target.id === focus.id) ? 1.4 : 0.4)
     node.attr("opacity", d => {
@@ -1527,6 +1545,7 @@ cites ${d.out_deg} papers in the catalog`
   node.on("mouseleave", function () {
     arc.attr("stroke", "#94a3b8").attr("stroke-opacity", 0.18)
         .attr("stroke-width", d => d.source_kind === "both" ? 0.9 : 0.6)
+        .attr("marker-end", "url(#arr-default)")
     node.attr("opacity", 1)
   })
 
