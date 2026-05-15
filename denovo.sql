@@ -322,6 +322,11 @@ INSERT INTO author VALUES(316,'Zicheng Liu',NULL);
 INSERT INTO author VALUES(317,'Shengying Pan',NULL);
 INSERT INTO author VALUES(318,'Qing Zhang',NULL);
 INSERT INTO author VALUES(319,'Wenting Li',NULL);
+INSERT INTO author VALUES(320,'Yuxing Liao',NULL);
+INSERT INTO author VALUES(321,'Zhiao Shi',NULL);
+INSERT INTO author VALUES(322,'Sara R. Savage',NULL);
+INSERT INTO author VALUES(323,'Wen Jiang',NULL);
+INSERT INTO author VALUES(324,'Bing Zhang',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -416,6 +421,7 @@ INSERT INTO city VALUES(60,'Lanzhou',2);
 INSERT INTO city VALUES(61,'Bangkok',18);
 INSERT INTO city VALUES(62,'Changsha',2);
 INSERT INTO city VALUES(63,'Singapore',19);
+INSERT INTO city VALUES(64,'Houston',8);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -570,6 +576,8 @@ INSERT INTO affiliation VALUES(137,'The Wistar Institute','Proteomics and Metabo
 INSERT INTO affiliation VALUES(138,'The Wistar Institute','Center for Systems and Computational Biology',8,38);
 INSERT INTO affiliation VALUES(139,'Hunan University',NULL,2,62);
 INSERT INTO affiliation VALUES(140,'National University of Singapore',NULL,19,63);
+INSERT INTO affiliation VALUES(141,'Baylor College of Medicine','Lester and Sue Smith Breast Center',8,64);
+INSERT INTO affiliation VALUES(142,'Baylor College of Medicine','Department of Molecular and Human Genetics',8,64);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1009,6 +1017,18 @@ INSERT INTO author_affiliation VALUES(100,52);
 INSERT INTO author_affiliation VALUES(317,52);
 INSERT INTO author_affiliation VALUES(318,52);
 INSERT INTO author_affiliation VALUES(319,52);
+INSERT INTO author_affiliation VALUES(90,142);
+INSERT INTO author_affiliation VALUES(320,142);
+INSERT INTO author_affiliation VALUES(321,142);
+INSERT INTO author_affiliation VALUES(322,142);
+INSERT INTO author_affiliation VALUES(323,142);
+INSERT INTO author_affiliation VALUES(324,142);
+INSERT INTO author_affiliation VALUES(90,141);
+INSERT INTO author_affiliation VALUES(320,141);
+INSERT INTO author_affiliation VALUES(321,141);
+INSERT INTO author_affiliation VALUES(322,141);
+INSERT INTO author_affiliation VALUES(323,141);
+INSERT INTO author_affiliation VALUES(324,141);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1091,6 +1111,7 @@ INSERT INTO algorithm VALUES(72,'SMSNet','https://github.com/cmb-chula/SMSNet',N
 INSERT INTO algorithm VALUES(73,'NovoBench',NULL,NULL,NULL,NULL,'NeurIPS benchmark for DL de novo','meta',NULL,NULL);
 INSERT INTO algorithm VALUES(74,'SearchNovo','https://github.com/junxia97/SearchNovo',NULL,NULL,'Transformer (AR)','DB-search + de novo fusion','adjacent',1,'DDA');
 INSERT INTO algorithm VALUES(75,'NovoBoard','https://github.com/nh2tran/NovoBoard',NULL,NULL,NULL,'Decoy-based FDR + accuracy framework','post-processor',0,'DDA');
+INSERT INTO algorithm VALUES(76,'Wen 2020 Review',NULL,NULL,NULL,NULL,'Broad DL-in-proteomics review (de novo is one of several topics)','meta',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1182,6 +1203,7 @@ INSERT INTO publication VALUES(77,'Uncovering Thousands of New Peptides with Seq
 INSERT INTO publication VALUES(78,'NovoBench: Benchmarking Deep Learning-based De Novo Peptide Sequencing Methods in Proteomics','2024-06-16','10.48550/arXiv.2406.11906','arXiv',NULL,'https://arxiv.org/abs/2406.11906','NeurIPS 2024','ML conference');
 INSERT INTO publication VALUES(79,'Bridging the Gap between Database Search and De Novo Peptide Sequencing with SearchNovo','2025-01-22',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=SjMtxqdQ73','ICLR 2025','ML conference');
 INSERT INTO publication VALUES(80,'NovoBoard: A Comprehensive Framework for Evaluating the False Discovery Rate and Accuracy of De Novo Peptide Sequencing','2024-04-16','10.1016/j.mcpro.2025.100939','ASBMB',NULL,'https://www.mcponline.org/article/S1535-9476(24)00139-7/fulltext','Molecular & Cellular Proteomics','peer-reviewed');
+INSERT INTO publication VALUES(81,'Deep Learning in Proteomics','2020-07-01','10.1002/pmic.201900335','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.201900335','Proteomics','peer-reviewed');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1272,6 +1294,7 @@ INSERT INTO publication_algorithm VALUES(77,72);
 INSERT INTO publication_algorithm VALUES(78,73);
 INSERT INTO publication_algorithm VALUES(79,74);
 INSERT INTO publication_algorithm VALUES(80,75);
+INSERT INTO publication_algorithm VALUES(81,76);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1816,11 +1839,18 @@ INSERT INTO publication_author VALUES(80,319,6);
 INSERT INTO publication_author VALUES(80,105,7);
 INSERT INTO publication_author VALUES(80,107,8);
 INSERT INTO publication_author VALUES(80,252,9);
+INSERT INTO publication_author VALUES(81,90,1);
+INSERT INTO publication_author VALUES(81,256,2);
+INSERT INTO publication_author VALUES(81,320,3);
+INSERT INTO publication_author VALUES(81,321,4);
+INSERT INTO publication_author VALUES(81,322,5);
+INSERT INTO publication_author VALUES(81,323,6);
+INSERT INTO publication_author VALUES(81,324,7);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',19);
-INSERT INTO sqlite_sequence VALUES('city',63);
-INSERT INTO sqlite_sequence VALUES('affiliation',140);
-INSERT INTO sqlite_sequence VALUES('author',319);
-INSERT INTO sqlite_sequence VALUES('algorithm',75);
-INSERT INTO sqlite_sequence VALUES('publication',80);
+INSERT INTO sqlite_sequence VALUES('city',64);
+INSERT INTO sqlite_sequence VALUES('affiliation',142);
+INSERT INTO sqlite_sequence VALUES('author',324);
+INSERT INTO sqlite_sequence VALUES('algorithm',76);
+INSERT INTO sqlite_sequence VALUES('publication',81);
 COMMIT;
