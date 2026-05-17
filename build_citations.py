@@ -144,26 +144,29 @@ def main() -> int:
     conn.execute("PRAGMA foreign_keys = ON")
     cur  = conn.cursor()
 
-    pubs = cur.execute(
+    all_pubs = cur.execute(
         "SELECT id, title, doi FROM publication ORDER BY id"
     ).fetchall()
-    total = len(pubs)
+    total = len(all_pubs)
 
     if args.only:
         wanted = {int(x) for x in args.only.split(",") if x.strip()}
-        pubs = [p for p in pubs if p[0] in wanted]
+        pubs = [p for p in all_pubs if p[0] in wanted]
         print(f"--only filter: {len(pubs)}/{total} publications selected.")
     elif args.skip_processed:
         seen = already_processed_ids(cur)
-        pubs = [p for p in pubs if p[0] not in seen]
+        pubs = [p for p in all_pubs if p[0] not in seen]
         print(f"--skip-processed: {len(pubs)}/{total} new publications to process "
               f"({len(seen)} already queried).")
     else:
+        pubs = all_pubs
         print(f"Loaded {len(pubs)} publications from the DB.")
 
-    # Lookup tables: DOI → pub_id, normalized_title → pub_id
-    by_doi   = {(d or "").lower(): pid for pid, _, d in pubs if d}
-    by_title = {normalize_title(t): pid for pid, t, _ in pubs if t}
+    # Lookup tables: DOI → pub_id, normalized_title → pub_id. Built from the
+    # *full* catalog so references can resolve back to any paper, not just the
+    # filtered subset currently being processed.
+    by_doi   = {(d or "").lower(): pid for pid, _, d in all_pubs if d}
+    by_title = {normalize_title(t): pid for pid, t, _ in all_pubs if t}
     all_titles_norm = list(by_title.keys())
 
     audit_rows: list[dict] = []
