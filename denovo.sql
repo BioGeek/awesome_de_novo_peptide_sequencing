@@ -401,6 +401,8 @@ INSERT INTO author VALUES(395,'Xiaowei Huang',NULL);
 INSERT INTO author VALUES(396,'Timo Sachsenberg',NULL);
 INSERT INTO author VALUES(397,'Mingze Bai',NULL);
 INSERT INTO author VALUES(398,'Yasset Perez-Riverol',NULL);
+INSERT INTO author VALUES(408,'Chi-en Amy Tai',NULL);
+INSERT INTO author VALUES(409,'Alexander Wong',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -696,6 +698,7 @@ INSERT INTO affiliation VALUES(168,'Peking Union Medical College Hospital','Stem
 INSERT INTO affiliation VALUES(169,'University of Tübingen','Department of Computer Science, Applied Bioinformatics',4,76);
 INSERT INTO affiliation VALUES(170,'Chongqing University of Posts and Telecommunications','Chongqing Key Laboratory of Big Data for Bio Intelligence',2,43);
 INSERT INTO affiliation VALUES(171,'European Molecular Biology Laboratory','European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus',7,77);
+INSERT INTO affiliation VALUES(172,'University of Waterloo','Department of Systems Design Engineering',9,24);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1242,6 +1245,8 @@ INSERT INTO author_affiliation VALUES(391,168);
 INSERT INTO author_affiliation VALUES(396,169);
 INSERT INTO author_affiliation VALUES(397,170);
 INSERT INTO author_affiliation VALUES(398,171);
+INSERT INTO author_affiliation VALUES(408,172);
+INSERT INTO author_affiliation VALUES(409,172);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1342,6 +1347,7 @@ INSERT INTO algorithm VALUES(90,'DPST','https://github.com/Yan98/DPST',NULL,NULL
 INSERT INTO algorithm VALUES(91,'MaxNovo',NULL,NULL,'https://www.maxquant.org/','Graph / DP','MaxQuant spectrum-graph de novo','algorithm',0,'DDA');
 INSERT INTO algorithm VALUES(92,'PEAKS DB',NULL,NULL,'https://www.bioinfor.com/peaksdb/','Graph / DP','De-novo-assisted DB search','adjacent',0,'DDA');
 INSERT INTO algorithm VALUES(93,'π-MSNet',NULL,NULL,NULL,NULL,'Billion-scale AI-ready proteomics data portal','adjacent',NULL,NULL);
+INSERT INTO algorithm VALUES(94,'Casanovo-DM2',NULL,NULL,NULL,'Diffusion','Diffusion decoder variants (Casanovo-DS / DM1 / DM2) plugged into Casanovo''s spectrum encoder; DM2 + DINOISER loss reported the best amino-acid recall.','algorithm',1,'DDA');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1467,6 +1473,7 @@ INSERT INTO publication VALUES(112,'MARS: Improved De Novo Peptide Candidate Sel
 INSERT INTO publication VALUES(113,'A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models','2024-08-30','10.26434/chemrxiv-2024-z5b8m','ChemRxiv',NULL,'https://chemrxiv.org/engage/chemrxiv/article-details/66d24fef20ac769e5f672ad0','ChemRxiv','preprint',NULL);
 INSERT INTO publication VALUES(114,'Introducing PandaNovo for practical large-scale de novo peptide sequencing','2023-07-16','10.1101/2023.07.15.549133','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2023.07.15.549133v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(115,'π-MSNet: A billion-scale, AI-ready living proteomics data portal','2026-04-13','10.64898/2026.04.13.718149','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.04.13.718149v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(116,'Diffusion Decoding for Peptide De Novo Sequencing','2025-07-15','10.48550/arXiv.2507.10955','arXiv',NULL,'https://arxiv.org/abs/2507.10955','arXiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1592,6 +1599,7 @@ INSERT INTO publication_algorithm VALUES(112,34);
 INSERT INTO publication_algorithm VALUES(113,89);
 INSERT INTO publication_algorithm VALUES(114,32);
 INSERT INTO publication_algorithm VALUES(115,93);
+INSERT INTO publication_algorithm VALUES(116,94);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2383,6 +2391,8 @@ INSERT INTO publication_author VALUES(115,188,11);
 INSERT INTO publication_author VALUES(115,398,12);
 INSERT INTO publication_author VALUES(115,166,13);
 INSERT INTO publication_author VALUES(115,151,14);
+INSERT INTO publication_author VALUES(116,408,1);
+INSERT INTO publication_author VALUES(116,409,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3100,9 +3110,9 @@ INSERT INTO journal_impact VALUES('Applied Sciences (MDPI)','S4210205812',3.1409
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',21);
 INSERT INTO sqlite_sequence VALUES('city',77);
-INSERT INTO sqlite_sequence VALUES('affiliation',171);
-INSERT INTO sqlite_sequence VALUES('author',407);
-INSERT INTO sqlite_sequence VALUES('algorithm',93);
-INSERT INTO sqlite_sequence VALUES('publication',115);
+INSERT INTO sqlite_sequence VALUES('affiliation',172);
+INSERT INTO sqlite_sequence VALUES('author',409);
+INSERT INTO sqlite_sequence VALUES('algorithm',94);
+INSERT INTO sqlite_sequence VALUES('publication',116);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
