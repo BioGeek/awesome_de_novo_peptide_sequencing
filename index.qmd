@@ -143,6 +143,7 @@ author_affs = pd.read_sql(
 algorithms = pd.read_sql(
     """
     SELECT alg.name AS model,
+           alg.aliases AS aliases,
            alg.algorithm_family AS family,
            alg.short_description AS description,
            alg.repository AS repo,
@@ -1862,8 +1863,19 @@ viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filte
 //| echo: false
 viewof selected_pubs = {
   // Decorate each row with the venue's OpenAlex 2-year citedness (or null).
+  // Also rewrite the comma-separated `models` string to append known aliases
+  // (e.g. π-HelixNovo → "π-HelixNovo (aka PandaNovo)") so renamed methods stay
+  // searchable by their historical name in the table's filter box.
+  const aliases_by_model = new Map(
+    algorithms_t.filter(a => a.aliases).map(a => [a.model, a.aliases])
+  )
+  const annotate_models = s => (s ?? "")
+    .split(",").map(x => x.trim()).filter(Boolean)
+    .map(m => aliases_by_model.has(m) ? `${m} (aka ${aliases_by_model.get(m)})` : m)
+    .join(", ")
   const search_with_if = search.map(r => ({
     ...r,
+    models: annotate_models(r.models),
     citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
   }))
   const table = Inputs.table(search_with_if, {
