@@ -1309,7 +1309,6 @@ INSERT INTO algorithm VALUES(7,'DiffuNovo',NULL,NULL,NULL,'Diffusion','Regressor
 INSERT INTO algorithm VALUES(8,'OmniNovo',NULL,NULL,NULL,'Transformer (NAR)','PTM-aware NAR','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(9,'CrossNovo','https://github.com/BEAM-Labs/denovo',NULL,NULL,'Transformer (NAR)','AR + NAR hybrid','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(10,'Modanovo','https://github.com/gagneurlab/Modanovo',NULL,NULL,'Transformer (AR)','Unified PTM-aware model','algorithm',1,'DDA',NULL);
-INSERT INTO algorithm VALUES(11,'DIANovo',NULL,NULL,NULL,'GNN','Graph-based DIA sequencing','algorithm',1,'DIA',NULL);
 INSERT INTO algorithm VALUES(12,'Casanovo','https://github.com/Noble-Lab/casanovo',NULL,NULL,'Transformer (AR)','First Transformer','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(13,'DiffNovo','https://github.com/Biocomputing-Research-Group/DiffNovo',NULL,NULL,'Transformer (NAR)','Transformer-diffusion model','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(14,'RNovA','https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',NULL,NULL,'Transformer (AR)','Zero-shot open PTM discovery','algorithm',1,'DDA',NULL);
@@ -1320,7 +1319,7 @@ INSERT INTO algorithm VALUES(18,'TSARseqNovo','https://github.com/qiyueliuhuo8/T
 INSERT INTO algorithm VALUES(19,'XA-Novo','https://github.com/biocc/SP-MEGD_Fusion',NULL,NULL,'Transformer (AR)','NAR knowledge distillation','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(20,'π-PrimeNovo','https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',NULL,NULL,'Transformer (NAR)','NAR Transformer (CTC)','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(21,'ReNovo',NULL,NULL,NULL,'Transformer (AR)','Retrieval-based sequencing','algorithm',1,'DDA',NULL);
-INSERT INTO algorithm VALUES(22,'DiaNovo','https://github.com/hearthewind/dianovo',NULL,NULL,'Transformer (AR)','Multiplexed DIA spectra','algorithm',1,'DIA',NULL);
+INSERT INTO algorithm VALUES(22,'DIANovo','https://github.com/hearthewind/dianovo',NULL,NULL,'Transformer (AR)','Transformer-based de novo sequencer for DIA — disentangles coeluted/multiplexed precursor spectra. Presented in Zheng Ma''s arXiv preprint (2024) and his PhD thesis (2025).','algorithm',1,'DIA',NULL);
 INSERT INTO algorithm VALUES(23,'RankNovo',NULL,NULL,NULL,'Transformer (AR)','Universal reranking','post-processor',1,'both',NULL);
 INSERT INTO algorithm VALUES(24,'π-xNovo','https://github.com/PHOENIXcenter/pi-xNovo',NULL,NULL,'Transformer (AR)','Explainable AI sequencing','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(25,'TransNovo','https://github.com/ThatMatin/TransNovo',NULL,NULL,'Transformer (AR)','Transformer-based sequencing','algorithm',1,'DDA',NULL);
@@ -1544,7 +1543,7 @@ INSERT INTO publication_algorithm VALUES(7,7);
 INSERT INTO publication_algorithm VALUES(8,8);
 INSERT INTO publication_algorithm VALUES(9,9);
 INSERT INTO publication_algorithm VALUES(10,10);
-INSERT INTO publication_algorithm VALUES(11,11);
+INSERT INTO publication_algorithm VALUES(11,22);
 INSERT INTO publication_algorithm VALUES(12,12);
 INSERT INTO publication_algorithm VALUES(13,13);
 INSERT INTO publication_algorithm VALUES(14,14);
