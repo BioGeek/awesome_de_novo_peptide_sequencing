@@ -1395,7 +1395,8 @@ INSERT INTO algorithm VALUES(94,'Casanovo-DM2',NULL,NULL,NULL,'Diffusion','Diffu
 INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,NULL,'Mini-review on applying de novo peptide sequencing in metaproteomics — challenges (large search spaces, missing references) and tooling outlook.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS — fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(97,'DiffNovo-DIA','https://pypi.org/project/diffnovo-dia/',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
-INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,NULL,'Deep active-learning approach for DIA de novo peptide sequencing — picks the next spectra to label so the training set stays small. Introduced at the ICML 2022 Workshop on Computational Biology and revisited in Shiva Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA',NULL);
+INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,NULL,'Active-learning-augmented DIA de novo sequencer. Introduced in Shiva Ebrahimi''s PhD thesis (UNT, 2025) where it likely sits on top of the thesis''s Transformer-DIA base; no standalone paper or public code yet. (Conceptually related to AL-DeepNovo-DIA from the same group''s 2022 ICML workshop paper, which applied active learning to Tran et al. 2019''s DeepNovo-DIA instead.)','algorithm',1,'DIA',NULL);
+INSERT INTO algorithm VALUES(99,'AL-DeepNovo-DIA',NULL,NULL,NULL,'CNN + RNN','Active-learning wrapper around Tran et al. 2019''s DeepNovo-DIA — selects which spectra to label using uncertainty-based informativeness scores, keeping training data small. Proposed at the ICML 2022 Workshop on Computational Biology by Ebrahimi & Guo.','algorithm',1,'DIA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1659,7 +1660,7 @@ INSERT INTO publication_algorithm VALUES(119,98);
 INSERT INTO publication_algorithm VALUES(119,28);
 INSERT INTO publication_algorithm VALUES(119,97);
 INSERT INTO publication_algorithm VALUES(120,28);
-INSERT INTO publication_algorithm VALUES(121,98);
+INSERT INTO publication_algorithm VALUES(121,99);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3288,7 +3289,7 @@ INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
 INSERT INTO sqlite_sequence VALUES('author',425);
-INSERT INTO sqlite_sequence VALUES('algorithm',98);
+INSERT INTO sqlite_sequence VALUES('algorithm',99);
 INSERT INTO sqlite_sequence VALUES('publication',121);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
