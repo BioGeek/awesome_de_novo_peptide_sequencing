@@ -1395,7 +1395,7 @@ INSERT INTO algorithm VALUES(94,'Casanovo-DM2',NULL,NULL,NULL,'Diffusion','Diffu
 INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,NULL,'Mini-review on applying de novo peptide sequencing in metaproteomics — challenges (large search spaces, missing references) and tooling outlook.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS — fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(97,'DiffNovo-DIA','https://pypi.org/project/diffnovo-dia/',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
-INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,NULL,'Active-learning-augmented DIA de novo sequencer. Introduced in Shiva Ebrahimi''s PhD thesis (UNT, 2025); no standalone paper or public code yet.','algorithm',1,'DIA',NULL);
+INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,NULL,'Deep active-learning approach for DIA de novo peptide sequencing — picks the next spectra to label so the training set stays small. Introduced at the ICML 2022 Workshop on Computational Biology and revisited in Shiva Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1526,6 +1526,7 @@ INSERT INTO publication VALUES(117,'Metaproteomics Beyond Databases: Addressing 
 INSERT INTO publication VALUES(118,'De novo sequencing of peptides by MS/MS','2010-02-18','10.1002/pmic.200900459','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.200900459','Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(119,'De Novo Peptide Sequencing for Data-independent Acquisition (DIA) Using Deep Learning','2025-05-01','10.12794/metadc2443151','PhD thesis',NULL,'https://digital.library.unt.edu/ark:/67531/metadc2443151/','','thesis',NULL);
 INSERT INTO publication VALUES(120,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2023-12-04','10.1109/BIBE60311.2023.00013','IEEE',NULL,'https://ieeexplore.ieee.org/document/10431866','2023 IEEE 23rd International Conference on Bioinformatics and Bioengineering (BIBE)','peer-reviewed',NULL);
+INSERT INTO publication VALUES(121,'Deep Active Learning for De Novo Peptide Sequencing from Data-independent-acquisition Mass Spectrometry','2022-07-22',NULL,NULL,NULL,'https://icml-compbio.github.io/icml-website-2022/2022/papers/WCBICML2022_paper_60.pdf','ICML 2022 Workshop on Computational Biology','ML conference',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1658,6 +1659,7 @@ INSERT INTO publication_algorithm VALUES(119,98);
 INSERT INTO publication_algorithm VALUES(119,28);
 INSERT INTO publication_algorithm VALUES(119,97);
 INSERT INTO publication_algorithm VALUES(120,28);
+INSERT INTO publication_algorithm VALUES(121,98);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2471,6 +2473,8 @@ INSERT INTO publication_author VALUES(118,425,4);
 INSERT INTO publication_author VALUES(119,97,1);
 INSERT INTO publication_author VALUES(120,97,1);
 INSERT INTO publication_author VALUES(120,99,2);
+INSERT INTO publication_author VALUES(121,97,1);
+INSERT INTO publication_author VALUES(121,99,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3285,6 +3289,6 @@ INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
 INSERT INTO sqlite_sequence VALUES('author',425);
 INSERT INTO sqlite_sequence VALUES('algorithm',98);
-INSERT INTO sqlite_sequence VALUES('publication',120);
+INSERT INTO sqlite_sequence VALUES('publication',121);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
