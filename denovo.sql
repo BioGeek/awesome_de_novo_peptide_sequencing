@@ -1394,6 +1394,8 @@ INSERT INTO algorithm VALUES(93,'π-MSNet',NULL,NULL,NULL,NULL,'Billion-scale AI
 INSERT INTO algorithm VALUES(94,'Casanovo-DM2',NULL,NULL,NULL,'Diffusion','Diffusion decoder variants (Casanovo-DS / DM1 / DM2) plugged into Casanovo''s spectrum encoder; DM2 + DINOISER loss reported the best amino-acid recall.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,NULL,'Mini-review on applying de novo peptide sequencing in metaproteomics — challenges (large search spaces, missing references) and tooling outlook.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS — fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(97,'DiffNovo-DIA','https://pypi.org/project/diffnovo-dia/',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
+INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,NULL,'Active-learning-augmented DIA de novo sequencer. Introduced in Shiva Ebrahimi''s PhD thesis (UNT, 2025); no standalone paper or public code yet.','algorithm',1,'DIA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1522,6 +1524,7 @@ INSERT INTO publication VALUES(115,'π-MSNet: A billion-scale, AI-ready living p
 INSERT INTO publication VALUES(116,'Diffusion Decoding for Peptide De Novo Sequencing','2025-07-15','10.48550/arXiv.2507.10955','arXiv',NULL,'https://arxiv.org/abs/2507.10955','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(117,'Metaproteomics Beyond Databases: Addressing the Challenges and Potentials of De Novo Sequencing','2025-01-31','10.1002/pmic.202400321','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.202400321','Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(118,'De novo sequencing of peptides by MS/MS','2010-02-18','10.1002/pmic.200900459','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.200900459','Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(119,'De Novo Peptide Sequencing for Data-independent Acquisition (DIA) Using Deep Learning','2025-05-01','10.12794/metadc2443151','PhD thesis',NULL,'https://digital.library.unt.edu/ark:/67531/metadc2443151/','','thesis',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1650,6 +1653,9 @@ INSERT INTO publication_algorithm VALUES(115,93);
 INSERT INTO publication_algorithm VALUES(116,94);
 INSERT INTO publication_algorithm VALUES(117,95);
 INSERT INTO publication_algorithm VALUES(118,96);
+INSERT INTO publication_algorithm VALUES(119,98);
+INSERT INTO publication_algorithm VALUES(119,28);
+INSERT INTO publication_algorithm VALUES(119,97);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2460,6 +2466,7 @@ INSERT INTO publication_author VALUES(118,422,1);
 INSERT INTO publication_author VALUES(118,423,2);
 INSERT INTO publication_author VALUES(118,424,3);
 INSERT INTO publication_author VALUES(118,425,4);
+INSERT INTO publication_author VALUES(119,97,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3197,6 +3204,35 @@ INSERT INTO publication_citation VALUES(117,103,'crossref');
 INSERT INTO publication_citation VALUES(118,70,'crossref');
 INSERT INTO publication_citation VALUES(118,86,'crossref');
 INSERT INTO publication_citation VALUES(118,92,'crossref');
+INSERT INTO publication_citation VALUES(119,1,'crossref');
+INSERT INTO publication_citation VALUES(119,32,'crossref');
+INSERT INTO publication_citation VALUES(119,34,'crossref');
+INSERT INTO publication_citation VALUES(119,37,'crossref');
+INSERT INTO publication_citation VALUES(119,39,'crossref');
+INSERT INTO publication_citation VALUES(119,41,'crossref');
+INSERT INTO publication_citation VALUES(119,42,'crossref');
+INSERT INTO publication_citation VALUES(119,46,'crossref');
+INSERT INTO publication_citation VALUES(119,48,'crossref');
+INSERT INTO publication_citation VALUES(119,49,'crossref');
+INSERT INTO publication_citation VALUES(119,52,'crossref');
+INSERT INTO publication_citation VALUES(119,54,'crossref');
+INSERT INTO publication_citation VALUES(119,56,'crossref');
+INSERT INTO publication_citation VALUES(119,58,'crossref');
+INSERT INTO publication_citation VALUES(119,60,'crossref');
+INSERT INTO publication_citation VALUES(119,62,'crossref');
+INSERT INTO publication_citation VALUES(119,66,'crossref');
+INSERT INTO publication_citation VALUES(119,67,'crossref');
+INSERT INTO publication_citation VALUES(119,68,'crossref');
+INSERT INTO publication_citation VALUES(119,70,'crossref');
+INSERT INTO publication_citation VALUES(119,71,'crossref');
+INSERT INTO publication_citation VALUES(119,72,'crossref');
+INSERT INTO publication_citation VALUES(119,73,'crossref');
+INSERT INTO publication_citation VALUES(119,77,'crossref');
+INSERT INTO publication_citation VALUES(119,99,'crossref');
+INSERT INTO publication_citation VALUES(119,101,'crossref');
+INSERT INTO publication_citation VALUES(119,103,'crossref');
+INSERT INTO publication_citation VALUES(119,108,'crossref');
+INSERT INTO publication_citation VALUES(119,110,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3233,7 +3269,7 @@ INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
 INSERT INTO sqlite_sequence VALUES('author',425);
-INSERT INTO sqlite_sequence VALUES('algorithm',96);
-INSERT INTO sqlite_sequence VALUES('publication',118);
+INSERT INTO sqlite_sequence VALUES('algorithm',98);
+INSERT INTO sqlite_sequence VALUES('publication',119);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
