@@ -1525,6 +1525,7 @@ INSERT INTO publication VALUES(116,'Diffusion Decoding for Peptide De Novo Seque
 INSERT INTO publication VALUES(117,'Metaproteomics Beyond Databases: Addressing the Challenges and Potentials of De Novo Sequencing','2025-01-31','10.1002/pmic.202400321','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.202400321','Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(118,'De novo sequencing of peptides by MS/MS','2010-02-18','10.1002/pmic.200900459','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.200900459','Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(119,'De Novo Peptide Sequencing for Data-independent Acquisition (DIA) Using Deep Learning','2025-05-01','10.12794/metadc2443151','PhD thesis',NULL,'https://digital.library.unt.edu/ark:/67531/metadc2443151/','','thesis',NULL);
+INSERT INTO publication VALUES(120,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2023-12-04','10.1109/BIBE60311.2023.00013','IEEE',NULL,'https://ieeexplore.ieee.org/document/10431866','2023 IEEE 23rd International Conference on Bioinformatics and Bioengineering (BIBE)','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1656,6 +1657,7 @@ INSERT INTO publication_algorithm VALUES(118,96);
 INSERT INTO publication_algorithm VALUES(119,98);
 INSERT INTO publication_algorithm VALUES(119,28);
 INSERT INTO publication_algorithm VALUES(119,97);
+INSERT INTO publication_algorithm VALUES(120,28);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2467,6 +2469,8 @@ INSERT INTO publication_author VALUES(118,423,2);
 INSERT INTO publication_author VALUES(118,424,3);
 INSERT INTO publication_author VALUES(118,425,4);
 INSERT INTO publication_author VALUES(119,97,1);
+INSERT INTO publication_author VALUES(120,97,1);
+INSERT INTO publication_author VALUES(120,99,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3233,6 +3237,17 @@ INSERT INTO publication_citation VALUES(119,101,'crossref');
 INSERT INTO publication_citation VALUES(119,103,'crossref');
 INSERT INTO publication_citation VALUES(119,108,'crossref');
 INSERT INTO publication_citation VALUES(119,110,'crossref');
+INSERT INTO publication_citation VALUES(120,44,'crossref');
+INSERT INTO publication_citation VALUES(120,54,'crossref');
+INSERT INTO publication_citation VALUES(120,58,'crossref');
+INSERT INTO publication_citation VALUES(120,60,'crossref');
+INSERT INTO publication_citation VALUES(120,62,'crossref');
+INSERT INTO publication_citation VALUES(120,67,'crossref');
+INSERT INTO publication_citation VALUES(120,73,'crossref');
+INSERT INTO publication_citation VALUES(120,77,'crossref');
+INSERT INTO publication_citation VALUES(120,101,'crossref');
+INSERT INTO publication_citation VALUES(120,102,'crossref');
+INSERT INTO publication_citation VALUES(120,110,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3270,6 +3285,6 @@ INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
 INSERT INTO sqlite_sequence VALUES('author',425);
 INSERT INTO sqlite_sequence VALUES('algorithm',98);
-INSERT INTO sqlite_sequence VALUES('publication',119);
+INSERT INTO sqlite_sequence VALUES('publication',120);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
