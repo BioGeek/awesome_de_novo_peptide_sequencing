@@ -1326,7 +1326,7 @@ INSERT INTO algorithm VALUES(24,'π-xNovo','https://github.com/PHOENIXcenter/pi-
 INSERT INTO algorithm VALUES(25,'TransNovo','https://github.com/ThatMatin/TransNovo',NULL,NULL,'Transformer (AR)','Transformer-based sequencing','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(26,'PowerNovo','https://github.com/protdb/PowerNovo',NULL,NULL,'Transformer (AR)','Transformer + BERT ensemble','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(27,'Cascadia',NULL,NULL,NULL,'Transformer (AR)','Transformer for DIA','algorithm',1,'DIA',NULL);
-INSERT INTO algorithm VALUES(28,'DiaTrans','https://github.com/Biocomputing-Research-Group/Casanovo-DIA',NULL,NULL,'Transformer (AR)','Transformer for DIA','algorithm',1,'DIA',NULL);
+INSERT INTO algorithm VALUES(28,'DiaTrans','https://github.com/Biocomputing-Research-Group/Transformer-DIA',NULL,NULL,'Transformer (AR)','Transformer for DIA','algorithm',1,'DIA','Casanovo-DIA, Transformer-DIA');
 INSERT INTO algorithm VALUES(29,'pXg','https://github.com/progistar/pXg',NULL,NULL,NULL,'MHC-I noncanonical peptides','downstream-application',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(30,'AdaNovo',NULL,NULL,NULL,'Transformer (AR)','Mutual info for PTMs','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(31,'NovoB','https://github.com/ProteomeTeam/NovoB',NULL,NULL,'Transformer (AR)','Bidirectional decoding','algorithm',1,'DDA',NULL);
