@@ -1396,6 +1396,7 @@ INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,N
 INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS — fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(97,'DiffNovo-DIA','https://pypi.org/project/diffnovo-dia/',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
 INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,NULL,'CNN + RNN','Active-learning wrapper around Tran et al. 2019''s DeepNovo-DIA — uses acquisition functions to pick the most informative spectra at each training iteration instead of random selection. First published as AL-DeepNovo-DIA (ICML 2022 Workshop on Computational Biology, Ebrahimi & Guo); rebranded ActiveNovo_DIA in Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA','AL-DeepNovo-DIA, ActiveNovo_DIA');
+INSERT INTO algorithm VALUES(100,'PowerNovo2','https://github.com/protdb/PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer — successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Currently code-only on GitHub; no preprint or peer-reviewed publication yet.','algorithm',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3288,7 +3289,7 @@ INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
 INSERT INTO sqlite_sequence VALUES('author',425);
-INSERT INTO sqlite_sequence VALUES('algorithm',99);
+INSERT INTO sqlite_sequence VALUES('algorithm',100);
 INSERT INTO sqlite_sequence VALUES('publication',121);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;

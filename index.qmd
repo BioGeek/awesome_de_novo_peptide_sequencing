@@ -511,7 +511,7 @@ innovations_timeline = {
   const band_order = [
     "Heuristic", "Graph / DP", "HMM", "Decision tree",
     "Random Forest", "Learning-to-rank",
-    "CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion"
+    "CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion", "Flow"
   ]
   const band_color = {
     "Heuristic":         "#8a96a0",
@@ -525,7 +525,8 @@ innovations_timeline = {
     "GNN":               "#937860",
     "CNN":               "#8172B3",
     "Transformer (NAR)": "#55A868",
-    "Diffusion":         "#C44E52"
+    "Diffusion":         "#C44E52",
+    "Flow":              "#937DC2"
   }
   // Tiers chosen to spread labels both above and below the band center.
   // 25 interleaved tier positions (the previous 15 ran out for the 2024-2026
@@ -553,7 +554,8 @@ innovations_timeline = {
     "GNN":               1.2,
     "CNN":               1.2,
     "Transformer (NAR)": 2.5,
-    "Diffusion":         1.2
+    "Diffusion":         1.2,
+    "Flow":              1.2
   }
 
   // Apply every filter (family, kind, approach, acquisition) up front.
@@ -1130,6 +1132,7 @@ author_algo_network = {
     "CNN":               "#8172B3",
     "Transformer (NAR)": "#55A868",
     "Diffusion":         "#C44E52",
+    "Flow":              "#937DC2",
     "Unknown":           "#999999"
   }
   const nodeFill = d => d.kind === "author" ? "#cdd6e0" : (family_color[d.family] ?? "#999")
