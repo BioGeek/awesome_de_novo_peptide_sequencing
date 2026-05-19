@@ -95,11 +95,16 @@ pub_authorship = pd.read_sql(
            a.name            AS author,
            af.id             AS affiliation_id,
            af.name           AS affiliation,
+           ci.id             AS city_id,
+           ci.name           AS city,
+           ci.lat            AS lat,
+           ci.lng            AS lng,
            c.name            AS country
     FROM publication_author pa
     JOIN author a              ON a.id = pa.author_id
     LEFT JOIN author_affiliation aa ON aa.author_id = a.id
     LEFT JOIN affiliation af   ON af.id = aa.affiliation_id
+    LEFT JOIN city ci          ON ci.id = af.city_id
     LEFT JOIN country c        ON c.id = af.country_id
     """,
     conn,
@@ -731,7 +736,7 @@ innovations_timeline = {
 
 ## Where the work happens
 
-Authors and the institutions behind them span **${n_countries}** countries.
+Authors and the institutions behind them span **${n_countries}** countries. Pan and zoom the map — zoom in past about 2× and country circles split into the individual cities behind them. Circle area scales with the chosen metric; fill colour shows the quartile rank.
 
 ```{ojs}
 //| echo: false
@@ -743,44 +748,166 @@ viewof country_metric = Inputs.radio(
 
 ```{ojs}
 //| echo: false
-{
-  // Per-country distinct authors / affiliations, recomputed from the currently
-  // filtered pubs so the chart reacts to the global Kind / Approach /
-  // Acquisition filters. Falls back to the unfiltered geo_t totals when no
-  // filter has been applied (avoids an empty chart on first paint).
+topojson = require("topojson-client@3")
+world_atlas = (await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")).json()
+```
+
+```{ojs}
+//| echo: false
+where_the_work_map = {
+  // ===== Aggregate from the currently-filtered pubs =====
   const pub_ids = new Set(pubs_filtered.map(p => p.id))
-  const authors_by_country = new Map()
-  const affs_by_country    = new Map()
+
+  // city-level buckets
+  const cityKey = r => `${r.city_id}`  // city_id uniquely identifies a city
+  const city_rows = new Map()
+  // country-level buckets (centroid computed from member cities, weighted by author count)
+  const country_rows = new Map()
+
   for (const r of pub_authorship_t) {
     if (!pub_ids.has(r.pub_id) || !r.country) continue
-    if (!authors_by_country.has(r.country)) authors_by_country.set(r.country, new Set())
-    if (!affs_by_country.has(r.country))    affs_by_country.set(r.country,    new Set())
-    authors_by_country.get(r.country).add(r.author_id)
-    affs_by_country.get(r.country).add(r.affiliation_id)
+    // country aggregate
+    if (!country_rows.has(r.country)) {
+      country_rows.set(r.country, { country: r.country, authors: new Set(), affiliations: new Set(),
+                                    lat_sum: 0, lng_sum: 0, lat_w: 0 })
+    }
+    const cr = country_rows.get(r.country)
+    cr.authors.add(r.author_id); cr.affiliations.add(r.affiliation_id)
+    if (r.lat != null && r.lng != null) {
+      cr.lat_sum += r.lat; cr.lng_sum += r.lng; cr.lat_w += 1
+    }
+    // city aggregate (only rows with a geocoded city)
+    if (r.lat == null || r.lng == null || !r.city_id) continue
+    const k = cityKey(r)
+    if (!city_rows.has(k)) {
+      city_rows.set(k, { city: r.city, country: r.country, lat: r.lat, lng: r.lng,
+                        authors: new Set(), affiliations: new Set() })
+    }
+    const cc = city_rows.get(k)
+    cc.authors.add(r.author_id); cc.affiliations.add(r.affiliation_id)
   }
-  const rows = Array.from(authors_by_country.keys()).map(country => ({
-    country,
-    authors:      authors_by_country.get(country).size,
-    affiliations: affs_by_country.get(country).size
-  })).filter(r => r[country_metric] > 0)
 
-  return Plot.plot({
-    marginLeft: 140,
-    width: 1100,
-    height: Math.max(280, rows.length * 22),
-    x: { label: country_metric === "authors" ? `Distinct authors (${pubs_filtered.length} papers)` : `Distinct affiliations (${pubs_filtered.length} papers)`, grid: true },
-    y: { label: null },
-    marks: [
-      Plot.barX(rows, {
-        x: country_metric,
-        y: "country",
-        fill: "steelblue",
-        sort: { y: "x", reverse: true },
-        tip: true
-      }),
-      Plot.ruleX([0])
+  const city_data = Array.from(city_rows.values()).map(r => ({
+    city: r.city, country: r.country, lat: r.lat, lng: r.lng,
+    authors: r.authors.size, affiliations: r.affiliations.size
+  }))
+  const country_data = Array.from(country_rows.values()).map(r => ({
+    country: r.country,
+    authors: r.authors.size, affiliations: r.affiliations.size,
+    lat: r.lat_w ? r.lat_sum / r.lat_w : 0,
+    lng: r.lat_w ? r.lng_sum / r.lat_w : 0
+  })).filter(r => r.lat_w !== 0 || (r.lat !== 0 && r.lng !== 0))
+
+  const metric = country_metric  // 'authors' | 'affiliations'
+
+  // ===== Set up scales =====
+  const width = 1100, height = 560
+  const projection = d3.geoNaturalEarth1()
+    .fitExtent([[10, 10], [width - 10, height - 10]],
+               topojson.feature(world_atlas, world_atlas.objects.countries))
+  const path = d3.geoPath(projection)
+
+  // Size: sqrt(metric) so area is linear in metric.
+  const max_city    = d3.max(city_data,    d => d[metric]) || 1
+  const max_country = d3.max(country_data, d => d[metric]) || 1
+  const cityR    = v => 2 + 12 * Math.sqrt(v / max_city)
+  const countryR = v => 6 + 22 * Math.sqrt(v / max_country)
+
+  // Color: quartile rank of the metric in the active layer.
+  const quartiles = (arr, key) => {
+    const sorted = arr.map(d => d[key]).filter(v => v > 0).sort(d3.ascending)
+    return [
+      d3.quantile(sorted, 0.25),
+      d3.quantile(sorted, 0.50),
+      d3.quantile(sorted, 0.75)
     ]
+  }
+  const palette = ["#cfe2f3", "#9ec5e8", "#5b8edb", "#1f4ec7"]
+  const colorFor = (v, q) => v <= q[0] ? palette[0] : v <= q[1] ? palette[1] : v <= q[2] ? palette[2] : palette[3]
+  const cityQ    = quartiles(city_data,    metric)
+  const countryQ = quartiles(country_data, metric)
+
+  // ===== Build SVG =====
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width:100%; height:auto; background:#f6f8fa; font:11px sans-serif;")
+
+  const g = svg.append("g")
+
+  // Country fills (greyed base map).
+  const countries_feature = topojson.feature(world_atlas, world_atlas.objects.countries)
+  g.append("g")
+    .selectAll("path")
+    .data(countries_feature.features)
+    .join("path")
+    .attr("d", path)
+    .attr("fill", "#e9ecef")
+    .attr("stroke", "#cfd4d9")
+    .attr("stroke-width", 0.5)
+
+  // Two overlay layers — country-level (visible at low zoom) and city-level (at high zoom).
+  const country_layer = g.append("g").attr("class", "country-layer")
+  country_layer.selectAll("circle")
+    .data(country_data)
+    .join("circle")
+    .attr("cx", d => projection([d.lng, d.lat])[0])
+    .attr("cy", d => projection([d.lng, d.lat])[1])
+    .attr("r",  d => countryR(d[metric]))
+    .attr("fill", d => colorFor(d[metric], countryQ))
+    .attr("fill-opacity", 0.78)
+    .attr("stroke", "#1f4ec7")
+    .attr("stroke-width", 0.6)
+    .append("title").text(d => `${d.country}\n${d.authors} authors · ${d.affiliations} affiliations`)
+
+  const city_layer = g.append("g").attr("class", "city-layer").attr("opacity", 0)
+  city_layer.selectAll("circle")
+    .data(city_data)
+    .join("circle")
+    .attr("cx", d => projection([d.lng, d.lat])[0])
+    .attr("cy", d => projection([d.lng, d.lat])[1])
+    .attr("r",  d => cityR(d[metric]))
+    .attr("fill", d => colorFor(d[metric], cityQ))
+    .attr("fill-opacity", 0.85)
+    .attr("stroke", "#1f4ec7")
+    .attr("stroke-width", 0.5)
+    .append("title").text(d => `${d.city}, ${d.country}\n${d.authors} authors · ${d.affiliations} affiliations`)
+
+  // ===== Zoom behaviour with the city/country threshold =====
+  const SPLIT_K = 2.0  // above this zoom factor, switch to city-level
+  const zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", ev => {
+      g.attr("transform", ev.transform)
+      // Keep stroke widths visually constant under zoom.
+      g.selectAll("path").attr("stroke-width", 0.5 / Math.sqrt(ev.transform.k))
+      const k = ev.transform.k
+      const show_cities = k >= SPLIT_K
+      country_layer.attr("opacity", show_cities ? 0 : 1).attr("pointer-events", show_cities ? "none" : "auto")
+      city_layer.attr("opacity", show_cities ? 1 : 0).attr("pointer-events", show_cities ? "auto" : "none")
+      // Circle radii also shrink with zoom so they don't grow unbounded.
+      country_layer.selectAll("circle").attr("r", d => countryR(d[metric]) / Math.sqrt(k))
+      city_layer.selectAll("circle").attr("r",    d => cityR(d[metric])    / Math.sqrt(k))
+    })
+  svg.call(zoom)
+
+  // ===== Color legend (bottom-left) =====
+  const legend = svg.append("g").attr("transform", `translate(20, ${height - 38})`)
+  legend.append("text").attr("x", 0).attr("y", -8)
+    .attr("font-weight", "bold").attr("fill", "#2a3140")
+    .text(`Circles sized & colored by ${metric} · zoom in past ${SPLIT_K}× for city detail`)
+  palette.forEach((c, i) => {
+    legend.append("rect").attr("x", i * 110).attr("y", 0).attr("width", 100).attr("height", 12).attr("fill", c)
+    legend.append("text").attr("x", i * 110).attr("y", 26).attr("fill", "#2a3140").text(["Q1 (lowest)","Q2","Q3","Q4 (highest)"][i])
   })
+
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    ${svg.node()}
+  </div>`
 }
 ```
 
