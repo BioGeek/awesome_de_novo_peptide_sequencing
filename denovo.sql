@@ -418,6 +418,10 @@ INSERT INTO author VALUES(423,'Nico Zinn',NULL);
 INSERT INTO author VALUES(424,'Martin E. Boehm',NULL);
 INSERT INTO author VALUES(425,'Wolf D. Lehmann',NULL);
 INSERT INTO author VALUES(426,'Yonghan Yu',NULL);
+INSERT INTO author VALUES(427,'Sandro Andreotti',NULL);
+INSERT INTO author VALUES(428,'Gunnar W. Klau',NULL);
+INSERT INTO author VALUES(429,'Knut Reinert',NULL);
+INSERT INTO author VALUES(430,'Bernhard Y. Renard',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -724,6 +728,9 @@ INSERT INTO affiliation VALUES(175,'Robert Koch Institute','Data Competence Cent
 INSERT INTO affiliation VALUES(176,'University of Turku and Åbo Akademi University','Turku Bioscience Centre',22,79);
 INSERT INTO affiliation VALUES(177,'University of Turku','Institute of Biomedicine',22,79);
 INSERT INTO affiliation VALUES(178,'German Cancer Research Center','Molecular Structure Analysis',4,80);
+INSERT INTO affiliation VALUES(179,'Freie Universität Berlin',NULL,4,78);
+INSERT INTO affiliation VALUES(180,'International Max Planck Research School','Computational Biology and Scientific Computing',4,78);
+INSERT INTO affiliation VALUES(181,'Robert Koch Institute','Research Group Bioinformatics',4,78);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1293,6 +1300,12 @@ INSERT INTO author_affiliation VALUES(423,178);
 INSERT INTO author_affiliation VALUES(424,178);
 INSERT INTO author_affiliation VALUES(425,178);
 INSERT INTO author_affiliation VALUES(426,43);
+INSERT INTO author_affiliation VALUES(427,179);
+INSERT INTO author_affiliation VALUES(427,180);
+INSERT INTO author_affiliation VALUES(428,179);
+INSERT INTO author_affiliation VALUES(429,179);
+INSERT INTO author_affiliation VALUES(421,181);
+INSERT INTO author_affiliation VALUES(430,181);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1397,6 +1410,8 @@ INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,'Tu
 INSERT INTO algorithm VALUES(97,'DiffNovo-DIA',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
 INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,'CNN + RNN','Active-learning wrapper around Tran et al. 2019''s DeepNovo-DIA — uses acquisition functions to pick the most informative spectra at each training iteration instead of random selection. First published as AL-DeepNovo-DIA (ICML 2022 Workshop on Computational Biology, Ebrahimi & Guo); rebranded ActiveNovo_DIA in Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA','AL-DeepNovo-DIA, ActiveNovo_DIA');
 INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer — successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Currently code-only on GitHub; no preprint or peer-reviewed publication yet.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(101,'Antilope',NULL,NULL,'Graph / DP','Lagrangian-relaxation formulation of de novo peptide sequencing — frames the problem as a constrained optimization over the spectrum graph and solves it with iterative subgradient ascent.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(102,'Muth & Renard 2017 evaluation',NULL,NULL,NULL,'Briefings in Bioinformatics review evaluating whether de novo sequencing has become an accurate alternative to database-driven peptide identification — surveys state-of-the-art tools and benchmark performance circa 2017.','review',NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1529,6 +1544,8 @@ INSERT INTO publication VALUES(119,'De Novo Peptide Sequencing for Data-independ
 INSERT INTO publication VALUES(120,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2023-12-04','10.1109/BIBE60311.2023.00013','IEEE',NULL,'https://ieeexplore.ieee.org/document/10431866','2023 IEEE 23rd International Conference on Bioinformatics and Bioengineering (BIBE)','peer-reviewed',NULL);
 INSERT INTO publication VALUES(121,'Deep Active Learning for De Novo Peptide Sequencing from Data-independent-acquisition Mass Spectrometry','2022-07-22',NULL,NULL,NULL,'https://icml-compbio.github.io/icml-website-2022/2022/papers/WCBICML2022_paper_60.pdf','ICML 2022 Workshop on Computational Biology','ML conference',NULL);
 INSERT INTO publication VALUES(122,'Zero-shot de novo peptide sequencing with open posttranslational modification discovery','2026-05-19','10.1038/s41587-026-03116-1','Springer Nature',NULL,'https://www.nature.com/articles/s41587-026-03116-1','Nature Biotechnology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(123,'Antilope—A Lagrangian Relaxation Approach to the de novo Peptide Sequencing Problem','2012-03-01','10.1109/TCBB.2011.59','IEEE',NULL,'https://ieeexplore.ieee.org/document/5740842','IEEE/ACM Transactions on Computational Biology and Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(124,'Evaluating de novo sequencing in proteomics: already an accurate alternative to database-driven peptide identification?','2017-03-21','10.1093/bib/bbx033','Oxford University Press',NULL,'https://academic.oup.com/bib/article/19/5/954/3076504','Briefings in Bioinformatics','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1663,6 +1680,8 @@ INSERT INTO publication_algorithm VALUES(119,97);
 INSERT INTO publication_algorithm VALUES(120,28);
 INSERT INTO publication_algorithm VALUES(121,98);
 INSERT INTO publication_algorithm VALUES(122,14);
+INSERT INTO publication_algorithm VALUES(123,101);
+INSERT INTO publication_algorithm VALUES(124,102);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2489,6 +2508,11 @@ INSERT INTO publication_author VALUES(122,105,8);
 INSERT INTO publication_author VALUES(122,252,9);
 INSERT INTO publication_author VALUES(122,106,10);
 INSERT INTO publication_author VALUES(122,107,11);
+INSERT INTO publication_author VALUES(123,427,1);
+INSERT INTO publication_author VALUES(123,428,2);
+INSERT INTO publication_author VALUES(123,429,3);
+INSERT INTO publication_author VALUES(124,421,1);
+INSERT INTO publication_author VALUES(124,430,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3275,6 +3299,23 @@ INSERT INTO publication_citation VALUES(122,80,'crossref');
 INSERT INTO publication_citation VALUES(122,81,'crossref');
 INSERT INTO publication_citation VALUES(122,93,'crossref');
 INSERT INTO publication_citation VALUES(122,101,'crossref');
+INSERT INTO publication_citation VALUES(123,65,'both');
+INSERT INTO publication_citation VALUES(123,66,'both');
+INSERT INTO publication_citation VALUES(123,67,'both');
+INSERT INTO publication_citation VALUES(123,68,'both');
+INSERT INTO publication_citation VALUES(123,69,'both');
+INSERT INTO publication_citation VALUES(124,65,'crossref');
+INSERT INTO publication_citation VALUES(124,66,'crossref');
+INSERT INTO publication_citation VALUES(124,67,'crossref');
+INSERT INTO publication_citation VALUES(124,68,'crossref');
+INSERT INTO publication_citation VALUES(124,69,'crossref');
+INSERT INTO publication_citation VALUES(124,70,'crossref');
+INSERT INTO publication_citation VALUES(124,72,'crossref');
+INSERT INTO publication_citation VALUES(124,73,'crossref');
+INSERT INTO publication_citation VALUES(124,88,'crossref');
+INSERT INTO publication_citation VALUES(124,95,'crossref');
+INSERT INTO publication_citation VALUES(124,118,'crossref');
+INSERT INTO publication_citation VALUES(124,123,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3307,6 +3348,7 @@ INSERT INTO journal_impact VALUES('Scientific Data','S2607323502',4.896506550218
 INSERT INTO journal_impact VALUES('Scientific Reports','S196734849',4.27927203257754751,457,295734,2026);
 INSERT INTO journal_impact VALUES('Applied Sciences (MDPI)','S4210205812',3.18170304949175131,219,88434,2026);
 INSERT INTO journal_impact VALUES('Nature Biotechnology','S106963461',11.5123739688359307,630,19409,2026);
+INSERT INTO journal_impact VALUES('IEEE/ACM Transactions on Computational Biology and Bioinformatics','S36029991',4.54545454545454585,111,3574,2026);
 CREATE TABLE algorithm_repository (
   algorithm_id INTEGER NOT NULL
       REFERENCES algorithm(id) ON DELETE CASCADE,
@@ -3364,9 +3406,9 @@ INSERT INTO algorithm_repository VALUES(14,'https://github.com/AmadeusloveIris/R
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
-INSERT INTO sqlite_sequence VALUES('affiliation',178);
-INSERT INTO sqlite_sequence VALUES('author',426);
-INSERT INTO sqlite_sequence VALUES('algorithm',100);
-INSERT INTO sqlite_sequence VALUES('publication',122);
+INSERT INTO sqlite_sequence VALUES('affiliation',181);
+INSERT INTO sqlite_sequence VALUES('author',430);
+INSERT INTO sqlite_sequence VALUES('algorithm',102);
+INSERT INTO sqlite_sequence VALUES('publication',124);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
