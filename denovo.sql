@@ -177,7 +177,7 @@ INSERT INTO author VALUES(170,'Denis V. Petrovskiy',NULL);
 INSERT INTO author VALUES(171,'Kirill S. Nikolsky',NULL);
 INSERT INTO author VALUES(172,'Liudmila I. Kulikova',NULL);
 INSERT INTO author VALUES(173,'Vladimir R. Rudnev',NULL);
-INSERT INTO author VALUES(174,'Tatiana V. Butkova',NULL);
+INSERT INTO author VALUES(174,'Tatiana V. Butkova','t.butkova@gmail.com');
 INSERT INTO author VALUES(175,'Kristina A. Malsagova',NULL);
 INSERT INTO author VALUES(176,'Arthur T. Kopylov',NULL);
 INSERT INTO author VALUES(177,'Anna L. Kaysheva','kaysheva1@gmail.com');
@@ -1409,7 +1409,7 @@ INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,'
 INSERT INTO algorithm VALUES(96,'Seidler 2010 de novo review',NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS — fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(97,'DiffNovo-DIA',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing — DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA');
 INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,'CNN + RNN','Active-learning wrapper around Tran et al. 2019''s DeepNovo-DIA — uses acquisition functions to pick the most informative spectra at each training iteration instead of random selection. First published as AL-DeepNovo-DIA (ICML 2022 Workshop on Computational Biology, Ebrahimi & Guo); rebranded ActiveNovo_DIA in Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA','AL-DeepNovo-DIA, ActiveNovo_DIA');
-INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer — successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Currently code-only on GitHub; no preprint or peer-reviewed publication yet.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer — successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Published in PLOS Computational Biology, May 2026.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(101,'Antilope',NULL,NULL,'Graph / DP','Lagrangian-relaxation formulation of de novo peptide sequencing — frames the problem as a constrained optimization over the spectrum graph and solves it with iterative subgradient ascent.','algorithm',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(102,'Muth & Renard 2017 evaluation',NULL,NULL,NULL,'Briefings in Bioinformatics review evaluating whether de novo sequencing has become an accurate alternative to database-driven peptide identification — surveys state-of-the-art tools and benchmark performance circa 2017.','review',NULL,NULL,NULL);
 CREATE TABLE publication (
@@ -1546,6 +1546,7 @@ INSERT INTO publication VALUES(121,'Deep Active Learning for De Novo Peptide Seq
 INSERT INTO publication VALUES(122,'Zero-shot de novo peptide sequencing with open posttranslational modification discovery','2026-05-19','10.1038/s41587-026-03116-1','Springer Nature',NULL,'https://www.nature.com/articles/s41587-026-03116-1','Nature Biotechnology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(123,'Antilope—A Lagrangian Relaxation Approach to the de novo Peptide Sequencing Problem','2012-03-01','10.1109/TCBB.2011.59','IEEE',NULL,'https://ieeexplore.ieee.org/document/5740842','IEEE/ACM Transactions on Computational Biology and Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(124,'Evaluating de novo sequencing in proteomics: already an accurate alternative to database-driven peptide identification?','2017-03-21','10.1093/bib/bbx033','Oxford University Press',NULL,'https://academic.oup.com/bib/article/19/5/954/3076504','Briefings in Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(125,'PowerNovo2: A generative flow-based approach to non-autoregressive de novo peptide sequencing','2026-05-20','10.1371/journal.pcbi.1014298','Public Library of Science (PLoS)',NULL,'https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1014298','PLOS Computational Biology','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1682,6 +1683,7 @@ INSERT INTO publication_algorithm VALUES(121,98);
 INSERT INTO publication_algorithm VALUES(122,14);
 INSERT INTO publication_algorithm VALUES(123,101);
 INSERT INTO publication_algorithm VALUES(124,102);
+INSERT INTO publication_algorithm VALUES(125,100);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2513,6 +2515,14 @@ INSERT INTO publication_author VALUES(123,428,2);
 INSERT INTO publication_author VALUES(123,429,3);
 INSERT INTO publication_author VALUES(124,421,1);
 INSERT INTO publication_author VALUES(124,430,2);
+INSERT INTO publication_author VALUES(125,170,1);
+INSERT INTO publication_author VALUES(125,171,2);
+INSERT INTO publication_author VALUES(125,173,3);
+INSERT INTO publication_author VALUES(125,172,4);
+INSERT INTO publication_author VALUES(125,174,5);
+INSERT INTO publication_author VALUES(125,175,6);
+INSERT INTO publication_author VALUES(125,176,7);
+INSERT INTO publication_author VALUES(125,177,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3316,6 +3326,15 @@ INSERT INTO publication_citation VALUES(124,88,'crossref');
 INSERT INTO publication_citation VALUES(124,95,'crossref');
 INSERT INTO publication_citation VALUES(124,118,'crossref');
 INSERT INTO publication_citation VALUES(124,123,'crossref');
+INSERT INTO publication_citation VALUES(125,21,'crossref');
+INSERT INTO publication_citation VALUES(125,26,'crossref');
+INSERT INTO publication_citation VALUES(125,28,'crossref');
+INSERT INTO publication_citation VALUES(125,39,'crossref');
+INSERT INTO publication_citation VALUES(125,60,'crossref');
+INSERT INTO publication_citation VALUES(125,62,'crossref');
+INSERT INTO publication_citation VALUES(125,101,'crossref');
+INSERT INTO publication_citation VALUES(125,107,'crossref');
+INSERT INTO publication_citation VALUES(125,108,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3409,6 +3428,6 @@ INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',181);
 INSERT INTO sqlite_sequence VALUES('author',430);
 INSERT INTO sqlite_sequence VALUES('algorithm',102);
-INSERT INTO sqlite_sequence VALUES('publication',124);
+INSERT INTO sqlite_sequence VALUES('publication',125);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
