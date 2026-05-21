@@ -164,7 +164,6 @@ INSERT INTO author VALUES(156,'Wenjie Du',NULL);
 INSERT INTO author VALUES(157,'Stan Z. Li','stan.zq.li@westlake.edu.cn');
 INSERT INTO author VALUES(158,'Ruixue Zhang',NULL);
 INSERT INTO author VALUES(159,'Jiazhen Chen',NULL);
-INSERT INTO author VALUES(160,'Paul Shan',NULL);
 INSERT INTO author VALUES(161,'Ali Ghodsi','ali.ghodsi@uwaterloo.ca');
 INSERT INTO author VALUES(162,'Kai Zou',NULL);
 INSERT INTO author VALUES(163,'Yu Wang','wangy20@pcl.ac.cn');
@@ -418,6 +417,7 @@ INSERT INTO author VALUES(422,'Joerg Seidler',NULL);
 INSERT INTO author VALUES(423,'Nico Zinn',NULL);
 INSERT INTO author VALUES(424,'Martin E. Boehm',NULL);
 INSERT INTO author VALUES(425,'Wolf D. Lehmann',NULL);
+INSERT INTO author VALUES(426,'Yonghan Yu',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1311,7 +1311,7 @@ INSERT INTO algorithm VALUES(9,'CrossNovo','https://github.com/BEAM-Labs/denovo'
 INSERT INTO algorithm VALUES(10,'Modanovo','https://github.com/gagneurlab/Modanovo',NULL,NULL,'Transformer (AR)','Unified PTM-aware model','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(12,'Casanovo','https://github.com/Noble-Lab/casanovo',NULL,NULL,'Transformer (AR)','First Transformer','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(13,'DiffNovo','https://github.com/Biocomputing-Research-Group/DiffNovo',NULL,NULL,'Transformer (NAR)','Transformer-diffusion model','algorithm',1,'DDA',NULL);
-INSERT INTO algorithm VALUES(14,'RNovA','https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',NULL,NULL,'Transformer (AR)','Zero-shot open PTM discovery','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(14,'RNovA','https://github.com/zqq66/RNovA https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',NULL,NULL,'Transformer (AR)','Zero-shot open PTM discovery','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(15,'XuanjiNovo','https://github.com/guomics-lab/MassNet-DDA',NULL,NULL,'Transformer (NAR)','Billion-scale pretraining','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(16,'RefineNovo','https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo',NULL,NULL,'Transformer (NAR)','Curriculum learning','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(17,'LIPNovo','https://github.com/usr922/LIPNovo',NULL,NULL,'Transformer (AR)','Latent imputation','algorithm',1,'DDA',NULL);
@@ -1528,6 +1528,7 @@ INSERT INTO publication VALUES(118,'De novo sequencing of peptides by MS/MS','20
 INSERT INTO publication VALUES(119,'De Novo Peptide Sequencing for Data-independent Acquisition (DIA) Using Deep Learning','2025-05-01','10.12794/metadc2443151','PhD thesis',NULL,'https://digital.library.unt.edu/ark:/67531/metadc2443151/','','thesis',NULL);
 INSERT INTO publication VALUES(120,'Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectrometry','2023-12-04','10.1109/BIBE60311.2023.00013','IEEE',NULL,'https://ieeexplore.ieee.org/document/10431866','2023 IEEE 23rd International Conference on Bioinformatics and Bioengineering (BIBE)','peer-reviewed',NULL);
 INSERT INTO publication VALUES(121,'Deep Active Learning for De Novo Peptide Sequencing from Data-independent-acquisition Mass Spectrometry','2022-07-22',NULL,NULL,NULL,'https://icml-compbio.github.io/icml-website-2022/2022/papers/WCBICML2022_paper_60.pdf','ICML 2022 Workshop on Computational Biology','ML conference',NULL);
+INSERT INTO publication VALUES(122,'Zero-shot de novo peptide sequencing with open posttranslational modification discovery','2026-05-19','10.1038/s41587-026-03116-1','Springer Nature',NULL,'https://www.nature.com/articles/s41587-026-03116-1','Nature Biotechnology','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1661,6 +1662,7 @@ INSERT INTO publication_algorithm VALUES(119,28);
 INSERT INTO publication_algorithm VALUES(119,97);
 INSERT INTO publication_algorithm VALUES(120,28);
 INSERT INTO publication_algorithm VALUES(121,98);
+INSERT INTO publication_algorithm VALUES(122,14);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -1897,7 +1899,7 @@ INSERT INTO publication_author VALUES(23,100,2);
 INSERT INTO publication_author VALUES(23,158,3);
 INSERT INTO publication_author VALUES(23,159,4);
 INSERT INTO publication_author VALUES(23,105,5);
-INSERT INTO publication_author VALUES(23,160,6);
+INSERT INTO publication_author VALUES(23,252,6);
 INSERT INTO publication_author VALUES(23,161,7);
 INSERT INTO publication_author VALUES(23,107,8);
 INSERT INTO publication_author VALUES(24,67,1);
@@ -2476,6 +2478,17 @@ INSERT INTO publication_author VALUES(120,97,1);
 INSERT INTO publication_author VALUES(120,99,2);
 INSERT INTO publication_author VALUES(121,97,1);
 INSERT INTO publication_author VALUES(121,99,2);
+INSERT INTO publication_author VALUES(122,100,1);
+INSERT INTO publication_author VALUES(122,101,2);
+INSERT INTO publication_author VALUES(122,102,3);
+INSERT INTO publication_author VALUES(122,103,4);
+INSERT INTO publication_author VALUES(122,104,5);
+INSERT INTO publication_author VALUES(122,426,6);
+INSERT INTO publication_author VALUES(122,158,7);
+INSERT INTO publication_author VALUES(122,105,8);
+INSERT INTO publication_author VALUES(122,252,9);
+INSERT INTO publication_author VALUES(122,106,10);
+INSERT INTO publication_author VALUES(122,107,11);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3253,6 +3266,15 @@ INSERT INTO publication_citation VALUES(120,77,'crossref');
 INSERT INTO publication_citation VALUES(120,101,'crossref');
 INSERT INTO publication_citation VALUES(120,102,'crossref');
 INSERT INTO publication_citation VALUES(120,110,'crossref');
+INSERT INTO publication_citation VALUES(122,2,'crossref');
+INSERT INTO publication_citation VALUES(122,21,'crossref');
+INSERT INTO publication_citation VALUES(122,41,'crossref');
+INSERT INTO publication_citation VALUES(122,54,'crossref');
+INSERT INTO publication_citation VALUES(122,62,'crossref');
+INSERT INTO publication_citation VALUES(122,80,'crossref');
+INSERT INTO publication_citation VALUES(122,81,'crossref');
+INSERT INTO publication_citation VALUES(122,93,'crossref');
+INSERT INTO publication_citation VALUES(122,101,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3288,8 +3310,8 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',178);
-INSERT INTO sqlite_sequence VALUES('author',425);
+INSERT INTO sqlite_sequence VALUES('author',426);
 INSERT INTO sqlite_sequence VALUES('algorithm',100);
-INSERT INTO sqlite_sequence VALUES('publication',121);
+INSERT INTO sqlite_sequence VALUES('publication',122);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
