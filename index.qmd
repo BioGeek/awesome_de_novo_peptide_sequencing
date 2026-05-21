@@ -28,9 +28,12 @@ pubs = pd.read_sql(
            (SELECT GROUP_CONCAT(alg.name, ', ')
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS models,
-           (SELECT alg.repository
-              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id LIMIT 1) AS repo,
+           -- Repository URLs come from algorithm_repository (1-N rows per algo).
+           -- Concatenate with whitespace so the OJS multi-link renderer keeps working.
+           (SELECT GROUP_CONCAT(ar.url, ' ')
+              FROM publication_algorithm pal
+              JOIN algorithm_repository ar ON ar.algorithm_id = pal.algorithm_id
+              WHERE pal.publication_id = p.id) AS repo,
            -- pick the dominant kind / DL flag / acquisition mode of the publication's
            -- model(s); for the vast majority of papers there's a single linked model.
            (SELECT alg.kind
@@ -151,7 +154,10 @@ algorithms = pd.read_sql(
            alg.aliases AS aliases,
            alg.algorithm_family AS family,
            alg.short_description AS description,
-           alg.repository AS repo,
+           -- All repository URLs for this algorithm, ordered, space-separated.
+           (SELECT GROUP_CONCAT(ar.url, ' ')
+              FROM (SELECT url FROM algorithm_repository
+                    WHERE algorithm_id = alg.id ORDER BY sort_order) ar) AS repo,
            alg.kind AS kind,
            alg.is_deep_learning AS is_dl,
            alg.acquisition_mode AS acquisition,
