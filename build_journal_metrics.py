@@ -45,7 +45,9 @@ REQUEST_DELAY = 0.2   # polite spacing; OpenAlex allows 10 req/sec for the polit
 CONFERENCE_VENUES = {
     "ICLR 2025", "AAAI 2024", "AAAI 2026", "NeurIPS 2024", "IJCAI 2025",
     "ICML 2022",
+    "ICML 2022 Workshop on Computational Biology",
     "Bioinformatics and Computational Biology (BICOB 2025)",
+    "2023 IEEE 23rd International Conference on Bioinformatics and Bioengineering (BIBE)",
 }
 
 # Manual journal → OpenAlex source-id pin. Use this for venues whose
