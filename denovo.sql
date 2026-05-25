@@ -422,6 +422,20 @@ INSERT INTO author VALUES(427,'Sandro Andreotti',NULL);
 INSERT INTO author VALUES(428,'Gunnar W. Klau',NULL);
 INSERT INTO author VALUES(429,'Knut Reinert',NULL);
 INSERT INTO author VALUES(430,'Bernhard Y. Renard',NULL);
+INSERT INTO author VALUES(431,'Jiale Zhao','zhaojiale22z@ict.ac.cn');
+INSERT INTO author VALUES(432,'Pengzhi Mao',NULL);
+INSERT INTO author VALUES(433,'Kaifei Wang',NULL);
+INSERT INTO author VALUES(434,'Yiming Li',NULL);
+INSERT INTO author VALUES(435,'Yaping Peng',NULL);
+INSERT INTO author VALUES(436,'Ranfei Chen',NULL);
+INSERT INTO author VALUES(437,'Shuqi Lu',NULL);
+INSERT INTO author VALUES(438,'Xiaohong Ji',NULL);
+INSERT INTO author VALUES(439,'Jiaxiang Ding',NULL);
+INSERT INTO author VALUES(440,'Xin Zhang',NULL);
+INSERT INTO author VALUES(441,'Yucheng Liao',NULL);
+INSERT INTO author VALUES(442,'Weinan E',NULL);
+INSERT INTO author VALUES(443,'Han Wen','wenh@dp.tech');
+INSERT INTO author VALUES(444,'Weijie Zhang','zhangweijie@dp.tech');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1412,6 +1426,7 @@ INSERT INTO algorithm VALUES(98,'ActiveNovo-DIA',NULL,NULL,'CNN + RNN','Active-l
 INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer — successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Published in PLOS Computational Biology, May 2026.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(101,'Antilope',NULL,NULL,'Graph / DP','Lagrangian-relaxation formulation of de novo peptide sequencing — frames the problem as a constrained optimization over the spectrum graph and solves it with iterative subgradient ascent.','algorithm',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(102,'Muth & Renard 2017 evaluation',NULL,NULL,NULL,'Briefings in Bioinformatics review evaluating whether de novo sequencing has become an accurate alternative to database-driven peptide identification — surveys state-of-the-art tools and benchmark performance circa 2017.','review',NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(103,'pUniFind',NULL,NULL,'Transformer (AR)','Multimodal pre-trained transformer for mass spectra that unifies peptide-spectrum scoring and zero-shot de novo sequencing in a single model. Trained on >100M open-search-derived spectra; reports +60% PSMs over prior de novo methods with 1,300+ modifications supported, and a DL-based QC step that recovers 38.5% additional peptides.','algorithm',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1547,6 +1562,8 @@ INSERT INTO publication VALUES(122,'Zero-shot de novo peptide sequencing with op
 INSERT INTO publication VALUES(123,'Antilope—A Lagrangian Relaxation Approach to the de novo Peptide Sequencing Problem','2012-03-01','10.1109/TCBB.2011.59','IEEE',NULL,'https://ieeexplore.ieee.org/document/5740842','IEEE/ACM Transactions on Computational Biology and Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(124,'Evaluating de novo sequencing in proteomics: already an accurate alternative to database-driven peptide identification?','2017-03-21','10.1093/bib/bbx033','Oxford University Press',NULL,'https://academic.oup.com/bib/article/19/5/954/3076504','Briefings in Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(125,'PowerNovo2: A generative flow-based approach to non-autoregressive de novo peptide sequencing','2026-05-20','10.1371/journal.pcbi.1014298','Public Library of Science (PLoS)',NULL,'https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1014298','PLOS Computational Biology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(126,'pUniFind: a unified large pre-trained deep learning model pushing the limit of mass spectra interpretation','2025-06-30','10.48550/arXiv.2507.00087','arXiv',NULL,'https://arxiv.org/abs/2507.00087','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(127,'A large-scale unified deep learning model for peptide mass spectrum interpretation trained on multimodal data','2026-05-25','10.1038/s42256-026-01234-8','Springer Nature',NULL,'https://www.nature.com/articles/s42256-026-01234-8','Nature Machine Intelligence','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1684,6 +1701,8 @@ INSERT INTO publication_algorithm VALUES(122,14);
 INSERT INTO publication_algorithm VALUES(123,101);
 INSERT INTO publication_algorithm VALUES(124,102);
 INSERT INTO publication_algorithm VALUES(125,100);
+INSERT INTO publication_algorithm VALUES(126,103);
+INSERT INTO publication_algorithm VALUES(127,103);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2523,6 +2542,36 @@ INSERT INTO publication_author VALUES(125,174,5);
 INSERT INTO publication_author VALUES(125,175,6);
 INSERT INTO publication_author VALUES(125,176,7);
 INSERT INTO publication_author VALUES(125,177,8);
+INSERT INTO publication_author VALUES(126,431,1);
+INSERT INTO publication_author VALUES(126,432,2);
+INSERT INTO publication_author VALUES(126,433,3);
+INSERT INTO publication_author VALUES(126,434,4);
+INSERT INTO publication_author VALUES(126,435,5);
+INSERT INTO publication_author VALUES(126,436,6);
+INSERT INTO publication_author VALUES(126,437,7);
+INSERT INTO publication_author VALUES(126,438,8);
+INSERT INTO publication_author VALUES(126,439,9);
+INSERT INTO publication_author VALUES(126,440,10);
+INSERT INTO publication_author VALUES(126,441,11);
+INSERT INTO publication_author VALUES(126,442,12);
+INSERT INTO publication_author VALUES(126,444,13);
+INSERT INTO publication_author VALUES(126,443,14);
+INSERT INTO publication_author VALUES(126,40,15);
+INSERT INTO publication_author VALUES(127,431,1);
+INSERT INTO publication_author VALUES(127,432,2);
+INSERT INTO publication_author VALUES(127,433,3);
+INSERT INTO publication_author VALUES(127,434,4);
+INSERT INTO publication_author VALUES(127,435,5);
+INSERT INTO publication_author VALUES(127,436,6);
+INSERT INTO publication_author VALUES(127,437,7);
+INSERT INTO publication_author VALUES(127,438,8);
+INSERT INTO publication_author VALUES(127,439,9);
+INSERT INTO publication_author VALUES(127,440,10);
+INSERT INTO publication_author VALUES(127,441,11);
+INSERT INTO publication_author VALUES(127,442,12);
+INSERT INTO publication_author VALUES(127,443,13);
+INSERT INTO publication_author VALUES(127,444,14);
+INSERT INTO publication_author VALUES(127,40,15);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3335,6 +3384,24 @@ INSERT INTO publication_citation VALUES(125,62,'crossref');
 INSERT INTO publication_citation VALUES(125,101,'crossref');
 INSERT INTO publication_citation VALUES(125,107,'crossref');
 INSERT INTO publication_citation VALUES(125,108,'crossref');
+INSERT INTO publication_citation VALUES(126,26,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,49,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,54,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,58,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,62,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,68,'semanticscholar');
+INSERT INTO publication_citation VALUES(126,82,'semanticscholar');
+INSERT INTO publication_citation VALUES(127,21,'crossref');
+INSERT INTO publication_citation VALUES(127,26,'crossref');
+INSERT INTO publication_citation VALUES(127,41,'crossref');
+INSERT INTO publication_citation VALUES(127,49,'crossref');
+INSERT INTO publication_citation VALUES(127,54,'crossref');
+INSERT INTO publication_citation VALUES(127,58,'crossref');
+INSERT INTO publication_citation VALUES(127,62,'crossref');
+INSERT INTO publication_citation VALUES(127,67,'crossref');
+INSERT INTO publication_citation VALUES(127,68,'crossref');
+INSERT INTO publication_citation VALUES(127,80,'crossref');
+INSERT INTO publication_citation VALUES(127,82,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -3426,8 +3493,8 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',22);
 INSERT INTO sqlite_sequence VALUES('city',80);
 INSERT INTO sqlite_sequence VALUES('affiliation',181);
-INSERT INTO sqlite_sequence VALUES('author',430);
-INSERT INTO sqlite_sequence VALUES('algorithm',102);
-INSERT INTO sqlite_sequence VALUES('publication',125);
+INSERT INTO sqlite_sequence VALUES('author',444);
+INSERT INTO sqlite_sequence VALUES('algorithm',103);
+INSERT INTO sqlite_sequence VALUES('publication',127);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
