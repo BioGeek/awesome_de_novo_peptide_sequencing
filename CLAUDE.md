@@ -30,6 +30,10 @@ sqlite3 denovo.db "SELECT name, algorithm_family FROM algorithm ORDER BY name;"
 
 # Rebuild the citation graph from Crossref + Semantic Scholar (offline, ~30 min)
 uv run python build_citations.py
+
+# Refresh GitHub stars / issues / PRs / last-pushed for every repo in algorithm_repository
+# (offline, ~15 min, uses the `gh` CLI for auth — run `gh auth login` first if needed)
+uv run python build_repo_metrics.py
 ```
 
 ## Schema shape (read before editing data)

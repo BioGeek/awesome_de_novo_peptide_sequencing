@@ -220,6 +220,30 @@ journal_impact = pd.read_sql(
     conn,
 )
 
+# Code-activity metrics per repository (built offline via build_repo_metrics.py
+# using the gh CLI). Joined back to algorithms so the UI can group by method.
+# Each algorithm may have multiple repos; we pick the primary (lowest sort_order).
+repo_metrics = pd.read_sql(
+    """
+    SELECT alg.name        AS model,
+           alg.algorithm_family AS family,
+           ar.url          AS url,
+           rm.stars,
+           rm.forks,
+           rm.open_issues,
+           rm.closed_issues,
+           rm.open_prs,
+           rm.closed_prs,
+           rm.last_pushed,
+           rm.fetched_at
+    FROM algorithm_repository ar
+    JOIN algorithm alg            ON alg.id = ar.algorithm_id
+    JOIN repository_metrics rm    ON rm.url = ar.url
+    ORDER BY rm.stars DESC NULLS LAST
+    """,
+    conn,
+)
+
 conn.close()
 
 ojs_define(
@@ -235,6 +259,7 @@ ojs_define(
     author_details=author_details,
     citations=citations,
     journal_impact=journal_impact,
+    repo_metrics=repo_metrics,
 )
 ```
 
@@ -295,6 +320,11 @@ citations_t      = transpose(citations)
 journal_impact_t = transpose(journal_impact)
 // Lookup table: journal name → 2yr citedness, for fast joins in OJS cells.
 journal_impact_by_name = new Map(journal_impact_t.map(j => [j.journal, j]))
+repo_metrics_t = transpose(repo_metrics).map(r => ({
+  ...r,
+  last_pushed: r.last_pushed ? new Date(r.last_pushed) : null,
+  fetched_at:  r.fetched_at  ? new Date(r.fetched_at)  : null,
+}))
 
 // Derived counters — everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
@@ -1693,6 +1723,130 @@ cites ${d.out_deg} papers in the catalog`
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+  </div>`
+}
+```
+
+## Code activity
+
+Open-source uptake snapshot from the GitHub API: stars, fork count, open / closed issues + PRs, and the most recent push. Pulled offline by `build_repo_metrics.py` against `algorithm_repository.url`. Non-GitHub repos (PyPI, project home pages, anonymised review repos) aren't counted here.
+
+```{ojs}
+//| echo: false
+viewof repo_metric = Inputs.radio(
+  ["stars", "forks", "open_issues", "open_prs", "closed_issues", "closed_prs"],
+  { label: "Rank by", value: "stars" }
+)
+```
+
+```{ojs}
+//| echo: false
+{
+  // Bar chart of the top 20 repos by the selected metric.
+  const top = repo_metrics_t
+    .filter(r => r[repo_metric] != null)
+    .sort((a, b) => (b[repo_metric] ?? 0) - (a[repo_metric] ?? 0))
+    .slice(0, 20)
+    .map(r => ({
+      ...r,
+      label: r.model + (r.url.includes("/tree/") ? "*" : ""),
+    }))
+
+  const labelfmt = {
+    stars: "Stars (★)", forks: "Forks", open_issues: "Open issues",
+    open_prs: "Open PRs", closed_issues: "Closed issues", closed_prs: "Closed PRs"
+  }
+  return Plot.plot({
+    marginLeft: 180, width: 1100,
+    height: Math.max(280, top.length * 24),
+    x: { label: labelfmt[repo_metric], grid: true },
+    y: { label: null },
+    marks: [
+      Plot.barX(top, {
+        x: repo_metric,
+        y: "label",
+        fill: "#1f6feb",
+        sort: { y: "x", reverse: true },
+        tip: true,
+        title: d => `${d.model}\n${d.url}\nstars=${d.stars}, forks=${d.forks}\n` +
+                    `issues open/closed: ${d.open_issues}/${d.closed_issues}\n` +
+                    `PRs open/closed: ${d.open_prs}/${d.closed_prs}\n` +
+                    `last pushed: ${d.last_pushed ? d.last_pushed.toISOString().slice(0,10) : "—"}`
+      }),
+      Plot.ruleX([0])
+    ]
+  })
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  // Scatter: stars vs months since last push. Stale-but-popular repos sit in the
+  // upper right; actively maintained but small projects sit lower left.
+  const now = Date.now()
+  const points = repo_metrics_t
+    .filter(r => r.stars != null && r.last_pushed != null)
+    .map(r => ({
+      ...r,
+      months_since_push: (now - r.last_pushed.getTime()) / (1000*60*60*24*30.44)
+    }))
+  return Plot.plot({
+    width: 1100, height: 460,
+    marginLeft: 60, marginBottom: 50,
+    x: { label: "Months since last push →", grid: true, reverse: true },
+    y: { label: "Stars (★)", type: "log", grid: true },
+    color: { legend: true, label: "Family" },
+    marks: [
+      Plot.dot(points, {
+        x: "months_since_push", y: "stars",
+        fill: "family",
+        r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
+        tip: true,
+        title: d => `${d.model}\n★ ${d.stars} · ${d.months_since_push.toFixed(1)} mo since last push\n` +
+                    `issues open: ${d.open_issues}  ·  PRs open: ${d.open_prs}`
+      }),
+      Plot.text(points.filter(d => d.stars >= 20), {
+        x: "months_since_push", y: "stars", text: "model",
+        dy: -12, fontSize: 10, fontWeight: 600
+      })
+    ]
+  })
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  // Full sortable table of every repository with metrics.
+  const rows = repo_metrics_t.slice()
+  const table = Inputs.table(rows, {
+    columns: ["model", "family", "stars", "forks", "open_issues",
+              "closed_issues", "open_prs", "closed_prs", "last_pushed", "url"],
+    header: {
+      model: "Method", family: "Family", stars: "★", forks: "Forks",
+      open_issues: "Issues (open)", closed_issues: "Issues (closed)",
+      open_prs: "PRs (open)", closed_prs: "PRs (closed)",
+      last_pushed: "Last updated", url: "Repo"
+    },
+    format: {
+      stars: v => v == null ? "" : String(v),
+      last_pushed: d => d ? d.toISOString().slice(0, 10) : "—",
+      url: u => u ? htl.html`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>` : ""
+    },
+    sort: "stars", reverse: true,
+    rows: 25,
+    width: { model: 130, family: 130, stars: 70, forks: 70,
+             open_issues: 90, closed_issues: 100, open_prs: 80, closed_prs: 100,
+             last_pushed: 110, url: 240 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
   </div>`
 }
 ```
