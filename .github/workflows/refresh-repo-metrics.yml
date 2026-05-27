@@ -1,0 +1,61 @@
+name: Refresh repo metrics
+
+on:
+  schedule:
+    # Daily at 06:00 UTC — GitHub Actions cron is best-effort and can drift up
+    # to ~1 hour under load, which is fine for a once-a-day refresh.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit the refreshed denovo.db / denovo.sql
+  actions:  write   # trigger publish.yml via workflow_dispatch
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      - name: Refresh repository metrics
+        env:
+          # build_repo_metrics.py shells out to `gh api`; gh reads GH_TOKEN.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run python build_repo_metrics.py
+          sqlite3 denovo.db .dump > denovo.sql
+
+      - name: Commit if metrics changed
+        id: commit
+        run: |
+          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
+            echo "No metric changes today — nothing to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add denovo.db denovo.sql
+          git commit -m "Daily refresh of GitHub repository metrics
+
+          Built by .github/workflows/refresh-repo-metrics.yml"
+          git push
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger site rebuild
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          # Default GITHUB_TOKEN-driven pushes don't trigger downstream
+          # workflows (recursion guard), so we kick publish.yml explicitly.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish.yml --ref main
