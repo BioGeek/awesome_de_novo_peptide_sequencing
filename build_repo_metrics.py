@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Fetch GitHub activity metrics for every repository in algorithm_repository.
 
-Run offline (not in CI). Re-execute when new repos are added or to refresh the
-stars / issue / PR counts. Idempotent — UPSERTs into repository_metrics.
+Re-execute when new repos are added or to refresh the stars / issue / PR
+counts. Idempotent and **silent on quiet days**: the UPSERT only touches a row
+(and bumps fetched_at) when at least one metric actually moved, so a no-change
+run produces zero diff and the daily refresh-repo-metrics.yml workflow doesn't
+noise-commit. `fetched_at` therefore means "when did this row's data last
+change", not "when did the script last query this row".
 
 Uses the `gh` CLI for authentication so callers don't need to fiddle with
-GITHUB_TOKEN. `gh auth login` must already be set up.
+GITHUB_TOKEN. `gh auth login` must already be set up (the CI workflow sets
+GH_TOKEN from secrets.GITHUB_TOKEN, which gh picks up automatically).
 
 Per repository we record:
   - stars              from /repos
@@ -161,6 +166,17 @@ def main() -> int:
                 closed_prs    = excluded.closed_prs,
                 last_pushed   = excluded.last_pushed,
                 fetched_at    = excluded.fetched_at
+                -- Only touch the row (and bump fetched_at) when at least one
+                -- metric actually moved. IS NOT is the null-safe inequality
+                -- check; '!=' returns NULL for NULL operands, which would let
+                -- a NULL→value transition slip past the guard.
+                WHERE stars         IS NOT excluded.stars
+                   OR forks         IS NOT excluded.forks
+                   OR open_issues   IS NOT excluded.open_issues
+                   OR closed_issues IS NOT excluded.closed_issues
+                   OR open_prs      IS NOT excluded.open_prs
+                   OR closed_prs    IS NOT excluded.closed_prs
+                   OR last_pushed   IS NOT excluded.last_pushed
             """,
             (url, metrics["stars"], metrics["forks"],
              metrics["open_issues"], metrics["closed_issues"],
