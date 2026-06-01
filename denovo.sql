@@ -3557,7 +3557,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/
 INSERT INTO repository_metrics VALUES('https://github.com/usr922/LIPNovo',9,1,1,0,0,0,'2025-05-26T03:21:36Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/qiyueliuhuo8/TSARseqNovo',6,1,2,0,0,0,'2024-12-26T15:55:41Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/ProteomeTeam/NovoB',2,2,2,4,1,0,'2025-05-07T06:14:46Z','2026-05-26T12:38:15');
-INSERT INTO repository_metrics VALUES('https://github.com/PHOENIXcenter/pi-HelixNovo',14,5,0,3,0,0,'2026-05-22T03:59:45Z','2026-05-26T12:38:15');
+INSERT INTO repository_metrics VALUES('https://github.com/PHOENIXcenter/pi-HelixNovo',14,5,0,3,0,0,'2026-06-01T01:13:37Z','2026-06-01T07:34:11');
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/spectralis',17,8,5,1,0,0,'2024-10-01T09:58:14Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/ContraNovo',23,3,1,8,0,0,'2024-03-15T05:43:26Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/lkytal/PepNet',40,12,8,3,0,0,'2024-10-30T21:22:09Z','2026-05-26T12:38:15');
