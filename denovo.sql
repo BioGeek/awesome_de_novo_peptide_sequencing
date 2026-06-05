@@ -547,6 +547,17 @@ INSERT INTO author VALUES(552,'Marvin L. Vestal',NULL);
 INSERT INTO author VALUES(553,'Rodion Demine',NULL);
 INSERT INTO author VALUES(554,'Peter Walden',NULL);
 INSERT INTO author VALUES(555,'Yonghua Han',NULL);
+INSERT INTO author VALUES(556,'David L. Tabb',NULL);
+INSERT INTO author VALUES(557,'Anita Saraf',NULL);
+INSERT INTO author VALUES(558,'John R. Yates',NULL);
+INSERT INTO author VALUES(559,'Stephan Jung',NULL);
+INSERT INTO author VALUES(560,'Claudia Fladerer',NULL);
+INSERT INTO author VALUES(561,'Frank Braendle',NULL);
+INSERT INTO author VALUES(562,'Johannes Madlung',NULL);
+INSERT INTO author VALUES(563,'Otmar Spring',NULL);
+INSERT INTO author VALUES(564,'Alfred Nordheim',NULL);
+INSERT INTO author VALUES(565,'Penghao Wang',NULL);
+INSERT INTO author VALUES(566,'Susan R. Wilson',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -702,6 +713,8 @@ INSERT INTO city VALUES(110,'Suita',29,34.7593999999999994,135.516899999999992);
 INSERT INTO city VALUES(111,'Havana',30,23.1136000000000017,-82.3666000000000053);
 INSERT INTO city VALUES(112,'Calgary',9,51.0446999999999988,-114.071899999999999);
 INSERT INTO city VALUES(113,'Framingham',8,42.2792999999999992,-71.4162000000000034);
+INSERT INTO city VALUES(114,'Sydney',15,-33.8688000000000002,151.209300000000013);
+INSERT INTO city VALUES(115,'Stuttgart',4,48.7757999999999967,9.18290000000000006);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -966,6 +979,11 @@ INSERT INTO affiliation VALUES(248,'Charité - Universitätsmedizin Berlin','Dep
 INSERT INTO affiliation VALUES(249,'National Institute of Child Health and Human Development','Laboratory of Cellular and Molecular Biophysics',8,66);
 INSERT INTO affiliation VALUES(250,'University of Calgary','Neuroscience Research Group, Department of Physiology and Biophysics',9,112);
 INSERT INTO affiliation VALUES(251,'Applied Biosystems',NULL,8,113);
+INSERT INTO affiliation VALUES(252,'The Scripps Research Institute','SR11 Department of Cell Biology',8,56);
+INSERT INTO affiliation VALUES(253,'University of New South Wales','Prince of Wales Clinical School',15,114);
+INSERT INTO affiliation VALUES(254,'Australian National University','Mathematical Sciences Institute',15,72);
+INSERT INTO affiliation VALUES(255,'University of Tübingen','Proteome Center Tuebingen, Interfakultaeres Institut fuer Zellbiologie',4,76);
+INSERT INTO affiliation VALUES(256,'University of Hohenheim','Institut fuer Botanik',4,115);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1735,6 +1753,19 @@ INSERT INTO author_affiliation VALUES(552,251);
 INSERT INTO author_affiliation VALUES(553,248);
 INSERT INTO author_affiliation VALUES(554,248);
 INSERT INTO author_affiliation VALUES(555,131);
+INSERT INTO author_affiliation VALUES(556,252);
+INSERT INTO author_affiliation VALUES(557,252);
+INSERT INTO author_affiliation VALUES(558,252);
+INSERT INTO author_affiliation VALUES(482,147);
+INSERT INTO author_affiliation VALUES(559,255);
+INSERT INTO author_affiliation VALUES(560,255);
+INSERT INTO author_affiliation VALUES(561,256);
+INSERT INTO author_affiliation VALUES(562,255);
+INSERT INTO author_affiliation VALUES(563,256);
+INSERT INTO author_affiliation VALUES(564,255);
+INSERT INTO author_affiliation VALUES(565,253);
+INSERT INTO author_affiliation VALUES(566,253);
+INSERT INTO author_affiliation VALUES(566,254);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1879,6 +1910,12 @@ INSERT INTO algorithm VALUES(137,'SeqMS',NULL,NULL,'Heuristic','Software aid for
 INSERT INTO algorithm VALUES(138,'MALDI/TOF-TOF de novo sequencing',NULL,NULL,'Heuristic','Sequence-extension approach for de novo sequencing from MALDI TOF-TOF spectra.','algorithm',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(139,'Sequit',NULL,NULL,'Heuristic','Software for de novo peptide sequencing by MALDI post-source decay mass spectrometry.','algorithm',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(140,'SPIDER',NULL,NULL,'Homology search','Protein identification from sequence tags while accounting for de novo sequencing error.','adjacent',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(141,'GutenTag',NULL,NULL,'Sequence tag','High-throughput sequence tagging using an empirically derived fragmentation model.','adjacent',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(142,'MS-Profile',NULL,NULL,'Spectral profile','Spectral profile representation for gapped de novo peptide sequencing and identification.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(143,'Proteomics-grade de novo sequencing',NULL,NULL,'Heuristic','Proteomics-grade de novo sequencing approach for large MS/MS data sets.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(144,'NovoDB',NULL,NULL,'Hybrid search','Protein identification method integrating de novo sequencing with database searching.','adjacent',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(145,'Meta-SPS',NULL,NULL,'Spectral assembly','Shotgun protein sequencing with meta-contig assembly for longer de novo protein contigs.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(146,'Plasmopara elicitor de novo workflow',NULL,NULL,NULL,'Downstream application combining de novo peptide sequencing algorithms with RACE-PCR to identify a Plasmopara halstedii elicitor protein.','downstream-application',0,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2054,6 +2091,12 @@ INSERT INTO publication VALUES(162,'Automated interpretation of low-energy colli
 INSERT INTO publication VALUES(163,'De novo sequencing of peptides using MALDI/TOF-TOF','2002-07-01','10.1016/S1044-0305(02)00393-8','American Chemical Society (ACS)',NULL,'https://doi.org/10.1016/S1044-0305(02)00393-8','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL);
 INSERT INTO publication VALUES(164,'Sequit: software for de novo peptide sequencing by matrix-assisted laser desorption/ionization post-source decay mass spectrometry','2004-04-30','10.1002/rcm.1420','Wiley',NULL,'https://doi.org/10.1002/rcm.1420','Rapid Communications in Mass Spectrometry','peer-reviewed',NULL);
 INSERT INTO publication VALUES(165,'SPIDER: software for protein identification from sequence tags with de novo sequencing error','2005-06-01','10.1142/S0219720005001247','World Scientific Pub Co Pte Ltd',NULL,'https://doi.org/10.1142/S0219720005001247','Journal of Bioinformatics and Computational Biology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(166,'GutenTag: High-Throughput Sequence Tagging via an Empirically Derived Fragmentation Model','2003-12-01','10.1021/ac0347462','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ac0347462','Analytical Chemistry','peer-reviewed',NULL);
+INSERT INTO publication VALUES(167,'Proteomics-Grade de Novo Sequencing Approach','2005-12-01','10.1021/pr050288x','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/pr050288x','Journal of Proteome Research','peer-reviewed',NULL);
+INSERT INTO publication VALUES(168,'Spectral Profiles, a Novel Representation of Tandem Mass Spectra and Their Applications for de Novo Peptide Sequencing and Identification','2009-06-01','10.1074/mcp.M800535-MCP200','Elsevier BV',NULL,'https://doi.org/10.1074/mcp.M800535-MCP200','Molecular & Cellular Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(169,'Identification of a novel Plasmopara halstedii elicitor protein combining de novo peptide sequencing algorithms and RACE-PCR','2010-01-01','10.1186/1477-5956-8-24','Springer Science and Business Media LLC',NULL,'https://doi.org/10.1186/1477-5956-8-24','Proteome Science','peer-reviewed',NULL);
+INSERT INTO publication VALUES(170,'Shotgun Protein Sequencing with Meta-contig Assembly','2012-10-01','10.1074/mcp.M111.015768','Elsevier BV',NULL,'https://doi.org/10.1074/mcp.M111.015768','Molecular & Cellular Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(171,'Mass spectrometry-based protein identification by integrating de novo sequencing with database searching','2013-01-01','10.1186/1471-2105-14-S2-S24','Springer Science and Business Media LLC',NULL,'https://doi.org/10.1186/1471-2105-14-S2-S24','BMC Bioinformatics','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2231,6 +2274,12 @@ INSERT INTO publication_algorithm VALUES(162,137);
 INSERT INTO publication_algorithm VALUES(163,138);
 INSERT INTO publication_algorithm VALUES(164,139);
 INSERT INTO publication_algorithm VALUES(165,140);
+INSERT INTO publication_algorithm VALUES(166,141);
+INSERT INTO publication_algorithm VALUES(167,143);
+INSERT INTO publication_algorithm VALUES(168,142);
+INSERT INTO publication_algorithm VALUES(169,146);
+INSERT INTO publication_algorithm VALUES(170,145);
+INSERT INTO publication_algorithm VALUES(171,144);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3249,6 +3298,27 @@ INSERT INTO publication_author VALUES(164,554,2);
 INSERT INTO publication_author VALUES(165,555,1);
 INSERT INTO publication_author VALUES(165,234,2);
 INSERT INTO publication_author VALUES(165,272,3);
+INSERT INTO publication_author VALUES(166,556,1);
+INSERT INTO publication_author VALUES(166,557,2);
+INSERT INTO publication_author VALUES(166,558,3);
+INSERT INTO publication_author VALUES(167,340,1);
+INSERT INTO publication_author VALUES(167,341,2);
+INSERT INTO publication_author VALUES(167,482,3);
+INSERT INTO publication_author VALUES(167,342,4);
+INSERT INTO publication_author VALUES(168,467,1);
+INSERT INTO publication_author VALUES(168,475,2);
+INSERT INTO publication_author VALUES(168,271,3);
+INSERT INTO publication_author VALUES(169,559,1);
+INSERT INTO publication_author VALUES(169,560,2);
+INSERT INTO publication_author VALUES(169,561,3);
+INSERT INTO publication_author VALUES(169,562,4);
+INSERT INTO publication_author VALUES(169,563,5);
+INSERT INTO publication_author VALUES(169,564,6);
+INSERT INTO publication_author VALUES(170,473,1);
+INSERT INTO publication_author VALUES(170,269,2);
+INSERT INTO publication_author VALUES(170,475,3);
+INSERT INTO publication_author VALUES(171,565,1);
+INSERT INTO publication_author VALUES(171,566,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -4220,10 +4290,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2
 INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,0,'2022-08-18T04:30:03Z','2026-05-26T12:38:15');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',30);
-INSERT INTO sqlite_sequence VALUES('city',113);
-INSERT INTO sqlite_sequence VALUES('affiliation',251);
-INSERT INTO sqlite_sequence VALUES('author',555);
-INSERT INTO sqlite_sequence VALUES('algorithm',140);
-INSERT INTO sqlite_sequence VALUES('publication',165);
+INSERT INTO sqlite_sequence VALUES('city',115);
+INSERT INTO sqlite_sequence VALUES('affiliation',256);
+INSERT INTO sqlite_sequence VALUES('author',566);
+INSERT INTO sqlite_sequence VALUES('algorithm',146);
+INSERT INTO sqlite_sequence VALUES('publication',171);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
