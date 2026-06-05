@@ -1159,10 +1159,8 @@ ${type_breakdown(d)}`
         .attr("stroke", "#1f2328")
         .attr("stroke-width", 0.65 / Math.sqrt(k))
 
-      g.selectAll("title")
-        .data([d])
-        .join("title")
-        .text(tooltip)
+      g.selectAll("title").remove()
+      g.attr("aria-label", tooltip(d))
     })
   }
 
@@ -2069,7 +2067,7 @@ cites ${d.out_deg} papers in the catalog`
 
 ### Academic impact by citation count
 
-Publication-level global citation counts from **OpenAlex** `cited_by_count`. Counts are matched to catalog publications by DOI first, then by high-confidence title search when DOI lookup is unavailable; refresh with `build_publication_impact.py`.
+Publication-level global citation counts from **OpenAlex** `cited_by_count`. Counts are matched to catalog publications by DOI first, then by high-confidence title search when DOI lookup is unavailable.
 
 ```{ojs}
 //| echo: false
