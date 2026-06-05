@@ -6,3 +6,4 @@ plots/
 citation_audit.csv
 
 /.quarto/
+__pycache__/
