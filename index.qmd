@@ -798,7 +798,7 @@ innovations_timeline = {
 
 ## Where the work happens
 
-Authors and the organizations behind them span **${n_countries}** countries. Circle area scales with the selected impact metric; colour groups organizations by type. Nearby organizations are gently separated so dense hubs remain readable without zooming. Organization type is inferred from institution names and should be read as a practical display category.
+Authors and the organizations behind them span **${n_countries}** countries. Pan and zoom the map — zoomed out, nearby work collapses to country-level pies; zoom in past about 2× and those aggregates split into city-level pies. Circle area scales with the selected impact metric; pie colours group organizations by type. Organization type is inferred from institution names and should be read as a practical display category.
 
 ```{ojs}
 //| echo: false
@@ -898,6 +898,116 @@ where_the_work_map = {
     n: org_data.filter(d => d.type === type).length
   }))
 
+  const make_bucket = fields => ({
+    ...fields,
+    lat_sum: 0,
+    lng_sum: 0,
+    loc_w: 0,
+    authors: new Set(),
+    papers: new Set(),
+    affiliations: new Set(),
+    organizations: new Set(),
+    types: new Map()
+  })
+
+  const add_to_bucket = (bucket, r, type) => {
+    bucket.authors.add(r.author_id)
+    bucket.papers.add(r.pub_id)
+    bucket.affiliations.add(r.affiliation_id)
+    bucket.organizations.add(r.affiliation)
+    bucket.lat_sum += r.lat
+    bucket.lng_sum += r.lng
+    bucket.loc_w += 1
+
+    if (!bucket.types.has(type)) {
+      bucket.types.set(type, {
+        type,
+        authors: new Set(),
+        papers: new Set(),
+        affiliations: new Set(),
+        organizations: new Set()
+      })
+    }
+    const by_type = bucket.types.get(type)
+    by_type.authors.add(r.author_id)
+    by_type.papers.add(r.pub_id)
+    by_type.affiliations.add(r.affiliation_id)
+    by_type.organizations.add(r.affiliation)
+  }
+
+  const city_rows = new Map()
+  const country_rows = new Map()
+  for (const r of pub_authorship_t) {
+    if (!pub_ids.has(r.pub_id) || !r.affiliation || !r.country || r.lat == null || r.lng == null) continue
+    const type = classify_org(r.affiliation)
+    if (!org_type_filter.includes(type)) continue
+
+    const country_key = r.country
+    if (!country_rows.has(country_key)) {
+      country_rows.set(country_key, make_bucket({
+        level: "country",
+        label: r.country,
+        country: r.country
+      }))
+    }
+    add_to_bucket(country_rows.get(country_key), r, type)
+
+    if (!r.city_id) continue
+    const city_key = String(r.city_id)
+    if (!city_rows.has(city_key)) {
+      city_rows.set(city_key, make_bucket({
+        level: "city",
+        label: `${r.city}, ${r.country}`,
+        city: r.city,
+        country: r.country,
+        lat: r.lat,
+        lng: r.lng
+      }))
+    }
+    add_to_bucket(city_rows.get(city_key), r, type)
+  }
+
+  const metric_value = (sets, metric) => {
+    if (!sets) return 0
+    if (metric === "authors") return sets.authors.size
+    if (metric === "papers") return sets.papers.size
+    return Array.from(sets.papers).reduce((sum, pid) => sum + (publication_impact_by_pub.get(pid)?.cited_by_count ?? 0), 0)
+  }
+
+  const finalize_bucket = bucket => {
+    const lat = bucket.lat ?? (bucket.lat_sum / bucket.loc_w)
+    const lng = bucket.lng ?? (bucket.lng_sum / bucket.loc_w)
+    const type_values = org_types_present.map(type => ({
+      type,
+      value: metric_value(bucket.types.get(type), org_metric)
+    })).filter(d => d.value > 0)
+
+    return {
+      level: bucket.level,
+      label: bucket.label,
+      city: bucket.city,
+      country: bucket.country,
+      lat,
+      lng,
+      authors: bucket.authors.size,
+      papers: bucket.papers.size,
+      affiliations: bucket.affiliations.size,
+      organizations: bucket.organizations.size,
+      citations: Array.from(bucket.papers).reduce((sum, pid) => sum + (publication_impact_by_pub.get(pid)?.cited_by_count ?? 0), 0),
+      type_values
+    }
+  }
+
+  const city_data = Array.from(city_rows.values())
+    .filter(d => d.loc_w > 0)
+    .map(finalize_bucket)
+    .filter(d => Number.isFinite(d.lat) && Number.isFinite(d.lng))
+
+  const country_data = Array.from(country_rows.values())
+    .filter(d => d.loc_w > 0)
+    .map(finalize_bucket)
+    .filter(d => Number.isFinite(d.lat) && Number.isFinite(d.lng))
+
   // ===== Set up scales =====
   const width = 1100, height = 620
   const projection = d3.geoNaturalEarth1()
@@ -907,21 +1017,12 @@ where_the_work_map = {
 
   // Size: sqrt(metric) so circle area is linear in the selected metric.
   const metric_label = { citations: "global citations", authors: "authors", papers: "papers" }[org_metric]
-  const max_value = d3.max(org_data, d => d[org_metric]) || 1
-  const radius = v => 3 + 24 * Math.sqrt((v || 0) / max_value)
-
-  const nodes = org_data.map(d => {
-    const [x0, y0] = projection([d.lng, d.lat])
-    return { ...d, x0, y0, x: x0, y: y0, r: radius(d[org_metric]) }
-  })
-  // Collision layout nudges dense hubs apart while keeping circles pulled toward
-  // their true projected coordinates.
-  const sim = d3.forceSimulation(nodes)
-    .force("x", d3.forceX(d => d.x0).strength(0.35))
-    .force("y", d3.forceY(d => d.y0).strength(0.35))
-    .force("collide", d3.forceCollide(d => d.r + 1.6).iterations(3))
-    .stop()
-  for (let i = 0; i < 180; ++i) sim.tick()
+  const max_city = d3.max(city_data, d => d[org_metric]) || 1
+  const max_country = d3.max(country_data, d => d[org_metric]) || 1
+  const cityR = v => 2.5 + 13 * Math.sqrt((v || 0) / max_city)
+  const countryR = v => 7 + 25 * Math.sqrt((v || 0) / max_country)
+  const sorted_city_data = city_data.slice().sort((a, b) => d3.descending(a[org_metric], b[org_metric]))
+  const sorted_country_data = country_data.slice().sort((a, b) => d3.descending(a[org_metric], b[org_metric]))
 
   // ===== Build SVG =====
   const svg = d3.create("svg")
@@ -936,18 +1037,10 @@ where_the_work_map = {
 
   const map_layer = svg.append("g")
 
-  const zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .translateExtent([[0, 0], [width, height]])
-    .extent([[0, 0], [width, height]])
-    .on("start", () => svg.style("cursor", "grabbing"))
-    .on("zoom", ev => map_layer.attr("transform", ev.transform))
-    .on("end", () => svg.style("cursor", "grab"))
-  svg.call(zoom)
-
   // Country fills (greyed base map).
   const countries_feature = topojson.feature(world_atlas, world_atlas.objects.countries)
-  map_layer.append("g")
+  const base_layer = map_layer.append("g").attr("class", "base-map")
+  base_layer
     .selectAll("path")
     .data(countries_feature.features)
     .join("path")
@@ -956,61 +1049,89 @@ where_the_work_map = {
     .attr("stroke", "#cfd4d9")
     .attr("stroke-width", 0.5)
 
-  // Leader lines reveal how far collision has moved circles from their true
-  // geocoded anchor.
-  map_layer.append("g")
-    .attr("stroke", "#8c959f")
-    .attr("stroke-opacity", 0.35)
-    .attr("stroke-width", 0.6)
-    .selectAll("line")
-    .data(nodes.filter(d => Math.hypot(d.x - d.x0, d.y - d.y0) > 8))
-    .join("line")
-    .attr("x1", d => d.x0)
-    .attr("y1", d => d.y0)
-    .attr("x2", d => d.x)
-    .attr("y2", d => d.y)
-
-  const org_layer = map_layer.append("g")
-  org_layer.selectAll("circle")
-    .data(nodes)
-    .join("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", d => d.r)
-    .attr("fill", d => org_type_color[d.type])
-    .attr("fill-opacity", 0.78)
-    .attr("stroke", "#1f2328")
-    .attr("stroke-width", 0.55)
-    .append("title").text(d => `${d.organization}
-${d.type} · ${d.city}, ${d.country}
-${d.papers} papers · ${d.authors} authors · ${d.citations} global citations
-${d.affiliations} affiliation rows`)
-
-  // Emphasize the most impactful organizations with short labels.
-  const labelled = nodes
+  const type_breakdown = d => d.type_values
     .slice()
-    .sort((a, b) => d3.descending(a[org_metric], b[org_metric]))
-    .slice(0, 18)
-  map_layer.append("g")
-    .selectAll("text")
-    .data(labelled)
-    .join("text")
-    .attr("x", d => d.x)
-    .attr("y", d => d.y - d.r - 4)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 10)
-    .attr("font-weight", 650)
-    .attr("fill", "#1f2328")
-    .attr("paint-order", "stroke")
-    .attr("stroke", "white")
-    .attr("stroke-width", 3)
-    .text(d => d.organization.length > 26 ? d.organization.slice(0, 24) + "…" : d.organization)
+    .sort((a, b) => d3.descending(a.value, b.value))
+    .map(v => `${v.type}: ${v.value} ${metric_label}`)
+    .join("\n")
+
+  const tooltip = d => `${d.label}
+${d.authors} authors · ${d.papers} papers · ${d.citations} global citations
+${d.organizations} organizations · ${d.affiliations} affiliation rows
+${type_breakdown(d)}`
+
+  const marker_radius = (radius_fn, d, k) => radius_fn(d[org_metric]) / Math.sqrt(k)
+
+  const draw_markers = (layer, data, radius_fn, k = 1) => {
+    const markers = layer.selectAll("g.marker")
+      .data(data, d => d.label)
+      .join("g")
+      .attr("class", "marker")
+      .attr("transform", d => {
+        const [x, y] = projection([d.lng, d.lat])
+        return `translate(${x},${y})`
+      })
+
+    markers.each(function(d) {
+      const g = d3.select(this)
+      const r = marker_radius(radius_fn, d, k)
+      const slices = d.type_values.length ? d.type_values : [{ type: "Academic", value: 1 }]
+      const pie = d3.pie().sort(null).value(s => s.value)(slices)
+      const arc = d3.arc().innerRadius(0).outerRadius(r)
+
+      g.selectAll("path.slice")
+        .data(pie, p => p.data.type)
+        .join("path")
+        .attr("class", "slice")
+        .attr("d", arc)
+        .attr("fill", p => org_type_color[p.data.type])
+        .attr("fill-opacity", 0.82)
+
+      g.selectAll("circle.outline")
+        .data([d])
+        .join("circle")
+        .attr("class", "outline")
+        .attr("r", r)
+        .attr("fill", "none")
+        .attr("stroke", "#1f2328")
+        .attr("stroke-width", 0.65 / Math.sqrt(k))
+
+      g.selectAll("title")
+        .data([d])
+        .join("title")
+        .text(tooltip)
+    })
+  }
+
+  const country_layer = map_layer.append("g").attr("class", "country-layer")
+  const city_layer = map_layer.append("g").attr("class", "city-layer").attr("opacity", 0).attr("pointer-events", "none")
+  draw_markers(country_layer, sorted_country_data, countryR)
+  draw_markers(city_layer, sorted_city_data, cityR)
+
+  const SPLIT_K = 2.0
+  const zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("start", () => svg.style("cursor", "grabbing"))
+    .on("zoom", ev => {
+      const k = ev.transform.k
+      const show_cities = k >= SPLIT_K
+      map_layer.attr("transform", ev.transform)
+      base_layer.selectAll("path").attr("stroke-width", 0.5 / Math.sqrt(k))
+      country_layer.attr("opacity", show_cities ? 0 : 1).attr("pointer-events", show_cities ? "none" : "auto")
+      city_layer.attr("opacity", show_cities ? 1 : 0).attr("pointer-events", show_cities ? "auto" : "none")
+      draw_markers(country_layer, sorted_country_data, countryR, k)
+      draw_markers(city_layer, sorted_city_data, cityR, k)
+    })
+    .on("end", () => svg.style("cursor", "grab"))
+  svg.call(zoom)
 
   // ===== Legends =====
   const legend = svg.append("g").attr("transform", `translate(20, ${height - 74})`)
   legend.append("text").attr("x", 0).attr("y", -10)
     .attr("font-weight", "bold").attr("fill", "#2a3140")
-    .text(`${nodes.length} organizations · circle area ∝ ${metric_label}`)
+    .text(`${org_data.length} organizations · ${city_data.length} cities · circle area ∝ ${metric_label}`)
   const visible_types = org_types_present.filter(t => type_counts.find(d => d.type === t)?.n)
   const leg = legend.selectAll("g.type")
     .data(visible_types)
@@ -1030,10 +1151,11 @@ ${d.affiliations} affiliation rows`)
     .attr("fill", "#2a3140")
     .text(d => `${d} (${type_counts.find(x => x.type === d)?.n ?? 0})`)
 
-  const max_r = radius(max_value)
+  const max_value = max_country
+  const max_r = countryR(max_value)
   const size_legend = svg.append("g").attr("transform", `translate(${width - 170}, ${height - 86})`)
   size_legend.append("circle").attr("cx", 28).attr("cy", 36).attr("r", max_r).attr("fill", "none").attr("stroke", "#57606a")
-  size_legend.append("circle").attr("cx", 28).attr("cy", 36 + max_r - radius(max_value / 4)).attr("r", radius(max_value / 4)).attr("fill", "none").attr("stroke", "#57606a")
+  size_legend.append("circle").attr("cx", 28).attr("cy", 36 + max_r - countryR(max_value / 4)).attr("r", countryR(max_value / 4)).attr("fill", "none").attr("stroke", "#57606a")
   size_legend.append("text").attr("x", 70).attr("y", 24).attr("fill", "#57606a").text(`${max_value} ${metric_label}`)
   size_legend.append("text").attr("x", 70).attr("y", 48).attr("fill", "#57606a").text(`${Math.round(max_value / 4)} ${metric_label}`)
 
