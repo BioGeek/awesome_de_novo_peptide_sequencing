@@ -793,6 +793,24 @@ innovations_timeline = {
   cursor: pointer; color: #24292f;
 }
 .map-zoom-btn:hover { background: #f6f8fa; border-color: #afb8c1; }
+.map-tooltip {
+  position: fixed; z-index: 30; max-width: 300px;
+  padding: 10px 12px; border: 1px solid #d0d7de; border-radius: 6px;
+  background: rgba(255, 255, 255, 0.98); color: #24292f;
+  box-shadow: 0 8px 24px rgba(31, 35, 40, 0.16);
+  font: 12px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none; opacity: 0;
+  transform: translate(12px, 12px);
+  transition: opacity 120ms ease;
+}
+.map-tooltip.visible { opacity: 1; }
+.map-tooltip-title { font-weight: 700; margin-bottom: 5px; }
+.map-tooltip-meta { color: #57606a; margin-bottom: 7px; }
+.map-tooltip-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.map-tooltip-swatch {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1px solid rgba(31, 35, 40, 0.35); flex: 0 0 auto;
+}
 </style>
 ```
 
@@ -1060,6 +1078,42 @@ ${d.authors} authors · ${d.papers} papers · ${d.citations} global citations
 ${d.organizations} organizations · ${d.affiliations} affiliation rows
 ${type_breakdown(d)}`
 
+  const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const fmt = v => Number(v ?? 0).toLocaleString()
+  const move_tooltip = ev => {
+    const pad = 16
+    const { innerWidth, innerHeight } = window
+    const box = tooltip_el.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, innerWidth - box.width - pad)
+    const top = Math.min(ev.clientY + pad, innerHeight - box.height - pad)
+    tooltip_el.style.left = `${Math.max(pad, left)}px`
+    tooltip_el.style.top = `${Math.max(pad, top)}px`
+  }
+  const show_tooltip = (ev, d) => {
+    const rows = d.type_values
+      .slice()
+      .sort((a, b) => d3.descending(a.value, b.value))
+    tooltip_el.replaceChildren(html`<div>
+      <div class="map-tooltip-title">${d.label}</div>
+      <div class="map-tooltip-meta">
+        ${fmt(d[org_metric])} ${metric_label}<br>
+        ${fmt(d.authors)} authors · ${fmt(d.papers)} papers · ${fmt(d.citations)} global citations<br>
+        ${fmt(d.organizations)} organizations · ${fmt(d.affiliations)} affiliation rows
+      </div>
+      ${rows.map(row => html`<div class="map-tooltip-row">
+        <span class="map-tooltip-swatch" style=${`background:${org_type_color[row.type]}`}></span>
+        <span>${row.type}: ${fmt(row.value)} ${metric_label}</span>
+      </div>`)}
+    </div>`)
+    tooltip_el.classList.add("visible")
+    tooltip_el.setAttribute("aria-hidden", "false")
+    move_tooltip(ev)
+  }
+  const hide_tooltip = () => {
+    tooltip_el.classList.remove("visible")
+    tooltip_el.setAttribute("aria-hidden", "true")
+  }
+
   const marker_radius = (radius_fn, d, k) => radius_fn(d[org_metric]) / Math.sqrt(k)
 
   const draw_markers = (layer, data, radius_fn, k = 1) => {
@@ -1071,6 +1125,15 @@ ${type_breakdown(d)}`
         const [x, y] = projection([d.lng, d.lat])
         return `translate(${x},${y})`
       })
+      .style("cursor", "help")
+      .on("mouseenter", show_tooltip)
+      .on("mousemove", move_tooltip)
+      .on("mouseleave", hide_tooltip)
+      .on("focus", function(ev, d) {
+        const rect = this.getBoundingClientRect()
+        show_tooltip({ clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }, d)
+      })
+      .on("blur", hide_tooltip)
 
     markers.each(function(d) {
       const g = d3.select(this)
@@ -1174,6 +1237,7 @@ ${type_breakdown(d)}`
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+    ${tooltip_el}
   </div>`
 }
 ```
