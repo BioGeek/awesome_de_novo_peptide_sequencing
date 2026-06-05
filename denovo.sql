@@ -634,6 +634,12 @@ INSERT INTO author VALUES(639,'Johan Malmström',NULL);
 INSERT INTO author VALUES(640,'Lars Malmström',NULL);
 INSERT INTO author VALUES(641,'Georg Tscheuschner',NULL);
 INSERT INTO author VALUES(642,'Michael G. Weller',NULL);
+INSERT INTO author VALUES(643,'Lissa C. Anderson',NULL);
+INSERT INTO author VALUES(644,'Dina L. Bai',NULL);
+INSERT INTO author VALUES(645,'Greg T. Blakney',NULL);
+INSERT INTO author VALUES(646,'David S. Butcher',NULL);
+INSERT INTO author VALUES(647,'Larry Reser',NULL);
+INSERT INTO author VALUES(648,'Jeffrey Shabanowitz',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -813,6 +819,8 @@ INSERT INTO city VALUES(132,'Pearl River',8,41.0589900000000014,-74.021799999999
 INSERT INTO city VALUES(133,'Lund',6,55.7047000000000025,13.1910000000000007);
 INSERT INTO city VALUES(134,'Nancy',14,48.6921000000000034,6.18440000000000011);
 INSERT INTO city VALUES(135,'Potsdam',4,52.3905999999999991,13.0645000000000006);
+INSERT INTO city VALUES(136,'Tallahassee',8,30.4383000000000016,-84.2806999999999959);
+INSERT INTO city VALUES(137,'Charlottesville',8,38.0292999999999992,-78.4766999999999939);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1126,6 +1134,9 @@ INSERT INTO affiliation VALUES(297,'Université de Lorraine','CNRS, Inria, LORIA
 INSERT INTO affiliation VALUES(298,'Robert Koch Institute','MF1',4,78);
 INSERT INTO affiliation VALUES(299,'Federal Institute for Materials Research and Testing (BAM)',NULL,4,78);
 INSERT INTO affiliation VALUES(300,'Hasso Plattner Institute','Digital Engineering Faculty, University of Potsdam',4,135);
+INSERT INTO affiliation VALUES(301,'National High Magnetic Field Laboratory',NULL,8,136);
+INSERT INTO affiliation VALUES(302,'Florida State University','Department of Chemistry and Biochemistry',8,136);
+INSERT INTO affiliation VALUES(303,'University of Virginia','Department of Chemistry',8,137);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2021,6 +2032,13 @@ INSERT INTO author_affiliation VALUES(641,299);
 INSERT INTO author_affiliation VALUES(430,300);
 INSERT INTO author_affiliation VALUES(642,299);
 INSERT INTO author_affiliation VALUES(421,299);
+INSERT INTO author_affiliation VALUES(643,301);
+INSERT INTO author_affiliation VALUES(643,302);
+INSERT INTO author_affiliation VALUES(644,303);
+INSERT INTO author_affiliation VALUES(645,301);
+INSERT INTO author_affiliation VALUES(646,301);
+INSERT INTO author_affiliation VALUES(647,303);
+INSERT INTO author_affiliation VALUES(648,303);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2193,6 +2211,7 @@ INSERT INTO algorithm VALUES(165,'ADEPTS',NULL,NULL,'Spectra pair','Advanced pep
 INSERT INTO algorithm VALUES(166,'Conovo',NULL,NULL,'Constrained search','Constrained de novo sequencing algorithm for peptide families such as conotoxins.','algorithm',0,'DDA','Constrained de novo sequencing');
 INSERT INTO algorithm VALUES(167,'Multienzyme DeepNovo models',NULL,NULL,'CNN + RNN','DeepNovo-based multienzyme models for improving peptide de novo sequencing generalizability.','algorithm',1,'DDA','MEM; multienzyme models');
 INSERT INTO algorithm VALUES(168,'Beslic 2023 antibody assembly evaluation',NULL,NULL,NULL,'Benchmark evaluation of de novo peptide sequencing tools for monoclonal antibody assembly.','benchmark',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(169,'Hunt Lab Guide',NULL,NULL,NULL,'Molecular & Cellular Proteomics guide to manual de novo peptide sequence analysis by tandem mass spectrometry.','review',NULL,NULL,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2397,6 +2416,7 @@ INSERT INTO publication VALUES(191,'ADEPTS: Advanced peptide de novo sequencing 
 INSERT INTO publication VALUES(192,'Constrained De Novo Sequencing of Conotoxins','2012-08-03','10.1021/pr300312h','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/pr300312h','Journal of Proteome Research','peer-reviewed',NULL);
 INSERT INTO publication VALUES(193,'Multienzyme deep learning models improve peptide de novo sequencing by mass spectrometry proteomics','2023-01-20','10.1371/journal.pcbi.1010457','Public Library of Science (PLoS)',NULL,'https://doi.org/10.1371/journal.pcbi.1010457','PLOS Computational Biology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(194,'Comprehensive evaluation of peptide de novo sequencing tools for monoclonal antibody assembly','2023-01-19','10.1093/bib/bbac542','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bib/bbac542','Briefings in Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(195,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis by Tandem Mass Spectrometry','2024-11-07','10.1016/j.mcpro.2024.100875','Elsevier BV',NULL,'https://doi.org/10.1016/j.mcpro.2024.100875','Molecular & Cellular Proteomics','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2603,6 +2623,7 @@ INSERT INTO publication_algorithm VALUES(191,165);
 INSERT INTO publication_algorithm VALUES(192,166);
 INSERT INTO publication_algorithm VALUES(193,167);
 INSERT INTO publication_algorithm VALUES(194,168);
+INSERT INTO publication_algorithm VALUES(195,169);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3743,6 +3764,12 @@ INSERT INTO publication_author VALUES(194,641,2);
 INSERT INTO publication_author VALUES(194,430,3);
 INSERT INTO publication_author VALUES(194,642,4);
 INSERT INTO publication_author VALUES(194,421,5);
+INSERT INTO publication_author VALUES(195,643,1);
+INSERT INTO publication_author VALUES(195,644,2);
+INSERT INTO publication_author VALUES(195,645,3);
+INSERT INTO publication_author VALUES(195,646,4);
+INSERT INTO publication_author VALUES(195,647,5);
+INSERT INTO publication_author VALUES(195,648,6);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5077,6 +5104,7 @@ INSERT INTO publication_citation VALUES(194,146,'both');
 INSERT INTO publication_citation VALUES(194,165,'both');
 INSERT INTO publication_citation VALUES(194,170,'both');
 INSERT INTO publication_citation VALUES(194,193,'both');
+INSERT INTO publication_citation VALUES(195,146,'both');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -5443,12 +5471,13 @@ INSERT INTO publication_impact VALUES(191,'W2023250395',31,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(192,'W1977817462',34,'doi',NULL,2026,'2026-06-05T11:15:24+00:00');
 INSERT INTO publication_impact VALUES(193,'W4317556129',11,'doi',NULL,2026,'2026-06-05T11:15:24+00:00');
 INSERT INTO publication_impact VALUES(194,'W4312095560',68,'doi',NULL,2026,'2026-06-05T11:15:24+00:00');
+INSERT INTO publication_impact VALUES(195,'W4404093938',2,'doi',NULL,2026,'2026-06-05T11:30:04+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',32);
-INSERT INTO sqlite_sequence VALUES('city',135);
-INSERT INTO sqlite_sequence VALUES('affiliation',300);
-INSERT INTO sqlite_sequence VALUES('author',642);
-INSERT INTO sqlite_sequence VALUES('algorithm',168);
-INSERT INTO sqlite_sequence VALUES('publication',194);
+INSERT INTO sqlite_sequence VALUES('city',137);
+INSERT INTO sqlite_sequence VALUES('affiliation',303);
+INSERT INTO sqlite_sequence VALUES('author',648);
+INSERT INTO sqlite_sequence VALUES('algorithm',169);
+INSERT INTO sqlite_sequence VALUES('publication',195);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
