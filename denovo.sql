@@ -640,6 +640,7 @@ INSERT INTO author VALUES(645,'Greg T. Blakney',NULL);
 INSERT INTO author VALUES(646,'David S. Butcher',NULL);
 INSERT INTO author VALUES(647,'Larry Reser',NULL);
 INSERT INTO author VALUES(648,'Jeffrey Shabanowitz',NULL);
+INSERT INTO author VALUES(649,'James Paul Cleveland',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -821,6 +822,7 @@ INSERT INTO city VALUES(134,'Nancy',14,48.6921000000000034,6.18440000000000011);
 INSERT INTO city VALUES(135,'Potsdam',4,52.3905999999999991,13.0645000000000006);
 INSERT INTO city VALUES(136,'Tallahassee',8,30.4383000000000016,-84.2806999999999959);
 INSERT INTO city VALUES(137,'Charlottesville',8,38.0292999999999992,-78.4766999999999939);
+INSERT INTO city VALUES(138,'Columbia',8,34.0007000000000019,-81.0348000000000041);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1137,6 +1139,7 @@ INSERT INTO affiliation VALUES(300,'Hasso Plattner Institute','Digital Engineeri
 INSERT INTO affiliation VALUES(301,'National High Magnetic Field Laboratory',NULL,8,136);
 INSERT INTO affiliation VALUES(302,'Florida State University','Department of Chemistry and Biochemistry',8,136);
 INSERT INTO affiliation VALUES(303,'University of Virginia','Department of Chemistry',8,137);
+INSERT INTO affiliation VALUES(304,'University of South Carolina','Computer Science and Engineering',8,138);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2039,6 +2042,7 @@ INSERT INTO author_affiliation VALUES(645,301);
 INSERT INTO author_affiliation VALUES(646,301);
 INSERT INTO author_affiliation VALUES(647,303);
 INSERT INTO author_affiliation VALUES(648,303);
+INSERT INTO author_affiliation VALUES(649,304);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2212,6 +2216,7 @@ INSERT INTO algorithm VALUES(166,'Conovo',NULL,NULL,'Constrained search','Constr
 INSERT INTO algorithm VALUES(167,'Multienzyme DeepNovo models',NULL,NULL,'CNN + RNN','DeepNovo-based multienzyme models for improving peptide de novo sequencing generalizability.','algorithm',1,'DDA','MEM; multienzyme models');
 INSERT INTO algorithm VALUES(168,'Beslic 2023 antibody assembly evaluation',NULL,NULL,NULL,'Benchmark evaluation of de novo peptide sequencing tools for monoclonal antibody assembly.','benchmark',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(169,'Hunt Lab Guide',NULL,NULL,NULL,'Molecular & Cellular Proteomics guide to manual de novo peptide sequence analysis by tandem mass spectrometry.','review',NULL,NULL,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis');
+INSERT INTO algorithm VALUES(170,'QuasiNovo',NULL,NULL,'Graph / DP + neural network','De novo peptide sequencing algorithm using a neural-network ion classifier, dynamic programming candidate generation, and amino acid usage/edge-frequency scoring.','algorithm',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2417,6 +2422,7 @@ INSERT INTO publication VALUES(192,'Constrained De Novo Sequencing of Conotoxins
 INSERT INTO publication VALUES(193,'Multienzyme deep learning models improve peptide de novo sequencing by mass spectrometry proteomics','2023-01-20','10.1371/journal.pcbi.1010457','Public Library of Science (PLoS)',NULL,'https://doi.org/10.1371/journal.pcbi.1010457','PLOS Computational Biology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(194,'Comprehensive evaluation of peptide de novo sequencing tools for monoclonal antibody assembly','2023-01-19','10.1093/bib/bbac542','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bib/bbac542','Briefings in Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(195,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis by Tandem Mass Spectrometry','2024-11-07','10.1016/j.mcpro.2024.100875','Elsevier BV',NULL,'https://doi.org/10.1016/j.mcpro.2024.100875','Molecular & Cellular Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(196,'QuasiNovo: Algorithms for De Novo Peptide Sequencing','2013-01-01',NULL,'PhD thesis',replace('High-throughput proteomics analysis involves the rapid identification and characterization of large sets of proteins in complex biological samples. Tandem mass spectrometry (MS/MS) has become the leading approach for the experimental identification of proteins. Accurate analysis of the data produced is a computationally challenging process that relies on a complex understanding of molecular dynamics, signal processing, and pattern classification.\nIn this work we address these modeling and classification problems, and introduce an additional data-driven evolutionary information source into the analysis pipeline. The particular problem being solved is peptide sequencing via MS/MS. The objective in solving this problem is to decipher the amino acid sequence of digested proteins (peptides) from the MS/MS spectra produced in a typical experimental protocol. Our approach sequences peptides using only the information contained in the experimental spectrum (de novo) and distributions of amino acid usage learned from large sets of protein sequence data.\nIn this dissertation we pursue three main objectives: an ion classifier based on a neural network which selects informative ions from the spectrum, a peptide sequencer which uses dynamic programming and a scoring function to generate candidate peptide sequences, and a candidate peptide scoring function. Candidate peptide sequences are generated via a dynamic programming graph algorithm, and then scored using a combination of the neural network score, the amino acid usage score, and an edge frequency score.\nIn addition to a complete de novo peptide sequencer, we also examine the use of amino acid usage models independently for reranking candidate peptides.','\n',char(10)),'https://scholarcommons.sc.edu/etd/3586/',NULL,'thesis',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2624,6 +2630,7 @@ INSERT INTO publication_algorithm VALUES(192,166);
 INSERT INTO publication_algorithm VALUES(193,167);
 INSERT INTO publication_algorithm VALUES(194,168);
 INSERT INTO publication_algorithm VALUES(195,169);
+INSERT INTO publication_algorithm VALUES(196,170);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3770,6 +3777,7 @@ INSERT INTO publication_author VALUES(195,645,3);
 INSERT INTO publication_author VALUES(195,646,4);
 INSERT INTO publication_author VALUES(195,647,5);
 INSERT INTO publication_author VALUES(195,648,6);
+INSERT INTO publication_author VALUES(196,649,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5472,12 +5480,13 @@ INSERT INTO publication_impact VALUES(192,'W1977817462',34,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(193,'W4317556129',11,'doi',NULL,2026,'2026-06-05T11:15:24+00:00');
 INSERT INTO publication_impact VALUES(194,'W4312095560',68,'doi',NULL,2026,'2026-06-05T11:15:24+00:00');
 INSERT INTO publication_impact VALUES(195,'W4404093938',2,'doi',NULL,2026,'2026-06-05T11:30:04+00:00');
+INSERT INTO publication_impact VALUES(196,'W2555928497',0,'title',100.0,2026,'2026-06-05T11:56:25+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',32);
-INSERT INTO sqlite_sequence VALUES('city',137);
-INSERT INTO sqlite_sequence VALUES('affiliation',303);
-INSERT INTO sqlite_sequence VALUES('author',648);
-INSERT INTO sqlite_sequence VALUES('algorithm',169);
-INSERT INTO sqlite_sequence VALUES('publication',195);
+INSERT INTO sqlite_sequence VALUES('city',138);
+INSERT INTO sqlite_sequence VALUES('affiliation',304);
+INSERT INTO sqlite_sequence VALUES('author',649);
+INSERT INTO sqlite_sequence VALUES('algorithm',170);
+INSERT INTO sqlite_sequence VALUES('publication',196);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
