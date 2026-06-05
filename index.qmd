@@ -1959,16 +1959,61 @@ cites ${d.out_deg} papers in the catalog`
     if (top_per_row.get(r).length < 5 && n.in_deg >= 4) top_per_row.get(r).push(n)
   }
   const labelled = Array.from(top_per_row.values()).flat()
+  const labelText = d => (d.models?.split(",")[0]?.trim()) || d.title.slice(0, 22)
+  const label_boxes = []
+  for (const group of d3.groups(labelled, d => d.kind).map(([, values]) => values)) {
+    const placed = []
+    const ordered = group.slice().sort((a, b) => d3.descending(a.in_deg, b.in_deg))
+    for (const d of ordered) {
+      const text = labelText(d)
+      const ri = row_index.get(d.kind) ?? KIND_ORDER.length - 1
+      const rowTop = ri * row_h + 6
+      const rowBottom = (ri + 1) * row_h - 6
+      const baseY = d.y - nodeR(d) - 5
+      const w = Math.min(150, Math.max(32, text.length * 5.7))
+      const h = 12
+      const offsets = [0, -14, 14, -28, 28, -42, 42]
+      let chosen = null
+      for (const offset of offsets) {
+        const y = Math.max(rowTop + h / 2, Math.min(rowBottom - h / 2, baseY + offset))
+        const box = { x0: d.x - w / 2, x1: d.x + w / 2, y0: y - h / 2, y1: y + h / 2 }
+        const overlaps = placed.some(p =>
+          box.x0 < p.x1 + 6 && box.x1 + 6 > p.x0 && box.y0 < p.y1 + 3 && box.y1 + 3 > p.y0
+        )
+        if (!overlaps) {
+          chosen = { ...box, d, text, y }
+          break
+        }
+      }
+      if (chosen) {
+        placed.push(chosen)
+        label_boxes.push(chosen)
+      }
+    }
+  }
   const label_layer = root.append("g").attr("class", "labels").attr("pointer-events", "none")
+  label_layer.selectAll("line")
+    .data(label_boxes.filter(l => Math.abs(l.y - (l.d.y - nodeR(l.d) - 5)) > 8))
+    .join("line")
+    .attr("x1", d => d.d.x)
+    .attr("y1", d => d.d.y - nodeR(d.d) - 1)
+    .attr("x2", d => d.d.x)
+    .attr("y2", d => d.y + 4)
+    .attr("stroke", "#8c959f")
+    .attr("stroke-opacity", 0.55)
+    .attr("stroke-width", 0.6)
   label_layer.selectAll("text")
-    .data(labelled)
+    .data(label_boxes)
     .join("text")
-    .text(d => (d.models?.split(",")[0]?.trim()) || d.title.slice(0, 22))
-    .attr("x", d => d.x)
-    .attr("y", d => d.y - nodeR(d) - 4)
+    .text(d => d.text)
+    .attr("x", d => d.d.x)
+    .attr("y", d => d.y)
     .attr("text-anchor", "middle")
     .attr("font-size", 10)
     .attr("font-weight", 600)
+    .attr("paint-order", "stroke")
+    .attr("stroke", "white")
+    .attr("stroke-width", 3)
     .attr("fill", "#1d2330")
 
   // ===== Hover behaviour =====
