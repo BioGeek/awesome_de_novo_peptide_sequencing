@@ -782,6 +782,17 @@ innovations_timeline = {
   cursor: pointer; color: #57606a;
 }
 .fs-btn:hover { background: #f6f8fa; border-color: #afb8c1; }
+.map-zoom-controls {
+  position: absolute; top: 8px; left: 8px; z-index: 10;
+  display: flex; gap: 4px;
+}
+.map-zoom-btn {
+  width: 28px; height: 28px; line-height: 1;
+  padding: 0; font-size: 16px; font-weight: 650;
+  background: white; border: 1px solid #d0d7de; border-radius: 4px;
+  cursor: pointer; color: #24292f;
+}
+.map-zoom-btn:hover { background: #f6f8fa; border-color: #afb8c1; }
 </style>
 ```
 
@@ -915,11 +926,28 @@ where_the_work_map = {
   // ===== Build SVG =====
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width:100%; height:auto; background:#f6f8fa; font:11px sans-serif;")
+    .attr("style", "max-width:100%; height:auto; background:#f6f8fa; font:11px sans-serif; cursor: grab;")
+
+  svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "transparent")
+    .attr("pointer-events", "all")
+
+  const map_layer = svg.append("g")
+
+  const zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("start", () => svg.style("cursor", "grabbing"))
+    .on("zoom", ev => map_layer.attr("transform", ev.transform))
+    .on("end", () => svg.style("cursor", "grab"))
+  svg.call(zoom)
 
   // Country fills (greyed base map).
   const countries_feature = topojson.feature(world_atlas, world_atlas.objects.countries)
-  svg.append("g")
+  map_layer.append("g")
     .selectAll("path")
     .data(countries_feature.features)
     .join("path")
@@ -930,7 +958,7 @@ where_the_work_map = {
 
   // Leader lines reveal how far collision has moved circles from their true
   // geocoded anchor.
-  svg.append("g")
+  map_layer.append("g")
     .attr("stroke", "#8c959f")
     .attr("stroke-opacity", 0.35)
     .attr("stroke-width", 0.6)
@@ -942,7 +970,7 @@ where_the_work_map = {
     .attr("x2", d => d.x)
     .attr("y2", d => d.y)
 
-  const org_layer = svg.append("g")
+  const org_layer = map_layer.append("g")
   org_layer.selectAll("circle")
     .data(nodes)
     .join("circle")
@@ -963,7 +991,7 @@ ${d.affiliations} affiliation rows`)
     .slice()
     .sort((a, b) => d3.descending(a[org_metric], b[org_metric]))
     .slice(0, 18)
-  svg.append("g")
+  map_layer.append("g")
     .selectAll("text")
     .data(labelled)
     .join("text")
@@ -1009,7 +1037,15 @@ ${d.affiliations} affiliation rows`)
   size_legend.append("text").attr("x", 70).attr("y", 24).attr("fill", "#57606a").text(`${max_value} ${metric_label}`)
   size_legend.append("text").attr("x", 70).attr("y", 48).attr("fill", "#57606a").text(`${Math.round(max_value / 4)} ${metric_label}`)
 
+  const zoom_in = html`<button class="map-zoom-btn" title="Zoom in" aria-label="Zoom in">+</button>`
+  zoom_in.onclick = () => svg.transition().duration(180).call(zoom.scaleBy, 1.45)
+  const zoom_out = html`<button class="map-zoom-btn" title="Zoom out" aria-label="Zoom out">-</button>`
+  zoom_out.onclick = () => svg.transition().duration(180).call(zoom.scaleBy, 1 / 1.45)
+  const zoom_reset = html`<button class="map-zoom-btn" title="Reset map zoom" aria-label="Reset map zoom">↺</button>`
+  zoom_reset.onclick = () => svg.transition().duration(220).call(zoom.transform, d3.zoomIdentity)
+
   return html`<div class="chart-wrap">
+    <div class="map-zoom-controls">${zoom_in}${zoom_out}${zoom_reset}</div>
     <button class="fs-btn" onclick="
       const el = this.parentElement;
       if (document.fullscreenElement) document.exitFullscreen();
