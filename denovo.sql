@@ -436,6 +436,34 @@ INSERT INTO author VALUES(441,'Yucheng Liao',NULL);
 INSERT INTO author VALUES(442,'Weinan E',NULL);
 INSERT INTO author VALUES(443,'Han Wen','wenh@dp.tech');
 INSERT INTO author VALUES(444,'Weijie Zhang','zhangweijie@dp.tech');
+INSERT INTO author VALUES(445,'Ming-Yang Kao',NULL);
+INSERT INTO author VALUES(446,'Matthew Tepel',NULL);
+INSERT INTO author VALUES(447,'John Rush',NULL);
+INSERT INTO author VALUES(448,'George M. Church',NULL);
+INSERT INTO author VALUES(449,'Bingwen Lu',NULL);
+INSERT INTO author VALUES(450,'Marshall Bern',NULL);
+INSERT INTO author VALUES(451,'David Theo Goldberg',NULL);
+INSERT INTO author VALUES(452,'Sergey Pevtsov',NULL);
+INSERT INTO author VALUES(453,'Irina Fedulova',NULL);
+INSERT INTO author VALUES(454,'Hamid Mirzaei',NULL);
+INSERT INTO author VALUES(455,'Charles R. Buck',NULL);
+INSERT INTO author VALUES(456,'Peter A. DiMaggio',NULL);
+INSERT INTO author VALUES(457,'Christodoulos A. Floudas',NULL);
+INSERT INTO author VALUES(458,'Chongle Pan',NULL);
+INSERT INTO author VALUES(459,'Byung H. Park',NULL);
+INSERT INTO author VALUES(460,'W. Hayes McDonald',NULL);
+INSERT INTO author VALUES(461,'Patricia A. Carey',NULL);
+INSERT INTO author VALUES(462,'Jillian F. Banfield',NULL);
+INSERT INTO author VALUES(463,'Nathan C. VerBerkmoes',NULL);
+INSERT INTO author VALUES(464,'Robert L. Hettich',NULL);
+INSERT INTO author VALUES(465,'Nagiza F. Samatova',NULL);
+INSERT INTO author VALUES(466,'Kyowon Jeong',NULL);
+INSERT INTO author VALUES(467,'Sangtae Kim',NULL);
+INSERT INTO author VALUES(468,'Franz F. Roos',NULL);
+INSERT INTO author VALUES(469,'Mark Cieliebak',NULL);
+INSERT INTO author VALUES(470,'Zsuzsanna Lipták',NULL);
+INSERT INTO author VALUES(471,'Lucas K. Mathis',NULL);
+INSERT INTO author VALUES(472,'Matthias Müller',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -550,6 +578,17 @@ INSERT INTO city VALUES(77,'Hinxton',7,52.0833000000000012,0.1875);
 INSERT INTO city VALUES(78,'Berlin',4,52.5200000000000031,13.4049999999999993);
 INSERT INTO city VALUES(79,'Turku',22,60.4517999999999986,22.2666000000000003);
 INSERT INTO city VALUES(80,'Heidelberg',4,49.3988000000000013,8.67239999999999966);
+INSERT INTO city VALUES(81,'Boston',8,42.3601000000000027,-71.0588999999999941);
+INSERT INTO city VALUES(82,'New Haven',8,41.3083000000000026,-72.9278999999999939);
+INSERT INTO city VALUES(83,'Palo Alto',8,37.4418999999999968,-122.143);
+INSERT INTO city VALUES(84,'West Lafayette',8,40.4258999999999986,-86.9081000000000045);
+INSERT INTO city VALUES(85,'Princeton',8,40.3573000000000021,-74.667199999999994);
+INSERT INTO city VALUES(86,'Oak Ridge',8,36.010399999999997,-84.2695999999999969);
+INSERT INTO city VALUES(87,'Nashville',8,36.1627000000000009,-86.7815999999999974);
+INSERT INTO city VALUES(88,'Knoxville',8,35.9605999999999994,-83.9206999999999965);
+INSERT INTO city VALUES(89,'Berkeley',8,37.8714999999999974,-122.272999999999996);
+INSERT INTO city VALUES(90,'Raleigh',8,35.779600000000002,-78.6381999999999976);
+INSERT INTO city VALUES(91,'Bielefeld',4,52.0302000000000006,8.53250000000000064);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -749,6 +788,24 @@ INSERT INTO affiliation VALUES(183,'AI for Science Institute',NULL,2,9);
 INSERT INTO affiliation VALUES(184,'Peking University','Center for Machine Learning Research',2,9);
 INSERT INTO affiliation VALUES(185,'Peking University','School of Mathematical Sciences',2,9);
 INSERT INTO affiliation VALUES(186,'State Key Laboratory of Medical Proteomics',NULL,2,9);
+INSERT INTO affiliation VALUES(187,'Harvard University','Department of Genetics, Harvard Medical School',8,81);
+INSERT INTO affiliation VALUES(188,'Yale University','Department of Computer Science',8,82);
+INSERT INTO affiliation VALUES(189,'University of Southern California','Molecular and Computational Biology Program, Department of Biological Sciences',8,34);
+INSERT INTO affiliation VALUES(190,'Palo Alto Research Center',NULL,8,83);
+INSERT INTO affiliation VALUES(191,'Lomonosov Moscow State University','Department of Computational Mathematics and Cybernetics',12,32);
+INSERT INTO affiliation VALUES(192,'Purdue University','Bindley Bioscience Center',8,84);
+INSERT INTO affiliation VALUES(193,'Princeton University','Department of Chemical Engineering',8,85);
+INSERT INTO affiliation VALUES(194,'Oak Ridge National Laboratory','Computer Science and Mathematics Division',8,86);
+INSERT INTO affiliation VALUES(195,'Oak Ridge National Laboratory','Chemical Sciences Division',8,86);
+INSERT INTO affiliation VALUES(196,'Vanderbilt University','Proteomics Laboratory, Mass Spectrometry Research Center, School of Medicine',8,87);
+INSERT INTO affiliation VALUES(197,'University of Tennessee','Department of Computer Science',8,88);
+INSERT INTO affiliation VALUES(198,'University of California, Berkeley','Department of Earth and Planetary Science',8,89);
+INSERT INTO affiliation VALUES(199,'North Carolina State University','Department of Computer Science',8,90);
+INSERT INTO affiliation VALUES(200,'University of California San Diego','Department of Electrical and Computer Engineering and Department of Computer Science and Engineering',8,49);
+INSERT INTO affiliation VALUES(201,'ETH Zurich','Institute of Plant Sciences',16,59);
+INSERT INTO affiliation VALUES(202,'ETH Zurich','Institute of Theoretical Computer Science',16,59);
+INSERT INTO affiliation VALUES(203,'Bielefeld University','Technische Fakultät, AG Genominformatik',4,91);
+INSERT INTO affiliation VALUES(204,'ETH Zurich','Institute of Plant Science',16,59);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -1347,6 +1404,64 @@ INSERT INTO author_affiliation VALUES(441,184);
 INSERT INTO author_affiliation VALUES(442,184);
 INSERT INTO author_affiliation VALUES(442,185);
 INSERT INTO author_affiliation VALUES(443,186);
+INSERT INTO author_affiliation VALUES(289,187);
+INSERT INTO author_affiliation VALUES(445,188);
+INSERT INTO author_affiliation VALUES(446,187);
+INSERT INTO author_affiliation VALUES(447,187);
+INSERT INTO author_affiliation VALUES(448,187);
+INSERT INTO author_affiliation VALUES(449,189);
+INSERT INTO author_affiliation VALUES(289,189);
+INSERT INTO author_affiliation VALUES(450,190);
+INSERT INTO author_affiliation VALUES(451,190);
+INSERT INTO author_affiliation VALUES(452,191);
+INSERT INTO author_affiliation VALUES(452,192);
+INSERT INTO author_affiliation VALUES(453,191);
+INSERT INTO author_affiliation VALUES(453,192);
+INSERT INTO author_affiliation VALUES(454,191);
+INSERT INTO author_affiliation VALUES(454,192);
+INSERT INTO author_affiliation VALUES(455,191);
+INSERT INTO author_affiliation VALUES(455,192);
+INSERT INTO author_affiliation VALUES(62,191);
+INSERT INTO author_affiliation VALUES(62,192);
+INSERT INTO author_affiliation VALUES(456,193);
+INSERT INTO author_affiliation VALUES(457,193);
+INSERT INTO author_affiliation VALUES(458,194);
+INSERT INTO author_affiliation VALUES(459,194);
+INSERT INTO author_affiliation VALUES(460,195);
+INSERT INTO author_affiliation VALUES(460,196);
+INSERT INTO author_affiliation VALUES(461,197);
+INSERT INTO author_affiliation VALUES(462,198);
+INSERT INTO author_affiliation VALUES(463,195);
+INSERT INTO author_affiliation VALUES(464,195);
+INSERT INTO author_affiliation VALUES(465,194);
+INSERT INTO author_affiliation VALUES(465,199);
+INSERT INTO author_affiliation VALUES(466,200);
+INSERT INTO author_affiliation VALUES(467,200);
+INSERT INTO author_affiliation VALUES(271,200);
+INSERT INTO author_affiliation VALUES(469,202);
+INSERT INTO author_affiliation VALUES(470,202);
+INSERT INTO author_affiliation VALUES(472,202);
+INSERT INTO author_affiliation VALUES(281,204);
+INSERT INTO author_affiliation VALUES(281,202);
+INSERT INTO author_affiliation VALUES(281,203);
+INSERT INTO author_affiliation VALUES(468,204);
+INSERT INTO author_affiliation VALUES(468,202);
+INSERT INTO author_affiliation VALUES(468,203);
+INSERT INTO author_affiliation VALUES(469,204);
+INSERT INTO author_affiliation VALUES(469,203);
+INSERT INTO author_affiliation VALUES(470,204);
+INSERT INTO author_affiliation VALUES(470,203);
+INSERT INTO author_affiliation VALUES(471,204);
+INSERT INTO author_affiliation VALUES(471,202);
+INSERT INTO author_affiliation VALUES(471,203);
+INSERT INTO author_affiliation VALUES(472,204);
+INSERT INTO author_affiliation VALUES(472,203);
+INSERT INTO author_affiliation VALUES(284,204);
+INSERT INTO author_affiliation VALUES(284,202);
+INSERT INTO author_affiliation VALUES(284,203);
+INSERT INTO author_affiliation VALUES(282,204);
+INSERT INTO author_affiliation VALUES(282,202);
+INSERT INTO author_affiliation VALUES(282,203);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -1454,6 +1569,14 @@ INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressi
 INSERT INTO algorithm VALUES(101,'Antilope',NULL,NULL,'Graph / DP','Lagrangian-relaxation formulation of de novo peptide sequencing — frames the problem as a constrained optimization over the spectrum graph and solves it with iterative subgradient ascent.','algorithm',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(102,'Muth & Renard 2017 evaluation',NULL,NULL,NULL,'Briefings in Bioinformatics review evaluating whether de novo sequencing has become an accurate alternative to database-driven peptide identification — surveys state-of-the-art tools and benchmark performance circa 2017.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(103,'pUniFind',NULL,NULL,'Transformer (AR)','Multimodal pre-trained transformer for mass spectra that unifies peptide-spectrum scoring and zero-shot de novo sequencing in a single model. Trained on >100M open-search-derived spectra; reports +60% PSMs over prior de novo methods with 1,300+ modifications supported, and a DL-based QC step that recovers 38.5% additional peptides.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(104,'Chen 2001 DP',NULL,NULL,'Graph / DP','Dynamic-programming formulation over an NC-spectrum graph for de novo peptide sequencing.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(105,'Lu 2003 suboptimal sequencing',NULL,NULL,'Graph / DP','Suboptimal-path algorithm for reporting multiple candidate de novo peptide sequences.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(106,'EigenMS',NULL,NULL,'Spectral graph partitioning','Spectral graph partitioning de novo sequencer with robust TOF mass recalibration.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(107,'Pevtsov 2006 evaluation',NULL,NULL,NULL,'Performance evaluation of existing de novo sequencing algorithms.','benchmark',NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(108,'PILOT',NULL,NULL,'Integer linear optimization','Integer-linear-optimization formulation for de novo peptide identification from tandem mass spectra.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(109,'Vonode',NULL,NULL,'Graph / DP','High-throughput de novo sequencing approach for high-resolution shotgun proteomics spectra.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(110,'UniNovo',NULL,NULL,'Graph / DP','Universal de novo sequencing tool trained across fragmentation methods and instruments.','algorithm',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(111,'AUDENS',NULL,'http://www.ti.inf.ethz.ch/pw/software/audens/','Graph / DP','Open-source automated de novo sequencing tool with preprocessing and dynamic programming over MS/MS spectra.','algorithm',0,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -1591,6 +1714,15 @@ INSERT INTO publication VALUES(124,'Evaluating de novo sequencing in proteomics:
 INSERT INTO publication VALUES(125,'PowerNovo2: A generative flow-based approach to non-autoregressive de novo peptide sequencing','2026-05-20','10.1371/journal.pcbi.1014298','Public Library of Science (PLoS)',NULL,'https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1014298','PLOS Computational Biology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(126,'pUniFind: a unified large pre-trained deep learning model pushing the limit of mass spectra interpretation','2025-06-30','10.48550/arXiv.2507.00087','arXiv',NULL,'https://arxiv.org/abs/2507.00087','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(127,'A large-scale unified deep learning model for peptide mass spectrum interpretation trained on multimodal data','2026-05-25','10.1038/s42256-026-01234-8','Springer Nature',NULL,'https://www.nature.com/articles/s42256-026-01234-8','Nature Machine Intelligence','peer-reviewed',NULL);
+INSERT INTO publication VALUES(128,'A Dynamic Programming Approach to De Novo Peptide Sequencing via Tandem Mass Spectrometry','2001-06-01','10.1089/10665270152530872','SAGE Publications',NULL,'https://doi.org/10.1089/10665270152530872','Journal of Computational Biology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(129,'A Suboptimal Algorithm for De Novo Peptide Sequencing via Tandem Mass Spectrometry','2003-02-01','10.1089/106652703763255633','SAGE Publications',NULL,'https://doi.org/10.1089/106652703763255633','Journal of Computational Biology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(130,'An effective algorithm for peptide de novo sequencing from MS/MS spectra','2005-05-01','10.1016/j.jcss.2004.12.001','Elsevier BV',NULL,'https://doi.org/10.1016/j.jcss.2004.12.001','Journal of Computer and System Sciences','peer-reviewed',NULL);
+INSERT INTO publication VALUES(131,'De Novo Analysis of Peptide Tandem Mass Spectra by Spectral Graph Partitioning','2006-03-01','10.1089/cmb.2006.13.364','SAGE Publications',NULL,'https://doi.org/10.1089/cmb.2006.13.364','Journal of Computational Biology','peer-reviewed',NULL);
+INSERT INTO publication VALUES(132,'Performance Evaluation of Existing De Novo Sequencing Algorithms','2006-11-01','10.1021/pr060222h','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/pr060222h','Journal of Proteome Research','peer-reviewed',NULL);
+INSERT INTO publication VALUES(133,'De Novo Peptide Identification via Tandem Mass Spectrometry and Integer Linear Optimization','2007-02-01','10.1021/ac0618425','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ac0618425','Analytical Chemistry','peer-reviewed',NULL);
+INSERT INTO publication VALUES(134,'A high-throughput de novo sequencing approach for shotgun proteomics using high-resolution tandem mass spectrometry','2010-03-05','10.1186/1471-2105-11-118','Springer Science and Business Media LLC',NULL,'https://doi.org/10.1186/1471-2105-11-118','BMC Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(135,'UniNovo: a universal tool for de novo peptide sequencing','2013-08-15','10.1093/bioinformatics/btt338','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bioinformatics/btt338','Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(136,'AUDENS: A Tool for Automated Peptide de Novo Sequencing','2005-10-01','10.1021/pr050070a','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/pr050070a','Journal of Proteome Research','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -1730,6 +1862,15 @@ INSERT INTO publication_algorithm VALUES(124,102);
 INSERT INTO publication_algorithm VALUES(125,100);
 INSERT INTO publication_algorithm VALUES(126,103);
 INSERT INTO publication_algorithm VALUES(127,103);
+INSERT INTO publication_algorithm VALUES(128,104);
+INSERT INTO publication_algorithm VALUES(129,105);
+INSERT INTO publication_algorithm VALUES(130,62);
+INSERT INTO publication_algorithm VALUES(131,106);
+INSERT INTO publication_algorithm VALUES(132,107);
+INSERT INTO publication_algorithm VALUES(133,108);
+INSERT INTO publication_algorithm VALUES(134,109);
+INSERT INTO publication_algorithm VALUES(135,110);
+INSERT INTO publication_algorithm VALUES(136,111);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -2599,6 +2740,44 @@ INSERT INTO publication_author VALUES(127,442,12);
 INSERT INTO publication_author VALUES(127,443,13);
 INSERT INTO publication_author VALUES(127,444,14);
 INSERT INTO publication_author VALUES(127,40,15);
+INSERT INTO publication_author VALUES(128,289,1);
+INSERT INTO publication_author VALUES(128,445,2);
+INSERT INTO publication_author VALUES(128,446,3);
+INSERT INTO publication_author VALUES(128,447,4);
+INSERT INTO publication_author VALUES(128,448,5);
+INSERT INTO publication_author VALUES(129,449,1);
+INSERT INTO publication_author VALUES(129,289,2);
+INSERT INTO publication_author VALUES(130,234,1);
+INSERT INTO publication_author VALUES(130,272,2);
+INSERT INTO publication_author VALUES(130,274,3);
+INSERT INTO publication_author VALUES(131,450,1);
+INSERT INTO publication_author VALUES(131,451,2);
+INSERT INTO publication_author VALUES(132,452,1);
+INSERT INTO publication_author VALUES(132,453,2);
+INSERT INTO publication_author VALUES(132,454,3);
+INSERT INTO publication_author VALUES(132,455,4);
+INSERT INTO publication_author VALUES(132,62,5);
+INSERT INTO publication_author VALUES(133,456,1);
+INSERT INTO publication_author VALUES(133,457,2);
+INSERT INTO publication_author VALUES(134,458,1);
+INSERT INTO publication_author VALUES(134,459,2);
+INSERT INTO publication_author VALUES(134,460,3);
+INSERT INTO publication_author VALUES(134,461,4);
+INSERT INTO publication_author VALUES(134,462,5);
+INSERT INTO publication_author VALUES(134,463,6);
+INSERT INTO publication_author VALUES(134,464,7);
+INSERT INTO publication_author VALUES(134,465,8);
+INSERT INTO publication_author VALUES(135,466,1);
+INSERT INTO publication_author VALUES(135,467,2);
+INSERT INTO publication_author VALUES(135,271,3);
+INSERT INTO publication_author VALUES(136,281,1);
+INSERT INTO publication_author VALUES(136,468,2);
+INSERT INTO publication_author VALUES(136,469,3);
+INSERT INTO publication_author VALUES(136,470,4);
+INSERT INTO publication_author VALUES(136,471,5);
+INSERT INTO publication_author VALUES(136,472,6);
+INSERT INTO publication_author VALUES(136,284,7);
+INSERT INTO publication_author VALUES(136,282,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3570,10 +3749,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2
 INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,0,'2022-08-18T04:30:03Z','2026-05-26T12:38:15');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',22);
-INSERT INTO sqlite_sequence VALUES('city',80);
-INSERT INTO sqlite_sequence VALUES('affiliation',186);
-INSERT INTO sqlite_sequence VALUES('author',444);
-INSERT INTO sqlite_sequence VALUES('algorithm',103);
-INSERT INTO sqlite_sequence VALUES('publication',127);
+INSERT INTO sqlite_sequence VALUES('city',91);
+INSERT INTO sqlite_sequence VALUES('affiliation',204);
+INSERT INTO sqlite_sequence VALUES('author',472);
+INSERT INTO sqlite_sequence VALUES('algorithm',111);
+INSERT INTO sqlite_sequence VALUES('publication',136);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
