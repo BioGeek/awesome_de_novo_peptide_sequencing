@@ -787,13 +787,26 @@ innovations_timeline = {
 
 ## Where the work happens
 
-Authors and the institutions behind them span **${n_countries}** countries. Pan and zoom the map — zoom in past about 2× and country circles split into the individual cities behind them. Circle area scales with the chosen metric; fill colour shows the quartile rank.
+Authors and the organizations behind them span **${n_countries}** countries. Circle area scales with the selected impact metric; colour groups organizations by type. Nearby organizations are gently separated so dense hubs remain readable without zooming. Organization type is inferred from institution names and should be read as a practical display category.
 
 ```{ojs}
 //| echo: false
-viewof country_metric = Inputs.radio(
-  ["authors", "affiliations"],
-  { label: "Show", value: "authors" }
+viewof org_metric = Inputs.radio(
+  ["citations", "authors", "papers"],
+  { label: "Circle area", value: "citations" }
+)
+```
+
+```{ojs}
+//| echo: false
+org_types_present = ["Academic", "Industry", "Research Institute", "Government", "Nonprofit", "Lab"]
+```
+
+```{ojs}
+//| echo: false
+viewof org_type_filter = Inputs.checkbox(
+  org_types_present,
+  { label: "Organization type", value: org_types_present }
 )
 ```
 
@@ -806,88 +819,107 @@ world_atlas = (await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries
 ```{ojs}
 //| echo: false
 where_the_work_map = {
-  // ===== Aggregate from the currently-filtered pubs =====
+  // ===== Aggregate from the currently-filtered pubs at organization level =====
   const pub_ids = new Set(pubs_filtered.map(p => p.id))
 
-  // city-level buckets
-  const cityKey = r => `${r.city_id}`  // city_id uniquely identifies a city
-  const city_rows = new Map()
-  // country-level buckets (centroid computed from member cities, weighted by author count)
-  const country_rows = new Map()
-
-  for (const r of pub_authorship_t) {
-    if (!pub_ids.has(r.pub_id) || !r.country) continue
-    // country aggregate
-    if (!country_rows.has(r.country)) {
-      country_rows.set(r.country, { country: r.country, authors: new Set(), affiliations: new Set(),
-                                    lat_sum: 0, lng_sum: 0, lat_w: 0 })
-    }
-    const cr = country_rows.get(r.country)
-    cr.authors.add(r.author_id); cr.affiliations.add(r.affiliation_id)
-    if (r.lat != null && r.lng != null) {
-      cr.lat_sum += r.lat; cr.lng_sum += r.lng; cr.lat_w += 1
-    }
-    // city aggregate (only rows with a geocoded city)
-    if (r.lat == null || r.lng == null || !r.city_id) continue
-    const k = cityKey(r)
-    if (!city_rows.has(k)) {
-      city_rows.set(k, { city: r.city, country: r.country, lat: r.lat, lng: r.lng,
-                        authors: new Set(), affiliations: new Set() })
-    }
-    const cc = city_rows.get(k)
-    cc.authors.add(r.author_id); cc.affiliations.add(r.affiliation_id)
+  const org_type_color = {
+    "Academic": "#2563eb",
+    "Industry": "#ea580c",
+    "Research Institute": "#7c3aed",
+    "Government": "#059669",
+    "Nonprofit": "#be123c",
+    "Lab": "#0f766e"
   }
 
-  const city_data = Array.from(city_rows.values()).map(r => ({
-    city: r.city, country: r.country, lat: r.lat, lng: r.lng,
-    authors: r.authors.size, affiliations: r.affiliations.size
-  }))
-  const country_data = Array.from(country_rows.values()).map(r => ({
-    country: r.country,
-    authors: r.authors.size, affiliations: r.affiliations.size,
-    lat: r.lat_w ? r.lat_sum / r.lat_w : 0,
-    lng: r.lat_w ? r.lng_sum / r.lat_w : 0
-  })).filter(r => r.lat_w !== 0 || (r.lat !== 0 && r.lng !== 0))
+  const classify_org = name => {
+    const n = (name ?? "").toLowerCase()
+    if (/\b(inc|ltd|llc|gmbh|corp|corporation|company|co\.|biosystems|biotech|pharmaceuticals|pfizer|bruker|procter|protein metrics|instadeep|novor|sciex|bioinformatics solutions|dp technology|deepmind|microsoft|nvidia|google)\b/.test(n)) return "Industry"
+    if (/\b(national laboratory|government|ministry|academy of sciences|nih|national institute|cnrs|csiro|bam|federal institute|nist|institute of metrology|los alamos)\b/.test(n)) return "Government"
+    if (/\b(nonprofit|foundation|initiative|biohub|vib|wellcome|sanger)\b/.test(n)) return "Nonprofit"
+    if (/\b(laboratory|lab)\b/.test(n) && !/\b(university|institute|hospital|center|centre)\b/.test(n)) return "Lab"
+    if (/\b(institute|institut|instituto|center|centre|laboratory|hospital|clinic|medical center|research)\b/.test(n) && !/\b(university|college|school|faculty)\b/.test(n)) return "Research Institute"
+    return "Academic"
+  }
 
-  const metric = country_metric  // 'authors' | 'affiliations'
+  const org_rows = new Map()
+
+  for (const r of pub_authorship_t) {
+    if (!pub_ids.has(r.pub_id) || !r.affiliation || !r.country || r.lat == null || r.lng == null) continue
+    const k = r.affiliation
+    if (!org_rows.has(k)) {
+      org_rows.set(k, {
+        organization: r.affiliation,
+        type: classify_org(r.affiliation),
+        city: r.city,
+        country: r.country,
+        lat_sum: 0,
+        lng_sum: 0,
+        loc_w: 0,
+        authors: new Set(),
+        papers: new Set(),
+        affiliations: new Set()
+      })
+    }
+    const org = org_rows.get(k)
+    org.authors.add(r.author_id)
+    org.papers.add(r.pub_id)
+    org.affiliations.add(r.affiliation_id)
+    org.lat_sum += r.lat
+    org.lng_sum += r.lng
+    org.loc_w += 1
+  }
+
+  const org_data = Array.from(org_rows.values()).map(r => ({
+    organization: r.organization,
+    type: r.type,
+    city: r.city,
+    country: r.country,
+    lat: r.lat_sum / r.loc_w,
+    lng: r.lng_sum / r.loc_w,
+    authors: r.authors.size,
+    papers: r.papers.size,
+    affiliations: r.affiliations.size,
+    citations: Array.from(r.papers).reduce((sum, pid) => sum + (publication_impact_by_pub.get(pid)?.cited_by_count ?? 0), 0)
+  })).filter(r => org_type_filter.includes(r.type))
+
+  const type_counts = org_types_present.map(type => ({
+    type,
+    n: org_data.filter(d => d.type === type).length
+  }))
 
   // ===== Set up scales =====
-  const width = 1100, height = 560
+  const width = 1100, height = 620
   const projection = d3.geoNaturalEarth1()
     .fitExtent([[10, 10], [width - 10, height - 10]],
                topojson.feature(world_atlas, world_atlas.objects.countries))
   const path = d3.geoPath(projection)
 
-  // Size: sqrt(metric) so area is linear in metric.
-  const max_city    = d3.max(city_data,    d => d[metric]) || 1
-  const max_country = d3.max(country_data, d => d[metric]) || 1
-  const cityR    = v => 2 + 12 * Math.sqrt(v / max_city)
-  const countryR = v => 6 + 22 * Math.sqrt(v / max_country)
+  // Size: sqrt(metric) so circle area is linear in the selected metric.
+  const metric_label = { citations: "global citations", authors: "authors", papers: "papers" }[org_metric]
+  const max_value = d3.max(org_data, d => d[org_metric]) || 1
+  const radius = v => 3 + 24 * Math.sqrt((v || 0) / max_value)
 
-  // Color: quartile rank of the metric in the active layer.
-  const quartiles = (arr, key) => {
-    const sorted = arr.map(d => d[key]).filter(v => v > 0).sort(d3.ascending)
-    return [
-      d3.quantile(sorted, 0.25),
-      d3.quantile(sorted, 0.50),
-      d3.quantile(sorted, 0.75)
-    ]
-  }
-  const palette = ["#cfe2f3", "#9ec5e8", "#5b8edb", "#1f4ec7"]
-  const colorFor = (v, q) => v <= q[0] ? palette[0] : v <= q[1] ? palette[1] : v <= q[2] ? palette[2] : palette[3]
-  const cityQ    = quartiles(city_data,    metric)
-  const countryQ = quartiles(country_data, metric)
+  const nodes = org_data.map(d => {
+    const [x0, y0] = projection([d.lng, d.lat])
+    return { ...d, x0, y0, x: x0, y: y0, r: radius(d[org_metric]) }
+  })
+  // Collision layout nudges dense hubs apart while keeping circles pulled toward
+  // their true projected coordinates.
+  const sim = d3.forceSimulation(nodes)
+    .force("x", d3.forceX(d => d.x0).strength(0.35))
+    .force("y", d3.forceY(d => d.y0).strength(0.35))
+    .force("collide", d3.forceCollide(d => d.r + 1.6).iterations(3))
+    .stop()
+  for (let i = 0; i < 180; ++i) sim.tick()
 
   // ===== Build SVG =====
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("style", "max-width:100%; height:auto; background:#f6f8fa; font:11px sans-serif;")
 
-  const g = svg.append("g")
-
   // Country fills (greyed base map).
   const countries_feature = topojson.feature(world_atlas, world_atlas.objects.countries)
-  g.append("g")
+  svg.append("g")
     .selectAll("path")
     .data(countries_feature.features)
     .join("path")
@@ -896,60 +928,86 @@ where_the_work_map = {
     .attr("stroke", "#cfd4d9")
     .attr("stroke-width", 0.5)
 
-  // Two overlay layers — country-level (visible at low zoom) and city-level (at high zoom).
-  const country_layer = g.append("g").attr("class", "country-layer")
-  country_layer.selectAll("circle")
-    .data(country_data)
-    .join("circle")
-    .attr("cx", d => projection([d.lng, d.lat])[0])
-    .attr("cy", d => projection([d.lng, d.lat])[1])
-    .attr("r",  d => countryR(d[metric]))
-    .attr("fill", d => colorFor(d[metric], countryQ))
-    .attr("fill-opacity", 0.78)
-    .attr("stroke", "#1f4ec7")
+  // Leader lines reveal how far collision has moved circles from their true
+  // geocoded anchor.
+  svg.append("g")
+    .attr("stroke", "#8c959f")
+    .attr("stroke-opacity", 0.35)
     .attr("stroke-width", 0.6)
-    .append("title").text(d => `${d.country}\n${d.authors} authors · ${d.affiliations} affiliations`)
+    .selectAll("line")
+    .data(nodes.filter(d => Math.hypot(d.x - d.x0, d.y - d.y0) > 8))
+    .join("line")
+    .attr("x1", d => d.x0)
+    .attr("y1", d => d.y0)
+    .attr("x2", d => d.x)
+    .attr("y2", d => d.y)
 
-  const city_layer = g.append("g").attr("class", "city-layer").attr("opacity", 0)
-  city_layer.selectAll("circle")
-    .data(city_data)
+  const org_layer = svg.append("g")
+  org_layer.selectAll("circle")
+    .data(nodes)
     .join("circle")
-    .attr("cx", d => projection([d.lng, d.lat])[0])
-    .attr("cy", d => projection([d.lng, d.lat])[1])
-    .attr("r",  d => cityR(d[metric]))
-    .attr("fill", d => colorFor(d[metric], cityQ))
-    .attr("fill-opacity", 0.85)
-    .attr("stroke", "#1f4ec7")
-    .attr("stroke-width", 0.5)
-    .append("title").text(d => `${d.city}, ${d.country}\n${d.authors} authors · ${d.affiliations} affiliations`)
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", d => d.r)
+    .attr("fill", d => org_type_color[d.type])
+    .attr("fill-opacity", 0.78)
+    .attr("stroke", "#1f2328")
+    .attr("stroke-width", 0.55)
+    .append("title").text(d => `${d.organization}
+${d.type} · ${d.city}, ${d.country}
+${d.papers} papers · ${d.authors} authors · ${d.citations} global citations
+${d.affiliations} affiliation rows`)
 
-  // ===== Zoom behaviour with the city/country threshold =====
-  const SPLIT_K = 2.0  // above this zoom factor, switch to city-level
-  const zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .on("zoom", ev => {
-      g.attr("transform", ev.transform)
-      // Keep stroke widths visually constant under zoom.
-      g.selectAll("path").attr("stroke-width", 0.5 / Math.sqrt(ev.transform.k))
-      const k = ev.transform.k
-      const show_cities = k >= SPLIT_K
-      country_layer.attr("opacity", show_cities ? 0 : 1).attr("pointer-events", show_cities ? "none" : "auto")
-      city_layer.attr("opacity", show_cities ? 1 : 0).attr("pointer-events", show_cities ? "auto" : "none")
-      // Circle radii also shrink with zoom so they don't grow unbounded.
-      country_layer.selectAll("circle").attr("r", d => countryR(d[metric]) / Math.sqrt(k))
-      city_layer.selectAll("circle").attr("r",    d => cityR(d[metric])    / Math.sqrt(k))
-    })
-  svg.call(zoom)
+  // Emphasize the most impactful organizations with short labels.
+  const labelled = nodes
+    .slice()
+    .sort((a, b) => d3.descending(a[org_metric], b[org_metric]))
+    .slice(0, 18)
+  svg.append("g")
+    .selectAll("text")
+    .data(labelled)
+    .join("text")
+    .attr("x", d => d.x)
+    .attr("y", d => d.y - d.r - 4)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 10)
+    .attr("font-weight", 650)
+    .attr("fill", "#1f2328")
+    .attr("paint-order", "stroke")
+    .attr("stroke", "white")
+    .attr("stroke-width", 3)
+    .text(d => d.organization.length > 26 ? d.organization.slice(0, 24) + "…" : d.organization)
 
-  // ===== Color legend (bottom-left) =====
-  const legend = svg.append("g").attr("transform", `translate(20, ${height - 38})`)
-  legend.append("text").attr("x", 0).attr("y", -8)
+  // ===== Legends =====
+  const legend = svg.append("g").attr("transform", `translate(20, ${height - 74})`)
+  legend.append("text").attr("x", 0).attr("y", -10)
     .attr("font-weight", "bold").attr("fill", "#2a3140")
-    .text(`Circles sized & colored by ${metric} · zoom in past ${SPLIT_K}× for city detail`)
-  palette.forEach((c, i) => {
-    legend.append("rect").attr("x", i * 110).attr("y", 0).attr("width", 100).attr("height", 12).attr("fill", c)
-    legend.append("text").attr("x", i * 110).attr("y", 26).attr("fill", "#2a3140").text(["Q1 (lowest)","Q2","Q3","Q4 (highest)"][i])
-  })
+    .text(`${nodes.length} organizations · circle area ∝ ${metric_label}`)
+  const visible_types = org_types_present.filter(t => type_counts.find(d => d.type === t)?.n)
+  const leg = legend.selectAll("g.type")
+    .data(visible_types)
+    .join("g")
+    .attr("transform", (_, i) => `translate(${(i % 3) * 210}, ${Math.floor(i / 3) * 24})`)
+  leg.append("circle")
+    .attr("r", 7)
+    .attr("cx", 7)
+    .attr("cy", 7)
+    .attr("fill", d => org_type_color[d])
+    .attr("fill-opacity", 0.78)
+    .attr("stroke", "#1f2328")
+    .attr("stroke-width", 0.5)
+  leg.append("text")
+    .attr("x", 20)
+    .attr("y", 11)
+    .attr("fill", "#2a3140")
+    .text(d => `${d} (${type_counts.find(x => x.type === d)?.n ?? 0})`)
+
+  const max_r = radius(max_value)
+  const size_legend = svg.append("g").attr("transform", `translate(${width - 170}, ${height - 86})`)
+  size_legend.append("circle").attr("cx", 28).attr("cy", 36).attr("r", max_r).attr("fill", "none").attr("stroke", "#57606a")
+  size_legend.append("circle").attr("cx", 28).attr("cy", 36 + max_r - radius(max_value / 4)).attr("r", radius(max_value / 4)).attr("fill", "none").attr("stroke", "#57606a")
+  size_legend.append("text").attr("x", 70).attr("y", 24).attr("fill", "#57606a").text(`${max_value} ${metric_label}`)
+  size_legend.append("text").attr("x", 70).attr("y", 48).attr("fill", "#57606a").text(`${Math.round(max_value / 4)} ${metric_label}`)
 
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
@@ -957,7 +1015,7 @@ where_the_work_map = {
       if (document.fullscreenElement) document.exitFullscreen();
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
-    ${svg.node()}
+    <div class="chart-scroll">${svg.node()}</div>
   </div>`
 }
 ```
