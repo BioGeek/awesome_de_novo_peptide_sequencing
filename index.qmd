@@ -220,6 +220,18 @@ journal_impact = pd.read_sql(
     conn,
 )
 
+# Global citation counts per publication from OpenAlex (built offline via
+# build_publication_impact.py). `cited_by_count` is OpenAlex's global count for
+# the matched work, not just citations from papers in this catalog.
+publication_impact = pd.read_sql(
+    """
+    SELECT publication_id, openalex_id, cited_by_count, match_method,
+           match_score, year_collected, fetched_at
+    FROM publication_impact
+    """,
+    conn,
+)
+
 # Code-activity metrics per repository (built offline via build_repo_metrics.py
 # using the gh CLI). Joined back to algorithms so the UI can group by method.
 # Each algorithm may have multiple repos; we pick the primary (lowest sort_order).
@@ -259,6 +271,7 @@ ojs_define(
     author_details=author_details,
     citations=citations,
     journal_impact=journal_impact,
+    publication_impact=publication_impact,
     repo_metrics=repo_metrics,
 )
 ```
@@ -320,6 +333,8 @@ citations_t      = transpose(citations)
 journal_impact_t = transpose(journal_impact)
 // Lookup table: journal name → 2yr citedness, for fast joins in OJS cells.
 journal_impact_by_name = new Map(journal_impact_t.map(j => [j.journal, j]))
+publication_impact_t = transpose(publication_impact)
+publication_impact_by_pub = new Map(publication_impact_t.map(r => [r.publication_id, r]))
 repo_metrics_t = transpose(repo_metrics).map(r => ({
   ...r,
   last_pushed: r.last_pushed ? new Date(r.last_pushed) : null,
@@ -1723,6 +1738,77 @@ cites ${d.out_deg} papers in the catalog`
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+  </div>`
+}
+```
+
+### Academic impact by citation count
+
+Publication-level global citation counts from **OpenAlex** `cited_by_count`. Counts are matched to catalog publications by DOI first, then by high-confidence title search when DOI lookup is unavailable; refresh with `build_publication_impact.py`.
+
+```{ojs}
+//| echo: false
+impact_rows = {
+  const rows = pubs_filtered.map(p => ({
+    ...p,
+    global_citations: publication_impact_by_pub.get(p.id)?.cited_by_count ?? null,
+    citation_year: publication_impact_by_pub.get(p.id)?.year_collected ?? null,
+    citation_match: publication_impact_by_pub.get(p.id)?.match_method ?? null
+  }))
+  return rows.sort((a, b) =>
+    d3.descending(a.global_citations ?? -1, b.global_citations ?? -1) ||
+    d3.ascending(a.year ?? Infinity, b.year ?? Infinity) ||
+    d3.ascending(a.title, b.title)
+  )
+}
+```
+
+```{ojs}
+//| echo: false
+viewof impact_search = Inputs.search(impact_rows, {
+  placeholder: `Search ${impact_rows.length} papers with citation counts (filtered)…`
+})
+```
+
+```{ojs}
+//| echo: false
+{
+  const table = Inputs.table(impact_search, {
+    columns: ["global_citations", "year", "models", "kind", "title", "authors", "journal", "type", "citation_year"],
+    header: {
+      global_citations: "Global citations",
+      year: "Year",
+      models: "Method(s)",
+      kind: "Kind",
+      title: "Title",
+      authors: "Authors",
+      journal: "Venue",
+      type: "Type",
+      citation_year: "Collected"
+    },
+    format: {
+      global_citations: c => c == null ? "" : String(c),
+      year: y => y == null ? "" : String(y),
+      citation_year: y => y == null ? "" : String(y),
+      title: (t, i) => {
+        const row = impact_search[i]
+        const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
+        return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+      },
+      authors: a => a && a.length > 90 ? a.slice(0, 90) + "…" : a
+    },
+    sort: "global_citations",
+    reverse: true,
+    rows: 30,
+    width: { global_citations: 120, year: 60, models: 170, kind: 130, type: 110, citation_year: 90 }
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${table}</div>
   </div>`
 }
 ```

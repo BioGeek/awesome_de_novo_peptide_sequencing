@@ -18,6 +18,8 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every pape
 - **`denovo.db`** — SQLite database of papers, models, authors, affiliations, cities, countries, and venues. **The source of truth.**
 - **`denovo.sql`** — committed SQL dump of `denovo.db` so diffs are reviewable in git.
 - **`index.qmd` + `_quarto.yml`** — the Quarto site (single-page narrative with interactive charts powered by Observable JS).
+- **`build_publication_impact.py`** — offline OpenAlex refresh for global publication citation counts.
+- **`build_citations.py` / `build_journal_metrics.py` / `build_repo_metrics.py`** — offline refresh scripts for the citation graph, venue metrics, and GitHub activity metrics.
 - **`plots.ipynb`** — Jupyter notebook for offline exploration / sanity checks (static matplotlib figures, not published).
 
 ## Contributing
