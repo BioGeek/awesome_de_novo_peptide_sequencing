@@ -5274,7 +5274,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',2,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-05-26T12:38:15');
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',187,75,17,305,8,304,'2026-06-03T03:13:56Z','2026-06-05T07:20:38');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',187,75,17,305,10,304,'2026-06-03T03:13:56Z','2026-06-08T07:30:23');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',4,2,1,1,0,0,'2026-05-24T18:02:30Z','2026-06-03T07:31:51');
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',10,4,0,4,0,6,'2026-02-11T07:47:46Z','2026-05-26T12:38:15');
