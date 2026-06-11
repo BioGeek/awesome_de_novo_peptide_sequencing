@@ -204,7 +204,11 @@ author_details = pd.read_sql(
 # build_citations.py). Each edge tagged with its provenance.
 citations = pd.read_sql(
     """
-    SELECT citing_id, cited_id, source FROM publication_citation
+    SELECT pc.citing_id, pc.cited_id, pc.source
+    FROM publication_citation pc
+    JOIN publication citing ON citing.id = pc.citing_id
+    JOIN publication cited ON cited.id = pc.cited_id
+    WHERE date(citing.publication_date) >= date(cited.publication_date)
     """,
     conn,
 )
@@ -1070,7 +1074,10 @@ where_the_work_map = {
   const type_breakdown = d => d.type_values
     .slice()
     .sort((a, b) => d3.descending(a.value, b.value))
-    .map(v => `${v.type}: ${v.value} ${metric_label}`)
+    // Drop the metric label from per-row breakdowns — the chart's metric
+    // selector already says which metric is being displayed, and the value
+    // stands alone.
+    .map(v => `${v.type}: ${v.value}`)
     .join("\n")
 
   const tooltip = d => `${d.label}
@@ -1093,16 +1100,18 @@ ${type_breakdown(d)}`
     const rows = d.type_values
       .slice()
       .sort((a, b) => d3.descending(a.value, b.value))
+    // 'global citations' used to repeat in (a) the headline metric line,
+    // (b) the canonical triple, and (c) every per-type breakdown row — fold
+    // (a) and (c) so the phrase only appears once in (b).
     tooltip_el.replaceChildren(html`<div>
       <div class="map-tooltip-title">${d.label}</div>
       <div class="map-tooltip-meta">
-        ${fmt(d[org_metric])} ${metric_label}<br>
         ${fmt(d.authors)} authors · ${fmt(d.papers)} papers · ${fmt(d.citations)} global citations<br>
         ${fmt(d.organizations)} organizations · ${fmt(d.affiliations)} affiliation rows
       </div>
       ${rows.map(row => html`<div class="map-tooltip-row">
         <span class="map-tooltip-swatch" style=${`background:${org_type_color[row.type]}`}></span>
-        <span>${row.type}: ${fmt(row.value)} ${metric_label}</span>
+        <span>${row.type}: ${fmt(row.value)}</span>
       </div>`)}
     </div>`)
     tooltip_el.classList.add("visible")
