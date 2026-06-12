@@ -651,6 +651,12 @@ INSERT INTO author VALUES(656,'Sue O''Connor',NULL);
 INSERT INTO author VALUES(657,'Douwe Schulte',NULL);
 INSERT INTO author VALUES(658,'Marta Šiborová',NULL);
 INSERT INTO author VALUES(659,'Joost Snijder','j.snijder@uu.nl');
+INSERT INTO author VALUES(660,'Jannik Schneider',NULL);
+INSERT INTO author VALUES(661,'Sonja Hartwig',NULL);
+INSERT INTO author VALUES(662,'Alexandra Chadt',NULL);
+INSERT INTO author VALUES(663,'Stefan Lehr',NULL);
+INSERT INTO author VALUES(664,'Hadi Al-Hasani','hadi.al-hasani@ddz.de');
+INSERT INTO author VALUES(665,'Michael Turewicz','michael.turewicz@ddz.de');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -839,6 +845,8 @@ INSERT INTO city VALUES(140,'Cambridge',7,52.2053000000000011,0.1218000000000000
 INSERT INTO city VALUES(141,'Bellaterra',33,41.5001999999999995,2.10780000000000011);
 INSERT INTO city VALUES(142,'Tel Aviv',23,32.0852999999999966,34.7817999999999969);
 INSERT INTO city VALUES(143,'Bedford Park',15,-35.0225000000000008,138.570600000000013);
+INSERT INTO city VALUES(144,'Düsseldorf',4,NULL,NULL);
+INSERT INTO city VALUES(145,'Jülich',4,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1164,6 +1172,9 @@ INSERT INTO affiliation VALUES(309,'Universitat Autonoma de Barcelona','Centre d
 INSERT INTO affiliation VALUES(310,'Tel Aviv University','Department of Anatomy and Anthropology, The Gray Faculty of Medical & Health Sciences',23,142);
 INSERT INTO affiliation VALUES(311,'Australian National University','Research School of Chemistry, Joint Mass Spectrometry Facility, College of Science',15,72);
 INSERT INTO affiliation VALUES(312,'Flinders University','College of Science and Engineering',15,143);
+INSERT INTO affiliation VALUES(313,'German Diabetes Center (DDZ)','Institute for Clinical Biochemistry and Pathobiochemistry, Leibniz Center for Diabetes Research at Heinrich Heine University Düsseldorf, Medical Faculty',4,144);
+INSERT INTO affiliation VALUES(314,'German Center for Diabetes Research (DZD e.V.)',NULL,4,23);
+INSERT INTO affiliation VALUES(315,'Forschungszentrum Jülich GmbH','Jülich Supercomputing Centre (JSC)',4,145);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2080,6 +2091,18 @@ INSERT INTO author_affiliation VALUES(656,308);
 INSERT INTO author_affiliation VALUES(657,262);
 INSERT INTO author_affiliation VALUES(658,262);
 INSERT INTO author_affiliation VALUES(659,262);
+INSERT INTO author_affiliation VALUES(660,313);
+INSERT INTO author_affiliation VALUES(661,313);
+INSERT INTO author_affiliation VALUES(662,313);
+INSERT INTO author_affiliation VALUES(663,313);
+INSERT INTO author_affiliation VALUES(664,313);
+INSERT INTO author_affiliation VALUES(665,313);
+INSERT INTO author_affiliation VALUES(661,314);
+INSERT INTO author_affiliation VALUES(662,314);
+INSERT INTO author_affiliation VALUES(663,314);
+INSERT INTO author_affiliation VALUES(664,314);
+INSERT INTO author_affiliation VALUES(665,314);
+INSERT INTO author_affiliation VALUES(660,315);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2257,6 +2280,7 @@ INSERT INTO algorithm VALUES(170,'QuasiNovo',NULL,NULL,'Graph / DP + neural netw
 INSERT INTO algorithm VALUES(171,'Orthrus','https://github.com/yc386/orthrus_metaproteomics','https://github.com/yc386/orthrus_metaproteomics','Hybrid de novo + database search','Open-source metaproteomics pipeline combining Casanovo transformer-based de novo sequencing with Sage database search and Mokapot rescoring.','downstream-application',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(172,'Ozboneprot',NULL,NULL,'Palaeoproteomics workflow','Workflow for de novo sequencing and validation of bone proteins to support shotgun palaeoproteomics on Australian zooarchaeological and palaeontological samples.','downstream-application',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(173,'Schulte 2025 cryoEM+MS antibody sequencing',NULL,NULL,NULL,'Workflow combining cryoEM-derived sequences (via ModelAngelo) with LC-MS/MS-based assembly (via Stitch) for simultaneous polyclonal antibody sequencing and epitope mapping. Reports 80–90% accuracy on antibody variable domains and improves MS-based assembly against polyclonal backgrounds.','adjacent',NULL,'DDA',NULL);
+INSERT INTO algorithm VALUES(174,'DLDN-Bench',NULL,NULL,NULL,'Benchmark framework for deep-learning de novo peptide sequencing in proteomics — derives evaluation datasets from human muscle biopsy MS data on PRIDE annotated by cross-engine consensus, and reports precision / coverage of recent DL tools (and classical baselines) against that pseudo-ground-truth.','benchmark',NULL,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2466,6 +2490,7 @@ INSERT INTO publication VALUES(196,'QuasiNovo: Algorithms for De Novo Peptide Se
 INSERT INTO publication VALUES(197,'Orthrus: an AI-powered, cloud-ready, and open-source hybrid approach for metaproteomics','2024-11-15','10.1101/2024.11.15.623814','Cold Spring Harbor Laboratory','While metaproteomics provides invaluable insight into microbial communities and functions, significant bioinformatics challenges persist due to data complexity and the limitations of database searching. Orthrus is a hybrid approach combining transformer-based de novo sequencing with Casanovo and database searching with Sage plus Mokapot rescoring. Benchmarking against PEAKS 11, MaxQuant, and MetaNovo demonstrated high peptide outputs, taxonomic diversity, and proteome coverage. Orthrus is Python-based and accessible via Google Colaboratory.','https://www.biorxiv.org/content/10.1101/2024.11.15.623814v1','bioRxiv','preprint','v1');
 INSERT INTO publication VALUES(198,'Ozboneprot: A de novo sequencing workflow to enable shotgun palaeoproteomics on Australian zooarchaeological and paleontological samples','2026-06-02','10.21203/rs.3.rs-9603698/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-9603698/v1','Research Square','preprint','v1');
 INSERT INTO publication VALUES(199,'Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry','2025-04-23','10.7554/eLife.101322.3','eLife',NULL,'https://elifesciences.org/articles/101322','eLife','peer-reviewed',NULL);
+INSERT INTO publication VALUES(200,'DLDN-Bench: A Benchmark Framework for Deep Learning de Novo Peptide Sequencing in Proteomics','2026-06-11','10.64898/2026.06.10.728383','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.10.728383v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2677,6 +2702,7 @@ INSERT INTO publication_algorithm VALUES(196,170);
 INSERT INTO publication_algorithm VALUES(197,171);
 INSERT INTO publication_algorithm VALUES(198,172);
 INSERT INTO publication_algorithm VALUES(199,173);
+INSERT INTO publication_algorithm VALUES(200,174);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3835,6 +3861,12 @@ INSERT INTO publication_author VALUES(199,657,1);
 INSERT INTO publication_author VALUES(199,658,2);
 INSERT INTO publication_author VALUES(199,34,3);
 INSERT INTO publication_author VALUES(199,659,4);
+INSERT INTO publication_author VALUES(200,660,1);
+INSERT INTO publication_author VALUES(200,661,2);
+INSERT INTO publication_author VALUES(200,662,3);
+INSERT INTO publication_author VALUES(200,663,4);
+INSERT INTO publication_author VALUES(200,664,5);
+INSERT INTO publication_author VALUES(200,665,6);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5264,6 +5296,7 @@ INSERT INTO algorithm_repository VALUES(97,'https://pypi.org/project/diffnovo-di
 INSERT INTO algorithm_repository VALUES(100,'https://github.com/protdb/PowerNovo2',0);
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/zqq66/RNovA',0);
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',1);
+INSERT INTO algorithm_repository VALUES(174,'https://github.com/ddz-icb/DLDN-Bench',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -5316,6 +5349,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/cmb-chula/SMSNet',12,7
 INSERT INTO repository_metrics VALUES('https://github.com/junxia97/SearchNovo',3,1,0,0,0,0,'2025-03-08T02:41:41Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2,0,0,1,0,'2024-08-28T03:38:58Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,0,'2022-08-18T04:30:03Z','2026-05-26T12:38:15');
+INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,0,0,0,0,0,'2026-04-30T08:03:10Z','2026-06-12T16:41:52');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -5527,11 +5561,11 @@ INSERT INTO publication_impact VALUES(197,'W4404446390',4,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-06-06T17:16:34+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
-INSERT INTO sqlite_sequence VALUES('city',143);
-INSERT INTO sqlite_sequence VALUES('affiliation',312);
-INSERT INTO sqlite_sequence VALUES('author',659);
-INSERT INTO sqlite_sequence VALUES('algorithm',173);
-INSERT INTO sqlite_sequence VALUES('publication',199);
+INSERT INTO sqlite_sequence VALUES('city',145);
+INSERT INTO sqlite_sequence VALUES('affiliation',315);
+INSERT INTO sqlite_sequence VALUES('author',665);
+INSERT INTO sqlite_sequence VALUES('algorithm',174);
+INSERT INTO sqlite_sequence VALUES('publication',200);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
