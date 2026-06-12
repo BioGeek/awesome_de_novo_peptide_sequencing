@@ -643,6 +643,14 @@ INSERT INTO author VALUES(648,'Jeffrey Shabanowitz',NULL);
 INSERT INTO author VALUES(649,'James Paul Cleveland',NULL);
 INSERT INTO author VALUES(650,'Yun Chiang',NULL);
 INSERT INTO author VALUES(651,'Matthew James Collins',NULL);
+INSERT INTO author VALUES(652,'Sofia C. Samper Carro','sofia.samper@anu.edu.au');
+INSERT INTO author VALUES(653,'Paula Kotli',NULL);
+INSERT INTO author VALUES(654,'Joseph Boileau',NULL);
+INSERT INTO author VALUES(655,'Vera Weisbecker',NULL);
+INSERT INTO author VALUES(656,'Sue O''Connor',NULL);
+INSERT INTO author VALUES(657,'Douwe Schulte',NULL);
+INSERT INTO author VALUES(658,'Marta Šiborová',NULL);
+INSERT INTO author VALUES(659,'Joost Snijder','j.snijder@uu.nl');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -679,6 +687,7 @@ INSERT INTO country VALUES(29,'Japan');
 INSERT INTO country VALUES(30,'Cuba');
 INSERT INTO country VALUES(31,'Austria');
 INSERT INTO country VALUES(32,'Philippines');
+INSERT INTO country VALUES(33,'Spain');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -827,6 +836,9 @@ INSERT INTO city VALUES(137,'Charlottesville',8,38.0292999999999992,-78.47669999
 INSERT INTO city VALUES(138,'Columbia',8,34.0007000000000019,-81.0348000000000041);
 INSERT INTO city VALUES(139,'Nice',14,43.7102000000000003,7.26199999999999956);
 INSERT INTO city VALUES(140,'Cambridge',7,52.2053000000000011,0.121800000000000005);
+INSERT INTO city VALUES(141,'Bellaterra',33,41.5001999999999995,2.10780000000000011);
+INSERT INTO city VALUES(142,'Tel Aviv',23,32.0852999999999966,34.7817999999999969);
+INSERT INTO city VALUES(143,'Bedford Park',15,-35.0225000000000008,138.570600000000013);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1147,6 +1159,11 @@ INSERT INTO affiliation VALUES(304,'University of South Carolina','Computer Scie
 INSERT INTO affiliation VALUES(305,'University of Copenhagen','Globe Institute',3,3);
 INSERT INTO affiliation VALUES(306,'Université Côte d''Azur','The Nice Institute of Chemistry',14,139);
 INSERT INTO affiliation VALUES(307,'University of Cambridge','McDonald Institute for Archaeological Research',7,140);
+INSERT INTO affiliation VALUES(308,'Australian National University','Archaeology and Natural History, School of Culture, History and Language, College of Asia and the Pacific',15,72);
+INSERT INTO affiliation VALUES(309,'Universitat Autonoma de Barcelona','Centre d''Estudis del Patrimoni Arqueologic, Facultat de Filosofia i Lletres',33,141);
+INSERT INTO affiliation VALUES(310,'Tel Aviv University','Department of Anatomy and Anthropology, The Gray Faculty of Medical & Health Sciences',23,142);
+INSERT INTO affiliation VALUES(311,'Australian National University','Research School of Chemistry, Joint Mass Spectrometry Facility, College of Science',15,72);
+INSERT INTO affiliation VALUES(312,'Flinders University','College of Science and Engineering',15,143);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2054,6 +2071,15 @@ INSERT INTO author_affiliation VALUES(650,305);
 INSERT INTO author_affiliation VALUES(650,306);
 INSERT INTO author_affiliation VALUES(651,305);
 INSERT INTO author_affiliation VALUES(651,307);
+INSERT INTO author_affiliation VALUES(652,308);
+INSERT INTO author_affiliation VALUES(652,309);
+INSERT INTO author_affiliation VALUES(653,310);
+INSERT INTO author_affiliation VALUES(654,311);
+INSERT INTO author_affiliation VALUES(655,312);
+INSERT INTO author_affiliation VALUES(656,308);
+INSERT INTO author_affiliation VALUES(657,262);
+INSERT INTO author_affiliation VALUES(658,262);
+INSERT INTO author_affiliation VALUES(659,262);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2229,6 +2255,8 @@ INSERT INTO algorithm VALUES(168,'Beslic 2023 antibody assembly evaluation',NULL
 INSERT INTO algorithm VALUES(169,'Hunt Lab Guide',NULL,NULL,NULL,'Molecular & Cellular Proteomics guide to manual de novo peptide sequence analysis by tandem mass spectrometry.','review',NULL,NULL,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis');
 INSERT INTO algorithm VALUES(170,'QuasiNovo',NULL,NULL,'Graph / DP + neural network','De novo peptide sequencing algorithm using a neural-network ion classifier, dynamic programming candidate generation, and amino acid usage/edge-frequency scoring.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(171,'Orthrus','https://github.com/yc386/orthrus_metaproteomics','https://github.com/yc386/orthrus_metaproteomics','Hybrid de novo + database search','Open-source metaproteomics pipeline combining Casanovo transformer-based de novo sequencing with Sage database search and Mokapot rescoring.','downstream-application',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(172,'Ozboneprot',NULL,NULL,'Palaeoproteomics workflow','Workflow for de novo sequencing and validation of bone proteins to support shotgun palaeoproteomics on Australian zooarchaeological and palaeontological samples.','downstream-application',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(173,'Schulte 2025 cryoEM+MS antibody sequencing',NULL,NULL,NULL,'Workflow combining cryoEM-derived sequences (via ModelAngelo) with LC-MS/MS-based assembly (via Stitch) for simultaneous polyclonal antibody sequencing and epitope mapping. Reports 80–90% accuracy on antibody variable domains and improves MS-based assembly against polyclonal backgrounds.','adjacent',NULL,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2436,6 +2464,8 @@ INSERT INTO publication VALUES(194,'Comprehensive evaluation of peptide de novo 
 INSERT INTO publication VALUES(195,'The Hunt Lab Guide to De Novo Peptide Sequence Analysis by Tandem Mass Spectrometry','2024-11-07','10.1016/j.mcpro.2024.100875','Elsevier BV',NULL,'https://doi.org/10.1016/j.mcpro.2024.100875','Molecular & Cellular Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(196,'QuasiNovo: Algorithms for De Novo Peptide Sequencing','2013-01-01',NULL,'PhD thesis',replace('High-throughput proteomics analysis involves the rapid identification and characterization of large sets of proteins in complex biological samples. Tandem mass spectrometry (MS/MS) has become the leading approach for the experimental identification of proteins. Accurate analysis of the data produced is a computationally challenging process that relies on a complex understanding of molecular dynamics, signal processing, and pattern classification.\nIn this work we address these modeling and classification problems, and introduce an additional data-driven evolutionary information source into the analysis pipeline. The particular problem being solved is peptide sequencing via MS/MS. The objective in solving this problem is to decipher the amino acid sequence of digested proteins (peptides) from the MS/MS spectra produced in a typical experimental protocol. Our approach sequences peptides using only the information contained in the experimental spectrum (de novo) and distributions of amino acid usage learned from large sets of protein sequence data.\nIn this dissertation we pursue three main objectives: an ion classifier based on a neural network which selects informative ions from the spectrum, a peptide sequencer which uses dynamic programming and a scoring function to generate candidate peptide sequences, and a candidate peptide scoring function. Candidate peptide sequences are generated via a dynamic programming graph algorithm, and then scored using a combination of the neural network score, the amino acid usage score, and an edge frequency score.\nIn addition to a complete de novo peptide sequencer, we also examine the use of amino acid usage models independently for reranking candidate peptides.','\n',char(10)),'https://scholarcommons.sc.edu/etd/3586/',NULL,'thesis',NULL);
 INSERT INTO publication VALUES(197,'Orthrus: an AI-powered, cloud-ready, and open-source hybrid approach for metaproteomics','2024-11-15','10.1101/2024.11.15.623814','Cold Spring Harbor Laboratory','While metaproteomics provides invaluable insight into microbial communities and functions, significant bioinformatics challenges persist due to data complexity and the limitations of database searching. Orthrus is a hybrid approach combining transformer-based de novo sequencing with Casanovo and database searching with Sage plus Mokapot rescoring. Benchmarking against PEAKS 11, MaxQuant, and MetaNovo demonstrated high peptide outputs, taxonomic diversity, and proteome coverage. Orthrus is Python-based and accessible via Google Colaboratory.','https://www.biorxiv.org/content/10.1101/2024.11.15.623814v1','bioRxiv','preprint','v1');
+INSERT INTO publication VALUES(198,'Ozboneprot: A de novo sequencing workflow to enable shotgun palaeoproteomics on Australian zooarchaeological and paleontological samples','2026-06-02','10.21203/rs.3.rs-9603698/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-9603698/v1','Research Square','preprint','v1');
+INSERT INTO publication VALUES(199,'Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry','2025-04-23','10.7554/eLife.101322.3','eLife',NULL,'https://elifesciences.org/articles/101322','eLife','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2645,6 +2675,8 @@ INSERT INTO publication_algorithm VALUES(194,168);
 INSERT INTO publication_algorithm VALUES(195,169);
 INSERT INTO publication_algorithm VALUES(196,170);
 INSERT INTO publication_algorithm VALUES(197,171);
+INSERT INTO publication_algorithm VALUES(198,172);
+INSERT INTO publication_algorithm VALUES(199,173);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3794,6 +3826,15 @@ INSERT INTO publication_author VALUES(195,648,6);
 INSERT INTO publication_author VALUES(196,649,1);
 INSERT INTO publication_author VALUES(197,650,1);
 INSERT INTO publication_author VALUES(197,651,2);
+INSERT INTO publication_author VALUES(198,652,1);
+INSERT INTO publication_author VALUES(198,653,2);
+INSERT INTO publication_author VALUES(198,654,3);
+INSERT INTO publication_author VALUES(198,655,4);
+INSERT INTO publication_author VALUES(198,656,5);
+INSERT INTO publication_author VALUES(199,657,1);
+INSERT INTO publication_author VALUES(199,658,2);
+INSERT INTO publication_author VALUES(199,34,3);
+INSERT INTO publication_author VALUES(199,659,4);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -3803,9 +3844,6 @@ CREATE TABLE publication_citation (
     FOREIGN KEY (cited_id)  REFERENCES publication(id) ON DELETE CASCADE,
     CHECK (citing_id != cited_id)
 );
-INSERT INTO publication_citation VALUES(1,26,'semanticscholar');
-INSERT INTO publication_citation VALUES(1,34,'crossref');
-INSERT INTO publication_citation VALUES(1,41,'crossref');
 INSERT INTO publication_citation VALUES(1,52,'both');
 INSERT INTO publication_citation VALUES(1,54,'both');
 INSERT INTO publication_citation VALUES(1,60,'both');
@@ -4007,7 +4045,6 @@ INSERT INTO publication_citation VALUES(25,66,'crossref');
 INSERT INTO publication_citation VALUES(25,67,'crossref');
 INSERT INTO publication_citation VALUES(25,71,'crossref');
 INSERT INTO publication_citation VALUES(25,73,'crossref');
-INSERT INTO publication_citation VALUES(25,80,'crossref');
 INSERT INTO publication_citation VALUES(25,86,'crossref');
 INSERT INTO publication_citation VALUES(26,33,'both');
 INSERT INTO publication_citation VALUES(26,34,'crossref');
@@ -4151,12 +4188,9 @@ INSERT INTO publication_citation VALUES(49,68,'both');
 INSERT INTO publication_citation VALUES(49,69,'both');
 INSERT INTO publication_citation VALUES(49,73,'both');
 INSERT INTO publication_citation VALUES(49,77,'both');
-INSERT INTO publication_citation VALUES(50,26,'crossref');
-INSERT INTO publication_citation VALUES(50,37,'crossref');
 INSERT INTO publication_citation VALUES(50,58,'crossref');
 INSERT INTO publication_citation VALUES(50,67,'crossref');
 INSERT INTO publication_citation VALUES(50,71,'crossref');
-INSERT INTO publication_citation VALUES(51,5,'semanticscholar');
 INSERT INTO publication_citation VALUES(51,62,'both');
 INSERT INTO publication_citation VALUES(51,66,'semanticscholar');
 INSERT INTO publication_citation VALUES(51,67,'crossref');
@@ -4254,14 +4288,11 @@ INSERT INTO publication_citation VALUES(73,70,'both');
 INSERT INTO publication_citation VALUES(73,71,'both');
 INSERT INTO publication_citation VALUES(73,88,'both');
 INSERT INTO publication_citation VALUES(73,92,'both');
-INSERT INTO publication_citation VALUES(73,98,'semanticscholar');
 INSERT INTO publication_citation VALUES(73,101,'semanticscholar');
 INSERT INTO publication_citation VALUES(76,1,'crossref');
-INSERT INTO publication_citation VALUES(76,21,'crossref');
 INSERT INTO publication_citation VALUES(76,25,'crossref');
 INSERT INTO publication_citation VALUES(76,26,'crossref');
 INSERT INTO publication_citation VALUES(76,28,'crossref');
-INSERT INTO publication_citation VALUES(76,29,'crossref');
 INSERT INTO publication_citation VALUES(76,32,'crossref');
 INSERT INTO publication_citation VALUES(76,33,'crossref');
 INSERT INTO publication_citation VALUES(76,34,'crossref');
@@ -4325,9 +4356,7 @@ INSERT INTO publication_citation VALUES(80,67,'crossref');
 INSERT INTO publication_citation VALUES(80,68,'crossref');
 INSERT INTO publication_citation VALUES(80,71,'crossref');
 INSERT INTO publication_citation VALUES(80,73,'crossref');
-INSERT INTO publication_citation VALUES(80,76,'crossref');
 INSERT INTO publication_citation VALUES(80,77,'crossref');
-INSERT INTO publication_citation VALUES(81,5,'semanticscholar');
 INSERT INTO publication_citation VALUES(81,58,'both');
 INSERT INTO publication_citation VALUES(81,60,'both');
 INSERT INTO publication_citation VALUES(81,62,'both');
@@ -4438,7 +4467,6 @@ INSERT INTO publication_citation VALUES(98,52,'crossref');
 INSERT INTO publication_citation VALUES(98,54,'both');
 INSERT INTO publication_citation VALUES(98,58,'both');
 INSERT INTO publication_citation VALUES(98,62,'both');
-INSERT INTO publication_citation VALUES(98,76,'crossref');
 INSERT INTO publication_citation VALUES(98,77,'crossref');
 INSERT INTO publication_citation VALUES(98,99,'crossref');
 INSERT INTO publication_citation VALUES(99,54,'semanticscholar');
@@ -4462,11 +4490,9 @@ INSERT INTO publication_citation VALUES(101,68,'both');
 INSERT INTO publication_citation VALUES(101,69,'both');
 INSERT INTO publication_citation VALUES(30,44,'semanticscholar');
 INSERT INTO publication_citation VALUES(30,110,'semanticscholar');
-INSERT INTO publication_citation VALUES(103,11,'crossref');
 INSERT INTO publication_citation VALUES(103,30,'crossref');
 INSERT INTO publication_citation VALUES(103,38,'crossref');
 INSERT INTO publication_citation VALUES(103,45,'crossref');
-INSERT INTO publication_citation VALUES(105,11,'crossref');
 INSERT INTO publication_citation VALUES(105,65,'crossref');
 INSERT INTO publication_citation VALUES(107,38,'crossref');
 INSERT INTO publication_citation VALUES(107,102,'crossref');
@@ -4481,8 +4507,6 @@ INSERT INTO publication_citation VALUES(116,2,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,41,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,49,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,62,'semanticscholar');
-INSERT INTO publication_citation VALUES(45,26,'both');
-INSERT INTO publication_citation VALUES(45,39,'both');
 INSERT INTO publication_citation VALUES(45,49,'both');
 INSERT INTO publication_citation VALUES(45,54,'both');
 INSERT INTO publication_citation VALUES(45,55,'both');
@@ -4635,7 +4659,6 @@ INSERT INTO publication_citation VALUES(102,73,'semanticscholar');
 INSERT INTO publication_citation VALUES(102,77,'semanticscholar');
 INSERT INTO publication_citation VALUES(128,65,'both');
 INSERT INTO publication_citation VALUES(128,66,'both');
-INSERT INTO publication_citation VALUES(128,185,'semanticscholar');
 INSERT INTO publication_citation VALUES(129,65,'crossref');
 INSERT INTO publication_citation VALUES(129,66,'crossref');
 INSERT INTO publication_citation VALUES(129,128,'crossref');
@@ -4813,7 +4836,6 @@ INSERT INTO publication_citation VALUES(145,70,'both');
 INSERT INTO publication_citation VALUES(145,71,'both');
 INSERT INTO publication_citation VALUES(145,88,'both');
 INSERT INTO publication_citation VALUES(145,92,'both');
-INSERT INTO publication_citation VALUES(145,101,'both');
 INSERT INTO publication_citation VALUES(145,128,'both');
 INSERT INTO publication_citation VALUES(145,130,'both');
 INSERT INTO publication_citation VALUES(145,132,'both');
@@ -5127,11 +5149,11 @@ INSERT INTO publication_citation VALUES(194,132,'both');
 INSERT INTO publication_citation VALUES(194,146,'both');
 INSERT INTO publication_citation VALUES(194,165,'both');
 INSERT INTO publication_citation VALUES(194,170,'both');
-INSERT INTO publication_citation VALUES(194,193,'both');
 INSERT INTO publication_citation VALUES(195,146,'both');
 INSERT INTO publication_citation VALUES(197,26,'crossref');
 INSERT INTO publication_citation VALUES(197,67,'crossref');
 INSERT INTO publication_citation VALUES(197,93,'crossref');
+INSERT INTO publication_citation VALUES(199,159,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -5140,53 +5162,54 @@ CREATE TABLE journal_impact (
     works_count       INTEGER,
     year_collected    INTEGER NOT NULL
 );
-INSERT INTO journal_impact VALUES('Analytical Chemistry','S191963794',6.12871696035242319,482,140227,2026);
-INSERT INTO journal_impact VALUES('Bioinformatics','S52395412',5.83438395415472754,568,19406,2026);
-INSERT INTO journal_impact VALUES('Bioinformatics Advances','S4210234069',2.18011527377521607,30,1036,2026);
-INSERT INTO journal_impact VALUES('Briefings in Bioinformatics','S91767247',6.05769230769230748,208,5756,2026);
-INSERT INTO journal_impact VALUES('Cell Systems','S2764739556',5.55806451612903185,138,1373,2026);
-INSERT INTO journal_impact VALUES('Communications Biology','S4210225776',5.45199314187741102,141,10368,2026);
-INSERT INTO journal_impact VALUES('Current Bioinformatics','S25854515',1.6611111111111112,48,1447,2026);
-INSERT INTO journal_impact VALUES('IEEE Journal of Biomedical and Health Informatics','S2495854775',4.66875000000000017,163,6494,2026);
-INSERT INTO journal_impact VALUES('Journal of Computational Biology','S78571599',1.41232227488151651,129,2742,2026);
-INSERT INTO journal_impact VALUES('Journal of Proteome Research','S74367812',3.37630104083266591,221,11021,2026);
-INSERT INTO journal_impact VALUES('Journal of the American Society for Mass Spectrometry','S60743949',2.48808172531214522,163,8803,2026);
-INSERT INTO journal_impact VALUES('Mass Spectrometry Reviews','S69764086',3.52100840336134446,169,1811,2026);
-INSERT INTO journal_impact VALUES('Molecular & Cellular Proteomics','S104550190',3.99103139013452912,242,6083,2026);
-INSERT INTO journal_impact VALUES('Nature Communications','S64187185',15.4643026645874304,737,89117,2026);
-INSERT INTO journal_impact VALUES('Nature Machine Intelligence','S2912241403',19.3911205073995773,144,1245,2026);
-INSERT INTO journal_impact VALUES('Nature Methods','S127827428',19.5162932790224026,509,8372,2026);
-INSERT INTO journal_impact VALUES('PLoS Computational Biology','S86033158',3.9853535353535352,285,12728,2026);
-INSERT INTO journal_impact VALUES('PNAS','S125754415',7.62912826420890954,1167,170771,2026);
-INSERT INTO journal_impact VALUES('Proteomics','S182655450',2.50205761316872443,211,10144,2026);
-INSERT INTO journal_impact VALUES('Rapid Communications in Mass Spectrometry','S89689683',1.59223300970873782,175,14475,2026);
-INSERT INTO journal_impact VALUES('Scientific Data','S2607323502',5.01968756687352879,206,8357,2026);
-INSERT INTO journal_impact VALUES('Scientific Reports','S196734849',4.37270913789884296,458,298043,2026);
-INSERT INTO journal_impact VALUES('Applied Sciences (MDPI)','S4210205812',3.27400713747830929,220,88972,2026);
-INSERT INTO journal_impact VALUES('Nature Biotechnology','S106963461',11.7226738934056005,631,19425,2026);
-INSERT INTO journal_impact VALUES('IEEE/ACM Transactions on Computational Biology and Bioinformatics','S36029991',4.64285714285714323,112,3574,2026);
-INSERT INTO journal_impact VALUES('AIChE Journal','S147177414',3.44790739091718601,279,20793,2026);
-INSERT INTO journal_impact VALUES('Analytica Chimica Acta','S192559872',4.8613826815642458,303,46815,2026);
-INSERT INTO journal_impact VALUES('BMC Bioinformatics','S19032547',4.5249130938586326,313,13171,2026);
+INSERT INTO journal_impact VALUES('Analytical Chemistry','S191963794',6.19556944821962485,482,140321,2026);
+INSERT INTO journal_impact VALUES('Bioinformatics','S52395412',5.90841865756541562,568,19419,2026);
+INSERT INTO journal_impact VALUES('Bioinformatics Advances','S4210234069',2.20630372492836679,30,1040,2026);
+INSERT INTO journal_impact VALUES('Briefings in Bioinformatics','S91767247',6.1455040871934603,208,5771,2026);
+INSERT INTO journal_impact VALUES('Cell Systems','S2764739556',5.64856230031948847,138,1376,2026);
+INSERT INTO journal_impact VALUES('Communications Biology','S4210225776',5.49141403434386266,142,10419,2026);
+INSERT INTO journal_impact VALUES('Current Bioinformatics','S25854515',1.67955801104972368,48,1448,2026);
+INSERT INTO journal_impact VALUES('IEEE Journal of Biomedical and Health Informatics','S2495854775',4.70403957131079941,163,6520,2026);
+INSERT INTO journal_impact VALUES('Journal of Computational Biology','S78571599',1.41121495327102808,129,2745,2026);
+INSERT INTO journal_impact VALUES('Journal of Proteome Research','S74367812',3.41082802547770702,221,11028,2026);
+INSERT INTO journal_impact VALUES('Journal of the American Society for Mass Spectrometry','S60743949',2.5095828635851185,163,8809,2026);
+INSERT INTO journal_impact VALUES('Mass Spectrometry Reviews','S69764086',3.5206611570247932,169,1813,2026);
+INSERT INTO journal_impact VALUES('Molecular & Cellular Proteomics','S104550190',4.06119402985074629,242,6084,2026);
+INSERT INTO journal_impact VALUES('Nature Communications','S64187185',15.6324037719386552,739,89418,2026);
+INSERT INTO journal_impact VALUES('Nature Machine Intelligence','S2912241403',19.6029411764705869,144,1248,2026);
+INSERT INTO journal_impact VALUES('Nature Methods','S127827428',19.6479438314944836,510,8387,2026);
+INSERT INTO journal_impact VALUES('PLoS Computational Biology','S86033158',4.02556390977443623,286,12743,2026);
+INSERT INTO journal_impact VALUES('PNAS','S125754415',7.71250712792244819,1167,170878,2026);
+INSERT INTO journal_impact VALUES('Proteomics','S182655450',2.52469135802469146,211,10144,2026);
+INSERT INTO journal_impact VALUES('Rapid Communications in Mass Spectrometry','S89689683',1.59773828756058167,175,14476,2026);
+INSERT INTO journal_impact VALUES('Scientific Data','S2607323502',5.07148900169204708,207,8412,2026);
+INSERT INTO journal_impact VALUES('Scientific Reports','S196734849',4.42454699061935574,458,299258,2026);
+INSERT INTO journal_impact VALUES('Applied Sciences (MDPI)','S4210205812',3.32278583714665876,220,89242,2026);
+INSERT INTO journal_impact VALUES('Nature Biotechnology','S106963461',11.8566308243727593,632,19434,2026);
+INSERT INTO journal_impact VALUES('IEEE/ACM Transactions on Computational Biology and Bioinformatics','S36029991',4.70779220779220786,112,3574,2026);
+INSERT INTO journal_impact VALUES('AIChE Journal','S147177414',3.48686514886164644,279,20812,2026);
+INSERT INTO journal_impact VALUES('Analytica Chimica Acta','S192559872',4.89455547898001341,303,46853,2026);
+INSERT INTO journal_impact VALUES('BMC Bioinformatics','S19032547',4.51136363636363668,314,13188,2026);
 INSERT INTO journal_impact VALUES('Biological Mass Spectrometry','S4210207926',0.0,3,9,2026);
-INSERT INTO journal_impact VALUES('Chemical Science','S184645833',7.42108137629710551,273,20760,2026);
-INSERT INTO journal_impact VALUES('Current Opinion in Structural Biology','S175155502',7.91355140186915928,253,5046,2026);
+INSERT INTO journal_impact VALUES('Chemical Science','S184645833',7.52297711299333205,274,20816,2026);
+INSERT INTO journal_impact VALUES('Current Opinion in Structural Biology','S175155502',7.9220183486238529,253,5054,2026);
 INSERT INTO journal_impact VALUES('Current Protocols in Protein Science','S2764865717',0.0,63,767,2026);
 INSERT INTO journal_impact VALUES('Drug Discovery Today: BIOSILICO','S9536792',0.0,14,45,2026);
-INSERT INTO journal_impact VALUES('Electrophoresis','S2849398',1.8647450110864745,195,18089,2026);
-INSERT INTO journal_impact VALUES('Expert Review of Proteomics','S96346590',2.91176470588235281,89,1614,2026);
-INSERT INTO journal_impact VALUES('Journal of Bioinformatics and Computational Biology','S155349577',0.866666666666666696,57,1354,2026);
-INSERT INTO journal_impact VALUES('Journal of Computer and System Sciences','S141020589',0.888888888888888839,190,3996,2026);
-INSERT INTO journal_impact VALUES('Journal of Proteomics','S100014387',2.52661064425770298,141,5394,2026);
-INSERT INTO journal_impact VALUES('Lecture Notes in Computer Science','S106296714',1.42059103236941286,710,598125,2026);
-INSERT INTO journal_impact VALUES('Molecular Biotechnology','S31191957',3.419928825622776,109,3909,2026);
-INSERT INTO journal_impact VALUES('Nucleic Acids Research','S134668137',14.1524283206553533,876,56051,2026);
-INSERT INTO journal_impact VALUES('PLOS Computational Biology','S86033158',3.9853535353535352,285,12728,2026);
-INSERT INTO journal_impact VALUES('PROTEOMICS','S182655450',2.50205761316872443,211,10144,2026);
-INSERT INTO journal_impact VALUES('Proceedings of the IEEE','S68686220',8.4662576687116573,467,20122,2026);
-INSERT INTO journal_impact VALUES('Proceedings of the National Academy of Sciences','S125754415',7.62912826420890954,1167,170771,2026);
-INSERT INTO journal_impact VALUES('Protein & Peptide Letters','S3577691',2.92941176470588215,74,3894,2026);
-INSERT INTO journal_impact VALUES('Proteome Science','S123527438',6.70000000000000017,66,731,2026);
+INSERT INTO journal_impact VALUES('Electrophoresis','S2849398',1.91592920353982298,195,18091,2026);
+INSERT INTO journal_impact VALUES('Expert Review of Proteomics','S96346590',2.97058823529411775,89,1614,2026);
+INSERT INTO journal_impact VALUES('Journal of Bioinformatics and Computational Biology','S155349577',0.855263157894736836,57,1355,2026);
+INSERT INTO journal_impact VALUES('Journal of Computer and System Sciences','S141020589',0.923076923076923128,190,3998,2026);
+INSERT INTO journal_impact VALUES('Journal of Proteomics','S100014387',2.5219780219780219,141,5401,2026);
+INSERT INTO journal_impact VALUES('Lecture Notes in Computer Science','S106296714',1.42711982570806106,711,598718,2026);
+INSERT INTO journal_impact VALUES('Molecular Biotechnology','S31191957',3.44326241134751764,110,3911,2026);
+INSERT INTO journal_impact VALUES('Nucleic Acids Research','S134668137',14.320520231213873,876,56093,2026);
+INSERT INTO journal_impact VALUES('PLOS Computational Biology','S86033158',4.02556390977443623,286,12743,2026);
+INSERT INTO journal_impact VALUES('PROTEOMICS','S182655450',2.52469135802469146,211,10144,2026);
+INSERT INTO journal_impact VALUES('Proceedings of the IEEE','S68686220',8.53211009174311918,467,20123,2026);
+INSERT INTO journal_impact VALUES('Proceedings of the National Academy of Sciences','S125754415',7.71250712792244819,1167,170878,2026);
+INSERT INTO journal_impact VALUES('Protein & Peptide Letters','S3577691',3.0,74,3894,2026);
+INSERT INTO journal_impact VALUES('Proteome Science','S123527438',6.84999999999999964,66,731,2026);
+INSERT INTO journal_impact VALUES('eLife','S1336409049',1.61510574018126895,318,30245,2026);
 CREATE TABLE algorithm_repository (
   algorithm_id INTEGER NOT NULL
       REFERENCES algorithm(id) ON DELETE CASCADE,
@@ -5274,7 +5297,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03');
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',188,75,17,305,12,304,'2026-06-08T18:07:49Z','2026-06-12T07:28:47');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',189,75,17,305,12,304,'2026-06-08T18:07:49Z','2026-06-12T15:43:43');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',4,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-06-09T07:06:01');
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',10,4,0,4,0,6,'2026-02-11T07:47:46Z','2026-05-26T12:38:15');
@@ -5501,12 +5524,67 @@ INSERT INTO publication_impact VALUES(194,'W4312095560',68,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(195,'W4404093938',2,'doi',NULL,2026,'2026-06-05T11:30:04+00:00');
 INSERT INTO publication_impact VALUES(196,'W2555928497',0,'title',100.0,2026,'2026-06-05T11:56:25+00:00');
 INSERT INTO publication_impact VALUES(197,'W4404446390',4,'doi',NULL,2026,'2026-06-05T12:08:36+00:00');
+INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-06-06T17:16:34+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',32);
-INSERT INTO sqlite_sequence VALUES('city',140);
-INSERT INTO sqlite_sequence VALUES('affiliation',307);
-INSERT INTO sqlite_sequence VALUES('author',651);
-INSERT INTO sqlite_sequence VALUES('algorithm',171);
-INSERT INTO sqlite_sequence VALUES('publication',197);
+INSERT INTO sqlite_sequence VALUES('country',33);
+INSERT INTO sqlite_sequence VALUES('city',143);
+INSERT INTO sqlite_sequence VALUES('affiliation',312);
+INSERT INTO sqlite_sequence VALUES('author',659);
+INSERT INTO sqlite_sequence VALUES('algorithm',173);
+INSERT INTO sqlite_sequence VALUES('publication',199);
+CREATE TRIGGER prevent_future_publication_citation_insert
+BEFORE INSERT ON publication_citation
+FOR EACH ROW
+WHEN EXISTS (
+    SELECT 1
+    FROM publication citing
+    JOIN publication cited
+    WHERE citing.id = NEW.citing_id
+      AND cited.id = NEW.cited_id
+      AND date(citing.publication_date) < date(cited.publication_date)
+)
+BEGIN
+    SELECT RAISE(ABORT, 'citation cannot point to a future publication');
+END;
+CREATE TRIGGER prevent_future_publication_citation_update
+BEFORE UPDATE OF citing_id, cited_id ON publication_citation
+FOR EACH ROW
+WHEN EXISTS (
+    SELECT 1
+    FROM publication citing
+    JOIN publication cited
+    WHERE citing.id = NEW.citing_id
+      AND cited.id = NEW.cited_id
+      AND date(citing.publication_date) < date(cited.publication_date)
+)
+BEGIN
+    SELECT RAISE(ABORT, 'citation cannot point to a future publication');
+END;
+CREATE TRIGGER prevent_future_publication_date_outgoing_update
+BEFORE UPDATE OF publication_date ON publication
+FOR EACH ROW
+WHEN EXISTS (
+    SELECT 1
+    FROM publication_citation pc
+    JOIN publication cited ON cited.id = pc.cited_id
+    WHERE pc.citing_id = NEW.id
+      AND date(NEW.publication_date) < date(cited.publication_date)
+)
+BEGIN
+    SELECT RAISE(ABORT, 'publication date would make an outgoing citation point to the future');
+END;
+CREATE TRIGGER prevent_future_publication_date_incoming_update
+BEFORE UPDATE OF publication_date ON publication
+FOR EACH ROW
+WHEN EXISTS (
+    SELECT 1
+    FROM publication_citation pc
+    JOIN publication citing ON citing.id = pc.citing_id
+    WHERE pc.cited_id = NEW.id
+      AND date(citing.publication_date) < date(NEW.publication_date)
+)
+BEGIN
+    SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
+END;
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
