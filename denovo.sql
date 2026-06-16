@@ -5308,7 +5308,7 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         );
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',121,30,8,27,4,96,'2026-06-08T23:03:56Z','2026-06-13T07:11:42');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',121,30,8,28,4,96,'2026-06-08T23:03:56Z','2026-06-16T07:47:37');
 INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,0,3,'2026-05-29T13:53:51Z','2026-05-30T06:54:29');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2025-05-05T06:49:32Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-05-26T12:38:15');
