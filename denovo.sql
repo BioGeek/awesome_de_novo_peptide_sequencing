@@ -657,6 +657,9 @@ INSERT INTO author VALUES(662,'Alexandra Chadt',NULL);
 INSERT INTO author VALUES(663,'Stefan Lehr',NULL);
 INSERT INTO author VALUES(664,'Hadi Al-Hasani','hadi.al-hasani@ddz.de');
 INSERT INTO author VALUES(665,'Michael Turewicz','michael.turewicz@ddz.de');
+INSERT INTO author VALUES(666,'Elisabeth Hjortswang',NULL);
+INSERT INTO author VALUES(667,'Joel Ströbaek',NULL);
+INSERT INTO author VALUES(668,'Simon Ekström',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1175,6 +1178,7 @@ INSERT INTO affiliation VALUES(312,'Flinders University','College of Science and
 INSERT INTO affiliation VALUES(313,'German Diabetes Center (DDZ)','Institute for Clinical Biochemistry and Pathobiochemistry, Leibniz Center for Diabetes Research at Heinrich Heine University Düsseldorf, Medical Faculty',4,144);
 INSERT INTO affiliation VALUES(314,'German Center for Diabetes Research (DZD e.V.)',NULL,4,23);
 INSERT INTO affiliation VALUES(315,'Forschungszentrum Jülich GmbH','Jülich Supercomputing Centre (JSC)',4,145);
+INSERT INTO affiliation VALUES(316,'Lund University','SciLifeLab, Integrated Structural Biology platform, Structural Proteomics Unit Sweden',6,133);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2103,6 +2107,9 @@ INSERT INTO author_affiliation VALUES(663,314);
 INSERT INTO author_affiliation VALUES(664,314);
 INSERT INTO author_affiliation VALUES(665,314);
 INSERT INTO author_affiliation VALUES(660,315);
+INSERT INTO author_affiliation VALUES(666,296);
+INSERT INTO author_affiliation VALUES(667,296);
+INSERT INTO author_affiliation VALUES(668,316);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2281,6 +2288,7 @@ INSERT INTO algorithm VALUES(171,'Orthrus','https://github.com/yc386/orthrus_met
 INSERT INTO algorithm VALUES(172,'Ozboneprot',NULL,NULL,'Palaeoproteomics workflow','Workflow for de novo sequencing and validation of bone proteins to support shotgun palaeoproteomics on Australian zooarchaeological and palaeontological samples.','downstream-application',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(173,'Schulte 2025 cryoEM+MS antibody sequencing',NULL,NULL,NULL,'Workflow combining cryoEM-derived sequences (via ModelAngelo) with LC-MS/MS-based assembly (via Stitch) for simultaneous polyclonal antibody sequencing and epitope mapping. Reports 80–90% accuracy on antibody variable domains and improves MS-based assembly against polyclonal backgrounds.','adjacent',NULL,'DDA',NULL);
 INSERT INTO algorithm VALUES(174,'DLDN-Bench',NULL,NULL,NULL,'Benchmark framework for deep-learning de novo peptide sequencing in proteomics — derives evaluation datasets from human muscle biopsy MS data on PRIDE annotated by cross-engine consensus, and reports precision / coverage of recent DL tools (and classical baselines) against that pseudo-ground-truth.','benchmark',NULL,'DDA',NULL);
+INSERT INTO algorithm VALUES(175,'Streptolysin O epitope de novo workflow',NULL,NULL,NULL,'Multi-modal MS workflow combining three deep-learning de novo sequencers (PointNovo, Casanovo, InstaNovo) with antibody profiling to identify a conserved protective epitope in Streptococcus pyogenes Streptolysin O.','downstream-application',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2491,6 +2499,7 @@ INSERT INTO publication VALUES(197,'Orthrus: an AI-powered, cloud-ready, and ope
 INSERT INTO publication VALUES(198,'Ozboneprot: A de novo sequencing workflow to enable shotgun palaeoproteomics on Australian zooarchaeological and paleontological samples','2026-06-02','10.21203/rs.3.rs-9603698/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-9603698/v1','Research Square','preprint','v1');
 INSERT INTO publication VALUES(199,'Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry','2025-04-23','10.7554/eLife.101322.3','eLife',NULL,'https://elifesciences.org/articles/101322','eLife','peer-reviewed',NULL);
 INSERT INTO publication VALUES(200,'DLDN-Bench: A Benchmark Framework for Deep Learning de Novo Peptide Sequencing in Proteomics','2026-06-11','10.64898/2026.06.10.728383','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.10.728383v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(201,'Multi-Modal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2023-12-02','10.1101/2023.12.02.569700','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.12.02.569700v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2703,6 +2712,7 @@ INSERT INTO publication_algorithm VALUES(197,171);
 INSERT INTO publication_algorithm VALUES(198,172);
 INSERT INTO publication_algorithm VALUES(199,173);
 INSERT INTO publication_algorithm VALUES(200,174);
+INSERT INTO publication_algorithm VALUES(201,175);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3867,6 +3877,14 @@ INSERT INTO publication_author VALUES(200,662,3);
 INSERT INTO publication_author VALUES(200,663,4);
 INSERT INTO publication_author VALUES(200,664,5);
 INSERT INTO publication_author VALUES(200,665,6);
+INSERT INTO publication_author VALUES(201,635,1);
+INSERT INTO publication_author VALUES(201,634,2);
+INSERT INTO publication_author VALUES(201,666,3);
+INSERT INTO publication_author VALUES(201,667,4);
+INSERT INTO publication_author VALUES(201,668,5);
+INSERT INTO publication_author VALUES(201,636,6);
+INSERT INTO publication_author VALUES(201,640,7);
+INSERT INTO publication_author VALUES(201,639,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5186,6 +5204,11 @@ INSERT INTO publication_citation VALUES(197,26,'crossref');
 INSERT INTO publication_citation VALUES(197,67,'crossref');
 INSERT INTO publication_citation VALUES(197,93,'crossref');
 INSERT INTO publication_citation VALUES(199,159,'crossref');
+INSERT INTO publication_citation VALUES(201,1,'crossref');
+INSERT INTO publication_citation VALUES(201,54,'crossref');
+INSERT INTO publication_citation VALUES(201,105,'crossref');
+INSERT INTO publication_citation VALUES(201,193,'crossref');
+INSERT INTO publication_citation VALUES(201,194,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -5562,10 +5585,10 @@ INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',145);
-INSERT INTO sqlite_sequence VALUES('affiliation',315);
-INSERT INTO sqlite_sequence VALUES('author',665);
-INSERT INTO sqlite_sequence VALUES('algorithm',174);
-INSERT INTO sqlite_sequence VALUES('publication',200);
+INSERT INTO sqlite_sequence VALUES('affiliation',316);
+INSERT INTO sqlite_sequence VALUES('author',668);
+INSERT INTO sqlite_sequence VALUES('algorithm',175);
+INSERT INTO sqlite_sequence VALUES('publication',201);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
