@@ -60,7 +60,7 @@ INSERT INTO author VALUES(52,'Yuqi Chang',NULL);
 INSERT INTO author VALUES(53,'Siqi Liu','siqiliu@genomics.cn');
 INSERT INTO author VALUES(54,'Karsten Kristiansen','kk@bio.ku.dk');
 INSERT INTO author VALUES(55,'Shaorong Chen','chenshaorong@westlake.edu.cn');
-INSERT INTO author VALUES(56,'Jingbo Zhou',NULL);
+INSERT INTO author VALUES(56,'Jingbo Zhou','zhoujingbo@westlake.edu.cn');
 INSERT INTO author VALUES(57,'Jun Xia','junxia@hkust-gz.edu.cn');
 INSERT INTO author VALUES(58,'Yuhan Chen',NULL);
 INSERT INTO author VALUES(59,'Shang Qu',NULL);
@@ -315,7 +315,7 @@ INSERT INTO author VALUES(311,'Ekapol Chuangsuwanich',NULL);
 INSERT INTO author VALUES(312,'Sira Sriswasdi',NULL);
 INSERT INTO author VALUES(313,'Yue Liu',NULL);
 INSERT INTO author VALUES(314,'Jianwei Yin',NULL);
-INSERT INTO author VALUES(315,'Hongxin Xiang',NULL);
+INSERT INTO author VALUES(315,'Hongxin Xiang','xianghx@hnu.edu.cn');
 INSERT INTO author VALUES(316,'Zicheng Liu',NULL);
 INSERT INTO author VALUES(317,'Shengying Pan',NULL);
 INSERT INTO author VALUES(318,'Qing Zhang',NULL);
@@ -660,6 +660,8 @@ INSERT INTO author VALUES(665,'Michael Turewicz','michael.turewicz@ddz.de');
 INSERT INTO author VALUES(666,'Elisabeth Hjortswang',NULL);
 INSERT INTO author VALUES(667,'Joel Ströbaek',NULL);
 INSERT INTO author VALUES(668,'Simon Ekström',NULL);
+INSERT INTO author VALUES(669,'Dongxin Lyu','lyudongxin@westlake.edu.cn');
+INSERT INTO author VALUES(670,'Yuqiang Li','liyuqiang@pjlab.org.cn');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1179,6 +1181,8 @@ INSERT INTO affiliation VALUES(313,'German Diabetes Center (DDZ)','Institute for
 INSERT INTO affiliation VALUES(314,'German Center for Diabetes Research (DZD e.V.)',NULL,4,23);
 INSERT INTO affiliation VALUES(315,'Forschungszentrum Jülich GmbH','Jülich Supercomputing Centre (JSC)',4,145);
 INSERT INTO affiliation VALUES(316,'Lund University','SciLifeLab, Integrated Structural Biology platform, Structural Proteomics Unit Sweden',6,133);
+INSERT INTO affiliation VALUES(317,'Westlake University',NULL,2,15);
+INSERT INTO affiliation VALUES(318,'The Hong Kong University of Science and Technology (Guangzhou)',NULL,2,16);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2110,6 +2114,10 @@ INSERT INTO author_affiliation VALUES(660,315);
 INSERT INTO author_affiliation VALUES(666,296);
 INSERT INTO author_affiliation VALUES(667,296);
 INSERT INTO author_affiliation VALUES(668,316);
+INSERT INTO author_affiliation VALUES(56,317);
+INSERT INTO author_affiliation VALUES(669,317);
+INSERT INTO author_affiliation VALUES(670,31);
+INSERT INTO author_affiliation VALUES(57,318);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2289,6 +2297,7 @@ INSERT INTO algorithm VALUES(172,'Ozboneprot',NULL,NULL,'Palaeoproteomics workfl
 INSERT INTO algorithm VALUES(173,'Schulte 2025 cryoEM+MS antibody sequencing',NULL,NULL,NULL,'Workflow combining cryoEM-derived sequences (via ModelAngelo) with LC-MS/MS-based assembly (via Stitch) for simultaneous polyclonal antibody sequencing and epitope mapping. Reports 80–90% accuracy on antibody variable domains and improves MS-based assembly against polyclonal backgrounds.','adjacent',NULL,'DDA',NULL);
 INSERT INTO algorithm VALUES(174,'DLDN-Bench',NULL,NULL,NULL,'Benchmark framework for deep-learning de novo peptide sequencing in proteomics — derives evaluation datasets from human muscle biopsy MS data on PRIDE annotated by cross-engine consensus, and reports precision / coverage of recent DL tools (and classical baselines) against that pseudo-ground-truth.','benchmark',NULL,'DDA',NULL);
 INSERT INTO algorithm VALUES(175,'Streptolysin O epitope de novo workflow',NULL,NULL,NULL,'Multi-modal MS workflow combining three deep-learning de novo sequencers (PointNovo, Casanovo, InstaNovo) with antibody profiling to identify a conserved protective epitope in Streptococcus pyogenes Streptolysin O.','downstream-application',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(176,'MemNovo',NULL,NULL,'Transformer (AR)','Autoregressive transformer de novo sequencer with a memory mechanism that lets the decoder revisit the input spectrum at each step to balance error accumulation.','algorithm',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2500,6 +2509,7 @@ INSERT INTO publication VALUES(198,'Ozboneprot: A de novo sequencing workflow to
 INSERT INTO publication VALUES(199,'Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry','2025-04-23','10.7554/eLife.101322.3','eLife',NULL,'https://elifesciences.org/articles/101322','eLife','peer-reviewed',NULL);
 INSERT INTO publication VALUES(200,'DLDN-Bench: A Benchmark Framework for Deep Learning de Novo Peptide Sequencing in Proteomics','2026-06-11','10.64898/2026.06.10.728383','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.10.728383v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(201,'Multi-Modal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2023-12-02','10.1101/2023.12.02.569700','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.12.02.569700v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(202,'MemNovo: Look Back at the Spectrum for Balanced De Novo Peptide Sequencing from Mass Spectrometry','2026-06-10','10.48550/arXiv.2606.11868','arXiv',NULL,'https://arxiv.org/abs/2606.11868','arXiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2713,6 +2723,7 @@ INSERT INTO publication_algorithm VALUES(198,172);
 INSERT INTO publication_algorithm VALUES(199,173);
 INSERT INTO publication_algorithm VALUES(200,174);
 INSERT INTO publication_algorithm VALUES(201,175);
+INSERT INTO publication_algorithm VALUES(202,176);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3885,6 +3896,11 @@ INSERT INTO publication_author VALUES(201,668,5);
 INSERT INTO publication_author VALUES(201,636,6);
 INSERT INTO publication_author VALUES(201,640,7);
 INSERT INTO publication_author VALUES(201,639,8);
+INSERT INTO publication_author VALUES(202,669,1);
+INSERT INTO publication_author VALUES(202,56,2);
+INSERT INTO publication_author VALUES(202,315,3);
+INSERT INTO publication_author VALUES(202,670,4);
+INSERT INTO publication_author VALUES(202,57,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5585,10 +5601,10 @@ INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',145);
-INSERT INTO sqlite_sequence VALUES('affiliation',316);
-INSERT INTO sqlite_sequence VALUES('author',668);
-INSERT INTO sqlite_sequence VALUES('algorithm',175);
-INSERT INTO sqlite_sequence VALUES('publication',201);
+INSERT INTO sqlite_sequence VALUES('affiliation',318);
+INSERT INTO sqlite_sequence VALUES('author',670);
+INSERT INTO sqlite_sequence VALUES('algorithm',176);
+INSERT INTO sqlite_sequence VALUES('publication',202);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
