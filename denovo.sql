@@ -2510,6 +2510,7 @@ INSERT INTO publication VALUES(199,'Simultaneous polyclonal antibody sequencing 
 INSERT INTO publication VALUES(200,'DLDN-Bench: A Benchmark Framework for Deep Learning de Novo Peptide Sequencing in Proteomics','2026-06-11','10.64898/2026.06.10.728383','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.10.728383v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(201,'Multi-Modal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2023-12-02','10.1101/2023.12.02.569700','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.12.02.569700v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(202,'MemNovo: Look Back at the Spectrum for Balanced De Novo Peptide Sequencing from Mass Spectrometry','2026-06-10','10.48550/arXiv.2606.11868','arXiv',NULL,'https://arxiv.org/abs/2606.11868','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(203,'Multimodal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2024-05-03','10.1021/acs.analchem.4c00596','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/acs.analchem.4c00596','Analytical Chemistry','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2724,6 +2725,7 @@ INSERT INTO publication_algorithm VALUES(199,173);
 INSERT INTO publication_algorithm VALUES(200,174);
 INSERT INTO publication_algorithm VALUES(201,175);
 INSERT INTO publication_algorithm VALUES(202,176);
+INSERT INTO publication_algorithm VALUES(203,175);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3901,6 +3903,14 @@ INSERT INTO publication_author VALUES(202,56,2);
 INSERT INTO publication_author VALUES(202,315,3);
 INSERT INTO publication_author VALUES(202,670,4);
 INSERT INTO publication_author VALUES(202,57,5);
+INSERT INTO publication_author VALUES(203,635,1);
+INSERT INTO publication_author VALUES(203,634,2);
+INSERT INTO publication_author VALUES(203,666,3);
+INSERT INTO publication_author VALUES(203,667,4);
+INSERT INTO publication_author VALUES(203,668,5);
+INSERT INTO publication_author VALUES(203,636,6);
+INSERT INTO publication_author VALUES(203,640,7);
+INSERT INTO publication_author VALUES(203,639,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5604,7 +5614,7 @@ INSERT INTO sqlite_sequence VALUES('city',145);
 INSERT INTO sqlite_sequence VALUES('affiliation',318);
 INSERT INTO sqlite_sequence VALUES('author',670);
 INSERT INTO sqlite_sequence VALUES('algorithm',176);
-INSERT INTO sqlite_sequence VALUES('publication',202);
+INSERT INTO sqlite_sequence VALUES('publication',203);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
