@@ -662,6 +662,10 @@ INSERT INTO author VALUES(667,'Joel Ströbaek',NULL);
 INSERT INTO author VALUES(668,'Simon Ekström',NULL);
 INSERT INTO author VALUES(669,'Dongxin Lyu','lyudongxin@westlake.edu.cn');
 INSERT INTO author VALUES(670,'Yuqiang Li','liyuqiang@pjlab.org.cn');
+INSERT INTO author VALUES(671,'Lisa Weilnbock',NULL);
+INSERT INTO author VALUES(672,'Erdmann Rapp',NULL);
+INSERT INTO author VALUES(673,'Marc Vaudel','marc.vaudel@uib.no');
+INSERT INTO author VALUES(674,'Harald Barsnes',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -852,6 +856,7 @@ INSERT INTO city VALUES(142,'Tel Aviv',23,32.0852999999999966,34.781799999999996
 INSERT INTO city VALUES(143,'Bedford Park',15,-35.0225000000000008,138.570600000000013);
 INSERT INTO city VALUES(144,'Düsseldorf',4,NULL,NULL);
 INSERT INTO city VALUES(145,'Jülich',4,NULL,NULL);
+INSERT INTO city VALUES(146,'Magdeburg',4,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1183,6 +1188,13 @@ INSERT INTO affiliation VALUES(315,'Forschungszentrum Jülich GmbH','Jülich Sup
 INSERT INTO affiliation VALUES(316,'Lund University','SciLifeLab, Integrated Structural Biology platform, Structural Proteomics Unit Sweden',6,133);
 INSERT INTO affiliation VALUES(317,'Westlake University',NULL,2,15);
 INSERT INTO affiliation VALUES(318,'The Hong Kong University of Science and Technology (Guangzhou)',NULL,2,16);
+INSERT INTO affiliation VALUES(319,'Max Planck Institute for Dynamics of Complex Technical Systems',NULL,4,146);
+INSERT INTO affiliation VALUES(320,'Ghent University','Department of Biochemistry',1,13);
+INSERT INTO affiliation VALUES(321,'VIB','Department of Medical Protein Research',1,13);
+INSERT INTO affiliation VALUES(322,'University of Bergen','Proteomics Unit, Department of Biomedicine',20,74);
+INSERT INTO affiliation VALUES(323,'University of Bergen','Computational Biology Unit, Department of Informatics',20,74);
+INSERT INTO affiliation VALUES(324,'University of Bergen','KG Jebsen Center for Diabetes Research, Department of Clinical Science',20,74);
+INSERT INTO affiliation VALUES(325,'Haukeland University Hospital','Center for Medical Genetics and Molecular Medicine',20,74);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2118,6 +2130,16 @@ INSERT INTO author_affiliation VALUES(56,317);
 INSERT INTO author_affiliation VALUES(669,317);
 INSERT INTO author_affiliation VALUES(670,31);
 INSERT INTO author_affiliation VALUES(57,318);
+INSERT INTO author_affiliation VALUES(421,319);
+INSERT INTO author_affiliation VALUES(672,319);
+INSERT INTO author_affiliation VALUES(671,282);
+INSERT INTO author_affiliation VALUES(29,320);
+INSERT INTO author_affiliation VALUES(29,321);
+INSERT INTO author_affiliation VALUES(673,322);
+INSERT INTO author_affiliation VALUES(674,322);
+INSERT INTO author_affiliation VALUES(674,323);
+INSERT INTO author_affiliation VALUES(673,324);
+INSERT INTO author_affiliation VALUES(673,325);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2298,6 +2320,8 @@ INSERT INTO algorithm VALUES(173,'Schulte 2025 cryoEM+MS antibody sequencing',NU
 INSERT INTO algorithm VALUES(174,'DLDN-Bench',NULL,NULL,NULL,'Benchmark framework for deep-learning de novo peptide sequencing in proteomics — derives evaluation datasets from human muscle biopsy MS data on PRIDE annotated by cross-engine consensus, and reports precision / coverage of recent DL tools (and classical baselines) against that pseudo-ground-truth.','benchmark',NULL,'DDA',NULL);
 INSERT INTO algorithm VALUES(175,'Streptolysin O epitope de novo workflow',NULL,NULL,NULL,'Multi-modal MS workflow combining three deep-learning de novo sequencers (PointNovo, Casanovo, InstaNovo) with antibody profiling to identify a conserved protective epitope in Streptococcus pyogenes Streptolysin O.','downstream-application',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(176,'MemNovo',NULL,NULL,'Transformer (AR)','Autoregressive transformer de novo sequencer with a memory mechanism that lets the decoder revisit the input spectrum at each step to balance error accumulation.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(177,'DeNovoGUI',NULL,NULL,NULL,'Open-source Java graphical user interface for tandem-MS de novo sequencing — wraps PepNovo+, DirecTag, Novor, and pNovo behind a single workflow with shared input/output handling and result inspection. From the CompOmics group at Ghent + collaborators in Bergen, Magdeburg, and Salzburg.','adjacent',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(178,'SearchGUI',NULL,NULL,NULL,'Open-source common interface wrapping a wide set of proteomics database search engines (X!Tandem, MS-GF+, Comet, OMSSA, MS Amanda, MyriMatch, Tide, Andromeda, MetaMorpheus, Sage) plus classical de novo engines (PepNovo+, DirecTag, Novor, pNovo). Sister project to DeNovoGUI from the same CompOmics-aligned Bergen / Ghent group.','adjacent',0,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2511,6 +2535,8 @@ INSERT INTO publication VALUES(200,'DLDN-Bench: A Benchmark Framework for Deep L
 INSERT INTO publication VALUES(201,'Multi-Modal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2023-12-02','10.1101/2023.12.02.569700','bioRxiv',NULL,'https://www.biorxiv.org/content/10.1101/2023.12.02.569700v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(202,'MemNovo: Look Back at the Spectrum for Balanced De Novo Peptide Sequencing from Mass Spectrometry','2026-06-10','10.48550/arXiv.2606.11868','arXiv',NULL,'https://arxiv.org/abs/2606.11868','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(203,'Multimodal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O','2024-05-03','10.1021/acs.analchem.4c00596','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/acs.analchem.4c00596','Analytical Chemistry','peer-reviewed',NULL);
+INSERT INTO publication VALUES(204,'DeNovoGUI: An Open Source Graphical User Interface for de Novo Sequencing of Tandem Mass Spectra','2014-01-07','10.1021/pr4008078','American Chemical Society',NULL,'https://pubs.acs.org/doi/full/10.1021/pr4008078','Journal of Proteome Research','peer-reviewed',NULL);
+INSERT INTO publication VALUES(205,'SearchGUI: A Highly Adaptable Common Interface for Proteomics Search and de Novo Engines','2018-05-18','10.1021/acs.jproteome.8b00175','American Chemical Society',NULL,'https://pubs.acs.org/doi/10.1021/acs.jproteome.8b00175','Journal of Proteome Research','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2726,6 +2752,8 @@ INSERT INTO publication_algorithm VALUES(200,174);
 INSERT INTO publication_algorithm VALUES(201,175);
 INSERT INTO publication_algorithm VALUES(202,176);
 INSERT INTO publication_algorithm VALUES(203,175);
+INSERT INTO publication_algorithm VALUES(204,177);
+INSERT INTO publication_algorithm VALUES(205,178);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -3911,6 +3939,15 @@ INSERT INTO publication_author VALUES(203,668,5);
 INSERT INTO publication_author VALUES(203,636,6);
 INSERT INTO publication_author VALUES(203,640,7);
 INSERT INTO publication_author VALUES(203,639,8);
+INSERT INTO publication_author VALUES(204,421,1);
+INSERT INTO publication_author VALUES(204,671,2);
+INSERT INTO publication_author VALUES(204,672,3);
+INSERT INTO publication_author VALUES(204,625,4);
+INSERT INTO publication_author VALUES(204,29,5);
+INSERT INTO publication_author VALUES(204,673,6);
+INSERT INTO publication_author VALUES(204,674,7);
+INSERT INTO publication_author VALUES(205,674,1);
+INSERT INTO publication_author VALUES(205,673,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5235,6 +5272,13 @@ INSERT INTO publication_citation VALUES(201,54,'crossref');
 INSERT INTO publication_citation VALUES(201,105,'crossref');
 INSERT INTO publication_citation VALUES(201,193,'crossref');
 INSERT INTO publication_citation VALUES(201,194,'crossref');
+INSERT INTO publication_citation VALUES(204,67,'crossref');
+INSERT INTO publication_citation VALUES(204,68,'both');
+INSERT INTO publication_citation VALUES(204,132,'both');
+INSERT INTO publication_citation VALUES(204,144,'both');
+INSERT INTO publication_citation VALUES(205,73,'crossref');
+INSERT INTO publication_citation VALUES(205,146,'crossref');
+INSERT INTO publication_citation VALUES(205,189,'crossref');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -5346,6 +5390,8 @@ INSERT INTO algorithm_repository VALUES(100,'https://github.com/protdb/PowerNovo
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/zqq66/RNovA',0);
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',1);
 INSERT INTO algorithm_repository VALUES(174,'https://github.com/ddz-icb/DLDN-Bench',0);
+INSERT INTO algorithm_repository VALUES(177,'https://github.com/compomics/denovogui',0);
+INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/searchgui',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -5357,16 +5403,16 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         );
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',120,30,8,27,4,96,'2026-06-08T23:03:56Z','2026-06-12T07:28:47');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',123,30,8,27,4,96,'2026-06-08T23:03:56Z','2026-06-22T08:15:24');
 INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,0,3,'2026-05-29T13:53:51Z','2026-05-30T06:54:29');
-INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2025-05-05T06:49:32Z','2026-05-26T12:38:15');
+INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24');
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/alifare/PepGo/tree/main',1,0,0,0,0,0,'2026-04-10T10:06:29Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47');
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/Modanovo',2,1,0,1,0,0,'2025-12-04T11:10:34Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/biocc/SP-MEGD_Fusion',4,2,0,0,0,0,'2026-02-10T08:43:17Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47');
-INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',4,1,1,0,0,0,'2025-11-12T22:57:57Z','2026-05-26T12:42:18');
+INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',5,1,1,0,0,0,'2025-11-12T22:57:57Z','2026-06-22T08:15:24');
 INSERT INTO repository_metrics VALUES('https://github.com/ThatMatin/TransNovo',1,0,0,0,0,2,'2024-07-19T08:52:58Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo',11,4,2,2,1,0,'2025-02-27T04:18:01Z','2026-06-10T07:20:03');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/Transformer-DIA',1,1,0,0,0,0,'2025-09-20T20:57:39Z','2026-05-26T12:42:18');
@@ -5379,7 +5425,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18');
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03');
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',189,75,17,305,12,304,'2026-06-08T18:07:49Z','2026-06-12T15:43:43');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',189,75,19,305,6,311,'2026-06-19T17:35:56Z','2026-06-22T08:15:24');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',4,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-06-09T07:06:01');
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',10,4,0,4,0,6,'2026-02-11T07:47:46Z','2026-05-26T12:38:15');
@@ -5398,7 +5444,9 @@ INSERT INTO repository_metrics VALUES('https://github.com/cmb-chula/SMSNet',12,7
 INSERT INTO repository_metrics VALUES('https://github.com/junxia97/SearchNovo',3,1,0,0,0,0,'2025-03-08T02:41:41Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2,0,0,1,0,'2024-08-28T03:38:58Z','2026-05-26T12:38:15');
 INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,0,'2022-08-18T04:30:03Z','2026-05-26T12:38:15');
-INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,0,0,0,0,0,'2026-04-30T08:03:10Z','2026-06-12T16:41:52');
+INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,1,0,0,1,0,'2026-04-30T08:03:10Z','2026-06-22T08:15:24');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',15,8,6,44,0,2,'2024-03-11T14:07:59Z','2026-06-22T08:15:24');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,15,18,360,0,5,'2025-08-15T14:01:55Z','2026-06-22T08:26:23');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -5610,11 +5658,11 @@ INSERT INTO publication_impact VALUES(197,'W4404446390',4,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-06-06T17:16:34+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
-INSERT INTO sqlite_sequence VALUES('city',145);
-INSERT INTO sqlite_sequence VALUES('affiliation',318);
-INSERT INTO sqlite_sequence VALUES('author',670);
-INSERT INTO sqlite_sequence VALUES('algorithm',176);
-INSERT INTO sqlite_sequence VALUES('publication',203);
+INSERT INTO sqlite_sequence VALUES('city',146);
+INSERT INTO sqlite_sequence VALUES('affiliation',325);
+INSERT INTO sqlite_sequence VALUES('author',674);
+INSERT INTO sqlite_sequence VALUES('algorithm',178);
+INSERT INTO sqlite_sequence VALUES('publication',205);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
