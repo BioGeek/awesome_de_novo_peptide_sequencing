@@ -20,6 +20,8 @@ Per repository we record:
   - closed_issues      from /search/issues?q=...is:issue+is:closed
   - open_prs           from /search/issues?q=...is:pr+is:open
   - closed_prs         from /search/issues?q=...is:pr+is:closed
+  - latest_release     from /releases/latest, falling back to the most
+                       recent /tags entry; NULL if neither exists.
 
 (`open_issues_count` on /repos is unusable in isolation — GitHub counts pull
 requests as issues for that field, a longstanding quirk.)
@@ -70,6 +72,17 @@ def fetch_repo(owner: str, repo: str) -> dict | None:
     if not base:
         return None
     time.sleep(REPO_DELAY)
+
+    # Latest release tag. /releases/latest only matches non-draft + non-prerelease;
+    # repos that just tag without formally releasing get a fallback to the most
+    # recent /tags entry. Either endpoint returning 404 means 'no release yet'.
+    release = gh_api(f"/repos/{owner}/{repo}/releases/latest")
+    if release and release.get("tag_name"):
+        latest_release = release["tag_name"]
+    else:
+        tags = gh_api(f"/repos/{owner}/{repo}/tags?per_page=1")
+        latest_release = tags[0].get("name") if (tags and isinstance(tags, list) and tags) else None
+    time.sleep(REPO_DELAY)
     # Strip trailing .git if present in the URL.
     q_repo = f"{owner}/{repo}"
     counts = {}
@@ -87,9 +100,10 @@ def fetch_repo(owner: str, repo: str) -> dict | None:
         time.sleep(SEARCH_DELAY)
 
     return {
-        "stars":         base.get("stargazers_count"),
-        "forks":         base.get("forks_count"),
-        "last_pushed":   base.get("pushed_at"),
+        "stars":          base.get("stargazers_count"),
+        "forks":          base.get("forks_count"),
+        "last_pushed":    base.get("pushed_at"),
+        "latest_release": latest_release,
         **counts,
     }
 
@@ -106,10 +120,20 @@ def ensure_table(cur: sqlite3.Cursor) -> None:
             open_prs       INTEGER,
             closed_prs     INTEGER,
             last_pushed    TEXT,
-            fetched_at     TEXT NOT NULL
+            fetched_at     TEXT NOT NULL,
+            latest_release TEXT
         )
         """
     )
+    # Idempotent migration: tables created by older builds won't have
+    # latest_release; add it if missing. ALTER TABLE ADD COLUMN is a no-op on
+    # SQLite when the column exists, but it raises, so we check pragma first.
+    has_release = any(
+        r[1] == "latest_release"
+        for r in cur.execute("PRAGMA table_info(repository_metrics)")
+    )
+    if not has_release:
+        cur.execute("ALTER TABLE repository_metrics ADD COLUMN latest_release TEXT")
 
 
 def main() -> int:
@@ -155,37 +179,40 @@ def main() -> int:
             """
             INSERT INTO repository_metrics
                 (url, stars, forks, open_issues, closed_issues, open_prs, closed_prs,
-                 last_pushed, fetched_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 last_pushed, fetched_at, latest_release)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(url) DO UPDATE SET
-                stars         = excluded.stars,
-                forks         = excluded.forks,
-                open_issues   = excluded.open_issues,
-                closed_issues = excluded.closed_issues,
-                open_prs      = excluded.open_prs,
-                closed_prs    = excluded.closed_prs,
-                last_pushed   = excluded.last_pushed,
-                fetched_at    = excluded.fetched_at
+                stars          = excluded.stars,
+                forks          = excluded.forks,
+                open_issues    = excluded.open_issues,
+                closed_issues  = excluded.closed_issues,
+                open_prs       = excluded.open_prs,
+                closed_prs     = excluded.closed_prs,
+                last_pushed    = excluded.last_pushed,
+                fetched_at     = excluded.fetched_at,
+                latest_release = excluded.latest_release
                 -- Only touch the row (and bump fetched_at) when at least one
                 -- metric actually moved. IS NOT is the null-safe inequality
                 -- check; '!=' returns NULL for NULL operands, which would let
                 -- a NULL→value transition slip past the guard.
-                WHERE stars         IS NOT excluded.stars
-                   OR forks         IS NOT excluded.forks
-                   OR open_issues   IS NOT excluded.open_issues
-                   OR closed_issues IS NOT excluded.closed_issues
-                   OR open_prs      IS NOT excluded.open_prs
-                   OR closed_prs    IS NOT excluded.closed_prs
-                   OR last_pushed   IS NOT excluded.last_pushed
+                WHERE stars          IS NOT excluded.stars
+                   OR forks          IS NOT excluded.forks
+                   OR open_issues    IS NOT excluded.open_issues
+                   OR closed_issues  IS NOT excluded.closed_issues
+                   OR open_prs       IS NOT excluded.open_prs
+                   OR closed_prs     IS NOT excluded.closed_prs
+                   OR last_pushed    IS NOT excluded.last_pushed
+                   OR latest_release IS NOT excluded.latest_release
             """,
             (url, metrics["stars"], metrics["forks"],
              metrics["open_issues"], metrics["closed_issues"],
              metrics["open_prs"], metrics["closed_prs"],
-             metrics["last_pushed"], fetched_at),
+             metrics["last_pushed"], fetched_at, metrics.get("latest_release")),
         )
         print(f"  ★ {metrics['stars']:>5}  "
               f"issues open/closed {metrics['open_issues']}/{metrics['closed_issues']}  "
               f"PRs open/closed {metrics['open_prs']}/{metrics['closed_prs']}  "
+              f"release {metrics.get('latest_release') or '—'}  "
               f"last pushed {metrics['last_pushed']}")
         ok += 1
 

@@ -251,6 +251,7 @@ repo_metrics = pd.read_sql(
            rm.open_prs,
            rm.closed_prs,
            rm.last_pushed,
+           rm.latest_release,
            rm.fetched_at
     FROM algorithm_repository ar
     JOIN algorithm alg            ON alg.id = ar.algorithm_id
@@ -2147,7 +2148,7 @@ viewof impact_search = Inputs.search(impact_rows, {
 
 ## Code activity
 
-Open-source uptake snapshot from the GitHub API: stars, fork count, open / closed issues + PRs, and the most recent push. Pulled offline by `build_repo_metrics.py` against `algorithm_repository.url`. Non-GitHub repos (PyPI, project home pages, anonymised review repos) aren't counted here.
+Open-source uptake snapshot from the GitHub API: stars, fork count, open / closed issues + PRs, the most recent push, and the latest released tag (falling back to the latest plain tag if the project doesn't formally release). Pulled offline by `build_repo_metrics.py` against `algorithm_repository.url`. Non-GitHub repos (PyPI, project home pages, anonymised review repos) aren't counted here.
 
 ```{ojs}
 //| echo: false
@@ -2189,6 +2190,7 @@ viewof repo_metric = Inputs.radio(
         title: d => `${d.model}\n${d.url}\nstars=${d.stars}, forks=${d.forks}\n` +
                     `issues open/closed: ${d.open_issues}/${d.closed_issues}\n` +
                     `PRs open/closed: ${d.open_prs}/${d.closed_prs}\n` +
+                    `latest release: ${d.latest_release ?? "—"}\n` +
                     `last pushed: ${d.last_pushed ? d.last_pushed.toISOString().slice(0,10) : "—"}`
       }),
       Plot.ruleX([0])
@@ -2240,23 +2242,25 @@ viewof repo_metric = Inputs.radio(
   const rows = repo_metrics_t.slice()
   const table = Inputs.table(rows, {
     columns: ["model", "family", "stars", "forks", "open_issues",
-              "closed_issues", "open_prs", "closed_prs", "last_pushed", "url"],
+              "closed_issues", "open_prs", "closed_prs",
+              "latest_release", "last_pushed", "url"],
     header: {
       model: "Method", family: "Family", stars: "★", forks: "Forks",
       open_issues: "Issues (open)", closed_issues: "Issues (closed)",
       open_prs: "PRs (open)", closed_prs: "PRs (closed)",
-      last_pushed: "Last updated", url: "Repo"
+      latest_release: "Release", last_pushed: "Last updated", url: "Repo"
     },
     format: {
       stars: v => v == null ? "" : String(v),
       last_pushed: d => d ? d.toISOString().slice(0, 10) : "—",
+      latest_release: v => v ?? "—",
       url: u => u ? htl.html`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>` : ""
     },
     sort: "stars", reverse: true,
     rows: 25,
     width: { model: 130, family: 130, stars: 70, forks: 70,
              open_issues: 90, closed_issues: 100, open_prs: 80, closed_prs: 100,
-             last_pushed: 110, url: 240 }
+             latest_release: 100, last_pushed: 110, url: 240 }
   })
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
