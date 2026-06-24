@@ -1,0 +1,57 @@
+name: Refresh publication impact
+
+on:
+  schedule:
+    # Weekly on Sunday at 06:00 UTC. OpenAlex cited_by_count changes
+    # incrementally as papers get cited; weekly captures meaningful drift
+    # without spamming commits.
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions:  write   # trigger publish.yml after a successful commit
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      - name: Refresh publication citation impact
+        run: |
+          uv run python build_publication_impact.py
+          sqlite3 denovo.db .dump > denovo.sql
+
+      - name: Commit if cited_by_count changed
+        id: commit
+        run: |
+          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
+            echo "No citation-count drift this week — nothing to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add denovo.db denovo.sql
+          git commit -m "Weekly refresh of OpenAlex publication citation counts
+
+          Built by .github/workflows/refresh-publication-impact.yml"
+          git push
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger site rebuild
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish.yml --ref main

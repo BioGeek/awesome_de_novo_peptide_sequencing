@@ -1,0 +1,58 @@
+name: Refresh journal metrics
+
+on:
+  schedule:
+    # Twice a year — 1st of January and 1st of July at 06:00 UTC. OpenAlex's
+    # 2-year-mean-citedness is a rolling-window stat that doesn't move
+    # meaningfully on a faster cadence; more frequent refreshes just churn
+    # the same numbers.
+    - cron: '0 6 1 1,7 *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions:  write   # trigger publish.yml after a successful commit
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      - name: Refresh OpenAlex venue metrics
+        run: |
+          uv run python build_journal_metrics.py
+          sqlite3 denovo.db .dump > denovo.sql
+
+      - name: Commit if metrics changed
+        id: commit
+        run: |
+          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
+            echo "No venue-metric drift this cycle — nothing to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add denovo.db denovo.sql
+          git commit -m "Semi-annual refresh of OpenAlex journal metrics
+
+          Built by .github/workflows/refresh-journal-metrics.yml"
+          git push
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger site rebuild
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish.yml --ref main

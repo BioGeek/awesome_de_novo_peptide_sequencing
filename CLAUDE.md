@@ -34,7 +34,30 @@ uv run python build_citations.py
 # Refresh GitHub stars / issues / PRs / last-pushed for every repo in algorithm_repository
 # (offline, ~15 min, uses the `gh` CLI for auth — run `gh auth login` first if needed)
 uv run python build_repo_metrics.py
+
+# Refresh OpenAlex cited_by_count per publication (~5 min)
+uv run python build_publication_impact.py
+
+# Refresh OpenAlex 2-year mean citedness per peer-reviewed venue (~5 min)
+uv run python build_journal_metrics.py
 ```
+
+### Scheduled refreshes (GitHub Actions)
+
+All four builders also run on a cron in `.github/workflows/`, scoped to the
+cadence at which each metric meaningfully moves. Each workflow commits only
+when its data actually changed (no quiet-day churn) and then triggers
+`publish.yml` to redeploy the site.
+
+| Workflow                      | Script                       | Cadence                          | Cron expression  |
+|-------------------------------|------------------------------|----------------------------------|------------------|
+| `refresh-repo-metrics`        | `build_repo_metrics.py`      | Daily                            | `0 6 * * *`      |
+| `refresh-publication-impact`  | `build_publication_impact.py`| Weekly (Sun)                     | `0 6 * * 0`      |
+| `refresh-citation-graph`      | `build_citations.py`         | Monthly (1st)                    | `0 6 1 * *`      |
+| `refresh-journal-metrics`     | `build_journal_metrics.py`   | Semi-annual (Jan 1 + Jul 1)      | `0 6 1 1,7 *`    |
+
+All four are also `workflow_dispatch`-able from the Actions tab if you need an
+on-demand refresh (e.g., right after adding a new paper).
 
 ## Schema shape (read before editing data)
 
