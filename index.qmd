@@ -2820,16 +2820,6 @@ viewof author_search = Inputs.search(authors_table_rows, {
 }
 ```
 
-## Cite this catalog {#cite}
-
-Snapshots of this catalog are archived on Zenodo with a citable DOI. The concept DOI below resolves to the latest version; individual versions get their own DOI under the same concept.
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20825736.svg)](https://doi.org/10.5281/zenodo.20825736)
-
-> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825736>
-
-Machine-readable metadata: [`CITATION.cff`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/CITATION.cff). GitHub's "Cite this repository" button exports BibTeX / APA / RIS / EndNote.
-
 ## Contributing {#contributing}
 
 **Easiest path:** [**open a GitHub issue**](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/issues/new) with a link to the paper (DOI / arXiv / bioRxiv / OpenReview / …) and I'll wire it into the database. Corrections are equally welcome — wrong author lists, missing affiliations, mis-classified *kind* / *DL* / *acquisition*, broken hyperlinks, anything that looks off.
@@ -2844,6 +2834,14 @@ The site is generated from `denovo.db` (SQLite, the source of truth). If you're 
    sqlite3 denovo.db .dump > denovo.sql
    ```
 3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge — typically live within ~3 minutes.
+
+## Cite this catalog {#cite}
+
+If you use this catalog, please cite it:
+
+> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825737>
+
+Machine-readable metadata in [`CITATION.cff`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/CITATION.cff); GitHub's "Cite this repository" button exports BibTeX / APA / RIS / EndNote.
 
 ---
 
