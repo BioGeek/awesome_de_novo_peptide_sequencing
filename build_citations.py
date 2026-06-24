@@ -21,6 +21,7 @@ import re
 import sqlite3
 import sys
 import time
+from datetime import date
 from pathlib import Path
 
 import requests
@@ -44,6 +45,28 @@ def normalize_title(s: str) -> str:
     if not s:
         return ""
     return TITLE_PUNCT_RE.sub(" ", s).strip().lower()
+
+
+def parse_publication_date(value: str | None) -> date | None:
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def is_chronological_citation(
+    citing_id: int,
+    cited_id: int,
+    pub_dates: dict[int, str | None],
+) -> bool:
+    """Return False when a citation points to a future publication."""
+    citing_date = parse_publication_date(pub_dates.get(citing_id))
+    cited_date = parse_publication_date(pub_dates.get(cited_id))
+    if citing_date is None or cited_date is None:
+        return True
+    return citing_date >= cited_date
 
 
 def fetch_crossref_refs(doi: str) -> list[dict]:
@@ -145,7 +168,7 @@ def main() -> int:
     cur  = conn.cursor()
 
     all_pubs = cur.execute(
-        "SELECT id, title, doi FROM publication ORDER BY id"
+        "SELECT id, title, doi, publication_date FROM publication ORDER BY id"
     ).fetchall()
     total = len(all_pubs)
 
@@ -165,14 +188,15 @@ def main() -> int:
     # Lookup tables: DOI → pub_id, normalized_title → pub_id. Built from the
     # *full* catalog so references can resolve back to any paper, not just the
     # filtered subset currently being processed.
-    by_doi   = {(d or "").lower(): pid for pid, _, d in all_pubs if d}
-    by_title = {normalize_title(t): pid for pid, t, _ in all_pubs if t}
+    by_doi   = {(d or "").lower(): pid for pid, _, d, _ in all_pubs if d}
+    by_title = {normalize_title(t): pid for pid, t, _, _ in all_pubs if t}
+    pub_dates = {pid: pub_date for pid, _, _, pub_date in all_pubs}
     all_titles_norm = list(by_title.keys())
 
     audit_rows: list[dict] = []
     edges: dict[tuple[int, int], set[str]] = {}  # (citing, cited) → {sources}
 
-    for idx, (pid, title, doi) in enumerate(pubs, 1):
+    for idx, (pid, title, doi, _) in enumerate(pubs, 1):
         print(f"[{idx}/{len(pubs)}] pub {pid}: {title[:60]}")
 
         # 1) Crossref by DOI
@@ -195,7 +219,7 @@ def main() -> int:
                 or ""
             )
             cited = match_reference(ref_doi, ref_title, by_doi, by_title, all_titles_norm, audit_rows, pid)
-            if cited and cited != pid:
+            if cited and cited != pid and is_chronological_citation(pid, cited, pub_dates):
                 edges.setdefault((pid, cited), set()).add("crossref")
 
         # ---- Match Semantic Scholar references ----
@@ -204,7 +228,7 @@ def main() -> int:
             ref_doi   = (ext.get("DOI") or "").lower().strip()
             ref_title = (ref.get("title") or "")
             cited = match_reference(ref_doi, ref_title, by_doi, by_title, all_titles_norm, audit_rows, pid)
-            if cited and cited != pid:
+            if cited and cited != pid and is_chronological_citation(pid, cited, pub_dates):
                 edges.setdefault((pid, cited), set()).add("semanticscholar")
 
     # ---- Write edges to DB ----
