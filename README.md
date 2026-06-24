@@ -51,3 +51,16 @@ Open a PR with both files. The GitHub Action rebuilds the site and pushes to `gh
 uv sync
 uv run quarto preview
 ```
+
+## License
+
+[MIT](LICENSE). The Python scripts, the Quarto site, the SQLite catalog (`denovo.db` / `denovo.sql`), and the prose are all released under the same permissive terms — see [`LICENSE`](LICENSE) for the verbatim text. Re-use of the catalog is free for any purpose, commercial or otherwise; an acknowledgement back to this project (citation block below) is appreciated but not legally required.
+
+## Citation
+
+Machine-readable citation metadata lives in [`CITATION.cff`](CITATION.cff); GitHub renders a "Cite this repository" button in the sidebar that exposes BibTeX / APA / RIS conversions. After the first archived release on Zenodo, a concept DOI will resolve to the latest tagged version — the badge below will be filled in then.
+
+<!-- After the first GitHub release, replace XXXXXXX with the Zenodo concept-DOI digits.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+-->
+

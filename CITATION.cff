@@ -1,0 +1,39 @@
+# Machine-readable citation metadata. GitHub renders this as a 'Cite this
+# repository' button in the sidebar. Zenodo also reads it when minting a DOI
+# for new releases (the values here override .zenodo.json on conflict).
+cff-version: 1.2.0
+message: "If you use this catalog, please cite it as below."
+title: "Awesome De Novo Peptide Sequencing"
+abstract: >-
+  A comprehensive, curated, and interactive map of the de novo peptide
+  sequencing field — algorithms, post-processors, downstream applications,
+  and adjacent tools, covering both deep-learning and classical approaches.
+  Includes a SQLite database of papers, models, authors, affiliations, and
+  venues, alongside a Quarto-based interactive website with Observable JS
+  visualisations tracking publication impact, journal metrics, and GitHub
+  activity across the field.
+type: software
+authors:
+  - family-names: "Van Goey"
+    given-names: "Jeroen"
+    affiliation: "InstaDeep"
+    orcid: "https://orcid.org/0000-0003-4480-5567"
+repository-code: "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing"
+url: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
+license: MIT
+keywords:
+  - de novo peptide sequencing
+  - proteomics
+  - mass spectrometry
+  - tandem mass spectrometry
+  - MS/MS
+  - bioinformatics
+  - deep learning
+  - awesome list
+  - literature database
+  - curated resource
+# After the first Zenodo release, fill in the concept DOI here and uncomment.
+# identifiers:
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXX"
+#     description: "Concept DOI (resolves to the latest version)"
