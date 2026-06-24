@@ -588,7 +588,11 @@ Plot.plot({
   color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis", "commentary"] },
   marks: [
     Plot.barY(
-      pubs_filtered.filter(p => Number.isFinite(p.year)),
+      // Drop kind='meta' — that's the catalog's self-entry (no
+      // publication_type, no real venue) plus any other meta artefacts
+      // like commentaries-without-method. They'd otherwise render as
+      // transparent stack segments and skew the publication-volume story.
+      pubs_filtered.filter(p => Number.isFinite(p.year) && p.kind !== "meta"),
       Plot.groupX(
         { y: "count" },
         { x: "year", fill: "type", tip: true }

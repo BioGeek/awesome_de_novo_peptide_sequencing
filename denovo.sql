@@ -19,7 +19,7 @@ INSERT INTO author VALUES(11,'Andreas Hougaard Laustsen',NULL);
 INSERT INTO author VALUES(12,'Stan J. J. Brouns',NULL);
 INSERT INTO author VALUES(13,'Anne Ljungars',NULL);
 INSERT INTO author VALUES(14,'Erwin M. Schoof',NULL);
-INSERT INTO author VALUES(15,'Jeroen Van Goey',NULL);
+INSERT INTO author VALUES(15,'Jeroen Van Goey','j.vangoey@instadeep.com');
 INSERT INTO author VALUES(16,'Ulrich auf dem Keller',NULL);
 INSERT INTO author VALUES(17,'Karim Beguir',NULL);
 INSERT INTO author VALUES(18,'Nicolas Lopez Carranza',NULL);
@@ -2468,6 +2468,7 @@ INSERT INTO algorithm VALUES(185,'PeptideShaker',NULL,NULL,NULL,'Open-source Jav
 INSERT INTO algorithm VALUES(186,'Snake venom proteomes review',NULL,NULL,NULL,'Toxins (2017) review and database surveying snake venom proteomes assembled largely via de novo sequencing — entry point into venomics as a downstream application area for de novo methods.','review',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(187,'Human plasma IgG1 repertoire profiling',NULL,NULL,NULL,'De novo MS workflow (LC-MS coupled with Stitch / native MS) for profiling the circulating human plasma IgG1 antibody repertoire, demonstrating individual-specific dynamics — landmark application of de novo to clinical antibodyomics.','downstream-application',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(188,'MS2PIP',NULL,NULL,NULL,'Original MS2PIP — random-forest predictor of MS/MS fragment-ion peak intensities used to rescore search-engine and de novo sequencing results. Later updates (2019 web server, 2024 DL backbone) live in algorithm.short_description.','adjacent',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(189,'Awesome De Novo Peptide Sequencing catalog',NULL,NULL,NULL,'This catalog itself — a curated, interactive map of the de novo peptide sequencing field. SQLite database of papers, models, authors, affiliations, and venues, surfaced via an Observable JS site. Released under CC BY 4.0 (catalog) + MIT (helper scripts).','meta',NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2693,6 +2694,7 @@ INSERT INTO publication VALUES(212,'PeptideShaker enables reanalysis of MS-deriv
 INSERT INTO publication VALUES(213,'A Review and Database of Snake Venom Proteomes','2017-09-18','10.3390/toxins9090290','MDPI AG',NULL,'https://doi.org/10.3390/toxins9090290','Toxins','peer-reviewed',NULL);
 INSERT INTO publication VALUES(214,'Human plasma IgG1 repertoires are simple, unique, and dynamic','2021-12-01','10.1016/j.cels.2021.08.008','Elsevier BV',NULL,'https://doi.org/10.1016/j.cels.2021.08.008','Cell Systems','peer-reviewed',NULL);
 INSERT INTO publication VALUES(215,'MS2PIP: a tool for MS/MS peak intensity prediction','2013-09-27','10.1093/bioinformatics/btt544','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bioinformatics/btt544','Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(216,'Awesome De Novo Peptide Sequencing','2026-06-24','10.5281/zenodo.20825737','Zenodo',NULL,'https://doi.org/10.5281/zenodo.20825737','Zenodo','','v0.1.0');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2920,6 +2922,7 @@ INSERT INTO publication_algorithm VALUES(212,185);
 INSERT INTO publication_algorithm VALUES(213,186);
 INSERT INTO publication_algorithm VALUES(214,187);
 INSERT INTO publication_algorithm VALUES(215,188);
+INSERT INTO publication_algorithm VALUES(216,189);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4285,6 +4288,7 @@ INSERT INTO publication_author VALUES(214,805,13);
 INSERT INTO publication_author VALUES(214,806,14);
 INSERT INTO publication_author VALUES(215,787,1);
 INSERT INTO publication_author VALUES(215,29,2);
+INSERT INTO publication_author VALUES(216,15,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6014,8 +6018,8 @@ INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',146);
 INSERT INTO sqlite_sequence VALUES('affiliation',325);
 INSERT INTO sqlite_sequence VALUES('author',806);
-INSERT INTO sqlite_sequence VALUES('algorithm',188);
-INSERT INTO sqlite_sequence VALUES('publication',215);
+INSERT INTO sqlite_sequence VALUES('algorithm',189);
+INSERT INTO sqlite_sequence VALUES('publication',216);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
