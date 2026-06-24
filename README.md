@@ -4,6 +4,8 @@ A comprehensive, interactive map of the *de novo* peptide sequencing field — a
 
 🌐 **Live site:** <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20825736.svg)](https://doi.org/10.5281/zenodo.20825736)
+
 ## Scope
 
 The repository tracks the *de novo* peptide sequencing field broadly. Every paper is classified by:
@@ -63,9 +65,13 @@ The Zenodo deposit is archived under CC BY 4.0 (the umbrella that covers the bul
 
 ## Citation
 
-Machine-readable citation metadata lives in [`CITATION.cff`](CITATION.cff); GitHub renders a "Cite this repository" button in the sidebar that exposes BibTeX / APA / RIS conversions. After the first archived release on Zenodo, a concept DOI will resolve to the latest tagged version — the badge below will be filled in then.
+Snapshots of this catalog are archived on Zenodo. The **concept DOI** below resolves to the latest version; each tagged release gets its own version-specific DOI under that concept.
 
-<!-- After the first GitHub release, replace XXXXXXX with the Zenodo concept-DOI digits.
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
--->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20825736.svg)](https://doi.org/10.5281/zenodo.20825736)
+
+Suggested citation:
+
+> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825736>
+
+Machine-readable metadata lives in [`CITATION.cff`](CITATION.cff); GitHub renders a "Cite this repository" button in the sidebar that exposes BibTeX / APA / RIS / EndNote conversions.
 

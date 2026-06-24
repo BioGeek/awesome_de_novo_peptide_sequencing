@@ -33,8 +33,10 @@ keywords:
   - awesome list
   - literature database
   - curated resource
-# After the first Zenodo release, fill in the concept DOI here and uncomment.
-# identifiers:
-#   - type: doi
-#     value: "10.5281/zenodo.XXXXXXX"
-#     description: "Concept DOI (resolves to the latest version)"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20825736"
+    description: "Concept DOI (resolves to the latest version)"
+  - type: doi
+    value: "10.5281/zenodo.20825737"
+    description: "Version DOI for v0.1.0 (the inaugural archived release)"
