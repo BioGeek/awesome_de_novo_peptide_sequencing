@@ -81,6 +81,6 @@
     "href": "index.html#cite",
     "title": "Awesome De Novo Peptide Sequencing",
     "section": "Cite this catalog",
-    "text": "Cite this catalog\nIf you use this catalog, please cite it:\n\nVan Goey, J. Awesome De Novo Peptide Sequencing. Zenodo. https://doi.org/10.5281/zenodo.20825737\n\nMachine-readable metadata in CITATION.cff; GitHub’s “Cite this repository” button exports BibTeX / APA / RIS / EndNote.\n\n\nThis page is a comprehensive map of de novo peptide sequencing — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike. Source data and code: GitHub — rebuilt automatically on every push to main."
+    "text": "Cite this catalog\nIf you use this catalog, please cite it as:\n\nVan Goey, J. Awesome De Novo Peptide Sequencing. Zenodo. https://doi.org/10.5281/zenodo.20825737\n\nMachine-readable metadata is in CITATION.cff; GitHub’s “Cite this repository” button exports BibTeX / APA.\n\n\nThis page is a comprehensive map of de novo peptide sequencing — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike. Source data and code: GitHub — rebuilt automatically on every push to main."
   }
 ]
