@@ -20,7 +20,8 @@ authors:
     orcid: "https://orcid.org/0000-0003-4480-5567"
 repository-code: "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing"
 url: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
-license: MIT
+license: CC-BY-4.0
+license-url: "https://creativecommons.org/licenses/by/4.0/"
 keywords:
   - de novo peptide sequencing
   - proteomics

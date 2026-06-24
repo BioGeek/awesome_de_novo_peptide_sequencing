@@ -54,7 +54,12 @@ uv run quarto preview
 
 ## License
 
-[MIT](LICENSE). The Python scripts, the Quarto site, the SQLite catalog (`denovo.db` / `denovo.sql`), and the prose are all released under the same permissive terms — see [`LICENSE`](LICENSE) for the verbatim text. Re-use of the catalog is free for any purpose, commercial or otherwise; an acknowledgement back to this project (citation block below) is appreciated but not legally required.
+Dual-licensed so the data and the code each get the convention of their own community:
+
+- **Curated catalog + prose** (`denovo.db`, `denovo.sql`, `index.qmd`, README and other docs) → [**CC BY 4.0**](LICENSE). Use it for anything, commercial or otherwise; the only ask is appropriate credit (see [Citation](#citation)).
+- **Python scripts** (`build_citations.py`, `build_journal_metrics.py`, `build_repo_metrics.py`, `build_publication_impact.py`) → [**MIT**](LICENSE-CODE). Standard permissive terms; copyright notice must be preserved when redistributing.
+
+The Zenodo deposit is archived under CC BY 4.0 (the umbrella that covers the bulk of the artefact). The MIT terms on the helper scripts ride along for anyone who wants to lift the scripts into a permissively-licensed downstream tool.
 
 ## Citation
 
