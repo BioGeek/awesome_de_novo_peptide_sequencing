@@ -1,10 +1,11 @@
+
 # Awesome *De Novo* Peptide Sequencing
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20825737.svg)](https://doi.org/10.5281/zenodo.20825737)
 
 A comprehensive, curated, and interactive map of the *de novo* peptide sequencing field. Algorithms, post-processors, downstream applications and adjacent tools, covering both deep-learning and classical approaches. Includes a SQLite database of papers, models, authors, affiliations, and   venues, alongside a Quarto-based interactive website with Observable JS visualisations tracking publication impact, journal metrics, and GitHub activity across the field.
 
 🌐 **Live site:** <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20825737.svg)](https://doi.org/10.5281/zenodo.20825737)
 
 ## Scope
 
