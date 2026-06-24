@@ -2837,11 +2837,11 @@ The site is generated from `denovo.db` (SQLite, the source of truth). If you're 
 
 ## Cite this catalog {#cite}
 
-If you use this catalog, please cite it:
+If you use this catalog, please cite it as:
 
 > Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825737>
 
-Machine-readable metadata in [`CITATION.cff`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/CITATION.cff); GitHub's "Cite this repository" button exports BibTeX / APA / RIS / EndNote.
+Machine-readable metadata is in [`CITATION.cff`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/CITATION.cff); GitHub's "Cite this repository" button exports BibTeX / APA.
 
 ---
 
