@@ -2469,6 +2469,7 @@ INSERT INTO algorithm VALUES(186,'Snake venom proteomes review',NULL,NULL,NULL,'
 INSERT INTO algorithm VALUES(187,'Human plasma IgG1 repertoire profiling',NULL,NULL,NULL,'De novo MS workflow (LC-MS coupled with Stitch / native MS) for profiling the circulating human plasma IgG1 antibody repertoire, demonstrating individual-specific dynamics — landmark application of de novo to clinical antibodyomics.','downstream-application',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(188,'MS2PIP',NULL,NULL,NULL,'Original MS2PIP — random-forest predictor of MS/MS fragment-ion peak intensities used to rescore search-engine and de novo sequencing results. Later updates (2019 web server, 2024 DL backbone) live in algorithm.short_description.','adjacent',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(189,'Awesome De Novo Peptide Sequencing catalog',NULL,NULL,NULL,'This catalog itself — a curated, interactive map of the de novo peptide sequencing field. SQLite database of papers, models, authors, affiliations, and venues, surfaced via an Observable JS site. Released under CC BY 4.0 (catalog) + MIT (helper scripts).','meta',NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(190,'jingbo02 Awesome-Denovo-Peptide-Sequencing',NULL,NULL,NULL,'Curated GitHub-resident paper collection covering de novo peptide sequencing, maintained by Jingbo Zhou (Westlake / Zhejiang). Kindred meta-resource alongside this catalog — slightly different scope and editorial choices, but covers the same field.','meta',NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2695,6 +2696,7 @@ INSERT INTO publication VALUES(213,'A Review and Database of Snake Venom Proteom
 INSERT INTO publication VALUES(214,'Human plasma IgG1 repertoires are simple, unique, and dynamic','2021-12-01','10.1016/j.cels.2021.08.008','Elsevier BV',NULL,'https://doi.org/10.1016/j.cels.2021.08.008','Cell Systems','peer-reviewed',NULL);
 INSERT INTO publication VALUES(215,'MS2PIP: a tool for MS/MS peak intensity prediction','2013-09-27','10.1093/bioinformatics/btt544','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bioinformatics/btt544','Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(216,'Awesome De Novo Peptide Sequencing','2026-06-24','10.5281/zenodo.20825737','Zenodo',NULL,'https://doi.org/10.5281/zenodo.20825737','Zenodo','','v0.1.0');
+INSERT INTO publication VALUES(217,'Awesome-Denovo-Peptide-Sequencing','2024-04-10',NULL,'GitHub',NULL,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing','GitHub','',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2923,6 +2925,7 @@ INSERT INTO publication_algorithm VALUES(213,186);
 INSERT INTO publication_algorithm VALUES(214,187);
 INSERT INTO publication_algorithm VALUES(215,188);
 INSERT INTO publication_algorithm VALUES(216,189);
+INSERT INTO publication_algorithm VALUES(217,190);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4289,6 +4292,7 @@ INSERT INTO publication_author VALUES(214,806,14);
 INSERT INTO publication_author VALUES(215,787,1);
 INSERT INTO publication_author VALUES(215,29,2);
 INSERT INTO publication_author VALUES(216,15,1);
+INSERT INTO publication_author VALUES(217,56,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5749,6 +5753,7 @@ INSERT INTO algorithm_repository VALUES(14,'https://github.com/AmadeusloveIris/R
 INSERT INTO algorithm_repository VALUES(174,'https://github.com/ddz-icb/DLDN-Bench',0);
 INSERT INTO algorithm_repository VALUES(177,'https://github.com/compomics/denovogui',0);
 INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/searchgui',0);
+INSERT INTO algorithm_repository VALUES(190,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -5804,6 +5809,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,
 INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,1,0,0,1,0,'2026-04-30T08:03:10Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',15,9,6,44,1,2,'2024-03-11T14:07:59Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,16,18,360,1,5,'2025-08-15T14:01:55Z','2026-06-24T08:16:11',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -6018,8 +6024,8 @@ INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',146);
 INSERT INTO sqlite_sequence VALUES('affiliation',325);
 INSERT INTO sqlite_sequence VALUES('author',806);
-INSERT INTO sqlite_sequence VALUES('algorithm',189);
-INSERT INTO sqlite_sequence VALUES('publication',216);
+INSERT INTO sqlite_sequence VALUES('algorithm',190);
+INSERT INTO sqlite_sequence VALUES('publication',217);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
