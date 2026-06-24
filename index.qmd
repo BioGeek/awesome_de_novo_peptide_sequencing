@@ -457,11 +457,12 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 **Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
-::::: {.sticky-filters}
-::: {.sticky-filters-header}
-🎚️ **Filters** — Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll.
+::::: {.sticky-filters .collapsed-on-mobile}
+::: {.sticky-filters-header role="button" tabindex="0" aria-expanded="false" aria-controls="sticky-filter-body"}
+🎚️ **Filters** — Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
 :::
 
+:::: {#sticky-filter-body .sticky-filters-body}
 ```{ojs}
 //| echo: false
 viewof kind_filter = Inputs.checkbox(kinds_present, { label: "Kind", value: kinds_present })
@@ -476,6 +477,7 @@ viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "
 //| echo: false
 viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
 ```
+::::
 :::::
 
 ```{ojs}
@@ -506,6 +508,8 @@ n_papers_filtered = pubs_filtered.length
   border: 1px solid #d0d7de;
   border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+.sticky-filters-body {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -513,16 +517,61 @@ n_papers_filtered = pubs_filtered.length
 }
 .sticky-filters .cell { margin: 0; }
 .sticky-filters-header {
-  flex-basis: 100%;
   font-size: 0.88rem;
   color: #424a53;
   padding: 0.15rem 0 0.25rem;
   border-bottom: 1px dashed #d0d7de;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.45rem;
 }
 .sticky-filters-header p { margin: 0; }
 .sticky-filters form { margin: 0 !important; }
+.sticky-filters-toggle-hint { display: none; }
+.sticky-filters-chevron { transition: transform 0.15s ease; display: inline-block; }
+.sticky-filters[aria-expanded="true"] .sticky-filters-chevron { transform: rotate(90deg); }
+
+@media (max-width: 768px) {
+  /* On mobile the three input groups stacked vertically eat half the
+     viewport. Hide the body by default; the header becomes a tappable
+     row that expands/collapses on click. */
+  .sticky-filters.collapsed-on-mobile .sticky-filters-body { display: none; }
+  .sticky-filters.collapsed-on-mobile[aria-expanded="true"] .sticky-filters-body { display: flex; }
+  .sticky-filters-header { cursor: pointer; user-select: none; margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+  .sticky-filters[aria-expanded="true"] .sticky-filters-header { margin-bottom: 0.45rem; border-bottom: 1px dashed #d0d7de; padding-bottom: 0.25rem; }
+  .sticky-filters-toggle-hint { display: inline; margin-left: 0.25rem; color: #57606a; }
+}
 </style>
+<script>
+// Tap-to-toggle the filter pane on mobile widths (≤768px).
+// On wider viewports, leave the panel always expanded — the script only
+// flips aria-expanded so the chevron and body visibility CSS reacts.
+(() => {
+  const wrap = document.currentScript.previousElementSibling
+    || document.querySelector('.sticky-filters');
+  if (!wrap) return;
+  const header = wrap.querySelector('.sticky-filters-header');
+  if (!header) return;
+  const toggle = () => {
+    const open = wrap.getAttribute('aria-expanded') === 'true';
+    wrap.setAttribute('aria-expanded', open ? 'false' : 'true');
+    header.setAttribute('aria-expanded', open ? 'false' : 'true');
+  };
+  // Only interactive on mobile widths; on desktop the CSS shows the body unconditionally.
+  const wireUp = () => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      header.addEventListener('click', toggle);
+      header.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    }
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireUp);
+  } else {
+    wireUp();
+  }
+})();
+</script>
 ```
 
 ## The wave
