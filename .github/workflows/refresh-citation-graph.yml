@@ -2,12 +2,15 @@ name: Refresh citation graph
 
 on:
   schedule:
-    # Monthly on the 1st at 06:00 UTC. Crossref + Semantic Scholar back-fill
-    # their reference indexes over weeks/months as new bibliographies are
-    # ingested, so an existing publication's resolvable edges can grow even
-    # without us adding new papers. Monthly catches that drift without burning
-    # rate budget on a ~30-minute full sweep too often.
-    - cron: '0 6 1 * *'
+    # Monthly on the 1st at 07:00 UTC — 30 minutes after the weekly window
+    # closes (when the 1st falls on a Sunday) and a full hour after the daily
+    # repo-metrics workflow, so the three never race on the main branch.
+    # Crossref + Semantic Scholar back-fill their reference indexes over
+    # weeks/months as new bibliographies are ingested, so an existing
+    # publication's resolvable edges can grow even without us adding new
+    # papers. Monthly catches that drift without burning rate budget on a
+    # ~30-minute full sweep too often.
+    - cron: '0 7 1 * *'
   workflow_dispatch:
 
 permissions:

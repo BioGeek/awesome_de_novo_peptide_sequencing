@@ -51,10 +51,16 @@ when its data actually changed (no quiet-day churn) and then triggers
 
 | Workflow                      | Script                       | Cadence                          | Cron expression  |
 |-------------------------------|------------------------------|----------------------------------|------------------|
-| `refresh-repo-metrics`        | `build_repo_metrics.py`      | Daily                            | `0 6 * * *`      |
-| `refresh-publication-impact`  | `build_publication_impact.py`| Weekly (Sun)                     | `0 6 * * 0`      |
-| `refresh-citation-graph`      | `build_citations.py`         | Monthly (1st)                    | `0 6 1 * *`      |
-| `refresh-journal-metrics`     | `build_journal_metrics.py`   | Semi-annual (Jan 1 + Jul 1)      | `0 6 1 1,7 *`    |
+| `refresh-repo-metrics`        | `build_repo_metrics.py`      | Daily 06:00 UTC                  | `0 6 * * *`      |
+| `refresh-publication-impact`  | `build_publication_impact.py`| Weekly Sun 06:30 UTC             | `30 6 * * 0`     |
+| `refresh-citation-graph`      | `build_citations.py`         | Monthly 1st 07:00 UTC            | `0 7 1 * *`      |
+| `refresh-journal-metrics`     | `build_journal_metrics.py`   | Semi-annual Jan 1 + Jul 1 08:00 UTC | `0 8 1 1,7 *` |
+
+The slot-per-hour staircase is deliberate: when two workflows are scheduled
+on the same calendar day (e.g. daily + weekly on a Sunday, all four on
+Jan 1 / Jul 1) the earlier one finishes before the next one starts, so they
+never race for `main` and the conditional-commit + `gh workflow run` chain
+stays deterministic.
 
 All four are also `workflow_dispatch`-able from the Actions tab if you need an
 on-demand refresh (e.g., right after adding a new paper).

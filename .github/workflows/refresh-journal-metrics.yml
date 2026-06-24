@@ -2,11 +2,13 @@ name: Refresh journal metrics
 
 on:
   schedule:
-    # Twice a year — 1st of January and 1st of July at 06:00 UTC. OpenAlex's
-    # 2-year-mean-citedness is a rolling-window stat that doesn't move
-    # meaningfully on a faster cadence; more frequent refreshes just churn
-    # the same numbers.
-    - cron: '0 6 1 1,7 *'
+    # Twice a year — 1st of January and 1st of July at 08:00 UTC. On those
+    # days the daily (06:00), weekly-if-Sunday (06:30), and monthly (07:00)
+    # have all already finished, so the four workflows are well-spaced and
+    # never race for the main branch. OpenAlex's 2-year-mean-citedness is a
+    # rolling-window stat that doesn't move meaningfully on a faster cadence;
+    # more frequent refreshes just churn the same numbers.
+    - cron: '0 8 1 1,7 *'
   workflow_dispatch:
 
 permissions:
