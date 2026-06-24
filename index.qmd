@@ -541,29 +541,25 @@ n_papers_filtered = pubs_filtered.length
 }
 </style>
 <script>
-// Tap-to-toggle the filter pane on mobile widths (≤768px).
-// On wider viewports, leave the panel always expanded — the script only
-// flips aria-expanded so the chevron and body visibility CSS reacts.
+// Tap-to-toggle the sticky filter pane. Always wires the click handler on
+// every viewport — the @media (max-width:768px) CSS rule is what actually
+// hides/shows the body based on aria-expanded, so on desktop a tap just
+// rotates the (display:none) chevron with no visible effect.
 (() => {
-  const wrap = document.currentScript.previousElementSibling
-    || document.querySelector('.sticky-filters');
-  if (!wrap) return;
-  const header = wrap.querySelector('.sticky-filters-header');
-  if (!header) return;
-  const toggle = () => {
-    const open = wrap.getAttribute('aria-expanded') === 'true';
-    wrap.setAttribute('aria-expanded', open ? 'false' : 'true');
-    header.setAttribute('aria-expanded', open ? 'false' : 'true');
-  };
-  // Only interactive on mobile widths; on desktop the CSS shows the body unconditionally.
   const wireUp = () => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (isMobile) {
-      header.addEventListener('click', toggle);
-      header.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-      });
-    }
+    const wrap = document.querySelector('.sticky-filters');
+    if (!wrap) return;
+    const header = wrap.querySelector('.sticky-filters-header');
+    if (!header) return;
+    const toggle = () => {
+      const open = wrap.getAttribute('aria-expanded') === 'true';
+      wrap.setAttribute('aria-expanded', open ? 'false' : 'true');
+      header.setAttribute('aria-expanded', open ? 'false' : 'true');
+    };
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', wireUp);
