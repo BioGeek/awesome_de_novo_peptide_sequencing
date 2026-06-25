@@ -5831,6 +5831,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',15,9,6,44,1,2,'2024-03-11T14:07:59Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,16,18,360,1,5,'2025-08-15T14:01:55Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,1,0,0,0,'2026-04-07T00:28:43Z','2026-06-25T10:23:51',NULL);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
