@@ -798,6 +798,8 @@ INSERT INTO author VALUES(803,'Meri R.J. Varkila',NULL);
 INSERT INTO author VALUES(804,'Olaf L. Cremer',NULL);
 INSERT INTO author VALUES(805,'Marc J.M. Bonten',NULL);
 INSERT INTO author VALUES(806,'Albert J.R. Heck',NULL);
+INSERT INTO author VALUES(807,'Jacob H. Russell',NULL);
+INSERT INTO author VALUES(808,'Nicholas M. Riley',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2470,6 +2472,7 @@ INSERT INTO algorithm VALUES(187,'Human plasma IgG1 repertoire profiling',NULL,N
 INSERT INTO algorithm VALUES(188,'MS2PIP',NULL,NULL,NULL,'Original MS2PIP — random-forest predictor of MS/MS fragment-ion peak intensities used to rescore search-engine and de novo sequencing results. Later updates (2019 web server, 2024 DL backbone) live in algorithm.short_description.','adjacent',0,'DDA',NULL);
 INSERT INTO algorithm VALUES(189,'Awesome De Novo Peptide Sequencing catalog',NULL,NULL,NULL,'This catalog itself — a curated, interactive map of the de novo peptide sequencing field. SQLite database of papers, models, authors, affiliations, and venues, surfaced via an Observable JS site. Released under CC BY 4.0 (catalog) + MIT (helper scripts).','meta',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(190,'jingbo02 Awesome-Denovo-Peptide-Sequencing',NULL,NULL,NULL,'Curated GitHub-resident paper collection covering de novo peptide sequencing, maintained by Jingbo Zhou (Westlake / Zhejiang). Kindred meta-resource alongside this catalog — slightly different scope and editorial choices, but covers the same field.','meta',NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(191,'Casanovo Foundation',NULL,NULL,'Transformer (AR)','Foundation model for tandem-MS proteomics — pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5.','algorithm',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2697,6 +2700,7 @@ INSERT INTO publication VALUES(214,'Human plasma IgG1 repertoires are simple, un
 INSERT INTO publication VALUES(215,'MS2PIP: a tool for MS/MS peak intensity prediction','2013-09-27','10.1093/bioinformatics/btt544','Oxford University Press (OUP)',NULL,'https://doi.org/10.1093/bioinformatics/btt544','Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(216,'Awesome De Novo Peptide Sequencing','2026-06-24','10.5281/zenodo.20825737','Zenodo',NULL,'https://doi.org/10.5281/zenodo.20825737','Zenodo','','v0.1.0');
 INSERT INTO publication VALUES(217,'Awesome-Denovo-Peptide-Sequencing','2024-04-10',NULL,'GitHub',NULL,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing','GitHub','',NULL);
+INSERT INTO publication VALUES(218,'Foundation model for mass spectrometry proteomics','2025-05-16','10.48550/arXiv.2505.10848','arXiv',NULL,'https://arxiv.org/abs/2505.10848','arXiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2926,6 +2930,7 @@ INSERT INTO publication_algorithm VALUES(214,187);
 INSERT INTO publication_algorithm VALUES(215,188);
 INSERT INTO publication_algorithm VALUES(216,189);
 INSERT INTO publication_algorithm VALUES(217,190);
+INSERT INTO publication_algorithm VALUES(218,191);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4293,6 +4298,14 @@ INSERT INTO publication_author VALUES(215,787,1);
 INSERT INTO publication_author VALUES(215,29,2);
 INSERT INTO publication_author VALUES(216,15,1);
 INSERT INTO publication_author VALUES(217,56,1);
+INSERT INTO publication_author VALUES(218,89,1);
+INSERT INTO publication_author VALUES(218,92,2);
+INSERT INTO publication_author VALUES(218,807,3);
+INSERT INTO publication_author VALUES(218,95,4);
+INSERT INTO publication_author VALUES(218,86,5);
+INSERT INTO publication_author VALUES(218,808,6);
+INSERT INTO publication_author VALUES(218,94,7);
+INSERT INTO publication_author VALUES(218,96,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -5638,6 +5651,13 @@ INSERT INTO publication_citation VALUES(211,101,'both');
 INSERT INTO publication_citation VALUES(211,215,'both');
 INSERT INTO publication_citation VALUES(214,159,'both');
 INSERT INTO publication_citation VALUES(214,189,'both');
+INSERT INTO publication_citation VALUES(218,26,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,49,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,62,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,65,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,73,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,76,'semanticscholar');
+INSERT INTO publication_citation VALUES(218,81,'semanticscholar');
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -5754,6 +5774,7 @@ INSERT INTO algorithm_repository VALUES(174,'https://github.com/ddz-icb/DLDN-Ben
 INSERT INTO algorithm_repository VALUES(177,'https://github.com/compomics/denovogui',0);
 INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/searchgui',0);
 INSERT INTO algorithm_repository VALUES(190,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',0);
+INSERT INTO algorithm_repository VALUES(191,'https://github.com/Noble-Lab/casanovo-foundation',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -6023,9 +6044,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',146);
 INSERT INTO sqlite_sequence VALUES('affiliation',325);
-INSERT INTO sqlite_sequence VALUES('author',806);
-INSERT INTO sqlite_sequence VALUES('algorithm',190);
-INSERT INTO sqlite_sequence VALUES('publication',217);
+INSERT INTO sqlite_sequence VALUES('author',808);
+INSERT INTO sqlite_sequence VALUES('algorithm',191);
+INSERT INTO sqlite_sequence VALUES('publication',218);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
