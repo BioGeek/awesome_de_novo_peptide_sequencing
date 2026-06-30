@@ -5818,6 +5818,7 @@ INSERT INTO algorithm_repository VALUES(177,'https://github.com/compomics/denovo
 INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/searchgui',0);
 INSERT INTO algorithm_repository VALUES(190,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',0);
 INSERT INTO algorithm_repository VALUES(191,'https://github.com/Noble-Lab/casanovo-foundation',0);
+INSERT INTO algorithm_repository VALUES(192,'https://openi.pcl.ac.cn/OpenI/pi-HelixNovo-NPU',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
