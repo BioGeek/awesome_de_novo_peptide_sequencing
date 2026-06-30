@@ -804,6 +804,8 @@ INSERT INTO author VALUES(809,'Cheng Lai',NULL);
 INSERT INTO author VALUES(810,'Jiangli Hu',NULL);
 INSERT INTO author VALUES(811,'Zexuan Yi',NULL);
 INSERT INTO author VALUES(812,'Yue Yu',NULL);
+INSERT INTO author VALUES(813,'Jiayi Li',NULL);
+INSERT INTO author VALUES(814,'Hannes Röst','hannes.rost@utoronto.ca');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1334,6 +1336,7 @@ INSERT INTO affiliation VALUES(323,'University of Bergen','Computational Biology
 INSERT INTO affiliation VALUES(324,'University of Bergen','KG Jebsen Center for Diabetes Research, Department of Clinical Science',20,74);
 INSERT INTO affiliation VALUES(325,'Haukeland University Hospital','Center for Medical Genetics and Molecular Medicine',20,74);
 INSERT INTO affiliation VALUES(326,'Pengcheng Laboratory',NULL,2,10);
+INSERT INTO affiliation VALUES(327,'University of Toronto','Donnelly Centre for Cellular and Biomolecular Research',9,97);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2295,6 +2298,8 @@ INSERT INTO author_affiliation VALUES(143,186);
 INSERT INTO author_affiliation VALUES(144,186);
 INSERT INTO author_affiliation VALUES(147,186);
 INSERT INTO author_affiliation VALUES(151,186);
+INSERT INTO author_affiliation VALUES(813,327);
+INSERT INTO author_affiliation VALUES(814,327);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2491,6 +2496,7 @@ INSERT INTO algorithm VALUES(189,'Awesome De Novo Peptide Sequencing catalog',NU
 INSERT INTO algorithm VALUES(190,'jingbo02 Awesome-Denovo-Peptide-Sequencing',NULL,NULL,NULL,'Curated GitHub-resident paper collection covering de novo peptide sequencing, maintained by Jingbo Zhou (Westlake / Zhejiang). Kindred meta-resource alongside this catalog — slightly different scope and editorial choices, but covers the same field.','meta',NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(191,'Casanovo Foundation',NULL,NULL,'Transformer (AR)','Foundation model for tandem-MS proteomics — pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(192,'π-HelixNovo2',NULL,NULL,'Transformer (AR)','Successor to π-HelixNovo with an emphasis on availability: an online inference service alongside the model architecture refinement. Same Tsinghua / Pengcheng Lab / NCPSB collaboration as the original.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(193,'Li & Röst 2026 prior-vs-physics benchmark',NULL,NULL,NULL,'Benchmark that disentangles how much of a DL de novo sequencer''s output reflects MS/MS fragmentation evidence vs learned peptide-sequence priors — important for assessing robustness on out-of-distribution proteomes.','benchmark',NULL,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2720,6 +2726,7 @@ INSERT INTO publication VALUES(216,'Awesome De Novo Peptide Sequencing','2026-06
 INSERT INTO publication VALUES(217,'Awesome-Denovo-Peptide-Sequencing','2024-04-10',NULL,'GitHub',NULL,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing','GitHub','',NULL);
 INSERT INTO publication VALUES(218,'Foundation model for mass spectrometry proteomics','2025-05-16','10.48550/arXiv.2505.10848','arXiv',NULL,'https://arxiv.org/abs/2505.10848','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(219,'π-HelixNovo2: Making Accurate Online De Novo Peptide Sequencing Available to All','2026-06-25','10.1093/gpbjnl/qzag049','Oxford University Press',NULL,'https://academic.oup.com/gpb/advance-article/doi/10.1093/gpbjnl/qzag049/8716247','Genomics, Proteomics & Bioinformatics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(220,'Learning Fragmentation Physics or Exploiting Sequence Priors? Benchmarking Bias in Deep Learning Models for De Novo Peptide Sequencing','2026-06-29','10.64898/2026.06.23.734131','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.23.734131v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2951,6 +2958,7 @@ INSERT INTO publication_algorithm VALUES(216,189);
 INSERT INTO publication_algorithm VALUES(217,190);
 INSERT INTO publication_algorithm VALUES(218,191);
 INSERT INTO publication_algorithm VALUES(219,192);
+INSERT INTO publication_algorithm VALUES(220,193);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4338,6 +4346,8 @@ INSERT INTO publication_author VALUES(219,147,9);
 INSERT INTO publication_author VALUES(219,812,10);
 INSERT INTO publication_author VALUES(219,151,11);
 INSERT INTO publication_author VALUES(219,163,12);
+INSERT INTO publication_author VALUES(220,813,1);
+INSERT INTO publication_author VALUES(220,814,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6077,10 +6087,10 @@ INSERT INTO publication_impact VALUES(198,'W7163211145',0,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',146);
-INSERT INTO sqlite_sequence VALUES('affiliation',326);
-INSERT INTO sqlite_sequence VALUES('author',812);
-INSERT INTO sqlite_sequence VALUES('algorithm',192);
-INSERT INTO sqlite_sequence VALUES('publication',219);
+INSERT INTO sqlite_sequence VALUES('affiliation',327);
+INSERT INTO sqlite_sequence VALUES('author',814);
+INSERT INTO sqlite_sequence VALUES('algorithm',193);
+INSERT INTO sqlite_sequence VALUES('publication',220);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
