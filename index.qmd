@@ -1054,16 +1054,20 @@ application_timeline = {
         tip: true,
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
-      // Labels sit just above the dot (upper half of lane) or just below (lower half).
-      // dy tightened from 10 → 6 so labels don't spill into neighbouring lanes.
+      // Labels rotated -30° so long taxon-focused names ("Anatolian meadow viper
+      // top-down ISD venomics" = 44 chars ≈ 350 px unrotated) stack diagonally
+      // instead of running horizontally into each other. Standard timeline pattern.
+      // Upper half of lane → label goes up-right; lower half → label goes down-right.
       Plot.text(items.filter(d => d.y_frac >= 0.5), {
         x: "first_pub", y: "y", text: "model",
-        textAnchor: "middle", lineAnchor: "bottom", dy: -6,
+        textAnchor: "start", lineAnchor: "bottom",
+        dx: 8, dy: -4, rotate: -30,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       }),
       Plot.text(items.filter(d => d.y_frac < 0.5), {
         x: "first_pub", y: "y", text: "model",
-        textAnchor: "middle", lineAnchor: "top", dy: 6,
+        textAnchor: "start", lineAnchor: "top",
+        dx: 8, dy: 4, rotate: 30,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
     ]
