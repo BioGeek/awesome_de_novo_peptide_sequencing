@@ -23,11 +23,11 @@ Per repository we record:
   - latest_release     from /releases/latest, falling back to the most
                        recent /tags entry; NULL if neither exists.
 
-(`open_issues_count` on /repos is unusable in isolation — GitHub counts pull
+(`open_issues_count` on /repos is unusable in isolation; GitHub counts pull
 requests as issues for that field, a longstanding quirk.)
 
 Non-GitHub URLs (PyPI, anonymous.4open.science, project home pages, …) are
-skipped — the script logs them and leaves the row absent.
+skipped: the script logs them and leaves the row absent.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ DB_PATH = Path(__file__).parent / "denovo.db"
 
 GH_URL_RE = re.compile(r"https?://github\.com/([^/\s]+)/([^/\s#?]+)")
 REPO_DELAY   = 0.5  # delay between /repos calls (5000/hr quota)
-SEARCH_DELAY = 2.5  # delay between /search calls (30/min secondary limit — easy to trip)
+SEARCH_DELAY = 2.5  # delay between /search calls (30/min secondary limit, easy to trip)
 
 
 def gh_api(path: str) -> dict | None:
@@ -212,7 +212,7 @@ def main() -> int:
         print(f"  ★ {metrics['stars']:>5}  "
               f"issues open/closed {metrics['open_issues']}/{metrics['closed_issues']}  "
               f"PRs open/closed {metrics['open_prs']}/{metrics['closed_prs']}  "
-              f"release {metrics.get('latest_release') or '—'}  "
+              f"release {metrics.get('latest_release') or 'n/a'}  "
               f"last pushed {metrics['last_pushed']}")
         ok += 1
 

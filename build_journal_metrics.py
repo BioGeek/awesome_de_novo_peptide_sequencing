@@ -7,12 +7,12 @@ metrics annually.
 Source: https://api.openalex.org/sources?search={journal}
        https://api.openalex.org/sources/{openalex_id}
 
-We pull `summary_stats.2yr_mean_citedness` — methodologically equivalent to the
+We pull `summary_stats.2yr_mean_citedness`, methodologically equivalent to the
 JCR Impact Factor (mean citations in year t to articles published in years t-1
 and t-2) but computed over OpenAlex's open citation graph. We also store
 `summary_stats.h_index` and `works_count` for context.
 
-Conference proceedings and preprint servers are skipped — they don't have a
+Conference proceedings and preprint servers are skipped; they don't have a
 meaningful IF-style metric. The script identifies them by their publication_type
 in `publication` (peer-reviewed / ML conference are eligible; preprint / thesis
 / commentary are not).
@@ -40,7 +40,7 @@ USER_AGENT = (
 OPENALEX_BASE = "https://api.openalex.org/sources"
 REQUEST_DELAY = 0.2   # polite spacing; OpenAlex allows 10 req/sec for the polite pool
 
-# Conferences and proceedings to skip — OpenAlex does have venue records for
+# Conferences and proceedings to skip. OpenAlex does have venue records for
 # them but the 2yr citedness is misleading for non-rolling venues.
 CONFERENCE_VENUES = {
     "ICLR 2025", "AAAI 2024", "AAAI 2026", "NeurIPS 2024", "IJCAI 2025",
@@ -55,7 +55,7 @@ CONFERENCE_VENUES = {
 PINNED_IDS: dict[str, str] = {
     # PNAS /search returns "PNAS Nexus" first; pin to the actual PNAS.
     "PNAS":                    "S125754415",
-    # Applied Sciences (MDPI) — name "(MDPI)" qualifier confuses /search.
+    # Applied Sciences (MDPI): the "(MDPI)" qualifier confuses /search.
     "Applied Sciences (MDPI)": "S4210205812",
 }
 

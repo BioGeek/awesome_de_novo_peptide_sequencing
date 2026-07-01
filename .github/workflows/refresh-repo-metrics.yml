@@ -2,7 +2,7 @@ name: Refresh repo metrics
 
 on:
   schedule:
-    # Daily at 06:00 UTC — GitHub Actions cron is best-effort and can drift up
+    # Daily at 06:00 UTC. GitHub Actions cron is best-effort and can drift up
     # to ~1 hour under load, which is fine for a once-a-day refresh.
     - cron: '0 6 * * *'
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
         id: commit
         run: |
           if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No metric changes today — nothing to commit."
+            echo "No metric changes today, nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

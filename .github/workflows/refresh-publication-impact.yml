@@ -2,7 +2,7 @@ name: Refresh publication impact
 
 on:
   schedule:
-    # Weekly on Sunday at 06:30 UTC — 30 minutes after the daily repo-metrics
+    # Weekly on Sunday at 06:30 UTC, 30 minutes after the daily repo-metrics
     # workflow would have finished, so on Sundays the two don't race for the
     # main branch. OpenAlex cited_by_count drifts incrementally as papers get
     # cited; weekly captures meaningful change without spamming commits.
@@ -38,7 +38,7 @@ jobs:
         id: commit
         run: |
           if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No citation-count drift this week — nothing to commit."
+            echo "No citation-count drift this week, nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

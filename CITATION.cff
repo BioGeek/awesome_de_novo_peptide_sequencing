@@ -6,7 +6,7 @@ message: "If you use this catalog, please cite it as below."
 title: "Awesome De Novo Peptide Sequencing"
 abstract: >-
   A comprehensive, curated, and interactive map of the de novo peptide
-  sequencing field — algorithms, post-processors, downstream applications,
+  sequencing field: algorithms, post-processors, downstream applications,
   and adjacent tools, covering both deep-learning and classical approaches.
   Includes a SQLite database of papers, models, authors, affiliations, and
   venues, alongside a Quarto-based interactive website with Observable JS

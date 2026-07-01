@@ -2,7 +2,7 @@
 """Build the publication_citation graph from Crossref + Semantic Scholar.
 
 Run offline (not in CI). Re-execute when new papers are added or to refresh
-citation counts. Idempotent — INSERT OR IGNORE keeps existing edges.
+citation counts. Idempotent: INSERT OR IGNORE keeps existing edges.
 
 Outputs:
   - rows inserted into `publication_citation` in denovo.db
@@ -282,7 +282,7 @@ def match_reference(
     if ref_doi:
         if ref_doi in by_doi:
             return by_doi[ref_doi]
-        # DOI conclusively identifies a different paper — don't fuzzy-match.
+        # DOI conclusively identifies a different paper, don't fuzzy-match.
         return None
     if not ref_title:
         return None

@@ -2,7 +2,7 @@ name: Refresh journal metrics
 
 on:
   schedule:
-    # Twice a year — 1st of January and 1st of July at 08:00 UTC. On those
+    # Twice a year (1st of January and 1st of July) at 08:00 UTC. On those
     # days the daily (06:00), weekly-if-Sunday (06:30), and monthly (07:00)
     # have all already finished, so the four workflows are well-spaced and
     # never race for the main branch. OpenAlex's 2-year-mean-citedness is a
@@ -40,7 +40,7 @@ jobs:
         id: commit
         run: |
           if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No venue-metric drift this cycle — nothing to commit."
+            echo "No venue-metric drift this cycle, nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

@@ -1,6 +1,6 @@
 ---
 title: "Awesome *De Novo* Peptide Sequencing"
-subtitle: "A comprehensive, interactive map of the field — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike."
+subtitle: "A comprehensive, interactive map of the field. Algorithms, post-processors, downstream applications and adjacent tools, deep-learning and classical alike."
 execute:
   echo: false
   freeze: false
@@ -11,11 +11,17 @@ execute:
 #| echo: false
 #| output: false
 import sqlite3
+from datetime import date
 import pandas as pd
 from pathlib import Path
 
 DB = Path(__file__).parent / "denovo.db" if "__file__" in dir() else Path("denovo.db")
 conn = sqlite3.connect(DB)
+
+# Site build date, surfaced in the footer's 'Last updated' line. Reflects when
+# Quarto rendered the site (i.e., when a push or scheduled workflow last
+# rebuilt gh-pages), which is a close proxy for when the catalog was refreshed.
+build_date = date.today().strftime("%-d %B %Y")
 
 pubs = pd.read_sql(
     """
@@ -182,7 +188,7 @@ venues = pd.read_sql(
     conn,
 )
 
-# All authors with their affiliations and countries — fuels the Browse-authors table.
+# All authors with their affiliations and countries. Fuels the Browse-authors table.
 author_details = pd.read_sql(
     """
     SELECT a.id AS id, a.name AS name, a.email AS email,
@@ -278,6 +284,7 @@ ojs_define(
     journal_impact=journal_impact,
     publication_impact=publication_impact,
     repo_metrics=repo_metrics,
+    build_date=build_date,
 )
 ```
 
@@ -346,7 +353,7 @@ repo_metrics_t = transpose(repo_metrics).map(r => ({
   fetched_at:  r.fetched_at  ? new Date(r.fetched_at)  : null,
 }))
 
-// Derived counters — everything flows from the data, no hardcoded numbers.
+// Derived counters. Everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
 n_models = algorithms_t.length
 n_authors = new Set(pubs_t.flatMap(p => (p.authors ?? "").split(", ").filter(Boolean))).size
@@ -354,7 +361,7 @@ n_countries = geo_t.length
 years_with_pubs = pubs_t.map(p => p.year).filter(y => Number.isFinite(y))
 first_year = Math.min(...years_with_pubs)
 last_year  = Math.max(...years_with_pubs)
-// First year a paper using deep learning appears in the catalog — anchors the
+// First year a paper using deep learning appears in the catalog. Anchors the
 // "wave" prose so the DL inflection point reads from data, not a constant.
 dl_algo_names = new Set(algorithms_t.filter(a => a.is_dl === true).map(a => a.model))
 first_dl_year = Math.min(...pubs_t
@@ -450,16 +457,16 @@ html`<div class="hero-grid">
 
 ```{ojs}
 //| echo: false
-md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** methods for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed — a snapshot of a field where the conversation moves faster than the journals.`
+md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** methods for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed. A snapshot of a field where the conversation moves faster than the journals.`
 ```
 
 ::: {.scope-banner}
-**Scope.** A comprehensive map of *de novo* peptide sequencing — core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
+**Scope.** A comprehensive map of *de novo* peptide sequencing covering core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
 :::
 
 ::::: {.sticky-filters .collapsed-on-mobile}
 ::: {.sticky-filters-header role="button" tabindex="0" aria-expanded="false" aria-controls="sticky-filter-body"}
-🎚️ **Filters** — Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
+🎚️ **Filters** · Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
 :::
 
 :::: {#sticky-filter-body .sticky-filters-body}
@@ -542,7 +549,7 @@ n_papers_filtered = pubs_filtered.length
 </style>
 <script>
 // Tap-to-toggle the sticky filter pane. Always wires the click handler on
-// every viewport — the @media (max-width:768px) CSS rule is what actually
+// every viewport. The @media (max-width:768px) CSS rule is what actually
 // hides/shows the body based on aria-expanded, so on desktop a tap just
 // rotates the (display:none) chevron with no visible effect.
 (() => {
@@ -574,7 +581,7 @@ n_papers_filtered = pubs_filtered.length
 
 ```{ojs}
 //| echo: false
-md`The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since — **${n_peer_reviewed}** papers have made it through peer review, alongside **${n_preprints}** preprints still in the publication pipeline.`
+md`The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since. **${n_peer_reviewed}** papers have made it through peer review, alongside **${n_preprints}** preprints still in the publication pipeline.`
 ```
 
 ```{ojs}
@@ -588,7 +595,7 @@ Plot.plot({
   color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis", "commentary"] },
   marks: [
     Plot.barY(
-      // Drop kind='meta' — that's the catalog's self-entry (no
+      // Drop kind='meta' rows: the catalog's self-entry (no
       // publication_type, no real venue) plus any other meta artefacts
       // like commentaries-without-method. They'd otherwise render as
       // transparent stack segments and skew the publication-volume story.
@@ -605,7 +612,7 @@ Plot.plot({
 
 ## The architectures
 
-*De novo* sequencing has cycled through several methodological families — first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution.
+*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution.
 
 ```{ojs}
 //| echo: false
@@ -649,7 +656,7 @@ innovations_timeline = {
   // MIN_GAP_DAYS is computed dynamically below from the actual x-range so it self-tunes
   // when more years of data come in (e.g. older classical methods extending back to 1997).
 
-  // Per-family band heights — busy families get more vertical room (matches plots.ipynb).
+  // Per-family band heights: busy families get more vertical room (matches plots.ipynb).
   // Graph / DP now holds seven classical algorithms (Sherenga, PEAKS, PepNovo, MSNovo,
   // pNovo, pNovo+, CycloNovo) so it needs a taller swimlane.
   const band_heights = {
@@ -711,12 +718,12 @@ innovations_timeline = {
   // (AR) papers) don't all fall through to the center-line fallback.
   const PLOT_WIDTH_PX  = 1200          // chart 1400 minus left+right margins
   const LABEL_RESERVE_PX = 70          // median label width across all current entries
-  const MAX_GAP_DAYS = 550              // cap ~1.5 yr — beyond this dense bands burst
+  const MAX_GAP_DAYS = 550              // cap ~1.5 yr; beyond this dense bands burst
   const total_days = (x_pad_max - x_pad_min) / 86400000
   const px_per_day = PLOT_WIDTH_PX / total_days
   const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
 
-  // in band_order — without it the chart would crash on .y0 of undefined.
+  // in band_order (without it the chart would crash on .y0 of undefined).
   const rows = algorithms_versioned_t
     .filter(a => matches_filters(a) && band_index.has(a.family))
     .slice()
@@ -752,7 +759,7 @@ innovations_timeline = {
     y: { domain: [0, total_height], axis: null },
     color: { domain: band_order, range: band_order.map(f => band_color[f]), legend: false },
     marks: [
-      // Background band per family — extends to the padded x domain so edge labels stay inside.
+      // Background band per family, extended to the padded x domain so edge labels stay inside.
       Plot.rect(bands, {
         x1: () => x_pad_min, x2: () => x_pad_max,
         y1: "y0", y2: "y1",
@@ -870,7 +877,7 @@ innovations_timeline = {
 
 ## Where the work happens
 
-Authors and the organizations behind them span **${n_countries}** countries. Pan and zoom the map — zoomed out, nearby work collapses to country-level pies; zoom in past about 2× and those aggregates split into city-level pies. Circle area scales with the selected impact metric; pie colours group organizations by type. Organization type is inferred from institution names and should be read as a practical display category.
+Authors and the organizations behind them span **${n_countries}** countries. Pan and zoom the map. Zoomed out, nearby work collapses to country-level pies; zoom in past about 2× and those aggregates split into city-level pies. Circle area scales with the selected impact metric; pie colours group organizations by type. Organization type is inferred from institution names and should be read as a practical display category.
 
 ```{ojs}
 //| echo: false
@@ -1124,7 +1131,7 @@ where_the_work_map = {
   const type_breakdown = d => d.type_values
     .slice()
     .sort((a, b) => d3.descending(a.value, b.value))
-    // Drop the metric label from per-row breakdowns — the chart's metric
+    // Drop the metric label from per-row breakdowns: the chart's metric
     // selector already says which metric is being displayed, and the value
     // stands alone.
     .map(v => `${v.type}: ${v.value}`)
@@ -1151,7 +1158,7 @@ ${type_breakdown(d)}`
       .slice()
       .sort((a, b) => d3.descending(a.value, b.value))
     // 'global citations' used to repeat in (a) the headline metric line,
-    // (b) the canonical triple, and (c) every per-type breakdown row — fold
+    // (b) the canonical triple, and (c) every per-type breakdown row. Fold
     // (a) and (c) so the phrase only appears once in (b).
     tooltip_el.replaceChildren(html`<div>
       <div class="map-tooltip-title">${d.label}</div>
@@ -1317,7 +1324,7 @@ ${type_breakdown(d)}`
   }
   const rows = Array.from(authors_by_inst, ([institution, authors]) => ({
     institution,
-    country: country_of.get(institution) ?? "—",
+    country: country_of.get(institution) ?? "",
     authors: authors.size
   }))
     .sort((a, b) => b.authors - a.authors)
@@ -1332,7 +1339,7 @@ ${type_breakdown(d)}`
     marks: [
       Plot.barX(rows, {
         x: "authors",
-        y: d => `${d.institution} — ${d.country}`,
+        y: d => `${d.institution} · ${d.country}`,
         fill: "country",
         sort: { y: "x", reverse: true },
         tip: true
@@ -1463,7 +1470,7 @@ network_chart = {
     .attr("font-size", 16)
     .attr("font-weight", "bold")
     .attr("fill", "#24292f")
-    .text("Co-authorship network — authors with ≥ 3 papers, pie nodes for multi-affiliation")
+    .text("Co-authorship network · authors with ≥ 3 papers, pie nodes for multi-affiliation")
 
   const g = svg.append("g")
   svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
@@ -1582,7 +1589,7 @@ network_chart = {
 
 ### Models and the authors behind them
 
-This second view rewires the same network as a **bipartite** graph: every prolific author (≥ 3 papers) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family — so you can see which research groups own which slice of the architectural landscape.
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ 3 papers) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
 
 ```{ojs}
 //| echo: false
@@ -1687,7 +1694,7 @@ author_algo_network = {
     .attr("font-size", 16)
     .attr("font-weight", "bold")
     .attr("fill", "#24292f")
-    .text("Authors ↔ models — diamonds are algorithms colored by family, circles are authors")
+    .text("Authors ↔ models · diamonds are algorithms colored by family, circles are authors")
 
   const g = svg.append("g")
   svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
@@ -1810,7 +1817,7 @@ author_algo_network = {
 
 A chronological citation arc diagram. Papers are placed left-to-right by publication date and stratified vertically by `kind`; within each row, the most-cited papers float to the top. Each arc connects a citing paper (right end) to a paper it cites (left end), curving upward above the row. **Hover any paper** to highlight the citations into it (red) and out of it (blue), and dim everything else.
 
-Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), matched back to publications via DOI-exact (and, for refs without a DOI, fuzzy-title with token-set ratio ≥ 92). Only intra-catalog citations are drawn — references to papers outside the catalog are filtered out. Every arrow runs *citing → cited*, so the arrowhead always lands on the older paper.
+Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or title-search fallback), matched back to publications via DOI-exact (and, for refs without a DOI, fuzzy-title with token-set ratio ≥ 92). Only intra-catalog citations are drawn; references to papers outside the catalog are filtered out. Every arrow runs *citing → cited*, so the arrowhead always lands on the older paper.
 
 ```{ojs}
 //| echo: false
@@ -1840,7 +1847,7 @@ citation_arcs = {
     cite_out.set(e.citing_id, (cite_out.get(e.citing_id) ?? 0) + 1)
   }
 
-  // Y-strata by kind. Meta types at the top, core algorithms at the bottom — so
+  // Y-strata by kind. Meta types at the top, core algorithms at the bottom, so
   // arcs (which always curve upward) have the most headroom for citations heading
   // *into* heavily-cited algorithm-row papers.
   const KIND_ORDER = [
@@ -1950,7 +1957,7 @@ citation_arcs = {
     .attr("font-size", 15)
     .attr("font-weight", "bold")
     .attr("fill", "#24292f")
-    .text(`Citation flow — ${nodes.length} papers, ${links.length} intra-catalog citations (citing → cited)`)
+    .text(`Citation flow · ${nodes.length} papers, ${links.length} intra-catalog citations (citing → cited)`)
 
   // Citation arcs. Cubic-Bezier curving upward (above the baseline).
   function arcPath(d) {
@@ -2001,7 +2008,7 @@ citation_arcs = {
     .attr("cursor", "pointer")
 
   node.append("title").text(d =>
-    `${d.models || "(no model)"} — ${d.title}
+    `${d.models || "(no model)"} · ${d.title}
 year: ${d.year ?? ""}
 kind: ${d.kind}
 cited by ${d.in_deg} papers in the catalog
@@ -2239,8 +2246,8 @@ viewof repo_metric = Inputs.radio(
         title: d => `${d.model}\n${d.url}\nstars=${d.stars}, forks=${d.forks}\n` +
                     `issues open/closed: ${d.open_issues}/${d.closed_issues}\n` +
                     `PRs open/closed: ${d.open_prs}/${d.closed_prs}\n` +
-                    `latest release: ${d.latest_release ?? "—"}\n` +
-                    `last pushed: ${d.last_pushed ? d.last_pushed.toISOString().slice(0,10) : "—"}`
+                    `latest release: ${d.latest_release ?? "n/a"}\n` +
+                    `last pushed: ${d.last_pushed ? d.last_pushed.toISOString().slice(0,10) : "n/a"}`
       }),
       Plot.ruleX([0])
     ]
@@ -2308,8 +2315,8 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     },
     format: {
       stars: v => v == null ? "" : String(v),
-      last_pushed: d => d ? d.toISOString().slice(0, 10) : "—",
-      latest_release: v => v ?? "—",
+      last_pushed: d => d ? d.toISOString().slice(0, 10) : "",
+      latest_release: v => v ?? "",
       url: u => u ? htl.html`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>` : ""
     },
     sort: "stars", reverse: true,
@@ -2373,7 +2380,7 @@ viewof venue_type = Inputs.radio(
 
 ### Venue citedness (open-data analog of the Impact Factor)
 
-Two-year mean citedness from **OpenAlex** (`summary_stats.2yr_mean_citedness`). Methodologically equivalent to the Clarivate Impact Factor formula — mean citations in year *t* to articles published in years *t-1* and *t-2* — but computed over OpenAlex's open Crossref-aggregated citation graph rather than the paywalled Web of Science one. Conferences and preprint servers are omitted (their non-rolling publication schedule makes the metric misleading). Built offline via `build_journal_metrics.py`; refresh annually.
+Two-year mean citedness from **OpenAlex** (`summary_stats.2yr_mean_citedness`). Methodologically equivalent to the Clarivate Impact Factor formula (mean citations in year *t* to articles published in years *t-1* and *t-2*), but computed over OpenAlex's open Crossref-aggregated citation graph rather than the paywalled Web of Science one. Conferences and preprint servers are omitted (their non-rolling publication schedule makes the metric misleading). Built offline via `build_journal_metrics.py`; refresh annually.
 
 ```{ojs}
 //| echo: false
@@ -2677,7 +2684,7 @@ viewof selected_pubs = {
     width: { year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   // Reflect the inner Inputs.table's value/input on the fullscreen wrapper so
-  // `viewof selected_pubs` exposes the rows the user has ticked — used by the
+  // `viewof selected_pubs` exposes the rows the user has ticked, used by the
   // BibTeX download button below.
   const wrapper = html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
@@ -2733,7 +2740,7 @@ viewof selected_pubs = {
   }
   const disabled = selected_pubs.length === 0
   const btn = html`<button class="download-btn" ?disabled=${disabled}>
-    ⬇ Download ${selected_pubs.length || "—"} selected as BibTeX
+    ⬇ Download ${selected_pubs.length || "0"} selected as BibTeX
   </button>`
   btn.disabled = disabled
   btn.onclick = handle_download
@@ -2829,7 +2836,7 @@ viewof author_search = Inputs.search(authors_table_rows, {
 
 ## Contributing {#contributing}
 
-**Easiest path:** [**open a GitHub issue**](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/issues/new) with a link to the paper (DOI / arXiv / bioRxiv / OpenReview / …) and I'll wire it into the database. Corrections are equally welcome — wrong author lists, missing affiliations, mis-classified *kind* / *DL* / *acquisition*, broken hyperlinks, anything that looks off.
+**Easiest path:** [**open a GitHub issue**](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/issues/new) with a link to the paper (DOI / arXiv / bioRxiv / OpenReview / …) and I'll wire it into the database. Corrections are equally welcome: wrong author lists, missing affiliations, mis-classified *kind* / *DL* / *acquisition*, broken hyperlinks, anything that looks off.
 
 ### Advanced: edit the database directly
 
@@ -2840,7 +2847,7 @@ The site is generated from `denovo.db` (SQLite, the source of truth). If you're 
    ```bash
    sqlite3 denovo.db .dump > denovo.sql
    ```
-3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge — typically live within ~3 minutes.
+3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge; typically live within ~3 minutes.
 
 ## Cite this catalog {#cite}
 
@@ -2853,5 +2860,21 @@ Machine-readable metadata is in [`CITATION.cff`](https://github.com/BioGeek/awes
 ---
 
 ::: {.text-muted}
-This page is a comprehensive map of *de novo* peptide sequencing — algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike. Source data and code: [GitHub](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing) — rebuilt automatically on every push to `main`.
+This page is a comprehensive map of *de novo* peptide sequencing covering algorithms, post-processors, downstream applications and adjacent tools, deep-learning and classical alike. Source data and code: [GitHub](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing), rebuilt automatically on every push to `main`.
 :::
+
+```{ojs}
+//| echo: false
+md`<div class="last-updated">Last updated on ${build_date}.</div>`
+```
+
+```{=html}
+<style>
+.last-updated {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: #6a737d;
+  text-align: center;
+}
+</style>
+```

@@ -2,7 +2,7 @@ name: Refresh citation graph
 
 on:
   schedule:
-    # Monthly on the 1st at 07:00 UTC — 30 minutes after the weekly window
+    # Monthly on the 1st at 07:00 UTC, 30 minutes after the weekly window
     # closes (when the 1st falls on a Sunday) and a full hour after the daily
     # repo-metrics workflow, so the three never race on the main branch.
     # Crossref + Semantic Scholar back-fill their reference indexes over
@@ -49,7 +49,7 @@ jobs:
         id: commit
         run: |
           if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No new citation edges resolved this month — nothing to commit."
+            echo "No new citation edges resolved this month, nothing to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
