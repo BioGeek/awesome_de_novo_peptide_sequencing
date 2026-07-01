@@ -1139,7 +1139,17 @@ application_timeline = {
 
 ### Application → sequencer flow
 
-Which sequencing tools does each application community actually use? Two signals are unioned: (1) explicit `publication_algorithm` links — the curator's "this paper uses tool X" assertion; (2) the Crossref citation graph — "this paper cites a publication describing tool X" (rebuilt monthly by `build_citations.py`). An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper either uses or cites PEAKS. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
+Which sequencing tools does each application community actually reach for? Two signals can drive the Sankey and they're different strengths:
+
+- **Uses**: the paper has a curated `publication_algorithm` link asserting "this method was used" — usually because the methods section names the tool explicitly.
+- **Cites**: the paper's Crossref reference list contains a publication describing the tool — a weaker signal (the tool might just be mentioned as prior art). Rebuilt monthly by `build_citations.py`.
+
+Use the toggle to switch between them, or view the union of both. An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper satisfies the selected signal. Edge thickness is the paper count.
+
+```{ojs}
+//| echo: false
+viewof sankey_signal = Inputs.radio(["Uses", "Cites", "Either"], { label: "Signal", value: "Either" })
+```
 
 ```{ojs}
 //| echo: false
@@ -1185,24 +1195,28 @@ application_sankey = {
     sd_totals.set(sd,     (sd_totals.get(sd)     ?? 0) + 1)
     seq_totals.set(a.model,(seq_totals.get(a.model)?? 0) + 1)
   }
-  // Signal 1: curated tool-usage.
-  for (const p of pubs_t) {
-    const sd = pub_subdomain.get(p.id)
-    if (!sd) continue
-    for (const a of pub_algs.get(p.id) || []) record(p.id, sd, a)
+  // Signal 1: curated tool-usage. Included when the radio is 'Uses' or 'Either'.
+  if (sankey_signal !== "Cites") {
+    for (const p of pubs_t) {
+      const sd = pub_subdomain.get(p.id)
+      if (!sd) continue
+      for (const a of pub_algs.get(p.id) || []) record(p.id, sd, a)
+    }
   }
-  // Signal 2: intra-catalog citation graph.
-  for (const e of citations_t) {
-    const sd = pub_subdomain.get(e.citing_id)
-    if (!sd) continue
-    for (const a of pub_algs.get(e.cited_id) || []) record(e.citing_id, sd, a)
+  // Signal 2: intra-catalog citation graph. Included when the radio is 'Cites' or 'Either'.
+  if (sankey_signal !== "Uses") {
+    for (const e of citations_t) {
+      const sd = pub_subdomain.get(e.citing_id)
+      if (!sd) continue
+      for (const a of pub_algs.get(e.cited_id) || []) record(e.citing_id, sd, a)
+    }
   }
 
   if (flow.size === 0) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
-      No subdomain→sequencer flows have been resolved yet — application papers
-      have neither <code>publication_algorithm</code> links nor citations to
-      indexed sequencing methods.
+      No subdomain→sequencer flows for signal <b>${sankey_signal}</b>. Try
+      switching the radio above to <i>Either</i> to combine curated tool-usage
+      with the citation graph.
     </p>`
   }
 
