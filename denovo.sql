@@ -7351,7 +7351,7 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',70);
 INSERT INTO sqlite_sequence VALUES('city',225);
 INSERT INTO sqlite_sequence VALUES('affiliation',472);
-INSERT INTO sqlite_sequence VALUES('author',914);
+INSERT INTO sqlite_sequence VALUES('author',915);
 INSERT INTO sqlite_sequence VALUES('algorithm',213);
 INSERT INTO sqlite_sequence VALUES('publication',242);
 CREATE TRIGGER prevent_future_publication_citation_insert
@@ -7409,4 +7409,5 @@ BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_author_name_unique ON author(name);
 COMMIT;
