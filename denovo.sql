@@ -910,6 +910,11 @@ INSERT INTO author VALUES(923,'Orawan Khow',NULL);
 INSERT INTO author VALUES(924,'Narongsak Chaiyabutr',NULL);
 INSERT INTO author VALUES(925,'Visith Sitprija',NULL);
 INSERT INTO author VALUES(926,'Trairak Pisitkun',NULL);
+INSERT INTO author VALUES(927,'Juan J. Calvete',NULL);
+INSERT INTO author VALUES(928,'Bruno Lomonte',NULL);
+INSERT INTO author VALUES(929,'Anthony J. Saviola',NULL);
+INSERT INTO author VALUES(930,'Francisco Calderón Celis',NULL);
+INSERT INTO author VALUES(931,'Jorge Ruiz Encinar',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -956,6 +961,7 @@ INSERT INTO country VALUES(46,'Malaysia');
 INSERT INTO country VALUES(52,'Tanzania');
 INSERT INTO country VALUES(70,'Croatia');
 INSERT INTO country VALUES(71,'Myanmar');
+INSERT INTO country VALUES(72,'Costa Rica');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1190,6 +1196,10 @@ INSERT INTO city VALUES(223,'Thiruvananthapuram',28,NULL,NULL);
 INSERT INTO city VALUES(224,'Campinas',24,NULL,NULL);
 INSERT INTO city VALUES(225,'Bragança Paulista',24,NULL,NULL);
 INSERT INTO city VALUES(226,'Yangon',71,NULL,NULL);
+INSERT INTO city VALUES(227,'Valencia',33,NULL,NULL);
+INSERT INTO city VALUES(228,'San José',72,NULL,NULL);
+INSERT INTO city VALUES(229,'Aurora',8,NULL,NULL);
+INSERT INTO city VALUES(230,'Oviedo',33,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1654,6 +1664,10 @@ INSERT INTO affiliation VALUES(476,'Chulalongkorn University','Research Unit of 
 INSERT INTO affiliation VALUES(477,'Ministry of Health','Chemical Toxicology Research Division, Department of Medical Research',71,226);
 INSERT INTO affiliation VALUES(478,'National Institutes of Health','Epithelial Systems Biology Laboratory, NHLBI',8,66);
 INSERT INTO affiliation VALUES(479,'Queen Saovabha Memorial Institute','The Thai Red Cross Society',18,61);
+INSERT INTO affiliation VALUES(480,'Instituto de Biomedicina de Valencia (CSIC)','Evolutionary and Translational Venomics Laboratory',33,227);
+INSERT INTO affiliation VALUES(481,'Universidad de Costa Rica','Unidad de Proteómica, Instituto Clodomiro Picado, Facultad de Microbiología',72,228);
+INSERT INTO affiliation VALUES(482,'University of Colorado Anschutz Medical Campus','Department of Biochemistry and Molecular Genetics',8,229);
+INSERT INTO affiliation VALUES(483,'University of Oviedo','Department of Physical and Analytical Chemistry',33,230);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2925,6 +2939,11 @@ INSERT INTO author_affiliation VALUES(923,479);
 INSERT INTO author_affiliation VALUES(925,479);
 INSERT INTO author_affiliation VALUES(926,474);
 INSERT INTO author_affiliation VALUES(926,478);
+INSERT INTO author_affiliation VALUES(927,480);
+INSERT INTO author_affiliation VALUES(928,481);
+INSERT INTO author_affiliation VALUES(929,482);
+INSERT INTO author_affiliation VALUES(930,483);
+INSERT INTO author_affiliation VALUES(931,483);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3143,6 +3162,7 @@ INSERT INTO algorithm VALUES(211,'Malabar pit viper venom de novo workflow',NULL
 INSERT INTO algorithm VALUES(212,'Naja naja venom de novo workflow',NULL,NULL,NULL,'Venomics + antivenomics workflow using SDS-PAGE, RP-HPLC and Q-TOF LC-MS/MS with PEAKS + Novor de novo sequencing to identify 115 proteins across 17 venom protein families in Indian cobra venom from the Western Ghats, and benchmark polyvalent-antivenom recognition.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(213,'Scorpion venom short peptide de novo workflow',NULL,NULL,NULL,'LC-HRMS with de novo sequencing of short (2-12 aa) scorpion venom peptides — 156 sequences identified, revealing N- and C-terminal modifications including the previously unreported N-benzoyl modification.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(214,'Daboia siamensis integrated multi-omics venomics workflow',NULL,NULL,NULL,'Multi-omics venomics of Russell''s viper (Daboia siamensis, Thai specimens): 10x-linked-read + short-read genome assembly and venom-gland transcriptomics feed a MAKER-annotated CDS database, which is searched with PEAKS Studio (database) plus SMSNet (deep-learning de novo) to identify 1,662 venom proteins including previously unreported hyaluronidase-1, phospholipase B and waprin.','downstream-application',NULL,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(215,'Snake venomics quantification review',NULL,NULL,NULL,'Calvete-lab review of mass-spectrometry-based quantification of snake venom proteomes for non-model species: label-free strategies, absolute quantification via ICP-MS, hybrid elemental/molecular MS setups. Discusses manual de novo interpretation as an established workflow for non-model venomics.','review',NULL,NULL,NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3396,6 +3416,7 @@ INSERT INTO publication VALUES(240,'Delineating the venom toxin arsenal of Malab
 INSERT INTO publication VALUES(241,'Venomics and antivenomics of Indian spectacled cobra (Naja naja) from the Western Ghats','2022-01-28','10.1016/j.actatropica.2022.106324','Elsevier',NULL,NULL,'Acta Tropica','peer-reviewed',NULL);
 INSERT INTO publication VALUES(242,'Unveiling the Diversity and Modifications of Short Peptides in Scorpion Venom through Liquid Chromatography-High Resolution Mass Spectrometry','2024-03-16','10.3390/toxins16030155','MDPI',NULL,NULL,'Toxins','peer-reviewed',NULL);
 INSERT INTO publication VALUES(243,'Identification of Daboia siamensis venome using integrated multi-omics data','2022-07-30','10.1038/s41598-022-17300-1','Springer Nature',NULL,'https://www.nature.com/articles/s41598-022-17300-1','Scientific Reports','peer-reviewed',NULL);
+INSERT INTO publication VALUES(244,'Quantification of snake venom proteomes by mass spectrometry - considerations and perspectives','2023-05-08','10.1002/mas.21850','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/mas.21850','Mass Spectrometry Reviews','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3666,6 +3687,8 @@ INSERT INTO publication_algorithm VALUES(241,68);
 INSERT INTO publication_algorithm VALUES(243,214);
 INSERT INTO publication_algorithm VALUES(243,62);
 INSERT INTO publication_algorithm VALUES(243,72);
+INSERT INTO publication_algorithm VALUES(244,215);
+INSERT INTO publication_algorithm VALUES(244,158);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5214,6 +5237,11 @@ INSERT INTO publication_author VALUES(243,923,9);
 INSERT INTO publication_author VALUES(243,924,10);
 INSERT INTO publication_author VALUES(243,925,11);
 INSERT INTO publication_author VALUES(243,926,12);
+INSERT INTO publication_author VALUES(244,927,1);
+INSERT INTO publication_author VALUES(244,928,2);
+INSERT INTO publication_author VALUES(244,929,3);
+INSERT INTO publication_author VALUES(244,930,4);
+INSERT INTO publication_author VALUES(244,931,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7398,12 +7426,12 @@ INSERT INTO publication_impact VALUES(217,NULL,NULL,'unmatched',27.4509803921568
 INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',71);
-INSERT INTO sqlite_sequence VALUES('city',226);
-INSERT INTO sqlite_sequence VALUES('affiliation',479);
-INSERT INTO sqlite_sequence VALUES('author',926);
-INSERT INTO sqlite_sequence VALUES('algorithm',214);
-INSERT INTO sqlite_sequence VALUES('publication',243);
+INSERT INTO sqlite_sequence VALUES('country',72);
+INSERT INTO sqlite_sequence VALUES('city',230);
+INSERT INTO sqlite_sequence VALUES('affiliation',483);
+INSERT INTO sqlite_sequence VALUES('author',931);
+INSERT INTO sqlite_sequence VALUES('algorithm',215);
+INSERT INTO sqlite_sequence VALUES('publication',244);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
