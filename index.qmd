@@ -1040,6 +1040,216 @@ application_timeline = {
 }
 ```
 
+### Application → sequencer flow
+
+Which sequencing tools does each application community actually use? Inferred from the intra-catalog citation graph: an edge from *palaeoproteomics* to *Casanovo* means at least one palaeoproteomics-tagged paper in the catalog cites the canonical Casanovo publication. Edge thickness is the count. Some subdomains cite classical / non-DL tools (PEAKS, PepNovo) — those show up on the right side too. Palaeoproteomics currently has no visible flows because its papers pre-date most modern DL sequencers and mostly cite PEAKS-family tools not tracked as citation targets.
+
+```{ojs}
+//| echo: false
+application_sankey = {
+  // Which sequencer(s) does each downstream-application paper cite?
+  const alg_by_name = new Map(algorithms_t.map(a => [a.model, a]))
+  const pub_by_id   = new Map(pubs_t.map(p => [p.id, p]))
+
+  // For each pub, gather its algorithm rows (parsed from the comma-joined
+  // 'models' string).
+  const pub_algs = new Map()
+  for (const p of pubs_t) {
+    const names = (p.models ?? "").split(",").map(s => s.trim()).filter(Boolean)
+    pub_algs.set(p.id, names.map(n => alg_by_name.get(n)).filter(Boolean))
+  }
+
+  // For each downstream-application publication, resolve its subdomain via
+  // any linked kind='downstream-application' algorithm that has a subdomain.
+  const pub_subdomain = new Map()
+  for (const p of pubs_t) {
+    const app_alg = (pub_algs.get(p.id) || []).find(a => a.kind === "downstream-application" && a.subdomain)
+    if (app_alg) pub_subdomain.set(p.id, app_alg.subdomain)
+  }
+
+  // Aggregate: (subdomain, sequencer) → number of downstream-app papers that
+  // cite a paper linked to that sequencer.
+  const flow = new Map()
+  const sd_totals   = new Map()
+  const seq_totals  = new Map()
+  const seen_edges  = new Set()
+  for (const e of citations_t) {
+    const sd = pub_subdomain.get(e.citing_id)
+    if (!sd) continue
+    const cited_algs = pub_algs.get(e.cited_id) || []
+    for (const a of cited_algs) {
+      // Only sequencing methods (kind='algorithm') with a family — excludes
+      // reviews, benchmarks, other downstream apps, etc.
+      if (a.kind !== "algorithm" || !a.family) continue
+      const edge_key = `${e.citing_id}|${sd}|${a.model}`
+      if (seen_edges.has(edge_key)) continue
+      seen_edges.add(edge_key)
+      const key = `${sd}|${a.model}`
+      flow.set(key, (flow.get(key) ?? 0) + 1)
+      sd_totals.set(sd,     (sd_totals.get(sd)     ?? 0) + 1)
+      seq_totals.set(a.model,(seq_totals.get(a.model)?? 0) + 1)
+    }
+  }
+
+  if (flow.size === 0) {
+    return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
+      No subdomain→sequencer flows have been resolved yet — application papers
+      either don't cite any indexed sequencing method, or their citations
+      haven't been built via <code>build_citations.py</code>.
+    </p>`
+  }
+
+  // Layout parameters.
+  const width = 1100, height = 480
+  const margin = { top: 30, right: 260, bottom: 20, left: 260 }
+  const inner_w = width  - margin.left - margin.right
+  const inner_h = height - margin.top  - margin.bottom
+
+  // Node lists sorted by traffic.
+  const left_nodes = Array.from(sd_totals.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([sd, total]) => ({ id: sd, kind: "subdomain", total }))
+  const right_nodes = Array.from(seq_totals.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([seq, total]) => ({ id: seq, kind: "sequencer", total }))
+
+  // Palette (mirror the swim-lane timeline for consistency).
+  const subdomain_color = {
+    "general-proteomics":  "#8a96a0",
+    "plant-pathogen":      "#4c8b3a",
+    "metaproteomics":      "#1a7f37",
+    "immunopeptidomics":   "#bf8700",
+    "antibodyomics":       "#cf222e",
+    "palaeoproteomics":    "#8250df"
+  }
+  const subdomain_label = {
+    "general-proteomics":  "General proteomics",
+    "plant-pathogen":      "Plant-pathogen",
+    "metaproteomics":      "Metaproteomics",
+    "immunopeptidomics":   "Immunopeptidomics",
+    "antibodyomics":       "Antibodyomics",
+    "palaeoproteomics":    "Palaeoproteomics"
+  }
+
+  // Assign Y positions (stacked, proportional to traffic + a small padding).
+  const pad_y = 8
+  const total_left  = d3.sum(left_nodes,  d => d.total)
+  const total_right = d3.sum(right_nodes, d => d.total)
+  const avail_left  = inner_h - pad_y * (left_nodes.length  - 1)
+  const avail_right = inner_h - pad_y * (right_nodes.length - 1)
+
+  let y_cursor = 0
+  for (const n of left_nodes) {
+    n.h = (n.total / total_left) * avail_left
+    n.y0 = y_cursor
+    n.y1 = y_cursor + n.h
+    y_cursor += n.h + pad_y
+  }
+  y_cursor = 0
+  for (const n of right_nodes) {
+    n.h = (n.total / total_right) * avail_right
+    n.y0 = y_cursor
+    n.y1 = y_cursor + n.h
+    y_cursor += n.h + pad_y
+  }
+
+  const left_by_id  = new Map(left_nodes.map(n => [n.id, n]))
+  const right_by_id = new Map(right_nodes.map(n => [n.id, n]))
+
+  // Build edge list with y-positions inside each node (proportional stacks).
+  const edges = []
+  const left_offset  = new Map(left_nodes.map(n => [n.id, 0]))
+  const right_offset = new Map(right_nodes.map(n => [n.id, 0]))
+  for (const [key, count] of Array.from(flow.entries())
+       .sort((a, b) => b[1] - a[1])) {
+    const [sd, seq] = key.split("|")
+    const L = left_by_id.get(sd), R = right_by_id.get(seq)
+    const l_h = (count / L.total) * L.h
+    const r_h = (count / R.total) * R.h
+    const l_off = left_offset.get(sd)
+    const r_off = right_offset.get(seq)
+    edges.push({
+      subdomain: sd, sequencer: seq, count,
+      l_y0: L.y0 + l_off, l_y1: L.y0 + l_off + l_h,
+      r_y0: R.y0 + r_off, r_y1: R.y0 + r_off + r_h,
+      color: subdomain_color[sd] ?? "#888"
+    })
+    left_offset.set(sd,  l_off + l_h)
+    right_offset.set(seq, r_off + r_h)
+  }
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width:100%; height:auto; background:#fbfbfd; font:11px sans-serif;")
+
+  const g = svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+  // Ribbon paths (S-curves between left and right node segments).
+  const ribbon = d => {
+    const x0 = 0, x1 = inner_w
+    const mid = (x0 + x1) / 2
+    return `M ${x0} ${d.l_y0}
+            C ${mid} ${d.l_y0}, ${mid} ${d.r_y0}, ${x1} ${d.r_y0}
+            L ${x1} ${d.r_y1}
+            C ${mid} ${d.r_y1}, ${mid} ${d.l_y1}, ${x0} ${d.l_y1} Z`
+  }
+  g.append("g")
+    .selectAll("path")
+    .data(edges)
+    .join("path")
+    .attr("d", ribbon)
+    .attr("fill", d => d.color)
+    .attr("fill-opacity", 0.55)
+    .attr("stroke", "none")
+    .append("title")
+    .text(d => `${subdomain_label[d.subdomain] ?? d.subdomain} → ${d.sequencer} · ${d.count} paper${d.count === 1 ? "" : "s"}`)
+
+  // Left node bars + labels.
+  g.append("g")
+    .selectAll("rect")
+    .data(left_nodes)
+    .join("rect")
+    .attr("x", -8).attr("y", d => d.y0)
+    .attr("width", 8).attr("height", d => d.y1 - d.y0)
+    .attr("fill", d => subdomain_color[d.id] ?? "#888")
+  g.append("g")
+    .selectAll("text")
+    .data(left_nodes)
+    .join("text")
+    .attr("x", -14).attr("y", d => (d.y0 + d.y1) / 2 + 4)
+    .attr("text-anchor", "end")
+    .attr("font-weight", "bold")
+    .attr("fill", d => subdomain_color[d.id] ?? "#333")
+    .text(d => `${subdomain_label[d.id] ?? d.id}  (${d.total})`)
+
+  // Right node bars + labels.
+  g.append("g")
+    .selectAll("rect")
+    .data(right_nodes)
+    .join("rect")
+    .attr("x", inner_w).attr("y", d => d.y0)
+    .attr("width", 8).attr("height", d => d.y1 - d.y0)
+    .attr("fill", "#1f6feb")
+  g.append("g")
+    .selectAll("text")
+    .data(right_nodes)
+    .join("text")
+    .attr("x", inner_w + 14).attr("y", d => (d.y0 + d.y1) / 2 + 4)
+    .attr("text-anchor", "start")
+    .attr("fill", "#1d2330")
+    .text(d => `${d.id}  (${d.total})`)
+
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${svg.node()}</div>
+  </div>`
+}
+```
+
 ## Where the work happens
 
 Authors and the organizations behind them span **${n_countries}** countries. Pan and zoom the map. Zoomed out, nearby work collapses to country-level pies; zoom in past about 2× and those aggregates split into city-level pies. Circle area scales with the selected impact metric; pie colours group organizations by type. Organization type is inferred from institution names and should be read as a practical display category.
