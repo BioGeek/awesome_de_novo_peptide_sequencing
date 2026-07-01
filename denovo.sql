@@ -5907,6 +5907,10 @@ INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/search
 INSERT INTO algorithm_repository VALUES(190,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',0);
 INSERT INTO algorithm_repository VALUES(191,'https://github.com/Noble-Lab/casanovo-foundation',0);
 INSERT INTO algorithm_repository VALUES(192,'https://openi.pcl.ac.cn/OpenI/pi-HelixNovo-NPU',0);
+INSERT INTO algorithm_repository VALUES(183,'https://github.com/kusterlab/prosit',0);
+INSERT INTO algorithm_repository VALUES(184,'https://github.com/compomics/ms2rescore',0);
+INSERT INTO algorithm_repository VALUES(188,'https://github.com/compomics/ms2pip',0);
+INSERT INTO algorithm_repository VALUES(185,'https://github.com/compomics/peptide-shaker',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
