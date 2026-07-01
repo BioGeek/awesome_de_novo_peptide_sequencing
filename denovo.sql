@@ -1070,6 +1070,7 @@ INSERT INTO city VALUES(207,'Martinsried',4,NULL,NULL);
 INSERT INTO city VALUES(208,'Barcelona',33,NULL,NULL);
 INSERT INTO city VALUES(209,'Copenhagen',3,NULL,NULL);
 INSERT INTO city VALUES(210,'Wuhan',2,NULL,NULL);
+INSERT INTO city VALUES(211,'Utrecht',5,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1486,6 +1487,10 @@ INSERT INTO affiliation VALUES(423,'University of Cambridge','Department of Arch
 INSERT INTO affiliation VALUES(424,'Muséum national d''Histoire naturelle, Musée de l''Homme','UMR7206 Eco-anthropologie',14,37);
 INSERT INTO affiliation VALUES(425,'Shandong University','Institute of Cultural Heritage',2,204);
 INSERT INTO affiliation VALUES(427,'Institució Catalana de Recerca i Estudis Avançats (ICREA)',NULL,33,149);
+INSERT INTO affiliation VALUES(432,'Netherlands Proteomics Center',NULL,5,39);
+INSERT INTO affiliation VALUES(433,'University Medical Center Utrecht','Julius Center for Health Sciences and Primary Care',5,39);
+INSERT INTO affiliation VALUES(434,'University Medical Center Utrecht','Department of Intensive Care Medicine',5,39);
+INSERT INTO affiliation VALUES(435,'University Medical Center Utrecht','Department of Medical Microbiology',5,39);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2608,6 +2613,29 @@ INSERT INTO author_affiliation VALUES(734,334);
 INSERT INTO author_affiliation VALUES(734,424);
 INSERT INTO author_affiliation VALUES(735,425);
 INSERT INTO author_affiliation VALUES(688,427);
+INSERT INTO author_affiliation VALUES(795,262);
+INSERT INTO author_affiliation VALUES(795,432);
+INSERT INTO author_affiliation VALUES(796,262);
+INSERT INTO author_affiliation VALUES(796,432);
+INSERT INTO author_affiliation VALUES(797,262);
+INSERT INTO author_affiliation VALUES(797,432);
+INSERT INTO author_affiliation VALUES(798,262);
+INSERT INTO author_affiliation VALUES(798,432);
+INSERT INTO author_affiliation VALUES(799,262);
+INSERT INTO author_affiliation VALUES(799,432);
+INSERT INTO author_affiliation VALUES(657,432);
+INSERT INTO author_affiliation VALUES(800,262);
+INSERT INTO author_affiliation VALUES(800,432);
+INSERT INTO author_affiliation VALUES(801,262);
+INSERT INTO author_affiliation VALUES(801,432);
+INSERT INTO author_affiliation VALUES(802,262);
+INSERT INTO author_affiliation VALUES(802,432);
+INSERT INTO author_affiliation VALUES(803,433);
+INSERT INTO author_affiliation VALUES(803,434);
+INSERT INTO author_affiliation VALUES(659,432);
+INSERT INTO author_affiliation VALUES(804,434);
+INSERT INTO author_affiliation VALUES(805,433);
+INSERT INTO author_affiliation VALUES(805,435);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -6892,9 +6920,9 @@ INSERT INTO publication_impact VALUES(217,NULL,NULL,'unmatched',27.4509803921568
 INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',68);
-INSERT INTO sqlite_sequence VALUES('city',210);
-INSERT INTO sqlite_sequence VALUES('affiliation',430);
+INSERT INTO sqlite_sequence VALUES('country',69);
+INSERT INTO sqlite_sequence VALUES('city',211);
+INSERT INTO sqlite_sequence VALUES('affiliation',435);
 INSERT INTO sqlite_sequence VALUES('author',821);
 INSERT INTO sqlite_sequence VALUES('algorithm',197);
 INSERT INTO sqlite_sequence VALUES('publication',227);
