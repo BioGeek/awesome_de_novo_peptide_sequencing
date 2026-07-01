@@ -915,7 +915,8 @@ application_timeline = {
   // (plant-pathogen, general-proteomics), so lane heights adjust accordingly.
   const lane_order = [
     "general-proteomics", "plant-pathogen", "metaproteomics",
-    "immunopeptidomics", "antibodyomics", "wildlife-proteomics", "palaeoproteomics"
+    "immunopeptidomics", "antibodyomics", "wildlife-proteomics",
+    "forensics", "palaeoproteomics"
   ]
   const lane_label = {
     "general-proteomics":  "General proteomics",
@@ -924,6 +925,7 @@ application_timeline = {
     "immunopeptidomics":   "Immunopeptidomics / neoantigen",
     "antibodyomics":       "Antibodyomics",
     "wildlife-proteomics": "Wildlife proteomics",
+    "forensics":           "Forensics",
     "palaeoproteomics":    "Palaeoproteomics"
   }
   const lane_color = {
@@ -933,6 +935,7 @@ application_timeline = {
     "immunopeptidomics":   "#bf8700",
     "antibodyomics":       "#cf222e",
     "wildlife-proteomics": "#0969da",
+    "forensics":           "#953800",
     "palaeoproteomics":    "#8250df"
   }
   const lane_height = {
@@ -942,6 +945,7 @@ application_timeline = {
     "immunopeptidomics":   1.5,
     "antibodyomics":       1.2,
     "wildlife-proteomics": 1.2,
+    "forensics":           1.0,
     "palaeoproteomics":    1.8
   }
 
@@ -1125,6 +1129,7 @@ application_sankey = {
     "immunopeptidomics":   "#bf8700",
     "antibodyomics":       "#cf222e",
     "wildlife-proteomics": "#0969da",
+    "forensics":           "#953800",
     "palaeoproteomics":    "#8250df"
   }
   const subdomain_label = {
@@ -1134,6 +1139,7 @@ application_sankey = {
     "immunopeptidomics":   "Immunopeptidomics",
     "antibodyomics":       "Antibodyomics",
     "wildlife-proteomics": "Wildlife proteomics",
+    "forensics":           "Forensics",
     "palaeoproteomics":    "Palaeoproteomics"
   }
 
