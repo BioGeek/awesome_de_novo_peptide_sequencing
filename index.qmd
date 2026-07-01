@@ -993,14 +993,20 @@ application_timeline = {
   const x_max = d3.max(rows, d => d.first_pub)
   const x_pad_min = d3.timeMonth.offset(x_min, -12)
   const x_pad_max = d3.timeMonth.offset(x_max, 12)
-  // MIN_GAP_DAYS auto-tunes to the actual x-scale, capped so dense years
-  // (2018/2020/2022 in venomics) don't all fall through to the fallback tier.
+  // MIN_GAP_DAYS auto-tunes to the actual x-scale. Labels here are longer than
+  // in the architectures chart (workflow names average 25 chars ≈ 180 px), and
+  // the venomics lane has 10 papers clustered in 2018/2020/2022 — so we need
+  // both a bigger label reserve AND a much larger max-gap cap so tier packing
+  // spreads dots across 5-6 tiers instead of collapsing to 2 rows.
   const PLOT_WIDTH_PX = 950            // chart 1200 minus 210 left + 40 right margins
-  const LABEL_RESERVE_PX = 110         // median label width after the 7b6440a rename
-  const MAX_GAP_DAYS = 550             // cap ~1.5 yr
+  const LABEL_RESERVE_PX = 200         // conservative for taxon-focused labels ≤22 chars
+  const MAX_GAP_DAYS = 1200            // cap ~3.3 yr so dense years spread vertically
   const total_days = (x_pad_max - x_pad_min) / 86400000
   const px_per_day = PLOT_WIDTH_PX / total_days
   const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
+
+  // Truncate the display label to 22 chars (full name stays in the tooltip).
+  const truncate_label = s => (s && s.length > 22 ? s.slice(0, 21) + '…' : s)
 
   const last_at_tier = new Map()
   const items = []
@@ -1054,20 +1060,17 @@ application_timeline = {
         tip: true,
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
-      // Labels rotated -30° so long taxon-focused names ("Anatolian meadow viper
-      // top-down ISD venomics" = 44 chars ≈ 350 px unrotated) stack diagonally
-      // instead of running horizontally into each other. Standard timeline pattern.
-      // Upper half of lane → label goes up-right; lower half → label goes down-right.
+      // Labels sit just above the dot (upper half of lane) or just below (lower half).
+      // Display label is truncated to 22 chars; the full name is still available
+      // via the dot's hover tooltip.
       Plot.text(items.filter(d => d.y_frac >= 0.5), {
-        x: "first_pub", y: "y", text: "model",
-        textAnchor: "start", lineAnchor: "bottom",
-        dx: 8, dy: -4, rotate: -30,
+        x: "first_pub", y: "y", text: d => truncate_label(d.model),
+        textAnchor: "middle", lineAnchor: "bottom", dy: -6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       }),
       Plot.text(items.filter(d => d.y_frac < 0.5), {
-        x: "first_pub", y: "y", text: "model",
-        textAnchor: "start", lineAnchor: "top",
-        dx: 8, dy: 4, rotate: 30,
+        x: "first_pub", y: "y", text: d => truncate_label(d.model),
+        textAnchor: "middle", lineAnchor: "top", dy: 6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
     ]
