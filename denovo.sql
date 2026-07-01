@@ -806,6 +806,8 @@ INSERT INTO author VALUES(811,'Zexuan Yi',NULL);
 INSERT INTO author VALUES(812,'Yue Yu',NULL);
 INSERT INTO author VALUES(813,'Jiayi Li',NULL);
 INSERT INTO author VALUES(814,'Hannes Röst','hannes.rost@utoronto.ca');
+INSERT INTO author VALUES(815,'Yun Yang',NULL);
+INSERT INTO author VALUES(816,'Yeye Leng',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2300,6 +2302,12 @@ INSERT INTO author_affiliation VALUES(147,186);
 INSERT INTO author_affiliation VALUES(151,186);
 INSERT INTO author_affiliation VALUES(813,327);
 INSERT INTO author_affiliation VALUES(814,327);
+INSERT INTO author_affiliation VALUES(166,186);
+INSERT INTO author_affiliation VALUES(188,186);
+INSERT INTO author_affiliation VALUES(390,186);
+INSERT INTO author_affiliation VALUES(151,167);
+INSERT INTO author_affiliation VALUES(815,167);
+INSERT INTO author_affiliation VALUES(816,167);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2497,6 +2505,7 @@ INSERT INTO algorithm VALUES(190,'jingbo02 Awesome-Denovo-Peptide-Sequencing',NU
 INSERT INTO algorithm VALUES(191,'Casanovo Foundation',NULL,NULL,'Transformer (AR)','Foundation model for tandem-MS proteomics — pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(192,'π-HelixNovo2',NULL,NULL,'Transformer (AR)','Successor to π-HelixNovo with an emphasis on availability: an online inference service alongside the model architecture refinement. Same Tsinghua / Pengcheng Lab / NCPSB collaboration as the original.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(193,'Li & Röst 2026 prior-vs-physics benchmark',NULL,NULL,NULL,'Benchmark that disentangles how much of a DL de novo sequencer''s output reflects MS/MS fragmentation evidence vs learned peptide-sequence priors — important for assessing robustness on out-of-distribution proteomes.','benchmark',NULL,'DDA',NULL);
+INSERT INTO algorithm VALUES(194,'FDR control for AI-based de novo sequencing (Liang 2026)',NULL,NULL,NULL,'FDR-control post-processing layer for the output of AI-based de novo peptide sequencers — surfaces trustworthy identifications and calibrates confidence scores across models. Applicable to any deep-learning de novo pipeline.','post-processor',1,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2727,6 +2736,7 @@ INSERT INTO publication VALUES(217,'Awesome-Denovo-Peptide-Sequencing','2024-04-
 INSERT INTO publication VALUES(218,'Foundation model for mass spectrometry proteomics','2025-05-16','10.48550/arXiv.2505.10848','arXiv',NULL,'https://arxiv.org/abs/2505.10848','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(219,'π-HelixNovo2: Making Accurate Online De Novo Peptide Sequencing Available to All','2026-06-25','10.1093/gpbjnl/qzag049','Oxford University Press',NULL,'https://academic.oup.com/gpb/advance-article/doi/10.1093/gpbjnl/qzag049/8716247','Genomics, Proteomics & Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(220,'Learning Fragmentation Physics or Exploiting Sequence Priors? Benchmarking Bias in Deep Learning Models for De Novo Peptide Sequencing','2026-06-29','10.64898/2026.06.23.734131','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.23.734131v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(221,'False discovery rate control for trustworthy AI-based de novo peptide sequencing','2026-07-01','10.64898/2026.06.29.735174','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.29.735174v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2959,6 +2969,7 @@ INSERT INTO publication_algorithm VALUES(217,190);
 INSERT INTO publication_algorithm VALUES(218,191);
 INSERT INTO publication_algorithm VALUES(219,192);
 INSERT INTO publication_algorithm VALUES(220,193);
+INSERT INTO publication_algorithm VALUES(221,194);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4348,6 +4359,17 @@ INSERT INTO publication_author VALUES(219,151,11);
 INSERT INTO publication_author VALUES(219,163,12);
 INSERT INTO publication_author VALUES(220,813,1);
 INSERT INTO publication_author VALUES(220,814,2);
+INSERT INTO publication_author VALUES(221,164,1);
+INSERT INTO publication_author VALUES(221,390,2);
+INSERT INTO publication_author VALUES(221,143,3);
+INSERT INTO publication_author VALUES(221,165,4);
+INSERT INTO publication_author VALUES(221,815,5);
+INSERT INTO publication_author VALUES(221,816,6);
+INSERT INTO publication_author VALUES(221,166,7);
+INSERT INTO publication_author VALUES(221,167,8);
+INSERT INTO publication_author VALUES(221,188,9);
+INSERT INTO publication_author VALUES(221,163,10);
+INSERT INTO publication_author VALUES(221,151,11);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6089,9 +6111,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
 INSERT INTO sqlite_sequence VALUES('city',146);
 INSERT INTO sqlite_sequence VALUES('affiliation',327);
-INSERT INTO sqlite_sequence VALUES('author',814);
-INSERT INTO sqlite_sequence VALUES('algorithm',193);
-INSERT INTO sqlite_sequence VALUES('publication',220);
+INSERT INTO sqlite_sequence VALUES('author',816);
+INSERT INTO sqlite_sequence VALUES('algorithm',194);
+INSERT INTO sqlite_sequence VALUES('publication',221);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
