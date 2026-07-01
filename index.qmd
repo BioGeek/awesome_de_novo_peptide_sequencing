@@ -1042,7 +1042,9 @@ application_timeline = {
 
 ### Application → sequencer flow
 
-Which sequencing tools does each application community actually use? Inferred from the intra-catalog citation graph: an edge from *palaeoproteomics* to *Casanovo* means at least one palaeoproteomics-tagged paper in the catalog cites the canonical Casanovo publication. Edge thickness is the count. Some subdomains cite classical / non-DL tools (PEAKS, PepNovo) — those show up on the right side too. Palaeoproteomics currently has no visible flows because its papers pre-date most modern DL sequencers and mostly cite PEAKS-family tools not tracked as citation targets.
+Which sequencing tools does each application community actually use? Inferred from the intra-catalog citation graph: an edge from *palaeoproteomics* to *Casanovo* means at least one palaeoproteomics-tagged paper in the catalog cites the canonical Casanovo publication. Edge thickness is the paper count. Both DL and classical sequencers (PEAKS, PepNovo, Novor, pNovo, ...) show up on the right side, since every `kind='algorithm'` row is a valid target.
+
+Palaeoproteomics flows look thin here for two reasons: (1) Crossref's reference-list coverage for older Nature papers is patchy, so a typical palaeo paper produces only 0–4 outgoing edges in `publication_citation` versus 20–30 for a modern DL paper; (2) the palaeo bibliography's centre of gravity is palaeogenetics / anthropology / palaeontology — off-catalog and therefore invisible here. What survives (`palaeoproteomics → PEAKS`, from the ostrich-eggshell paper) is genuine but under-represents actual tool use.
 
 ```{ojs}
 //| echo: false
