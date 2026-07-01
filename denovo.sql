@@ -3081,7 +3081,7 @@ INSERT INTO algorithm VALUES(44,'PGPointNovo',NULL,NULL,'CNN + RNN','Parallel GP
 INSERT INTO algorithm VALUES(45,'PaSER Novor',NULL,NULL,'Transformer (AR)','Real-time 4D-proteomics','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(46,'Denovo-GCN',NULL,NULL,'GNN','GCN on spectrum graph','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(47,'NovoRank',NULL,NULL,'CNN + RNN','Spectral clustering refinement','post-processor',1,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(48,'Kaiko',NULL,NULL,'CNN + RNN','Metaproteomics','downstream-application',1,'DDA',NULL,'metaproteomics');
+INSERT INTO algorithm VALUES(48,'Kaiko',NULL,NULL,'CNN + RNN','Deep-learning (CNN + RNN) de novo peptide sequencer trained on 5 M peptide-spectrum matches from 55 phylogenetically diverse bacteria. Identifies microbial community members directly from metaproteomic MS/MS, then builds sample-specific protein databases without requiring matched metagenomes — validated on native soil microbiome samples.','downstream-application',1,'DDA',NULL,'metaproteomics');
 INSERT INTO algorithm VALUES(49,'DePS',NULL,NULL,'CNN + RNN','Improved deep learning model','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(50,'Deep Novo A+',NULL,NULL,'CNN + RNN','Improved DeepNovo model','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(51,'PointNovo',NULL,NULL,'CNN + RNN','Point-set network','algorithm',1,'DDA',NULL,NULL);
