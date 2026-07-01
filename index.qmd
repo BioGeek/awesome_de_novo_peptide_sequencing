@@ -1139,7 +1139,7 @@ application_timeline = {
 
 ### Application → sequencer flow
 
-Which sequencing tools does each application community actually use? Read straight from the curated tool-usage links: an edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper reports using PEAKS. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
+Which sequencing tools does each application community actually use? Two signals are unioned: (1) explicit `publication_algorithm` links — the curator's "this paper uses tool X" assertion; (2) the Crossref citation graph — "this paper cites a publication describing tool X" (rebuilt monthly by `build_citations.py`). An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper either uses or cites PEAKS. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
 
 ```{ojs}
 //| echo: false
@@ -1164,38 +1164,45 @@ application_sankey = {
     if (app_alg) pub_subdomain.set(p.id, app_alg.subdomain)
   }
 
-  // Aggregate: (subdomain, sequencer) → number of downstream-app papers that
-  // report using that sequencer. Uses each publication's own curated
-  // publication_algorithm links (via pubs_t.models), NOT the Crossref
-  // reference graph. This surfaces every subdomain the moment a paper is
-  // added, rather than waiting for the monthly build_citations.py cron.
+  // Aggregate: (subdomain, sequencer) → number of downstream-app papers.
+  // TWO signals are unioned so a paper counts once per sequencer regardless
+  // of which surfaced the edge:
+  //   1. Direct publication_algorithm links (curator-asserted "uses tool X").
+  //   2. Citation edges to papers describing tool X (via publication_citation).
+  // The seen_edges dedup key is (paper, subdomain, tool), so a paper that both
+  // uses and cites the same tool contributes just once to the flow count.
   const flow = new Map()
   const sd_totals   = new Map()
   const seq_totals  = new Map()
   const seen_edges  = new Set()
+  const record = (paper_id, sd, a) => {
+    if (!(a.kind === "algorithm" || a.kind === "adjacent") || !a.family) return
+    const edge_key = `${paper_id}|${sd}|${a.model}`
+    if (seen_edges.has(edge_key)) return
+    seen_edges.add(edge_key)
+    const key = `${sd}|${a.model}`
+    flow.set(key, (flow.get(key) ?? 0) + 1)
+    sd_totals.set(sd,     (sd_totals.get(sd)     ?? 0) + 1)
+    seq_totals.set(a.model,(seq_totals.get(a.model)?? 0) + 1)
+  }
+  // Signal 1: curated tool-usage.
   for (const p of pubs_t) {
     const sd = pub_subdomain.get(p.id)
     if (!sd) continue
-    for (const a of pub_algs.get(p.id) || []) {
-      // Sequencing methods plus adjacent tooling (DB search, rescoring,
-      // sequence tags, etc.). Excludes reviews, benchmarks, and other
-      // downstream apps (including this paper's own workflow row) to keep
-      // the "what tool was used?" story clean.
-      if (!(a.kind === "algorithm" || a.kind === "adjacent") || !a.family) continue
-      const edge_key = `${p.id}|${sd}|${a.model}`
-      if (seen_edges.has(edge_key)) continue
-      seen_edges.add(edge_key)
-      const key = `${sd}|${a.model}`
-      flow.set(key, (flow.get(key) ?? 0) + 1)
-      sd_totals.set(sd,     (sd_totals.get(sd)     ?? 0) + 1)
-      seq_totals.set(a.model,(seq_totals.get(a.model)?? 0) + 1)
-    }
+    for (const a of pub_algs.get(p.id) || []) record(p.id, sd, a)
+  }
+  // Signal 2: intra-catalog citation graph.
+  for (const e of citations_t) {
+    const sd = pub_subdomain.get(e.citing_id)
+    if (!sd) continue
+    for (const a of pub_algs.get(e.cited_id) || []) record(e.citing_id, sd, a)
   }
 
   if (flow.size === 0) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
       No subdomain→sequencer flows have been resolved yet — application papers
-      have no <code>publication_algorithm</code> links to indexed sequencing methods.
+      have neither <code>publication_algorithm</code> links nor citations to
+      indexed sequencing methods.
     </p>`
   }
 
