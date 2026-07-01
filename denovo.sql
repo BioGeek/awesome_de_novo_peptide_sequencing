@@ -832,6 +832,14 @@ INSERT INTO author VALUES(842,'Mihaela Pravica',NULL);
 INSERT INTO author VALUES(843,'Ivana Varenina',NULL);
 INSERT INTO author VALUES(844,'Nina Bilandžić',NULL);
 INSERT INTO author VALUES(845,'Mario Cindrić',NULL);
+INSERT INTO author VALUES(846,'Ema Svetličić',NULL);
+INSERT INTO author VALUES(847,'Lucija Dončević',NULL);
+INSERT INTO author VALUES(848,'Luka Ozdanovac',NULL);
+INSERT INTO author VALUES(849,'Andrea Janeš',NULL);
+INSERT INTO author VALUES(850,'Tomislav Tustonić',NULL);
+INSERT INTO author VALUES(851,'Andrija Štajduhar',NULL);
+INSERT INTO author VALUES(852,'Antun Lovro Brkić',NULL);
+INSERT INTO author VALUES(853,'Marina Čeprnja',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1536,6 +1544,12 @@ INSERT INTO affiliation VALUES(447,'Pacific Northwest National Laboratory','Appl
 INSERT INTO affiliation VALUES(448,'Karius Inc.',NULL,8,215);
 INSERT INTO affiliation VALUES(449,'Rudjer Bošković Institute','Laboratory for Bioanalytics, Division of Molecular Medicine',70,216);
 INSERT INTO affiliation VALUES(450,'Croatian Veterinary Institute','Laboratory for Residue Control, Department of Veterinary Public Health',70,216);
+INSERT INTO affiliation VALUES(451,'Rudjer Bošković Institute','Division of Molecular Medicine',70,216);
+INSERT INTO affiliation VALUES(452,'University Hospital Dubrava','Clinical Department of Laboratory Diagnostics',70,216);
+INSERT INTO affiliation VALUES(453,'Conscius Ltd.',NULL,70,216);
+INSERT INTO affiliation VALUES(454,'Andrija Štampar Teaching Institute of Public Health','Division for Medical Statistics',70,216);
+INSERT INTO affiliation VALUES(455,'Institute of Physics',NULL,70,216);
+INSERT INTO affiliation VALUES(456,'Special Hospital Agram','Agram EEIG',70,216);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2720,6 +2734,15 @@ INSERT INTO author_affiliation VALUES(842,449);
 INSERT INTO author_affiliation VALUES(845,449);
 INSERT INTO author_affiliation VALUES(843,450);
 INSERT INTO author_affiliation VALUES(844,450);
+INSERT INTO author_affiliation VALUES(846,3);
+INSERT INTO author_affiliation VALUES(845,451);
+INSERT INTO author_affiliation VALUES(847,451);
+INSERT INTO author_affiliation VALUES(848,451);
+INSERT INTO author_affiliation VALUES(849,452);
+INSERT INTO author_affiliation VALUES(850,453);
+INSERT INTO author_affiliation VALUES(851,454);
+INSERT INTO author_affiliation VALUES(852,455);
+INSERT INTO author_affiliation VALUES(853,456);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2925,6 +2948,7 @@ INSERT INTO algorithm VALUES(198,'Koala milk lactation proteome',NULL,NULL,NULL,
 INSERT INTO algorithm VALUES(199,'Tasmanian devil pouch secretion proteome',NULL,NULL,NULL,'De novo peptide sequencing workflow (InstaNovo+) applied to the first proteomic characterisation of Tasmanian devil pouch secretions, uncovering antimicrobial and immune-protective proteins shielding immunologically vulnerable joeys.','downstream-application',NULL,'DDA',NULL,'wildlife-proteomics');
 INSERT INTO algorithm VALUES(200,'MARLOWE',NULL,NULL,'Probabilistic taxonomy classifier','Computational tool that takes de novo-sequenced peptides from mass spectra of an unknown biological sample and returns a ranked, probabilistic list of source organisms, aimed at forensic biothreat and biodiversity casework.','downstream-application',NULL,'DDA',NULL,'forensics');
 INSERT INTO algorithm VALUES(201,'Processed meat species authentication workflow',NULL,NULL,NULL,'De novo peptide sequencing workflow combining FBDA peptide derivatization, dual-polarity DIA-MS, and SCX fractionation to discover species-specific markers (myosin, troponin) in highly processed pork, chicken and bovine meat products — enabling detection of adulteration down to 10 % species contamination.','downstream-application',NULL,'DIA',NULL,'food-authentication');
+INSERT INTO algorithm VALUES(202,'Protein Acrobat',NULL,NULL,'Graph / DP','De novo peptide sequencing tool from the Cindrić group, coupling MALDI-TOF/TOF fragmentation of chemically activated peptides with de novo sequence elucidation and NCBInr alignment for organism identification (bacteria, viruses, meat-species markers).','algorithm',0,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3166,6 +3190,7 @@ INSERT INTO publication VALUES(228,'Lactation-stage specific protein shifts in k
 INSERT INTO publication VALUES(229,'Characterisation of pouch secretions from breeding Tasmanian devils','2026-03-24','10.1093/reprod/xaag024','Oxford University Press',NULL,'https://academic.oup.com/reproduction/article/171/3/xaag024/8529050','Reproduction','peer-reviewed',NULL);
 INSERT INTO publication VALUES(230,'MARLOWE: Taxonomic Characterization of Unknown Samples for Forensics Using De Novo Peptide Identification','2025-06-02','10.1101/2024.09.30.615220','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2024.09.30.615220v2','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(231,'Identification of Species-Specific Peptide Markers in Highly Processed Meat Products Using De Novo Sequencing','2026-06-26','10.3390/foods15132294','MDPI',NULL,'https://www.mdpi.com/2304-8158/15/13/2294','Foods','peer-reviewed',NULL);
+INSERT INTO publication VALUES(232,'Direct Identification of Urinary Tract Pathogens by MALDI-TOF/TOF Analysis and De Novo Peptide Sequencing','2022-08-25','10.3390/molecules27175461','MDPI',NULL,'https://www.mdpi.com/1420-3049/27/17/5461','Molecules','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3411,6 +3436,8 @@ INSERT INTO publication_algorithm VALUES(229,199);
 INSERT INTO publication_algorithm VALUES(229,2);
 INSERT INTO publication_algorithm VALUES(230,200);
 INSERT INTO publication_algorithm VALUES(231,201);
+INSERT INTO publication_algorithm VALUES(232,202);
+INSERT INTO publication_algorithm VALUES(231,202);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4865,6 +4892,15 @@ INSERT INTO publication_author VALUES(231,842,2);
 INSERT INTO publication_author VALUES(231,843,3);
 INSERT INTO publication_author VALUES(231,844,4);
 INSERT INTO publication_author VALUES(231,845,5);
+INSERT INTO publication_author VALUES(232,846,1);
+INSERT INTO publication_author VALUES(232,847,2);
+INSERT INTO publication_author VALUES(232,848,3);
+INSERT INTO publication_author VALUES(232,849,4);
+INSERT INTO publication_author VALUES(232,850,5);
+INSERT INTO publication_author VALUES(232,851,6);
+INSERT INTO publication_author VALUES(232,852,7);
+INSERT INTO publication_author VALUES(232,853,8);
+INSERT INTO publication_author VALUES(232,845,9);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7051,10 +7087,10 @@ INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',70);
 INSERT INTO sqlite_sequence VALUES('city',216);
-INSERT INTO sqlite_sequence VALUES('affiliation',450);
-INSERT INTO sqlite_sequence VALUES('author',845);
-INSERT INTO sqlite_sequence VALUES('algorithm',201);
-INSERT INTO sqlite_sequence VALUES('publication',231);
+INSERT INTO sqlite_sequence VALUES('affiliation',456);
+INSERT INTO sqlite_sequence VALUES('author',853);
+INSERT INTO sqlite_sequence VALUES('algorithm',202);
+INSERT INTO sqlite_sequence VALUES('publication',232);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
