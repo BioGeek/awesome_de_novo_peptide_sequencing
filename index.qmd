@@ -1095,12 +1095,12 @@ application_timeline = {
       // ~22 chars; the full untruncated name is still available via the tooltip.
       Plot.text(items.filter(d => d.y_frac >= 0.5), {
         x: "first_pub", y: "y", text: d => wrap_label(d.model),
-        textAnchor: "middle", lineAnchor: "bottom", dy: -6,
+        textAnchor: "middle", lineAnchor: "bottom", dy: -12,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       }),
       Plot.text(items.filter(d => d.y_frac < 0.5), {
         x: "first_pub", y: "y", text: d => wrap_label(d.model),
-        textAnchor: "middle", lineAnchor: "top", dy: 6,
+        textAnchor: "middle", lineAnchor: "top", dy: 12,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
     ]
