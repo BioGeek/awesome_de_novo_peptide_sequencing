@@ -808,6 +808,15 @@ INSERT INTO author VALUES(818,'Jean-Charles Boisson','boisson@lifl.fr');
 INSERT INTO author VALUES(819,'Laetitia Jourdan','jourdan@lifl.fr');
 INSERT INTO author VALUES(820,'El-Ghazali Talbi','talbi@lifl.fr');
 INSERT INTO author VALUES(821,'Christian Rolando','Christian.Rolando@univlille1.fr');
+INSERT INTO author VALUES(822,'Manujaya W. Jayamanna Mohottige',NULL);
+INSERT INTO author VALUES(823,'Angéla Juhász',NULL);
+INSERT INTO author VALUES(824,'Emma Peel',NULL);
+INSERT INTO author VALUES(825,'Mitchell G. Nye-Wood',NULL);
+INSERT INTO author VALUES(826,'Katherine A. Farquharson',NULL);
+INSERT INTO author VALUES(827,'Tawfeek Khedr',NULL);
+INSERT INTO author VALUES(828,'Katherine Belov',NULL);
+INSERT INTO author VALUES(829,'Carolyn J. Hogg',NULL);
+INSERT INTO author VALUES(830,'Michelle L. Colgrave',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1071,6 +1080,9 @@ INSERT INTO city VALUES(208,'Barcelona',33,NULL,NULL);
 INSERT INTO city VALUES(209,'Copenhagen',3,NULL,NULL);
 INSERT INTO city VALUES(210,'Wuhan',2,NULL,NULL);
 INSERT INTO city VALUES(211,'Utrecht',5,NULL,NULL);
+INSERT INTO city VALUES(212,'Joondalup',15,NULL,NULL);
+INSERT INTO city VALUES(213,'Port Macquarie',15,NULL,NULL);
+INSERT INTO city VALUES(214,'Brisbane',15,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1493,6 +1505,12 @@ INSERT INTO affiliation VALUES(434,'University Medical Center Utrecht','Departme
 INSERT INTO affiliation VALUES(435,'University Medical Center Utrecht','Department of Medical Microbiology',5,39);
 INSERT INTO affiliation VALUES(436,'University of Washington','Department of Chemistry',8,25);
 INSERT INTO affiliation VALUES(437,'University of Antwerp','Adrem Data Lab',1,26);
+INSERT INTO affiliation VALUES(438,'Edith Cowan University','Australian Research Council Centre of Excellence Centre for Innovations in Peptide and Protein Science',15,212);
+INSERT INTO affiliation VALUES(439,'Edith Cowan University','Centre of Crops and Horticultural Analytics for Nutrition and Climate Excellence, School of Science',15,212);
+INSERT INTO affiliation VALUES(440,'The University of Sydney','Australian Research Council Centre of Excellence Centre for Innovations in Peptide and Protein Science',15,114);
+INSERT INTO affiliation VALUES(441,'The University of Sydney','School of Life and Environmental Science, Faculty of Science',15,114);
+INSERT INTO affiliation VALUES(442,'Koala Conservation Australia',NULL,15,213);
+INSERT INTO affiliation VALUES(443,'Commonwealth Scientific and Industrial Research Organisation','St Lucia Agriculture and Food',15,214);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2641,6 +2659,25 @@ INSERT INTO author_affiliation VALUES(805,435);
 INSERT INTO author_affiliation VALUES(807,436);
 INSERT INTO author_affiliation VALUES(808,436);
 INSERT INTO author_affiliation VALUES(95,437);
+INSERT INTO author_affiliation VALUES(822,438);
+INSERT INTO author_affiliation VALUES(823,438);
+INSERT INTO author_affiliation VALUES(825,438);
+INSERT INTO author_affiliation VALUES(827,438);
+INSERT INTO author_affiliation VALUES(830,438);
+INSERT INTO author_affiliation VALUES(822,439);
+INSERT INTO author_affiliation VALUES(823,439);
+INSERT INTO author_affiliation VALUES(827,439);
+INSERT INTO author_affiliation VALUES(830,439);
+INSERT INTO author_affiliation VALUES(824,440);
+INSERT INTO author_affiliation VALUES(826,440);
+INSERT INTO author_affiliation VALUES(828,440);
+INSERT INTO author_affiliation VALUES(829,440);
+INSERT INTO author_affiliation VALUES(824,441);
+INSERT INTO author_affiliation VALUES(826,441);
+INSERT INTO author_affiliation VALUES(828,441);
+INSERT INTO author_affiliation VALUES(829,441);
+INSERT INTO author_affiliation VALUES(826,442);
+INSERT INTO author_affiliation VALUES(830,443);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2842,6 +2879,8 @@ INSERT INTO algorithm VALUES(194,'FDR control for AI-based de novo sequencing',N
 INSERT INTO algorithm VALUES(195,'GP-based scoring function for de novo PSM re-ranking',NULL,NULL,'Learning-to-rank','Genetic-programming-derived scoring function for re-ranking peptide-spectrum matches emitted by de novo sequencing tools. Improves top-k accuracy over the default scorer.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(196,'Deep-learning protein identification primer',NULL,NULL,'CNN + RNN','Companion vision paper by the DeepNovo authors laying out how deep learning applies to protein identification end-to-end (from spectrum → amino-acid tokens → peptide → protein). Predates the PNAS DeepNovo paper by a few months.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(197,'Adaptive GA for tandem-MS peptide sequencing',NULL,NULL,'Heuristic','Adaptive genetic algorithm for protein sequencing from tandem MS. Represents peptides as GA individuals, evolves them against the observed spectrum; the adaptive component tunes mutation / crossover rates on the fly.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(198,'Koala milk lactation proteome',NULL,NULL,NULL,'Non-model marsupial milk proteomics workflow using InstaNovo+ de novo sequencing to profile lactation-stage-specific protein shifts in koala milk against the joey''s development.','downstream-application',NULL,'DDA',NULL,'wildlife-proteomics');
+INSERT INTO algorithm VALUES(199,'Tasmanian devil pouch secretion proteome',NULL,NULL,NULL,'De novo peptide sequencing workflow (InstaNovo+) applied to the first proteomic characterisation of Tasmanian devil pouch secretions, uncovering antimicrobial and immune-protective proteins shielding immunologically vulnerable joeys.','downstream-application',NULL,'DDA',NULL,'wildlife-proteomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3079,6 +3118,8 @@ INSERT INTO publication VALUES(224,'GA-Novo: De Novo Peptide Sequencing via Tand
 INSERT INTO publication VALUES(225,'Protein identification with deep learning: from abc to xyz','2017-10-08','10.48550/arXiv.1710.02765','arXiv',NULL,'https://arxiv.org/abs/1710.02765','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(226,'Antilope – A Lagrangian Relaxation Approach to the de novo Peptide Sequencing Problem','2011-02-19','10.48550/arXiv.1102.4016','arXiv',NULL,'https://arxiv.org/abs/1102.4016','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(227,'Protein Sequencing with an Adaptive Genetic Algorithm from Tandem Mass Spectrometry','2008-04-08','10.48550/arXiv.0804.1201','arXiv',NULL,'https://arxiv.org/abs/0804.1201','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(228,'Lactation-stage specific protein shifts in koala milk mirror the joey''s growth needs','2026-04-01','10.1016/j.ijbiomac.2026.151640','Elsevier',NULL,'https://www.sciencedirect.com/science/article/pii/S0141813026015667','International Journal of Biological Macromolecules','peer-reviewed',NULL);
+INSERT INTO publication VALUES(229,'Characterisation of pouch secretions from breeding Tasmanian devils','2026-03-24','10.1093/reprod/xaag024','Oxford University Press',NULL,'https://academic.oup.com/reproduction/article/171/3/xaag024/8529050','Reproduction','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3318,6 +3359,10 @@ INSERT INTO publication_algorithm VALUES(224,124);
 INSERT INTO publication_algorithm VALUES(225,196);
 INSERT INTO publication_algorithm VALUES(226,101);
 INSERT INTO publication_algorithm VALUES(227,197);
+INSERT INTO publication_algorithm VALUES(228,198);
+INSERT INTO publication_algorithm VALUES(228,2);
+INSERT INTO publication_algorithm VALUES(229,199);
+INSERT INTO publication_algorithm VALUES(229,2);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4741,6 +4786,22 @@ INSERT INTO publication_author VALUES(227,818,1);
 INSERT INTO publication_author VALUES(227,819,2);
 INSERT INTO publication_author VALUES(227,820,3);
 INSERT INTO publication_author VALUES(227,821,4);
+INSERT INTO publication_author VALUES(228,822,1);
+INSERT INTO publication_author VALUES(228,823,2);
+INSERT INTO publication_author VALUES(228,824,3);
+INSERT INTO publication_author VALUES(228,825,4);
+INSERT INTO publication_author VALUES(228,826,5);
+INSERT INTO publication_author VALUES(228,827,6);
+INSERT INTO publication_author VALUES(228,828,7);
+INSERT INTO publication_author VALUES(228,829,8);
+INSERT INTO publication_author VALUES(228,830,9);
+INSERT INTO publication_author VALUES(229,822,1);
+INSERT INTO publication_author VALUES(229,824,2);
+INSERT INTO publication_author VALUES(229,823,3);
+INSERT INTO publication_author VALUES(229,825,4);
+INSERT INTO publication_author VALUES(229,828,5);
+INSERT INTO publication_author VALUES(229,830,6);
+INSERT INTO publication_author VALUES(229,829,7);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6926,11 +6987,11 @@ INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',69);
-INSERT INTO sqlite_sequence VALUES('city',211);
-INSERT INTO sqlite_sequence VALUES('affiliation',437);
-INSERT INTO sqlite_sequence VALUES('author',821);
-INSERT INTO sqlite_sequence VALUES('algorithm',197);
-INSERT INTO sqlite_sequence VALUES('publication',227);
+INSERT INTO sqlite_sequence VALUES('city',214);
+INSERT INTO sqlite_sequence VALUES('affiliation',443);
+INSERT INTO sqlite_sequence VALUES('author',830);
+INSERT INTO sqlite_sequence VALUES('algorithm',199);
+INSERT INTO sqlite_sequence VALUES('publication',229);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
