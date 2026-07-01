@@ -1050,6 +1050,18 @@ INSERT INTO city VALUES(187,'Tempe',8,NULL,NULL);
 INSERT INTO city VALUES(188,'York',7,NULL,NULL);
 INSERT INTO city VALUES(189,'Bangor',7,NULL,NULL);
 INSERT INTO city VALUES(190,'Sheffield',7,NULL,NULL);
+INSERT INTO city VALUES(191,'Tarragona',33,NULL,NULL);
+INSERT INTO city VALUES(192,'Copenhagen',3,NULL,NULL);
+INSERT INTO city VALUES(193,'Tbilisi',41,NULL,NULL);
+INSERT INTO city VALUES(194,'Burgos',33,NULL,NULL);
+INSERT INTO city VALUES(195,'Hinxton',7,NULL,NULL);
+INSERT INTO city VALUES(196,'Odense',3,NULL,NULL);
+INSERT INTO city VALUES(197,'Martinsried',4,NULL,NULL);
+INSERT INTO city VALUES(198,'Madrid',33,NULL,NULL);
+INSERT INTO city VALUES(199,'Cambridge',7,NULL,NULL);
+INSERT INTO city VALUES(200,'London',7,NULL,NULL);
+INSERT INTO city VALUES(201,'York',7,NULL,NULL);
+INSERT INTO city VALUES(202,'Barcelona',33,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1444,6 +1456,21 @@ INSERT INTO affiliation VALUES(384,'The Hebrew University','National Natural His
 INSERT INTO affiliation VALUES(385,'University of Toronto','Department of Anthropology',9,97);
 INSERT INTO affiliation VALUES(386,'University of the Witwatersrand','Evolutionary Studies Institute',45,181);
 INSERT INTO affiliation VALUES(387,'University of York','Centre of Excellence in Mass Spectrometry',7,150);
+INSERT INTO affiliation VALUES(390,'Max Planck Institute of Biochemistry','Computational Systems Biochemistry',4,73);
+INSERT INTO affiliation VALUES(392,'Barcelona Institute of Science and Technology','Center for Genomic Regulation (CNAG-CRG)',33,149);
+INSERT INTO affiliation VALUES(393,'University Pompeu Fabra','Proteomics Unit',33,149);
+INSERT INTO affiliation VALUES(395,'University Pompeu Fabra','Institute of Evolutionary Biology (UPF-CSIC)',33,149);
+INSERT INTO affiliation VALUES(396,'Centro Nacional de Investigación sobre la Evolución Humana (CENIEH)',NULL,33,194);
+INSERT INTO affiliation VALUES(397,'University College London','Anthropology Department',7,1);
+INSERT INTO affiliation VALUES(398,'Georgian National Museum',NULL,41,170);
+INSERT INTO affiliation VALUES(399,'Universidad Complutense de Madrid','Centro Mixto UCM-ISCIII de Evolución y Comportamiento Humanos',33,180);
+INSERT INTO affiliation VALUES(400,'Universidad Complutense de Madrid','Departamento de Paleontología, Facultad de Ciencias Geológicas',33,180);
+INSERT INTO affiliation VALUES(401,'Universidad Rovira i Virgili','Departamento d''Història i Història de l''Art',33,151);
+INSERT INTO affiliation VALUES(403,'Institució Catalana de Recerca i Estudis Avançats (ICREA)',NULL,33,149);
+INSERT INTO affiliation VALUES(404,'Universitat Autònoma de Barcelona','Institut Català de Paleontologia Miquel Crusafont',33,149);
+INSERT INTO affiliation VALUES(405,'Tbilisi State University',NULL,41,170);
+INSERT INTO affiliation VALUES(407,'Centro Nacional de Investigación sobre la Evolución Humana (CENIEH)',NULL,33,194);
+INSERT INTO affiliation VALUES(411,'Wellcome Trust Sanger Institute',NULL,7,77);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2525,6 +2552,38 @@ INSERT INTO author_affiliation VALUES(755,379);
 INSERT INTO author_affiliation VALUES(757,379);
 INSERT INTO author_affiliation VALUES(760,382);
 INSERT INTO author_affiliation VALUES(767,367);
+INSERT INTO author_affiliation VALUES(381,390);
+INSERT INTO author_affiliation VALUES(677,390);
+INSERT INTO author_affiliation VALUES(679,392);
+INSERT INTO author_affiliation VALUES(679,393);
+INSERT INTO author_affiliation VALUES(681,395);
+INSERT INTO author_affiliation VALUES(682,395);
+INSERT INTO author_affiliation VALUES(683,395);
+INSERT INTO author_affiliation VALUES(684,396);
+INSERT INTO author_affiliation VALUES(684,407);
+INSERT INTO author_affiliation VALUES(684,397);
+INSERT INTO author_affiliation VALUES(685,339);
+INSERT INTO author_affiliation VALUES(685,398);
+INSERT INTO author_affiliation VALUES(686,399);
+INSERT INTO author_affiliation VALUES(686,400);
+INSERT INTO author_affiliation VALUES(687,401);
+INSERT INTO author_affiliation VALUES(687,353);
+INSERT INTO author_affiliation VALUES(688,392);
+INSERT INTO author_affiliation VALUES(688,395);
+INSERT INTO author_affiliation VALUES(688,354);
+INSERT INTO author_affiliation VALUES(688,403);
+INSERT INTO author_affiliation VALUES(688,404);
+INSERT INTO author_affiliation VALUES(690,392);
+INSERT INTO author_affiliation VALUES(690,393);
+INSERT INTO author_affiliation VALUES(384,390);
+INSERT INTO author_affiliation VALUES(692,398);
+INSERT INTO author_affiliation VALUES(692,405);
+INSERT INTO author_affiliation VALUES(693,334);
+INSERT INTO author_affiliation VALUES(694,395);
+INSERT INTO author_affiliation VALUES(695,396);
+INSERT INTO author_affiliation VALUES(695,407);
+INSERT INTO author_affiliation VALUES(695,397);
+INSERT INTO author_affiliation VALUES(696,411);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -6809,9 +6868,9 @@ INSERT INTO publication_impact VALUES(217,NULL,NULL,'unmatched',27.4509803921568
 INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',57);
-INSERT INTO sqlite_sequence VALUES('city',190);
-INSERT INTO sqlite_sequence VALUES('affiliation',387);
+INSERT INTO sqlite_sequence VALUES('country',62);
+INSERT INTO sqlite_sequence VALUES('city',202);
+INSERT INTO sqlite_sequence VALUES('affiliation',413);
 INSERT INTO sqlite_sequence VALUES('author',821);
 INSERT INTO sqlite_sequence VALUES('algorithm',197);
 INSERT INTO sqlite_sequence VALUES('publication',227);
