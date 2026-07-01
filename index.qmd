@@ -353,6 +353,31 @@ repo_metrics_t = transpose(repo_metrics).map(r => ({
   fetched_at:  r.fetched_at  ? new Date(r.fetched_at)  : null,
 }))
 
+// Some repositories back multiple catalogued algorithms (e.g. InstaNovo +
+// InstaNovo-P share instadeepai/instanovo). For the two Code-activity plots
+// we want ONE dot per repo — otherwise the shared bar/point appears twice
+// on top of itself and the label collides. Fold rows by URL, joining the
+// per-repo model names with ' / ' so the tooltip still shows which
+// algorithms live in that repo. The Browse-all table below keeps the
+// un-deduplicated repo_metrics_t so per-algorithm columns (family, kind)
+// stay intact.
+repo_metrics_by_url = {
+  const grouped = new Map()
+  for (const r of repo_metrics_t) {
+    if (!r.url) continue
+    if (!grouped.has(r.url)) grouped.set(r.url, {...r, models: [r.model]})
+    else grouped.get(r.url).models.push(r.model)
+  }
+  return Array.from(grouped.values()).map(r => ({
+    ...r,
+    // 'model' overrides the single-value field with a joined label used by
+    // Plot.text and the tooltip title. 'family' picks the first algorithm's
+    // family for the dot color (families are usually the same when they
+    // share a repo; where they differ, the first one seen wins).
+    model: r.models.join(" / "),
+  }))
+}
+
 // Derived counters. Everything flows from the data, no hardcoded numbers.
 n_papers = pubs_t.length
 n_models = algorithms_t.length
@@ -2218,7 +2243,9 @@ viewof repo_metric = Inputs.radio(
 //| echo: false
 {
   // Bar chart of the top 20 repos by the selected metric.
-  const top = repo_metrics_t
+  // repo_metrics_by_url is deduped so repos backing multiple algorithms
+  // (InstaNovo + InstaNovo-P, ...) surface as one bar with a combined label.
+  const top = repo_metrics_by_url
     .filter(r => r[repo_metric] != null)
     .sort((a, b) => (b[repo_metric] ?? 0) - (a[repo_metric] ?? 0))
     .slice(0, 20)
@@ -2262,8 +2289,10 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
 {
   // Scatter: stars vs months since last push. Stale-but-popular repos sit in the
   // upper right; actively maintained but small projects sit lower left.
+  // repo_metrics_by_url dedupes shared-repo algorithm pairs (e.g. InstaNovo +
+  // InstaNovo-P) so we don't stack two labels on the same coordinate.
   const now = Date.now()
-  const points = repo_metrics_t
+  const points = repo_metrics_by_url
     .filter(r => r.stars != null && r.last_pushed != null)
     .map(r => ({
       ...r,
