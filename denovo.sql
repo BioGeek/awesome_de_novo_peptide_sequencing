@@ -2949,6 +2949,7 @@ INSERT INTO algorithm VALUES(199,'Tasmanian devil pouch secretion proteome',NULL
 INSERT INTO algorithm VALUES(200,'MARLOWE',NULL,NULL,'Probabilistic taxonomy classifier','Computational tool that takes de novo-sequenced peptides from mass spectra of an unknown biological sample and returns a ranked, probabilistic list of source organisms, aimed at forensic biothreat and biodiversity casework.','downstream-application',NULL,'DDA',NULL,'forensics');
 INSERT INTO algorithm VALUES(201,'Processed meat species authentication workflow',NULL,NULL,NULL,'De novo peptide sequencing workflow combining FBDA peptide derivatization, dual-polarity DIA-MS, and SCX fractionation to discover species-specific markers (myosin, troponin) in highly processed pork, chicken and bovine meat products — enabling detection of adulteration down to 10 % species contamination.','downstream-application',NULL,'DIA',NULL,'food-authentication');
 INSERT INTO algorithm VALUES(202,'Protein Acrobat',NULL,NULL,'Graph / DP','De novo peptide sequencing tool from the Cindrić group, coupling MALDI-TOF/TOF fragmentation of chemically activated peptides with de novo sequence elucidation and NCBInr alignment for organism identification (bacteria, viruses, meat-species markers).','algorithm',0,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(203,'Direct urinary tract pathogen identification workflow',NULL,NULL,NULL,'Culture-independent MALDI-TOF/TOF de novo peptide sequencing workflow (using Protein Acrobat + NCBInr alignment) that identifies uropathogens directly from native patient urine in under 24 h, side-stepping the standard 24–72 h culture step in clinical microbiology.','downstream-application',NULL,NULL,NULL,'pathogen-identification');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3438,6 +3439,7 @@ INSERT INTO publication_algorithm VALUES(230,200);
 INSERT INTO publication_algorithm VALUES(231,201);
 INSERT INTO publication_algorithm VALUES(232,202);
 INSERT INTO publication_algorithm VALUES(231,202);
+INSERT INTO publication_algorithm VALUES(232,203);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7089,7 +7091,7 @@ INSERT INTO sqlite_sequence VALUES('country',70);
 INSERT INTO sqlite_sequence VALUES('city',216);
 INSERT INTO sqlite_sequence VALUES('affiliation',456);
 INSERT INTO sqlite_sequence VALUES('author',853);
-INSERT INTO sqlite_sequence VALUES('algorithm',202);
+INSERT INTO sqlite_sequence VALUES('algorithm',203);
 INSERT INTO sqlite_sequence VALUES('publication',232);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation

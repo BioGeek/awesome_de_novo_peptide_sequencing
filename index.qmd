@@ -916,40 +916,43 @@ application_timeline = {
   const lane_order = [
     "general-proteomics", "plant-pathogen", "metaproteomics",
     "immunopeptidomics", "antibodyomics", "wildlife-proteomics",
-    "food-authentication", "forensics", "palaeoproteomics"
+    "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics"
   ]
   const lane_label = {
-    "general-proteomics":  "General proteomics",
-    "plant-pathogen":      "Plant-pathogen effectors",
-    "metaproteomics":      "Metaproteomics",
-    "immunopeptidomics":   "Immunopeptidomics / neoantigen",
-    "antibodyomics":       "Antibodyomics",
-    "wildlife-proteomics": "Wildlife proteomics",
-    "food-authentication": "Food authentication",
-    "forensics":           "Forensics",
-    "palaeoproteomics":    "Palaeoproteomics"
+    "general-proteomics":     "General proteomics",
+    "plant-pathogen":         "Plant-pathogen effectors",
+    "metaproteomics":         "Metaproteomics",
+    "immunopeptidomics":      "Immunopeptidomics / neoantigen",
+    "antibodyomics":          "Antibodyomics",
+    "wildlife-proteomics":    "Wildlife proteomics",
+    "food-authentication":    "Food authentication",
+    "pathogen-identification":"Clinical pathogen ID",
+    "forensics":              "Forensics",
+    "palaeoproteomics":       "Palaeoproteomics"
   }
   const lane_color = {
-    "general-proteomics":  "#8a96a0",
-    "plant-pathogen":      "#4c8b3a",
-    "metaproteomics":      "#1a7f37",
-    "immunopeptidomics":   "#bf8700",
-    "antibodyomics":       "#cf222e",
-    "wildlife-proteomics": "#0969da",
-    "food-authentication": "#d4a72c",
-    "forensics":           "#953800",
-    "palaeoproteomics":    "#8250df"
+    "general-proteomics":     "#8a96a0",
+    "plant-pathogen":         "#4c8b3a",
+    "metaproteomics":         "#1a7f37",
+    "immunopeptidomics":      "#bf8700",
+    "antibodyomics":          "#cf222e",
+    "wildlife-proteomics":    "#0969da",
+    "food-authentication":    "#d4a72c",
+    "pathogen-identification":"#0a3069",
+    "forensics":              "#953800",
+    "palaeoproteomics":       "#8250df"
   }
   const lane_height = {
-    "general-proteomics":  1.0,
-    "plant-pathogen":      1.0,
-    "metaproteomics":      1.2,
-    "immunopeptidomics":   1.5,
-    "antibodyomics":       1.2,
-    "wildlife-proteomics": 1.2,
-    "food-authentication": 1.0,
-    "forensics":           1.0,
-    "palaeoproteomics":    1.8
+    "general-proteomics":     1.0,
+    "plant-pathogen":         1.0,
+    "metaproteomics":         1.2,
+    "immunopeptidomics":      1.5,
+    "antibodyomics":          1.2,
+    "wildlife-proteomics":    1.2,
+    "food-authentication":    1.0,
+    "pathogen-identification":1.0,
+    "forensics":              1.0,
+    "palaeoproteomics":       1.8
   }
 
   const rows = algorithms_t
@@ -1126,26 +1129,28 @@ application_sankey = {
 
   // Palette (mirror the swim-lane timeline for consistency).
   const subdomain_color = {
-    "general-proteomics":  "#8a96a0",
-    "plant-pathogen":      "#4c8b3a",
-    "metaproteomics":      "#1a7f37",
-    "immunopeptidomics":   "#bf8700",
-    "antibodyomics":       "#cf222e",
-    "wildlife-proteomics": "#0969da",
-    "food-authentication": "#d4a72c",
-    "forensics":           "#953800",
-    "palaeoproteomics":    "#8250df"
+    "general-proteomics":     "#8a96a0",
+    "plant-pathogen":         "#4c8b3a",
+    "metaproteomics":         "#1a7f37",
+    "immunopeptidomics":      "#bf8700",
+    "antibodyomics":          "#cf222e",
+    "wildlife-proteomics":    "#0969da",
+    "food-authentication":    "#d4a72c",
+    "pathogen-identification":"#0a3069",
+    "forensics":              "#953800",
+    "palaeoproteomics":       "#8250df"
   }
   const subdomain_label = {
-    "general-proteomics":  "General proteomics",
-    "plant-pathogen":      "Plant-pathogen",
-    "metaproteomics":      "Metaproteomics",
-    "immunopeptidomics":   "Immunopeptidomics",
-    "antibodyomics":       "Antibodyomics",
-    "wildlife-proteomics": "Wildlife proteomics",
-    "food-authentication": "Food authentication",
-    "forensics":           "Forensics",
-    "palaeoproteomics":    "Palaeoproteomics"
+    "general-proteomics":     "General proteomics",
+    "plant-pathogen":         "Plant-pathogen",
+    "metaproteomics":         "Metaproteomics",
+    "immunopeptidomics":      "Immunopeptidomics",
+    "antibodyomics":          "Antibodyomics",
+    "wildlife-proteomics":    "Wildlife proteomics",
+    "food-authentication":    "Food authentication",
+    "pathogen-identification":"Clinical pathogen ID",
+    "forensics":              "Forensics",
+    "palaeoproteomics":       "Palaeoproteomics"
   }
 
   // Assign Y positions (stacked, proportional to traffic + a small padding).
