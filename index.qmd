@@ -1013,8 +1013,23 @@ application_timeline = {
   const px_per_day = PLOT_WIDTH_PX / total_days
   const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
 
-  // Truncate the display label to 22 chars (full name stays in the tooltip).
-  const truncate_label = s => (s && s.length > 22 ? s.slice(0, 21) + '…' : s)
+  // Wrap the display label onto two lines at a word boundary when it exceeds
+  // the max width (Plot renders \n as separate tspans). Falls back to the raw
+  // string if the label already fits or has no whitespace to break on.
+  const wrap_label = (s, max_chars = 22) => {
+    if (!s || s.length <= max_chars) return s
+    const words = s.split(' ')
+    if (words.length === 1) return s
+    let line1 = ''
+    let i = 0
+    while (i < words.length && (line1 ? line1.length + 1 + words[i].length : words[i].length) <= max_chars) {
+      line1 = line1 ? `${line1} ${words[i]}` : words[i]
+      i++
+    }
+    if (!line1) { line1 = words[0]; i = 1 }
+    const line2 = words.slice(i).join(' ')
+    return line2 ? `${line1}\n${line2}` : line1
+  }
 
   const last_at_tier = new Map()
   const items = []
@@ -1076,15 +1091,15 @@ application_timeline = {
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
-      // Display label is truncated to 22 chars; the full name is still available
-      // via the dot's hover tooltip.
+      // Display label wraps onto two lines at a word boundary when it exceeds
+      // ~22 chars; the full untruncated name is still available via the tooltip.
       Plot.text(items.filter(d => d.y_frac >= 0.5), {
-        x: "first_pub", y: "y", text: d => truncate_label(d.model),
+        x: "first_pub", y: "y", text: d => wrap_label(d.model),
         textAnchor: "middle", lineAnchor: "bottom", dy: -6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       }),
       Plot.text(items.filter(d => d.y_frac < 0.5), {
-        x: "first_pub", y: "y", text: d => truncate_label(d.model),
+        x: "first_pub", y: "y", text: d => wrap_label(d.model),
         textAnchor: "middle", lineAnchor: "top", dy: 6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
