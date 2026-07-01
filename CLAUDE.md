@@ -19,10 +19,15 @@ uv sync                          # install deps from pyproject.toml / uv.lock
 uv run jupyter notebook plots.ipynb
 
 # Regenerate the SQL dump after any change to denovo.db, commit BOTH files together
+# (also automated by the pre-commit hook — see 'Repo hooks' below).
 sqlite3 denovo.db .dump > denovo.sql
 
 # Rebuild denovo.db from the dump (e.g. after pulling a commit that changed denovo.sql)
 rm denovo.db && sqlite3 denovo.db < denovo.sql
+
+# One-time setup per clone: activate the tracked pre-commit hook that
+# auto-regenerates denovo.sql whenever you stage denovo.db.
+git config core.hooksPath .githooks
 
 # Quick inspection
 sqlite3 denovo.db ".tables"

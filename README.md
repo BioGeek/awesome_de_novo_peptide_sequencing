@@ -48,6 +48,8 @@ git add denovo.db denovo.sql
 
 Open a PR with both files. The GitHub Action rebuilds the site and pushes to `gh-pages` on merge; typically live within ~3 minutes.
 
+**One-time setup per clone**: run `git config core.hooksPath .githooks` to activate the tracked pre-commit hook that automatically regenerates `denovo.sql` whenever you stage `denovo.db` — so the two files can't drift out of sync in a commit.
+
 ## Preview locally
 
 ```bash

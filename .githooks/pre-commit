@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit — keep denovo.sql in lockstep with denovo.db
+#
+# When denovo.db is staged, regenerate denovo.sql from it (via `sqlite3 .dump`)
+# and add the fresh dump to the same commit. Preserves the invariant CLAUDE.md
+# calls out: 'denovo.sql is the canonical human-readable representation; treat
+# it as the source of truth when the two disagree.'
+#
+# Skip entirely when denovo.db is NOT staged — no-op cost for unrelated commits.
+#
+# Enable per-clone with:
+#   git config core.hooksPath .githooks
+
+set -e
+
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -qx 'denovo\.db'; then
+  # denovo.db not staged — nothing to sync.
+  exit 0
+fi
+
+if ! command -v sqlite3 >/dev/null 2>&1; then
+  echo "pre-commit: denovo.db is staged but sqlite3 is not installed." >&2
+  echo "Install sqlite3 or unstage denovo.db before committing." >&2
+  exit 1
+fi
+
+# Regenerate the dump from the currently-staged .db. Note: the file on disk
+# is what sqlite3 reads, which for a `git add denovo.db` in normal usage is
+# identical to the staged blob (denovo.db is not typically staged from a
+# different state than the working tree). If you `git add -p denovo.db` or
+# stash mid-edit, the assumption breaks — but that would already leave the
+# .db in an ambiguous state.
+sqlite3 denovo.db .dump > denovo.sql
+git add denovo.sql
+
+# Report so the user knows why an extra file joined their commit.
+echo "pre-commit: regenerated denovo.sql from staged denovo.db."
