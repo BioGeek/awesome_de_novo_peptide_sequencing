@@ -5868,7 +5868,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-
 INSERT INTO repository_metrics VALUES('https://github.com/progistar/pXg',5,0,0,1,0,0,'2024-05-22T01:20:58Z','2026-06-24T08:16:11','v2.3.0-2024-05-15');
 INSERT INTO repository_metrics VALUES('https://github.com/shallFun4Learning/PGPointNovo',3,0,1,0,0,0,'2023-01-26T12:33:52Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/HanyangBISLab/NovoRank',4,0,0,0,0,0,'2025-03-24T12:58:48Z','2026-05-26T12:42:18',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/PNNL-Comp-Mass-Spec/Kaiko',4,5,2,1,0,1,'2021-11-16T16:56:50Z','2026-05-26T12:42:18',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/PNNL-Comp-Mass-Spec/Kaiko',4,5,3,1,0,1,'2021-11-16T16:56:50Z','2026-07-01T07:21:17',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/irleader/PointNovo',8,1,0,0,0,0,'2021-11-11T16:52:25Z','2026-06-24T08:16:11','v0.0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12,7,0,0,0,0,'2020-11-26T03:52:51Z','2026-06-24T08:16:11','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
