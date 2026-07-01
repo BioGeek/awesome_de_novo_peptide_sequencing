@@ -915,7 +915,7 @@ application_timeline = {
   // (plant-pathogen, general-proteomics), so lane heights adjust accordingly.
   const lane_order = [
     "general-proteomics", "plant-pathogen", "metaproteomics",
-    "immunopeptidomics", "antibodyomics", "wildlife-proteomics",
+    "immunopeptidomics", "antibodyomics", "venomics", "wildlife-proteomics",
     "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics"
   ]
   const lane_label = {
@@ -924,6 +924,7 @@ application_timeline = {
     "metaproteomics":         "Metaproteomics",
     "immunopeptidomics":      "Immunopeptidomics / neoantigen",
     "antibodyomics":          "Antibodyomics",
+    "venomics":               "Venomics",
     "wildlife-proteomics":    "Wildlife proteomics",
     "food-authentication":    "Food authentication",
     "pathogen-identification":"Clinical pathogen ID",
@@ -936,6 +937,7 @@ application_timeline = {
     "metaproteomics":         "#1a7f37",
     "immunopeptidomics":      "#bf8700",
     "antibodyomics":          "#cf222e",
+    "venomics":               "#a40e26",
     "wildlife-proteomics":    "#0969da",
     "food-authentication":    "#d4a72c",
     "pathogen-identification":"#0a3069",
@@ -948,6 +950,7 @@ application_timeline = {
     "metaproteomics":         1.2,
     "immunopeptidomics":      1.5,
     "antibodyomics":          1.2,
+    "venomics":               1.5,
     "wildlife-proteomics":    1.2,
     "food-authentication":    1.0,
     "pathogen-identification":1.0,
@@ -1134,6 +1137,7 @@ application_sankey = {
     "metaproteomics":         "#1a7f37",
     "immunopeptidomics":      "#bf8700",
     "antibodyomics":          "#cf222e",
+    "venomics":               "#a40e26",
     "wildlife-proteomics":    "#0969da",
     "food-authentication":    "#d4a72c",
     "pathogen-identification":"#0a3069",
@@ -1146,6 +1150,7 @@ application_sankey = {
     "metaproteomics":         "Metaproteomics",
     "immunopeptidomics":      "Immunopeptidomics",
     "antibodyomics":          "Antibodyomics",
+    "venomics":               "Venomics",
     "wildlife-proteomics":    "Wildlife proteomics",
     "food-authentication":    "Food authentication",
     "pathogen-identification":"Clinical pathogen ID",
