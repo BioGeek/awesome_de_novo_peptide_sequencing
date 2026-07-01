@@ -916,7 +916,7 @@ application_timeline = {
   const lane_order = [
     "general-proteomics", "plant-pathogen", "metaproteomics",
     "immunopeptidomics", "antibodyomics", "wildlife-proteomics",
-    "forensics", "palaeoproteomics"
+    "food-authentication", "forensics", "palaeoproteomics"
   ]
   const lane_label = {
     "general-proteomics":  "General proteomics",
@@ -925,6 +925,7 @@ application_timeline = {
     "immunopeptidomics":   "Immunopeptidomics / neoantigen",
     "antibodyomics":       "Antibodyomics",
     "wildlife-proteomics": "Wildlife proteomics",
+    "food-authentication": "Food authentication",
     "forensics":           "Forensics",
     "palaeoproteomics":    "Palaeoproteomics"
   }
@@ -935,6 +936,7 @@ application_timeline = {
     "immunopeptidomics":   "#bf8700",
     "antibodyomics":       "#cf222e",
     "wildlife-proteomics": "#0969da",
+    "food-authentication": "#d4a72c",
     "forensics":           "#953800",
     "palaeoproteomics":    "#8250df"
   }
@@ -945,6 +947,7 @@ application_timeline = {
     "immunopeptidomics":   1.5,
     "antibodyomics":       1.2,
     "wildlife-proteomics": 1.2,
+    "food-authentication": 1.0,
     "forensics":           1.0,
     "palaeoproteomics":    1.8
   }
@@ -1129,6 +1132,7 @@ application_sankey = {
     "immunopeptidomics":   "#bf8700",
     "antibodyomics":       "#cf222e",
     "wildlife-proteomics": "#0969da",
+    "food-authentication": "#d4a72c",
     "forensics":           "#953800",
     "palaeoproteomics":    "#8250df"
   }
@@ -1139,6 +1143,7 @@ application_sankey = {
     "immunopeptidomics":   "Immunopeptidomics",
     "antibodyomics":       "Antibodyomics",
     "wildlife-proteomics": "Wildlife proteomics",
+    "food-authentication": "Food authentication",
     "forensics":           "Forensics",
     "palaeoproteomics":    "Palaeoproteomics"
   }
