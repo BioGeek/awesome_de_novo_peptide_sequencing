@@ -686,13 +686,13 @@ innovations_timeline = {
   // Graph / DP now holds seven classical algorithms (Sherenga, PEAKS, PepNovo, MSNovo,
   // pNovo, pNovo+, CycloNovo) so it needs a taller swimlane.
   const band_heights = {
-    "Heuristic":         1.0,
-    "Graph / DP":        2.5,
+    "Heuristic":         2.5,   // 2001-2006 cluster: MALDI-QIT / MALDI-TOF-TOF / Adaptive GA all needed vertical room
+    "Graph / DP":        4.0,   // 2003-2005 burst: Sherenga / DP-based / Suboptimal / DeNovo / PepNovo overlap
     "HMM":               1.0,
     "Decision tree":     1.0,
     "Random Forest":     1.2,
     "Learning-to-rank":  1.2,
-    "CNN + RNN":         2.0,
+    "CNN + RNN":         3.5,   // 2018-2024 cluster of DeepNovo variants + neighbours
     "Transformer (AR)":  8.0,
     "GNN":               1.2,
     "CNN":               1.2,
@@ -743,8 +743,8 @@ innovations_timeline = {
   // when the timeline extends) but cap it so dense bursts (e.g. 2024-2026 Transformer
   // (AR) papers) don't all fall through to the center-line fallback.
   const PLOT_WIDTH_PX  = 1200          // chart 1400 minus left+right margins
-  const LABEL_RESERVE_PX = 70          // median label width across all current entries
-  const MAX_GAP_DAYS = 550              // cap ~1.5 yr; beyond this dense bands burst
+  const LABEL_RESERVE_PX = 150         // median label width AFTER wrap_label (2-line labels ~120-150 px wide)
+  const MAX_GAP_DAYS = 1400            // cap ~3.8 yr so busy years (2003/2005) get proper tier spread
   const total_days = (x_pad_max - x_pad_min) / 86400000
   const px_per_day = PLOT_WIDTH_PX / total_days
   const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
