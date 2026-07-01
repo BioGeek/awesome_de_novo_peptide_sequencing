@@ -1044,8 +1044,6 @@ application_timeline = {
 
 Which sequencing tools does each application community actually cite? Inferred from the intra-catalog citation graph: an edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper cites the canonical PEAKS publication. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
 
-Palaeoproteomics flow looks thin because Crossref's reference-list coverage for older Nature papers is patchy, and much of the palaeo bibliography (palaeogenetics, anthropology, palaeontology) is off-catalog. What survives (edges to PEAKS DB and PEAKS) is genuine but under-represents actual tool use.
-
 ```{ojs}
 //| echo: false
 application_sankey = {
