@@ -915,6 +915,31 @@ INSERT INTO author VALUES(928,'Bruno Lomonte',NULL);
 INSERT INTO author VALUES(929,'Anthony J. Saviola',NULL);
 INSERT INTO author VALUES(930,'Francisco Calderón Celis',NULL);
 INSERT INTO author VALUES(931,'Jorge Ruiz Encinar',NULL);
+INSERT INTO author VALUES(932,'Helena B. Fiorotti',NULL);
+INSERT INTO author VALUES(933,'Suely G. Figueiredo',NULL);
+INSERT INTO author VALUES(934,'Emídio Beraldo-Neto',NULL);
+INSERT INTO author VALUES(935,'Fabiana V. Campos',NULL);
+INSERT INTO author VALUES(936,'Daniel C. Pimenta',NULL);
+INSERT INTO author VALUES(937,'Heather G. Marco',NULL);
+INSERT INTO author VALUES(938,'Simone König',NULL);
+INSERT INTO author VALUES(939,'Gerd Gäde',NULL);
+INSERT INTO author VALUES(940,'Andrea Cerrato',NULL);
+INSERT INTO author VALUES(941,'Sara Elsa Aita',NULL);
+INSERT INTO author VALUES(942,'Chiara Cavaliere',NULL);
+INSERT INTO author VALUES(943,'Aldo Laganà',NULL);
+INSERT INTO author VALUES(944,'Carmela Maria Montone',NULL);
+INSERT INTO author VALUES(945,'Susy Piovesana',NULL);
+INSERT INTO author VALUES(946,'Riccardo Zenezini Chiozzi',NULL);
+INSERT INTO author VALUES(947,'Anna Laura Capriotti',NULL);
+INSERT INTO author VALUES(948,'Celso Vitor A. Q. Calomeno',NULL);
+INSERT INTO author VALUES(949,'Hulyana Brum',NULL);
+INSERT INTO author VALUES(950,'Rodrigo S. C. Brant',NULL);
+INSERT INTO author VALUES(951,'Marlon D. M. Santos',NULL);
+INSERT INTO author VALUES(952,'Luis Miguel Muñoz-Gómez',NULL);
+INSERT INTO author VALUES(953,'Ana Gisele da Costa Neves-Ferreira',NULL);
+INSERT INTO author VALUES(954,'Richard Hemmi Valente',NULL);
+INSERT INTO author VALUES(955,'Michel Batista',NULL);
+INSERT INTO author VALUES(956,'Paulo C. Carvalho',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -962,6 +987,7 @@ INSERT INTO country VALUES(52,'Tanzania');
 INSERT INTO country VALUES(70,'Croatia');
 INSERT INTO country VALUES(71,'Myanmar');
 INSERT INTO country VALUES(72,'Costa Rica');
+INSERT INTO country VALUES(73,'Uruguay');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1200,6 +1226,14 @@ INSERT INTO city VALUES(227,'Valencia',33,NULL,NULL);
 INSERT INTO city VALUES(228,'San José',72,NULL,NULL);
 INSERT INTO city VALUES(229,'Aurora',8,NULL,NULL);
 INSERT INTO city VALUES(230,'Oviedo',33,NULL,NULL);
+INSERT INTO city VALUES(231,'São Paulo',24,NULL,NULL);
+INSERT INTO city VALUES(232,'Vitória',24,NULL,NULL);
+INSERT INTO city VALUES(233,'Ouro Preto',24,NULL,NULL);
+INSERT INTO city VALUES(234,'Curitiba',24,NULL,NULL);
+INSERT INTO city VALUES(235,'Rio de Janeiro',24,NULL,NULL);
+INSERT INTO city VALUES(236,'Montevideo',73,NULL,NULL);
+INSERT INTO city VALUES(237,'Münster',4,NULL,NULL);
+INSERT INTO city VALUES(238,'Rome',38,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1668,6 +1702,19 @@ INSERT INTO affiliation VALUES(480,'Instituto de Biomedicina de Valencia (CSIC)'
 INSERT INTO affiliation VALUES(481,'Universidad de Costa Rica','Unidad de Proteómica, Instituto Clodomiro Picado, Facultad de Microbiología',72,228);
 INSERT INTO affiliation VALUES(482,'University of Colorado Anschutz Medical Campus','Department of Biochemistry and Molecular Genetics',8,229);
 INSERT INTO affiliation VALUES(483,'University of Oviedo','Department of Physical and Analytical Chemistry',33,230);
+INSERT INTO affiliation VALUES(484,'Butantan Institute','Laboratory of Biochemistry and Biophysics',24,231);
+INSERT INTO affiliation VALUES(485,'Butantan Institute','Post-graduate Program in Sciences - Toxinology',24,231);
+INSERT INTO affiliation VALUES(486,'Federal University of Espírito Santo','Laboratory of Protein Chemistry, Physiological Sciences Department',24,232);
+INSERT INTO affiliation VALUES(487,'Federal University of Ouro Preto','Laboratory of Enzymology and Proteomics, Biological Sciences Department',24,233);
+INSERT INTO affiliation VALUES(488,'University of Cape Town','Department of Biological Sciences',45,186);
+INSERT INTO affiliation VALUES(489,'University of Münster','IZKF Core Unit Proteomics, Interdisciplinary Center for Clinical Research',4,237);
+INSERT INTO affiliation VALUES(490,'Sapienza Università di Roma','Department of Chemistry',38,238);
+INSERT INTO affiliation VALUES(491,'Netherlands Proteomics Centre',NULL,5,39);
+INSERT INTO affiliation VALUES(492,'Carlos Chagas Institute, Fiocruz Paraná','Laboratory for Structural and Computational Proteomics',24,234);
+INSERT INTO affiliation VALUES(493,'Carlos Chagas Institute, Fiocruz Paraná','Mass Spectrometry Facility',24,234);
+INSERT INTO affiliation VALUES(494,'Oswaldo Cruz Institute, Fiocruz','Laboratory of Toxinology',24,235);
+INSERT INTO affiliation VALUES(495,'Institut Pasteur de Montevideo','Analytical Biochemistry and Proteomics Unit, Instituto de Investigaciones Biológicas Clemente Estable',73,236);
+INSERT INTO affiliation VALUES(496,'University of California San Diego','Integrated Space Stem Cell Orbital Research (ISSCOR) Center',8,49);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2944,6 +2991,37 @@ INSERT INTO author_affiliation VALUES(928,481);
 INSERT INTO author_affiliation VALUES(929,482);
 INSERT INTO author_affiliation VALUES(930,483);
 INSERT INTO author_affiliation VALUES(931,483);
+INSERT INTO author_affiliation VALUES(936,484);
+INSERT INTO author_affiliation VALUES(934,484);
+INSERT INTO author_affiliation VALUES(932,484);
+INSERT INTO author_affiliation VALUES(932,485);
+INSERT INTO author_affiliation VALUES(933,486);
+INSERT INTO author_affiliation VALUES(935,487);
+INSERT INTO author_affiliation VALUES(939,488);
+INSERT INTO author_affiliation VALUES(937,488);
+INSERT INTO author_affiliation VALUES(938,489);
+INSERT INTO author_affiliation VALUES(943,490);
+INSERT INTO author_affiliation VALUES(940,490);
+INSERT INTO author_affiliation VALUES(947,490);
+INSERT INTO author_affiliation VALUES(944,490);
+INSERT INTO author_affiliation VALUES(942,490);
+INSERT INTO author_affiliation VALUES(941,490);
+INSERT INTO author_affiliation VALUES(945,490);
+INSERT INTO author_affiliation VALUES(946,262);
+INSERT INTO author_affiliation VALUES(946,263);
+INSERT INTO author_affiliation VALUES(946,491);
+INSERT INTO author_affiliation VALUES(948,492);
+INSERT INTO author_affiliation VALUES(949,492);
+INSERT INTO author_affiliation VALUES(951,492);
+INSERT INTO author_affiliation VALUES(956,492);
+INSERT INTO author_affiliation VALUES(949,493);
+INSERT INTO author_affiliation VALUES(955,493);
+INSERT INTO author_affiliation VALUES(950,493);
+INSERT INTO author_affiliation VALUES(953,494);
+INSERT INTO author_affiliation VALUES(952,494);
+INSERT INTO author_affiliation VALUES(954,494);
+INSERT INTO author_affiliation VALUES(951,495);
+INSERT INTO author_affiliation VALUES(956,496);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3163,6 +3241,10 @@ INSERT INTO algorithm VALUES(212,'Naja naja venomics',NULL,NULL,NULL,'Venomics +
 INSERT INTO algorithm VALUES(213,'Scorpion venom short peptides',NULL,NULL,NULL,'LC-HRMS with de novo sequencing of short (2-12 aa) scorpion venom peptides — 156 sequences identified, revealing N- and C-terminal modifications including the previously unreported N-benzoyl modification.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(214,'Daboia siamensis multi-omics venomics',NULL,NULL,NULL,'Multi-omics venomics of Russell''s viper (Daboia siamensis, Thai specimens): 10x-linked-read + short-read genome assembly and venom-gland transcriptomics feed a MAKER-annotated CDS database, which is searched with PEAKS Studio (database) plus SMSNet (deep-learning de novo) to identify 1,662 venom proteins including previously unreported hyaluronidase-1, phospholipase B and waprin.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(215,'Snake venomics quantification review',NULL,NULL,NULL,'Calvete-lab review of mass-spectrometry-based quantification of snake venom proteomes for non-model species: label-free strategies, absolute quantification via ICP-MS, hybrid elemental/molecular MS setups. Discusses manual de novo interpretation as an established workflow for non-model venomics.','review',NULL,NULL,NULL,'venomics');
+INSERT INTO algorithm VALUES(216,'Conus regius conopeptidome',NULL,NULL,NULL,'Reversed-phase LC + Q-TOF MS/MS with Peaks Studio v7 de novo sequencing to identify 520 conopeptides from the vermivorous cone snail Conus regius, spanning 13 conotoxin gene superfamilies and eight disulfide-poor peptide classes — the first molluscan entry in the venomics lane.','downstream-application',NULL,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(217,'Insect adipokinetic hormone neuropeptidomics',NULL,NULL,NULL,'High-resolution LC-MS with de novo peptide sequencing to identify and confirm mature adipokinetic-hormone (AKH) neuropeptides — including novel sequences with post-translational hydroxyproline — in one cockroach, two moths and two flies, cross-checked against genome/transcriptome predictions.','downstream-application',NULL,'DDA',NULL,'neuropeptidomics');
+INSERT INTO algorithm VALUES(218,'Sea bass muscle bioactive peptidome',NULL,NULL,NULL,'Native-peptide discovery workflow combining suspect-screening for short peptides (2-4 aa, including modified aminoacyl derivatives) with database + de novo sequencing for medium-sized peptides (2,665 identified by de novo alone) from sea bass muscle, generalising to any food-matrix bioactive-peptide search.','downstream-application',NULL,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(219,'SequenceAssembler',NULL,NULL,'Sequence assembly','Post-identification tool that assembles full-length protein sequences by unifying peptide-spectrum matching (PSM) and de novo sequencing outputs from Novor Cloud, PEAKS Studio, and PatternLab for Proteomics; one-click GUI and comparable in performance to Stitch.','post-processor',0,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3417,6 +3499,10 @@ INSERT INTO publication VALUES(241,'Venomics and antivenomics of Indian spectacl
 INSERT INTO publication VALUES(242,'Unveiling the Diversity and Modifications of Short Peptides in Scorpion Venom through Liquid Chromatography-High Resolution Mass Spectrometry','2024-03-16','10.3390/toxins16030155','MDPI',NULL,NULL,'Toxins','peer-reviewed',NULL);
 INSERT INTO publication VALUES(243,'Identification of Daboia siamensis venome using integrated multi-omics data','2022-07-30','10.1038/s41598-022-17300-1','Springer Nature',NULL,'https://www.nature.com/articles/s41598-022-17300-1','Scientific Reports','peer-reviewed',NULL);
 INSERT INTO publication VALUES(244,'Quantification of snake venom proteomes by mass spectrometry - considerations and perspectives','2023-05-08','10.1002/mas.21850','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/mas.21850','Mass Spectrometry Reviews','peer-reviewed',NULL);
+INSERT INTO publication VALUES(245,'Expanding the repertoire of conopeptides from the venom of the vermivorous snail Conus regius','2025-08-23','10.1016/j.toxicon.2025.108551','Elsevier',NULL,'https://doi.org/10.1016/j.toxicon.2025.108551','Toxicon','peer-reviewed',NULL);
+INSERT INTO publication VALUES(246,'Mass Spectrometric Proof of Predicted Peptides: Novel Adipokinetic Hormones in Insects','2022-10-01','10.3390/molecules27196469','MDPI',NULL,'https://doi.org/10.3390/molecules27196469','Molecules','peer-reviewed',NULL);
+INSERT INTO publication VALUES(247,'Comprehensive identification of native medium-sized and short bioactive peptides in sea bass muscle','2020-10-22','10.1016/j.foodchem.2020.128443','Elsevier',NULL,'https://doi.org/10.1016/j.foodchem.2020.128443','Food Chemistry','peer-reviewed',NULL);
+INSERT INTO publication VALUES(248,'SequenceAssembler: A tool for protein sequence assembly from mass spectrometry data','2025-10-08','10.1016/j.jprot.2025.105542','Elsevier',NULL,'https://doi.org/10.1016/j.jprot.2025.105542','Journal of Proteomics','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3689,6 +3775,13 @@ INSERT INTO publication_algorithm VALUES(243,62);
 INSERT INTO publication_algorithm VALUES(243,72);
 INSERT INTO publication_algorithm VALUES(244,215);
 INSERT INTO publication_algorithm VALUES(244,158);
+INSERT INTO publication_algorithm VALUES(245,216);
+INSERT INTO publication_algorithm VALUES(245,62);
+INSERT INTO publication_algorithm VALUES(246,217);
+INSERT INTO publication_algorithm VALUES(247,218);
+INSERT INTO publication_algorithm VALUES(248,219);
+INSERT INTO publication_algorithm VALUES(248,62);
+INSERT INTO publication_algorithm VALUES(248,68);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5242,6 +5335,31 @@ INSERT INTO publication_author VALUES(244,928,2);
 INSERT INTO publication_author VALUES(244,929,3);
 INSERT INTO publication_author VALUES(244,930,4);
 INSERT INTO publication_author VALUES(244,931,5);
+INSERT INTO publication_author VALUES(245,932,1);
+INSERT INTO publication_author VALUES(245,933,2);
+INSERT INTO publication_author VALUES(245,934,3);
+INSERT INTO publication_author VALUES(245,935,4);
+INSERT INTO publication_author VALUES(245,936,5);
+INSERT INTO publication_author VALUES(246,937,1);
+INSERT INTO publication_author VALUES(246,938,2);
+INSERT INTO publication_author VALUES(246,939,3);
+INSERT INTO publication_author VALUES(247,940,1);
+INSERT INTO publication_author VALUES(247,941,2);
+INSERT INTO publication_author VALUES(247,942,3);
+INSERT INTO publication_author VALUES(247,943,4);
+INSERT INTO publication_author VALUES(247,944,5);
+INSERT INTO publication_author VALUES(247,945,6);
+INSERT INTO publication_author VALUES(247,946,7);
+INSERT INTO publication_author VALUES(247,947,8);
+INSERT INTO publication_author VALUES(248,948,1);
+INSERT INTO publication_author VALUES(248,949,2);
+INSERT INTO publication_author VALUES(248,950,3);
+INSERT INTO publication_author VALUES(248,951,4);
+INSERT INTO publication_author VALUES(248,952,5);
+INSERT INTO publication_author VALUES(248,953,6);
+INSERT INTO publication_author VALUES(248,954,7);
+INSERT INTO publication_author VALUES(248,955,8);
+INSERT INTO publication_author VALUES(248,956,9);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7426,12 +7544,12 @@ INSERT INTO publication_impact VALUES(217,NULL,NULL,'unmatched',27.4509803921568
 INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',72);
-INSERT INTO sqlite_sequence VALUES('city',230);
-INSERT INTO sqlite_sequence VALUES('affiliation',483);
-INSERT INTO sqlite_sequence VALUES('author',931);
-INSERT INTO sqlite_sequence VALUES('algorithm',215);
-INSERT INTO sqlite_sequence VALUES('publication',244);
+INSERT INTO sqlite_sequence VALUES('country',73);
+INSERT INTO sqlite_sequence VALUES('city',238);
+INSERT INTO sqlite_sequence VALUES('affiliation',496);
+INSERT INTO sqlite_sequence VALUES('author',956);
+INSERT INTO sqlite_sequence VALUES('algorithm',219);
+INSERT INTO sqlite_sequence VALUES('publication',248);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
