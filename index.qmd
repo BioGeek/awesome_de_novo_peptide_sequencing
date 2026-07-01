@@ -981,12 +981,26 @@ application_timeline = {
   const lane_index = new Map(lanes.map(l => [l.subdomain, l]))
 
   // Within-lane tier assignment so dots at similar dates don't overlap labels.
-  const Y_TIERS = [0.5, 0.85, 0.15, 0.7, 0.3, 0.9, 0.1, 0.6, 0.4]
+  // Ported from the architectures chart above: 25 interleaved tiers + dynamic
+  // MIN_GAP_DAYS. The venomics lane alone has 10 papers with clustering in
+  // 2018/2020/2022, so the old 9-tier / static-400-day setup was over-crowded.
+  const Y_TIERS = [
+    0.5, 0.8, 0.2, 0.9, 0.1, 0.7, 0.3, 0.6, 0.4,
+    0.85, 0.15, 0.95, 0.05, 0.75, 0.25, 0.65, 0.35, 0.55, 0.45,
+    0.88, 0.12, 0.78, 0.22, 0.58, 0.42
+  ]
   const x_min = d3.min(rows, d => d.first_pub)
   const x_max = d3.max(rows, d => d.first_pub)
   const x_pad_min = d3.timeMonth.offset(x_min, -12)
   const x_pad_max = d3.timeMonth.offset(x_max, 12)
-  const MIN_GAP_DAYS = 400  // wider than the architectures chart — labels here can be long ('Streptolysin O epitope de novo workflow')
+  // MIN_GAP_DAYS auto-tunes to the actual x-scale, capped so dense years
+  // (2018/2020/2022 in venomics) don't all fall through to the fallback tier.
+  const PLOT_WIDTH_PX = 950            // chart 1200 minus 210 left + 40 right margins
+  const LABEL_RESERVE_PX = 110         // median label width after the 7b6440a rename
+  const MAX_GAP_DAYS = 550             // cap ~1.5 yr
+  const total_days = (x_pad_max - x_pad_min) / 86400000
+  const px_per_day = PLOT_WIDTH_PX / total_days
+  const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
 
   const last_at_tier = new Map()
   const items = []
@@ -1040,14 +1054,16 @@ application_timeline = {
         tip: true,
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
+      // Labels sit just above the dot (upper half of lane) or just below (lower half).
+      // dy tightened from 10 → 6 so labels don't spill into neighbouring lanes.
       Plot.text(items.filter(d => d.y_frac >= 0.5), {
         x: "first_pub", y: "y", text: "model",
-        textAnchor: "middle", lineAnchor: "bottom", dy: -10,
+        textAnchor: "middle", lineAnchor: "bottom", dy: -6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       }),
       Plot.text(items.filter(d => d.y_frac < 0.5), {
         x: "first_pub", y: "y", text: "model",
-        textAnchor: "middle", lineAnchor: "top", dy: 10,
+        textAnchor: "middle", lineAnchor: "top", dy: 6,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
     ]
