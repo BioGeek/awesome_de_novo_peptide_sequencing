@@ -2282,7 +2282,7 @@ viewof repo_metric = Inputs.radio(
 }
 ```
 
-Plot popularity (★, log scale) against staleness (months since last push). Vibrant repos cluster on the right at higher star counts; abandoned-but-historically-popular projects drift toward the left. Dot size scales with open issues + open PRs.
+Plot popularity (★, log scale) against staleness (months since last push). Vibrant repos cluster on the right at higher star counts; abandoned-but-historically-popular projects drift toward the left. Dot size scales with open issues + open PRs. Hover any dot for the repo name, url, and counts.
 
 ```{ojs}
 //| echo: false
@@ -2305,23 +2305,19 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     y: { label: "Stars (★)", type: "log", grid: true },
     color: { legend: true, label: "Family" },
     marks: [
+      // No always-on labels: even with dodgeY the ≥20-star subset still
+      // overlaps in dense clusters, and choosing WHICH stars threshold to
+      // label reads as arbitrary. Rely on Plot's hover tooltip (tip: true)
+      // for identification — every dot gets a rich popup with the same info.
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
         fill: "family",
         r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
         tip: true,
         title: d => `${d.model}\n★ ${d.stars} · ${d.months_since_push.toFixed(1)} mo since last push\n` +
-                    `issues open: ${d.open_issues}  ·  PRs open: ${d.open_prs}`
-      }),
-      // dodgeY auto-stacks labels that would collide at the same (x, y) so
-      // sibling repos with similar stats (e.g. InstaNovo + InstaNovo-P,
-      // PrimeNovo + RefineNovo) no longer print on top of each other.
-      Plot.text(points.filter(d => d.stars >= 20),
-        Plot.dodgeY({anchor: "middle", padding: 2}, {
-          x: "months_since_push", y: "stars", text: "model",
-          fontSize: 10, fontWeight: 600,
-          fill: "#1d2330"
-        }))
+                    `issues open: ${d.open_issues}  ·  PRs open: ${d.open_prs}\n` +
+                    `${d.url}`
+      })
     ]
   })
 }
