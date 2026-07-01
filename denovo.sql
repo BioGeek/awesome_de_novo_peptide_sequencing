@@ -90,15 +90,15 @@ INSERT INTO author VALUES(82,'Julien Gagneur',NULL);
 INSERT INTO author VALUES(83,'Zheng Ma',NULL);
 INSERT INTO author VALUES(84,'Gwenneth Straub',NULL);
 INSERT INTO author VALUES(85,'Varun Ananth',NULL);
-INSERT INTO author VALUES(86,'William E. Fondrie',NULL);
+INSERT INTO author VALUES(86,'William E. Fondrie','wfondrie@talus.bio');
 INSERT INTO author VALUES(87,'Chris Hsu',NULL);
 INSERT INTO author VALUES(88,'Michael Riffle',NULL);
-INSERT INTO author VALUES(89,'Justin Sanders',NULL);
+INSERT INTO author VALUES(89,'Justin Sanders','jsander1@cs.washington.edu');
 INSERT INTO author VALUES(90,'Bo Wen',NULL);
 INSERT INTO author VALUES(91,'Lingwen Xu',NULL);
-INSERT INTO author VALUES(92,'Melih Yilmaz',NULL);
+INSERT INTO author VALUES(92,'Melih Yilmaz','melih@cs.washington.edu');
 INSERT INTO author VALUES(93,'Michael J. MacCoss',NULL);
-INSERT INTO author VALUES(94,'Sewoong Oh',NULL);
+INSERT INTO author VALUES(94,'Sewoong Oh','sewoong@cs.washington.edu');
 INSERT INTO author VALUES(95,'Wout Bittremieux','wout.bittremieux@uantwerpen.be');
 INSERT INTO author VALUES(96,'William Stafford Noble','william-noble@uw.edu');
 INSERT INTO author VALUES(97,'Shiva Ebrahimi','Shiva.Ebrahimi@unt.edu');
@@ -793,8 +793,8 @@ INSERT INTO author VALUES(802,'Jean-François Greisch',NULL);
 INSERT INTO author VALUES(803,'Meri R.J. Varkila',NULL);
 INSERT INTO author VALUES(804,'Olaf L. Cremer',NULL);
 INSERT INTO author VALUES(805,'Marc J.M. Bonten',NULL);
-INSERT INTO author VALUES(807,'Jacob H. Russell',NULL);
-INSERT INTO author VALUES(808,'Nicholas M. Riley',NULL);
+INSERT INTO author VALUES(807,'Jacob H. Russell','rus22@uw.edu');
+INSERT INTO author VALUES(808,'Nicholas M. Riley','nmriley@uw.edu');
 INSERT INTO author VALUES(809,'Cheng Lai',NULL);
 INSERT INTO author VALUES(810,'Jiangli Hu',NULL);
 INSERT INTO author VALUES(811,'Zexuan Yi',NULL);
@@ -1491,6 +1491,8 @@ INSERT INTO affiliation VALUES(432,'Netherlands Proteomics Center',NULL,5,39);
 INSERT INTO affiliation VALUES(433,'University Medical Center Utrecht','Julius Center for Health Sciences and Primary Care',5,39);
 INSERT INTO affiliation VALUES(434,'University Medical Center Utrecht','Department of Intensive Care Medicine',5,39);
 INSERT INTO affiliation VALUES(435,'University Medical Center Utrecht','Department of Medical Microbiology',5,39);
+INSERT INTO affiliation VALUES(436,'University of Washington','Department of Chemistry',8,25);
+INSERT INTO affiliation VALUES(437,'University of Antwerp','Adrem Data Lab',1,26);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2636,6 +2638,9 @@ INSERT INTO author_affiliation VALUES(659,432);
 INSERT INTO author_affiliation VALUES(804,434);
 INSERT INTO author_affiliation VALUES(805,433);
 INSERT INTO author_affiliation VALUES(805,435);
+INSERT INTO author_affiliation VALUES(807,436);
+INSERT INTO author_affiliation VALUES(808,436);
+INSERT INTO author_affiliation VALUES(95,437);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -6922,7 +6927,7 @@ INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',69);
 INSERT INTO sqlite_sequence VALUES('city',211);
-INSERT INTO sqlite_sequence VALUES('affiliation',435);
+INSERT INTO sqlite_sequence VALUES('affiliation',437);
 INSERT INTO sqlite_sequence VALUES('author',821);
 INSERT INTO sqlite_sequence VALUES('algorithm',197);
 INSERT INTO sqlite_sequence VALUES('publication',227);
