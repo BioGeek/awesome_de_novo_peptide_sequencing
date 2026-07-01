@@ -899,6 +899,17 @@ INSERT INTO author VALUES(911,'Huixia Zhang',NULL);
 INSERT INTO author VALUES(912,'Jianfeng Qin',NULL);
 INSERT INTO author VALUES(913,'Wei Zhang',NULL);
 INSERT INTO author VALUES(914,'Zhihong Jiang',NULL);
+INSERT INTO author VALUES(916,'Thammakorn Saethang',NULL);
+INSERT INTO author VALUES(917,'Poorichaya Somparn',NULL);
+INSERT INTO author VALUES(918,'Sunchai Payungporn',NULL);
+INSERT INTO author VALUES(919,'Khin Than Yee',NULL);
+INSERT INTO author VALUES(920,'Kenneth Hodge',NULL);
+INSERT INTO author VALUES(921,'Mark A. Knepper',NULL);
+INSERT INTO author VALUES(922,'Lawan Chanhome',NULL);
+INSERT INTO author VALUES(923,'Orawan Khow',NULL);
+INSERT INTO author VALUES(924,'Narongsak Chaiyabutr',NULL);
+INSERT INTO author VALUES(925,'Visith Sitprija',NULL);
+INSERT INTO author VALUES(926,'Trairak Pisitkun',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -944,6 +955,7 @@ INSERT INTO country VALUES(45,'South Africa');
 INSERT INTO country VALUES(46,'Malaysia');
 INSERT INTO country VALUES(52,'Tanzania');
 INSERT INTO country VALUES(70,'Croatia');
+INSERT INTO country VALUES(71,'Myanmar');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1177,6 +1189,7 @@ INSERT INTO city VALUES(222,'Kollam',28,NULL,NULL);
 INSERT INTO city VALUES(223,'Thiruvananthapuram',28,NULL,NULL);
 INSERT INTO city VALUES(224,'Campinas',24,NULL,NULL);
 INSERT INTO city VALUES(225,'Bragança Paulista',24,NULL,NULL);
+INSERT INTO city VALUES(226,'Yangon',71,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1634,6 +1647,13 @@ INSERT INTO affiliation VALUES(469,'National University of Singapore','Departmen
 INSERT INTO affiliation VALUES(470,'Ege University','Department of Biology, Faculty of Science',25,220);
 INSERT INTO affiliation VALUES(471,'Ege University','Department of Bioengineering, Faculty of Engineering',25,220);
 INSERT INTO affiliation VALUES(472,'Macau University of Science and Technology','State Key Laboratory of Quality Research in Chinese Medicine',2,218);
+INSERT INTO affiliation VALUES(473,'Kasetsart University','Department of Computer Science, Faculty of Science',18,61);
+INSERT INTO affiliation VALUES(474,'Chulalongkorn University','Center of Excellence in Systems Biology, Faculty of Medicine',18,61);
+INSERT INTO affiliation VALUES(475,'Chulalongkorn University','Translational Research in Inflammation and Immunology Research Unit, Department of Microbiology, Faculty of Medicine',18,61);
+INSERT INTO affiliation VALUES(476,'Chulalongkorn University','Research Unit of Systems Microbiology, Faculty of Medicine',18,61);
+INSERT INTO affiliation VALUES(477,'Ministry of Health','Chemical Toxicology Research Division, Department of Medical Research',71,226);
+INSERT INTO affiliation VALUES(478,'National Institutes of Health','Epithelial Systems Biology Laboratory, NHLBI',8,66);
+INSERT INTO affiliation VALUES(479,'Queen Saovabha Memorial Institute','The Thai Red Cross Society',18,61);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2892,6 +2912,19 @@ INSERT INTO author_affiliation VALUES(911,472);
 INSERT INTO author_affiliation VALUES(912,472);
 INSERT INTO author_affiliation VALUES(913,472);
 INSERT INTO author_affiliation VALUES(914,472);
+INSERT INTO author_affiliation VALUES(916,473);
+INSERT INTO author_affiliation VALUES(917,474);
+INSERT INTO author_affiliation VALUES(917,475);
+INSERT INTO author_affiliation VALUES(918,476);
+INSERT INTO author_affiliation VALUES(919,477);
+INSERT INTO author_affiliation VALUES(920,474);
+INSERT INTO author_affiliation VALUES(921,478);
+INSERT INTO author_affiliation VALUES(922,479);
+INSERT INTO author_affiliation VALUES(924,479);
+INSERT INTO author_affiliation VALUES(923,479);
+INSERT INTO author_affiliation VALUES(925,479);
+INSERT INTO author_affiliation VALUES(926,474);
+INSERT INTO author_affiliation VALUES(926,478);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3109,6 +3142,7 @@ INSERT INTO algorithm VALUES(210,'Anatolian Meadow Viper top-down ISD venomics w
 INSERT INTO algorithm VALUES(211,'Malabar pit viper venom de novo workflow',NULL,NULL,NULL,'Venomics workflow combining SDS-PAGE and ion-exchange pre-fractionation with LC-MS/MS + Novor and PEAKS de novo sequencing to identify 97 proteins (including 18 exclusive to de novo) from Trimeresurus malabaricus venom, and evaluate antivenom cross-reactivity.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(212,'Naja naja venom de novo workflow',NULL,NULL,NULL,'Venomics + antivenomics workflow using SDS-PAGE, RP-HPLC and Q-TOF LC-MS/MS with PEAKS + Novor de novo sequencing to identify 115 proteins across 17 venom protein families in Indian cobra venom from the Western Ghats, and benchmark polyvalent-antivenom recognition.','downstream-application',NULL,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(213,'Scorpion venom short peptide de novo workflow',NULL,NULL,NULL,'LC-HRMS with de novo sequencing of short (2-12 aa) scorpion venom peptides — 156 sequences identified, revealing N- and C-terminal modifications including the previously unreported N-benzoyl modification.','downstream-application',NULL,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(214,'Daboia siamensis integrated multi-omics venomics workflow',NULL,NULL,NULL,'Multi-omics venomics of Russell''s viper (Daboia siamensis, Thai specimens): 10x-linked-read + short-read genome assembly and venom-gland transcriptomics feed a MAKER-annotated CDS database, which is searched with PEAKS Studio (database) plus SMSNet (deep-learning de novo) to identify 1,662 venom proteins including previously unreported hyaluronidase-1, phospholipase B and waprin.','downstream-application',NULL,'DDA',NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3361,6 +3395,7 @@ INSERT INTO publication VALUES(239,'Extended Snake Venomics by Top-Down In-Sourc
 INSERT INTO publication VALUES(240,'Delineating the venom toxin arsenal of Malabar pit viper (Trimeresurus malabaricus) from the Western Ghats of India and evaluating its immunological cross-reactivity and in vitro cytotoxicity','2020-01-23','10.1016/j.ijbiomac.2020.01.226','Elsevier',NULL,NULL,'International Journal of Biological Macromolecules','peer-reviewed',NULL);
 INSERT INTO publication VALUES(241,'Venomics and antivenomics of Indian spectacled cobra (Naja naja) from the Western Ghats','2022-01-28','10.1016/j.actatropica.2022.106324','Elsevier',NULL,NULL,'Acta Tropica','peer-reviewed',NULL);
 INSERT INTO publication VALUES(242,'Unveiling the Diversity and Modifications of Short Peptides in Scorpion Venom through Liquid Chromatography-High Resolution Mass Spectrometry','2024-03-16','10.3390/toxins16030155','MDPI',NULL,NULL,'Toxins','peer-reviewed',NULL);
+INSERT INTO publication VALUES(243,'Identification of Daboia siamensis venome using integrated multi-omics data','2022-07-30','10.1038/s41598-022-17300-1','Springer Nature',NULL,'https://www.nature.com/articles/s41598-022-17300-1','Scientific Reports','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3628,6 +3663,9 @@ INSERT INTO publication_algorithm VALUES(240,62);
 INSERT INTO publication_algorithm VALUES(240,68);
 INSERT INTO publication_algorithm VALUES(241,62);
 INSERT INTO publication_algorithm VALUES(241,68);
+INSERT INTO publication_algorithm VALUES(243,214);
+INSERT INTO publication_algorithm VALUES(243,62);
+INSERT INTO publication_algorithm VALUES(243,72);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5164,6 +5202,18 @@ INSERT INTO publication_author VALUES(242,911,6);
 INSERT INTO publication_author VALUES(242,912,7);
 INSERT INTO publication_author VALUES(242,913,8);
 INSERT INTO publication_author VALUES(242,914,9);
+INSERT INTO publication_author VALUES(243,916,1);
+INSERT INTO publication_author VALUES(243,917,2);
+INSERT INTO publication_author VALUES(243,918,3);
+INSERT INTO publication_author VALUES(243,312,4);
+INSERT INTO publication_author VALUES(243,919,5);
+INSERT INTO publication_author VALUES(243,920,6);
+INSERT INTO publication_author VALUES(243,921,7);
+INSERT INTO publication_author VALUES(243,922,8);
+INSERT INTO publication_author VALUES(243,923,9);
+INSERT INTO publication_author VALUES(243,924,10);
+INSERT INTO publication_author VALUES(243,925,11);
+INSERT INTO publication_author VALUES(243,926,12);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7348,12 +7398,12 @@ INSERT INTO publication_impact VALUES(217,NULL,NULL,'unmatched',27.4509803921568
 INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',70);
-INSERT INTO sqlite_sequence VALUES('city',225);
-INSERT INTO sqlite_sequence VALUES('affiliation',472);
-INSERT INTO sqlite_sequence VALUES('author',915);
-INSERT INTO sqlite_sequence VALUES('algorithm',213);
-INSERT INTO sqlite_sequence VALUES('publication',242);
+INSERT INTO sqlite_sequence VALUES('country',71);
+INSERT INTO sqlite_sequence VALUES('city',226);
+INSERT INTO sqlite_sequence VALUES('affiliation',479);
+INSERT INTO sqlite_sequence VALUES('author',926);
+INSERT INTO sqlite_sequence VALUES('algorithm',214);
+INSERT INTO sqlite_sequence VALUES('publication',243);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
