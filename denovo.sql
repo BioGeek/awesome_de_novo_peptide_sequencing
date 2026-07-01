@@ -1234,6 +1234,7 @@ INSERT INTO city VALUES(235,'Rio de Janeiro',24,NULL,NULL);
 INSERT INTO city VALUES(236,'Montevideo',73,NULL,NULL);
 INSERT INTO city VALUES(237,'Münster',4,NULL,NULL);
 INSERT INTO city VALUES(238,'Rome',38,NULL,NULL);
+INSERT INTO city VALUES(239,'Strasbourg',14,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1715,6 +1716,8 @@ INSERT INTO affiliation VALUES(493,'Carlos Chagas Institute, Fiocruz Paraná','M
 INSERT INTO affiliation VALUES(494,'Oswaldo Cruz Institute, Fiocruz','Laboratory of Toxinology',24,235);
 INSERT INTO affiliation VALUES(495,'Institut Pasteur de Montevideo','Analytical Biochemistry and Proteomics Unit, Instituto de Investigaciones Biológicas Clemente Estable',73,236);
 INSERT INTO affiliation VALUES(496,'University of California San Diego','Integrated Space Stem Cell Orbital Research (ISSCOR) Center',8,49);
+INSERT INTO affiliation VALUES(497,'University of Strasbourg','BioOrganic Mass Spectrometry Laboratory (LSMBO), IPHC UMR 7178, CNRS',14,239);
+INSERT INTO affiliation VALUES(498,'Infrastructure Nationale de Protéomique (ProFI-FR2048)',NULL,14,239);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3022,6 +3025,10 @@ INSERT INTO author_affiliation VALUES(952,494);
 INSERT INTO author_affiliation VALUES(954,494);
 INSERT INTO author_affiliation VALUES(951,495);
 INSERT INTO author_affiliation VALUES(956,496);
+INSERT INTO author_affiliation VALUES(784,7);
+INSERT INTO author_affiliation VALUES(784,8);
+INSERT INTO author_affiliation VALUES(29,497);
+INSERT INTO author_affiliation VALUES(29,498);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3245,6 +3252,7 @@ INSERT INTO algorithm VALUES(216,'Conus regius conopeptidome',NULL,NULL,NULL,'Re
 INSERT INTO algorithm VALUES(217,'Insect adipokinetic hormone neuropeptidomics',NULL,NULL,NULL,'High-resolution LC-MS with de novo peptide sequencing to identify and confirm mature adipokinetic-hormone (AKH) neuropeptides — including novel sequences with post-translational hydroxyproline — in one cockroach, two moths and two flies, cross-checked against genome/transcriptome predictions.','downstream-application',NULL,'DDA',NULL,'neuropeptidomics');
 INSERT INTO algorithm VALUES(218,'Sea bass muscle bioactive peptidome',NULL,NULL,NULL,'Native-peptide discovery workflow combining suspect-screening for short peptides (2-4 aa, including modified aminoacyl derivatives) with database + de novo sequencing for medium-sized peptides (2,665 identified by de novo alone) from sea bass muscle, generalising to any food-matrix bioactive-peptide search.','downstream-application',NULL,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(219,'SequenceAssembler',NULL,NULL,'Sequence assembly','Post-identification tool that assembles full-length protein sequences by unifying peptide-spectrum matching (PSM) and de novo sequencing outputs from Novor Cloud, PEAKS Studio, and PatternLab for Proteomics; one-click GUI and comparable in performance to Stitch.','post-processor',0,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(220,'De novo sequence-ambiguity benchmark',NULL,NULL,NULL,'Benchmark across 8 leading DL de novo peptide sequencers on three proteomics datasets, showing large overlap of correct calls between models and that post-processing yields only modest gains — the shared error source is limited fragment-ion coverage, a bottleneck that database search shares as well.','benchmark',NULL,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3503,6 +3511,7 @@ INSERT INTO publication VALUES(245,'Expanding the repertoire of conopeptides fro
 INSERT INTO publication VALUES(246,'Mass Spectrometric Proof of Predicted Peptides: Novel Adipokinetic Hormones in Insects','2022-10-01','10.3390/molecules27196469','MDPI',NULL,'https://doi.org/10.3390/molecules27196469','Molecules','peer-reviewed',NULL);
 INSERT INTO publication VALUES(247,'Comprehensive identification of native medium-sized and short bioactive peptides in sea bass muscle','2020-10-22','10.1016/j.foodchem.2020.128443','Elsevier',NULL,'https://doi.org/10.1016/j.foodchem.2020.128443','Food Chemistry','peer-reviewed',NULL);
 INSERT INTO publication VALUES(248,'SequenceAssembler: A tool for protein sequence assembly from mass spectrometry data','2025-10-08','10.1016/j.jprot.2025.105542','Elsevier',NULL,'https://doi.org/10.1016/j.jprot.2025.105542','Journal of Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(249,'Limitations of de novo sequencing in resolving sequence ambiguity','2025-08-23','10.1101/2025.08.19.671052','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2025.08.19.671052v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3782,6 +3791,7 @@ INSERT INTO publication_algorithm VALUES(247,218);
 INSERT INTO publication_algorithm VALUES(248,219);
 INSERT INTO publication_algorithm VALUES(248,62);
 INSERT INTO publication_algorithm VALUES(248,68);
+INSERT INTO publication_algorithm VALUES(249,220);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5360,6 +5370,16 @@ INSERT INTO publication_author VALUES(248,953,6);
 INSERT INTO publication_author VALUES(248,954,7);
 INSERT INTO publication_author VALUES(248,955,8);
 INSERT INTO publication_author VALUES(248,956,9);
+INSERT INTO publication_author VALUES(249,28,1);
+INSERT INTO publication_author VALUES(249,417,2);
+INSERT INTO publication_author VALUES(249,418,3);
+INSERT INTO publication_author VALUES(249,419,4);
+INSERT INTO publication_author VALUES(249,421,5);
+INSERT INTO publication_author VALUES(249,420,6);
+INSERT INTO publication_author VALUES(249,29,7);
+INSERT INTO publication_author VALUES(249,784,8);
+INSERT INTO publication_author VALUES(249,416,9);
+INSERT INTO publication_author VALUES(249,27,10);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7545,11 +7565,11 @@ INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',73);
-INSERT INTO sqlite_sequence VALUES('city',238);
-INSERT INTO sqlite_sequence VALUES('affiliation',496);
+INSERT INTO sqlite_sequence VALUES('city',239);
+INSERT INTO sqlite_sequence VALUES('affiliation',498);
 INSERT INTO sqlite_sequence VALUES('author',956);
-INSERT INTO sqlite_sequence VALUES('algorithm',219);
-INSERT INTO sqlite_sequence VALUES('publication',248);
+INSERT INTO sqlite_sequence VALUES('algorithm',220);
+INSERT INTO sqlite_sequence VALUES('publication',249);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
