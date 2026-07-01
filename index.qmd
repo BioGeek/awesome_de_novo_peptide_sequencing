@@ -692,12 +692,12 @@ innovations_timeline = {
     "Decision tree":     1.0,
     "Random Forest":     1.2,
     "Learning-to-rank":  1.2,
-    "CNN + RNN":         3.5,   // 2018-2024 cluster of DeepNovo variants + neighbours
-    "Transformer (AR)":  8.0,
+    "CNN + RNN":         5.0,   // 2018-2024 cluster of DeepNovo variants + neighbours (was 3.5, still tight)
+    "Transformer (AR)":  14.0,  // Cambrian explosion 2024-2026: ~27 Casanovo/Novo variants, needed 75 % more room
     "GNN":               1.2,
     "CNN":               1.2,
-    "Transformer (NAR)": 2.5,
-    "Diffusion":         1.2,
+    "Transformer (NAR)": 3.5,   // 2024-2025 CrossNovo/OmniNovo/π-PrimeNovo/DiffNovo/Refinovo cluster
+    "Diffusion":         1.8,
     "Flow":              1.2
   }
 
