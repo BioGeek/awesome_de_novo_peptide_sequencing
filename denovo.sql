@@ -823,7 +823,7 @@ INSERT INTO author VALUES(833,'Gelio Alves',NULL);
 INSERT INTO author VALUES(834,'Aleksey Y. Ogurtsov',NULL);
 INSERT INTO author VALUES(835,'Anthony S. Barente',NULL);
 INSERT INTO author VALUES(836,'Dustin L. Crockett',NULL);
-INSERT INTO author VALUES(837,'Natalie C. Lamar',NULL);
+INSERT INTO author VALUES(837,'Natalie C. Heller-Lamar',NULL);
 INSERT INTO author VALUES(838,'Eric D. Merkley',NULL);
 INSERT INTO author VALUES(839,'Yi-Kuo Yu',NULL);
 INSERT INTO author VALUES(840,'Kristin H. Jarman',NULL);
@@ -840,7 +840,6 @@ INSERT INTO author VALUES(850,'Tomislav Tustonić',NULL);
 INSERT INTO author VALUES(851,'Andrija Štajduhar',NULL);
 INSERT INTO author VALUES(852,'Antun Lovro Brkić',NULL);
 INSERT INTO author VALUES(853,'Marina Čeprnja',NULL);
-INSERT INTO author VALUES(854,'Natalie C. Heller',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2744,7 +2743,7 @@ INSERT INTO author_affiliation VALUES(850,453);
 INSERT INTO author_affiliation VALUES(851,454);
 INSERT INTO author_affiliation VALUES(852,455);
 INSERT INTO author_affiliation VALUES(853,456);
-INSERT INTO author_affiliation VALUES(854,109);
+INSERT INTO author_affiliation VALUES(837,109);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4910,7 +4909,7 @@ INSERT INTO publication_author VALUES(232,853,8);
 INSERT INTO publication_author VALUES(232,845,9);
 INSERT INTO publication_author VALUES(233,840,1);
 INSERT INTO publication_author VALUES(233,831,2);
-INSERT INTO publication_author VALUES(233,854,3);
+INSERT INTO publication_author VALUES(233,837,3);
 INSERT INTO publication_author VALUES(233,836,4);
 INSERT INTO publication_author VALUES(233,838,5);
 CREATE TABLE publication_citation (
