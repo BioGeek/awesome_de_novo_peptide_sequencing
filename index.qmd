@@ -1139,7 +1139,7 @@ application_timeline = {
 
 ### Application → sequencer flow
 
-Which sequencing tools does each application community actually cite? Inferred from the intra-catalog citation graph: an edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper cites the canonical PEAKS publication. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
+Which sequencing tools does each application community actually use? Read straight from the curated tool-usage links: an edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper reports using PEAKS. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
 
 ```{ojs}
 //| echo: false
@@ -1165,21 +1165,24 @@ application_sankey = {
   }
 
   // Aggregate: (subdomain, sequencer) → number of downstream-app papers that
-  // cite a paper linked to that sequencer.
+  // report using that sequencer. Uses each publication's own curated
+  // publication_algorithm links (via pubs_t.models), NOT the Crossref
+  // reference graph. This surfaces every subdomain the moment a paper is
+  // added, rather than waiting for the monthly build_citations.py cron.
   const flow = new Map()
   const sd_totals   = new Map()
   const seq_totals  = new Map()
   const seen_edges  = new Set()
-  for (const e of citations_t) {
-    const sd = pub_subdomain.get(e.citing_id)
+  for (const p of pubs_t) {
+    const sd = pub_subdomain.get(p.id)
     if (!sd) continue
-    const cited_algs = pub_algs.get(e.cited_id) || []
-    for (const a of cited_algs) {
+    for (const a of pub_algs.get(p.id) || []) {
       // Sequencing methods plus adjacent tooling (DB search, rescoring,
       // sequence tags, etc.). Excludes reviews, benchmarks, and other
-      // downstream apps to keep the "what tool was used?" story clean.
+      // downstream apps (including this paper's own workflow row) to keep
+      // the "what tool was used?" story clean.
       if (!(a.kind === "algorithm" || a.kind === "adjacent") || !a.family) continue
-      const edge_key = `${e.citing_id}|${sd}|${a.model}`
+      const edge_key = `${p.id}|${sd}|${a.model}`
       if (seen_edges.has(edge_key)) continue
       seen_edges.add(edge_key)
       const key = `${sd}|${a.model}`
@@ -1192,8 +1195,7 @@ application_sankey = {
   if (flow.size === 0) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
       No subdomain→sequencer flows have been resolved yet — application papers
-      either don't cite any indexed sequencing method, or their citations
-      haven't been built via <code>build_citations.py</code>.
+      have no <code>publication_algorithm</code> links to indexed sequencing methods.
     </p>`
   }
 
