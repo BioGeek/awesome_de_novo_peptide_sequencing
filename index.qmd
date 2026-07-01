@@ -813,7 +813,15 @@ innovations_timeline = {
         r: 7,
         stroke: "white",
         strokeWidth: 1.5,
-        tip: true,
+        // Tooltip sized to match the .map-tooltip on the world map (12-13px,
+        // roomier padding, white background with a soft border).
+        tip: {
+          fontSize: 13,
+          lineHeight: 1.35,
+          textPadding: 10,
+          fill: "white",
+          stroke: "#d0d7de"
+        },
         title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
       // Labels anchored above the dot (top half of band)
@@ -1057,7 +1065,14 @@ application_timeline = {
         x: "first_pub", y: "y",
         fill: "subdomain",
         r: 7, stroke: "white", strokeWidth: 1.5,
-        tip: true,
+        // Tooltip sized to match the .map-tooltip on the world map.
+        tip: {
+          fontSize: 13,
+          lineHeight: 1.35,
+          textPadding: 10,
+          fill: "white",
+          stroke: "#d0d7de"
+        },
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
