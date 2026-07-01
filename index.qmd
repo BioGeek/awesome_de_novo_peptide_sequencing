@@ -903,7 +903,7 @@ innovations_timeline = {
 
 ## Application areas
 
-*De novo* peptide sequencing gets picked up by a handful of distinct scientific communities, each with its own workflow conventions. Every algorithm classified `kind='downstream-application'` carries a `subdomain` tag; each dot below is one application-focused method / workflow, placed at its first publication date and stacked into a lane by sub-domain.
+*De novo* peptide sequencing gets picked up by a handful of distinct scientific communities, each with its own workflow conventions. Each dot below is one application-focused method or workflow, placed at its first publication date and stacked into a lane by sub-domain.
 
 ```{ojs}
 //| echo: false
@@ -1042,9 +1042,9 @@ application_timeline = {
 
 ### Application → sequencer flow
 
-Which sequencing tools does each application community actually use? Inferred from the intra-catalog citation graph: an edge from *palaeoproteomics* to *Casanovo* means at least one palaeoproteomics-tagged paper in the catalog cites the canonical Casanovo publication. Edge thickness is the paper count. Both DL and classical sequencers (PEAKS, PepNovo, Novor, pNovo, ...) show up on the right side, since every `kind='algorithm'` row is a valid target.
+Which sequencing tools does each application community actually cite? Inferred from the intra-catalog citation graph: an edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper cites the canonical PEAKS publication. Edge thickness is the paper count. Both DL and classical sequencers show up on the right side, alongside adjacent database-search and rescoring tools.
 
-Palaeoproteomics flows look thin here for two reasons: (1) Crossref's reference-list coverage for older Nature papers is patchy, so a typical palaeo paper produces only 0–4 outgoing edges in `publication_citation` versus 20–30 for a modern DL paper; (2) the palaeo bibliography's centre of gravity is palaeogenetics / anthropology / palaeontology — off-catalog and therefore invisible here. What survives (`palaeoproteomics → PEAKS`, from the ostrich-eggshell paper) is genuine but under-represents actual tool use.
+Palaeoproteomics flow looks thin because Crossref's reference-list coverage for older Nature papers is patchy, and much of the palaeo bibliography (palaeogenetics, anthropology, palaeontology) is off-catalog. What survives (edges to PEAKS DB and PEAKS) is genuine but under-represents actual tool use.
 
 ```{ojs}
 //| echo: false
@@ -1080,9 +1080,10 @@ application_sankey = {
     if (!sd) continue
     const cited_algs = pub_algs.get(e.cited_id) || []
     for (const a of cited_algs) {
-      // Only sequencing methods (kind='algorithm') with a family — excludes
-      // reviews, benchmarks, other downstream apps, etc.
-      if (a.kind !== "algorithm" || !a.family) continue
+      // Sequencing methods plus adjacent tooling (DB search, rescoring,
+      // sequence tags, etc.). Excludes reviews, benchmarks, and other
+      // downstream apps to keep the "what tool was used?" story clean.
+      if (!(a.kind === "algorithm" || a.kind === "adjacent") || !a.family) continue
       const edge_key = `${e.citing_id}|${sd}|${a.model}`
       if (seen_edges.has(edge_key)) continue
       seen_edges.add(edge_key)
