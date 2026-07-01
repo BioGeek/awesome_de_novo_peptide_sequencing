@@ -167,6 +167,7 @@ algorithms = pd.read_sql(
            alg.kind AS kind,
            alg.is_deep_learning AS is_dl,
            alg.acquisition_mode AS acquisition,
+           alg.subdomain AS subdomain,
            MIN(p.publication_date) AS first_pub
     FROM algorithm alg
     LEFT JOIN publication_algorithm pal ON alg.id = pal.algorithm_id
@@ -898,6 +899,145 @@ innovations_timeline = {
   border: 1px solid rgba(31, 35, 40, 0.35); flex: 0 0 auto;
 }
 </style>
+```
+
+## Application areas
+
+*De novo* peptide sequencing gets picked up by a handful of distinct scientific communities, each with its own workflow conventions. Every algorithm classified `kind='downstream-application'` carries a `subdomain` tag; each dot below is one application-focused method / workflow, placed at its first publication date and stacked into a lane by sub-domain.
+
+```{ojs}
+//| echo: false
+application_timeline = {
+  // Same swim-lane pattern as the architectures chart, keyed on subdomain
+  // instead of family. Lanes ordered oldest-application-adoption at the top
+  // (immunopeptidomics + general proteomics were first) down to the newest
+  // adopters. Currently one entry only sits in each single-entry lane
+  // (plant-pathogen, general-proteomics), so lane heights adjust accordingly.
+  const lane_order = [
+    "general-proteomics", "plant-pathogen", "metaproteomics",
+    "immunopeptidomics", "antibodyomics", "palaeoproteomics"
+  ]
+  const lane_label = {
+    "general-proteomics":  "General proteomics",
+    "plant-pathogen":      "Plant-pathogen effectors",
+    "metaproteomics":      "Metaproteomics",
+    "immunopeptidomics":   "Immunopeptidomics / neoantigen",
+    "antibodyomics":       "Antibodyomics",
+    "palaeoproteomics":    "Palaeoproteomics"
+  }
+  const lane_color = {
+    "general-proteomics":  "#8a96a0",
+    "plant-pathogen":      "#4c8b3a",
+    "metaproteomics":      "#1a7f37",
+    "immunopeptidomics":   "#bf8700",
+    "antibodyomics":       "#cf222e",
+    "palaeoproteomics":    "#8250df"
+  }
+  const lane_height = {
+    "general-proteomics":  1.0,
+    "plant-pathogen":      1.0,
+    "metaproteomics":      1.2,
+    "immunopeptidomics":   1.5,
+    "antibodyomics":       1.2,
+    "palaeoproteomics":    1.8
+  }
+
+  const rows = algorithms_t
+    .filter(a => a.kind === "downstream-application" && a.subdomain && a.first_pub)
+    .slice()
+    .sort((a, b) => a.first_pub - b.first_pub)
+
+  let y_cursor = 0
+  const lanes = lane_order.map(sd => {
+    const h = lane_height[sd] ?? 1.2
+    const lane = { subdomain: sd, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h/2, height: h }
+    y_cursor += h
+    return lane
+  })
+  const total_height = y_cursor
+  const lane_index = new Map(lanes.map(l => [l.subdomain, l]))
+
+  // Within-lane tier assignment so dots at similar dates don't overlap labels.
+  const Y_TIERS = [0.5, 0.85, 0.15, 0.7, 0.3, 0.9, 0.1, 0.6, 0.4]
+  const x_min = d3.min(rows, d => d.first_pub)
+  const x_max = d3.max(rows, d => d.first_pub)
+  const x_pad_min = d3.timeMonth.offset(x_min, -12)
+  const x_pad_max = d3.timeMonth.offset(x_max, 12)
+  const MIN_GAP_DAYS = 400  // wider than the architectures chart — labels here can be long ('Streptolysin O epitope de novo workflow')
+
+  const last_at_tier = new Map()
+  const items = []
+  for (const row of rows) {
+    let placed = false
+    for (let ti = 0; ti < Y_TIERS.length; ti++) {
+      const key = `${row.subdomain}|${ti}`
+      const last = last_at_tier.get(key)
+      if (last === undefined || (row.first_pub - last)/86400000 >= MIN_GAP_DAYS) {
+        last_at_tier.set(key, row.first_pub)
+        const lane = lane_index.get(row.subdomain)
+        items.push({ ...row, y: lane.y0 + lane.height * Y_TIERS[ti], y_frac: Y_TIERS[ti] })
+        placed = true
+        break
+      }
+    }
+    if (!placed) {
+      const lane = lane_index.get(row.subdomain)
+      items.push({ ...row, y: lane.center, y_frac: 0.5 })
+    }
+  }
+
+  const chart = Plot.plot({
+    width: 1200,
+    height: Math.max(340, total_height * 90),
+    marginLeft: 210,
+    marginRight: 40,
+    marginBottom: 40,
+    x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
+    y: { domain: [0, total_height], axis: null },
+    color: { domain: lane_order, range: lane_order.map(s => lane_color[s]), legend: false },
+    marks: [
+      Plot.rect(lanes, {
+        x1: () => x_pad_min, x2: () => x_pad_max,
+        y1: "y0", y2: "y1",
+        fill: "subdomain",
+        fillOpacity: 0.09
+      }),
+      Plot.ruleY(lanes.flatMap(l => [l.y0, l.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
+      Plot.text(lanes, {
+        x: () => x_pad_min, y: "center",
+        text: d => lane_label[d.subdomain],
+        textAnchor: "end", dx: -8,
+        fontSize: 12, fontWeight: "bold",
+        fill: "subdomain"
+      }),
+      Plot.dot(items, {
+        x: "first_pub", y: "y",
+        fill: "subdomain",
+        r: 7, stroke: "white", strokeWidth: 1.5,
+        tip: true,
+        title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
+      }),
+      Plot.text(items.filter(d => d.y_frac >= 0.5), {
+        x: "first_pub", y: "y", text: "model",
+        textAnchor: "middle", lineAnchor: "bottom", dy: -10,
+        fontSize: 10, fontWeight: "bold", fill: "subdomain"
+      }),
+      Plot.text(items.filter(d => d.y_frac < 0.5), {
+        x: "first_pub", y: "y", text: "model",
+        textAnchor: "middle", lineAnchor: "top", dy: 10,
+        fontSize: 10, fontWeight: "bold", fill: "subdomain"
+      })
+    ]
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${chart}</div>
+  </div>`
+}
 ```
 
 ## Where the work happens
