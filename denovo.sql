@@ -499,10 +499,10 @@ INSERT INTO author VALUES(504,'Srinivasa R. Nagalla',NULL);
 INSERT INTO author VALUES(505,'Yuhan Cai',NULL);
 INSERT INTO author VALUES(506,'Arun Devabhaktuni',NULL);
 INSERT INTO author VALUES(507,'Joshua E. Elias',NULL);
-INSERT INTO author VALUES(508,'Samaneh Azari',NULL);
-INSERT INTO author VALUES(509,'Bing Xue',NULL);
-INSERT INTO author VALUES(510,'Mengjie Zhang',NULL);
-INSERT INTO author VALUES(511,'Lifeng Peng',NULL);
+INSERT INTO author VALUES(508,'Samaneh Azari','samaneh.azari@ecs.vuw.ac.nz');
+INSERT INTO author VALUES(509,'Bing Xue','bing.xue@ecs.vuw.ac.nz');
+INSERT INTO author VALUES(510,'Mengjie Zhang','mengjie.zhang@ecs.vuw.ac.nz');
+INSERT INTO author VALUES(511,'Lifeng Peng','lifeng.peng@vuw.ac.nz');
 INSERT INTO author VALUES(512,'MyPhuong T. Le',NULL);
 INSERT INTO author VALUES(513,'Yu Zhu',NULL);
 INSERT INTO author VALUES(514,'Eric T. Dziekonski',NULL);
@@ -808,6 +808,11 @@ INSERT INTO author VALUES(813,'Jiayi Li',NULL);
 INSERT INTO author VALUES(814,'Hannes Röst','hannes.rost@utoronto.ca');
 INSERT INTO author VALUES(815,'Yun Yang',NULL);
 INSERT INTO author VALUES(816,'Yeye Leng',NULL);
+INSERT INTO author VALUES(817,'Zachariah Levine',NULL);
+INSERT INTO author VALUES(818,'Jean-Charles Boisson','boisson@lifl.fr');
+INSERT INTO author VALUES(819,'Laetitia Jourdan','jourdan@lifl.fr');
+INSERT INTO author VALUES(820,'El-Ghazali Talbi','talbi@lifl.fr');
+INSERT INTO author VALUES(821,'Christian Rolando','Christian.Rolando@univlille1.fr');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -999,6 +1004,8 @@ INSERT INTO city VALUES(143,'Bedford Park',15,-35.0225000000000008,138.570600000
 INSERT INTO city VALUES(144,'Düsseldorf',4,NULL,NULL);
 INSERT INTO city VALUES(145,'Jülich',4,NULL,NULL);
 INSERT INTO city VALUES(146,'Magdeburg',4,NULL,NULL);
+INSERT INTO city VALUES(147,'Amsterdam',5,NULL,NULL);
+INSERT INTO city VALUES(148,'Villeneuve d''Ascq',14,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1339,6 +1346,9 @@ INSERT INTO affiliation VALUES(324,'University of Bergen','KG Jebsen Center for 
 INSERT INTO affiliation VALUES(325,'Haukeland University Hospital','Center for Medical Genetics and Molecular Medicine',20,74);
 INSERT INTO affiliation VALUES(326,'Pengcheng Laboratory',NULL,2,10);
 INSERT INTO affiliation VALUES(327,'University of Toronto','Donnelly Centre for Cellular and Biomolecular Research',9,97);
+INSERT INTO affiliation VALUES(328,'Centrum Wiskunde & Informatica (CWI)','Life Sciences Group',5,147);
+INSERT INTO affiliation VALUES(329,'LIFL / INRIA',NULL,14,148);
+INSERT INTO affiliation VALUES(330,'Université Lille 1','Plateforme de Protéomique / Centre Commun de Spectrométrie de Masse',14,148);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -2308,6 +2318,12 @@ INSERT INTO author_affiliation VALUES(390,186);
 INSERT INTO author_affiliation VALUES(151,167);
 INSERT INTO author_affiliation VALUES(815,167);
 INSERT INTO author_affiliation VALUES(816,167);
+INSERT INTO author_affiliation VALUES(817,43);
+INSERT INTO author_affiliation VALUES(428,328);
+INSERT INTO author_affiliation VALUES(818,329);
+INSERT INTO author_affiliation VALUES(819,329);
+INSERT INTO author_affiliation VALUES(820,329);
+INSERT INTO author_affiliation VALUES(821,330);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -2506,6 +2522,9 @@ INSERT INTO algorithm VALUES(191,'Casanovo Foundation',NULL,NULL,'Transformer (A
 INSERT INTO algorithm VALUES(192,'π-HelixNovo2',NULL,NULL,'Transformer (AR)','Successor to π-HelixNovo with an emphasis on availability: an online inference service alongside the model architecture refinement. Same Tsinghua / Pengcheng Lab / NCPSB collaboration as the original.','algorithm',1,'DDA',NULL);
 INSERT INTO algorithm VALUES(193,'Li & Röst 2026 prior-vs-physics benchmark',NULL,NULL,NULL,'Benchmark that disentangles how much of a DL de novo sequencer''s output reflects MS/MS fragmentation evidence vs learned peptide-sequence priors — important for assessing robustness on out-of-distribution proteomes.','benchmark',NULL,'DDA',NULL);
 INSERT INTO algorithm VALUES(194,'FDR control for AI-based de novo sequencing (Liang 2026)',NULL,NULL,NULL,'FDR-control post-processing layer for the output of AI-based de novo peptide sequencers — surfaces trustworthy identifications and calibrates confidence scores across models. Applicable to any deep-learning de novo pipeline.','post-processor',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(195,'Azari 2019 GP re-ranker',NULL,NULL,'Learning-to-rank','Genetic-programming-derived scoring function for re-ranking peptide-spectrum matches emitted by de novo sequencing tools. Improves top-k accuracy over the default scorer.','post-processor',0,'DDA',NULL);
+INSERT INTO algorithm VALUES(196,'Tran 2017 deep-learning protein identification primer',NULL,NULL,'CNN + RNN','Companion vision paper by the DeepNovo authors laying out how deep learning applies to protein identification end-to-end (from spectrum → amino-acid tokens → peptide → protein). Predates the PNAS DeepNovo paper by a few months.','algorithm',1,'DDA',NULL);
+INSERT INTO algorithm VALUES(197,'Boisson 2008 adaptive GA',NULL,NULL,'Heuristic','Adaptive genetic algorithm for protein sequencing from tandem MS. Represents peptides as GA individuals, evolves them against the observed spectrum; the adaptive component tunes mutation / crossover rates on the fly.','algorithm',0,'DDA',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -2737,6 +2756,12 @@ INSERT INTO publication VALUES(218,'Foundation model for mass spectrometry prote
 INSERT INTO publication VALUES(219,'π-HelixNovo2: Making Accurate Online De Novo Peptide Sequencing Available to All','2026-06-25','10.1093/gpbjnl/qzag049','Oxford University Press',NULL,'https://academic.oup.com/gpb/advance-article/doi/10.1093/gpbjnl/qzag049/8716247','Genomics, Proteomics & Bioinformatics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(220,'Learning Fragmentation Physics or Exploiting Sequence Priors? Benchmarking Bias in Deep Learning Models for De Novo Peptide Sequencing','2026-06-29','10.64898/2026.06.23.734131','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.23.734131v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(221,'False discovery rate control for trustworthy AI-based de novo peptide sequencing','2026-07-01','10.64898/2026.06.29.735174','bioRxiv',NULL,'https://www.biorxiv.org/content/10.64898/2026.06.29.735174v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(222,'Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control','2026-02-23','10.48550/arXiv.2602.20209','arXiv',NULL,'https://arxiv.org/abs/2602.20209','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(223,'Improving the Results of De novo Peptide Identification via Tandem Mass Spectrometry Using a Genetic Programming-based Scoring Function for Re-ranking Peptide-Spectrum Matches','2019-08-12','10.48550/arXiv.1908.08010','arXiv',NULL,'https://arxiv.org/abs/1908.08010','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(224,'GA-Novo: De Novo Peptide Sequencing via Tandem Mass Spectrometry using Genetic Algorithm','2019-02-03','10.48550/arXiv.1902.00845','arXiv',NULL,'https://arxiv.org/abs/1902.00845','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(225,'Protein identification with deep learning: from abc to xyz','2017-10-08','10.48550/arXiv.1710.02765','arXiv',NULL,'https://arxiv.org/abs/1710.02765','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(226,'Antilope – A Lagrangian Relaxation Approach to the de novo Peptide Sequencing Problem','2011-02-19','10.48550/arXiv.1102.4016','arXiv',NULL,'https://arxiv.org/abs/1102.4016','arXiv','preprint',NULL);
+INSERT INTO publication VALUES(227,'Protein Sequencing with an Adaptive Genetic Algorithm from Tandem Mass Spectrometry','2008-04-08','10.48550/arXiv.0804.1201','arXiv',NULL,'https://arxiv.org/abs/0804.1201','arXiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -2970,6 +2995,12 @@ INSERT INTO publication_algorithm VALUES(218,191);
 INSERT INTO publication_algorithm VALUES(219,192);
 INSERT INTO publication_algorithm VALUES(220,193);
 INSERT INTO publication_algorithm VALUES(221,194);
+INSERT INTO publication_algorithm VALUES(222,7);
+INSERT INTO publication_algorithm VALUES(223,195);
+INSERT INTO publication_algorithm VALUES(224,124);
+INSERT INTO publication_algorithm VALUES(225,196);
+INSERT INTO publication_algorithm VALUES(226,101);
+INSERT INTO publication_algorithm VALUES(227,197);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -4370,6 +4401,29 @@ INSERT INTO publication_author VALUES(221,167,8);
 INSERT INTO publication_author VALUES(221,188,9);
 INSERT INTO publication_author VALUES(221,163,10);
 INSERT INTO publication_author VALUES(221,151,11);
+INSERT INTO publication_author VALUES(222,55,1);
+INSERT INTO publication_author VALUES(222,56,2);
+INSERT INTO publication_author VALUES(222,57,3);
+INSERT INTO publication_author VALUES(223,508,1);
+INSERT INTO publication_author VALUES(223,509,2);
+INSERT INTO publication_author VALUES(223,510,3);
+INSERT INTO publication_author VALUES(223,511,4);
+INSERT INTO publication_author VALUES(224,508,1);
+INSERT INTO publication_author VALUES(224,509,2);
+INSERT INTO publication_author VALUES(224,510,3);
+INSERT INTO publication_author VALUES(224,511,4);
+INSERT INTO publication_author VALUES(225,211,1);
+INSERT INTO publication_author VALUES(225,817,2);
+INSERT INTO publication_author VALUES(225,105,3);
+INSERT INTO publication_author VALUES(225,252,4);
+INSERT INTO publication_author VALUES(225,107,5);
+INSERT INTO publication_author VALUES(226,427,1);
+INSERT INTO publication_author VALUES(226,428,2);
+INSERT INTO publication_author VALUES(226,429,3);
+INSERT INTO publication_author VALUES(227,818,1);
+INSERT INTO publication_author VALUES(227,819,2);
+INSERT INTO publication_author VALUES(227,820,3);
+INSERT INTO publication_author VALUES(227,821,4);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6130,11 +6184,11 @@ INSERT INTO publication_impact VALUES(218,'W4417299611',2,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(219,'W7165868213',0,'doi',NULL,2026,'2026-06-28T07:45:18+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',33);
-INSERT INTO sqlite_sequence VALUES('city',146);
-INSERT INTO sqlite_sequence VALUES('affiliation',327);
-INSERT INTO sqlite_sequence VALUES('author',816);
-INSERT INTO sqlite_sequence VALUES('algorithm',194);
-INSERT INTO sqlite_sequence VALUES('publication',221);
+INSERT INTO sqlite_sequence VALUES('city',148);
+INSERT INTO sqlite_sequence VALUES('affiliation',330);
+INSERT INTO sqlite_sequence VALUES('author',821);
+INSERT INTO sqlite_sequence VALUES('algorithm',197);
+INSERT INTO sqlite_sequence VALUES('publication',227);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
