@@ -40,17 +40,40 @@ pubs = pd.read_sql(
               FROM publication_algorithm pal
               JOIN algorithm_repository ar ON ar.algorithm_id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS repo,
-           -- pick the dominant kind / DL flag / acquisition mode of the publication's
-           -- model(s); for the vast majority of papers there's a single linked model.
+           -- Resolve the paper's dominant kind / DL flag / acquisition mode from its
+           -- linked algorithms. Papers linked to MULTIPLE kinds (e.g. a wildlife-
+           -- proteomics workflow AND InstaNovo+) previously got 'algorithm' by
+           -- LIMIT 1 lottery; the priority ORDER BY below routes each paper to
+           -- the kind that reflects what IT contributes:
+           --   1. downstream-application (paper IS an application) beats
+           --   2. review, 3. benchmark, 4. meta (paper IS a review/benchmark/meta)
+           --   5. post-processor (paper introduces a post-processor)
+           --   6. adjacent (paper introduces adjacent tooling)
+           --   7. algorithm (default — paper introduces a de novo algorithm)
            (SELECT alg.kind
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id LIMIT 1) AS kind,
+              WHERE pal.publication_id = p.id
+              ORDER BY CASE alg.kind
+                WHEN 'downstream-application' THEN 1
+                WHEN 'review'                 THEN 2
+                WHEN 'benchmark'              THEN 3
+                WHEN 'meta'                   THEN 4
+                WHEN 'post-processor'         THEN 5
+                WHEN 'adjacent'               THEN 6
+                WHEN 'algorithm'              THEN 7
+                ELSE 8
+              END
+              LIMIT 1) AS kind,
+           -- For is_dl / acquisition, prefer rows where the flag is actually SET —
+           -- workflow rows carry NULL, algorithm rows carry the real value.
            (SELECT alg.is_deep_learning
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id LIMIT 1) AS is_dl,
+              WHERE pal.publication_id = p.id AND alg.is_deep_learning IS NOT NULL
+              LIMIT 1) AS is_dl,
            (SELECT alg.acquisition_mode
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id LIMIT 1) AS acquisition
+              WHERE pal.publication_id = p.id AND alg.acquisition_mode IS NOT NULL
+              LIMIT 1) AS acquisition
     FROM publication p
     ORDER BY p.publication_date
     """,
