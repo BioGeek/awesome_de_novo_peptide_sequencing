@@ -836,7 +836,10 @@ innovations_timeline = {
         fontWeight: "bold",
         fill: "family"
       }),
-      // Dots
+      // Dots are drawn via a Plot.dot placeholder so the layout is computed
+      // (x/y scales, viewBox etc.), then replaced with d3-controlled circles
+      // below so we can wire our .map-tooltip HTML style. Empty title means
+      // Plot won't add native <title> tooltips.
       Plot.dot(items, {
         x: "first_pub",
         y: "y",
@@ -844,8 +847,7 @@ innovations_timeline = {
         r: 7,
         stroke: "white",
         strokeWidth: 1.5,
-        tip: plot_tip_style,
-        title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
+        className: "arch-dot"
       }),
       // Labels anchored above the dot (top half of band). Wrap onto two
       // lines when the model name exceeds ~22 chars so long names don't
@@ -876,6 +878,46 @@ innovations_timeline = {
     ]
   })
 
+  // Rich .map-tooltip on the Plot.dot circles — matches the HTML tooltip style
+  // used across the world-map / co-auth / bipartite / Sankey / citation-arc
+  // charts. Plot renders dots in the order of the input `items` array, so we
+  // bind by DOM order.
+  const arch_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_arch_tip = ev => {
+    const pad = 12
+    const box = arch_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    arch_tooltip.style.left = `${Math.max(pad, left)}px`
+    arch_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  const arch_dot_circles = chart.querySelectorAll(".arch-dot circle")
+  arch_dot_circles.forEach((circle, i) => {
+    const d = items[i]
+    if (!d) return
+    circle.style.cursor = "pointer"
+    circle.setAttribute("aria-label", `${d.model}. ${d.family}. First publication ${d.first_pub.toISOString().slice(0,10)}.`)
+    circle.addEventListener("mouseenter", ev => {
+      arch_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.model}</div>
+        <div class="map-tooltip-meta">${d.first_pub.toISOString().slice(0,10)}</div>
+        <div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${band_color[d.family] ?? "#999"}`}></span>
+          <span>${d.family}</span>
+        </div>
+        ${d.description ? html`<div class="map-tooltip-meta" style="margin-top:6px; max-width:280px; white-space:normal;">${d.description}</div>` : ""}
+      </div>`)
+      arch_tooltip.classList.add("visible")
+      arch_tooltip.setAttribute("aria-hidden", "false")
+      move_arch_tip(ev)
+    })
+    circle.addEventListener("mousemove", move_arch_tip)
+    circle.addEventListener("mouseleave", () => {
+      arch_tooltip.classList.remove("visible")
+      arch_tooltip.setAttribute("aria-hidden", "true")
+    })
+  })
+
   // Wrap in a horizontally-scrollable container with a fullscreen button.
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
@@ -884,6 +926,7 @@ innovations_timeline = {
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${chart}</div>
+    ${arch_tooltip}
   </div>`
 }
 ```
@@ -1105,8 +1148,7 @@ application_timeline = {
         x: "first_pub", y: "y",
         fill: "subdomain",
         r: 7, stroke: "white", strokeWidth: 1.5,
-        tip: plot_tip_style,
-        title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
+        className: "app-dot"
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
       // Display label wraps onto two lines at a word boundary when it exceeds
@@ -1123,6 +1165,45 @@ application_timeline = {
       })
     ]
   })
+
+  // Rich .map-tooltip on the Plot.dot circles (matches the shared style).
+  // Plot renders dots in the order of `items`, so bind by DOM order.
+  const app_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_app_tip = ev => {
+    const pad = 12
+    const box = app_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    app_tooltip.style.left = `${Math.max(pad, left)}px`
+    app_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  const app_dot_circles = chart.querySelectorAll(".app-dot circle")
+  app_dot_circles.forEach((circle, i) => {
+    const d = items[i]
+    if (!d) return
+    circle.style.cursor = "pointer"
+    circle.setAttribute("aria-label", `${d.model}. ${lane_label[d.subdomain] ?? d.subdomain}. First publication ${d.first_pub.toISOString().slice(0,10)}.`)
+    circle.addEventListener("mouseenter", ev => {
+      app_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.model}</div>
+        <div class="map-tooltip-meta">${d.first_pub.toISOString().slice(0,10)}</div>
+        <div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${lane_color[d.subdomain] ?? "#999"}`}></span>
+          <span>${lane_label[d.subdomain] ?? d.subdomain}</span>
+        </div>
+        ${d.description ? html`<div class="map-tooltip-meta" style="margin-top:6px; max-width:280px; white-space:normal;">${d.description}</div>` : ""}
+      </div>`)
+      app_tooltip.classList.add("visible")
+      app_tooltip.setAttribute("aria-hidden", "false")
+      move_app_tip(ev)
+    })
+    circle.addEventListener("mousemove", move_app_tip)
+    circle.addEventListener("mouseleave", () => {
+      app_tooltip.classList.remove("visible")
+      app_tooltip.setAttribute("aria-hidden", "true")
+    })
+  })
+
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
       const el = this.parentElement;
@@ -1130,6 +1211,7 @@ application_timeline = {
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${chart}</div>
+    ${app_tooltip}
   </div>`
 }
 ```
