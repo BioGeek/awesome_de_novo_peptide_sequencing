@@ -2314,10 +2314,51 @@ author_algo_network = {
     .attr("class", "node")
     .call(drag(sim))
 
-  node_g.append("title").text(d => d.kind === "algo"
-    ? `${d.id} (algorithm)\nFamily: ${d.family}\n${d.degree} author links`
-    : `${d.id} (author)\n${d.degree} model links`
+  // Rich HTML tooltip that follows the cursor (matches world-map + co-auth style).
+  // aria-label handles screen-reader accessibility so we don't also stack a
+  // native black SVG <title> tooltip on top.
+  node_g.attr("aria-label", d => d.kind === "algo"
+    ? `${d.id} algorithm. Family: ${d.family}. ${d.degree} author links.`
+    : `${d.id} author. ${d.degree} model links.`
   )
+  const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_tip = ev => {
+    const pad = 12
+    const box = tooltip_el.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    tooltip_el.style.left = `${Math.max(pad, left)}px`
+    tooltip_el.style.top  = `${Math.max(pad, top)}px`
+  }
+  const show_tip = (ev, d) => {
+    if (d.kind === "algo") {
+      tooltip_el.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.id}</div>
+        <div class="map-tooltip-meta">algorithm · ${d.degree} author link${d.degree === 1 ? "" : "s"}</div>
+        <div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${family_color[d.family] ?? "#999"}`}></span>
+          <span>${d.family}</span>
+        </div>
+      </div>`)
+    } else {
+      tooltip_el.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.id}</div>
+        <div class="map-tooltip-meta">author · ${d.degree} model link${d.degree === 1 ? "" : "s"}</div>
+      </div>`)
+    }
+    tooltip_el.classList.add("visible")
+    tooltip_el.setAttribute("aria-hidden", "false")
+    move_tip(ev)
+  }
+  const hide_tip = () => {
+    tooltip_el.classList.remove("visible")
+    tooltip_el.setAttribute("aria-hidden", "true")
+  }
+  node_g
+    .style("cursor", "pointer")
+    .on("mouseenter", show_tip)
+    .on("mousemove",  move_tip)
+    .on("mouseleave", hide_tip)
 
   // Authors as circles; algorithms as diamonds (rotated squares).
   node_g.each(function (d) {
@@ -2409,6 +2450,7 @@ author_algo_network = {
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+    ${tooltip_el}
   </div>`
 }
 ```
