@@ -3056,7 +3056,7 @@ viewof repo_metric = Inputs.radio(
     stars: "Stars (★)", forks: "Forks", open_issues: "Open issues",
     open_prs: "Open PRs", closed_issues: "Closed issues", closed_prs: "Closed PRs"
   }
-  return Plot.plot({
+  const chart = Plot.plot({
     marginLeft: 180, width: 1100,
     height: Math.max(280, top.length * 24),
     x: { label: labelfmt[repo_metric], grid: true },
@@ -3067,16 +3067,55 @@ viewof repo_metric = Inputs.radio(
         y: "label",
         fill: "#1f6feb",
         sort: { y: "x", reverse: true },
-        tip: plot_tip_style,
-        title: d => `${d.model}\n${d.url}\nstars=${d.stars}, forks=${d.forks}\n` +
-                    `issues open/closed: ${d.open_issues}/${d.closed_issues}\n` +
-                    `PRs open/closed: ${d.open_prs}/${d.closed_prs}\n` +
-                    `latest release: ${d.latest_release ?? "n/a"}\n` +
-                    `last pushed: ${d.last_pushed ? d.last_pushed.toISOString().slice(0,10) : "n/a"}`
+        className: "repo-bar"
       }),
       Plot.ruleX([0])
     ]
   })
+
+  // Rich .map-tooltip on the bars. Plot renders barX rects in the sort order
+  // (already computed above) — we replicate that here to bind data by DOM
+  // index. Same helper pattern as the swim-lane charts.
+  const repo_bar_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_repo_bar_tip = ev => {
+    const pad = 12
+    const box = repo_bar_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    repo_bar_tooltip.style.left = `${Math.max(pad, left)}px`
+    repo_bar_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  const sorted = top.slice().sort((a, b) => (b[repo_metric] ?? 0) - (a[repo_metric] ?? 0))
+  chart.querySelectorAll(".repo-bar rect").forEach((rect, i) => {
+    const d = sorted[i]
+    if (!d) return
+    rect.style.cursor = "pointer"
+    rect.setAttribute("aria-label",
+      `${d.model}. ${d.stars} stars, ${d.forks} forks. ${d.open_issues} open issues, ${d.open_prs} open PRs.`)
+    rect.addEventListener("mouseenter", ev => {
+      repo_bar_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.model}</div>
+        <div class="map-tooltip-meta">
+          <a href=${d.url} target="_blank" rel="noopener" style="color:inherit;">${d.url.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>
+        </div>
+        <div class="map-tooltip-row"><span>★ <b>${d.stars ?? 0}</b> · forks <b>${d.forks ?? 0}</b></span></div>
+        <div class="map-tooltip-row"><span>issues open/closed: <b>${d.open_issues ?? 0}</b>/${d.closed_issues ?? 0}</span></div>
+        <div class="map-tooltip-row"><span>PRs open/closed: <b>${d.open_prs ?? 0}</b>/${d.closed_prs ?? 0}</span></div>
+        ${d.latest_release ? html`<div class="map-tooltip-row"><span>release: ${d.latest_release}</span></div>` : ""}
+        ${d.last_pushed ? html`<div class="map-tooltip-row"><span>last pushed: ${d.last_pushed.toISOString().slice(0,10)}</span></div>` : ""}
+      </div>`)
+      repo_bar_tooltip.classList.add("visible")
+      repo_bar_tooltip.setAttribute("aria-hidden", "false")
+      move_repo_bar_tip(ev)
+    })
+    rect.addEventListener("mousemove", move_repo_bar_tip)
+    rect.addEventListener("mouseleave", () => {
+      repo_bar_tooltip.classList.remove("visible")
+      repo_bar_tooltip.setAttribute("aria-hidden", "true")
+    })
+  })
+
+  return html`<div class="chart-wrap">${chart}${repo_bar_tooltip}</div>`
 }
 ```
 
@@ -3096,7 +3135,7 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       ...r,
       months_since_push: (now - r.last_pushed.getTime()) / (1000*60*60*24*30.44)
     }))
-  return Plot.plot({
+  const chart = Plot.plot({
     width: 1100, height: 460,
     marginLeft: 60, marginBottom: 50,
     x: { label: "Months since last push →", grid: true, reverse: true },
@@ -3105,19 +3144,58 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     marks: [
       // No always-on labels: even with dodgeY the ≥20-star subset still
       // overlaps in dense clusters, and choosing WHICH stars threshold to
-      // label reads as arbitrary. Rely on Plot's hover tooltip (tip: plot_tip_style)
+      // label reads as arbitrary. Rely on the styled .map-tooltip on hover
       // for identification — every dot gets a rich popup with the same info.
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
         fill: "family",
         r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
-        tip: plot_tip_style,
-        title: d => `${d.model}\n★ ${d.stars} · ${d.months_since_push.toFixed(1)} mo since last push\n` +
-                    `issues open: ${d.open_issues}  ·  PRs open: ${d.open_prs}\n` +
-                    `${d.url}`
+        className: "repo-dot"
       })
     ]
   })
+
+  // Same tooltip pattern as the repo bars.
+  const repo_dot_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_repo_dot_tip = ev => {
+    const pad = 12
+    const box = repo_dot_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    repo_dot_tooltip.style.left = `${Math.max(pad, left)}px`
+    repo_dot_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  chart.querySelectorAll(".repo-dot circle").forEach((circle, i) => {
+    const d = points[i]
+    if (!d) return
+    circle.style.cursor = "pointer"
+    circle.setAttribute("aria-label",
+      `${d.model}. ${d.stars} stars. ${d.months_since_push.toFixed(1)} months since last push.`)
+    circle.addEventListener("mouseenter", ev => {
+      repo_dot_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.model}</div>
+        <div class="map-tooltip-meta">
+          <a href=${d.url} target="_blank" rel="noopener" style="color:inherit;">${d.url.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>
+        </div>
+        ${d.family ? html`<div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${d.family_color ?? "#4C72B0"}`}></span>
+          <span>${d.family}</span>
+        </div>` : ""}
+        <div class="map-tooltip-row"><span>★ <b>${d.stars}</b> · ${d.months_since_push.toFixed(1)} mo since push</span></div>
+        <div class="map-tooltip-row"><span>open issues <b>${d.open_issues ?? 0}</b> · open PRs <b>${d.open_prs ?? 0}</b></span></div>
+      </div>`)
+      repo_dot_tooltip.classList.add("visible")
+      repo_dot_tooltip.setAttribute("aria-hidden", "false")
+      move_repo_dot_tip(ev)
+    })
+    circle.addEventListener("mousemove", move_repo_dot_tip)
+    circle.addEventListener("mouseleave", () => {
+      repo_dot_tooltip.classList.remove("visible")
+      repo_dot_tooltip.setAttribute("aria-hidden", "true")
+    })
+  })
+
+  return html`<div class="chart-wrap">${chart}${repo_dot_tooltip}</div>`
 }
 ```
 
