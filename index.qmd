@@ -1902,9 +1902,13 @@ The chart shows the twenty most-published authors. The network below it shows ho
 //| echo: false
 network_chart = {
   const width = 1400
-  const height = 760
-  const LEGEND_H = 110
-  const PLOT_H = height - LEGEND_H
+  // Legend height grows so all N affiliations render — was clipping at LEGEND_H=110
+  // (25-item limit) while all_affs runs to 70+. PLOT_H stays at 650 for the network.
+  const PLOT_H = 650
+  const cols_per_row = 6            // was 5; slightly denser
+  const col_w = 220                 // 6 × 220 = 1320 px, fits in 1400 chart
+  const row_h = 18
+  const LEGEND_TITLE_PX = 20        // room for the "Affiliation (N)" header
 
   // All affiliations per author (an author can have multiple).
   const affs_by_author = d3.rollup(
@@ -1933,6 +1937,11 @@ network_chart = {
   const all_affs = Array.from(new Set(nodes.flatMap(n => n.affiliations))).sort()
   const palette = d3.schemeTableau10.concat(d3.schemeSet3)
   const color = d3.scaleOrdinal().domain(all_affs).range(all_affs.map((_, i) => palette[i % palette.length]))
+
+  // Legend height grown to accommodate every affiliation (was hard-coded 110).
+  const legend_rows = Math.ceil(all_affs.length / cols_per_row)
+  const LEGEND_H = LEGEND_TITLE_PX + legend_rows * row_h + 12   // + padding
+  const height = PLOT_H + LEGEND_H
 
   // Primary affiliation = the one shared with most neighbors (for edge coloring).
   const adj = new Map(nodes.map(n => [n.id, []]))
@@ -2006,9 +2015,42 @@ network_chart = {
     .attr("class", "node")
     .call(drag(sim))
 
+  // Rich HTML tooltip that follows the cursor, matching the world map's .map-tooltip.
+  // Native SVG <title> stays as a11y fallback for keyboard users / screen readers.
   node_g.append("title").text(d =>
     `${d.id}\n${d.affiliations.join(" + ")}\n${d.degree} co-author links`
   )
+  const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_tip = ev => {
+    const pad = 12
+    const box = tooltip_el.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    tooltip_el.style.left = `${Math.max(pad, left)}px`
+    tooltip_el.style.top  = `${Math.max(pad, top)}px`
+  }
+  const show_tip = (ev, d) => {
+    tooltip_el.replaceChildren(html`<div>
+      <div class="map-tooltip-title">${d.id}</div>
+      <div class="map-tooltip-meta">${d.degree} co-author link${d.degree === 1 ? "" : "s"}</div>
+      ${d.affiliations.map(aff => html`<div class="map-tooltip-row">
+        <span class="map-tooltip-swatch" style=${`background:${color(aff)}`}></span>
+        <span>${aff}</span>
+      </div>`)}
+    </div>`)
+    tooltip_el.classList.add("visible")
+    tooltip_el.setAttribute("aria-hidden", "false")
+    move_tip(ev)
+  }
+  const hide_tip = () => {
+    tooltip_el.classList.remove("visible")
+    tooltip_el.setAttribute("aria-hidden", "true")
+  }
+  node_g
+    .style("cursor", "pointer")
+    .on("mouseenter", show_tip)
+    .on("mousemove",  move_tip)
+    .on("mouseleave", hide_tip)
 
   // Render each node: single circle if 1 affiliation, pie wedges if multiple.
   node_g.each(function (d) {
@@ -2053,7 +2095,7 @@ network_chart = {
     label.attr("x", d => d.x).attr("y", d => d.y)
   })
 
-  // Affiliation legend at the bottom.
+  // Affiliation legend at the bottom, now sized to show every affiliation.
   const legend_g = svg.append("g")
     .attr("transform", `translate(40, ${PLOT_H + 10})`)
   legend_g.append("text")
@@ -2062,19 +2104,20 @@ network_chart = {
     .attr("font-size", 12)
     .attr("fill", "#57606a")
     .text(`Affiliation (${all_affs.length})`)
-  const cols_per_row = 5
   legend_g.selectAll("g.leg-item")
     .data(all_affs)
     .join("g")
     .attr("class", "leg-item")
-    .attr("transform", (_, i) => `translate(${(i % cols_per_row) * 260}, ${20 + Math.floor(i / cols_per_row) * 18})`)
+    .attr("transform", (_, i) => `translate(${(i % cols_per_row) * col_w}, ${LEGEND_TITLE_PX + Math.floor(i / cols_per_row) * row_h})`)
     .call(s => {
       s.append("circle").attr("r", 6).attr("cx", 6).attr("cy", -4).attr("fill", color)
       s.append("text")
         .attr("x", 18).attr("y", 0)
         .attr("font-size", 11)
         .attr("fill", "#24292f")
-        .text(d => d.length > 32 ? d.slice(0, 30) + "…" : d)
+        .append("title").text(d => d)   // native tooltip shows the untruncated name
+      // Truncate long names to keep the row width bounded (column is 220 px wide).
+      s.select("text").text(d => d.length > 26 ? d.slice(0, 24) + "…" : d)
     })
 
   invalidation.then(() => sim.stop())
@@ -2093,6 +2136,7 @@ network_chart = {
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+    ${tooltip_el}
   </div>`
 }
 ```
