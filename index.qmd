@@ -2150,9 +2150,13 @@ This second view rewires the same network as a **bipartite** graph: every prolif
 //| echo: false
 author_algo_network = {
   const width = 1400
-  const height = 760
-  const LEGEND_H = 90
-  const PLOT_H = height - LEGEND_H
+  // Legend height computed dynamically after families_seen is known (below);
+  // hardcoded 90 clipped anything past the first 3 rows × 5 cols = 15 items.
+  const PLOT_H = 650
+  const legend_cols_per_row = 5
+  const legend_col_w = 260
+  const legend_row_h = 22
+  const LEGEND_TITLE_PX = 22
 
   // Same prolific-author filter as the co-auth network (authors with ≥ 3 papers).
   const prolific = new Set(coauth_edges_t.flatMap(e => [e.source, e.target]))
@@ -2266,7 +2270,17 @@ author_algo_network = {
     : 9 + 14 * Math.sqrt(d.degree / max_algo_deg)
 
   // Pull algorithm nodes toward a central ring so they cluster by family.
+  // families_seen is only the families that ACTUALLY have a diamond on the
+  // chart — a family present in the DB but with no algorithm linked to a
+  // prolific author (≥3 papers) won't be here.
   const families_seen = Array.from(new Set(nodes.filter(n => n.kind === "algo").map(n => n.family))).sort()
+
+  // Legend height + SVG total height derived from actual family count so the
+  // legend never clips (was hard-coded to LEGEND_H=90 which only fit ~15
+  // items; we now have ~25 pseudo-families thanks to resolveFamily fallback).
+  const legend_row_count = Math.ceil((families_seen.length + 1) / legend_cols_per_row)   // +1 for the author swatch
+  const LEGEND_H = LEGEND_TITLE_PX + legend_row_count * legend_row_h + 20
+  const height = PLOT_H + LEGEND_H
   const family_target = new Map()
   for (let i = 0; i < families_seen.length; i++) {
     const angle = i * 2 * Math.PI / families_seen.length
@@ -2415,7 +2429,7 @@ author_algo_network = {
     .data(legend_items)
     .join("g")
     .attr("class", "leg-item")
-    .attr("transform", (_, i) => `translate(${(i % 5) * 260}, ${22 + Math.floor(i / 5) * 22})`)
+    .attr("transform", (_, i) => `translate(${(i % legend_cols_per_row) * legend_col_w}, ${LEGEND_TITLE_PX + Math.floor(i / legend_cols_per_row) * legend_row_h})`)
     .call(s => {
       s.append(d => d.shape === "diamond"
         ? document.createElementNS("http://www.w3.org/2000/svg", "rect")
