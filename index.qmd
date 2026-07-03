@@ -2016,9 +2016,10 @@ network_chart = {
     .call(drag(sim))
 
   // Rich HTML tooltip that follows the cursor, matching the world map's .map-tooltip.
-  // Native SVG <title> stays as a11y fallback for keyboard users / screen readers.
-  node_g.append("title").text(d =>
-    `${d.id}\n${d.affiliations.join(" + ")}\n${d.degree} co-author links`
+  // Screen-reader accessibility uses aria-label (not <title>) to avoid stacking a
+  // native black browser tooltip on top of the styled HTML one.
+  node_g.attr("aria-label", d =>
+    `${d.id}. ${d.affiliations.join(", ")}. ${d.degree} co-author links.`
   )
   const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
   const move_tip = ev => {
