@@ -293,6 +293,18 @@ ojs_define(
 //| echo: false
 import { aq, op } from "@uwdata/arquero"
 
+// Shared Plot-tip styling used across every Plot chart on the page. Matches
+// the .map-tooltip CSS palette (12-13 px, roomier padding, white background
+// with soft border) so the built-in Plot tip looks the same as our custom
+// world-map / co-auth / bipartite HTML tooltips.
+plot_tip_style = ({
+  fontSize: 13,
+  lineHeight: 1.35,
+  textPadding: 10,
+  fill: "white",
+  stroke: "#d0d7de"
+})
+
 pubs_t = transpose(pubs).map(r => ({ ...r, year: +r.year, date: r.date ? new Date(r.date) : null }))
 top_authors_t = transpose(top_authors)
 geo_t = transpose(geo)
@@ -628,7 +640,7 @@ Plot.plot({
       pubs_filtered.filter(p => Number.isFinite(p.year) && p.kind !== "meta"),
       Plot.groupX(
         { y: "count" },
-        { x: "year", fill: "type", tip: true }
+        { x: "year", fill: "type", tip: plot_tip_style }
       )
     ),
     Plot.ruleY([0])
@@ -832,15 +844,7 @@ innovations_timeline = {
         r: 7,
         stroke: "white",
         strokeWidth: 1.5,
-        // Tooltip sized to match the .map-tooltip on the world map (12-13px,
-        // roomier padding, white background with a soft border).
-        tip: {
-          fontSize: 13,
-          lineHeight: 1.35,
-          textPadding: 10,
-          fill: "white",
-          stroke: "#d0d7de"
-        },
+        tip: plot_tip_style,
         title: d => `${d.model}\n${d.family}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
       // Labels anchored above the dot (top half of band). Wrap onto two
@@ -1101,14 +1105,7 @@ application_timeline = {
         x: "first_pub", y: "y",
         fill: "subdomain",
         r: 7, stroke: "white", strokeWidth: 1.5,
-        // Tooltip sized to match the .map-tooltip on the world map.
-        tip: {
-          fontSize: 13,
-          lineHeight: 1.35,
-          textPadding: 10,
-          fill: "white",
-          stroke: "#d0d7de"
-        },
+        tip: plot_tip_style,
         title: d => `${d.model}\n${d.subdomain}\n${d.description ?? ""}\n${d.first_pub.toISOString().slice(0,10)}`
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
@@ -1328,7 +1325,18 @@ application_sankey = {
             L ${x1} ${d.r_y1}
             C ${mid} ${d.r_y1}, ${mid} ${d.l_y1}, ${x0} ${d.l_y1} Z`
   }
-  g.append("g")
+  // Styled tooltip for the ribbons (matches world-map / co-auth / bipartite).
+  // aria-label carries the same info for keyboard / screen-reader users.
+  const sankey_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_sankey_tip = ev => {
+    const pad = 12
+    const box = sankey_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    sankey_tooltip.style.left = `${Math.max(pad, left)}px`
+    sankey_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  const ribbon_paths = g.append("g")
     .selectAll("path")
     .data(edges)
     .join("path")
@@ -1336,8 +1344,26 @@ application_sankey = {
     .attr("fill", d => d.color)
     .attr("fill-opacity", 0.55)
     .attr("stroke", "none")
-    .append("title")
-    .text(d => `${subdomain_label[d.subdomain] ?? d.subdomain} → ${d.sequencer} · ${d.count} paper${d.count === 1 ? "" : "s"}`)
+    .attr("cursor", "pointer")
+    .attr("aria-label", d => `${subdomain_label[d.subdomain] ?? d.subdomain} to ${d.sequencer}. ${d.count} paper${d.count === 1 ? "" : "s"}.`)
+    .on("mouseenter", (ev, d) => {
+      sankey_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${subdomain_label[d.subdomain] ?? d.subdomain} → ${d.sequencer}</div>
+        <div class="map-tooltip-meta">${d.count} paper${d.count === 1 ? "" : "s"}</div>
+        <div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${d.color}`}></span>
+          <span>${subdomain_label[d.subdomain] ?? d.subdomain}</span>
+        </div>
+      </div>`)
+      sankey_tooltip.classList.add("visible")
+      sankey_tooltip.setAttribute("aria-hidden", "false")
+      move_sankey_tip(ev)
+    })
+    .on("mousemove", move_sankey_tip)
+    .on("mouseleave", () => {
+      sankey_tooltip.classList.remove("visible")
+      sankey_tooltip.setAttribute("aria-hidden", "true")
+    })
 
   // Left node bars + labels.
   g.append("g")
@@ -1381,6 +1407,7 @@ application_sankey = {
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+    ${sankey_tooltip}
   </div>`
 }
 ```
@@ -1852,7 +1879,7 @@ ${type_breakdown(d)}`
         y: d => `${d.institution} · ${d.country}`,
         fill: "country",
         sort: { y: "x", reverse: true },
-        tip: true
+        tip: plot_tip_style
       }),
       Plot.ruleX([0])
     ]
@@ -1890,7 +1917,7 @@ The chart shows the twenty most-published authors. The network below it shows ho
         y: "name",
         fill: "#1f6feb",
         sort: { y: "x", reverse: true },
-        tip: true
+        tip: plot_tip_style
       }),
       Plot.ruleX([0])
     ]
@@ -2663,13 +2690,40 @@ citation_arcs = {
     .attr("stroke-width", 0.8)
     .attr("cursor", "pointer")
 
-  node.append("title").text(d =>
-    `${d.models || "(no model)"} · ${d.title}
-year: ${d.year ?? ""}
-kind: ${d.kind}
-cited by ${d.in_deg} papers in the catalog
-cites ${d.out_deg} papers in the catalog`
+  // Styled tooltip that follows the cursor (matches world-map / co-auth /
+  // bipartite / Sankey). aria-label handles screen-reader accessibility.
+  node.attr("aria-label", d =>
+    `${d.models || d.title}. ${d.year ?? ""}. ${d.kind}. Cited by ${d.in_deg}, cites ${d.out_deg}.`
   )
+  const arc_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_arc_tip = ev => {
+    const pad = 12
+    const box = arc_tooltip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    arc_tooltip.style.left = `${Math.max(pad, left)}px`
+    arc_tooltip.style.top  = `${Math.max(pad, top)}px`
+  }
+  node
+    .on("mouseenter", (ev, d) => {
+      arc_tooltip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.models || "(no model)"}</div>
+        <div class="map-tooltip-meta">${d.title}</div>
+        <div class="map-tooltip-row">
+          <span class="map-tooltip-swatch" style=${`background:${kind_color[d.kind] ?? "#999"}`}></span>
+          <span>${d.kind}${d.year ? ` · ${d.year}` : ""}</span>
+        </div>
+        <div class="map-tooltip-row"><span>cited by <b>${d.in_deg}</b> · cites <b>${d.out_deg}</b></span></div>
+      </div>`)
+      arc_tooltip.classList.add("visible")
+      arc_tooltip.setAttribute("aria-hidden", "false")
+      move_arc_tip(ev)
+    })
+    .on("mousemove", move_arc_tip)
+    .on("mouseleave", () => {
+      arc_tooltip.classList.remove("visible")
+      arc_tooltip.setAttribute("aria-hidden", "true")
+    })
 
   // Labels: only the top in-degree papers (one per row, so labels are legible).
   const top_per_row = new Map()
@@ -2783,6 +2837,7 @@ cites ${d.out_deg} papers in the catalog`
       else el.requestFullscreen();
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${svg.node()}</div>
+    ${arc_tooltip}
   </div>`
 }
 ```
@@ -2900,7 +2955,7 @@ viewof repo_metric = Inputs.radio(
         y: "label",
         fill: "#1f6feb",
         sort: { y: "x", reverse: true },
-        tip: true,
+        tip: plot_tip_style,
         title: d => `${d.model}\n${d.url}\nstars=${d.stars}, forks=${d.forks}\n` +
                     `issues open/closed: ${d.open_issues}/${d.closed_issues}\n` +
                     `PRs open/closed: ${d.open_prs}/${d.closed_prs}\n` +
@@ -2938,13 +2993,13 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     marks: [
       // No always-on labels: even with dodgeY the ≥20-star subset still
       // overlaps in dense clusters, and choosing WHICH stars threshold to
-      // label reads as arbitrary. Rely on Plot's hover tooltip (tip: true)
+      // label reads as arbitrary. Rely on Plot's hover tooltip (tip: plot_tip_style)
       // for identification — every dot gets a rich popup with the same info.
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
         fill: "family",
         r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
-        tip: true,
+        tip: plot_tip_style,
         title: d => `${d.model}\n★ ${d.stars} · ${d.months_since_push.toFixed(1)} mo since last push\n` +
                     `issues open: ${d.open_issues}  ·  PRs open: ${d.open_prs}\n` +
                     `${d.url}`
@@ -3026,7 +3081,7 @@ viewof venue_type = Inputs.radio(
         y: "venue",
         fill: "#6f42c1",
         sort: { y: "x", reverse: true },
-        tip: true
+        tip: plot_tip_style
       }),
       Plot.ruleX([0])
     ]
@@ -3275,7 +3330,7 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
         y: "label",
         fill: "#1f6feb",
         sort: { y: "x2", reverse: true },
-        tip: true
+        tip: plot_tip_style
       }),
       Plot.ruleX([0])
     ]
