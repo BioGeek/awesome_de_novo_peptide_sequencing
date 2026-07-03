@@ -2704,26 +2704,11 @@ citation_arcs = {
     arc_tooltip.style.left = `${Math.max(pad, left)}px`
     arc_tooltip.style.top  = `${Math.max(pad, top)}px`
   }
-  node
-    .on("mouseenter", (ev, d) => {
-      arc_tooltip.replaceChildren(html`<div>
-        <div class="map-tooltip-title">${d.models || "(no model)"}</div>
-        <div class="map-tooltip-meta">${d.title}</div>
-        <div class="map-tooltip-row">
-          <span class="map-tooltip-swatch" style=${`background:${kind_color[d.kind] ?? "#999"}`}></span>
-          <span>${d.kind}${d.year ? ` · ${d.year}` : ""}</span>
-        </div>
-        <div class="map-tooltip-row"><span>cited by <b>${d.in_deg}</b> · cites <b>${d.out_deg}</b></span></div>
-      </div>`)
-      arc_tooltip.classList.add("visible")
-      arc_tooltip.setAttribute("aria-hidden", "false")
-      move_arc_tip(ev)
-    })
-    .on("mousemove", move_arc_tip)
-    .on("mouseleave", () => {
-      arc_tooltip.classList.remove("visible")
-      arc_tooltip.setAttribute("aria-hidden", "true")
-    })
+  // Note: the actual mouseenter/mouseleave handlers are attached below,
+  // AFTER out_edges/in_edges are computed, so the tooltip + highlight logic
+  // can live in one handler. Attach mousemove here since it only needs the
+  // tooltip element and never fights with the highlight handler.
+  node.on("mousemove", move_arc_tip)
 
   // Labels: only the top in-degree papers (one per row, so labels are legible).
   const top_per_row = new Map()
@@ -2801,7 +2786,25 @@ citation_arcs = {
     in_edges.get (l.target.id).push(l)
   }
 
-  node.on("mouseenter", function (_, focus) {
+  // Combined mouseenter: show the styled tooltip AND highlight the citation
+  // neighbourhood in one pass — attaching two separate .on('mouseenter')
+  // handlers here would silently replace the first (D3 semantics).
+  node.on("mouseenter", function (ev, focus) {
+    // 1. Show styled tooltip
+    arc_tooltip.replaceChildren(html`<div>
+      <div class="map-tooltip-title">${focus.models || "(no model)"}</div>
+      <div class="map-tooltip-meta">${focus.title}</div>
+      <div class="map-tooltip-row">
+        <span class="map-tooltip-swatch" style=${`background:${kind_color[focus.kind] ?? "#999"}`}></span>
+        <span>${focus.kind}${focus.year ? ` · ${focus.year}` : ""}</span>
+      </div>
+      <div class="map-tooltip-row"><span>cited by <b>${focus.in_deg}</b> · cites <b>${focus.out_deg}</b></span></div>
+    </div>`)
+    arc_tooltip.classList.add("visible")
+    arc_tooltip.setAttribute("aria-hidden", "false")
+    move_arc_tip(ev)
+
+    // 2. Highlight citation neighbourhood
     const ins  = new Set((in_edges.get(focus.id)  ?? []).map(l => l.source.id))
     const outs = new Set((out_edges.get(focus.id) ?? []).map(l => l.target.id))
     arc
@@ -2824,6 +2827,10 @@ citation_arcs = {
     })
   })
   node.on("mouseleave", function () {
+    // 1. Hide tooltip
+    arc_tooltip.classList.remove("visible")
+    arc_tooltip.setAttribute("aria-hidden", "true")
+    // 2. Reset arc + node styling
     arc.attr("stroke", "#94a3b8").attr("stroke-opacity", 0.18)
         .attr("stroke-width", d => d.source_kind === "both" ? 0.9 : 0.6)
         .attr("marker-end", "url(#arr-default)")
