@@ -7424,7 +7424,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denov
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,1,0,0,0,'2026-04-07T00:28:43Z','2026-06-25T10:23:51',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',93,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-02T07:00:40','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,22,13,106,0,117,'2026-04-11T18:13:31Z','2026-07-02T07:00:40','v3.2.1');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,46,505,1,15,'2026-06-30T09:32:26Z','2026-07-02T07:00:40',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,47,505,1,15,'2026-06-30T09:32:26Z','2026-07-04T08:16:36',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',49,19,7,79,0,177,'2026-06-19T12:24:40Z','2026-07-02T07:00:40','v4.1.2');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
