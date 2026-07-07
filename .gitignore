@@ -8,3 +8,4 @@ citation_audit.csv
 /.quarto/
 __pycache__/
 **/*.quarto_ipynb
+**/*.quarto_ipynb_*
