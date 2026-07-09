@@ -7417,7 +7417,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',191,77,20,305,7,315,'2026-07-08T00:08:26Z','2026-07-08T08:02:35','v5.2.0');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',191,77,20,305,6,316,'2026-07-09T02:38:03Z','2026-07-09T08:58:58','v5.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',4,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-06-09T07:06:01',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',10,4,0,4,0,6,'2026-07-03T03:16:49Z','2026-07-03T08:42:29','v1.1');
@@ -7443,8 +7443,8 @@ INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denov
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,1,0,0,0,'2026-04-07T00:28:43Z','2026-06-25T10:23:51',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',93,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-02T07:00:40','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,22,13,106,0,117,'2026-04-11T18:13:31Z','2026-07-02T07:00:40','v3.2.1');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,47,505,1,15,'2026-06-30T09:32:26Z','2026-07-04T08:16:36',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',49,19,7,79,0,177,'2026-06-19T12:24:40Z','2026-07-02T07:00:40','v4.1.2');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,47,505,1,14,'2026-06-30T09:32:26Z','2026-07-09T08:58:58',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',49,19,7,79,0,178,'2026-06-19T12:24:40Z','2026-07-09T08:58:58','v4.1.2');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
