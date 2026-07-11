@@ -3525,6 +3525,7 @@ INSERT INTO publication VALUES(247,'Comprehensive identification of native mediu
 INSERT INTO publication VALUES(248,'SequenceAssembler: A tool for protein sequence assembly from mass spectrometry data','2025-10-08','10.1016/j.jprot.2025.105542','Elsevier',NULL,'https://doi.org/10.1016/j.jprot.2025.105542','Journal of Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(249,'Limitations of de novo sequencing in resolving sequence ambiguity','2025-08-23','10.1101/2025.08.19.671052','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2025.08.19.671052v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(250,'Wastewater metaproteomics: tracking microbial and human protein biomarkers','2025-12-18','10.1093/ismeco/ycaf243','Oxford University Press',NULL,'https://doi.org/10.1093/ismeco/ycaf243','ISME Communications','peer-reviewed',NULL);
+INSERT INTO publication VALUES(251,'InstaNovo-P: a de novo peptide sequencing model for phosphoproteomics','2026-07-10','10.1038/s41467-026-75138-x','Springer Nature',NULL,'https://www.nature.com/articles/s41467-026-75138-x','Nature Communications','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3806,6 +3807,7 @@ INSERT INTO publication_algorithm VALUES(248,62);
 INSERT INTO publication_algorithm VALUES(248,68);
 INSERT INTO publication_algorithm VALUES(249,220);
 INSERT INTO publication_algorithm VALUES(250,221);
+INSERT INTO publication_algorithm VALUES(251,3);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5399,6 +5401,25 @@ INSERT INTO publication_author VALUES(250,958,2);
 INSERT INTO publication_author VALUES(250,959,3);
 INSERT INTO publication_author VALUES(250,960,4);
 INSERT INTO publication_author VALUES(250,961,5);
+INSERT INTO publication_author VALUES(251,20,1);
+INSERT INTO publication_author VALUES(251,22,2);
+INSERT INTO publication_author VALUES(251,5,3);
+INSERT INTO publication_author VALUES(251,21,4);
+INSERT INTO publication_author VALUES(251,3,5);
+INSERT INTO publication_author VALUES(251,1,6);
+INSERT INTO publication_author VALUES(251,23,7);
+INSERT INTO publication_author VALUES(251,24,8);
+INSERT INTO publication_author VALUES(251,25,9);
+INSERT INTO publication_author VALUES(251,26,10);
+INSERT INTO publication_author VALUES(251,27,11);
+INSERT INTO publication_author VALUES(251,28,12);
+INSERT INTO publication_author VALUES(251,18,13);
+INSERT INTO publication_author VALUES(251,14,14);
+INSERT INTO publication_author VALUES(251,29,15);
+INSERT INTO publication_author VALUES(251,15,16);
+INSERT INTO publication_author VALUES(251,30,17);
+INSERT INTO publication_author VALUES(251,19,18);
+INSERT INTO publication_author VALUES(251,2,19);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7711,7 +7732,7 @@ INSERT INTO sqlite_sequence VALUES('city',239);
 INSERT INTO sqlite_sequence VALUES('affiliation',499);
 INSERT INTO sqlite_sequence VALUES('author',961);
 INSERT INTO sqlite_sequence VALUES('algorithm',221);
-INSERT INTO sqlite_sequence VALUES('publication',250);
+INSERT INTO sqlite_sequence VALUES('publication',251);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
