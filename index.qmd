@@ -1006,70 +1006,88 @@ innovations_timeline = {
 
 ```{ojs}
 //| echo: false
+// Single source of truth for subdomain metadata, shared by the swim-lane
+// timeline below and the Sankey diagram further down the page. Add a new
+// subdomain here ONCE (order + label + color [+ lane height for the
+// timeline]) and both charts pick it up automatically — no need to touch
+// this in two places.
+subdomain_order = [
+  "general-proteomics", "plant-pathogen", "metaproteomics", "wastewater-metaproteomics",
+  "immunopeptidomics", "antibodyomics", "venomics", "neuropeptidomics",
+  "bioactive-peptides", "wildlife-proteomics",
+  "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics",
+  "toxin-identification"
+]
+subdomain_label = ({
+  "general-proteomics":       "General proteomics",
+  "plant-pathogen":           "Plant-pathogen effectors",
+  "metaproteomics":           "Metaproteomics",
+  "wastewater-metaproteomics":"Wastewater metaproteomics",
+  "immunopeptidomics":        "Immunopeptidomics / neoantigen",
+  "antibodyomics":            "Antibodyomics",
+  "venomics":                 "Venomics",
+  "neuropeptidomics":         "Neuropeptidomics",
+  "bioactive-peptides":       "Bioactive peptides",
+  "wildlife-proteomics":      "Wildlife proteomics",
+  "food-authentication":      "Food authentication",
+  "pathogen-identification":  "Clinical pathogen ID",
+  "forensics":                "Forensics",
+  "palaeoproteomics":         "Palaeoproteomics",
+  "toxin-identification":     "Toxin identification (biodefense)"
+})
+subdomain_color = ({
+  "general-proteomics":       "#8a96a0",
+  "plant-pathogen":           "#4c8b3a",
+  "metaproteomics":           "#1a7f37",
+  "wastewater-metaproteomics":"#218380",
+  "immunopeptidomics":        "#bf8700",
+  "antibodyomics":            "#cf222e",
+  "venomics":                 "#a40e26",
+  "neuropeptidomics":         "#116329",
+  "bioactive-peptides":       "#4e7a1a",
+  "wildlife-proteomics":      "#0969da",
+  "food-authentication":      "#d4a72c",
+  "pathogen-identification":  "#0a3069",
+  "forensics":                "#953800",
+  "palaeoproteomics":         "#8250df",
+  "toxin-identification":     "#4338ca"
+})
+// Per-lane vertical room, only used by the timeline (the Sankey sizes nodes
+// by traffic instead), kept here anyway so it lives next to the rest of the
+// per-subdomain metadata.
+subdomain_lane_height = ({
+  "general-proteomics":       1.0,
+  "plant-pathogen":           1.0,
+  "metaproteomics":           1.2,
+  "wastewater-metaproteomics":1.0,
+  "immunopeptidomics":        1.5,
+  "antibodyomics":            1.2,
+  "venomics":                 3.0,  // 10 papers spanning 2014-2024 with clustering in 2018/2020/2022
+  "neuropeptidomics":         1.0,
+  "bioactive-peptides":       1.0,
+  "wildlife-proteomics":      1.2,
+  "food-authentication":      1.0,
+  "pathogen-identification":  1.0,
+  "forensics":                1.0,
+  "palaeoproteomics":         1.8,
+  "toxin-identification":     1.0
+})
+```
+
+```{ojs}
+//| echo: false
 application_timeline = {
   // Same swim-lane pattern as the architectures chart, keyed on subdomain
   // instead of family. Lanes ordered oldest-application-adoption at the top
   // (immunopeptidomics + general proteomics were first) down to the newest
   // adopters. Currently one entry only sits in each single-entry lane
   // (plant-pathogen, general-proteomics), so lane heights adjust accordingly.
-  const lane_order = [
-    "general-proteomics", "plant-pathogen", "metaproteomics", "wastewater-metaproteomics",
-    "immunopeptidomics", "antibodyomics", "venomics", "neuropeptidomics",
-    "bioactive-peptides", "wildlife-proteomics",
-    "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics",
-    "toxin-identification"
-  ]
-  const lane_label = {
-    "general-proteomics":       "General proteomics",
-    "plant-pathogen":           "Plant-pathogen effectors",
-    "metaproteomics":           "Metaproteomics",
-    "wastewater-metaproteomics":"Wastewater metaproteomics",
-    "immunopeptidomics":        "Immunopeptidomics / neoantigen",
-    "antibodyomics":            "Antibodyomics",
-    "venomics":                 "Venomics",
-    "neuropeptidomics":         "Neuropeptidomics",
-    "bioactive-peptides":       "Bioactive peptides",
-    "wildlife-proteomics":      "Wildlife proteomics",
-    "food-authentication":      "Food authentication",
-    "pathogen-identification":  "Clinical pathogen ID",
-    "forensics":                "Forensics",
-    "palaeoproteomics":         "Palaeoproteomics",
-    "toxin-identification":    "Toxin identification (biodefense)"
-  }
-  const lane_color = {
-    "general-proteomics":       "#8a96a0",
-    "plant-pathogen":           "#4c8b3a",
-    "metaproteomics":           "#1a7f37",
-    "wastewater-metaproteomics":"#218380",
-    "immunopeptidomics":        "#bf8700",
-    "antibodyomics":            "#cf222e",
-    "venomics":                 "#a40e26",
-    "neuropeptidomics":         "#116329",
-    "bioactive-peptides":       "#4e7a1a",
-    "wildlife-proteomics":      "#0969da",
-    "food-authentication":      "#d4a72c",
-    "pathogen-identification":  "#0a3069",
-    "forensics":                "#953800",
-    "palaeoproteomics":         "#8250df",
-    "toxin-identification":    "#4338ca"
-  }
-  const lane_height = {
-    "general-proteomics":       1.0,
-    "plant-pathogen":           1.0,
-    "metaproteomics":           1.2,
-    "wastewater-metaproteomics":1.0,
-    "immunopeptidomics":        1.5,
-    "antibodyomics":            1.2,
-    "venomics":                 3.0,  // 10 papers spanning 2014-2024 with clustering in 2018/2020/2022
-    "neuropeptidomics":         1.0,
-    "bioactive-peptides":       1.0,
-    "wildlife-proteomics":      1.2,
-    "food-authentication":      1.0,
-    "pathogen-identification":  1.0,
-    "forensics":                1.0,
-    "palaeoproteomics":         1.8,
-    "toxin-identification":     1.0
-  }
+  // Metadata (order/label/color/height) lives in the shared subdomain_* cells
+  // above so this chart and the Sankey diagram below stay in sync.
+  const lane_order  = subdomain_order
+  const lane_label  = subdomain_label
+  const lane_color  = subdomain_color
+  const lane_height = subdomain_lane_height
 
   const rows = algorithms_t
     .filter(a => a.kind === "downstream-application" && a.subdomain && a.first_pub)
@@ -1343,41 +1361,9 @@ application_sankey = {
     .sort((a, b) => b[1] - a[1])
     .map(([seq, total]) => ({ id: seq, kind: "sequencer", total }))
 
-  // Palette (mirror the swim-lane timeline for consistency).
-  const subdomain_color = {
-    "general-proteomics":       "#8a96a0",
-    "plant-pathogen":           "#4c8b3a",
-    "metaproteomics":           "#1a7f37",
-    "wastewater-metaproteomics":"#218380",
-    "immunopeptidomics":        "#bf8700",
-    "antibodyomics":            "#cf222e",
-    "venomics":                 "#a40e26",
-    "neuropeptidomics":         "#116329",
-    "bioactive-peptides":       "#4e7a1a",
-    "wildlife-proteomics":      "#0969da",
-    "food-authentication":      "#d4a72c",
-    "pathogen-identification":  "#0a3069",
-    "forensics":                "#953800",
-    "palaeoproteomics":         "#8250df",
-    "toxin-identification":    "#4338ca"
-  }
-  const subdomain_label = {
-    "general-proteomics":       "General proteomics",
-    "plant-pathogen":           "Plant-pathogen",
-    "metaproteomics":           "Metaproteomics",
-    "wastewater-metaproteomics":"Wastewater metaproteomics",
-    "immunopeptidomics":        "Immunopeptidomics",
-    "antibodyomics":            "Antibodyomics",
-    "venomics":                 "Venomics",
-    "neuropeptidomics":         "Neuropeptidomics",
-    "bioactive-peptides":       "Bioactive peptides",
-    "wildlife-proteomics":      "Wildlife proteomics",
-    "food-authentication":      "Food authentication",
-    "pathogen-identification":  "Clinical pathogen ID",
-    "forensics":                "Forensics",
-    "palaeoproteomics":         "Palaeoproteomics",
-    "toxin-identification":    "Toxin identification"
-  }
+  // Palette + labels come from the shared subdomain_color / subdomain_label
+  // cells defined above (next to the timeline chart) so the two charts can't
+  // drift out of sync.
 
   // Assign Y positions (stacked, proportional to traffic + a small padding).
   const pad_y = 8
