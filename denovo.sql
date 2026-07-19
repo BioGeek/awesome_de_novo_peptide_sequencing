@@ -7491,7 +7491,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',4
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,1,0,0,0,'2026-04-07T00:28:43Z','2026-06-25T10:23:51',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',93,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-02T07:00:40','v1.1.2');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,22,14,107,0,128,'2026-07-17T20:49:50Z','2026-07-18T07:22:05','v4.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,22,14,107,0,128,'2026-07-18T08:32:34Z','2026-07-19T07:53:04','v4.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,47,505,1,14,'2026-06-30T09:32:26Z','2026-07-09T08:58:58',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',49,19,5,81,0,183,'2026-07-13T17:01:59Z','2026-07-14T07:41:22','v4.2.0');
 CREATE TABLE publication_impact (
