@@ -3554,7 +3554,7 @@ INSERT INTO publication VALUES(250,'Wastewater metaproteomics: tracking microbia
 INSERT INTO publication VALUES(251,'InstaNovo-P: a de novo peptide sequencing model for phosphoproteomics','2026-07-10','10.1038/s41467-026-75138-x','Springer Nature',NULL,'https://www.nature.com/articles/s41467-026-75138-x','Nature Communications','peer-reviewed',NULL);
 INSERT INTO publication VALUES(252,'Identification of Unknown Biological Toxin Proteins Using Mass Spectrometry: A Case Study on De Novo Sequencing of Ricin','2025-11-18','10.3390/toxins17110564','MDPI',NULL,'https://doi.org/10.3390/toxins17110564','Toxins','peer-reviewed',NULL);
 INSERT INTO publication VALUES(253,'CasanovoGUI: a cross-platform desktop application for deep learning-based de novo peptide sequencing with Casanovo','2026-07-11','10.64898/2026.07.11.737889','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.64898/2026.07.11.737889v1','bioRxiv','preprint',NULL);
-INSERT INTO publication VALUES(254,'Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing','2026-07-04',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=tIG4D44jn9','OpenReview','ML conference',NULL);
+INSERT INTO publication VALUES(254,'Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing','2026-07-04',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=tIG4D44jn9','ICML 2026','ML conference',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -7454,6 +7454,7 @@ INSERT INTO algorithm_repository VALUES(183,'https://github.com/kusterlab/prosit
 INSERT INTO algorithm_repository VALUES(184,'https://github.com/compomics/ms2rescore',0);
 INSERT INTO algorithm_repository VALUES(188,'https://github.com/compomics/ms2pip',0);
 INSERT INTO algorithm_repository VALUES(185,'https://github.com/compomics/peptide-shaker',0);
+INSERT INTO algorithm_repository VALUES(224,'https://github.com/WanyuGroup/ICML2026_PhysNovo',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
