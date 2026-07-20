@@ -3112,7 +3112,15 @@ viewof repo_metric = Inputs.radio(
     })
   })
 
-  return html`<div class="chart-wrap">${chart}${repo_bar_tooltip}</div>`
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${chart}</div>
+    ${repo_bar_tooltip}
+  </div>`
 }
 ```
 
@@ -3165,6 +3173,8 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
   chart.querySelectorAll(".repo-dot circle").forEach((circle, i) => {
     const d = points[i]
     if (!d) return
+    // Pull the actual fill Plot picked for this dot — matches the legend swatch.
+    const family_swatch = circle.getAttribute("fill") ?? "#4C72B0"
     circle.style.cursor = "pointer"
     circle.setAttribute("aria-label",
       `${d.model}. ${d.stars} stars. ${d.months_since_push.toFixed(1)} months since last push.`)
@@ -3175,7 +3185,7 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
           <a href=${d.url} target="_blank" rel="noopener" style="color:inherit;">${d.url.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>
         </div>
         ${d.family ? html`<div class="map-tooltip-row">
-          <span class="map-tooltip-swatch" style=${`background:${d.family_color ?? "#4C72B0"}`}></span>
+          <span class="map-tooltip-swatch" style=${`background:${family_swatch}`}></span>
           <span>${d.family}</span>
         </div>` : ""}
         <div class="map-tooltip-row"><span>★ <b>${d.stars}</b> · ${d.months_since_push.toFixed(1)} mo since push</span></div>
@@ -3192,7 +3202,15 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     })
   })
 
-  return html`<div class="chart-wrap">${chart}${repo_dot_tooltip}</div>`
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${chart}</div>
+    ${repo_dot_tooltip}
+  </div>`
 }
 ```
 
