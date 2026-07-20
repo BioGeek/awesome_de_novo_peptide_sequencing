@@ -954,6 +954,9 @@ INSERT INTO author VALUES(967,'Fuli Wang',NULL);
 INSERT INTO author VALUES(968,'Yongqian Zhang',NULL);
 INSERT INTO author VALUES(969,'Kai Li',NULL);
 INSERT INTO author VALUES(970,'Zeyu An',NULL);
+INSERT INTO author VALUES(971,'Xuan Yu',NULL);
+INSERT INTO author VALUES(972,'Kunyi Li',NULL);
+INSERT INTO author VALUES(973,'Lusheng Wang',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1737,6 +1740,7 @@ INSERT INTO affiliation VALUES(499,'Delft University of Technology','Department 
 INSERT INTO affiliation VALUES(500,'State Key Laboratory of Chemistry for NBC Hazards Protection',NULL,2,9);
 INSERT INTO affiliation VALUES(501,'Beijing Institute of Technology','School of Medical Technology',2,9);
 INSERT INTO affiliation VALUES(502,'University of Michigan','Gilbert S. Omenn Department of Computational Medicine and Bioinformatics',8,240);
+INSERT INTO affiliation VALUES(503,'City University of Hong Kong','Department of Computer Science',2,17);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3063,6 +3067,9 @@ INSERT INTO author_affiliation VALUES(967,500);
 INSERT INTO author_affiliation VALUES(968,501);
 INSERT INTO author_affiliation VALUES(969,502);
 INSERT INTO author_affiliation VALUES(970,58);
+INSERT INTO author_affiliation VALUES(972,503);
+INSERT INTO author_affiliation VALUES(973,503);
+INSERT INTO author_affiliation VALUES(971,503);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3291,6 +3298,7 @@ INSERT INTO algorithm VALUES(221,'Wastewater microbial + human biomarker metapro
 INSERT INTO algorithm VALUES(222,'HDPS',NULL,NULL,'Hybrid de novo + database search','Heuristic two-round sequence assembly strategy combining multi-enzyme and microwave-assisted acid hydrolysis, pNovo de novo peptide sequencing, and pFind homology database search with k-mer graph assembly and majority-vote error correction; achieved 100% sequence coverage and >98% amino-acid accuracy on full-length Ricin toxin A and B chains without a reference sequence, outperforming ALPS.','downstream-application',0,'DDA','Heuristic De Novo Protein Sequencing','toxin-identification');
 INSERT INTO algorithm VALUES(223,'CasanovoGUI',NULL,NULL,NULL,'Cross-platform desktop application that wraps the Casanovo Transformer de novo peptide sequencer with a graphical front-end, lowering the barrier to entry for lab-facing MS users who would otherwise need to run Casanovo from the command line.','adjacent',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(224,'PhysNovo',NULL,NULL,'Diffusion','Discrete-diffusion de novo peptide sequencer that folds in physical mass-constraint terms at inference time, so generated sequences respect the observed precursor mass rather than relying purely on the learned amino-acid prior.','algorithm',1,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(225,'Prime-DiffNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive Transformer de novo peptide sequencer with a diffusion-based refinement step at inference time — the NAR pass drafts a full sequence in parallel, and the diffusion loop iteratively corrects residue predictions to sharpen accuracy.','algorithm',1,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3555,6 +3563,7 @@ INSERT INTO publication VALUES(251,'InstaNovo-P: a de novo peptide sequencing mo
 INSERT INTO publication VALUES(252,'Identification of Unknown Biological Toxin Proteins Using Mass Spectrometry: A Case Study on De Novo Sequencing of Ricin','2025-11-18','10.3390/toxins17110564','MDPI',NULL,'https://doi.org/10.3390/toxins17110564','Toxins','peer-reviewed',NULL);
 INSERT INTO publication VALUES(253,'CasanovoGUI: a cross-platform desktop application for deep learning-based de novo peptide sequencing with Casanovo','2026-07-11','10.64898/2026.07.11.737889','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.64898/2026.07.11.737889v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(254,'Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing','2026-07-04',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=tIG4D44jn9','ICML 2026','ML conference',NULL);
+INSERT INTO publication VALUES(255,'Prime-DiffNovo: Accurate Peptide De Novo Sequencing via Non-autoregressive Generation and Diffusion Refinement','2027-01-01','10.1007/978-981-92-3719-7_16','Springer',NULL,'https://link.springer.com/chapter/10.1007/978-981-92-3719-7_16','Lecture Notes in Computer Science (ISBRA 2026)','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3842,6 +3851,7 @@ INSERT INTO publication_algorithm VALUES(252,54);
 INSERT INTO publication_algorithm VALUES(253,223);
 INSERT INTO publication_algorithm VALUES(253,12);
 INSERT INTO publication_algorithm VALUES(254,224);
+INSERT INTO publication_algorithm VALUES(255,225);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5469,6 +5479,9 @@ INSERT INTO publication_author VALUES(253,95,5);
 INSERT INTO publication_author VALUES(253,96,6);
 INSERT INTO publication_author VALUES(254,970,1);
 INSERT INTO publication_author VALUES(254,118,2);
+INSERT INTO publication_author VALUES(255,971,1);
+INSERT INTO publication_author VALUES(255,972,2);
+INSERT INTO publication_author VALUES(255,973,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7782,10 +7795,10 @@ INSERT INTO publication_impact VALUES(252,'W4416392931',1,'doi',NULL,2026,'2026-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',73);
 INSERT INTO sqlite_sequence VALUES('city',240);
-INSERT INTO sqlite_sequence VALUES('affiliation',502);
-INSERT INTO sqlite_sequence VALUES('author',970);
-INSERT INTO sqlite_sequence VALUES('algorithm',224);
-INSERT INTO sqlite_sequence VALUES('publication',254);
+INSERT INTO sqlite_sequence VALUES('affiliation',503);
+INSERT INTO sqlite_sequence VALUES('author',973);
+INSERT INTO sqlite_sequence VALUES('algorithm',225);
+INSERT INTO sqlite_sequence VALUES('publication',255);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
