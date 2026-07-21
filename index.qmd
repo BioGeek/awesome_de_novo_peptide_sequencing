@@ -859,18 +859,16 @@ innovations_timeline = {
         fontWeight: "bold",
         fill: "family"
       }),
-      // Dots are drawn via a Plot.dot placeholder so the layout is computed
-      // (x/y scales, viewBox etc.), then replaced with d3-controlled circles
-      // below so we can wire our .map-tooltip HTML style. Empty title means
-      // Plot won't add native <title> tooltips.
+      // Rich HTML tooltips are wired below via a scoped
+      // chart.querySelectorAll('g[aria-label="dot"] circle') selector on the
+      // rendered SVG; no Plot tip is used here.
       Plot.dot(items, {
         x: "first_pub",
         y: "y",
         fill: "family",
         r: 7,
         stroke: "white",
-        strokeWidth: 1.5,
-        className: "arch-dot"
+        strokeWidth: 1.5
       }),
       // Labels anchored above the dot (top half of band). Wrap onto two
       // lines when the model name exceeds ~22 chars so long names don't
@@ -1203,8 +1201,7 @@ application_timeline = {
       Plot.dot(items, {
         x: "first_pub", y: "y",
         fill: "subdomain",
-        r: 7, stroke: "white", strokeWidth: 1.5,
-        className: "app-dot"
+        r: 7, stroke: "white", strokeWidth: 1.5
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
       // Display label wraps onto two lines at a word boundary when it exceeds
@@ -3072,8 +3069,7 @@ viewof repo_metric = Inputs.radio(
         x: repo_metric,
         y: "label",
         fill: "#1f6feb",
-        sort: { y: "x", reverse: true },
-        className: "repo-bar"
+        sort: { y: "x", reverse: true }
       }),
       Plot.ruleX([0])
     ]
@@ -3165,8 +3161,7 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
         fill: "family",
-        r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
-        className: "repo-dot"
+        r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0))
       })
     ]
   })
