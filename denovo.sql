@@ -957,6 +957,10 @@ INSERT INTO author VALUES(970,'Zeyu An',NULL);
 INSERT INTO author VALUES(971,'Xuan Yu',NULL);
 INSERT INTO author VALUES(972,'Kunyi Li',NULL);
 INSERT INTO author VALUES(973,'Lusheng Wang',NULL);
+INSERT INTO author VALUES(974,'Felix Hartkopf',NULL);
+INSERT INTO author VALUES(975,'Isabelle O''Bryon',NULL);
+INSERT INTO author VALUES(976,'Vineet Pham',NULL);
+INSERT INTO author VALUES(977,'David Arnott',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3070,6 +3074,10 @@ INSERT INTO author_affiliation VALUES(970,58);
 INSERT INTO author_affiliation VALUES(972,503);
 INSERT INTO author_affiliation VALUES(973,503);
 INSERT INTO author_affiliation VALUES(971,503);
+INSERT INTO author_affiliation VALUES(974,299);
+INSERT INTO author_affiliation VALUES(975,444);
+INSERT INTO author_affiliation VALUES(976,205);
+INSERT INTO author_affiliation VALUES(977,235);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3299,6 +3307,9 @@ INSERT INTO algorithm VALUES(222,'HDPS',NULL,NULL,'Hybrid de novo + database sea
 INSERT INTO algorithm VALUES(223,'CasanovoGUI',NULL,NULL,NULL,'Cross-platform desktop application that wraps the Casanovo Transformer de novo peptide sequencer with a graphical front-end, lowering the barrier to entry for lab-facing MS users who would otherwise need to run Casanovo from the command line.','adjacent',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(224,'PhysNovo',NULL,NULL,'Diffusion','Discrete-diffusion de novo peptide sequencer that folds in physical mass-constraint terms at inference time, so generated sequences respect the observed precursor mass rather than relying purely on the learned amino-acid prior.','algorithm',1,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(225,'Prime-DiffNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive Transformer de novo peptide sequencer with a diffusion-based refinement step at inference time — the NAR pass drafts a full sequence in parallel, and the diffusion loop iteratively corrects residue predictions to sharpen accuracy.','algorithm',1,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(226,'Golden age of de novo review',NULL,NULL,NULL,'Muth, Hartkopf, Vaudel & Renard 2018 review essay in Proteomics: state of the current de novo sequencing tool landscape, recent applied use cases, and outlook on where the field is heading.','review',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(227,'Flying under the radar review',NULL,NULL,NULL,'O''Bryon, Jenson & Merkley 2020 Protein Science review arguing that de novo peptide identification is under-appreciated relative to database-search methods, with concrete forensic / non-model / immunopeptidomic cases where it wins.','review',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(228,'Automated mAb de novo (Bandeira SPS)',NULL,NULL,'Spectral assembly','Landmark Nat Biotech 2008 paper by Bandeira, Pham, Pevzner, Arnott & Lill: applies Shotgun Protein Sequencing (SPS) — MS/MS spectral assembly — end-to-end to a monoclonal antibody, recovering both chains without any prior sequence.','downstream-application',0,'DDA',NULL,'antibodyomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3564,6 +3575,9 @@ INSERT INTO publication VALUES(252,'Identification of Unknown Biological Toxin P
 INSERT INTO publication VALUES(253,'CasanovoGUI: a cross-platform desktop application for deep learning-based de novo peptide sequencing with Casanovo','2026-07-11','10.64898/2026.07.11.737889','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.64898/2026.07.11.737889v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(254,'Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing','2026-07-04',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=tIG4D44jn9','ICML 2026','ML conference',NULL);
 INSERT INTO publication VALUES(255,'Prime-DiffNovo: Accurate Peptide De Novo Sequencing via Non-autoregressive Generation and Diffusion Refinement','2026-07-15','10.1007/978-981-92-3719-7_16','Springer',NULL,'https://link.springer.com/chapter/10.1007/978-981-92-3719-7_16','Lecture Notes in Computer Science (ISBRA 2026)','peer-reviewed',NULL);
+INSERT INTO publication VALUES(256,'A potential golden age to come—current tools, recent use cases, and future avenues for de novo sequencing in proteomics','2018-09-01','10.1002/pmic.201700150','Wiley',NULL,'https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201700150','Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(257,'Flying blind, or just flying under the radar? The underappreciated power of de novo methods of mass spectrometric peptide identification','2020-09-01','10.1002/pro.3919','Wiley',NULL,'https://onlinelibrary.wiley.com/doi/abs/10.1002/pro.3919','Protein Science','peer-reviewed',NULL);
+INSERT INTO publication VALUES(258,'Automated de novo protein sequencing of monoclonal antibodies','2008-12-01','10.1038/nbt1208-1336','Springer Nature',NULL,'https://www.nature.com/articles/nbt1208-1336','Nature Biotechnology','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3852,6 +3866,10 @@ INSERT INTO publication_algorithm VALUES(253,223);
 INSERT INTO publication_algorithm VALUES(253,12);
 INSERT INTO publication_algorithm VALUES(254,224);
 INSERT INTO publication_algorithm VALUES(255,225);
+INSERT INTO publication_algorithm VALUES(256,226);
+INSERT INTO publication_algorithm VALUES(257,227);
+INSERT INTO publication_algorithm VALUES(258,228);
+INSERT INTO publication_algorithm VALUES(258,130);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5482,6 +5500,18 @@ INSERT INTO publication_author VALUES(254,118,2);
 INSERT INTO publication_author VALUES(255,971,1);
 INSERT INTO publication_author VALUES(255,972,2);
 INSERT INTO publication_author VALUES(255,973,3);
+INSERT INTO publication_author VALUES(256,421,1);
+INSERT INTO publication_author VALUES(256,974,2);
+INSERT INTO publication_author VALUES(256,673,3);
+INSERT INTO publication_author VALUES(256,430,4);
+INSERT INTO publication_author VALUES(257,975,1);
+INSERT INTO publication_author VALUES(257,831,2);
+INSERT INTO publication_author VALUES(257,838,3);
+INSERT INTO publication_author VALUES(258,475,1);
+INSERT INTO publication_author VALUES(258,976,2);
+INSERT INTO publication_author VALUES(258,271,3);
+INSERT INTO publication_author VALUES(258,977,4);
+INSERT INTO publication_author VALUES(258,530,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7797,9 +7827,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',73);
 INSERT INTO sqlite_sequence VALUES('city',240);
 INSERT INTO sqlite_sequence VALUES('affiliation',503);
-INSERT INTO sqlite_sequence VALUES('author',973);
-INSERT INTO sqlite_sequence VALUES('algorithm',225);
-INSERT INTO sqlite_sequence VALUES('publication',255);
+INSERT INTO sqlite_sequence VALUES('author',977);
+INSERT INTO sqlite_sequence VALUES('algorithm',228);
+INSERT INTO sqlite_sequence VALUES('publication',258);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
