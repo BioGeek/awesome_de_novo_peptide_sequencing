@@ -7531,7 +7531,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',194,77,20,305,7,323,'2026-07-09T02:38:03Z','2026-07-20T08:31:46','v5.2.0');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',194,77,21,305,7,323,'2026-07-09T02:38:03Z','2026-07-26T08:01:21','v5.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',5,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-07-15T07:45:10',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',10,4,0,4,0,6,'2026-07-22T09:34:52Z','2026-07-23T08:04:55','v1.1');
@@ -7555,7 +7555,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',1
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,16,18,360,1,5,'2025-08-15T14:01:55Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,1,0,0,0,'2026-04-07T00:28:43Z','2026-06-25T10:23:51',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',93,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-02T07:00:40','v1.1.2');
+INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',92,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-26T08:01:21','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,22,14,109,0,131,'2026-07-24T21:35:06Z','2026-07-25T07:46:34','v4.0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,47,505,1,15,'2026-07-24T20:13:33Z','2026-07-25T07:46:34',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',49,19,5,81,0,183,'2026-07-13T17:01:59Z','2026-07-14T07:41:22','v4.2.0');
