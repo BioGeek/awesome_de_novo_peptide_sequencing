@@ -2034,9 +2034,7 @@ ${type_breakdown(d)}`
 
 ## Who's driving it
 
-The chart shows the twenty most-published authors. The network below it shows how authors with **≥ 3 papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.
-
-Edge thickness is **Newman fractional collaboration strength**: a pair sharing an *n*-author paper earns 1/(*n*−1), summed over every paper they share. So an intimate two-author collaboration scores a full 1.0 while each pair in a 53-author consortium scores ~0.02. Without this correction one community benchmark paper alone contributes a 33-node clique that swamps the whole graph. Use **min strength** to peel away weak ties and expose the dense research groups, and **max authors/paper** to drop mega-author papers outright.
+The chart below shows the twenty most-published authors.
 
 ```{ojs}
 //| echo: false
@@ -2071,6 +2069,12 @@ Edge thickness is **Newman fractional collaboration strength**: a pair sharing a
   })
 }
 ```
+
+### The collaboration network
+
+The network below shows how authors with **≥ 3 papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.
+
+Edge thickness is **Newman fractional collaboration strength**: a pair sharing an *n*-author paper earns 1/(*n*−1), summed over every paper they share. So an intimate two-author collaboration scores a full 1.0 while each pair in a 53-author consortium scores ~0.02. Without this correction one community benchmark paper alone contributes a 33-node clique that swamps the whole graph. Use **min strength** to peel away weak ties and expose the dense research groups, and **max authors/paper** to drop mega-author papers outright.
 
 ```{ojs}
 //| echo: false
