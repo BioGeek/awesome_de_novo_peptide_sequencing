@@ -970,6 +970,22 @@ INSERT INTO author VALUES(983,'Chenyu Yao',NULL);
 INSERT INTO author VALUES(984,'Laurent Gatto',NULL);
 INSERT INTO author VALUES(985,'Benjamin A. Neely',NULL);
 INSERT INTO author VALUES(986,'Michael R. Shortreed',NULL);
+INSERT INTO author VALUES(987,'Harrison Specht',NULL);
+INSERT INTO author VALUES(988,'Maddy Yeh',NULL);
+INSERT INTO author VALUES(989,'Sarah Sipe',NULL);
+INSERT INTO author VALUES(990,'David Barnes-Seeman',NULL);
+INSERT INTO author VALUES(991,'Mark Adamo',NULL);
+INSERT INTO author VALUES(992,'Kevin McDonnell',NULL);
+INSERT INTO author VALUES(993,'Michael P. Agius',NULL);
+INSERT INTO author VALUES(994,'Corinna Friedrich',NULL);
+INSERT INTO author VALUES(995,'Wai Kit Pang',NULL);
+INSERT INTO author VALUES(996,'Yanchang Huang',NULL);
+INSERT INTO author VALUES(997,'Kasa Shiva Raju',NULL);
+INSERT INTO author VALUES(998,'Wayne Vuong',NULL);
+INSERT INTO author VALUES(999,'Michael Alan Lee',NULL);
+INSERT INTO author VALUES(1000,'Ahmet Yesilcimen',NULL);
+INSERT INTO author VALUES(1001,'Bradley L. Pentelute',NULL);
+INSERT INTO author VALUES(1002,'Nikolai Slavov',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1201,7 +1217,6 @@ INSERT INTO city VALUES(172,'Minneapolis',8,NULL,NULL);
 INSERT INTO city VALUES(173,'Thohoyandou',45,NULL,NULL);
 INSERT INTO city VALUES(174,'Stockholm',6,NULL,NULL);
 INSERT INTO city VALUES(175,'Barcelona',33,NULL,NULL);
-INSERT INTO city VALUES(176,'Boston',8,NULL,NULL);
 INSERT INTO city VALUES(177,'Toronto',9,NULL,NULL);
 INSERT INTO city VALUES(178,'Dar es Salaam',52,NULL,NULL);
 INSERT INTO city VALUES(179,'Port Elizabeth',45,NULL,NULL);
@@ -1267,6 +1282,8 @@ INSERT INTO city VALUES(238,'Rome',38,NULL,NULL);
 INSERT INTO city VALUES(239,'Strasbourg',14,NULL,NULL);
 INSERT INTO city VALUES(240,'Ann Arbor',8,NULL,NULL);
 INSERT INTO city VALUES(241,'Solna',6,NULL,NULL);
+INSERT INTO city VALUES(242,'Watertown',8,NULL,NULL);
+INSERT INTO city VALUES(243,'Woburn',8,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1768,6 +1785,9 @@ INSERT INTO affiliation VALUES(513,'University of Wisconsin-Madison','Department
 INSERT INTO affiliation VALUES(514,'Chulalongkorn University','Center for Artificial Intelligence in Medicine, Research Affairs, Faculty of Medicine',18,61);
 INSERT INTO affiliation VALUES(515,'University of British Columbia',NULL,9,20);
 INSERT INTO affiliation VALUES(516,'KTH Royal Institute of Technology','Science for Life Laboratory, Department of Gene Technology',6,241);
+INSERT INTO affiliation VALUES(517,'Parallel Squared Technology Institute',NULL,8,242);
+INSERT INTO affiliation VALUES(518,'CreaGen Biosciences',NULL,8,243);
+INSERT INTO affiliation VALUES(519,'Northeastern University','Department of Bioengineering',8,81);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3130,6 +3150,23 @@ INSERT INTO author_affiliation VALUES(312,510);
 INSERT INTO author_affiliation VALUES(312,514);
 INSERT INTO author_affiliation VALUES(210,507);
 INSERT INTO author_affiliation VALUES(95,507);
+INSERT INTO author_affiliation VALUES(987,517);
+INSERT INTO author_affiliation VALUES(988,517);
+INSERT INTO author_affiliation VALUES(989,517);
+INSERT INTO author_affiliation VALUES(990,518);
+INSERT INTO author_affiliation VALUES(991,517);
+INSERT INTO author_affiliation VALUES(992,517);
+INSERT INTO author_affiliation VALUES(993,517);
+INSERT INTO author_affiliation VALUES(994,517);
+INSERT INTO author_affiliation VALUES(995,518);
+INSERT INTO author_affiliation VALUES(996,518);
+INSERT INTO author_affiliation VALUES(997,518);
+INSERT INTO author_affiliation VALUES(998,242);
+INSERT INTO author_affiliation VALUES(999,242);
+INSERT INTO author_affiliation VALUES(1000,242);
+INSERT INTO author_affiliation VALUES(1001,242);
+INSERT INTO author_affiliation VALUES(1002,517);
+INSERT INTO author_affiliation VALUES(1002,519);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3363,6 +3400,7 @@ INSERT INTO algorithm VALUES(226,'Golden age of de novo review',NULL,NULL,NULL,'
 INSERT INTO algorithm VALUES(227,'Flying under the radar review',NULL,NULL,NULL,'O''Bryon, Jenson & Merkley 2020 Protein Science review arguing that de novo peptide identification is under-appreciated relative to database-search methods, with concrete forensic / non-model / immunopeptidomic cases where it wins.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(228,'Automated mAb de novo (Bandeira SPS)',NULL,NULL,'Spectral assembly','Landmark Nat Biotech 2008 paper by Bandeira, Pham, Pevzner, Arnott & Lill: applies Shotgun Protein Sequencing (SPS) — MS/MS spectral assembly — end-to-end to a monoclonal antibody, recovering both chains without any prior sequence.','downstream-application',0,'DDA',NULL,'antibodyomics');
 INSERT INTO algorithm VALUES(229,'Living proteomics benchmark',NULL,NULL,NULL,'Community-driven, continuously-updated benchmarking resource for deep-learning de novo peptide sequencing: evaluates tools across a broad span of experimental conditions and proteomic applications rather than one frozen test set. Nature Methods Registered Report co-authored by 53 researchers spanning most of the groups that build the tools being benchmarked.','benchmark',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(230,'PSMtags',NULL,NULL,'Chemical derivatization assisted','Small-molecule peptide conjugates found by systematic screening that sharply increase b-ion fragment coverage, raising sequence-identification confidence and improving de novo sequencing. Also supports 9-plex stable-isotope multiplexing at ~240 samples/day, boosting protein data points roughly 6.5x over the unlabelled baseline in sensitive (low-input) proteomics.','adjacent',0,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3632,6 +3670,7 @@ INSERT INTO publication VALUES(256,'A potential golden age to come—current too
 INSERT INTO publication VALUES(257,'Flying blind, or just flying under the radar? The underappreciated power of de novo methods of mass spectrometric peptide identification','2020-09-01','10.1002/pro.3919','Wiley',NULL,'https://onlinelibrary.wiley.com/doi/abs/10.1002/pro.3919','Protein Science','peer-reviewed',NULL);
 INSERT INTO publication VALUES(258,'Automated de novo protein sequencing of monoclonal antibodies','2008-12-01','10.1038/nbt1208-1336','Springer Nature',NULL,'https://www.nature.com/articles/nbt1208-1336','Nature Biotechnology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(259,'A living proteomics benchmark for comprehensive evaluation of deep learning-based de novo peptide sequencing tools','2026-03-12','10.6084/m9.figshare.31680883','figshare',NULL,'https://doi.org/10.6084/m9.figshare.31680883','Nature Methods (Registered Report)','preprint',NULL);
+INSERT INTO publication VALUES(260,'PSMtags improve peptide sequencing and throughput in sensitive proteomics','2025-05-22','10.1101/2025.05.22.655509','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2025.05.22.655509v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3925,6 +3964,7 @@ INSERT INTO publication_algorithm VALUES(257,227);
 INSERT INTO publication_algorithm VALUES(258,228);
 INSERT INTO publication_algorithm VALUES(258,130);
 INSERT INTO publication_algorithm VALUES(259,229);
+INSERT INTO publication_algorithm VALUES(260,230);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5620,6 +5660,22 @@ INSERT INTO publication_author VALUES(259,234,50);
 INSERT INTO publication_author VALUES(259,96,51);
 INSERT INTO publication_author VALUES(259,19,52);
 INSERT INTO publication_author VALUES(259,95,53);
+INSERT INTO publication_author VALUES(260,987,1);
+INSERT INTO publication_author VALUES(260,988,2);
+INSERT INTO publication_author VALUES(260,989,3);
+INSERT INTO publication_author VALUES(260,990,4);
+INSERT INTO publication_author VALUES(260,991,5);
+INSERT INTO publication_author VALUES(260,992,6);
+INSERT INTO publication_author VALUES(260,993,7);
+INSERT INTO publication_author VALUES(260,994,8);
+INSERT INTO publication_author VALUES(260,995,9);
+INSERT INTO publication_author VALUES(260,996,10);
+INSERT INTO publication_author VALUES(260,997,11);
+INSERT INTO publication_author VALUES(260,998,12);
+INSERT INTO publication_author VALUES(260,999,13);
+INSERT INTO publication_author VALUES(260,1000,14);
+INSERT INTO publication_author VALUES(260,1001,15);
+INSERT INTO publication_author VALUES(260,1002,16);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7606,6 +7662,7 @@ INSERT INTO algorithm_repository VALUES(184,'https://github.com/compomics/ms2res
 INSERT INTO algorithm_repository VALUES(188,'https://github.com/compomics/ms2pip',0);
 INSERT INTO algorithm_repository VALUES(185,'https://github.com/compomics/peptide-shaker',0);
 INSERT INTO algorithm_repository VALUES(224,'https://github.com/WanyuGroup/ICML2026_PhysNovo',0);
+INSERT INTO algorithm_repository VALUES(230,'https://parallelsq.org/PSMtags',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -7939,11 +7996,11 @@ INSERT INTO publication_impact VALUES(257,'W3044824045',41,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(258,'W2090647436',140,'doi',NULL,2026,'2026-07-26T08:42:34+00:00');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',73);
-INSERT INTO sqlite_sequence VALUES('city',241);
-INSERT INTO sqlite_sequence VALUES('affiliation',516);
-INSERT INTO sqlite_sequence VALUES('author',986);
-INSERT INTO sqlite_sequence VALUES('algorithm',229);
-INSERT INTO sqlite_sequence VALUES('publication',259);
+INSERT INTO sqlite_sequence VALUES('city',243);
+INSERT INTO sqlite_sequence VALUES('affiliation',519);
+INSERT INTO sqlite_sequence VALUES('author',1002);
+INSERT INTO sqlite_sequence VALUES('algorithm',230);
+INSERT INTO sqlite_sequence VALUES('publication',260);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
