@@ -986,6 +986,13 @@ INSERT INTO author VALUES(999,'Michael Alan Lee',NULL);
 INSERT INTO author VALUES(1000,'Ahmet Yesilcimen',NULL);
 INSERT INTO author VALUES(1001,'Bradley L. Pentelute',NULL);
 INSERT INTO author VALUES(1002,'Nikolai Slavov',NULL);
+INSERT INTO author VALUES(1003,'Rui Vitorino',NULL);
+INSERT INTO author VALUES(1004,'Sofia Guedes',NULL);
+INSERT INTO author VALUES(1005,'Fabio Trindade',NULL);
+INSERT INTO author VALUES(1006,'Inês Correia',NULL);
+INSERT INTO author VALUES(1007,'Gabriela Moura',NULL);
+INSERT INTO author VALUES(1008,'Manuel A. S. Santos',NULL);
+INSERT INTO author VALUES(1009,'Francisco Amado',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1034,6 +1041,7 @@ INSERT INTO country VALUES(70,'Croatia');
 INSERT INTO country VALUES(71,'Myanmar');
 INSERT INTO country VALUES(72,'Costa Rica');
 INSERT INTO country VALUES(73,'Uruguay');
+INSERT INTO country VALUES(74,'Portugal');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1251,6 +1259,8 @@ INSERT INTO city VALUES(240,'Ann Arbor',8,NULL,NULL);
 INSERT INTO city VALUES(241,'Solna',6,NULL,NULL);
 INSERT INTO city VALUES(242,'Watertown',8,NULL,NULL);
 INSERT INTO city VALUES(243,'Woburn',8,NULL,NULL);
+INSERT INTO city VALUES(245,'Aveiro',74,NULL,NULL);
+INSERT INTO city VALUES(246,'Porto',74,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1748,6 +1758,9 @@ INSERT INTO affiliation VALUES(516,'KTH Royal Institute of Technology','Science 
 INSERT INTO affiliation VALUES(517,'Parallel Squared Technology Institute',NULL,8,242);
 INSERT INTO affiliation VALUES(518,'CreaGen Biosciences',NULL,8,243);
 INSERT INTO affiliation VALUES(519,'Northeastern University','Department of Bioengineering',8,81);
+INSERT INTO affiliation VALUES(520,'University of Aveiro','QOPNA & LAQV-REQUIMTE, Departamento de Química',74,245);
+INSERT INTO affiliation VALUES(521,'University of Aveiro','iBiMED, Institute of Biomedicine, Department of Medical Sciences',74,245);
+INSERT INTO affiliation VALUES(522,'University of Porto','Unidade de Investigação Cardiovascular, Departamento de Cirurgia e Fisiologia, Faculdade de Medicina',74,246);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3118,6 +3131,14 @@ INSERT INTO author_affiliation VALUES(1000,242);
 INSERT INTO author_affiliation VALUES(1001,242);
 INSERT INTO author_affiliation VALUES(1002,517);
 INSERT INTO author_affiliation VALUES(1002,519);
+INSERT INTO author_affiliation VALUES(1003,520);
+INSERT INTO author_affiliation VALUES(1003,521);
+INSERT INTO author_affiliation VALUES(1003,522);
+INSERT INTO author_affiliation VALUES(1004,520);
+INSERT INTO author_affiliation VALUES(1005,522);
+INSERT INTO author_affiliation VALUES(1006,521);
+INSERT INTO author_affiliation VALUES(1007,521);
+INSERT INTO author_affiliation VALUES(1008,521);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3352,6 +3373,7 @@ INSERT INTO algorithm VALUES(227,'Flying under the radar review',NULL,NULL,NULL,
 INSERT INTO algorithm VALUES(228,'Automated mAb de novo (Bandeira SPS)',NULL,NULL,'Spectral assembly','Landmark Nat Biotech 2008 paper by Bandeira, Pham, Pevzner, Arnott & Lill: applies Shotgun Protein Sequencing (SPS) — MS/MS spectral assembly — end-to-end to a monoclonal antibody, recovering both chains without any prior sequence.','downstream-application',0,'DDA',NULL,'antibodyomics');
 INSERT INTO algorithm VALUES(229,'Living proteomics benchmark',NULL,NULL,NULL,'Community-driven, continuously-updated benchmarking resource for deep-learning de novo peptide sequencing: evaluates tools across a broad span of experimental conditions and proteomic applications rather than one frozen test set. Nature Methods Registered Report co-authored by 53 researchers spanning most of the groups that build the tools being benchmarked.','benchmark',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(230,'PSMtags',NULL,NULL,'Chemical derivatization assisted','Small-molecule peptide conjugates found by systematic screening that sharply increase b-ion fragment coverage, raising sequence-identification confidence and improving de novo sequencing. Also supports 9-plex stable-isotope multiplexing at ~240 samples/day, boosting protein data points roughly 6.5x over the unlabelled baseline in sensitive (low-input) proteomics.','adjacent',0,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(231,'De novo protein sequencing review (Vitorino)',NULL,NULL,NULL,'Expert Review of Proteomics survey of de novo sequencing at the protein level: how MS/MS-derived peptide sequences are assembled into full protein sequences, the algorithmic and instrumental limits involved, and where the approach beats database search for organisms and proteoforms absent from reference databases.','review',NULL,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3623,6 +3645,7 @@ INSERT INTO publication VALUES(258,'Automated de novo protein sequencing of mono
 INSERT INTO publication VALUES(259,'A living proteomics benchmark for comprehensive evaluation of deep learning-based de novo peptide sequencing tools','2026-03-12','10.6084/m9.figshare.31680883','figshare',NULL,'https://doi.org/10.6084/m9.figshare.31680883','Nature Methods (Registered Report)','preprint',NULL);
 INSERT INTO publication VALUES(260,'PSMtags improve peptide sequencing and throughput in sensitive proteomics','2025-05-22','10.1101/2025.05.22.655509','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2025.05.22.655509v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(261,'A Hidden Markov Model for de Novo Peptide Sequencing','2004-12-13',NULL,'MIT Press',NULL,'https://papers.nips.cc/paper_files/paper/2004','NIPS 2004','ML conference',NULL);
+INSERT INTO publication VALUES(262,'De novo sequencing of proteins by mass spectrometry','2020-10-01','10.1080/14789450.2020.1831387','Taylor & Francis',NULL,'https://doi.org/10.1080/14789450.2020.1831387','Expert Review of Proteomics','peer-reviewed',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3918,6 +3941,7 @@ INSERT INTO publication_algorithm VALUES(258,130);
 INSERT INTO publication_algorithm VALUES(259,229);
 INSERT INTO publication_algorithm VALUES(260,230);
 INSERT INTO publication_algorithm VALUES(261,64);
+INSERT INTO publication_algorithm VALUES(262,231);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5637,6 +5661,14 @@ INSERT INTO publication_author VALUES(261,282,5);
 INSERT INTO publication_author VALUES(261,284,6);
 INSERT INTO publication_author VALUES(261,280,7);
 INSERT INTO publication_author VALUES(261,283,8);
+INSERT INTO publication_author VALUES(262,1003,1);
+INSERT INTO publication_author VALUES(262,1004,2);
+INSERT INTO publication_author VALUES(262,1005,3);
+INSERT INTO publication_author VALUES(262,1006,4);
+INSERT INTO publication_author VALUES(262,1007,5);
+INSERT INTO publication_author VALUES(262,956,6);
+INSERT INTO publication_author VALUES(262,1008,7);
+INSERT INTO publication_author VALUES(262,1009,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7956,12 +7988,12 @@ INSERT INTO publication_impact VALUES(256,'W2810217160',60,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(257,'W3044824045',41,'doi',NULL,2026,'2026-07-26T08:42:34+00:00');
 INSERT INTO publication_impact VALUES(258,'W2090647436',140,'doi',NULL,2026,'2026-07-26T08:42:34+00:00');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',73);
-INSERT INTO sqlite_sequence VALUES('city',244);
-INSERT INTO sqlite_sequence VALUES('affiliation',519);
-INSERT INTO sqlite_sequence VALUES('author',1002);
-INSERT INTO sqlite_sequence VALUES('algorithm',230);
-INSERT INTO sqlite_sequence VALUES('publication',261);
+INSERT INTO sqlite_sequence VALUES('country',74);
+INSERT INTO sqlite_sequence VALUES('city',246);
+INSERT INTO sqlite_sequence VALUES('affiliation',522);
+INSERT INTO sqlite_sequence VALUES('author',1009);
+INSERT INTO sqlite_sequence VALUES('algorithm',231);
+INSERT INTO sqlite_sequence VALUES('publication',262);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
