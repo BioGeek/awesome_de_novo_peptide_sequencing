@@ -3622,6 +3622,7 @@ INSERT INTO publication VALUES(257,'Flying blind, or just flying under the radar
 INSERT INTO publication VALUES(258,'Automated de novo protein sequencing of monoclonal antibodies','2008-12-01','10.1038/nbt1208-1336','Springer Nature',NULL,'https://www.nature.com/articles/nbt1208-1336','Nature Biotechnology','peer-reviewed',NULL);
 INSERT INTO publication VALUES(259,'A living proteomics benchmark for comprehensive evaluation of deep learning-based de novo peptide sequencing tools','2026-03-12','10.6084/m9.figshare.31680883','figshare',NULL,'https://doi.org/10.6084/m9.figshare.31680883','Nature Methods (Registered Report)','preprint',NULL);
 INSERT INTO publication VALUES(260,'PSMtags improve peptide sequencing and throughput in sensitive proteomics','2025-05-22','10.1101/2025.05.22.655509','Cold Spring Harbor Laboratory',NULL,'https://www.biorxiv.org/content/10.1101/2025.05.22.655509v1','bioRxiv','preprint',NULL);
+INSERT INTO publication VALUES(261,'A Hidden Markov Model for de Novo Peptide Sequencing','2004-12-13',NULL,'MIT Press',NULL,'https://papers.nips.cc/paper_files/paper/2004','NIPS 2004','ML conference',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -3916,6 +3917,7 @@ INSERT INTO publication_algorithm VALUES(258,228);
 INSERT INTO publication_algorithm VALUES(258,130);
 INSERT INTO publication_algorithm VALUES(259,229);
 INSERT INTO publication_algorithm VALUES(260,230);
+INSERT INTO publication_algorithm VALUES(261,64);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5627,6 +5629,14 @@ INSERT INTO publication_author VALUES(260,999,13);
 INSERT INTO publication_author VALUES(260,1000,14);
 INSERT INTO publication_author VALUES(260,1001,15);
 INSERT INTO publication_author VALUES(260,1002,16);
+INSERT INTO publication_author VALUES(261,278,1);
+INSERT INTO publication_author VALUES(261,279,2);
+INSERT INTO publication_author VALUES(261,285,3);
+INSERT INTO publication_author VALUES(261,281,4);
+INSERT INTO publication_author VALUES(261,282,5);
+INSERT INTO publication_author VALUES(261,284,6);
+INSERT INTO publication_author VALUES(261,280,7);
+INSERT INTO publication_author VALUES(261,283,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -7951,7 +7961,7 @@ INSERT INTO sqlite_sequence VALUES('city',244);
 INSERT INTO sqlite_sequence VALUES('affiliation',519);
 INSERT INTO sqlite_sequence VALUES('author',1002);
 INSERT INTO sqlite_sequence VALUES('algorithm',230);
-INSERT INTO sqlite_sequence VALUES('publication',260);
+INSERT INTO sqlite_sequence VALUES('publication',261);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
