@@ -37,20 +37,12 @@ jobs:
 
       - name: Commit if metrics changed
         id: commit
-        run: |
-          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No metric changes today, nothing to commit."
-            echo "committed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git config user.name  'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add denovo.db denovo.sql
-          git commit -m "Daily refresh of GitHub repository metrics
-
-          Built by .github/workflows/refresh-repo-metrics.yml"
-          git push
-          echo "committed=true" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/commit-refreshed-db
+        with:
+          table: repository_metrics
+          message: Daily refresh of GitHub repository metrics
+          workflow-file: refresh-repo-metrics.yml
+          no-changes-message: No metric changes today, nothing to commit.
 
       - name: Trigger site rebuild
         if: steps.commit.outputs.committed == 'true'

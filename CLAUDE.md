@@ -70,6 +70,40 @@ stays deterministic.
 All four are also `workflow_dispatch`-able from the Actions tab if you need an
 on-demand refresh (e.g., right after adding a new paper).
 
+### Push races and `.github/actions/commit-refreshed-db`
+
+The staircase only separates the workflows from *each other* — it can't stop a
+**human** pushing while a refresh is mid-run. That did happen and broke a daily
+run: the job checked out, rebuilt, committed, and by the time it pushed `main`
+had moved, so `git push` was rejected and the whole workflow failed.
+
+All four refresh workflows now commit through the shared composite action
+`.github/actions/commit-refreshed-db`, which retries a rejected push (5 attempts,
+increasing backoff). The interesting part is *how* it rebases, because a plain
+`git pull --rebase` is not an option here: `denovo.db` is binary so it conflicts
+every time, and a textual merge of `denovo.sql` can't be trusted.
+
+Instead it exploits an invariant of this repo — **each refresh workflow is the
+sole writer of exactly one table**:
+
+| Workflow                     | Owns table            |
+|------------------------------|-----------------------|
+| `refresh-repo-metrics`       | `repository_metrics`  |
+| `refresh-publication-impact` | `publication_impact`  |
+| `refresh-citation-graph`     | `publication_citation`|
+| `refresh-journal-metrics`    | `journal_impact`      |
+
+On a rejected push it dumps just its own table (`sqlite3 denovo.db ".dump
+<table>"`), hard-resets to `origin/main` to pick up whatever landed, replays its
+rows on top, regenerates `denovo.sql`, and pushes again. Everything the other
+side changed survives untouched, and the refreshed rows are not lost — no need
+to re-run the (slow, network-bound) builder.
+
+If you add a fifth refresh workflow, give it its own table and pass that table
+as the action's `table:` input. If a workflow ever needs to write two tables,
+the action needs extending first — replaying one table would silently drop the
+other's new rows.
+
 ## Schema shape (read before editing data)
 
 Ten tables: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Authors connect to publications via `publication_author` and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`) added after initial schema creation. `publication.publication_type` is a string; the SQL column comment names only `'preprint'` / `'peer-reviewed'` but the actual values in use now include `'thesis'`, `'ML conference'`, and `'commentary'`.

@@ -47,21 +47,12 @@ jobs:
 
       - name: Commit if edges changed
         id: commit
-        run: |
-          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No new citation edges resolved this month, nothing to commit."
-            echo "committed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git config user.name  'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add denovo.db denovo.sql
-          # citation_audit.csv is gitignored; intentional.
-          git commit -m "Monthly refresh of intra-catalog citation graph
-
-          Built by .github/workflows/refresh-citation-graph.yml"
-          git push
-          echo "committed=true" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/commit-refreshed-db
+        with:
+          table: publication_citation
+          message: Monthly refresh of intra-catalog citation graph
+          workflow-file: refresh-citation-graph.yml
+          no-changes-message: No new citation edges resolved this month, nothing to commit.
 
       - name: Trigger site rebuild
         if: steps.commit.outputs.committed == 'true'

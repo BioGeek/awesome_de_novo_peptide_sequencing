@@ -1,0 +1,101 @@
+name: Commit refreshed denovo.db
+description: >
+  Commit and push a refreshed denovo.db / denovo.sql, retrying safely when
+  another workflow or a human pushes to main in the meantime.
+
+inputs:
+  table:
+    description: >
+      The single table this workflow owns and is the sole writer of
+      (e.g. repository_metrics). On a push race the freshly-built rows for
+      this table are replayed onto the updated remote database, so concurrent
+      changes to every OTHER table are preserved.
+    required: true
+  message:
+    description: Commit message (first line; a provenance line is appended).
+    required: true
+  workflow-file:
+    description: Workflow filename, recorded in the commit body for provenance.
+    required: true
+  no-changes-message:
+    description: Message logged when the refresh produced no diff.
+    required: false
+    default: No changes this run, nothing to commit.
+  max-attempts:
+    description: How many times to retry a rejected push.
+    required: false
+    default: '5'
+
+outputs:
+  committed:
+    description: '"true" when a commit was pushed, "false" when there was nothing to do.'
+    value: ${{ steps.push.outputs.committed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Commit and push (race-tolerant)
+      id: push
+      shell: bash
+      env:
+        TABLE: ${{ inputs.table }}
+        MESSAGE: ${{ inputs.message }}
+        WORKFLOW_FILE: ${{ inputs.workflow-file }}
+        NO_CHANGES_MESSAGE: ${{ inputs.no-changes-message }}
+        MAX_ATTEMPTS: ${{ inputs.max-attempts }}
+      run: |
+        set -euo pipefail
+
+        if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
+          echo "$NO_CHANGES_MESSAGE"
+          echo "committed=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        git config user.name  'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+        commit_all () {
+          git add denovo.db denovo.sql
+          git commit -m "$MESSAGE" -m "Built by .github/workflows/$WORKFLOW_FILE"
+        }
+
+        commit_all
+
+        for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+          if git push; then
+            echo "Pushed on attempt $attempt."
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "::warning::Push rejected on attempt $attempt — main moved underneath us. Rebasing onto it."
+
+          # denovo.db is binary, so a normal rebase always conflicts on it and a
+          # textual merge of denovo.sql is not trustworthy. Instead: keep only
+          # the rows for the table this workflow owns, take the remote database
+          # wholesale (preserving whatever else was pushed), then replay our
+          # rows back on top. This is safe precisely because each refresh
+          # workflow is the sole writer of its own table.
+          sqlite3 denovo.db ".dump ${TABLE}" > /tmp/owned_table.sql
+          test -s /tmp/owned_table.sql || { echo "::error::Empty dump for ${TABLE}; refusing to continue."; exit 1; }
+
+          git fetch origin main
+          git reset --hard origin/main
+
+          sqlite3 denovo.db "DROP TABLE IF EXISTS ${TABLE};"
+          sqlite3 denovo.db < /tmp/owned_table.sql
+          sqlite3 denovo.db .dump > denovo.sql
+
+          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
+            echo "After rebasing, our rows match what is already on main. Nothing left to push."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          commit_all
+          sleep $(( attempt * 3 ))
+        done
+
+        echo "::error::Still could not push after $MAX_ATTEMPTS attempts."
+        exit 1

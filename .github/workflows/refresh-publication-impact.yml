@@ -36,20 +36,12 @@ jobs:
 
       - name: Commit if cited_by_count changed
         id: commit
-        run: |
-          if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then
-            echo "No citation-count drift this week, nothing to commit."
-            echo "committed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git config user.name  'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add denovo.db denovo.sql
-          git commit -m "Weekly refresh of OpenAlex publication citation counts
-
-          Built by .github/workflows/refresh-publication-impact.yml"
-          git push
-          echo "committed=true" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/commit-refreshed-db
+        with:
+          table: publication_impact
+          message: Weekly refresh of OpenAlex publication citation counts
+          workflow-file: refresh-publication-impact.yml
+          no-changes-message: No citation-count drift this week, nothing to commit.
 
       - name: Trigger site rebuild
         if: steps.commit.outputs.committed == 'true'
