@@ -744,13 +744,29 @@ innovations_timeline = {
     "Flow":              "#937DC2"
   }
   // Tiers chosen to spread labels both above and below the band center.
-  // 25 interleaved tier positions (the previous 15 ran out for the 2024-2026
-  // Transformer (AR) burst, dropping ~6 models onto the center-line fallback).
-  const Y_TIERS = [
-    0.5, 0.8, 0.2, 0.9, 0.1, 0.7, 0.3, 0.6, 0.4,
-    0.85, 0.15, 0.95, 0.05, 0.75, 0.25, 0.65, 0.35, 0.55, 0.45,
-    0.88, 0.12, 0.78, 0.22, 0.58, 0.42
-  ]
+  // Tier positions are GENERATED, not hard-coded, and there are always at least
+  // as many as the busiest band has entries (see Y_TIERS below). A fixed list
+  // is the wrong shape here: MIN_GAP_DAYS is derived from the full ~38-year
+  // chart span and therefore pins to its 1400-day cap, so in a dense band
+  // almost every entry demands its own tier. With 25 fixed tiers the 38-entry
+  // Transformer (AR) band overflowed and dumped 11 models onto the
+  // band.center fallback line, piling them into one unreadable row.
+  //
+  // van der Corput (bit-reversal) ordering: successive tiers land far apart
+  // vertically, so near-simultaneous neighbours never get adjacent rows.
+  const vdc = i => {
+    let out = 0, f = 0.5
+    for (let n = i + 1; n > 0; n = Math.floor(n / 2)) { out += (n % 2) * f; f /= 2 }
+    return out
+  }
+  const make_tiers = n => {
+    const N = Math.max(9, n)
+    // Even positions inset from the band edges so labels don't clip.
+    const pos = Array.from({ length: N }, (_, i) => N === 1 ? 0.5 : 0.06 + 0.88 * i / (N - 1))
+    return Array.from({ length: N }, (_, i) => i)
+      .sort((a, b) => vdc(a) - vdc(b))
+      .map(i => pos[i])
+  }
   // MIN_GAP_DAYS is computed dynamically below from the actual x-range so it self-tunes
   // when more years of data come in (e.g. older classical methods extending back to 1997).
 
@@ -765,7 +781,11 @@ innovations_timeline = {
     "Random Forest":     1.2,
     "Learning-to-rank":  1.2,
     "CNN + RNN":         5.0,   // 2018-2024 cluster of DeepNovo variants + neighbours (was 3.5, still tight)
-    "Transformer (AR)":  14.0,  // Cambrian explosion 2024-2026: ~27 Casanovo/Novo variants, needed 75 % more room
+    // Transformer (AR) is by far the densest band (38 versioned entries vs 20
+    // for the next-busiest). Tiers are now generated one-per-entry, so this
+    // height sets the per-tier spacing: 20 units * 70 px / 38 tiers = ~37 px,
+    // enough for a two-line wrapped label at fontSize 10.
+    "Transformer (AR)":  20.0,
     "GNN":               1.2,
     "CNN":               1.2,
     "Transformer (NAR)": 3.5,   // 2024-2025 CrossNovo/OmniNovo/π-PrimeNovo/DiffNovo/Refinovo cluster
@@ -845,6 +865,12 @@ innovations_timeline = {
     .filter(a => matches_filters(a) && band_index.has(a.family))
     .slice()
     .sort((a, b) => a.first_pub - b.first_pub)
+  // Enough tiers for the busiest visible band, so nothing has to fall back.
+  const busiest_band = d3.max(
+    d3.rollup(rows, v => v.length, d => d.family).values()
+  ) ?? 9
+  const Y_TIERS = make_tiers(busiest_band)
+
   const last_date_at_tier = new Map()
   const items = []
   for (const row of rows) {
