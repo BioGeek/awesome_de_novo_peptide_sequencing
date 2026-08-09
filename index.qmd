@@ -3340,10 +3340,31 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
     repo_dot_tooltip.style.left = `${Math.max(pad, left)}px`
     repo_dot_tooltip.style.top  = `${Math.max(pad, top)}px`
   }
+  // Plot re-sorts dot marks by DESCENDING RADIUS whenever r is a channel, so
+  // that small dots draw on top of large ones and stay clickable. DOM order is
+  // therefore NOT the order of `points`, and binding tooltips by DOM index
+  // attributed every repo's stats to some other repo's dot. Replicate the draw
+  // order instead (both Array.prototype.sort and Plot's sort are stable, so
+  // equal-radius ties keep input order).
+  const r_of = d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0))
+  const draw_order = points.slice().sort((a, b) => r_of(b) - r_of(a))
+
   // Selector scoped to this Plot chart; aria-label='dot' is the marker Plot
   // uses for dot marks (className mark option was silently ignored).
-  chart.querySelectorAll('g[aria-label="dot"] circle').forEach((circle, i) => {
-    const d = points[i]
+  const dots = Array.from(chart.querySelectorAll('g[aria-label="dot"] circle'))
+
+  // Fail closed. The rendered radii are the r CHANNEL passed through Plot's r
+  // scale, so they can't be compared numerically against r_of(); what we can
+  // check is the assumption itself — that Plot emitted the dots in descending
+  // radius order and that the counts line up. If either stops holding, skip
+  // the tooltips entirely rather than confidently labelling dots with the
+  // wrong repository.
+  const dom_r = dots.map(c => +c.getAttribute("r"))
+  const order_holds = dom_r.length === draw_order.length
+    && dom_r.every((v, i) => i === 0 || dom_r[i - 1] >= v - 1e-9)
+
+  if (order_holds) dots.forEach((circle, i) => {
+    const d = draw_order[i]
     if (!d) return
     // Pull the actual fill Plot picked for this dot — matches the legend swatch.
     const family_swatch = circle.getAttribute("fill") ?? "#4C72B0"
