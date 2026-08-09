@@ -342,6 +342,24 @@ plot_tip_style = ({
 })
 
 pubs_t = transpose(pubs).map(r => ({ ...r, year: +r.year, date: r.date ? new Date(r.date) : null }))
+
+// Shared country colour scale. Both the Top-institutions bars and the
+// most-published-authors bars use this, so a country keeps the same colour in
+// both. It has to be an explicit scale over the FULL country list: Plot's
+// default ordinal colours are assigned per-chart from whatever domain that
+// chart happens to contain, so two charts with different country sets would
+// otherwise paint the same country differently.
+country_color = {
+  const all = Array.from(
+    new Set(transpose(pub_authorship).map(r => r.country).filter(Boolean))
+  ).sort()
+  const palette = d3.schemeTableau10
+    .concat(d3.schemeSet3, d3.schemeSet2, d3.schemePaired)
+  return d3.scaleOrdinal()
+    .domain(all)
+    .range(all.map((_, i) => palette[i % palette.length]))
+    .unknown("#c9d1d9")
+}
 top_authors_t = transpose(top_authors)
 geo_t = transpose(geo)
 institutions_t = transpose(institutions)
@@ -2048,7 +2066,9 @@ ${type_breakdown(d)}`
       Plot.barX(rows, {
         x: "authors",
         y: d => `${d.institution} · ${d.country}`,
-        fill: "country",
+        // Shared scale (see country_color) so these colours match the
+        // most-published-authors chart below.
+        fill: d => country_color(d.country),
         sort: { y: "x", reverse: true },
         tip: plot_tip_style
       }),
@@ -2073,7 +2093,35 @@ The chart below shows the twenty most-published authors.
       counts.set(a, (counts.get(a) ?? 0) + 1)
     }
   }
-  const top = Array.from(counts, ([name, publications]) => ({ name, publications }))
+  // Country per author. Most authors sit in exactly one country, but a
+  // meaningful minority hold posts in several (Ming Li: Canada + China;
+  // Bittremieux: Belgium + USA; Pevzner: USA + Germany), so a single fill has
+  // to pick one. We colour by the author's *dominant* country — the one backing
+  // most of their affiliation rows, ties broken alphabetically for stability —
+  // and list every country in the tooltip so a multi-country author is never
+  // silently reduced to one.
+  const ctry_tally = new Map()   // author -> Map(country -> count)
+  for (const r of pub_authorship_t) {
+    if (!r.author || !r.country) continue
+    if (!ctry_tally.has(r.author)) ctry_tally.set(r.author, new Map())
+    const m = ctry_tally.get(r.author)
+    m.set(r.country, (m.get(r.country) ?? 0) + 1)
+  }
+  const countries_of = name => {
+    const m = ctry_tally.get(name)
+    if (!m) return []
+    return Array.from(m).sort((a, b) => d3.descending(a[1], b[1]) || d3.ascending(a[0], b[0]))
+  }
+
+  const top = Array.from(counts, ([name, publications]) => {
+    const cs = countries_of(name)
+    return {
+      name,
+      publications,
+      country: cs.length ? cs[0][0] : "",              // dominant
+      all_countries: cs.map(c => c[0]),
+    }
+  })
     .sort((a, b) => b.publications - a.publications)
     .slice(0, 20)
 
@@ -2086,9 +2134,14 @@ The chart below shows the twenty most-published authors.
       Plot.barX(top, {
         x: "publications",
         y: "name",
-        fill: "#1f6feb",
+        // Same shared scale as the Top-institutions chart above.
+        fill: d => country_color(d.country),
         sort: { y: "x", reverse: true },
-        tip: plot_tip_style
+        tip: plot_tip_style,
+        title: d => `${d.name}\n${d.publications} paper${d.publications === 1 ? "" : "s"}\n` +
+                    (d.all_countries.length > 1
+                       ? `countries: ${d.all_countries.join(", ")} (coloured by ${d.country})`
+                       : `country: ${d.country || "unknown"}`)
       }),
       Plot.ruleX([0])
     ]
