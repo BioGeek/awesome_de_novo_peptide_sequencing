@@ -362,6 +362,39 @@ country_color = {
     .range(all.map((_, i) => palette[i % palette.length]))
     .unknown("#c9d1d9")
 }
+
+// Shared algorithm-family colour scale, for the same reason country_color
+// exists: Plot's default ordinal colours are positional, so a family's colour
+// silently changes whenever the set of families present changes. That bit us
+// once already: adding one 'Tooling' category to the code-activity scatter
+// reshuffled every colour and turned Transformer (AR) brown. An explicit scale
+// over the full family list keeps a family the same colour wherever it appears.
+// The first 13 hexes are the architectures swim-lane's canonical band colours,
+// so the scatter and the swim-lane now agree.
+family_color_scale = {
+  const canonical = {
+    "Heuristic":         "#8a96a0",
+    "Graph / DP":        "#6c757d",
+    "HMM":               "#4d6a8c",
+    "Decision tree":     "#7b6f43",
+    "Random Forest":     "#a5673f",
+    "Learning-to-rank":  "#5f6b7a",
+    "CNN + RNN":         "#4C72B0",
+    "Transformer (AR)":  "#DD8452",
+    "GNN":               "#937860",
+    "CNN":               "#8172B3",
+    "Transformer (NAR)": "#55A868",
+    "Diffusion":         "#C44E52",
+    "Flow":              "#937DC2"
+  }
+  const extra_palette = d3.schemeTableau10.concat(d3.schemeSet3, d3.schemeSet2)
+  const rest = Array.from(new Set(
+    transpose(algorithms).map(r => r.family).filter(Boolean)
+  )).filter(f => !(f in canonical)).sort()
+  const map = new Map(Object.entries(canonical))
+  rest.forEach((f, i) => map.set(f, extra_palette[i % extra_palette.length]))
+  return f => map.get(f) ?? "#9c755f"     // fallback also covers the no-family group
+}
 top_authors_t = transpose(top_authors)
 geo_t = transpose(geo)
 institutions_t = transpose(institutions)
@@ -3311,12 +3344,28 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       ...r,
       months_since_push: (now - r.last_pushed.getTime()) / (1000*60*60*24*30.44)
     }))
+  // GUI wrappers, benchmark harnesses, meta resources and rescoring frameworks
+  // legitimately have no algorithm_family; they aren't sequencing
+  // architectures. Name that group so the legend shows a label rather than a
+  // blank swatch, which is what made its colour look like a bug.
+  const TOOLING = "Tooling (no single architecture)"
+  const fam_domain = Array.from(new Set(points.map(d => d.family ?? TOOLING))).sort()
+
   const chart = Plot.plot({
     width: 1100, height: 460,
     marginLeft: 60, marginBottom: 50,
     x: { label: "Months since last push →", grid: true, reverse: true },
     y: { label: "Stars (★)", type: "log", grid: true },
-    color: { legend: true, label: "Family" },
+    // Explicit domain + range pulled from the shared family scale, so each
+    // family keeps its architectures-chart colour and adding/removing a
+    // category can't reshuffle the rest. Plot's default positional assignment
+    // is what previously turned Transformer (AR) brown.
+    color: {
+      domain: fam_domain,
+      range: fam_domain.map(family_color_scale),
+      legend: true,
+      label: "Family"
+    },
     marks: [
       // No always-on labels: even with dodgeY the ≥20-star subset still
       // overlaps in dense clusters, and choosing WHICH stars threshold to
@@ -3324,7 +3373,7 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       // for identification — every dot gets a rich popup with the same info.
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
-        fill: "family",
+        fill: d => d.family ?? TOOLING,
         r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0))
       })
     ]
@@ -3377,10 +3426,10 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
         <div class="map-tooltip-meta">
           <a href=${d.url} target="_blank" rel="noopener" style="color:inherit;">${d.url.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>
         </div>
-        ${d.family ? html`<div class="map-tooltip-row">
+        <div class="map-tooltip-row">
           <span class="map-tooltip-swatch" style=${`background:${family_swatch}`}></span>
-          <span>${d.family}</span>
-        </div>` : ""}
+          <span>${d.family ?? TOOLING}</span>
+        </div>
         <div class="map-tooltip-row"><span>★ <b>${d.stars}</b> · ${d.months_since_push.toFixed(1)} mo since push</span></div>
         <div class="map-tooltip-row"><span>open issues <b>${d.open_issues ?? 0}</b> · open PRs <b>${d.open_prs ?? 0}</b></span></div>
       </div>`)
