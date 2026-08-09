@@ -2128,14 +2128,19 @@ The chart below shows the twenty most-published authors.
     .slice(0, 20)
 
   return Plot.plot({
-    marginLeft: 180,
+    // Wider left margin than the plain-name version: labels now carry the
+    // country too, and a few authors list several.
+    marginLeft: 300,
     height: Math.max(260, top.length * 22),
     x: { label: `Papers in current filter (${pubs_filtered.length} total)`, grid: true },
     y: { label: null },
     marks: [
       Plot.barX(top, {
         x: "publications",
-        y: "name",
+        // '<author> · <country>' to match the Top-institutions axis format.
+        // Multi-country authors get all of them, so the label never implies a
+        // single country the colour merely happened to pick.
+        y: d => `${d.name} · ${d.all_countries.length ? d.all_countries.join(" / ") : "unknown"}`,
         // Same shared scale as the Top-institutions chart above.
         fill: d => country_color(d.country),
         sort: { y: "x", reverse: true },
