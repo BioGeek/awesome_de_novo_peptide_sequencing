@@ -27,8 +27,10 @@ pubs = pd.read_sql(
     """
     SELECT p.id, p.title, p.publication_date AS date, p.publication_type AS type,
            p.publisher, p.journal, p.doi, p.url, p.version,
-           (SELECT GROUP_CONCAT(a.name, ', ')
-              FROM publication_author pa JOIN author a ON a.id = pa.author_id
+           -- author_display, not author: two different researchers share the
+           -- name 'Xiang Zhang', and every chart aggregates on this string.
+           (SELECT GROUP_CONCAT(a.display_name, ', ')
+              FROM publication_author pa JOIN author_display a ON a.id = pa.author_id
               WHERE pa.publication_id = p.id
               ORDER BY pa.author_order) AS authors,
            (SELECT GROUP_CONCAT(alg.name, ', ')
@@ -83,8 +85,8 @@ pubs["year"] = pd.to_datetime(pubs["date"], errors="coerce").dt.year
 
 top_authors = pd.read_sql(
     """
-    SELECT a.name, COUNT(pa.publication_id) AS publications
-    FROM author a JOIN publication_author pa ON a.id = pa.author_id
+    SELECT a.display_name AS name, COUNT(pa.publication_id) AS publications
+    FROM author_display a JOIN publication_author pa ON a.id = pa.author_id
     GROUP BY a.id
     ORDER BY publications DESC
     LIMIT 20
@@ -124,7 +126,7 @@ pub_authorship = pd.read_sql(
     """
     SELECT pa.publication_id AS pub_id,
            a.id              AS author_id,
-           a.name            AS author,
+           a.display_name    AS author,
            af.id             AS affiliation_id,
            af.name           AS affiliation,
            ci.id             AS city_id,
@@ -133,7 +135,7 @@ pub_authorship = pd.read_sql(
            ci.lng            AS lng,
            c.name            AS country
     FROM publication_author pa
-    JOIN author a              ON a.id = pa.author_id
+    JOIN author_display a      ON a.id = pa.author_id
     LEFT JOIN author_affiliation aa ON aa.author_id = a.id
     LEFT JOIN affiliation af   ON af.id = aa.affiliation_id
     LEFT JOIN city ci          ON ci.id = af.city_id
@@ -158,15 +160,15 @@ coauth_edges = pd.read_sql(
         SELECT publication_id, COUNT(*) AS n_authors
         FROM publication_author GROUP BY publication_id
     )
-    SELECT a1.name AS source, a2.name AS target,
+    SELECT a1.display_name AS source, a2.display_name AS target,
            pa_count.n_authors AS n_authors,
            COUNT(*) AS papers
     FROM publication_author pa1
     JOIN publication_author pa2
       ON pa1.publication_id = pa2.publication_id
      AND pa1.author_id < pa2.author_id
-    JOIN author a1 ON a1.id = pa1.author_id
-    JOIN author a2 ON a2.id = pa2.author_id
+    JOIN author_display a1 ON a1.id = pa1.author_id
+    JOIN author_display a2 ON a2.id = pa2.author_id
     JOIN paper_authors pa_count ON pa_count.publication_id = pa1.publication_id
     WHERE pa1.author_id IN (SELECT author_id FROM prolific)
       AND pa2.author_id IN (SELECT author_id FROM prolific)
@@ -178,8 +180,8 @@ coauth_edges = pd.read_sql(
 
 author_affs = pd.read_sql(
     """
-    SELECT a.name AS author, aff.name AS affiliation
-    FROM author a
+    SELECT a.display_name AS author, aff.name AS affiliation
+    FROM author_display a
     JOIN author_affiliation aa ON a.id = aa.author_id
     JOIN affiliation aff ON aa.affiliation_id = aff.id
     WHERE a.id IN (
@@ -228,7 +230,7 @@ venues = pd.read_sql(
 # All authors with their affiliations and countries. Fuels the Browse-authors table.
 author_details = pd.read_sql(
     """
-    SELECT a.id AS id, a.name AS name, a.email AS email,
+    SELECT a.id AS id, a.display_name AS name, a.email AS email,
            (SELECT GROUP_CONCAT(DISTINCT af.name || COALESCE(' / ' || af.department, ''))
               FROM author_affiliation aa JOIN affiliation af ON af.id = aa.affiliation_id
               WHERE aa.author_id = a.id) AS affiliations,
@@ -237,7 +239,7 @@ author_details = pd.read_sql(
               JOIN affiliation af ON af.id = aa.affiliation_id
               JOIN country c ON c.id = af.country_id
               WHERE aa.author_id = a.id) AS countries
-    FROM author a
+    FROM author_display a
     ORDER BY a.name
     """,
     conn,
