@@ -1035,6 +1035,7 @@ INSERT INTO author VALUES(1048,'Ze-Xuan Chen',NULL);
 INSERT INTO author VALUES(1049,'Chang-Rong You',NULL);
 INSERT INTO author VALUES(1050,'Ching Tarn',NULL);
 INSERT INTO author VALUES(1051,'Xie-Xuan Zhou',NULL);
+INSERT INTO author VALUES(1052,'Xinlue Shen',NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3285,6 +3286,7 @@ INSERT INTO author_affiliation VALUES(1050,554);
 INSERT INTO author_affiliation VALUES(1051,554);
 INSERT INTO author_affiliation VALUES(256,504);
 INSERT INTO author_affiliation VALUES(256,554);
+INSERT INTO author_affiliation VALUES(1052,131);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3522,6 +3524,7 @@ INSERT INTO algorithm VALUES(230,'PSMtags',NULL,NULL,'Chemical derivatization as
 INSERT INTO algorithm VALUES(231,'De novo protein sequencing review (Vitorino)',NULL,NULL,NULL,'Expert Review of Proteomics survey of de novo sequencing at the protein level: how MS/MS-derived peptide sequences are assembled into full protein sequences, the algorithmic and instrumental limits involved, and where the approach beats database search for organisms and proteoforms absent from reference databases.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(232,'AI proteomics perspective',NULL,NULL,NULL,'62-author Nature Methods Perspective mapping where AI is reshaping MS-based proteomics: peptide and protein identification and quantification (de novo sequencing among them), protein-protein interactions and complexes, spatial and perturbation proteomics, multi-omics integration, and ultimately AI virtual cells. Closes with a call for an AI-friendly data ecosystem for the field.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(233,'FoxNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive de novo sequencer specialised for HLA-I immunopeptides. Uses dual-token m/z encoding (integer + decimal vocabularies, ~4k tokens instead of ~3M fine-grained bins) in the spectrum encoder, then dynamic-programming top-K decoding over the NAR probability matrix to enforce exact precursor-mass constraints. Reaches >90% peptide accuracy at ~2,800 spectra/s — over 100x faster than the beam-search baseline — and was used to re-analyse 168M spectra from 4,423 raw files in 18 h on one GPU, recovering 41 of 42 targeted-MS-validated non-canonical peptides.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(234,'Spectrum representation ablation study',NULL,NULL,NULL,'MSc thesis ablation of how MS/MS peaks should be represented for a Transformer de novo sequencer. Holds a Casanovo-style encoder-decoder backbone fixed and varies only the peak embedding: additive m/z-intensity, separated/concatenated m/z and intensity, precursor-normalised (relative) m/z, learnable relative m/z, zero-vector controls, and probability-aware embeddings fed with DpNovo''s signal-vs-noise peak probabilities. Finds that separating peak features beats the additive baseline, relative m/z adds a further gain, and the best result combines external signal probability with intensity and mass features — evidence that input representation, not just architecture, moves the needle on Transformer de novo accuracy.','benchmark',1,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3796,6 +3799,7 @@ INSERT INTO publication VALUES(261,'A Hidden Markov Model for de Novo Peptide Se
 INSERT INTO publication VALUES(262,'De novo sequencing of proteins by mass spectrometry','2020-10-01','10.1080/14789450.2020.1831387','Taylor & Francis',NULL,'https://doi.org/10.1080/14789450.2020.1831387','Expert Review of Proteomics','peer-reviewed',NULL);
 INSERT INTO publication VALUES(263,'AI proteomics: from protein identification to virtual cells','2026-07-28','10.1038/s41592-026-03085-y','Springer Nature',NULL,'https://doi.org/10.1038/s41592-026-03085-y','Nature Methods','peer-reviewed',NULL);
 INSERT INTO publication VALUES(264,'Accurate and ultra-fast de novo HLA-I immunopeptide sequencing with FoxNovo','2026-08-03','10.65215/LTSpreprints.2026.08.02.000299','LangTaoSha Preprint Server',NULL,'https://langtaosha.org.cn/lts/en/preprint/view/299','LangTaoSha (LTS) Preprint','preprint',NULL);
+INSERT INTO publication VALUES(265,'Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing','2026-08-02',NULL,'MSc thesis',NULL,'https://uwo.scholaris.ca/server/api/core/bitstreams/72063822-16ef-4bbb-b360-1f4d3d15d247/content',NULL,'thesis',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4094,6 +4098,9 @@ INSERT INTO publication_algorithm VALUES(261,64);
 INSERT INTO publication_algorithm VALUES(262,231);
 INSERT INTO publication_algorithm VALUES(263,232);
 INSERT INTO publication_algorithm VALUES(264,233);
+INSERT INTO publication_algorithm VALUES(265,234);
+INSERT INTO publication_algorithm VALUES(265,12);
+INSERT INTO publication_algorithm VALUES(265,42);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5888,6 +5895,7 @@ INSERT INTO publication_author VALUES(264,1049,2);
 INSERT INTO publication_author VALUES(264,1050,3);
 INSERT INTO publication_author VALUES(264,1051,4);
 INSERT INTO publication_author VALUES(264,256,5);
+INSERT INTO publication_author VALUES(265,1052,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8458,9 +8466,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',554);
-INSERT INTO sqlite_sequence VALUES('author',1051);
-INSERT INTO sqlite_sequence VALUES('algorithm',233);
-INSERT INTO sqlite_sequence VALUES('publication',264);
+INSERT INTO sqlite_sequence VALUES('author',1052);
+INSERT INTO sqlite_sequence VALUES('algorithm',234);
+INSERT INTO sqlite_sequence VALUES('publication',265);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
