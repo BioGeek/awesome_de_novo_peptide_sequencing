@@ -8160,7 +8160,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',194,78,22,305,7,327,'2026-07-31T07:24:41Z','2026-08-08T06:28:46','v5.2.0');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',194,78,22,305,8,327,'2026-07-31T07:24:41Z','2026-08-10T07:02:05','v5.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',5,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-07-15T07:45:10',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,0,6,'2026-07-31T04:53:19Z','2026-08-08T06:28:46','v1.1');
@@ -8471,12 +8471,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',554);
 INSERT INTO sqlite_sequence VALUES('author',1054);
 INSERT INTO sqlite_sequence VALUES('algorithm',234);
 INSERT INTO sqlite_sequence VALUES('publication',265);
-CREATE VIEW author_display AS
-SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8536,4 +8530,10 @@ CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
 CREATE UNIQUE INDEX idx_author_name_disambig_unique
                ON author(name, IFNULL(disambiguator,''));
+CREATE VIEW author_display AS
+SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 COMMIT;
