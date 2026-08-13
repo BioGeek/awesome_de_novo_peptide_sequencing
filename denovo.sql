@@ -8138,7 +8138,7 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',126,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-07-31T08:26:23','1.2.2');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',127,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-08-13T07:05:40','1.2.2');
 INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,2,3,'2026-07-17T23:05:52Z','2026-07-18T07:22:05','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-06-24T08:16:11','v1.5.0-release');
@@ -8160,7 +8160,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',195,78,23,306,7,330,'2026-08-12T04:08:25Z','2026-08-12T07:01:36','v5.2.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',195,79,23,306,8,330,'2026-08-12T17:41:18Z','2026-08-13T07:05:40','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',5,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-07-15T07:45:10',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,0,6,'2026-07-31T04:53:19Z','2026-08-08T06:28:46','v1.1');
