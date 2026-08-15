@@ -8139,7 +8139,7 @@ CREATE TABLE repository_metrics (
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',127,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-08-13T07:05:40','1.2.2');
-INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,2,3,'2026-07-17T23:05:52Z','2026-07-18T07:22:05','v1.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,2,5,'2026-08-14T10:17:40Z','2026-08-15T06:15:47','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-06-24T08:16:11','v1.5.0-release');
 INSERT INTO repository_metrics VALUES('https://github.com/alifare/PepGo/tree/main',1,0,0,0,0,0,'2026-07-03T06:41:39Z','2026-07-03T08:42:29','v1.1.0');
