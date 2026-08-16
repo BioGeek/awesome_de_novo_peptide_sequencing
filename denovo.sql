@@ -3835,6 +3835,7 @@ INSERT INTO publication VALUES(264,'Accurate and ultra-fast de novo HLA-I immuno
 INSERT INTO publication VALUES(265,'Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing','2026-08-02',NULL,'MSc thesis',NULL,'https://uwo.scholaris.ca/server/api/core/bitstreams/72063822-16ef-4bbb-b360-1f4d3d15d247/content',NULL,'thesis',NULL);
 INSERT INTO publication VALUES(266,'Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads','2026-08-13','10.64898/2026.08.13.744110','bioRxiv','Reading a protein''s sequence from tandem mass spectra without a reference is limited by single-spectrum accuracy, most acutely across the hypervariable complementarity-determining regions of antibodies. Broadly specific proteases tile a protein with long, overlapping peptides, so every residue is covered by many independent de novo reads. borgonovo assembles their per-step probability profiles into a reference-free per-residue consensus, seeding templates from mass-closure-consistent reads and recruiting the rest by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum with a prior from its consensus position lifts amino acid accuracy on placed spectra from 0.80 to 0.87. On the therapeutic antibody trastuzumab, nine proteases cover its heavy and light chains completely at 0.88 fixed-window identity and 0.93 on the pruned assembly once local indels are accommodated. Applied unchanged to five secretome proteins and trastuzumab with three proteases, it reaches 0.87 mean fixed-window identity over 82% coverage. borgonovo is open source and works with most de novo sequencers, so redundant digestion turns any of them into a protein sequencer where no reference exists.','https://www.biorxiv.org/content/10.64898/2026.08.13.744110v1','bioRxiv','preprint',NULL);
 INSERT INTO publication VALUES(267,'Generalizable Direct Protein Sequencing With InstaNexus','2026-03-02','10.1016/j.mcpro.2026.101547','Elsevier BV','Protein-based therapeutics, such as antibodies and nanobodies, are not encoded in reference genomes, challenging their accurate characterization via standard proteomics. Current methods rely on indirect inference, fragmented outputs, and labor-intensive workflows, which hinder functional insights and routine application. Here, we present a generalizable, end-to-end workflow for direct protein sequencing, combining streamlined sample preparation, AI-driven de novo peptide sequencing, and tailored assembly to reconstruct contiguous protein sequences. A novel composite scoring framework prioritises longer assemblies and coverage, enhancing accuracy and reducing ambiguity. Validation across diverse protein modalities demonstrates its utility and ability to robustly sequence functionally critical regions of selected proteins. This workflow represents an advance in precision proteomics with promising applications in therapeutic discovery, immune profiling, and protein science.','https://doi.org/10.1016/j.mcpro.2026.101547','Molecular & Cellular Proteomics','peer-reviewed',NULL);
+INSERT INTO publication VALUES(268,'Generalizable direct protein sequencing with InstaNexus','2025-07-25','10.1101/2025.07.25.666861','Cold Spring Harbor Laboratory','Protein-based therapeutics, such as antibodies and nanobodies, are not encoded in reference genomes, challenging their accurate characterization via standard proteomics. Current methods rely on indirect inference, fragmented outputs, and labor-intensive workflows, which hinder functional insights and routine application. Here, we present a generalizable, end-to-end workflow for direct protein sequencing, combining streamlined sample preparation, AI-driven de novo peptide sequencing, and tailored assembly to reconstruct contiguous protein sequences. A novel composite scoring framework prioritises longer assemblies and coverage, enhancing accuracy and reducing ambiguity. Validation across diverse protein modalities demonstrates its utility and ability to robustly sequence functionally critical regions of selected proteins. This workflow represents an advance in precision proteomics with promising applications in therapeutic discovery, immune profiling, and protein science.','https://www.biorxiv.org/content/10.1101/2025.07.25.666861v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4141,6 +4142,8 @@ INSERT INTO publication_algorithm VALUES(266,235);
 INSERT INTO publication_algorithm VALUES(267,236);
 INSERT INTO publication_algorithm VALUES(267,1);
 INSERT INTO publication_algorithm VALUES(267,69);
+INSERT INTO publication_algorithm VALUES(268,236);
+INSERT INTO publication_algorithm VALUES(268,1);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5957,6 +5960,19 @@ INSERT INTO publication_author VALUES(267,19,12);
 INSERT INTO publication_author VALUES(267,1063,13);
 INSERT INTO publication_author VALUES(267,1064,14);
 INSERT INTO publication_author VALUES(267,2,15);
+INSERT INTO publication_author VALUES(268,1057,1);
+INSERT INTO publication_author VALUES(268,1058,2);
+INSERT INTO publication_author VALUES(268,1059,3);
+INSERT INTO publication_author VALUES(268,1060,4);
+INSERT INTO publication_author VALUES(268,1062,5);
+INSERT INTO publication_author VALUES(268,13,6);
+INSERT INTO publication_author VALUES(268,11,7);
+INSERT INTO publication_author VALUES(268,14,8);
+INSERT INTO publication_author VALUES(268,15,9);
+INSERT INTO publication_author VALUES(268,19,10);
+INSERT INTO publication_author VALUES(268,1063,11);
+INSERT INTO publication_author VALUES(268,1064,12);
+INSERT INTO publication_author VALUES(268,2,13);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8532,7 +8548,7 @@ INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
 INSERT INTO sqlite_sequence VALUES('algorithm',236);
-INSERT INTO sqlite_sequence VALUES('publication',267);
+INSERT INTO sqlite_sequence VALUES('publication',268);
 CREATE VIEW author_display AS
 SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
