@@ -1038,6 +1038,8 @@ INSERT INTO author VALUES(1051,'Xie-Xuan Zhou',NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1052,'Xinlue Shen',NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1053,'Xiang Zhang',NULL,'0DYq8m4AAAAJ','Purdue',NULL);
 INSERT INTO author VALUES(1054,'Xiang Zhang',NULL,NULL,'Shandong','2776859');
+INSERT INTO author VALUES(1055,'Emil Sporre',NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1056,'Fredrik Edfors','fredrik.edfors@scilifelab.se',NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1842,6 +1844,7 @@ INSERT INTO affiliation VALUES(551,'Wenzhou Medical University','Eye Hospital an
 INSERT INTO affiliation VALUES(552,'Sichuan University','Department of Computer Science',2,252);
 INSERT INTO affiliation VALUES(553,'Max Planck Institute of Biochemistry','Department of Proteomics and Signal Transduction',4,73);
 INSERT INTO affiliation VALUES(554,'Westlake University','Center for Infectious Disease Research, School of Medicine',2,15);
+INSERT INTO affiliation VALUES(555,'KTH Royal Institute of Technology','Science for Life Laboratory, Department of Protein Science',6,241);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3289,6 +3292,8 @@ INSERT INTO author_affiliation VALUES(1051,554);
 INSERT INTO author_affiliation VALUES(256,504);
 INSERT INTO author_affiliation VALUES(256,554);
 INSERT INTO author_affiliation VALUES(1052,131);
+INSERT INTO author_affiliation VALUES(1055,555);
+INSERT INTO author_affiliation VALUES(1056,555);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3527,6 +3532,7 @@ INSERT INTO algorithm VALUES(231,'De novo protein sequencing review (Vitorino)',
 INSERT INTO algorithm VALUES(232,'AI proteomics perspective',NULL,NULL,NULL,'62-author Nature Methods Perspective mapping where AI is reshaping MS-based proteomics: peptide and protein identification and quantification (de novo sequencing among them), protein-protein interactions and complexes, spatial and perturbation proteomics, multi-omics integration, and ultimately AI virtual cells. Closes with a call for an AI-friendly data ecosystem for the field.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(233,'FoxNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive de novo sequencer specialised for HLA-I immunopeptides. Uses dual-token m/z encoding (integer + decimal vocabularies, ~4k tokens instead of ~3M fine-grained bins) in the spectrum encoder, then dynamic-programming top-K decoding over the NAR probability matrix to enforce exact precursor-mass constraints. Reaches >90% peptide accuracy at ~2,800 spectra/s — over 100x faster than the beam-search baseline — and was used to re-analyse 168M spectra from 4,423 raw files in 18 h on one GPU, recovering 41 of 42 targeted-MS-validated non-canonical peptides.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(234,'Spectrum representation ablation study',NULL,NULL,NULL,'MSc thesis ablation of how MS/MS peaks should be represented for a Transformer de novo sequencer. Holds a Casanovo-style encoder-decoder backbone fixed and varies only the peak embedding: additive m/z-intensity, separated/concatenated m/z and intensity, precursor-normalised (relative) m/z, learnable relative m/z, zero-vector controls, and probability-aware embeddings fed with DpNovo''s signal-vs-noise peak probabilities. Finds that separating peak features beats the additive baseline, relative m/z adds a further gain, and the best result combines external signal probability with intensity and mass features — evidence that input representation, not just architecture, moves the needle on Transformer de novo accuracy.','benchmark',1,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(235,'borgonovo',NULL,NULL,'Sequence assembly','Reference-free protein sequencer: multi-protease digestion tiles a protein with overlapping peptides, and the redundant de novo reads are assembled into a per-residue consensus by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum under a prior from its consensus position raises amino-acid accuracy. Wraps Casanovo by default but is backend-agnostic.','post-processor',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3802,6 +3808,7 @@ INSERT INTO publication VALUES(262,'De novo sequencing of proteins by mass spect
 INSERT INTO publication VALUES(263,'AI proteomics: from protein identification to virtual cells','2026-07-28','10.1038/s41592-026-03085-y','Springer Nature',NULL,'https://doi.org/10.1038/s41592-026-03085-y','Nature Methods','peer-reviewed',NULL);
 INSERT INTO publication VALUES(264,'Accurate and ultra-fast de novo HLA-I immunopeptide sequencing with FoxNovo','2026-08-03','10.65215/LTSpreprints.2026.08.02.000299','LangTaoSha Preprint Server',NULL,'https://langtaosha.org.cn/lts/en/preprint/view/299','LangTaoSha (LTS) Preprint','preprint',NULL);
 INSERT INTO publication VALUES(265,'Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing','2026-08-02',NULL,'MSc thesis',NULL,'https://uwo.scholaris.ca/server/api/core/bitstreams/72063822-16ef-4bbb-b360-1f4d3d15d247/content',NULL,'thesis',NULL);
+INSERT INTO publication VALUES(266,'Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads','2026-08-13','10.64898/2026.08.13.744110','bioRxiv','Reading a protein''s sequence from tandem mass spectra without a reference is limited by single-spectrum accuracy, most acutely across the hypervariable complementarity-determining regions of antibodies. Broadly specific proteases tile a protein with long, overlapping peptides, so every residue is covered by many independent de novo reads. borgonovo assembles their per-step probability profiles into a reference-free per-residue consensus, seeding templates from mass-closure-consistent reads and recruiting the rest by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum with a prior from its consensus position lifts amino acid accuracy on placed spectra from 0.80 to 0.87. On the therapeutic antibody trastuzumab, nine proteases cover its heavy and light chains completely at 0.88 fixed-window identity and 0.93 on the pruned assembly once local indels are accommodated. Applied unchanged to five secretome proteins and trastuzumab with three proteases, it reaches 0.87 mean fixed-window identity over 82% coverage. borgonovo is open source and works with most de novo sequencers, so redundant digestion turns any of them into a protein sequencer where no reference exists.','https://www.biorxiv.org/content/10.64898/2026.08.13.744110v1','bioRxiv','preprint',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4103,6 +4110,8 @@ INSERT INTO publication_algorithm VALUES(264,233);
 INSERT INTO publication_algorithm VALUES(265,234);
 INSERT INTO publication_algorithm VALUES(265,12);
 INSERT INTO publication_algorithm VALUES(265,42);
+INSERT INTO publication_algorithm VALUES(266,12);
+INSERT INTO publication_algorithm VALUES(266,235);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5898,6 +5907,12 @@ INSERT INTO publication_author VALUES(264,1050,3);
 INSERT INTO publication_author VALUES(264,1051,4);
 INSERT INTO publication_author VALUES(264,256,5);
 INSERT INTO publication_author VALUES(265,1052,1);
+INSERT INTO publication_author VALUES(266,32,1);
+INSERT INTO publication_author VALUES(266,1055,2);
+INSERT INTO publication_author VALUES(266,657,3);
+INSERT INTO publication_author VALUES(266,659,4);
+INSERT INTO publication_author VALUES(266,1056,5);
+INSERT INTO publication_author VALUES(266,34,6);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8127,6 +8142,7 @@ INSERT INTO algorithm_repository VALUES(185,'https://github.com/compomics/peptid
 INSERT INTO algorithm_repository VALUES(224,'https://github.com/WanyuGroup/ICML2026_PhysNovo',0);
 INSERT INTO algorithm_repository VALUES(230,'https://parallelsq.org/PSMtags',0);
 INSERT INTO algorithm_repository VALUES(233,'https://github.com/fennomix/fennomix.novo',0);
+INSERT INTO algorithm_repository VALUES(235,'https://github.com/statisticalbiotechnology/borgonovo',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -8468,10 +8484,16 @@ INSERT INTO publication_impact VALUES(265,NULL,NULL,'unmatched',57.8313253012048
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
-INSERT INTO sqlite_sequence VALUES('affiliation',554);
-INSERT INTO sqlite_sequence VALUES('author',1054);
-INSERT INTO sqlite_sequence VALUES('algorithm',234);
-INSERT INTO sqlite_sequence VALUES('publication',265);
+INSERT INTO sqlite_sequence VALUES('affiliation',555);
+INSERT INTO sqlite_sequence VALUES('author',1056);
+INSERT INTO sqlite_sequence VALUES('algorithm',235);
+INSERT INTO sqlite_sequence VALUES('publication',266);
+CREATE VIEW author_display AS
+SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8531,10 +8553,4 @@ CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
 CREATE UNIQUE INDEX idx_author_name_disambig_unique
                ON author(name, IFNULL(disambiguator,''));
-CREATE VIEW author_display AS
-SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 COMMIT;
