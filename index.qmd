@@ -387,7 +387,17 @@ family_color_scale = {
     "Diffusion":         "#C44E52",
     "Flow":              "#937DC2"
   }
-  const extra_palette = d3.schemeTableau10.concat(d3.schemeSet3, d3.schemeSet2)
+  // Non-canonical families draw from these schemes, filtered for contrast:
+  // Set3 and Paired carry near-white pastels (#ffffb3, #ffed6f) that vanish as
+  // small dots on the page background. Drop anything too light to see.
+  const luminance = hex => {
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map(c => c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const extra_palette = d3.schemeTableau10
+    .concat(d3.schemeDark2, d3.schemeSet1, d3.schemeSet2, d3.schemeSet3)
+    .filter(c => /^#[0-9a-f]{6}$/i.test(c) && luminance(c) < 0.5)
   const rest = Array.from(new Set(
     transpose(algorithms).map(r => r.family).filter(Boolean)
   )).filter(f => !(f in canonical)).sort()
