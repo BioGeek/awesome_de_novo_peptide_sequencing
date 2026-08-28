@@ -3593,7 +3593,7 @@ INSERT INTO publication VALUES(21,'π-PrimeNovo: an accurate and efficient non-a
 INSERT INTO publication VALUES(22,'ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing','2024-11-27',NULL,'ICLR 2025',NULL,'https://openreview.net/forum?id=uQnvYP7yX9','ICLR 2025','ML conference',NULL);
 INSERT INTO publication VALUES(23,'Disentangling the Complex Multiplexed DIA Spectra in De Novo Peptide Sequencing','2024-11-24','10.48550/arXiv.2411.15684','arXiv',NULL,'https://arxiv.org/abs/2411.15684','arXiv','preprint',NULL);
 INSERT INTO publication VALUES(24,'RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing','2024-11-20',NULL,'ICLR 2025',NULL,'https://openreview.net/forum?id=87B3zDRMjv','ICLR 2025','ML conference',NULL);
-INSERT INTO publication VALUES(25,'Transforming de novo peptide sequencing by explainable AI','2024-08-04','10.21203/rs.3.rs-4716013/v1','Research Square',NULL,'https://www.researchsquare.com/article/rs-4716013/v1','Research Square','preprint',NULL);
+INSERT INTO publication VALUES(25,'Transforming de novo peptide sequencing by explainable AI','2024-08-05','10.21203/rs.3.rs-4716013/v1','Research Square','De novo peptide sequencing is crucial for identifying novel proteins, yet its broader application is constrained by the lack of a robust quality control system. In response, we developed a transformer-based model, π-xNovo, that accurately predicts peptides. By analyzing the model''s attention matrix, we elucidated the contribution of spectral peaks to amino acid predictions, thus making de novo sequencing results explainable. Leveraging these insights, we designed a quality control system, π-xNovo-QC, which distinguishes peptide predictions with an accuracy exceeding 80% and a sensitivity above 90%. Applying this system to a large-scale deep human proteome dataset resulted in the identification of 1,931,761 additional peptides, marking a 137% increase over traditional database search results. These newly identified peptides with high confidence facilitated a 17.9% increase in protein identification, a 23.59% increase in the detection of single amino acid polymorphism events, and a 20.02% increase in exon-skipping splicing events. The deployment of this explainable AI system holds significant potential for expanding the application of de novo peptide sequencing, particularly in exploring the darker matter of the entire proteome universe.','https://www.researchsquare.com/article/rs-4716013/v1','Research Square','preprint',NULL);
 INSERT INTO publication VALUES(26,'Sequence-to-sequence translation from mass spectra to peptides with a transformer model','2024-07-30','10.1038/s41467-024-49731-x','Nature Communications',NULL,'https://doi.org/10.1038/s41467-024-49731-x','Nature Communications','peer-reviewed','v2');
 INSERT INTO publication VALUES(27,'TransNovo','2024-07-15',NULL,NULL,NULL,'https://github.com/ThatMatin/TransNovo',NULL,'preprint',NULL);
 INSERT INTO publication VALUES(28,'PowerNovo: de novo peptide sequencing via tandem mass spectrometry using an ensemble of transformer and BERT models','2024-07-01','10.1038/s41598-024-65861-0','Scientific Reports',NULL,'https://doi.org/10.1038/s41598-024-65861-0','Scientific Reports','peer-reviewed',NULL);
@@ -8554,6 +8554,12 @@ INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
 INSERT INTO sqlite_sequence VALUES('algorithm',236);
 INSERT INTO sqlite_sequence VALUES('publication',268);
+CREATE VIEW author_display AS
+SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8613,10 +8619,4 @@ CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
 CREATE UNIQUE INDEX idx_author_name_disambig_unique
                ON author(name, IFNULL(disambiguator,''));
-CREATE VIEW author_display AS
-SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 COMMIT;
