@@ -8264,11 +8264,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-fou
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',92,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-26T08:01:21','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',67,23,14,109,1,131,'2026-08-01T10:54:00Z','2026-08-02T07:58:17','v4.0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,48,505,1,17,'2026-08-01T11:58:34Z','2026-08-28T17:45:28',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,19,5,81,0,183,'2026-07-13T17:01:59Z','2026-08-25T06:21:51','v4.2.0');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,19,4,82,0,183,'2026-07-13T17:01:59Z','2026-08-29T11:49:56','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',2,0,0,0,0,0,'2026-05-13T07:08:03Z','2026-07-23T08:04:55',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',0,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-08-28T17:45:28',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',1,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-08-29T11:49:56',NULL);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
