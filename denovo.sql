@@ -3826,6 +3826,9 @@ INSERT INTO publication VALUES(265,'Tandem Mass Spectra Representation Design fo
 INSERT INTO publication VALUES(266,'Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads','2026-08-13','10.64898/2026.08.13.744110','Cold Spring Harbor Laboratory','Reading a protein''s sequence from tandem mass spectra without a reference is limited by single-spectrum accuracy, most acutely across the hypervariable complementarity-determining regions of antibodies. Broadly specific proteases tile a protein with long, overlapping peptides, so every residue is covered by many independent de novo reads. borgonovo assembles their per-step probability profiles into a reference-free per-residue consensus, seeding templates from mass-closure-consistent reads and recruiting the rest by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum with a prior from its consensus position lifts amino acid accuracy on placed spectra from 0.80 to 0.87. On the therapeutic antibody trastuzumab, nine proteases cover its heavy and light chains completely at 0.88 fixed-window identity and 0.93 on the pruned assembly once local indels are accommodated. Applied unchanged to five secretome proteins and trastuzumab with three proteases, it reaches 0.87 mean fixed-window identity over 82% coverage. borgonovo is open source and works with most de novo sequencers, so redundant digestion turns any of them into a protein sequencer where no reference exists.','https://www.biorxiv.org/content/10.64898/2026.08.13.744110v1','bioRxiv','preprint',NULL,NULL);
 INSERT INTO publication VALUES(267,'Generalizable Direct Protein Sequencing With InstaNexus','2026-03-02','10.1016/j.mcpro.2026.101547','Elsevier BV','Protein-based therapeutics, such as antibodies and nanobodies, are not encoded in reference genomes, challenging their accurate characterization via standard proteomics. Current methods rely on indirect inference, fragmented outputs, and labor-intensive workflows, which hinder functional insights and routine application. Here, we present a generalizable, end-to-end workflow for direct protein sequencing, combining streamlined sample preparation, AI-driven de novo peptide sequencing, and tailored assembly to reconstruct contiguous protein sequences. A novel composite scoring framework prioritises longer assemblies and coverage, enhancing accuracy and reducing ambiguity. Validation across diverse protein modalities demonstrates its utility and ability to robustly sequence functionally critical regions of selected proteins. This workflow represents an advance in precision proteomics with promising applications in therapeutic discovery, immune profiling, and protein science.','https://doi.org/10.1016/j.mcpro.2026.101547','Molecular & Cellular Proteomics','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(268,'Generalizable direct protein sequencing with InstaNexus','2025-07-25','10.1101/2025.07.25.666861','Cold Spring Harbor Laboratory','Protein-based therapeutics, such as antibodies and nanobodies, are not encoded in reference genomes, challenging their accurate characterization via standard proteomics. Current methods rely on indirect inference, fragmented outputs, and labor-intensive workflows, which hinder functional insights and routine application. Here, we present a generalizable, end-to-end workflow for direct protein sequencing, combining streamlined sample preparation, AI-driven de novo peptide sequencing, and tailored assembly to reconstruct contiguous protein sequences. A novel composite scoring framework prioritises longer assemblies and coverage, enhancing accuracy and reducing ambiguity. Validation across diverse protein modalities demonstrates its utility and ability to robustly sequence functionally critical regions of selected proteins. This workflow represents an advance in precision proteomics with promising applications in therapeutic discovery, immune profiling, and protein science.','https://www.biorxiv.org/content/10.1101/2025.07.25.666861v1','bioRxiv','preprint',NULL,NULL);
+INSERT INTO publication VALUES(269,'Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra','2025-06-02','10.1021/acs.jproteome.5c00063','American Chemical Society (ACS)','A fundamental challenge in mass spectrometry-based proteomics is determining which peptide generated a given MS2 spectrum. Peptide sequencing typically relies on matching spectra against a known sequence database, which in some applications is not available. Deep learning-based de novo sequencing can address this limitation by directly predicting peptide sequences from MS2 data. We have seen the application of the transformer architecture to de novo sequencing produce state-of-the-art results on the so-called nine-species benchmark. In this study, we propose an improved transformer encoder inspired by the heuristics used in the manual interpretation of spectra. We modify the attention mechanism with a learned bias based on pairwise mass differences, termed Pairwise Attention (PA). Adding PA improves average peptide precision at 100% coverage by 12.7% (5.9 percentage points) over our base transformer on the original nine-species benchmark. We have also achieved a 7.4% increase over the previously published model Casanovo. Our MS2 encoding strategy is largely orthogonal to other transformer-based models encoding MS2 spectra, enabling straightforward integration into existing deep-learning approaches. Our results show that integrating domain-specific knowledge into transformers boosts de novo sequencing performance.','https://doi.org/10.1021/acs.jproteome.5c00063','Journal of Proteome Research','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(270,'Modanovo: A Unified Model for Post-translational Modification-Aware De Novo Sequencing Using Experimental Spectra From In Vivo and Synthetic Peptides','2025-12-23','10.1016/j.mcpro.2025.101501','Elsevier BV','Post-translational modifications (PTMs) play a central role in cellular regulation and are implicated in numerous diseases. Database searching remains the standard for identifying modified peptides from tandem mass spectra but is hindered by the combinatorial expansion of modification types and sites. De novo peptide sequencing offers an attractive alternative, yet existing methods remain limited to unmodified peptides or a narrow set of PTMs. Here, we curated a large dataset of spectra from endogenous and synthetic peptides from ProteomeTools spanning 19 biologically relevant amino acid-PTM combinations, covering phosphorylation, acetylation, and ubiquitination. We used this dataset to develop Modanovo, an extension of the Casanovo transformer architecture for de novo peptide sequencing. Modanovo achieved robust performance across these amino acid-PTM combinations (median area under the precision-coverage curve 0.92), while maintaining performance on unmodified peptides (0.93), nearly identical to Casanovo (0.94). The model outperformed π-PrimeNovo-PTM and InstaNovo-P and showed increased precision and complementarity to the database search tool MSFragger. Robustness was confirmed across independent datasets, particularly at peptide lengths frequently represented in the curated dataset. Applied to a phosphoproteomics dataset from monkeypox virus-infected cells, Modanovo recovered numerous confident peptides not reported by database search, including new viral phosphosites supported by spectral evidence, thereby demonstrating its complementarity to database-driven identification approaches. These results establish Modanovo as a broadly applicable model for comprehensive de novo sequencing of both modified and unmodified peptides.','https://doi.org/10.1016/j.mcpro.2025.101501','Molecular & Cellular Proteomics','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(271,'Improvements to Casanovo, a Deep Learning De Novo Peptide Sequencer','2025-12-30','10.1021/acs.jproteome.5c00706','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/acs.jproteome.5c00706','Journal of Proteome Research','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4134,6 +4137,9 @@ INSERT INTO publication_algorithm VALUES(267,1);
 INSERT INTO publication_algorithm VALUES(267,69);
 INSERT INTO publication_algorithm VALUES(268,236);
 INSERT INTO publication_algorithm VALUES(268,1);
+INSERT INTO publication_algorithm VALUES(269,4);
+INSERT INTO publication_algorithm VALUES(270,10);
+INSERT INTO publication_algorithm VALUES(271,12);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5963,6 +5969,33 @@ INSERT INTO publication_author VALUES(268,19,10);
 INSERT INTO publication_author VALUES(268,1063,11);
 INSERT INTO publication_author VALUES(268,1064,12);
 INSERT INTO publication_author VALUES(268,2,13);
+INSERT INTO publication_author VALUES(269,31,1);
+INSERT INTO publication_author VALUES(269,32,2);
+INSERT INTO publication_author VALUES(269,33,3);
+INSERT INTO publication_author VALUES(269,34,4);
+INSERT INTO publication_author VALUES(270,76,1);
+INSERT INTO publication_author VALUES(270,77,2);
+INSERT INTO publication_author VALUES(270,78,3);
+INSERT INTO publication_author VALUES(270,79,4);
+INSERT INTO publication_author VALUES(270,80,5);
+INSERT INTO publication_author VALUES(270,81,6);
+INSERT INTO publication_author VALUES(270,33,7);
+INSERT INTO publication_author VALUES(270,82,8);
+INSERT INTO publication_author VALUES(271,84,1);
+INSERT INTO publication_author VALUES(271,85,2);
+INSERT INTO publication_author VALUES(271,86,3);
+INSERT INTO publication_author VALUES(271,87,4);
+INSERT INTO publication_author VALUES(271,76,5);
+INSERT INTO publication_author VALUES(271,307,6);
+INSERT INTO publication_author VALUES(271,88,7);
+INSERT INTO publication_author VALUES(271,89,8);
+INSERT INTO publication_author VALUES(271,90,9);
+INSERT INTO publication_author VALUES(271,91,10);
+INSERT INTO publication_author VALUES(271,92,11);
+INSERT INTO publication_author VALUES(271,93,12);
+INSERT INTO publication_author VALUES(271,94,13);
+INSERT INTO publication_author VALUES(271,95,14);
+INSERT INTO publication_author VALUES(271,96,15);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8562,13 +8595,16 @@ INSERT INTO publication_version VALUES(226,123,'title');
 INSERT INTO publication_version VALUES(268,267,'biorxiv');
 INSERT INTO publication_version VALUES(114,34,'manual');
 INSERT INTO publication_version VALUES(201,203,'manual');
+INSERT INTO publication_version VALUES(4,269,'biorxiv');
+INSERT INTO publication_version VALUES(10,270,'biorxiv');
+INSERT INTO publication_version VALUES(12,271,'biorxiv');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
 INSERT INTO sqlite_sequence VALUES('algorithm',236);
-INSERT INTO sqlite_sequence VALUES('publication',268);
+INSERT INTO sqlite_sequence VALUES('publication',271);
 CREATE VIEW author_display AS
 SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

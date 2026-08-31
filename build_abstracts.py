@@ -11,11 +11,13 @@ Sources, tried in this order per publication, most authoritative first:
                    abstract, and it is the version of record for the preprint.
   2. arXiv API     (DOI prefix 10.48550) - likewise always carries it.
   3. OpenAlex      via the `openalex_id` already stored in publication_impact,
-                   so no re-resolution is needed. Broadest coverage, but the
-                   abstract arrives as an INVERTED INDEX (word -> positions)
-                   and has to be reassembled in position order. Elsevier and
-                   Springer Nature frequently withhold it, which is exactly
-                   why bioRxiv and arXiv are tried first.
+                   falling back to a DOI lookup when there is none (a freshly
+                   added paper has no id until the weekly impact refresh runs,
+                   which is exactly when you want this script). Broadest
+                   coverage, but the abstract arrives as an INVERTED INDEX
+                   (word -> positions) and has to be reassembled in position
+                   order. Elsevier and Springer Nature frequently withhold it,
+                   which is why bioRxiv and arXiv are tried first.
   4. Crossref      `abstract`, which is JATS XML and needs its tags stripped.
 
 Provenance goes in the new `publication.abstract_source` column, mirroring how
@@ -156,8 +158,17 @@ def from_arxiv(doi: str) -> str | None:
     return clean(node.text if node is not None else None)
 
 
-def from_openalex(openalex_id: str) -> str | None:
-    data = get_json(f"{OPENALEX_BASE}/{openalex_id}")
+def from_openalex(openalex_id: str | None, doi: str | None = None) -> str | None:
+    # Prefer the id already resolved by build_publication_impact.py, but fall
+    # back to a DOI lookup. Without the fallback a freshly added paper gets
+    # nothing from OpenAlex until the weekly impact refresh has assigned it an
+    # id, which is precisely when you want to run this script.
+    if openalex_id:
+        data = get_json(f"{OPENALEX_BASE}/{openalex_id}")
+    elif doi:
+        data = get_json(f"{OPENALEX_BASE}/doi:{doi}")
+    else:
+        return None
     if not data:
         return None
     index = data.get("abstract_inverted_index")
@@ -234,8 +245,8 @@ def main() -> int:
             abstract, source = from_arxiv(doi), "arxiv"
             time.sleep(ARXIV_DELAY)
 
-        if not abstract and openalex_id:
-            abstract, source = from_openalex(openalex_id), "openalex"
+        if not abstract and (openalex_id or doi):
+            abstract, source = from_openalex(openalex_id, doi), "openalex"
             time.sleep(REQUEST_DELAY)
 
         if not abstract and doi:
