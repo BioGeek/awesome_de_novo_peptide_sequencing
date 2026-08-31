@@ -106,7 +106,11 @@ other's new rows.
 
 ## Schema shape (read before editing data)
 
-Ten tables: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Authors connect to publications via `publication_author` and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`) added after initial schema creation. `publication.publication_type` is a string; the SQL column comment names only `'preprint'` / `'peer-reviewed'` but the actual values in use now include `'thesis'`, `'ML conference'`, and `'commentary'`.
+**Fourteen tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang).
+
+Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
+
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (180), `'preprint'` (69), `'ML conference'` (9), `'thesis'` (6), `'resource'` (2, for the catalog's own Zenodo record and a third-party link collection) and `'commentary'` (1). Use one of those six; do not invent a seventh without updating this list, and never leave it empty.
 
 ## Citation graph
 
