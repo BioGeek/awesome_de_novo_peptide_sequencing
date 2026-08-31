@@ -345,8 +345,6 @@ ojs_define(
 
 ```{ojs}
 //| echo: false
-import { aq, op } from "@uwdata/arquero"
-
 // Shared Plot-tip styling used across every Plot chart on the page. Matches
 // the .map-tooltip CSS palette (12-13 px, roomier padding, white background
 // with soft border) so the built-in Plot tip looks the same as our custom
