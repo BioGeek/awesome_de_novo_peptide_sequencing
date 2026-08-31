@@ -258,6 +258,21 @@ citations = pd.read_sql(
     conn,
 )
 
+# Explicit preprint -> peer-reviewed links (built offline via build_versions.py
+# from bioRxiv's `published` field, Crossref is-preprint-of relations, exact
+# normalised-title matches, and human-reviewed fuzzy candidates). Before this
+# table existed the lifecycle chart GUESSED the relation by bucketing on
+# (first algorithm name, version) and greedily pairing on date, which misread
+# papers with several algorithm links and could never pair a paper with none.
+pub_versions = pd.read_sql(
+    """
+    SELECT preprint_id, published_id, source
+    FROM publication_version
+    ORDER BY preprint_id
+    """,
+    conn,
+)
+
 # OpenAlex 2-year mean citedness per peer-reviewed venue (built offline via
 # build_journal_metrics.py). Methodologically equivalent to the JCR Impact
 # Factor formula but computed over the open Crossref-aggregated citation graph.
@@ -320,6 +335,7 @@ ojs_define(
     venues=venues,
     author_details=author_details,
     citations=citations,
+    pub_versions=pub_versions,
     journal_impact=journal_impact,
     publication_impact=publication_impact,
     repo_metrics=repo_metrics,
@@ -477,6 +493,13 @@ algorithms_versioned_t = {
 }
 venues_t = transpose(venues)
 author_details_t = transpose(author_details)
+
+// preprint_id -> published_id, from the explicit publication_version table.
+pub_versions_t = transpose(pub_versions).map(r => ({
+  ...r, preprint_id: +r.preprint_id, published_id: +r.published_id
+}))
+published_of = new Map(pub_versions_t.map(r => [r.preprint_id, r.published_id]))
+preprint_of  = new Map(pub_versions_t.map(r => [r.published_id, r.preprint_id]))
 citations_t      = transpose(citations)
 journal_impact_t = transpose(journal_impact)
 // Lookup table: journal name → 2yr citedness, for fast joins in OJS cells.
@@ -3608,82 +3631,73 @@ How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. 
 ```{ojs}
 //| echo: false
 lifecycle_rows = {
-  // Group publications by (method name, version). A pub without a model link
-  // is bucketed under a per-pub synthetic key so it can't accidentally pair
-  // with another stand-alone pub. Versioned publications (currently Casanovo
-  // v1 / v2 / v5) are bucketed by `${method}|${version}` so each version
-  // release pairs independently rather than collapsing into a single Casanovo
-  // row.
-  const by_group = new Map()
-  for (const p of pubs_filtered) {
-    const method = (p.models ?? "").split(",")[0]?.trim() || `_pub_${p.id}`
-    const key    = p.version ? `${method}|${p.version}` : method
-    if (!by_group.has(key)) by_group.set(key, { method, version: p.version || null, pubs: [] })
-    by_group.get(key).pubs.push(p)
-  }
-
+  // Pairing comes from the explicit publication_version table, built offline
+  // by build_versions.py from bioRxiv's `published` field, Crossref
+  // is-preprint-of relations, exact normalised-title matches and
+  // human-reviewed fuzzy candidates.
+  //
+  // This used to be guessed here: publications were bucketed by (first
+  // algorithm name, version) and each preprint greedily claimed the earliest
+  // later peer-reviewed paper in its bucket. That read only
+  // `models.split(",")[0]`, so a paper linked to several algorithms was
+  // bucketed by whichever came first; a paper with no algorithm link could
+  // never pair at all; and date-order greed could hand one journal paper to
+  // the wrong preprint. The table also refuses that last case outright, via a
+  // UNIQUE index on published_id.
   const POST_PREPRINT = new Set(["peer-reviewed", "ML conference", "thesis"])
 
-  const rows = []
-  for (const { method, version, pubs } of by_group.values()) {
-    // Sort each method's pubs by date.
-    const sorted = pubs.slice().sort((a, b) => (a.date ?? 0) - (b.date ?? 0))
-    const preprints = sorted.filter(p => p.type === "preprint")
-    const peers     = sorted.filter(p => POST_PREPRINT.has(p.type))
+  // The method label the y-axis and the Method column display. Version is kept
+  // separate because Casanovo has versioned releases (v1 / v2 / v5) that each
+  // went through their own preprint-to-journal cycle.
+  const label_of = p => ({
+    method: (p.models ?? "").split(",")[0]?.trim()
+            || (p.title ?? "").slice(0, 40)
+            || `#${p.id}`,
+    version: p.version || null
+  })
+  const url_of = p => p.url || (p.doi ? `https://doi.org/${p.doi}` : null)
 
-    // Greedy: each preprint claims the earliest unclaimed later peer-reviewed pub.
-    const claimed = new Set()
-    for (const pp of preprints) {
-      const target = peers.find(p => !claimed.has(p.id) && (p.date ?? 0) >= (pp.date ?? 0))
-      if (target) {
-        claimed.add(target.id)
-        const gap_days = ((target.date ?? 0) - (pp.date ?? 0)) / 86400000
-        const gap_months = gap_days / 30.44
-        rows.push({
-          method,
-          version,
-          status: "paired",
-          preprint_date: pp.date,
-          preprint_title: pp.title,
-          preprint_url:   pp.url || (pp.doi ? `https://doi.org/${pp.doi}` : null),
-          peer_date:  target.date,
-          peer_title: target.title,
-          peer_url:   target.url || (target.doi ? `https://doi.org/${target.doi}` : null),
-          gap_months: Math.round(gap_months * 10) / 10
-        })
-      } else {
-        rows.push({
-          method,
-          version,
-          status: "preprint-only",
-          preprint_date: pp.date,
-          preprint_title: pp.title,
-          preprint_url:   pp.url || (pp.doi ? `https://doi.org/${pp.doi}` : null),
-          peer_date:  null,
-          peer_title: null,
-          peer_url:   null,
-          gap_months: null
-        })
-      }
-    }
-    for (const p of peers) {
-      if (claimed.has(p.id)) continue
+  // Only pair when BOTH halves survive the global filters, so the chart never
+  // shows a pairing the reader has filtered half of away.
+  const visible = new Map(pubs_filtered.map(p => [p.id, p]))
+  const rows = []
+  const claimed = new Set()
+
+  for (const pp of pubs_filtered) {
+    if (pp.type !== "preprint") continue
+    const target_id = published_of.get(pp.id)
+    const target = target_id != null ? visible.get(target_id) : null
+    const { method, version } = label_of(pp)
+    if (target) {
+      claimed.add(target.id)
+      const gap_months = ((target.date ?? 0) - (pp.date ?? 0)) / 86400000 / 30.44
       rows.push({
-        method,
-        version,
-        status: "peer-reviewed-only",
-        preprint_date: null,
-        preprint_title: null,
-        preprint_url: null,
-        peer_date:  p.date,
-        peer_title: p.title,
-        peer_url:   p.url || (p.doi ? `https://doi.org/${p.doi}` : null),
-        gap_months: null
+        method, version, status: "paired",
+        preprint_date: pp.date, preprint_title: pp.title, preprint_url: url_of(pp),
+        peer_date: target.date, peer_title: target.title, peer_url: url_of(target),
+        gap_months: Math.round(gap_months * 10) / 10
+      })
+    } else {
+      rows.push({
+        method, version, status: "preprint-only",
+        preprint_date: pp.date, preprint_title: pp.title, preprint_url: url_of(pp),
+        peer_date: null, peer_title: null, peer_url: null, gap_months: null
       })
     }
   }
-  // Order: paired first (by gap, shortest → longest), then preprint-only by
-  // preprint date (oldest first = candidates for follow-up), then
+
+  for (const p of pubs_filtered) {
+    if (!POST_PREPRINT.has(p.type) || claimed.has(p.id)) continue
+    const { method, version } = label_of(p)
+    rows.push({
+      method, version, status: "peer-reviewed-only",
+      preprint_date: null, preprint_title: null, preprint_url: null,
+      peer_date: p.date, peer_title: p.title, peer_url: url_of(p), gap_months: null
+    })
+  }
+
+  // Order: paired first (shortest gap first), then preprint-only by preprint
+  // date (oldest first = the longest-outstanding follow-ups), then
   // peer-reviewed-only by year.
   const status_rank = { "paired": 0, "preprint-only": 1, "peer-reviewed-only": 2 }
   return rows.sort((a, b) => {

@@ -8536,6 +8536,32 @@ INSERT INTO publication_impact VALUES(265,NULL,NULL,'unmatched',73.1707317073170
 INSERT INTO publication_impact VALUES(266,'W7203571629',0,'doi',NULL,2026,'2026-08-30T12:02:47+00:00');
 INSERT INTO publication_impact VALUES(267,'W7133242906',0,'doi',NULL,2026,'2026-08-30T12:02:47+00:00');
 INSERT INTO publication_impact VALUES(268,'W4412793178',0,'doi',NULL,2026,'2026-08-30T12:02:47+00:00');
+CREATE TABLE publication_version (
+            preprint_id  INTEGER NOT NULL
+                REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            published_id INTEGER NOT NULL
+                REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            source       TEXT NOT NULL,  -- 'biorxiv' | 'crossref' | 'title' | 'manual'
+            PRIMARY KEY (preprint_id, published_id)
+        );
+INSERT INTO publication_version VALUES(3,251,'biorxiv');
+INSERT INTO publication_version VALUES(49,102,'title');
+INSERT INTO publication_version VALUES(103,29,'title');
+INSERT INTO publication_version VALUES(104,19,'title');
+INSERT INTO publication_version VALUES(105,26,'biorxiv');
+INSERT INTO publication_version VALUES(106,55,'biorxiv');
+INSERT INTO publication_version VALUES(107,21,'title');
+INSERT INTO publication_version VALUES(108,80,'biorxiv');
+INSERT INTO publication_version VALUES(109,79,'title');
+INSERT INTO publication_version VALUES(110,39,'crossref');
+INSERT INTO publication_version VALUES(111,37,'title');
+INSERT INTO publication_version VALUES(112,36,'crossref');
+INSERT INTO publication_version VALUES(113,98,'crossref');
+INSERT INTO publication_version VALUES(222,7,'title');
+INSERT INTO publication_version VALUES(226,123,'title');
+INSERT INTO publication_version VALUES(268,267,'biorxiv');
+INSERT INTO publication_version VALUES(114,34,'manual');
+INSERT INTO publication_version VALUES(201,203,'manual');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
@@ -8603,9 +8629,25 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE TRIGGER publication_version_sanity
+        BEFORE INSERT ON publication_version
+        FOR EACH ROW
+        BEGIN
+            SELECT CASE
+              WHEN (SELECT publication_type FROM publication WHERE id = NEW.preprint_id)
+                   <> 'preprint'
+                THEN RAISE(ABORT, 'preprint_id must reference a publication_type=preprint row')
+              WHEN NEW.preprint_id = NEW.published_id
+                THEN RAISE(ABORT, 'a publication cannot be its own other version')
+              WHEN date((SELECT publication_date FROM publication WHERE id = NEW.published_id))
+                   < date((SELECT publication_date FROM publication WHERE id = NEW.preprint_id))
+                THEN RAISE(ABORT, 'published version predates the preprint')
+            END;
+        END;
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
 CREATE UNIQUE INDEX idx_author_name_disambig_unique
                ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
