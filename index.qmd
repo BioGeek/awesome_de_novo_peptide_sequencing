@@ -1788,14 +1788,14 @@ application_sankey = {
     .text(d => `${subdomain_label[d.id] ?? d.id}  (${d.total})`)
 
   // Right node bars + labels.
-  g.append("g")
+  const right_rects = g.append("g")
     .selectAll("rect")
     .data(right_nodes)
     .join("rect")
     .attr("x", inner_w).attr("y", d => d.y0)
     .attr("width", 8).attr("height", d => d.y1 - d.y0)
     .attr("fill", "#1f6feb")
-  g.append("g")
+  const right_labels = g.append("g")
     .selectAll("text")
     .data(right_nodes)
     .join("text")
@@ -1803,6 +1803,12 @@ application_sankey = {
     .attr("text-anchor", "start")
     .attr("fill", "#1d2330")
     .text(d => `${d.id}  (${d.total})`)
+
+  // Right-hand nodes are sequencers, so both the bar and its label link to the
+  // algorithm page. The left-hand nodes are application subdomains, which have
+  // no page of their own, so they stay unlinked.
+  svg_link_wrap(right_rects, d => algo_href(d.id))
+  svg_link_wrap(right_labels, d => algo_href(d.id))
 
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
@@ -3477,6 +3483,12 @@ viewof repo_metric = Inputs.radio(
     stars: "Stars (★)", forks: "Forks", open_issues: "Open issues",
     open_prs: "Open PRs", closed_issues: "Closed issues", closed_prs: "Closed PRs"
   }
+  // The label carries a trailing "*" for repos pointing at a subdirectory, so
+  // the lookup keys off the label exactly as rendered.
+  const href_by_label = new Map(
+    top.map(d => [d.label, algo_href(d.model)]).filter(([, href]) => href)
+  )
+
   const chart = Plot.plot({
     marginLeft: 180, width: 1100,
     height: Math.max(280, top.length * 24),
@@ -3494,6 +3506,10 @@ viewof repo_metric = Inputs.radio(
       Plot.ruleX([0])
     ]
   })
+  // Tick labels too, so the method name is clickable and not just the bar. This
+  // touches only g[aria-label="y-axis tick label"], leaving the bar rects the
+  // tooltip binding below depends on untouched.
+  linkify_tick_labels(chart, href_by_label)
 
   // Rich .map-tooltip on the bars. Plot renders barX rects in the sort order
   // (already computed above) — we replicate that here to bind data by DOM
@@ -3745,7 +3761,14 @@ viewof venue_type = Inputs.radio(
     ([venue, papers]) => ({ venue, papers })
   ).sort((a, b) => d3.descending(a.papers, b.papers)).slice(0, 15)
 
-  return Plot.plot({
+  // The tick label IS the venue name here, so the lookup key needs no
+  // reconstruction, unlike the composite "name · country" axes elsewhere.
+  const href_by_label = new Map(
+    grouped.map(d => [d.venue, page_href("venues", d.venue)])
+           .filter(([, href]) => href)
+  )
+
+  const chart = Plot.plot({
     marginLeft: 180,
     height: Math.max(260, grouped.length * 24),
     x: { label: "Papers", grid: true },
@@ -3756,11 +3779,14 @@ viewof venue_type = Inputs.radio(
         y: "venue",
         fill: "#6f42c1",
         sort: { y: "x", reverse: true },
-        tip: plot_tip_style
+        tip: plot_tip_style,
+        href: d => page_href("venues", d.venue),
+        target: "_self"
       }),
       Plot.ruleX([0])
     ]
   })
+  return linkify_tick_labels(chart, href_by_label)
 }
 ```
 
@@ -3994,7 +4020,17 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
   if (!paired.length) {
     return html`<p style="color:#57606a; font-style:italic;">No paired methods in the current filter.</p>`
   }
-  return Plot.plot({
+  // Two destinations, because the two elements mean different things: the tick
+  // label is the METHOD, and the bar is the specific peer-reviewed paper whose
+  // arrival the gap measures. `method` falls back to a truncated title for a
+  // publication with no algorithm link, in which case page_href returns null
+  // and the label simply stays plain text.
+  const href_by_label = new Map(
+    paired.map(r => [r.label, page_href("algorithms", r.method)])
+          .filter(([, href]) => href)
+  )
+
+  const chart = Plot.plot({
     marginLeft: 200,
     height: Math.max(220, paired.length * 20),
     x: { label: "Preprint → peer-reviewed gap (months)", grid: true },
@@ -4006,11 +4042,14 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
         y: "label",
         fill: "#1f6feb",
         sort: { y: "x2", reverse: true },
-        tip: plot_tip_style
+        tip: plot_tip_style,
+        href: d => page_href("publications", d.peer_id),
+        target: "_self"
       }),
       Plot.ruleX([0])
     ]
   })
+  return linkify_tick_labels(chart, href_by_label)
 }
 ```
 
