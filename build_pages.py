@@ -615,6 +615,21 @@ def load(conn: sqlite3.Connection) -> dict:
         d["coauthors"][a1] = sorted(
             ((a2, names[a2], v[0], v[1]) for a2, v in others.items()),
             key=lambda t: (-t[2], t[1]))
+
+    # Newest first, publication id as a deterministic tie-break.
+    #
+    # These lists are accumulated from queries ordered by publication_id, which
+    # is INSERTION order and only loosely chronological: a 2025 journal paper
+    # entered today gets a higher id than a 2026 preprint entered last week. On
+    # Lukas Kall's page that put his 2025 J Proteome Research paper AFTER two
+    # 2026 papers. Every tuple here happens to carry the date at index 2 and the
+    # publication id at index 0, so one pass fixes all four.
+    def by_date_desc(rows: list[tuple]) -> list[tuple]:
+        return sorted(rows, key=lambda r: (str(r[2] or ""), r[0]), reverse=True)
+
+    for bucket in ("author_pubs", "alg_pubs", "cites", "cited_by"):
+        d[bucket] = {k: by_date_desc(v) for k, v in d[bucket].items()}
+
     return d
 
 
