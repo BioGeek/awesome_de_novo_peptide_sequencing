@@ -8,9 +8,18 @@ on:
 permissions:
   contents: write
 
+# The render now takes ~9 minutes because it builds ~1969 entity pages, so two
+# publishes can genuinely overlap: all four refresh workflows dispatch this one,
+# and `quarto publish gh-pages` force-pushes the branch. Without this, the
+# second push wins and the first job goes red for no real reason.
+concurrency:
+  group: publish
+  cancel-in-progress: true
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Check out repo
@@ -24,8 +33,23 @@ jobs:
       - name: Sync Python environment
         run: uv sync --frozen
 
+      # Pinned deliberately. Every rendered page embeds
+      # <meta name="generator" content="quarto-x.y.z"> and links the theme CSS
+      # by a CONTENT-HASHED filename, so a Quarto upgrade rewrites a byte in all
+      # ~1969 pages at once and gh-pages gains ~45 MB of blobs in one commit.
+      # Pinning makes that an intentional, occasional event.
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.9.38
+
+      # Writes pages/{publications,authors,algorithms,institutions,venues}/.
+      # A separate step rather than a Quarto pre-render hook: the hook works
+      # (Quarto recomputes the render list afterwards), but keeping it explicit
+      # means a failure here stops the build instead of silently publishing a
+      # stale or empty page set.
+      - name: Generate entity pages
+        run: uv run python build_pages.py
 
       - name: Render and publish to gh-pages
         uses: quarto-dev/quarto-actions/publish@v2

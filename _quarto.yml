@@ -3,6 +3,7 @@ project:
   output-dir: _site
   render:
     - index.qmd
+    - pages/
 
 website:
   title: "Awesome *De Novo* Peptide Sequencing"
@@ -12,6 +13,22 @@ website:
   repo-actions: [edit, issue]
   page-navigation: false
   back-to-top-navigation: true
+  # Without a navbar the ~1969 generated entity pages have no way back to the
+  # map except the in-page links the generator writes. A sidebar is not an
+  # option at that scale.
+  navbar:
+    title: "Awesome *De Novo* Peptide Sequencing"
+    left:
+      - text: "The map"
+        href: index.html
+      - text: "Papers"
+        href: index.html#browse-all-papers
+      - text: "Authors"
+        href: index.html#browse-all-authors
+    right:
+      - icon: github
+        href: https://github.com/BioGeek/awesome_de_novo_peptide_sequencing
+        aria-label: "Source on GitHub"
 
 format:
   html:
