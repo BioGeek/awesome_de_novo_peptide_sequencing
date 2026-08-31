@@ -1349,7 +1349,6 @@ INSERT INTO affiliation VALUES(10,'Vrije Universiteit Brussel','Structural Biolo
 INSERT INTO affiliation VALUES(11,'The University of Manchester','Division of Molecular and Cellular Function, School of Biological Science, Faculty of Biology Medicine and Health (FBMH)',7,2);
 INSERT INTO affiliation VALUES(12,'Technical University of Munich','Computational Mass Spectrometry, TUM School of Life Sciences',4,6);
 INSERT INTO affiliation VALUES(13,'Technical University of Munich','Munich Data Science Institute',4,7);
-INSERT INTO affiliation VALUES(14,'KTH - Royal Institute of Technology','Science for Life Laboratory',6,8);
 INSERT INTO affiliation VALUES(15,'Chinese Academy of Sciences','State Key Laboratory of Mathematical Science, Academy of Mathematics and Systems Science',2,9);
 INSERT INTO affiliation VALUES(16,'Shandong University of Technology','School of Computer Science and Technology',2,12);
 INSERT INTO affiliation VALUES(17,'Beijing Institute of Lifeomics','State Key Laboratory of Medical Proteomics, National Center for Protein Sciences (Beijing), Research Unit of Proteomics and Research and Development of New Drug of Chinese Academy of Medical Sciences, Beijing Proteome Research Center',2,9);
@@ -1434,16 +1433,13 @@ INSERT INTO affiliation VALUES(95,'Western University','Department of Computer S
 INSERT INTO affiliation VALUES(96,'Beihang University','Sino-German Joint Software Institute (JSI)',2,9);
 INSERT INTO affiliation VALUES(97,'Westlake University','Zhejiang Provincial Laboratory of Life Sciences and Biomedicine, School of Life Sciences',2,15);
 INSERT INTO affiliation VALUES(98,'Westlake Institute for Advanced Study','Institute of Basic Medical Sciences',2,15);
-INSERT INTO affiliation VALUES(99,'Peking University','Computer Center',2,9);
 INSERT INTO affiliation VALUES(100,'Chongqing University of Posts and Telecommunications','School of Computer Science and Technology',2,43);
 INSERT INTO affiliation VALUES(101,'Swinburne University of Technology','School of Software and Electrical Engineering',15,44);
-INSERT INTO affiliation VALUES(102,'Sun Yat-Sen University','School of Computer Science and Engineering',2,16);
 INSERT INTO affiliation VALUES(103,'Chinese PLA General Hospital','Department of General Surgery, First Medical Center',2,9);
 INSERT INTO affiliation VALUES(104,'Rapid Novor Inc.',NULL,9,45);
 INSERT INTO affiliation VALUES(105,'Bruker Daltonics GmbH & Co. KG',NULL,4,46);
 INSERT INTO affiliation VALUES(106,'Bruker Ltd.',NULL,9,47);
 INSERT INTO affiliation VALUES(107,'Bruker AG',NULL,16,48);
-INSERT INTO affiliation VALUES(108,'University of California San Diego','Skaggs School of Pharmacy and Pharmaceutical Science',8,49);
 INSERT INTO affiliation VALUES(109,'Pacific Northwest National Laboratory',NULL,8,50);
 INSERT INTO affiliation VALUES(110,'Brigham Young University',NULL,8,51);
 INSERT INTO affiliation VALUES(111,'Jiangsu University of Technology','Institute of Bioinformatics and Medical Engineering, School of Electrical and Information Engineering',2,52);
@@ -1451,7 +1447,6 @@ INSERT INTO affiliation VALUES(112,'Changzhou University','School of Computer Sc
 INSERT INTO affiliation VALUES(113,'China University of Mining and Technology','School of Mathematics',2,53);
 INSERT INTO affiliation VALUES(114,'University of California San Diego',NULL,8,49);
 INSERT INTO affiliation VALUES(115,'Carnegie Mellon University',NULL,8,54);
-INSERT INTO affiliation VALUES(117,'University of Waterloo','Department of Electrical & Computer Engineering',9,24);
 INSERT INTO affiliation VALUES(118,'Beijing Institute of Microbiology and Epidemiology','State Key Laboratory of Pathogen and Biosecurity',2,9);
 INSERT INTO affiliation VALUES(119,'University of Chicago','Department of the Geophysical Sciences',8,55);
 INSERT INTO affiliation VALUES(120,'National Institute of Biological Sciences, Beijing',NULL,2,9);
@@ -1505,7 +1500,6 @@ INSERT INTO affiliation VALUES(167,'International Academy of Phronesis Medicine 
 INSERT INTO affiliation VALUES(168,'Peking Union Medical College Hospital','Stem cell and Regenerative Medicine Lab, Institute of Clinical Medicine, State Key Laboratory of Complex, Severe, and Rare Diseases',2,9);
 INSERT INTO affiliation VALUES(169,'University of Tübingen','Department of Computer Science, Applied Bioinformatics',4,76);
 INSERT INTO affiliation VALUES(170,'Chongqing University of Posts and Telecommunications','Chongqing Key Laboratory of Big Data for Bio Intelligence',2,43);
-INSERT INTO affiliation VALUES(171,'European Molecular Biology Laboratory','European Bioinformatics Institute (EMBL-EBI), Wellcome Trust Genome Campus',7,77);
 INSERT INTO affiliation VALUES(172,'University of Waterloo','Department of Systems Design Engineering',9,24);
 INSERT INTO affiliation VALUES(173,'Beihang University','State Key Laboratory of Virtual Reality Technology and Systems',2,9);
 INSERT INTO affiliation VALUES(174,'Robert Koch Institute','Centre for Artificial Intelligence in Public Health Research',4,78);
@@ -1535,7 +1529,6 @@ INSERT INTO affiliation VALUES(197,'University of Tennessee','Department of Comp
 INSERT INTO affiliation VALUES(198,'University of California, Berkeley','Department of Earth and Planetary Science',8,89);
 INSERT INTO affiliation VALUES(199,'North Carolina State University','Department of Computer Science',8,90);
 INSERT INTO affiliation VALUES(200,'University of California San Diego','Department of Electrical and Computer Engineering and Department of Computer Science and Engineering',8,49);
-INSERT INTO affiliation VALUES(201,'ETH Zurich','Institute of Plant Sciences',16,59);
 INSERT INTO affiliation VALUES(202,'ETH Zurich','Institute of Theoretical Computer Science',16,59);
 INSERT INTO affiliation VALUES(203,'Bielefeld University','Technische Fakultät, AG Genominformatik',4,91);
 INSERT INTO affiliation VALUES(204,'ETH Zurich','Institute of Plant Science',16,59);
@@ -1582,7 +1575,7 @@ INSERT INTO affiliation VALUES(244,'Medical University of South Carolina','Depar
 INSERT INTO affiliation VALUES(245,'Osaka University','Division of Organic Chemistry',29,110);
 INSERT INTO affiliation VALUES(246,'Osaka University','Division of Protein Metabolism, Institute for Protein Research',29,110);
 INSERT INTO affiliation VALUES(247,'Center for Genetic Engineering and Biotechnology',NULL,30,111);
-INSERT INTO affiliation VALUES(248,'Charité - Universitätsmedizin Berlin','Department of Dermatology and Allergy',4,78);
+INSERT INTO affiliation VALUES(248,'Charité – Universitätsmedizin Berlin','Department of Dermatology and Allergy',4,78);
 INSERT INTO affiliation VALUES(249,'National Institute of Child Health and Human Development','Laboratory of Cellular and Molecular Biophysics',8,66);
 INSERT INTO affiliation VALUES(250,'University of Calgary','Neuroscience Research Group, Department of Physiology and Biophysics',9,112);
 INSERT INTO affiliation VALUES(251,'Applied Biosystems',NULL,8,113);
@@ -1643,7 +1636,7 @@ INSERT INTO affiliation VALUES(305,'University of Copenhagen','Globe Institute',
 INSERT INTO affiliation VALUES(306,'Université Côte d''Azur','The Nice Institute of Chemistry',14,139);
 INSERT INTO affiliation VALUES(307,'University of Cambridge','McDonald Institute for Archaeological Research',7,140);
 INSERT INTO affiliation VALUES(308,'Australian National University','Archaeology and Natural History, School of Culture, History and Language, College of Asia and the Pacific',15,72);
-INSERT INTO affiliation VALUES(309,'Universitat Autonoma de Barcelona','Centre d''Estudis del Patrimoni Arqueologic, Facultat de Filosofia i Lletres',33,141);
+INSERT INTO affiliation VALUES(309,'Universitat Autònoma de Barcelona','Centre d''Estudis del Patrimoni Arqueològic, Facultat de Filosofia i Lletres',33,141);
 INSERT INTO affiliation VALUES(310,'Tel Aviv University','Department of Anatomy and Anthropology, The Gray Faculty of Medical & Health Sciences',23,142);
 INSERT INTO affiliation VALUES(311,'Australian National University','Research School of Chemistry, Joint Mass Spectrometry Facility, College of Science',15,72);
 INSERT INTO affiliation VALUES(312,'Flinders University','College of Science and Engineering',15,143);
@@ -1820,10 +1813,10 @@ INSERT INTO affiliation VALUES(519,'Northeastern University','Department of Bioe
 INSERT INTO affiliation VALUES(520,'University of Aveiro','QOPNA & LAQV-REQUIMTE, Departamento de Química',74,245);
 INSERT INTO affiliation VALUES(521,'University of Aveiro','iBiMED, Institute of Biomedicine, Department of Medical Sciences',74,245);
 INSERT INTO affiliation VALUES(522,'University of Porto','Unidade de Investigação Cardiovascular, Departamento de Cirurgia e Fisiologia, Faculdade de Medicina',74,246);
-INSERT INTO affiliation VALUES(523,'Charité Universitätsmedizin Berlin','Department of Biochemistry',4,78);
+INSERT INTO affiliation VALUES(523,'Charité – Universitätsmedizin Berlin','Department of Biochemistry',4,78);
 INSERT INTO affiliation VALUES(524,'Monash University','Department of Biochemistry and Molecular Biology, Immunity and Cancer Programs, Biomedicine Discovery Institute',15,247);
 INSERT INTO affiliation VALUES(525,'Monash University','Department of Medicine, School of Clinical Sciences',15,247);
-INSERT INTO affiliation VALUES(526,'European Molecular Biology Laboratory, European Bioinformatics Institute (EMBL-EBI)','Wellcome Genome Campus',7,77);
+INSERT INTO affiliation VALUES(526,'European Molecular Biology Laboratory','European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus',7,77);
 INSERT INTO affiliation VALUES(527,'Harvard Medical School','Ludwig Center at Harvard',8,81);
 INSERT INTO affiliation VALUES(528,'Harvard Medical School','Broad Institute, Ludwig Center at Harvard, DF/HCC Cancer Center',8,81);
 INSERT INTO affiliation VALUES(529,'ETH Zurich','Department of Biology, Institute of Molecular Systems Biology',16,59);
@@ -1904,10 +1897,8 @@ INSERT INTO author_affiliation VALUES(29,7);
 INSERT INTO author_affiliation VALUES(29,8);
 INSERT INTO author_affiliation VALUES(30,11);
 INSERT INTO author_affiliation VALUES(31,12);
-INSERT INTO author_affiliation VALUES(32,14);
 INSERT INTO author_affiliation VALUES(33,12);
 INSERT INTO author_affiliation VALUES(33,13);
-INSERT INTO author_affiliation VALUES(34,14);
 INSERT INTO author_affiliation VALUES(35,15);
 INSERT INTO author_affiliation VALUES(35,19);
 INSERT INTO author_affiliation VALUES(36,15);
@@ -2172,7 +2163,6 @@ INSERT INTO author_affiliation VALUES(221,100);
 INSERT INTO author_affiliation VALUES(222,101);
 INSERT INTO author_affiliation VALUES(223,100);
 INSERT INTO author_affiliation VALUES(224,103);
-INSERT INTO author_affiliation VALUES(225,102);
 INSERT INTO author_affiliation VALUES(226,70);
 INSERT INTO author_affiliation VALUES(227,70);
 INSERT INTO author_affiliation VALUES(228,104);
@@ -2185,7 +2175,6 @@ INSERT INTO author_affiliation VALUES(234,104);
 INSERT INTO author_affiliation VALUES(235,107);
 INSERT INTO author_affiliation VALUES(1054,16);
 INSERT INTO author_affiliation VALUES(236,16);
-INSERT INTO author_affiliation VALUES(95,108);
 INSERT INTO author_affiliation VALUES(237,78);
 INSERT INTO author_affiliation VALUES(238,109);
 INSERT INTO author_affiliation VALUES(239,109);
@@ -2396,7 +2385,6 @@ INSERT INTO author_affiliation VALUES(395,167);
 INSERT INTO author_affiliation VALUES(391,168);
 INSERT INTO author_affiliation VALUES(396,169);
 INSERT INTO author_affiliation VALUES(397,170);
-INSERT INTO author_affiliation VALUES(398,171);
 INSERT INTO author_affiliation VALUES(408,172);
 INSERT INTO author_affiliation VALUES(409,172);
 INSERT INTO author_affiliation VALUES(410,96);
@@ -3318,6 +3306,8 @@ INSERT INTO author_affiliation VALUES(19,556);
 INSERT INTO author_affiliation VALUES(2,556);
 INSERT INTO author_affiliation VALUES(2,4);
 INSERT INTO author_affiliation VALUES(2,5);
+INSERT INTO author_affiliation VALUES(225,540);
+INSERT INTO author_affiliation VALUES(95,206);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -8555,6 +8545,12 @@ INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
 INSERT INTO sqlite_sequence VALUES('algorithm',236);
 INSERT INTO sqlite_sequence VALUES('publication',268);
+CREATE VIEW author_display AS
+SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8614,10 +8610,4 @@ CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
 CREATE UNIQUE INDEX idx_author_name_disambig_unique
                ON author(name, IFNULL(disambiguator,''));
-CREATE VIEW author_display AS
-SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 COMMIT;
