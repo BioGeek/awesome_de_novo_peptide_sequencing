@@ -8236,7 +8236,7 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',128,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-08-24T06:30:01','1.2.2');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',129,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-08-31T11:55:55','1.2.2');
 INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',1,0,0,0,2,5,'2026-08-14T10:17:40Z','2026-08-15T06:15:47','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-06-24T08:16:11','v1.5.0-release');
@@ -8258,13 +8258,13 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',197,79,18,313,10,334,'2026-08-26T03:26:23Z','2026-08-27T16:54:48','v5.2.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',197,79,18,313,10,335,'2026-08-26T03:26:23Z','2026-08-31T11:55:55','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',5,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-07-15T07:45:10',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,0,6,'2026-08-19T05:02:25Z','2026-08-19T06:20:19','v1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/usr922/LIPNovo',9,1,1,0,0,0,'2025-05-26T03:21:36Z','2026-05-26T12:38:15',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/qiyueliuhuo8/TSARseqNovo',6,1,2,0,0,0,'2024-12-26T15:55:41Z','2026-05-26T12:38:15',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/qiyueliuhuo8/TSARseqNovo',7,1,2,0,0,0,'2024-12-26T15:55:41Z','2026-08-31T11:55:55',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/ProteomeTeam/NovoB',2,2,2,4,1,0,'2025-05-07T06:14:46Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/PHOENIXcenter/pi-HelixNovo',14,5,0,3,0,0,'2026-06-26T07:24:53Z','2026-06-27T06:58:08','pi-HelixNovo-v1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/spectralis',17,8,5,1,0,0,'2024-10-01T09:58:14Z','2026-06-24T08:16:11','v1.0.0');
@@ -8272,7 +8272,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/ContraNovo',
 INSERT INTO repository_metrics VALUES('https://github.com/lkytal/PepNet',41,12,8,3,0,0,'2026-06-10T11:19:11Z','2026-08-12T07:01:36','v0.0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/AmadeusloveIris/Graphnovo',15,3,3,0,0,1,'2023-10-16T19:43:44Z','2026-06-24T08:16:11','v1');
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovo-DIA',41,12,1,2,0,0,'2020-11-26T03:49:07Z','2026-08-07T06:55:36',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovo',102,42,3,9,1,0,'2020-11-27T02:34:25Z','2026-05-26T12:38:15',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovo',103,42,3,9,1,0,'2020-11-27T02:34:25Z','2026-08-31T11:55:55',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/cmb-chula/SMSNet',12,7,2,1,13,15,'2024-06-13T13:50:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/junxia97/SearchNovo',3,1,0,0,0,0,'2025-03-08T02:41:41Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2,0,0,1,0,'2024-08-28T03:38:58Z','2026-05-26T12:38:15',NULL);
@@ -8605,12 +8605,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
 INSERT INTO sqlite_sequence VALUES('algorithm',236);
 INSERT INTO sqlite_sequence VALUES('publication',271);
-CREATE VIEW author_display AS
-SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8665,6 +8659,18 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE VIEW author_display AS
+SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8680,10 +8686,4 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
