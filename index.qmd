@@ -557,6 +557,59 @@ page_link = (type, key, label) => {
   return href ? htl.html`<a href=${href}>${text}</a>` : text
 }
 
+// Wrap already-rendered d3 nodes in an SVG <a>, the way Plot does internally.
+// The selection keeps referencing the ORIGINAL elements, so force-simulation
+// tick handlers that set `transform` on them keep working.
+//
+// Both force graphs use d3.drag(), and a drag that ends on an anchor would
+// otherwise navigate. So record the pointer position and swallow the click if
+// it moved more than a few pixels.
+// A repo can back two algorithms, so `model` reads "A / B"; link the first.
+algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
+
+svg_link_wrap = (selection, href_of) => {
+  selection.each(function (d) {
+    const href = href_of(d)
+    if (!href) return
+    const node = this
+    const parent = node.parentNode
+    const a = document.createElementNS("http://www.w3.org/2000/svg", "a")
+    a.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", href)
+    a.setAttribute("href", href)
+    a.style.cursor = "pointer"
+    parent.insertBefore(a, node)
+    a.appendChild(node)
+    let start = null
+    a.addEventListener("pointerdown", ev => { start = [ev.clientX, ev.clientY] })
+    a.addEventListener("click", ev => {
+      if (!start) return
+      const moved = Math.hypot(ev.clientX - start[0], ev.clientY - start[1])
+      if (moved > 4) ev.preventDefault()   // it was a drag, not a click
+    })
+  })
+  return selection
+}
+
+// Linkify the tick labels of a Plot ordinal axis. Matched by TEXT, never by
+// index, so there is no ordering assumption to get wrong: a label that does not
+// resolve simply stays plain text.
+linkify_tick_labels = (chart, href_by_label) => {
+  const groups = chart.querySelectorAll('g[aria-label$="axis tick label"]')
+  for (const g of groups) {
+    for (const text of g.querySelectorAll("text")) {
+      const href = href_by_label.get(text.textContent)
+      if (!href) continue
+      const a = document.createElementNS("http://www.w3.org/2000/svg", "a")
+      a.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", href)
+      a.setAttribute("href", href)
+      a.style.cursor = "pointer"
+      text.parentNode.insertBefore(a, text)
+      a.appendChild(text)
+    }
+  }
+  return chart
+}
+
 // Several tables show a comma-joined list of names in one cell (authors,
 // models). Link each name separately, leaving unmatched names as plain text.
 page_links = (type, joined, { sep = ", ", max = Infinity } = {}) => {
@@ -1094,7 +1147,11 @@ innovations_timeline = {
         fill: "family",
         r: 7,
         stroke: "white",
-        strokeWidth: 1.5
+        strokeWidth: 1.5,
+        // Plot wraps each mark in an SVG <a> itself, which sidesteps the
+        // descending-radius re-sort that makes DOM-index binding fragile here.
+        href: d => algo_href(d.base_model ?? d.model),
+        target: "_self"
       }),
       // Labels anchored above the dot (top half of band). Wrap onto two
       // lines when the model name exceeds ~22 chars so long names don't
@@ -1200,6 +1257,17 @@ innovations_timeline = {
   cursor: pointer; color: #57606a;
 }
 .fs-btn:hover { background: #f6f8fa; border-color: #afb8c1; }
+
+/* Marks and axis tick labels that link to an entity page. Plot and the d3
+   charts both wrap the clickable element in an SVG <a>, so one rule covers
+   every chart. Keyboard focus needs an explicit ring because the default
+   outline is invisible against a dark mark. */
+.chart-wrap svg a { cursor: pointer; }
+.chart-wrap svg a:hover text { text-decoration: underline; }
+.chart-wrap svg a:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
+}
 .map-zoom-controls {
   position: absolute; top: 8px; left: 8px; z-index: 10;
   display: flex; gap: 4px;
@@ -1427,7 +1495,9 @@ application_timeline = {
       Plot.dot(items, {
         x: "first_pub", y: "y",
         fill: "subdomain",
-        r: 7, stroke: "white", strokeWidth: 1.5
+        r: 7, stroke: "white", strokeWidth: 1.5,
+        href: d => algo_href(d.base_model ?? d.model),
+        target: "_self"
       }),
       // Labels sit just above the dot (upper half of lane) or just below (lower half).
       // Display label wraps onto two lines at a word boundary when it exceeds
@@ -2201,7 +2271,15 @@ ${type_breakdown(d)}`
     .sort((a, b) => b.authors - a.authors)
     .slice(0, 15)
 
-  return Plot.plot({
+  // Built with the SAME expression the y channel uses, so the tick label text
+  // matches exactly and the linkifier can find it.
+  const label_of = d => `${d.institution} · ${d.country}`
+  const href_by_label = new Map(
+    rows.map(d => [label_of(d), page_href("institutions", d.institution)])
+        .filter(([, href]) => href)
+  )
+
+  const chart = Plot.plot({
     marginLeft: 280,
     width: 1100,
     height: Math.max(260, rows.length * 26),
@@ -2210,16 +2288,19 @@ ${type_breakdown(d)}`
     marks: [
       Plot.barX(rows, {
         x: "authors",
-        y: d => `${d.institution} · ${d.country}`,
+        y: label_of,
         // Shared scale (see country_color) so these colours match the
         // most-published-authors chart below.
         fill: d => country_color(d.country),
         sort: { y: "x", reverse: true },
-        tip: plot_tip_style
+        tip: plot_tip_style,
+        href: d => page_href("institutions", d.institution),
+        target: "_self"
       }),
       Plot.ruleX([0])
     ]
   })
+  return linkify_tick_labels(chart, href_by_label)
 }
 ```
 
@@ -2270,7 +2351,15 @@ The chart below shows the twenty most-published authors.
     .sort((a, b) => b.publications - a.publications)
     .slice(0, 20)
 
-  return Plot.plot({
+  // Same expression as the y channel, so the tick label text matches exactly.
+  const label_of = d =>
+    `${d.name} · ${d.all_countries.length ? d.all_countries.join(" / ") : "unknown"}`
+  const href_by_label = new Map(
+    top.map(d => [label_of(d), page_href("authors", d.name)])
+       .filter(([, href]) => href)
+  )
+
+  const chart = Plot.plot({
     // Wider left margin than the plain-name version: labels now carry the
     // country too, and a few authors list several.
     marginLeft: 300,
@@ -2283,10 +2372,12 @@ The chart below shows the twenty most-published authors.
         // '<author> · <country>' to match the Top-institutions axis format.
         // Multi-country authors get all of them, so the label never implies a
         // single country the colour merely happened to pick.
-        y: d => `${d.name} · ${d.all_countries.length ? d.all_countries.join(" / ") : "unknown"}`,
+        y: label_of,
         // Same shared scale as the Top-institutions chart above.
         fill: d => country_color(d.country),
         sort: { y: "x", reverse: true },
+        href: d => page_href("authors", d.name),
+        target: "_self",
         tip: plot_tip_style,
         title: d => `${d.name}\n${d.publications} paper${d.publications === 1 ? "" : "s"}\n` +
                     (d.all_countries.length > 1
@@ -2296,6 +2387,7 @@ The chart below shows the twenty most-published authors.
       Plot.ruleX([0])
     ]
   })
+  return linkify_tick_labels(chart, href_by_label)
 }
 ```
 
@@ -2461,6 +2553,9 @@ network_chart = {
   node_g.attr("aria-label", d =>
     `${d.id}. ${d.affiliations.join(", ")}. Collaboration strength ${d.degree.toFixed(2)}.`
   )
+  // Node id is the author display name, which is the slug key. The drag guard
+  // inside svg_link_wrap keeps a drag from ending in navigation.
+  svg_link_wrap(node_g, d => page_href("authors", d.id))
   const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
   const move_tip = ev => {
     const pad = 12
@@ -2777,6 +2872,11 @@ author_algo_network = {
     ? `${d.id} algorithm. Family: ${d.family}. ${d.degree} author links.`
     : `${d.id} author. ${d.degree} model links.`
   )
+  // One selection, two entity types: `kind` picks which page to target. Algorithm
+  // nodes carry a version suffix (Casanovo v2), so fall back to base_model.
+  svg_link_wrap(node_g, d => d.kind === "algo"
+    ? algo_href(d.base_model ?? d.id)
+    : page_href("authors", d.id))
   const tooltip_el = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
   const move_tip = ev => {
     const pad = 12
@@ -3105,6 +3205,10 @@ citation_arcs = {
     .attr("stroke-width", 0.8)
     .attr("cursor", "pointer")
 
+  // These nodes already carry the publication id, which makes this the most
+  // direct link site on the page. No drag here, so the guard is a no-op.
+  svg_link_wrap(node, d => page_href("publications", d.id))
+
   // Styled tooltip that follows the cursor (matches world-map / co-auth /
   // bipartite / Sankey). aria-label handles screen-reader accessibility.
   node.attr("aria-label", d =>
@@ -3383,7 +3487,9 @@ viewof repo_metric = Inputs.radio(
         x: repo_metric,
         y: "label",
         fill: "#1f6feb",
-        sort: { y: "x", reverse: true }
+        sort: { y: "x", reverse: true },
+        href: d => algo_href(d.model),
+        target: "_self"
       }),
       Plot.ruleX([0])
     ]
@@ -3491,7 +3597,9 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       Plot.dot(points, {
         x: "months_since_push", y: "stars",
         fill: d => d.family ?? TOOLING,
-        r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0))
+        r: d => 4 + Math.sqrt((d.open_issues ?? 0) + (d.open_prs ?? 0)),
+        href: d => algo_href(d.model),
+        target: "_self"
       })
     ]
   })
