@@ -45,6 +45,11 @@ uv run python build_publication_impact.py
 
 # Refresh OpenAlex 2-year mean citedness per peer-reviewed venue (~5 min)
 uv run python build_journal_metrics.py
+
+# Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
+# (offline, ~10 min). Skips publications that already have one, so it never
+# overwrites hand-curated text; pass --force only if you mean to.
+uv run python build_abstracts.py
 ```
 
 ### Scheduled refreshes (GitHub Actions)
@@ -111,6 +116,28 @@ other's new rows.
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
 `publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (180), `'preprint'` (69), `'ML conference'` (9), `'thesis'` (6), `'resource'` (2, for the catalog's own Zenodo record and a third-party link collection) and `'commentary'` (1). Use one of those six; do not invent a seventh without updating this list, and never leave it empty.
+
+## Abstracts
+
+`build_abstracts.py` fills `publication.abstract`, trying bioRxiv, arXiv,
+OpenAlex and Crossref in that order and recording which one won in
+`publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
+`abstract` means the text was entered by hand and is authoritative: the script
+skips those rows unless `--force`, so don't pass `--force` casually.
+
+Coverage is 219/267. The 48 without one are mostly theses, conference pages and
+records with no DOI, where no API has anything to give.
+
+Two guards worth knowing about, because both were hit in practice:
+
+- OpenAlex delivers abstracts as an inverted index (word -> positions) that has
+  to be reassembled in position order, and some records carry only a PARTIAL
+  index. That reassembles into a fragment starting mid-sentence, so any
+  candidate whose first character is lowercase is rejected and the next source
+  is tried. A fragment presented as an abstract is worse than no abstract.
+- arXiv DOIs are minted as `10.48550/arXiv.2512.12272`, but the API's `id_list`
+  wants the bare `2512.12272`. Leaving the prefix on returns an empty feed
+  rather than an error, which silently falls through to OpenAlex.
 
 ## Citation graph
 
