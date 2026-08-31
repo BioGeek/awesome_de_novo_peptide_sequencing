@@ -15,6 +15,10 @@ from datetime import date
 import pandas as pd
 from pathlib import Path
 
+# Same module build_pages.py uses, so a link written here and the page written
+# there can never disagree about a URL.
+from slugs import all_slugs
+
 DB = Path(__file__).parent / "denovo.db" if "__file__" in dir() else Path("denovo.db")
 conn = sqlite3.connect(DB)
 
@@ -325,6 +329,31 @@ repo_metrics = pd.read_sql(
     conn,
 )
 
+# One lookup replaces threading ids through seven datasets. `key` is exactly the
+# string the charts ALREADY aggregate on -- a display name, an algorithm name,
+# an institution name, a journal -- with publications keyed by id. That matters
+# because several charts (top authors, top institutions) recompute their rows
+# client-side from pubs_filtered by NAME, so no server-side id could reach them.
+_slug_tables = all_slugs(conn)
+_slug_tables.pop("__fallbacks__", None)
+
+_key_sql = {
+    "publications": "SELECT id, CAST(id AS TEXT) FROM publication",
+    "authors":      "SELECT id, display_name FROM author_display",
+    "algorithms":   "SELECT id, name FROM algorithm",
+    "institutions": "SELECT MIN(id), name FROM affiliation GROUP BY name",
+    "venues":       "SELECT MIN(id), journal FROM publication "
+                    "WHERE journal IS NOT NULL AND journal <> '' GROUP BY journal",
+}
+_rows = []
+for _kind, _sql in _key_sql.items():
+    _slugs = _slug_tables[_kind]
+    for _id, _key in conn.execute(_sql + " ORDER BY 1"):
+        _slug = _slugs.get(int(_id))
+        if _slug:
+            _rows.append({"type": _kind, "key": _key, "slug": _slug})
+entity_slugs = pd.DataFrame(_rows, columns=["type", "key", "slug"])
+
 conn.close()
 
 ojs_define(
@@ -340,6 +369,7 @@ ojs_define(
     author_details=author_details,
     citations=citations,
     pub_versions=pub_versions,
+    entity_slugs=entity_slugs,
     journal_impact=journal_impact,
     publication_impact=publication_impact,
     repo_metrics=repo_metrics,
@@ -495,6 +525,51 @@ algorithms_versioned_t = {
 }
 venues_t = transpose(venues)
 author_details_t = transpose(author_details)
+
+// --- links into the generated entity pages ------------------------------
+// entity_slugs comes from slugs.py, the same module build_pages.py uses, so a
+// link here and the page it targets can never disagree.
+entity_slugs_t = transpose(entity_slugs)
+
+slug_map = {
+  const m = new Map()
+  for (const r of entity_slugs_t) {
+    if (!m.has(r.type)) m.set(r.type, new Map())
+    m.get(r.type).set(String(r.key), r.slug)
+  }
+  return m
+}
+
+// page_href("authors", "Lukas Käll") -> "pages/authors/lukas-kall.html", or
+// null when there is no such page. Callers MUST handle null: an author who is
+// filtered out, or a venue string with no page, should render as plain text
+// rather than a broken link.
+page_href = (type, key) => {
+  if (key == null) return null
+  const slug = slug_map.get(type)?.get(String(key))
+  return slug ? `pages/${type}/${slug}.html` : null
+}
+
+// Markup helper for Inputs.table cell formatters.
+page_link = (type, key, label) => {
+  const href = page_href(type, key)
+  const text = label ?? key
+  return href ? htl.html`<a href=${href}>${text}</a>` : text
+}
+
+// Several tables show a comma-joined list of names in one cell (authors,
+// models). Link each name separately, leaving unmatched names as plain text.
+page_links = (type, joined, { sep = ", ", max = Infinity } = {}) => {
+  const names = String(joined ?? "").split(sep).map(s => s.trim()).filter(Boolean)
+  const shown = names.slice(0, max)
+  const parts = []
+  shown.forEach((n, i) => {
+    if (i) parts.push(sep)
+    parts.push(page_link(type, n, n))
+  })
+  if (names.length > shown.length) parts.push(` +${names.length - shown.length}`)
+  return htl.html`${parts}`
+}
 
 // preprint_id -> published_id, from the explicit publication_version table.
 pub_versions_t = transpose(pub_versions).map(r => ({
@@ -3239,10 +3314,17 @@ viewof impact_search = Inputs.search(impact_rows, {
       citation_year: y => y == null ? "" : String(y),
       title: (t, i) => {
         const row = impact_search[i]
-        const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
-        return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+        const internal = page_href("publications", row?.id)
+        const external = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
+        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
+        return external
+          ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
+              title="Publisher / DOI" style="text-decoration:none">↗</a>`
+          : label
       },
-      authors: a => a && a.length > 90 ? a.slice(0, 90) + "…" : a
+      models:  m => page_links("algorithms", m, { max: 4 }),
+      journal: j => page_link("venues", j, j),
+      authors: a => page_links("authors", a, { max: 3 })
     },
     sort: "global_citations",
     reverse: true,
@@ -3510,6 +3592,9 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
       stars: v => v == null ? "" : String(v),
       last_pushed: d => d ? d.toISOString().slice(0, 10) : "",
       latest_release: v => v ?? "",
+      // One repo can back several algorithms (instadeepai/instanovo serves both
+      // InstaNovo and InstaNovo+), in which case model is "A / B".
+      model: m => page_links("algorithms", m, { sep: " / ", max: 3 }),
       url: u => u ? htl.html`<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(?:www\.)?github\.com\//, "")}</a>` : ""
     },
     sort: "stars", reverse: true,
@@ -3606,6 +3691,7 @@ viewof venue_if_search = Inputs.search(journal_impact_t, {
       year_collected:    "Year collected"
     },
     format: {
+      journal:          j => page_link("venues", j, j),
       two_yr_citedness: c => c == null ? "" : c.toFixed(2),
       h_index:          v => v == null ? "" : String(v),
       year_collected:   y => y == null ? "" : String(y)
@@ -3675,6 +3761,7 @@ lifecycle_rows = {
       const gap_months = ((target.date ?? 0) - (pp.date ?? 0)) / 86400000 / 30.44
       rows.push({
         method, version, status: "paired",
+        preprint_id: pp.id, peer_id: target.id,
         preprint_date: pp.date, preprint_title: pp.title, preprint_url: url_of(pp),
         peer_date: target.date, peer_title: target.title, peer_url: url_of(target),
         gap_months: Math.round(gap_months * 10) / 10
@@ -3682,6 +3769,7 @@ lifecycle_rows = {
     } else {
       rows.push({
         method, version, status: "preprint-only",
+        preprint_id: pp.id, peer_id: null,
         preprint_date: pp.date, preprint_title: pp.title, preprint_url: url_of(pp),
         peer_date: null, peer_title: null, peer_url: null, gap_months: null
       })
@@ -3693,6 +3781,7 @@ lifecycle_rows = {
     const { method, version } = label_of(p)
     rows.push({
       method, version, status: "peer-reviewed-only",
+      preprint_id: null, peer_id: p.id,
       preprint_date: null, preprint_title: null, preprint_url: null,
       peer_date: p.date, peer_title: p.title, peer_url: url_of(p), gap_months: null
     })
@@ -3745,20 +3834,26 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
       gap_months:    "Gap (months)"
     },
     format: {
+      // Dates link to this catalog's page for that version; the publisher link
+      // lives on the page itself. The title stays as the hover text, which is
+      // what makes a bare "2025-06" cell legible.
+      method: m => page_links("algorithms", m, { max: 2 }),
       preprint_date: (d, i) => {
         const row = lifecycle_search[i]
         if (!d) return ""
         const label = d.toISOString().slice(0, 7)
-        return row.preprint_url
-          ? htl.html`<a href="${row.preprint_url}" target="_blank" rel="noopener" title="${row.preprint_title}">${label}</a>`
+        const href = page_href("publications", row.preprint_id) ?? row.preprint_url
+        return href
+          ? htl.html`<a href=${href} title=${row.preprint_title ?? ""}>${label}</a>`
           : label
       },
       peer_date: (d, i) => {
         const row = lifecycle_search[i]
         if (!d) return ""
         const label = d.toISOString().slice(0, 7)
-        return row.peer_url
-          ? htl.html`<a href="${row.peer_url}" target="_blank" rel="noopener" title="${row.peer_title}">${label}</a>`
+        const href = page_href("publications", row.peer_id) ?? row.peer_url
+        return href
+          ? htl.html`<a href=${href} title=${row.peer_title ?? ""}>${label}</a>`
           : label
       },
       gap_months: g => g == null ? "" : `${g.toFixed(1)} mo`
@@ -3847,12 +3942,40 @@ viewof selected_pubs = {
       year: y => y == null ? "" : String(y),
       is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
       citedness: c => c == null ? "" : c.toFixed(1),
+      // The title now goes to this catalog's own page for the paper, with the
+      // publisher/DOI kept as a separate chip so both destinations stay
+      // reachable. The row index lookup is load-bearing: 19 titles are shared
+      // by a preprint and its journal version, so the title string alone cannot
+      // identify the row.
       title: (t, i) => {
         const row = search_with_if[i]
-        const url = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
-        return url ? htl.html`<a href="${url}" target="_blank" rel="noopener">${t}</a>` : t
+        const internal = page_href("publications", row?.id)
+        const external = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
+        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
+        return external
+          ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
+              title="Publisher / DOI" style="text-decoration:none">↗</a>`
+          : label
       },
-      authors: a => a && a.length > 80 ? a.slice(0, 80) + "…" : a,
+      // annotate_models() appended "(aka ...)" to renamed tools. Keep that
+      // visible but link only the name part, which is the slug key.
+      models: m => {
+        const parts = String(m ?? "").split(",").map(x => x.trim()).filter(Boolean)
+        const out = []
+        parts.slice(0, 4).forEach((part, idx) => {
+          if (idx) out.push(", ")
+          const alias = part.match(/^(.*?)(\s*\(aka [^)]*\))$/)
+          const name = alias ? alias[1] : part
+          out.push(page_link("algorithms", name, name))
+          if (alias) out.push(alias[2])
+        })
+        if (parts.length > 4) out.push(` +${parts.length - 4}`)
+        return htl.html`${out}`
+      },
+      // Three names then a count: a 53-author consortium paper would otherwise
+      // fill the row with links.
+      authors: a => page_links("authors", a, { max: 3 }),
+      journal: j => page_link("venues", j, j),
       repo: r => {
         if (!r) return ""
         // The repository column holds either a single URL or two whitespace-separated URLs
@@ -3999,8 +4122,25 @@ viewof author_search = Inputs.search(authors_table_rows, {
     },
     format: {
       papers:       n => n == null ? "" : String(n),
-      affiliations: s => !s ? "" : (s.length > 80 ? s.slice(0, 80) + "…" : s),
-      methods:      s => !s ? "" : (s.length > 60 ? s.slice(0, 60) + "…" : s)
+      name:         n => page_link("authors", n, n),
+      // affiliations is a "Institution / Department" list joined by "; ".
+      // Only the institution half has a page, so link that and keep the
+      // department as plain text.
+      affiliations: s => {
+        if (!s) return ""
+        const parts = String(s).split(";").map(x => x.trim()).filter(Boolean)
+        const out = []
+        parts.slice(0, 2).forEach((part, idx) => {
+          if (idx) out.push("; ")
+          const cut = part.indexOf(" / ")
+          const inst = cut === -1 ? part : part.slice(0, cut)
+          out.push(page_link("institutions", inst, inst))
+          if (cut !== -1) out.push(part.slice(cut))
+        })
+        if (parts.length > 2) out.push(` +${parts.length - 2}`)
+        return htl.html`${out}`
+      },
+      methods:      s => page_links("algorithms", s, { max: 4 })
     },
     sort: "papers",
     reverse: true,
