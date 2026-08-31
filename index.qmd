@@ -230,7 +230,11 @@ venues = pd.read_sql(
 # All authors with their affiliations and countries. Fuels the Browse-authors table.
 author_details = pd.read_sql(
     """
-    SELECT a.id AS id, a.display_name AS name, a.email AS email,
+    -- a.email is deliberately NOT selected. Nothing on the page consumes it,
+    -- but ojs_define inlines every column into index.html, so selecting it
+    -- published all 78 stored addresses in the page source for scrapers to
+    -- harvest, for zero benefit. They stay in the DB for provenance.
+    SELECT a.id AS id, a.display_name AS name,
            (SELECT GROUP_CONCAT(DISTINCT af.name || COALESCE(' / ' || af.department, ''))
               FROM author_affiliation aa JOIN affiliation af ON af.id = aa.affiliation_id
               WHERE aa.author_id = a.id) AS affiliations,

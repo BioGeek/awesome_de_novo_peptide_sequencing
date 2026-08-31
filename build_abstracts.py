@@ -98,6 +98,7 @@ def clean(text: str | None) -> str | None:
     text = re.sub(r"\s+", " ", text).strip()
     # Some records prefix the literal word "Abstract".
     text = re.sub(r"^abstract[:.\s]+", "", text, flags=re.I).strip()
+    text = scrub_contacts(text)
     if len(text) < MIN_ABSTRACT_CHARS:
         return None
     if text.lower().rstrip(".") in PLACEHOLDERS:
@@ -111,6 +112,26 @@ def clean(text: str | None) -> str | None:
     if text[0].islower():
         return None
     return text
+
+
+def scrub_contacts(text: str) -> str:
+    """Drop author email addresses from abstract text.
+
+    Structured abstracts in Bioinformatics and similar journals append a
+    "Contact: someone@somewhere" clause. That is journal boilerplate rather
+    than abstract prose, and these abstracts are rendered on crawlable,
+    sitemap-listed pages, so republishing the addresses there is an invitation
+    to scrapers. The "Availability and implementation" clause is kept, because
+    the repository URL in it is genuinely useful.
+    """
+    text = re.sub(
+        r"\s*Contact:\s*.*?(?=Supplementary information:|Availability|$)",
+        " ", text, flags=re.I | re.S,
+    )
+    # Belt and braces for an address appearing outside a Contact: clause.
+    text = re.sub(r"[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}", "", text)
+    text = re.sub(r"\s*;\s*(?=[.;]|$)", "", text)
+    return re.sub(r"\s+", " ", text).strip(" ;,")
 
 
 def get_json(url: str, params: dict | None = None) -> dict | None:

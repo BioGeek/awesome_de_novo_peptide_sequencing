@@ -293,9 +293,12 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                 line += f" · {md_escape(dept)}"
             L.append(line)
         L.append("")
+    # No email address here, deliberately. These pages are crawlable and listed
+    # in sitemap.xml, so a mailto: on each of 78 author pages is an invitation to
+    # scrapers. The addresses are already in the papers themselves, which is
+    # where someone who needs to make contact should get them. Public profile
+    # links carry no address and are fine.
     ids = []
-    if row["email"]:
-        ids.append(f"<{row['email']}>")
     if row["scholar_id"]:
         ids.append(f"[Google Scholar](https://scholar.google.com/citations?user={row['scholar_id']})")
     if row["sciprofiles_id"]:
@@ -482,7 +485,7 @@ def load(conn: sqlite3.Connection) -> dict:
         "doi, url, abstract FROM publication ORDER BY id"
     )]
     d["authors"] = [dict(r) for r in q(
-        "SELECT id, display_name, email, scholar_id, sciprofiles_id "
+        "SELECT id, display_name, scholar_id, sciprofiles_id "
         "FROM author_display ORDER BY id"
     )]
     d["algorithms"] = [dict(r) for r in q(
