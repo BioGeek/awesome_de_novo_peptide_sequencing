@@ -8318,10 +8318,10 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',129,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-08-31T11:55:55','1.2.2');
-INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',2,0,0,0,1,6,'2026-08-31T15:06:17Z','2026-09-01T10:35:34','v1.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',130,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-09-02T10:00:47','1.2.2');
+INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',3,0,0,0,1,6,'2026-08-31T15:06:17Z','2026-09-02T10:00:47','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',4,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-06-24T08:16:11','v1.5.0-release');
+INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',5,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-09-02T10:00:47','v1.5.0-release');
 INSERT INTO repository_metrics VALUES('https://github.com/alifare/PepGo/tree/main',1,0,0,0,0,0,'2026-07-03T06:41:39Z','2026-07-03T08:42:29','v1.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/Modanovo',3,1,0,1,0,0,'2025-12-04T11:10:34Z','2026-08-26T06:23:34','v1.0.0');
