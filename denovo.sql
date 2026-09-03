@@ -1740,9 +1740,9 @@ INSERT INTO affiliation VALUES(445,'National Institutes of Health','Division of 
 INSERT INTO affiliation VALUES(446,'Pacific Northwest National Laboratory','Applied Decisions Systems and Analytics Group',8,50);
 INSERT INTO affiliation VALUES(447,'Pacific Northwest National Laboratory','Applied Statistics and Computational Modeling Group',8,50);
 INSERT INTO affiliation VALUES(448,'Karius Inc.',NULL,8,215);
-INSERT INTO affiliation VALUES(449,'Rudjer Bošković Institute','Laboratory for Bioanalytics, Division of Molecular Medicine',70,216);
+INSERT INTO affiliation VALUES(449,'Ruđer Bošković Institute','Laboratory for Bioanalytics, Division of Molecular Medicine',70,216);
 INSERT INTO affiliation VALUES(450,'Croatian Veterinary Institute','Laboratory for Residue Control, Department of Veterinary Public Health',70,216);
-INSERT INTO affiliation VALUES(451,'Rudjer Bošković Institute','Division of Molecular Medicine',70,216);
+INSERT INTO affiliation VALUES(451,'Ruđer Bošković Institute','Division of Molecular Medicine',70,216);
 INSERT INTO affiliation VALUES(452,'University Hospital Dubrava','Clinical Department of Laboratory Diagnostics',70,216);
 INSERT INTO affiliation VALUES(453,'Conscius Ltd.',NULL,70,216);
 INSERT INTO affiliation VALUES(454,'Andrija Štampar Teaching Institute of Public Health','Division for Medical Statistics',70,216);

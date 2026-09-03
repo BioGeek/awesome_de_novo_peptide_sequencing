@@ -36,9 +36,26 @@ TRANSLITERATE = {
     "π": "pi",
     "—": "-",
     "–": "-",
-    "ø": "o",
+    "ø": "o", "Ø": "O",
     "ß": "ss",
     "ı": "i",
+    # Stroke and ligature letters do NOT decompose under NFKD, so without an
+    # explicit mapping they are stripped as punctuation and silently mangle a
+    # name: "Ruder Boskovic" would slug to "ru-er-boskovic". Only the first
+    # group occurs in the catalog today; the rest are here because the failure
+    # is silent and the next Polish or Maltese affiliation should not hit it.
+    #
+    # Croatian d-stroke maps to "dj" rather than "d" following the convention
+    # the institute's own English-language materials use, which also keeps the
+    # existing published slug stable.
+    "đ": "dj", "Đ": "Dj",
+    "ł": "l", "Ł": "L",
+    "ħ": "h", "Ħ": "H",
+    "ŧ": "t", "Ŧ": "T",
+    "æ": "ae", "Æ": "Ae",
+    "œ": "oe", "Œ": "Oe",
+    "þ": "th", "Þ": "Th",
+    "ð": "d", "Ð": "D",
 }
 
 
