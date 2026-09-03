@@ -47,6 +47,11 @@ uv run python build_publication_impact.py
 # Refresh OpenAlex 2-year mean citedness per peer-reviewed venue (~5 min)
 uv run python build_journal_metrics.py
 
+# Fill author ORCID + OpenAlex ids from OpenAlex, matched PER PUBLICATION
+# (offline, ~1 min). Refuses to write anything ambiguous; conflicts go to
+# author_id_audit.csv and are usually duplicate or merged author rows.
+uv run python build_author_ids.py
+
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
@@ -112,7 +117,7 @@ other's new rows.
 
 ## Schema shape (read before editing data)
 
-**Fourteen tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang).
+**Fourteen tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 916 of 1043 authors have at least one.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 

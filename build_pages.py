@@ -298,9 +298,16 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     # scrapers. The addresses are already in the papers themselves, which is
     # where someone who needs to make contact should get them. Public profile
     # links carry no address and are fine.
+    # ORCID first: it is the canonical persistent identifier and the one most
+    # readers will want. All of these carry no contact details, unlike the email
+    # address that used to sit here.
     ids = []
+    if row["orcid"]:
+        ids.append(f"[ORCID {row['orcid']}](https://orcid.org/{row['orcid']})")
     if row["scholar_id"]:
         ids.append(f"[Google Scholar](https://scholar.google.com/citations?user={row['scholar_id']})")
+    if row["openalex_id"]:
+        ids.append(f"[OpenAlex](https://openalex.org/{row['openalex_id']})")
     if row["sciprofiles_id"]:
         ids.append(f"[SciProfiles](https://sciprofiles.com/profile/{row['sciprofiles_id']})")
     if ids:
@@ -497,7 +504,7 @@ def load(conn: sqlite3.Connection) -> dict:
         "doi, url, abstract FROM publication ORDER BY id"
     )]
     d["authors"] = [dict(r) for r in q(
-        "SELECT id, display_name, scholar_id, sciprofiles_id "
+        "SELECT id, display_name, scholar_id, sciprofiles_id, orcid, openalex_id "
         "FROM author_display ORDER BY id"
     )]
     d["algorithms"] = [dict(r) for r in q(

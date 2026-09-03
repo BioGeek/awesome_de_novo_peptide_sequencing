@@ -11,3 +11,4 @@ __pycache__/
 **/*.quarto_ipynb_*
 version_audit.csv
 pages/
+author_id_audit.csv
