@@ -10,6 +10,7 @@ A curated knowledge base covering the *de novo* peptide sequencing field: algori
 - `denovo.sql`: full SQL dump of `denovo.db`, committed alongside the binary so diffs are reviewable in git. Treat `denovo.sql` as the canonical, human-readable representation; regenerate it after any DB write.
 - `plots.ipynb`: Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only, not published).
 - `index.qmd` + `_quarto.yml`: the Quarto site that renders interactive charts straight from `denovo.db`.
+- `WATCHLIST.md`: tools that belong in the catalog but have no citable manuscript yet, plus things deliberately left out. Check it before concluding a tool is simply missing, and add to it rather than adding a method with no publication.
 
 ## Common commands
 
