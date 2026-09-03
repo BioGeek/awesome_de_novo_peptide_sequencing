@@ -376,8 +376,13 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         L += ["## Code", ""]
         for url in ctx["repos"]:
             L.append(f"- <{url}>")
-        L += ["", "Live stars, open issues and last-push figures are on the "
-              f"[Code activity chart]({site.home('code')}).", ""]
+        if ctx["has_metrics"]:
+            L += ["", "Live stars, open issues and last-push figures are on the "
+                  f"[Code activity chart]({site.home('code')}).", ""]
+        else:
+            L += ["", "Not tracked on the Code activity chart: those figures come "
+                  "from the GitHub API, and this link is not a public GitHub "
+                  "repository.", ""]
 
     if ctx["pubs"]:
         L += ["## Papers", ""]
@@ -394,12 +399,19 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
               ", ".join(site.link("authors", a_id, name, from_kind=K)
                         for a_id, name in ctx["authors"]), ""]
 
-    keys = ["architectures"]
+    # Only claim a chart the entry actually appears on. The architectures
+    # swim-lane bands by algorithm_family and drops family-less rows; the code
+    # charts read repository_metrics; the bipartite graph needs an author with
+    # 3+ papers.
+    keys = []
+    if row["algorithm_family"]:
+        keys.append("architectures")
     if row["subdomain"]:
         keys.append("applications")
-    if ctx["repos"]:
+    if ctx["has_metrics"]:
         keys.append("code")
-    keys.append("bipartite")
+    if ctx["has_prolific_author"]:
+        keys.append("bipartite")
     L += site.seen_in(keys)
     earliest = min((p[2] for p in ctx["pubs"] if p[2]), default=None)
     return "\n".join(L) + "\n", date_to_mtime(earliest)
@@ -552,6 +564,22 @@ def load(conn: sqlite3.Connection) -> dict:
     for r in q("SELECT algorithm_id, url FROM algorithm_repository "
                "ORDER BY algorithm_id, sort_order, url"):
         d["repos"][r["algorithm_id"]].append(r["url"])
+
+    # Which repo URLs build_repo_metrics.py could actually resolve. It uses the
+    # gh CLI, so a PyPI page, a lab website, an anonymous-review link, a
+    # Hugging Face Space or a not-yet-public GitHub repo will never have a row,
+    # and 8 algorithms are in that position. Without this the page promised
+    # "live stars on the Code activity chart" for repos that can never appear
+    # there.
+    d["metric_urls"] = {r["url"] for r in
+                        q("SELECT url FROM repository_metrics ORDER BY url")}
+
+    # The co-authorship and author-algorithm charts draw only authors with 3+
+    # papers (the `prolific` CTE in index.qmd), so an algorithm reaches the
+    # bipartite graph only through one of them.
+    d["prolific"] = {r["author_id"] for r in
+                     q("SELECT author_id FROM publication_author "
+                       "GROUP BY author_id HAVING COUNT(*) >= 3 ORDER BY author_id")}
 
     d["cites"] = defaultdict(list)
     d["cited_by"] = defaultdict(list)
@@ -747,10 +775,13 @@ def main() -> int:
                     if name not in seen:
                         seen.add(name)
                         authors.append((a, name))
+            repos = d["repos"].get(gid, [])
             ctx = {
                 "pubs": d["alg_pubs"].get(gid, []),
-                "repos": d["repos"].get(gid, []),
+                "repos": repos,
                 "authors": sorted(authors, key=lambda t: t[1]),
+                "has_metrics": any(u in d["metric_urls"] for u in repos),
+                "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
             }
             body, mtime = render_algorithm(site, row, ctx)
             emit("algorithms", site.slugs["algorithms"][gid], body, mtime)

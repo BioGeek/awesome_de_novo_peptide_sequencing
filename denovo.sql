@@ -3548,6 +3548,7 @@ INSERT INTO algorithm VALUES(233,'FoxNovo',NULL,NULL,'Transformer (NAR)','Non-au
 INSERT INTO algorithm VALUES(234,'Spectrum representation ablation study',NULL,NULL,NULL,'MSc thesis ablation of how MS/MS peaks should be represented for a Transformer de novo sequencer. Holds a Casanovo-style encoder-decoder backbone fixed and varies only the peak embedding: additive m/z-intensity, separated/concatenated m/z and intensity, precursor-normalised (relative) m/z, learnable relative m/z, zero-vector controls, and probability-aware embeddings fed with DpNovo''s signal-vs-noise peak probabilities. Finds that separating peak features beats the additive baseline, relative m/z adds a further gain, and the best result combines external signal probability with intensity and mass features: evidence that input representation, not just architecture, moves the needle on Transformer de novo accuracy.','benchmark',1,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(235,'borgonovo',NULL,NULL,'Sequence assembly','Reference-free protein sequencer: multi-protease digestion tiles a protein with overlapping peptides, and the redundant de novo reads are assembled into a per-residue consensus by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum under a prior from its consensus position raises amino-acid accuracy. Wraps Casanovo by default but is backend-agnostic.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(236,'InstaNexus',NULL,NULL,'Sequence assembly','End-to-end workflow for reference-free sequencing of full-length protein therapeutics. Multi-protease digestion yields overlapping peptides, InstaNovo sequences them de novo and Winnow rescores, then greedy overlap or de Bruijn graph assembly (default k=7, min overlap 3) reconstructs contigs ranked by a composite score over coverage, N50, scaffold count and identity. Validated on nanobodies, monoclonal antibodies and de novo mini-binders.','post-processor',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(237,'DNPS-DR',NULL,NULL,NULL,'Automated daily literature briefing for the field, running as a Hugging Face Space. Queries the PubMed eutils API once a day for a fixed keyword set (de novo peptide sequencing, de novo sequencing with mass spectrometry, immunopeptidomics, and the tool names Casanovo, HelixNovo and DeepNovo), summarises each day''s hits with an LLM, and serves them as a dated report. A monitoring service rather than a curated collection, so it complements the hand-maintained meta-resources.','meta',NULL,NULL,'De Novo Peptide Sequencing Daily Report',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3829,6 +3830,7 @@ INSERT INTO publication VALUES(268,'Generalizable direct protein sequencing with
 INSERT INTO publication VALUES(269,'Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra','2025-06-02','10.1021/acs.jproteome.5c00063','American Chemical Society (ACS)','A fundamental challenge in mass spectrometry-based proteomics is determining which peptide generated a given MS2 spectrum. Peptide sequencing typically relies on matching spectra against a known sequence database, which in some applications is not available. Deep learning-based de novo sequencing can address this limitation by directly predicting peptide sequences from MS2 data. We have seen the application of the transformer architecture to de novo sequencing produce state-of-the-art results on the so-called nine-species benchmark. In this study, we propose an improved transformer encoder inspired by the heuristics used in the manual interpretation of spectra. We modify the attention mechanism with a learned bias based on pairwise mass differences, termed Pairwise Attention (PA). Adding PA improves average peptide precision at 100% coverage by 12.7% (5.9 percentage points) over our base transformer on the original nine-species benchmark. We have also achieved a 7.4% increase over the previously published model Casanovo. Our MS2 encoding strategy is largely orthogonal to other transformer-based models encoding MS2 spectra, enabling straightforward integration into existing deep-learning approaches. Our results show that integrating domain-specific knowledge into transformers boosts de novo sequencing performance.','https://doi.org/10.1021/acs.jproteome.5c00063','Journal of Proteome Research','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(270,'Modanovo: A Unified Model for Post-translational Modification-Aware De Novo Sequencing Using Experimental Spectra From In Vivo and Synthetic Peptides','2025-12-23','10.1016/j.mcpro.2025.101501','Elsevier BV','Post-translational modifications (PTMs) play a central role in cellular regulation and are implicated in numerous diseases. Database searching remains the standard for identifying modified peptides from tandem mass spectra but is hindered by the combinatorial expansion of modification types and sites. De novo peptide sequencing offers an attractive alternative, yet existing methods remain limited to unmodified peptides or a narrow set of PTMs. Here, we curated a large dataset of spectra from endogenous and synthetic peptides from ProteomeTools spanning 19 biologically relevant amino acid-PTM combinations, covering phosphorylation, acetylation, and ubiquitination. We used this dataset to develop Modanovo, an extension of the Casanovo transformer architecture for de novo peptide sequencing. Modanovo achieved robust performance across these amino acid-PTM combinations (median area under the precision-coverage curve 0.92), while maintaining performance on unmodified peptides (0.93), nearly identical to Casanovo (0.94). The model outperformed π-PrimeNovo-PTM and InstaNovo-P and showed increased precision and complementarity to the database search tool MSFragger. Robustness was confirmed across independent datasets, particularly at peptide lengths frequently represented in the curated dataset. Applied to a phosphoproteomics dataset from monkeypox virus-infected cells, Modanovo recovered numerous confident peptides not reported by database search, including new viral phosphosites supported by spectral evidence, thereby demonstrating its complementarity to database-driven identification approaches. These results establish Modanovo as a broadly applicable model for comprehensive de novo sequencing of both modified and unmodified peptides.','https://doi.org/10.1016/j.mcpro.2025.101501','Molecular & Cellular Proteomics','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(271,'Improvements to Casanovo, a Deep Learning De Novo Peptide Sequencer','2025-12-30','10.1021/acs.jproteome.5c00706','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/acs.jproteome.5c00706','Journal of Proteome Research','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(272,'De Novo Peptide Sequencing Daily Report (DNPS-DR)','2026-08-27','','Hugging Face',NULL,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR','Hugging Face','resource',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4140,6 +4142,7 @@ INSERT INTO publication_algorithm VALUES(268,1);
 INSERT INTO publication_algorithm VALUES(269,4);
 INSERT INTO publication_algorithm VALUES(270,10);
 INSERT INTO publication_algorithm VALUES(271,12);
+INSERT INTO publication_algorithm VALUES(272,237);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5996,6 +5999,7 @@ INSERT INTO publication_author VALUES(271,93,12);
 INSERT INTO publication_author VALUES(271,94,13);
 INSERT INTO publication_author VALUES(271,95,14);
 INSERT INTO publication_author VALUES(271,96,15);
+INSERT INTO publication_author VALUES(272,165,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8307,6 +8311,7 @@ INSERT INTO algorithm_repository VALUES(230,'https://parallelsq.org/PSMtags',0);
 INSERT INTO algorithm_repository VALUES(233,'https://github.com/fennomix/fennomix.novo',0);
 INSERT INTO algorithm_repository VALUES(235,'https://github.com/statisticalbiotechnology/borgonovo',0);
 INSERT INTO algorithm_repository VALUES(236,'https://github.com/Multiomics-Analytics-Group/InstaNexus',0);
+INSERT INTO algorithm_repository VALUES(237,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -8685,8 +8690,8 @@ INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',557);
 INSERT INTO sqlite_sequence VALUES('author',1064);
-INSERT INTO sqlite_sequence VALUES('algorithm',236);
-INSERT INTO sqlite_sequence VALUES('publication',271);
+INSERT INTO sqlite_sequence VALUES('algorithm',237);
+INSERT INTO sqlite_sequence VALUES('publication',272);
 CREATE VIEW author_display AS
 SELECT a.id, a.name, a.email, a.scholar_id, a.sciprofiles_id, a.disambiguator,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

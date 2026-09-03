@@ -116,7 +116,7 @@ other's new rows.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (180), `'preprint'` (69), `'ML conference'` (9), `'thesis'` (6), `'resource'` (2, for the catalog's own Zenodo record and a third-party link collection) and `'commentary'` (1). Use one of those six; do not invent a seventh without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (183), `'preprint'` (69), `'ML conference'` (9), `'thesis'` (6), `'resource'` (3, for field resources that have no manuscript: this catalog's own Zenodo record, a third-party link collection, and a daily literature-briefing Space) and `'commentary'` (1). Use one of those six; do not invent a seventh without updating this list, and never leave it empty.
 
 ## Abstracts
 

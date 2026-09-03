@@ -47,31 +47,6 @@ When a manuscript appears, the classification is already worked out:
 `kind='algorithm'`, `algorithm_family='Transformer (AR)'`, `is_deep_learning=1`,
 `acquisition_mode='DDA'` (NovoBench benchmarks are DDA), repo as above.
 
-### DNPS-DR (De Novo Peptide Sequencing Daily Report)
-
-| | |
-|---|---|
-| Space | <https://huggingface.co/spaces/yangtingpeng/DNPS-DR> (Gradio, RUNNING on zero-a10g) |
-| Author | Tingpeng Yang, Peng Cheng Laboratory / Tsinghua SIGS, already author 165 in the catalog |
-| First released | 2026-08-27 |
-| Last checked | 2026-08-31 |
-
-Not a curated collection. Reading `config.py`, `scheduler.py` and `agent.py`: it
-queries the PubMed eutils API once a day for a fixed keyword set (`"de novo peptide
-sequencing"`, `"de novo sequencing" AND "mass spectrometry"`, immunopeptidomics, and
-the tool names casanovo / helixnovo / deepnovo), feeds each day's hits to an LLM
-(MiniMax-M2.5) for summarisation, and serves the result as a dated briefing. There is
-a backfill routine and a 00:00 Asia/Shanghai cron.
-
-So it is an automated literature-alert service rather than a catalog. That makes it a
-`kind='meta'` candidate in the same class as `jingbo02 Awesome-Denovo-Peptide-Sequencing`
-(entry 190), which is resource-backed with no manuscript, so precedent exists.
-
-Held here rather than added because it is days old, unproven, and its summaries are
-LLM-generated, which is a different kind of artifact from a hand-curated list. Revisit
-if it persists and gains use. If added: `kind='meta'`, no family, no acquisition mode,
-with a `publication_type='resource'` row pointing at the Space, following entry 190.
-
 ## Considered, not added
 
 - **CorrDIA** (`10.3390/app13105969`). DIA deconvolution feeding a conventional
