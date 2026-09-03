@@ -148,7 +148,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Non-autoregressive de novo sequencer specialised for HLA-I immunopeptides. Uses dual-token m/z encoding (integer + decimal vocabularies, ~4k tokens instead of ~3M fine-grained bins) in the spectrum encoder, then dynamic-programming top-K decoding over the NAR probability matrix to enforce exact precursor-mass constraints. Reaches &gt;90% peptide accuracy at ~2,800 spectra/s — over 100x faster than the beam-search baseline — and was used to re-analyse 168M spectra from 4,423 raw files in 18 h on one GPU, recovering 41 of 42 targeted-MS-validated non-canonical peptides.</p>
+<p>Non-autoregressive de novo sequencer specialised for HLA-I immunopeptides. Uses dual-token m/z encoding (integer + decimal vocabularies, ~4k tokens instead of ~3M fine-grained bins) in the spectrum encoder, then dynamic-programming top-K decoding over the NAR probability matrix to enforce exact precursor-mass constraints. Reaches &gt;90% peptide accuracy at ~2,800 spectra/s, over 100x faster than the beam-search baseline, and was used to re-analyse 168M spectra from 4,423 raw files in 18 h on one GPU, recovering 41 of 42 targeted-MS-validated non-canonical peptides.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
