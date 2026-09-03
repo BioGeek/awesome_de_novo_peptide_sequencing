@@ -776,8 +776,18 @@ def main() -> int:
     if "algorithms" in kinds:
         for row in d["algorithms"]:
             gid = row["id"]
+            # Byline order, not alphabetical. 192 of 235 algorithms have exactly
+            # one paper, so for most pages the byline is unambiguous and sorting
+            # by name simply loses it: Denovo-GCN read "Haipeng Wang, Ruitao Wu,
+            # Runtao Wang, Xiang Zhang" against a byline of "Ruitao Wu, Xiang
+            # Zhang, Runtao Wang, Haipeng Wang".
+            #
+            # For a method with several papers, walk them OLDEST first so the
+            # defining paper's byline leads, then append anyone who first
+            # appears on a later paper. alg_pubs is newest-first for the Papers
+            # section, hence the reversed().
             authors, seen = [], set()
-            for pub_id, *_r in d["alg_pubs"].get(gid, []):
+            for pub_id, *_r in reversed(d["alg_pubs"].get(gid, [])):
                 for a, name in d["pub_authors"].get(pub_id, []):
                     if name not in seen:
                         seen.add(name)
@@ -786,7 +796,7 @@ def main() -> int:
             ctx = {
                 "pubs": d["alg_pubs"].get(gid, []),
                 "repos": repos,
-                "authors": sorted(authors, key=lambda t: t[1]),
+                "authors": authors,
                 "has_metrics": any(u in d["metric_urls"] for u in repos),
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
             }
