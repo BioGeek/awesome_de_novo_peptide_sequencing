@@ -8324,7 +8324,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/biocc/SP-MEGD_Fusion',
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',5,1,1,0,0,0,'2025-11-12T22:57:57Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/ThatMatin/TransNovo',1,0,0,0,0,2,'2024-07-19T08:52:58Z','2026-05-26T12:42:18',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo',11,4,2,2,1,0,'2025-02-27T04:18:01Z','2026-06-10T07:20:03',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo',12,4,2,2,1,0,'2025-02-27T04:18:01Z','2026-09-07T10:49:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/Transformer-DIA',2,1,0,0,0,0,'2025-09-20T20:57:39Z','2026-07-16T07:50:14',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/progistar/pXg',5,0,0,1,0,0,'2024-05-22T01:20:58Z','2026-06-24T08:16:11','v2.3.0-2024-05-15');
 INSERT INTO repository_metrics VALUES('https://github.com/shallFun4Learning/PGPointNovo',3,0,1,0,0,0,'2023-01-26T12:33:52Z','2026-05-26T12:38:15',NULL);
@@ -8337,7 +8337,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',197,79,18,313,12,335,'2026-08-26T03:26:23Z','2026-09-03T10:11:08','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',5,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-07-15T07:45:10',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',6,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-09-07T10:49:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,0,6,'2026-08-19T05:02:25Z','2026-08-19T06:20:19','v1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo',31,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-06-12T07:28:47',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/usr922/LIPNovo',9,1,1,0,0,0,'2025-05-26T03:21:36Z','2026-05-26T12:38:15',NULL);
