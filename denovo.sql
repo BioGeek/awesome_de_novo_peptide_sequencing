@@ -1044,6 +1044,9 @@ INSERT INTO author VALUES(1061,'Suthimon Thumtecho',NULL,NULL,NULL,NULL,'0000-00
 INSERT INTO author VALUES(1062,'Pasquale D. Colaianni',NULL,NULL,NULL,NULL,'0000-0003-4437-5827','A5024042176');
 INSERT INTO author VALUES(1063,'Marie V. Lukassen',NULL,NULL,NULL,NULL,'0000-0003-3237-2696','A5071339573');
 INSERT INTO author VALUES(1064,'Alberto Santos','albsad@biosustain.dtu.dk',NULL,NULL,NULL,'0000-0002-9163-7730','A5061383495');
+INSERT INTO author VALUES(1065,'Mechiel Nieuwoudt',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1066,'Divanisha Patel',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1067,'Isaac H.J. Houngue',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1841,6 +1844,7 @@ INSERT INTO affiliation VALUES(554,'Westlake University','Center for Infectious 
 INSERT INTO affiliation VALUES(555,'KTH Royal Institute of Technology','Science for Life Laboratory, Department of Protein Science',6,241);
 INSERT INTO affiliation VALUES(556,'Technical University of Denmark','Center for Translational Protein Design',3,4);
 INSERT INTO affiliation VALUES(557,'Novonesis',NULL,3,4);
+INSERT INTO affiliation VALUES(558,'Technical University of Denmark','Novo Nordisk Foundation Biotechnology Research Institute for the Green Transition',3,4);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3298,6 +3302,11 @@ INSERT INTO author_affiliation VALUES(280,202);
 INSERT INTO author_affiliation VALUES(280,203);
 INSERT INTO author_affiliation VALUES(280,204);
 INSERT INTO author_affiliation VALUES(215,131);
+INSERT INTO author_affiliation VALUES(1065,1);
+INSERT INTO author_affiliation VALUES(1066,1);
+INSERT INTO author_affiliation VALUES(1067,1);
+INSERT INTO author_affiliation VALUES(1057,558);
+INSERT INTO author_affiliation VALUES(1064,558);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3539,6 +3548,7 @@ INSERT INTO algorithm VALUES(234,'Spectrum representation ablation study',NULL,N
 INSERT INTO algorithm VALUES(235,'borgonovo',NULL,NULL,'Sequence assembly','Reference-free protein sequencer: multi-protease digestion tiles a protein with overlapping peptides, and the redundant de novo reads are assembled into a per-residue consensus by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum under a prior from its consensus position raises amino-acid accuracy. Wraps Casanovo by default but is backend-agnostic.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(236,'InstaNexus',NULL,NULL,'Sequence assembly','End-to-end workflow for reference-free sequencing of full-length protein therapeutics. Multi-protease digestion yields overlapping peptides, InstaNovo sequences them de novo and Winnow rescores, then greedy overlap or de Bruijn graph assembly (default k=7, min overlap 3) reconstructs contigs ranked by a composite score over coverage, N50, scaffold count and identity. Validated on nanobodies, monoclonal antibodies and de novo mini-binders.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(237,'DNPS-DR',NULL,NULL,NULL,'Automated daily literature briefing for the field, running as a Hugging Face Space. Queries the PubMed eutils API once a day for a fixed keyword set (de novo peptide sequencing, de novo sequencing with mass spectrometry, immunopeptidomics, and the tool names Casanovo, HelixNovo and DeepNovo), summarises each day''s hits with an LLM, and serves them as a dated report. A monitoring service rather than a curated collection, so it complements the hand-maintained meta-resources.','meta',NULL,NULL,'De Novo Peptide Sequencing Daily Report',NULL);
+INSERT INTO algorithm VALUES(238,'InstaNovo-FM',NULL,NULL,'Transformer (encoder-only)','Self-supervised foundation model for bottom-up proteomics: an encoder-only transformer trained to reconstruct masked regions of tandem mass spectra under a physics-aware objective, over a corpus of 1.47 billion MS/MS spectra with 184.6 million high-confidence annotations. The embeddings capture fragmentation method, sequence properties and post-translational modifications without peptide labels, and support de novo sequencing, database-free identification and analytical run classification as downstream tasks.','algorithm',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3821,6 +3831,7 @@ INSERT INTO publication VALUES(269,'Pairwise Attention: Leveraging Mass Differen
 INSERT INTO publication VALUES(270,'Modanovo: A Unified Model for Post-translational Modification-Aware De Novo Sequencing Using Experimental Spectra From In Vivo and Synthetic Peptides','2025-12-23','10.1016/j.mcpro.2025.101501','Elsevier BV','Post-translational modifications (PTMs) play a central role in cellular regulation and are implicated in numerous diseases. Database searching remains the standard for identifying modified peptides from tandem mass spectra but is hindered by the combinatorial expansion of modification types and sites. De novo peptide sequencing offers an attractive alternative, yet existing methods remain limited to unmodified peptides or a narrow set of PTMs. Here, we curated a large dataset of spectra from endogenous and synthetic peptides from ProteomeTools spanning 19 biologically relevant amino acid-PTM combinations, covering phosphorylation, acetylation, and ubiquitination. We used this dataset to develop Modanovo, an extension of the Casanovo transformer architecture for de novo peptide sequencing. Modanovo achieved robust performance across these amino acid-PTM combinations (median area under the precision-coverage curve 0.92), while maintaining performance on unmodified peptides (0.93), nearly identical to Casanovo (0.94). The model outperformed π-PrimeNovo-PTM and InstaNovo-P and showed increased precision and complementarity to the database search tool MSFragger. Robustness was confirmed across independent datasets, particularly at peptide lengths frequently represented in the curated dataset. Applied to a phosphoproteomics dataset from monkeypox virus-infected cells, Modanovo recovered numerous confident peptides not reported by database search, including new viral phosphosites supported by spectral evidence, thereby demonstrating its complementarity to database-driven identification approaches. These results establish Modanovo as a broadly applicable model for comprehensive de novo sequencing of both modified and unmodified peptides.','https://doi.org/10.1016/j.mcpro.2025.101501','Molecular & Cellular Proteomics','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(271,'Improvements to Casanovo, a Deep Learning De Novo Peptide Sequencer','2025-12-30','10.1021/acs.jproteome.5c00706','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/acs.jproteome.5c00706','Journal of Proteome Research','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(272,'De Novo Peptide Sequencing Daily Report (DNPS-DR)','2026-08-27','','Hugging Face',NULL,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR','Hugging Face','resource',NULL,NULL);
+INSERT INTO publication VALUES(273,'Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics','2026-09-03','10.64898/2026.09.03.747733','Cold Spring Harbor Laboratory','Mass spectrometry-based proteomics increasingly relies on machine learning, yet existing models are trained for defined supervised tasks such as peptide identification, de novo sequencing or fragment intensity prediction, limiting transfer across datasets, instruments and acquisition methods. Here we present InstaNovo-FM, a self-supervised foundation model for bottom-up proteomics trained to reconstruct masked regions of tandem mass spectra. We assemble a diverse training corpus spanning 1.47 billion MS/MS spectra and 184.6 million high-confidence annotations. We train an encoder-only transformer on the annotated tier using a physics-aware masked reconstruction objective. We demonstrate that the InstaNovo-FM embeddings encode fundamental experimental and biological properties, including fragmentation method, sequence properties and post-translational modifications, without requiring peptide labels. Furthermore, this foundation model directly enables diverse downstream applications, including de novo peptide sequencing, database-free identification and analytical run classification. InstaNovo-FM establishes a unified representation space for peptide fragmentation spectra, enabling robust transferability across the proteomics ecosystem.','https://www.biorxiv.org/content/10.64898/2026.09.03.747733v1','bioRxiv','preprint',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4133,6 +4144,7 @@ INSERT INTO publication_algorithm VALUES(269,4);
 INSERT INTO publication_algorithm VALUES(270,10);
 INSERT INTO publication_algorithm VALUES(271,12);
 INSERT INTO publication_algorithm VALUES(272,237);
+INSERT INTO publication_algorithm VALUES(273,238);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -5990,6 +6002,18 @@ INSERT INTO publication_author VALUES(271,94,13);
 INSERT INTO publication_author VALUES(271,95,14);
 INSERT INTO publication_author VALUES(271,96,15);
 INSERT INTO publication_author VALUES(272,165,1);
+INSERT INTO publication_author VALUES(273,1065,1);
+INSERT INTO publication_author VALUES(273,1057,2);
+INSERT INTO publication_author VALUES(273,1066,3);
+INSERT INTO publication_author VALUES(273,5,4);
+INSERT INTO publication_author VALUES(273,1067,5);
+INSERT INTO publication_author VALUES(273,304,6);
+INSERT INTO publication_author VALUES(273,1,7);
+INSERT INTO publication_author VALUES(273,1064,8);
+INSERT INTO publication_author VALUES(273,18,9);
+INSERT INTO publication_author VALUES(273,19,10);
+INSERT INTO publication_author VALUES(273,15,11);
+INSERT INTO publication_author VALUES(273,2,12);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8302,6 +8326,7 @@ INSERT INTO algorithm_repository VALUES(233,'https://github.com/fennomix/fennomi
 INSERT INTO algorithm_repository VALUES(235,'https://github.com/statisticalbiotechnology/borgonovo',0);
 INSERT INTO algorithm_repository VALUES(236,'https://github.com/Multiomics-Analytics-Group/InstaNexus',0);
 INSERT INTO algorithm_repository VALUES(237,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR',0);
+INSERT INTO algorithm_repository VALUES(238,'https://github.com/instadeepai/InstaNovo-FM',0);
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -8682,10 +8707,16 @@ INSERT INTO publication_version VALUES(12,271,'biorxiv');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
-INSERT INTO sqlite_sequence VALUES('affiliation',557);
-INSERT INTO sqlite_sequence VALUES('author',1064);
-INSERT INTO sqlite_sequence VALUES('algorithm',237);
-INSERT INTO sqlite_sequence VALUES('publication',272);
+INSERT INTO sqlite_sequence VALUES('affiliation',558);
+INSERT INTO sqlite_sequence VALUES('author',1067);
+INSERT INTO sqlite_sequence VALUES('algorithm',238);
+INSERT INTO sqlite_sequence VALUES('publication',273);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8740,12 +8771,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8761,10 +8786,10 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
