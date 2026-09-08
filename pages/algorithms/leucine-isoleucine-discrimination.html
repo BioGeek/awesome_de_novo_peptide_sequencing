@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Sequence-to-sequence translation from mass spectra to peptides with a transformer model – Awesome De Novo Peptide Sequencing</title>
+<title>Leucine/isoleucine discrimination – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <meta name="description" content="A comprehensive, interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike.">
-<meta property="og:title" content="Sequence-to-sequence translation from mass spectra to peptides with a transformer model – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="peer-reviewed · Nature Communications · 2024">
+<meta property="og:title" content="Leucine/isoleucine discrimination – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="adjacent · Neural network">
 
 
 </head>
@@ -130,8 +130,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Sequence-to-sequence translation from mass spectra to peptides with a transformer model</h1>
-<p class="subtitle lead">peer-reviewed · Nature Communications · 2024</p>
+<h1 class="title">Leucine/isoleucine discrimination</h1>
+<p class="subtitle lead">adjacent · Neural network</p>
 </div>
 
 
@@ -148,151 +148,41 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Deep-neural-network discrimination of the isomeric residues leucine and isoleucine, which are practically indistinguishable in de novo sequencing from ordinary tandem MS data. Rather than relying on the characteristic satellite ions that EThCD fragmentation produces, it learns from raw spectra directly, searching a broader range of the signal for other evidence that separates the two.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td>Date</td>
-<td>2024-07-30</td>
+<td>Kind</td>
+<td>adjacent</td>
 </tr>
 <tr class="even">
-<td>Type</td>
-<td>peer-reviewed</td>
+<td>Family</td>
+<td>Neural network</td>
 </tr>
 <tr class="odd">
-<td>Venue</td>
-<td><a href="../venues/nature-communications.html">Nature Communications</a></td>
+<td>Deep learning</td>
+<td>yes</td>
 </tr>
 <tr class="even">
-<td>Publisher</td>
-<td>Nature Communications</td>
-</tr>
-<tr class="odd">
-<td>Contribution</td>
-<td>algorithm</td>
-</tr>
-<tr class="even">
-<td>DOI</td>
-<td><a href="https://doi.org/10.1038/s41467-024-49731-x">10.1038/s41467-024-49731-x</a></td>
-</tr>
-<tr class="odd">
-<td>Citations (OpenAlex)</td>
-<td>105</td>
-</tr>
-<tr class="even">
-<td>Venue 2-year citedness</td>
-<td>15.88</td>
+<td>Acquisition</td>
+<td>DDA</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-simple callout-note">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p><strong>Preprint version:</strong> <a href="sequence-to-sequence-translation-from-mass-spectra-to-peptides-with-a-preprint.html">Sequence-to-sequence translation from mass spectra to peptides with a transformer model</a> (2023-01-03, bioRxiv)</p>
-</div>
-</div>
-</div>
-<section id="abstract" class="level2">
-<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>A fundamental challenge in mass spectrometry-based proteomics is the identification of the peptide that generated each acquired tandem mass spectrum. Approaches that leverage known peptide sequence databases cannot detect unexpected peptides and can be impractical or impossible to apply in some settings. Thus, the ability to assign peptide sequences to tandem mass spectra without prior information-de novo peptide sequencing-is valuable for tasks including antibody sequencing, immunopeptidomics, and metaproteomics. Although many methods have been developed to address this problem, it remains an outstanding challenge in part due to the difficulty of modeling the irregular data structure of tandem mass spectra. Here, we describe Casanovo, a machine learning model that uses a transformer neural network architecture to translate the sequence of peaks in a tandem mass spectrum into the sequence of amino acids that comprise the generating peptide. We train a Casanovo model from 30 million labeled spectra and demonstrate that the model outperforms several state-of-the-art methods on a cross-species benchmark dataset. We also develop a version of Casanovo that is fine-tuned for non-enzymatic peptides. Finally, we demonstrate that Casanovo’s superior performance improves the analysis of immunopeptidomics and metaproteomics experiments and allows us to delve deeper into the dark proteome.</p>
-</section>
-<section id="authors" class="level2">
-<h2 class="anchored" data-anchor-id="authors">Authors</h2>
-<ol type="1">
-<li><a href="../authors/melih-yilmaz.html">Melih Yilmaz</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-<li><a href="../authors/william-e-fondrie.html">William E. Fondrie</a> · <a href="../institutions/talus-bioscience.html">Talus Bioscience</a></li>
-<li><a href="../authors/wout-bittremieux.html">Wout Bittremieux</a> · <a href="../institutions/indiana-university.html">Indiana University</a>, <a href="../institutions/university-of-antwerp.html">University of Antwerp</a>, <a href="../institutions/university-of-california-san-diego.html">University of California San Diego</a></li>
-<li><a href="../authors/carlo-f-melendez.html">Carlo F. Melendez</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-<li><a href="../authors/rowan-nelson.html">Rowan Nelson</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-<li><a href="../authors/varun-ananth.html">Varun Ananth</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-<li><a href="../authors/sewoong-oh.html">Sewoong Oh</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-<li><a href="../authors/william-stafford-noble.html">William Stafford Noble</a> · <a href="../institutions/university-of-washington.html">University of Washington</a></li>
-</ol>
-</section>
-<section id="methods-and-tools" class="level2">
-<h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
 <ul>
-<li><a href="../algorithms/casanovo.html">Casanovo</a>: First Transformer</li>
+<li><a href="../publications/discrimination-of-leucine-and-isoleucine-in-de-novo-peptide-sequencing-using.html">Discrimination of Leucine and Isoleucine in De Novo peptide sequencing using deep neural networks</a> (2020, thesis)</li>
 </ul>
 </section>
-<section id="cites-21" class="level2">
-<h2 class="anchored" data-anchor-id="cites-21">Cites (21)</h2>
-<ul>
-<li><a href="bidirectional-de-novo-peptide-sequencing-using-a-transformer-model.html">Bidirectional de novo peptide sequencing using a transformer model</a> (2024) <small>both</small></li>
-<li><a href="introducing-pi-helixnovo-for-practical-large-scale-de-novo-peptide-sequencing.html">Introducing π-HelixNovo for practical large-scale de novo peptide sequencing</a> (2024) <small>crossref</small></li>
-<li><a href="deep-learning-driven-fragment-ion-series-classification-enables-highly-precise.html">Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo peptide sequencing</a> (2024) <small>crossref</small></li>
-<li><a href="accurate-de-novo-peptide-sequencing-using-fully-convolutional-neural-networks.html">Accurate de novo peptide sequencing using fully convolutional neural networks</a> (2023) <small>both</small></li>
-<li><a href="mitigating-the-missing-fragmentation-problem-in-de-novo-peptide-sequencing-with.html">Mitigating the missing-fragmentation problem in de novo peptide sequencing with a two-stage graph-based deep learning model</a> (2023) <small>semanticscholar</small></li>
-<li><a href="introducing-pandanovo-for-practical-large-scale-de-novo-peptide-sequencing.html">Introducing PandaNovo for practical large-scale de novo peptide sequencing</a> (2023) <small>semanticscholar</small></li>
-<li><a href="denovo-gcn-de-novo-peptide-sequencing-by-graph-convolutional-neural-networks.html">Denovo-GCN: De Novo Peptide Sequencing by Graph Convolutional Neural Networks</a> (2023) <small>both</small></li>
-<li><a href="comprehensive-evaluation-of-peptide-de-novo-sequencing-tools-for-monoclonal.html">Comprehensive evaluation of peptide de novo sequencing tools for monoclonal antibody assembly</a> (2023) <small>both</small></li>
-<li><a href="de-novo-mass-spectrometry-peptide-sequencing-with-a-transformer-model-preprint.html">De novo mass spectrometry peptide sequencing with a transformer model</a> (2022) <small>both</small></li>
-<li><a href="computationally-instrument-resolution-independent-de-novo-peptide-sequencing.html">Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution devices</a> (2021) <small>both</small></li>
-<li><a href="uncovering-thousands-of-new-peptides-with-sequence-mask-search-hybrid-de-novo.html">Uncovering Thousands of New Peptides with Sequence-Mask-Search Hybrid De Novo Peptide Sequencing Framework</a> (2019) <small>both</small></li>
-<li><a href="pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a> (2019) <small>both</small></li>
-<li><a href="prosit-proteome-wide-prediction-of-peptide-tandem-mass-spectra-by-deep-learning.html">Prosit: proteome-wide prediction of peptide tandem mass spectra by deep learning</a> (2019) <small>both</small></li>
-<li><a href="de-novo-peptide-sequencing-by-deep-learning.html">De novo peptide sequencing by deep learning</a> (2017) <small>both</small></li>
-<li><a href="novor-real-time-peptide-de-novo-sequencing-software.html">Novor: Real-Time Peptide de Novo Sequencing Software</a> (2015) <small>both</small></li>
-<li><a href="novohmm-a-hidden-markov-model-for-de-novo-peptide-sequencing.html">NovoHMM: A Hidden Markov Model for de Novo Peptide Sequencing</a> (2005) <small>both</small></li>
-<li><a href="pepnovo-de-novo-peptide-sequencing-via-probabilistic-network-modeling.html">PepNovo: de novo peptide sequencing via probabilistic network modeling</a> (2005) <small>both</small></li>
-<li><a href="a-hidden-markov-model-for-de-novo-peptide-sequencing.html">A Hidden Markov Model for de Novo Peptide Sequencing</a> (2004) <small>both</small></li>
-<li><a href="peaks-powerful-software-for-peptide-de-novo-sequencing-by-tandem-mass.html">PEAKS: powerful software for peptide de novo sequencing by tandem mass spectrometry</a> (2003) <small>crossref</small></li>
-<li><a href="de-novo-peptide-sequencing-via-tandem-mass-spectrometry.html">De novo peptide sequencing via tandem mass spectrometry</a> (1999) <small>both</small></li>
-<li><a href="sequence-database-searches-via-de-novo-peptide-sequencing-by-tandem-mass.html">Sequence database searches via de novo peptide sequencing by tandem mass spectrometry</a> (1997) <small>both</small></li>
-</ul>
-</section>
-<section id="cited-by-38" class="level2">
-<h2 class="anchored" data-anchor-id="cited-by-38">Cited by (38)</h2>
-<ul>
-<li><a href="reference-free-protein-sequencing-by-consensus-assembly-of-redundant-de-novo.html">Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads</a> (2026) <small>both</small></li>
-<li><a href="prime-diffnovo-accurate-peptide-de-novo-sequencing-via-non-autoregressive.html">Prime-DiffNovo: Accurate Peptide De Novo Sequencing via Non-autoregressive Generation and Diffusion Refinement</a> (2026) <small>crossref</small></li>
-<li><a href="casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de.html">CasanovoGUI: a cross-platform desktop application for deep learning-based de novo peptide sequencing with Casanovo</a> (2026) <small>both</small></li>
-<li><a href="instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics.html">InstaNovo-P: a de novo peptide sequencing model for phosphoproteomics</a> (2026) <small>crossref</small></li>
-<li><a href="false-discovery-rate-control-for-trustworthy-ai-based-de-novo-peptide-sequencing.html">False discovery rate control for trustworthy AI-based de novo peptide sequencing</a> (2026) <small>crossref</small></li>
-<li><a href="learning-fragmentation-physics-or-exploiting-sequence-priors-benchmarking-bias.html">Learning Fragmentation Physics or Exploiting Sequence Priors? Benchmarking Bias in Deep Learning Models for De Novo Peptide Sequencing</a> (2026) <small>both</small></li>
-<li><a href="a-large-scale-unified-deep-learning-model-for-peptide-mass-spectrum.html">A large-scale unified deep learning model for peptide mass spectrum interpretation trained on multimodal data</a> (2026) <small>crossref</small></li>
-<li><a href="powernovo2-a-generative-flow-based-approach-to-non-autoregressive-de-novo.html">PowerNovo2: A generative flow-based approach to non-autoregressive de novo peptide sequencing</a> (2026) <small>crossref</small></li>
-<li><a href="pi-msnet-a-billion-scale-ai-ready-living-proteomics-data-portal.html">π-MSNet: A billion-scale, AI-ready living proteomics data portal</a> (2026) <small>crossref</small></li>
-<li><a href="generalizable-direct-protein-sequencing-with-instanexus.html">Generalizable Direct Protein Sequencing With InstaNexus</a> (2026) <small>both</small></li>
-<li><a href="xa-novo-an-accurate-and-high-throughput-mass-spectrometry-based-de-novo.html">XA-Novo: an accurate and high-throughput mass spectrometry-based de novo sequencing technology for monoclonal antibodies and antibody mixtures</a> (2026) <small>both</small></li>
-<li><a href="abnovobench-a-resource-and-benchmarking-platform-for-monoclonal-antibody-de.html">AbNovoBench: a resource and benchmarking platform for monoclonal antibody de novo sequencing</a> (2026) <small>crossref</small></li>
-<li><a href="improvements-to-casanovo-a-deep-learning-de-novo-peptide-sequencer.html">Improvements to Casanovo, a Deep Learning De Novo Peptide Sequencer</a> (2025) <small>crossref</small></li>
-<li><a href="modanovo-a-unified-model-for-post-translational-modification-aware-de-novo.html">Modanovo: A Unified Model for Post-translational Modification-Aware De Novo Sequencing Using Experimental Spectra From In Vivo and Synthetic Peptides</a> (2025) <small>both</small></li>
-<li><a href="bidirectional-representations-augmented-autoregressive-biological-sequence.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a> (2025) <small>semanticscholar</small></li>
-<li><a href="modanovo-a-unified-model-for-post-translational-modification-aware-de-preprint.html">Modanovo: A Unified Model for Post-Translational Modification-Aware de Novo Sequencing Using Experimental Spectra from In Vivo and Synthetic Peptides</a> (2025) <small>both</small></li>
-<li><a href="framework-for-de-novo-sequencing-of-peptide-mixtures-via-network-analysis-and.html">Framework for de novo sequencing of peptide mixtures via network analysis and two-dimensional tandem mass spectrometry</a> (2025) <small>crossref</small></li>
-<li><a href="limitations-of-de-novo-sequencing-in-resolving-sequence-ambiguity.html">Limitations of de novo sequencing in resolving sequence ambiguity</a> (2025) <small>crossref</small></li>
-<li><a href="generalizable-direct-protein-sequencing-with-instanexus-preprint.html">Generalizable direct protein sequencing with InstaNexus</a> (2025) <small>crossref</small></li>
-<li><a href="improvements-to-casanovo-a-deep-learning-de-novo-peptide-sequencer-preprint.html">Improvements to CasaNovo, a deep learning de novo peptide sequencer</a> (2025) <small>crossref</small></li>
-<li><a href="punifind-a-unified-large-pre-trained-deep-learning-model-pushing-the-limit-of.html">pUniFind: a unified large pre-trained deep learning model pushing the limit of mass spectra interpretation</a> (2025) <small>semanticscholar</small></li>
-<li><a href="massnet-billion-scale-ai-friendly-mass-spectral-corpus-enables-robust-de-novo.html">MassNet: billion-scale AI-friendly mass spectral corpus enables robust de novo peptide sequencing</a> (2025) <small>crossref</small></li>
-<li><a href="curriculum-learning-for-biological-sequence-prediction-the-case-of-de-novo.html">Curriculum Learning for Biological Sequence Prediction: The Case of De Novo Peptide Sequencing</a> (2025) <small>semanticscholar</small></li>
-<li><a href="pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-sequencing-of.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025) <small>both</small></li>
-<li><a href="marlowe-taxonomic-characterization-of-unknown-samples-for-forensics-using-de.html">MARLOWE: Taxonomic Characterization of Unknown Samples for Forensics Using De Novo Peptide Identification</a> (2025) <small>crossref</small></li>
-<li><a href="latent-imputation-before-prediction-a-new-computational-paradigm-for-de-novo.html">Latent Imputation before Prediction: A New Computational Paradigm for De Novo Peptide Sequencing</a> (2025) <small>semanticscholar</small></li>
-<li><a href="foundation-model-for-mass-spectrometry-proteomics.html">Foundation model for mass spectrometry proteomics</a> (2025) <small>semanticscholar</small></li>
-<li><a href="instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics-preprint.html">InstaNovo-P: A de novo peptide sequencing model for phosphoproteomics</a> (2025) <small>crossref</small></li>
-<li><a href="instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale.html">InstaNovo enables diffusion-powered de novo peptide sequencing in large-scale proteomics experiments</a> (2025) <small>both</small></li>
-<li><a href="pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025) <small>both</small></li>
-<li><a href="dinovo-high-coverage-high-confidence-de-novo-peptide-sequencing-using-mirror.html">DiNovo: high-coverage, high-confidence de novo peptide sequencing using mirror proteases and deep learning</a> (2025) <small>crossref</small></li>
-<li><a href="pepgo-a-deep-learning-and-tree-search-based-model-for-de-novo-peptide-sequencing.html">PepGo: a deep learning and tree search-based model for de novo peptide sequencing</a> (2025) <small>crossref</small></li>
-<li><a href="metaproteomics-beyond-databases-addressing-the-challenges-and-potentials-of-de.html">Metaproteomics Beyond Databases: Addressing the Challenges and Potentials of De Novo Sequencing</a> (2025) <small>crossref</small></li>
-<li><a href="pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-learning-model.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a> (2025) <small>both</small></li>
-<li><a href="deep-learning-methods-for-de-novo-peptide-sequencing.html">Deep Learning Methods for De Novo Peptide Sequencing</a> (2024) <small>crossref</small></li>
-<li><a href="orthrus-an-ai-powered-cloud-ready-and-open-source-hybrid-approach-for.html">Orthrus: an AI-powered, cloud-ready, and open-source hybrid approach for metaproteomics</a> (2024) <small>crossref</small></li>
-<li><a href="novoboard-a-comprehensive-framework-for-evaluating-the-false-discovery-rate-and.html">NovoBoard: A Comprehensive Framework for Evaluating the False Discovery Rate and Accuracy of De Novo Peptide Sequencing</a> (2024) <small>crossref</small></li>
-<li><a href="accounting-for-digestion-enzyme-bias-in-casanovo.html">Accounting for Digestion Enzyme Bias in Casanovo</a> (2024) <small>crossref</small></li>
-</ul>
+<section id="authors-1" class="level2">
+<h2 class="anchored" data-anchor-id="authors-1">Authors (1)</h2>
+<p><a href="../authors/bingran-shen.html">Bingran Shen</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#browse-all-papers">Browse all papers</a></li>
-<li><a href="../../index.html#how-the-field-cites-itself">How the field cites itself</a></li>
-<li><a href="../../index.html#academic-impact-by-citation-count">Academic impact by citation count</a></li>
-<li><a href="../../index.html#publication-lifecycle">Publication lifecycle</a></li>
+<li><a href="../../index.html#the-architectures">The architectures</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
