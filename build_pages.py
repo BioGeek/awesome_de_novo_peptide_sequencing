@@ -284,7 +284,16 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     K = "authors"
     L = []
     n = len(ctx["pubs"])
-    sub = f"{n} paper{'s' if n != 1 else ''} in the catalog"
+    # A supervisor recorded via thesis_supervisor may have no catalogued paper of
+    # their own, in which case "0 papers" reads like a data error rather than a
+    # fact about the person.
+    if n:
+        sub = f"{n} paper{'s' if n != 1 else ''} in the catalog"
+    elif ctx.get("supervised"):
+        k = len(ctx["supervised"])
+        sub = f"supervised {k} thesis{'es' if k != 1 else ''} in the catalog"
+    else:
+        sub = "no catalogued papers"
     if ctx["countries"]:
         sub += " · " + ", ".join(ctx["countries"])
     L += front_matter(row["display_name"], sub)

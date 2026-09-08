@@ -1048,6 +1048,7 @@ INSERT INTO author VALUES(1065,'Mechiel Nieuwoudt',NULL,NULL,NULL,NULL,NULL,NULL
 INSERT INTO author VALUES(1066,'Divanisha Patel',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1067,'Isaac H.J. Houngue',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1068,'Shichao Wang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1069,'John Rose',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3309,6 +3310,7 @@ INSERT INTO author_affiliation VALUES(1067,1);
 INSERT INTO author_affiliation VALUES(1057,558);
 INSERT INTO author_affiliation VALUES(1064,558);
 INSERT INTO author_affiliation VALUES(1068,131);
+INSERT INTO author_affiliation VALUES(1069,304);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -8722,11 +8724,12 @@ CREATE TABLE thesis_supervisor (
 INSERT INTO thesis_supervisor VALUES(265,272);
 INSERT INTO thesis_supervisor VALUES(274,272);
 INSERT INTO thesis_supervisor VALUES(11,161);
+INSERT INTO thesis_supervisor VALUES(196,1069);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',558);
-INSERT INTO sqlite_sequence VALUES('author',1068);
+INSERT INTO sqlite_sequence VALUES('author',1069);
 INSERT INTO sqlite_sequence VALUES('algorithm',239);
 INSERT INTO sqlite_sequence VALUES('publication',274);
 CREATE VIEW author_display AS
