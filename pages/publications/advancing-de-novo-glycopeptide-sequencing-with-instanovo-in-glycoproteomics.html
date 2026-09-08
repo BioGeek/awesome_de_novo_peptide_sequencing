@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>InstaNovo – Awesome De Novo Peptide Sequencing</title>
+<title>Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <meta name="description" content="A comprehensive, interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike.">
-<meta property="og:title" content="InstaNovo – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="algorithm · Transformer (AR)">
+<meta property="og:title" content="Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="thesis · 2025">
 
 
 </head>
@@ -130,8 +130,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">InstaNovo</h1>
-<p class="subtitle lead">algorithm · Transformer (AR)</p>
+<h1 class="title">Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics</h1>
+<p class="subtitle lead">thesis · 2025</p>
 </div>
 
 
@@ -148,56 +148,55 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Knapsack beam search</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td>Kind</td>
-<td>algorithm</td>
+<td>Date</td>
+<td>2025-06-12</td>
 </tr>
 <tr class="even">
-<td>Family</td>
-<td>Transformer (AR)</td>
+<td>Type</td>
+<td>thesis</td>
 </tr>
 <tr class="odd">
-<td>Deep learning</td>
-<td>yes</td>
+<td>Publisher</td>
+<td>MSc thesis</td>
 </tr>
 <tr class="even">
-<td>Acquisition</td>
-<td>DDA</td>
+<td>Contribution</td>
+<td>downstream-application</td>
+</tr>
+<tr class="odd">
+<td>Supervisor</td>
+<td><a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a></td>
+</tr>
+<tr class="even">
+<td>Link</td>
+<td><a href="https://jeroen.vangoey.be/files/theses/glyco-finetuning-instanovo.pdf">https://jeroen.vangoey.be/files/theses/glyco-finetuning-instanovo.pdf</a></td>
 </tr>
 </tbody>
 </table>
-<section id="code" class="level2">
-<h2 class="anchored" data-anchor-id="code">Code</h2>
-<ul>
-<li><a href="https://github.com/instadeepai/instanovo" class="uri">https://github.com/instadeepai/instanovo</a></li>
-</ul>
-<p>Live stars, open issues and last-push figures are on the <a href="../../index.html#code-activity">Code activity chart</a>.</p>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>This study investigates the adaptation of InstaNovo, a transformer-based model originally designed for de novo peptide sequencing, to the more complex domain of glycoproteomics. Through a series of fine-tuning experiments on glycopeptide datasets, we observe that while the model shows some capacity to learn from glyco spectra, the overall improvements remain limited. Notably, fine-tuning on unfiltered spectra, which partially overlap with a dataset the model was trained on, results in stronger learning signals. However, across all fine-tuning settings, the model suffers from catastrophic forgetting, losing accuracy on peptide sequences it previously handled well. Even when using unfiltered spectra, which provide stronger learning signals for glycopeptides, this forgetting effect persists. PCA (Principal Component Analysis) projections of spectrum embeddings further reveal a significant domain shift, which helps explain why InstaNovo struggles on glycopeptides sequencing adaptation. To address this, we propose treating overlapping, glyco spectra not as outliers to discard, but as informative examples that help the model distinguish between glycosylated and non-glycosylated peptides. While fine-tuning strategies prove insufficient for reliable glycopeptide sequencing, our results highlight promising directions for improvement. Future work should explore richer datasets, multi-task learning, attention-guided learning mechanism, contrastive learning, and transformations that preserve the embedding of the original InstaNovo spectra while shifting glyco spectra closer to them in embedding space, helping align their distributions.</p>
 </section>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers</h2>
-<ul>
-<li><a href="../publications/insearch-ai-native-framework-for-large-scale-proteomic-database-search-via.html">INSearch: AI-native framework for large scale proteomic database search via contrastive joint embeddings and transformer-based scoring function</a> (2026, thesis)</li>
-<li><a href="../publications/sparse-autoencoders-for-interpretability-of-instanovo.html">Sparse Autoencoders for Interpretability of InstaNovo</a> (2026, thesis)</li>
-<li><a href="../publications/generalizable-direct-protein-sequencing-with-instanexus.html">Generalizable Direct Protein Sequencing With InstaNexus</a> (2026, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
-<li><a href="../publications/generalizable-direct-protein-sequencing-with-instanexus-preprint.html">Generalizable direct protein sequencing with InstaNexus</a> (2025, bioRxiv, preprint)</li>
-<li><a href="../publications/advancing-de-novo-glycopeptide-sequencing-with-instanovo-in-glycoproteomics.html">Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics</a> (2025, thesis)</li>
-<li><a href="../publications/instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale.html">InstaNovo enables diffusion-powered de novo peptide sequencing in large-scale proteomics experiments</a> (2025, Nature Machine Intelligence, peer-reviewed)</li>
-<li><a href="../publications/de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide.html">De novo peptide sequencing with InstaNovo: Accurate, database-free peptide identification for large scale proteomics experiments</a> (2023, bioRxiv, preprint)</li>
-</ul>
+<section id="authors" class="level2">
+<h2 class="anchored" data-anchor-id="authors">Authors</h2>
+<ol type="1">
+<li><a href="../authors/isaac-h-j-houngue.html">Isaac H.J. Houngue</a> · <a href="../institutions/african-institute-for-mathematical-sciences.html">African Institute for Mathematical Sciences</a>, <a href="../institutions/instadeep-ltd.html">InstaDeep Ltd</a></li>
+</ol>
 </section>
-<section id="authors-31" class="level2">
-<h2 class="anchored" data-anchor-id="authors-31">Authors (31)</h2>
-<p><a href="../authors/kevin-eloff.html">Kevin Eloff</a>, <a href="../authors/konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a>, <a href="../authors/oliver-morell.html">Oliver Morell</a>, <a href="../authors/amandla-mabona.html">Amandla Mabona</a>, <a href="../authors/jakob-berg-jespersen.html">Jakob Berg Jespersen</a>, <a href="../authors/wesley-williams.html">Wesley Williams</a>, <a href="../authors/sam-p-b-van-beljouw.html">Sam P. B. van Beljouw</a>, <a href="../authors/marcin-j-skwark.html">Marcin J. Skwark</a>, <a href="../authors/andreas-hougaard-laustsen.html">Andreas Hougaard Laustsen</a>, <a href="../authors/stan-j-j-brouns.html">Stan J. J. Brouns</a>, <a href="../authors/anne-ljungars.html">Anne Ljungars</a>, <a href="../authors/erwin-m-schoof.html">Erwin M. Schoof</a>, <a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a>, <a href="../authors/ulrich-auf-dem-keller.html">Ulrich auf dem Keller</a>, <a href="../authors/karim-beguir.html">Karim Beguir</a>, <a href="../authors/nicolas-lopez-carranza.html">Nicolas Lopez Carranza</a>, <a href="../authors/timothy-p-jenkins.html">Timothy P. Jenkins</a>, <a href="../authors/rachel-catzel.html">Rachel Catzel</a>, <a href="../authors/esperanza-rivera-de-torre.html">Esperanza Rivera-de-Torre</a>, <a href="../authors/isaac-h-j-houngue.html">Isaac H.J. Houngue</a>, <a href="../authors/marco-reverenna.html">Marco Reverenna</a>, <a href="../authors/maike-wennekers-nielsen.html">Maike Wennekers Nielsen</a>, <a href="../authors/darian-stephan-wolff.html">Darian Stephan Wolff</a>, <a href="../authors/elpida-lytra.html">Elpida Lytra</a>, <a href="../authors/pasquale-d-colaianni.html">Pasquale D. Colaianni</a>, <a href="../authors/marie-v-lukassen.html">Marie V. Lukassen</a>, <a href="../authors/alberto-santos.html">Alberto Santos</a>, <a href="../authors/jemma-daniel.html">Jemma Daniel</a>, <a href="../authors/suthimon-thumtecho.html">Suthimon Thumtecho</a>, <a href="../authors/mohammed-esameldin-adam-nagi.html">Mohammed Esameldin Adam Nagi</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a></p>
+<section id="methods-and-tools" class="level2">
+<h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
+<ul>
+<li><a href="../algorithms/instanovo.html">InstaNovo</a>: Knapsack beam search</li>
+<li><a href="../algorithms/instanovo-glycopeptide-fine-tuning.html">InstaNovo glycopeptide fine-tuning</a>: Adaptation of InstaNovo, a transformer de novo peptide sequencer, to glycoproteomics by fine-tuning on glycopeptide spectra. Learning from glyco spectra is measurable but limited, and every fine-tuning setting suffers catastrophic forgetting, losing accuracy on peptides the base model handled well; fine-tuning on unfiltered spectra that partly overlap the original training set gives the strongest learning signal but does not remove the effect. PCA of spectrum embeddings shows a large domain shift that explains the difficulty, and the study argues for treating overlapping glyco spectra as informative examples rather than outliers to discard, alongside multi-task and contrastive objectives and embedding transformations that pull glyco spectra toward the original distribution.</li>
+</ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#the-architectures">The architectures</a></li>
-<li><a href="../../index.html#code-activity">Code activity</a></li>
-<li><a href="../../index.html#models-and-the-authors-behind-them">Models and the authors behind them</a></li>
+<li><a href="../../index.html#browse-all-papers">Browse all papers</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 

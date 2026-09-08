@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>InstaNovo – Awesome De Novo Peptide Sequencing</title>
+<title>Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <meta name="description" content="A comprehensive, interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike.">
-<meta property="og:title" content="InstaNovo – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="algorithm · Transformer (AR)">
+<meta property="og:title" content="Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="thesis · 2024">
 
 
 </head>
@@ -130,8 +130,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">InstaNovo</h1>
-<p class="subtitle lead">algorithm · Transformer (AR)</p>
+<h1 class="title">Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding</h1>
+<p class="subtitle lead">thesis · 2024</p>
 </div>
 
 
@@ -148,56 +148,54 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Knapsack beam search</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td>Kind</td>
-<td>algorithm</td>
+<td>Date</td>
+<td>2024-06-16</td>
 </tr>
 <tr class="even">
-<td>Family</td>
-<td>Transformer (AR)</td>
+<td>Type</td>
+<td>thesis</td>
 </tr>
 <tr class="odd">
-<td>Deep learning</td>
-<td>yes</td>
+<td>Publisher</td>
+<td>MSc thesis</td>
 </tr>
 <tr class="even">
-<td>Acquisition</td>
-<td>DDA</td>
+<td>Contribution</td>
+<td>adjacent</td>
+</tr>
+<tr class="odd">
+<td>Supervisor</td>
+<td><a href="../authors/kevin-eloff.html">Kevin Eloff</a>, <a href="../authors/amandla-mabona.html">Amandla Mabona</a>, <a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a></td>
+</tr>
+<tr class="even">
+<td>Link</td>
+<td><a href="https://jeroen.vangoey.be/files/theses/spectra-encoder-cpc-pretraining.pdf">https://jeroen.vangoey.be/files/theses/spectra-encoder-cpc-pretraining.pdf</a></td>
 </tr>
 </tbody>
 </table>
-<section id="code" class="level2">
-<h2 class="anchored" data-anchor-id="code">Code</h2>
-<ul>
-<li><a href="https://github.com/instadeepai/instanovo" class="uri">https://github.com/instadeepai/instanovo</a></li>
-</ul>
-<p>Live stars, open issues and last-push figures are on the <a href="../../index.html#code-activity">Code activity chart</a>.</p>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Proteins are an important elements of life which plays an important role in several applications, including therapies and materials. Proteins are represented by a sequence, a specific order of amino acids linked together. Identification of protein sequences is necessary to perform various tasks that include designing new drugs, predicting protein function, and determining protein structure. Low cost sequencing technologies enables the identification of massive volume of new protein sequences. However, analyzing these vast datasets presents a challenge and require sophisticated tools. Database search-based algorithms have emerged as the predominant methods for sequence identification from mass spectra. However, one notable disadvantage of these approaches is the small number of peptide sequences available in the database compared to the huge array of peptides observed in nature. Deep learning techniques enabled advanced peptide mass spectrum sequencing. Despite advances in deep learning, de novo peptide sequencing remains challenging for peptide identification from spectra. Current methods struggle with both Post Translational Modification (PTMs) due to limited training data and noisy/incomplete spectra. One possible approach to overcome the challenge of the current methods is by using unsupervised learning to pretrain the networks. There are a massive volume of unlabelled mass spectra data that can be harnessed to pre-train the de novo architectures. This study aims to improve de novo peptide sequencing by pretraining transformer encoder using Contrastive Predictive Coding (CPC) based unsupervised learning. The result highlights CPC’s effectiveness for spectra library search task. On the 9-species-V2 dataset, CPC outperform OpenMS by 3.73% and 4.15% in average amino acid level precision and recall, respectively. It also shows a 3.8% improvement in peptide-level recall, highlighting the effectiveness of CPC pre-training method. Comparison on inference speed revealed that CPC significantly outperforms OpenMS on various dataset size, indicating that it is scalable at large dataset size. This research has established a solid groundwork for the effective pretraining of mass spectra encoders using CPC.</p>
 </section>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers</h2>
-<ul>
-<li><a href="../publications/insearch-ai-native-framework-for-large-scale-proteomic-database-search-via.html">INSearch: AI-native framework for large scale proteomic database search via contrastive joint embeddings and transformer-based scoring function</a> (2026, thesis)</li>
-<li><a href="../publications/sparse-autoencoders-for-interpretability-of-instanovo.html">Sparse Autoencoders for Interpretability of InstaNovo</a> (2026, thesis)</li>
-<li><a href="../publications/generalizable-direct-protein-sequencing-with-instanexus.html">Generalizable Direct Protein Sequencing With InstaNexus</a> (2026, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
-<li><a href="../publications/generalizable-direct-protein-sequencing-with-instanexus-preprint.html">Generalizable direct protein sequencing with InstaNexus</a> (2025, bioRxiv, preprint)</li>
-<li><a href="../publications/advancing-de-novo-glycopeptide-sequencing-with-instanovo-in-glycoproteomics.html">Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics</a> (2025, thesis)</li>
-<li><a href="../publications/instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale.html">InstaNovo enables diffusion-powered de novo peptide sequencing in large-scale proteomics experiments</a> (2025, Nature Machine Intelligence, peer-reviewed)</li>
-<li><a href="../publications/de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide.html">De novo peptide sequencing with InstaNovo: Accurate, database-free peptide identification for large scale proteomics experiments</a> (2023, bioRxiv, preprint)</li>
-</ul>
+<section id="authors" class="level2">
+<h2 class="anchored" data-anchor-id="authors">Authors</h2>
+<ol type="1">
+<li><a href="../authors/abel-legese-shibiru.html">Abel Legese Shibiru</a> · <a href="../institutions/african-institute-for-mathematical-sciences.html">African Institute for Mathematical Sciences</a></li>
+</ol>
 </section>
-<section id="authors-31" class="level2">
-<h2 class="anchored" data-anchor-id="authors-31">Authors (31)</h2>
-<p><a href="../authors/kevin-eloff.html">Kevin Eloff</a>, <a href="../authors/konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a>, <a href="../authors/oliver-morell.html">Oliver Morell</a>, <a href="../authors/amandla-mabona.html">Amandla Mabona</a>, <a href="../authors/jakob-berg-jespersen.html">Jakob Berg Jespersen</a>, <a href="../authors/wesley-williams.html">Wesley Williams</a>, <a href="../authors/sam-p-b-van-beljouw.html">Sam P. B. van Beljouw</a>, <a href="../authors/marcin-j-skwark.html">Marcin J. Skwark</a>, <a href="../authors/andreas-hougaard-laustsen.html">Andreas Hougaard Laustsen</a>, <a href="../authors/stan-j-j-brouns.html">Stan J. J. Brouns</a>, <a href="../authors/anne-ljungars.html">Anne Ljungars</a>, <a href="../authors/erwin-m-schoof.html">Erwin M. Schoof</a>, <a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a>, <a href="../authors/ulrich-auf-dem-keller.html">Ulrich auf dem Keller</a>, <a href="../authors/karim-beguir.html">Karim Beguir</a>, <a href="../authors/nicolas-lopez-carranza.html">Nicolas Lopez Carranza</a>, <a href="../authors/timothy-p-jenkins.html">Timothy P. Jenkins</a>, <a href="../authors/rachel-catzel.html">Rachel Catzel</a>, <a href="../authors/esperanza-rivera-de-torre.html">Esperanza Rivera-de-Torre</a>, <a href="../authors/isaac-h-j-houngue.html">Isaac H.J. Houngue</a>, <a href="../authors/marco-reverenna.html">Marco Reverenna</a>, <a href="../authors/maike-wennekers-nielsen.html">Maike Wennekers Nielsen</a>, <a href="../authors/darian-stephan-wolff.html">Darian Stephan Wolff</a>, <a href="../authors/elpida-lytra.html">Elpida Lytra</a>, <a href="../authors/pasquale-d-colaianni.html">Pasquale D. Colaianni</a>, <a href="../authors/marie-v-lukassen.html">Marie V. Lukassen</a>, <a href="../authors/alberto-santos.html">Alberto Santos</a>, <a href="../authors/jemma-daniel.html">Jemma Daniel</a>, <a href="../authors/suthimon-thumtecho.html">Suthimon Thumtecho</a>, <a href="../authors/mohammed-esameldin-adam-nagi.html">Mohammed Esameldin Adam Nagi</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a></p>
+<section id="methods-and-tools" class="level2">
+<h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
+<ul>
+<li><a href="../algorithms/cpc-spectrum-encoder-pretraining.html">CPC spectrum encoder pretraining</a>: Unsupervised pretraining of a transformer spectrum encoder by Contrastive Predictive Coding, aimed at the two things that limit supervised de novo sequencing: scarce training data for post-translational modifications, and noisy or incomplete spectra. Exploits the large volume of unlabelled tandem mass spectra that supervised training cannot use. Evaluated on spectral library search rather than sequencing, where on 9-species-V2 it beats OpenMS by 3.73% average amino-acid precision and 4.15% recall, gains 3.8% peptide-level recall, and scales better on inference speed across dataset sizes.</li>
+</ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#the-architectures">The architectures</a></li>
-<li><a href="../../index.html#code-activity">Code activity</a></li>
-<li><a href="../../index.html#models-and-the-authors-behind-them">Models and the authors behind them</a></li>
+<li><a href="../../index.html#browse-all-papers">Browse all papers</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
