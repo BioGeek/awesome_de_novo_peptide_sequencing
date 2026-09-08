@@ -1049,6 +1049,7 @@ INSERT INTO author VALUES(1066,'Divanisha Patel',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1067,'Isaac H.J. Houngue',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1068,'Shichao Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1069,'John Rose',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1070,'Bingran Shen',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3311,6 +3312,8 @@ INSERT INTO author_affiliation VALUES(1057,558);
 INSERT INTO author_affiliation VALUES(1064,558);
 INSERT INTO author_affiliation VALUES(1068,131);
 INSERT INTO author_affiliation VALUES(1069,304);
+INSERT INTO author_affiliation VALUES(518,131);
+INSERT INTO author_affiliation VALUES(1070,131);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3554,6 +3557,7 @@ INSERT INTO algorithm VALUES(236,'InstaNexus',NULL,NULL,'Sequence assembly','End
 INSERT INTO algorithm VALUES(237,'DNPS-DR',NULL,NULL,NULL,'Automated daily literature briefing for the field, running as a Hugging Face Space. Queries the PubMed eutils API once a day for a fixed keyword set (de novo peptide sequencing, de novo sequencing with mass spectrometry, immunopeptidomics, and the tool names Casanovo, HelixNovo and DeepNovo), summarises each day''s hits with an LLM, and serves them as a dated report. A monitoring service rather than a curated collection, so it complements the hand-maintained meta-resources.','meta',NULL,NULL,'De Novo Peptide Sequencing Daily Report',NULL);
 INSERT INTO algorithm VALUES(238,'InstaNovo-FM',NULL,NULL,'Transformer (encoder-only)','Self-supervised foundation model for bottom-up proteomics: an encoder-only transformer trained to reconstruct masked regions of tandem mass spectra under a physics-aware objective, over a corpus of 1.47 billion MS/MS spectra with 184.6 million high-confidence annotations. The embeddings capture fragmentation method, sequence properties and post-translational modifications without peptide labels, and support de novo sequencing, database-free identification and analytical run classification as downstream tasks.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(239,'Fragment-ion and amino-acid probability models',NULL,NULL,'Transformer (encoder-only)','Two local probability-prediction tasks for tandem mass spectra, aimed at telling sequence-informative fragment evidence from noise and from merely unobserved fragments. Fragment-Ion Probability scores whether a peak-supported mass position is a sequence-informative fragment ion; Amino Acid Probability scores whether two mass-consistent positions are adjacent fragments joined by a candidate residue. Encoder-only Transformers outperform CNN baselines on both, and feeding the probabilities to a separate sequencer raises amino-acid recall, amino-acid precision and peptide recall.','adjacent',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(240,'Leucine/isoleucine discrimination',NULL,NULL,'Neural network','Deep-neural-network discrimination of the isomeric residues leucine and isoleucine, which are practically indistinguishable in de novo sequencing from ordinary tandem MS data. Rather than relying on the characteristic satellite ions that EThCD fragmentation produces, it learns from raw spectra directly, searching a broader range of the signal for other evidence that separates the two.','adjacent',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3838,6 +3842,8 @@ INSERT INTO publication VALUES(271,'Improvements to Casanovo, a Deep Learning De
 INSERT INTO publication VALUES(272,'De Novo Peptide Sequencing Daily Report (DNPS-DR)','2026-08-27',NULL,'Hugging Face',NULL,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR','Hugging Face','resource',NULL,NULL);
 INSERT INTO publication VALUES(273,'Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics','2026-09-03','10.64898/2026.09.03.747733','Cold Spring Harbor Laboratory','Mass spectrometry-based proteomics increasingly relies on machine learning, yet existing models are trained for defined supervised tasks such as peptide identification, de novo sequencing or fragment intensity prediction, limiting transfer across datasets, instruments and acquisition methods. Here we present InstaNovo-FM, a self-supervised foundation model for bottom-up proteomics trained to reconstruct masked regions of tandem mass spectra. We assemble a diverse training corpus spanning 1.47 billion MS/MS spectra and 184.6 million high-confidence annotations. We train an encoder-only transformer on the annotated tier using a physics-aware masked reconstruction objective. We demonstrate that the InstaNovo-FM embeddings encode fundamental experimental and biological properties, including fragmentation method, sequence properties and post-translational modifications, without requiring peptide labels. Furthermore, this foundation model directly enables diverse downstream applications, including de novo peptide sequencing, database-free identification and analytical run classification. InstaNovo-FM establishes a unified representation space for peptide fragmentation spectra, enabling robust transferability across the proteomics ecosystem.','https://www.biorxiv.org/content/10.64898/2026.09.03.747733v1','bioRxiv','preprint',NULL,NULL);
 INSERT INTO publication VALUES(274,'Spectra Fragment-Ion and Amino Acid Probability Prediction for Peptide Sequencing','2026-08-18',NULL,'MSc thesis','Reliable tandem mass-spectral analysis requires distinguishing sequence-informative fragment evidence from noise and incomplete observations. This problem is important in peptide-spectrum interpretation, including database-assisted analysis and de novo peptide sequencing, because an observed peak is not necessarily a sequence-informative fragment, whereas an unobserved fragment may still be valid. This thesis formulates two local probability-prediction tasks. Fragment-Ion Probability estimates whether a peak-supported mass position represents a sequence-informative fragment ion, and Amino Acid Probability estimates whether two mass-consistent positions are adjacent fragments connected by a candidate residue. CNN and encoder-only Transformer models are developed for both tasks. In the controlled downstream experiment, using the evaluated probability models achieve higher Amino Acid Recall, Amino Acid Precision, and Peptide Recall, showing that the predicted probability provides useful complementary spectral evidence.','https://hdl.handle.net/20.500.14721/40424',NULL,'thesis',NULL,NULL);
+INSERT INTO publication VALUES(275,'De novo sequencing of multiple tandem mass spectra of peptide containing SILAC labeling','2023-03-29',NULL,'PhD thesis','The systematic studies of proteins has gradually become fundamental in the research related to molecular biology. Shotgun proteomics use bottom-up proteomics techniques in identifying proteins contained in complex mixtures using a combination of high performance liquid chromatography coupled with mass spectrometry technology. Current mass spectrometers equipped with high sensitivity and accuracy can produce thousands of tandem mass spectrometry (MS/MS) spectra in a single run. The large amount of data collected in a single LC-MS/MS run requires effective computational approaches to automate the process of spectra interpretation. De novo peptide sequencing from tandem mass spectrometry (MS/MS) has emerged as an important technology for peptide sequencing in proteomics. However, the low identification rate of the acquired mass spectral limits the efficiency of computational approaches. To increase the accuracy and practicality of de novo sequencing, some previous algorithms used multiple spectra to identify the peptide sequence. In this thesis, we focus on de novo sequencing of multiple SILAC labeled tandem mass spectra. Compared with previous approach, our research develop de novo sequencing algorithms based on different idea of how to use multiple spectra. SILAC technology uses medium containing different kinds of isotope-labeled essential amino acids, usually Arginine(R) and Lysine(K), to label newly synthesized proteins with stable isotopes during cell growth. Multiple MS/MS spectra for the same peptide sequence are produced by spectrometer after the SILAC samples are processed by LC-MS/MS shotgun proteomics. Based on the factors such as the type of isotope labeling, retention time, precursor ion mass, multiple spectra with different type of SILAC modifications for the same peptide in the sample can be used to identify the peptide sequence. In this study, not only are we aiming to identify the peptide sequence with specific SILAC modifications, but we are also pinpointing locations of SILAC modifications from multiple SILAC labeled MS/MS spectra. We propose two de novo sequencing algorithms to compute the peptide sequence which are based on total number of SILAC modifications and based on the combinations of SILAC modifications of Arginine(R) and Lysine(K). With two dynamic programming algorithms to identify peptide sequence and locating its SILAC modifications, the potential candidates are computed with similarity scores and then refinement algorithms are applied. Finally, a confident score is designed to measure all of the candidate sequence. To verify the performance of our algorithm, we compare the experimental results. We also compare the output candidates between our approach and PEAKS de novo.','https://hdl.handle.net/20.500.14721/32961',NULL,'thesis',NULL,NULL);
+INSERT INTO publication VALUES(276,'Discrimination of Leucine and Isoleucine in De Novo peptide sequencing using deep neural networks','2020-08-21',NULL,'MSc thesis','De novo peptide sequencing from tandem MS data is a key technology in proteomics for understanding the structure of proteins, especially for first seen sequences. Although this technique has advanced rapidly in recent years and become more effective, one crucial problem remained unsolved. Due to the isomerism of leucine and isoleucine, they are practically indistinguishable in de novo sequencing using traditional tandem MS data. Some experimental attempts have been made to resolve this ambiguity such as EThCD fragmentation process. In this study, we took a data focused approach rather than only looking for characteristic satellite ions produced by the EThCD fragmentation. We utilized cutting edge deep neural networks to digest raw spectra data in a broader range searching for other unknown evidence in the spectra in hopes to increase the reliability discriminating two isometric amino acids, while also explored the capabilities of such tools when dealing with tandem MS spectra data.','https://hdl.handle.net/20.500.14721/30298',NULL,'thesis',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4154,6 +4160,9 @@ INSERT INTO publication_algorithm VALUES(273,238);
 INSERT INTO publication_algorithm VALUES(274,12);
 INSERT INTO publication_algorithm VALUES(274,42);
 INSERT INTO publication_algorithm VALUES(274,239);
+INSERT INTO publication_algorithm VALUES(275,62);
+INSERT INTO publication_algorithm VALUES(275,129);
+INSERT INTO publication_algorithm VALUES(276,240);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6024,6 +6033,8 @@ INSERT INTO publication_author VALUES(273,19,10);
 INSERT INTO publication_author VALUES(273,15,11);
 INSERT INTO publication_author VALUES(273,2,12);
 INSERT INTO publication_author VALUES(274,1068,1);
+INSERT INTO publication_author VALUES(275,518,1);
+INSERT INTO publication_author VALUES(276,1070,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8727,13 +8738,15 @@ INSERT INTO thesis_supervisor VALUES(11,161);
 INSERT INTO thesis_supervisor VALUES(196,1069);
 INSERT INTO thesis_supervisor VALUES(57,161);
 INSERT INTO thesis_supervisor VALUES(119,99);
+INSERT INTO thesis_supervisor VALUES(275,272);
+INSERT INTO thesis_supervisor VALUES(276,272);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
 INSERT INTO sqlite_sequence VALUES('affiliation',558);
-INSERT INTO sqlite_sequence VALUES('author',1069);
-INSERT INTO sqlite_sequence VALUES('algorithm',239);
-INSERT INTO sqlite_sequence VALUES('publication',274);
+INSERT INTO sqlite_sequence VALUES('author',1070);
+INSERT INTO sqlite_sequence VALUES('algorithm',240);
+INSERT INTO sqlite_sequence VALUES('publication',276);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
