@@ -906,7 +906,7 @@ Plot.plot({
   height: 360,
   x: { label: "Year", tickFormat: "d", interval: 1 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
-  color: { legend: true, scheme: "blues", domain: ["preprint", "peer-reviewed", "ML conference", "thesis", "commentary"] },
+  color: { legend: true, scheme: "blues", domain: ["preprint", "postprint", "peer-reviewed", "ML conference", "thesis", "commentary"] },
   marks: [
     Plot.barY(
       // Drop kind='meta' rows: the catalog's self-entry (no
@@ -4165,6 +4165,7 @@ viewof selected_pubs = {
     "ML conference": "inproceedings",
     "thesis":        "phdthesis",
     "preprint":      "misc",
+    "postprint":     "misc",
     "commentary":    "misc"
   })[t] ?? "article"
   const to_bibtex = p => {
@@ -4179,7 +4180,8 @@ viewof selected_pubs = {
     if (p.journal) fields.push(`  journal = {${escape(p.journal)}}`)
     if (p.doi)     fields.push(`  doi     = {${escape(p.doi)}}`)
     if (p.url)     fields.push(`  url     = {${escape(p.url)}}`)
-    if (p.type === "preprint") fields.push(`  note    = {preprint}`)
+    if (p.type === "preprint" || p.type === "postprint")
+      fields.push(`  note    = {${p.type}}`)
     return `@${entry_type_of(p.type)}{${key},\n${fields.join(",\n")}\n}`
   }
   const handle_download = () => {

@@ -188,12 +188,15 @@ def all_slugs(conn: sqlite3.Connection) -> dict[str, dict[int, str]]:
     out: dict[str, dict[int, str]] = {}
     fallbacks: dict[str, list[int]] = {}
 
-    # Verified: in every colliding publication title pair, exactly one side is a
-    # preprint, so "-preprint" resolves all of them semantically.
+    # In every colliding publication title pair, exactly one side is the version
+    # of record and the other is a preprint or a postprint, so the type supplies
+    # the disambiguator semantically. Without the postprint entry, publication 30
+    # (an arXiv posting of a BIBE conference paper) would fall back to "-30".
     preprint_suffix = {
-        pid: "preprint"
-        for (pid,) in conn.execute(
-            "SELECT id FROM publication WHERE publication_type = 'preprint'"
+        pid: suffix
+        for pid, suffix in conn.execute(
+            "SELECT id, publication_type FROM publication "
+            "WHERE publication_type IN ('preprint', 'postprint')"
         )
     }
 
