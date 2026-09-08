@@ -125,6 +125,40 @@ Authors connect to publications via `publication_author` (with `author_order`) a
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. The single case is publication 30, an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
+## Publication dates
+
+`publication.publication_date` is a full `YYYY-MM-DD` string with no NULLs, so a
+date must always be produced even when the source has coarser precision. Two
+conventions, both reverse-engineered from the existing rows rather than written
+down anywhere, and worth following so the timeline stays comparable:
+
+- **Which date.** For a journal with a print issue, use the **issue** date, not
+  the online-first date. Of the sampled rows where Crossref's `published-online`
+  and `published-print` disagree, 6 of 7 carry the print date. For an online-only
+  journal (BMC, PLOS, Frontiers) the online date *is* the publication date, and
+  any nominal "issue" it is later bundled into can postdate the article by
+  months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
+  issue.
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 80 rows use day
+  `01` and 71 of those are in non-January months, so a first-of-the-month date is
+  normal here and not a red flag by itself.
+
+**The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
+holds only year precision. Copied in as-is that is indistinguishable from a real
+1 January, and it silently backdates a paper by up to a year: Chemical Science
+16(39) read as 2025-01-01 when it was published 2025-09-04. Four such rows were
+corrected (66, 153, 169, 171, plus thesis 57 from UWSpace's own metadata) by
+going to the publisher, Europe PMC or the repository instead. No builder writes
+`publication_date`, so these stay fixed, but hand-entry from an OpenAlex record
+can reintroduce it. When a source gives only a year, prefer the publisher page,
+Europe PMC `firstPublicationDate`, or a repository's `citation_publication_date`
+before settling for `YYYY-01-01`.
+
+Three rows legitimately keep 1 January (146, 158, 187: Mass Spectrometry Reviews
+34(1), Mol Cell Proteomics 8(1), AIChE Journal 53(1)) because each really is a
+January issue. Publication 196 keeps a year-only `2013-01-01` because its source,
+a Digital Commons ETD record, publishes "Date of Award 2013" with no month.
+
 ## Abstracts
 
 `build_abstracts.py` fills `publication.abstract`, trying bioRxiv, arXiv,
