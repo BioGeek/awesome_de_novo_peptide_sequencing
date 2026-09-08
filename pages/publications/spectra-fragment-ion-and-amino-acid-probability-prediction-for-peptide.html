@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing</title>
+<title>Spectra Fragment-Ion and Amino Acid Probability Prediction for Peptide Sequencing – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,7 +71,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <meta name="description" content="A comprehensive, interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike.">
-<meta property="og:title" content="Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing">
+<meta property="og:title" content="Spectra Fragment-Ion and Amino Acid Probability Prediction for Peptide Sequencing – Awesome De Novo Peptide Sequencing">
 <meta property="og:description" content="thesis · 2026">
 
 
@@ -130,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tandem Mass Spectra Representation Design for Transformer-Based De Novo Peptide Sequencing</h1>
+<h1 class="title">Spectra Fragment-Ion and Amino Acid Probability Prediction for Peptide Sequencing</h1>
 <p class="subtitle lead">thesis · 2026</p>
 </div>
 
@@ -152,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td>Date</td>
-<td>2026-07-27</td>
+<td>2026-08-18</td>
 </tr>
 <tr class="even">
 <td>Type</td>
@@ -164,7 +164,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Contribution</td>
-<td>benchmark</td>
+<td>adjacent</td>
 </tr>
 <tr class="odd">
 <td>Supervisor</td>
@@ -172,14 +172,18 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Link</td>
-<td><a href="https://hdl.handle.net/20.500.14721/40077">https://hdl.handle.net/20.500.14721/40077</a></td>
+<td><a href="https://hdl.handle.net/20.500.14721/40424">https://hdl.handle.net/20.500.14721/40424</a></td>
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Reliable tandem mass-spectral analysis requires distinguishing sequence-informative fragment evidence from noise and incomplete observations. This problem is important in peptide-spectrum interpretation, including database-assisted analysis and de novo peptide sequencing, because an observed peak is not necessarily a sequence-informative fragment, whereas an unobserved fragment may still be valid. This thesis formulates two local probability-prediction tasks. Fragment-Ion Probability estimates whether a peak-supported mass position represents a sequence-informative fragment ion, and Amino Acid Probability estimates whether two mass-consistent positions are adjacent fragments connected by a candidate residue. CNN and encoder-only Transformer models are developed for both tasks. In the controlled downstream experiment, using the evaluated probability models achieve higher Amino Acid Recall, Amino Acid Precision, and Peptide Recall, showing that the predicted probability provides useful complementary spectral evidence.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">
-<li><a href="../authors/xinlue-shen.html">Xinlue Shen</a> · <a href="../institutions/university-of-western-ontario.html">University of Western Ontario</a></li>
+<li><a href="../authors/shichao-wang.html">Shichao Wang</a> · <a href="../institutions/university-of-western-ontario.html">University of Western Ontario</a></li>
 </ol>
 </section>
 <section id="methods-and-tools" class="level2">
@@ -187,7 +191,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><a href="../algorithms/casanovo.html">Casanovo</a>: First Transformer</li>
 <li><a href="../algorithms/dpnovo.html">DpNovo</a>: Transformer + dynamic programming</li>
-<li><a href="../algorithms/spectrum-representation-ablation-study.html">Spectrum representation ablation study</a>: MSc thesis ablation of how MS/MS peaks should be represented for a Transformer de novo sequencer. Holds a Casanovo-style encoder-decoder backbone fixed and varies only the peak embedding: additive m/z-intensity, separated/concatenated m/z and intensity, precursor-normalised (relative) m/z, learnable relative m/z, zero-vector controls, and probability-aware embeddings fed with DpNovo’s signal-vs-noise peak probabilities. Finds that separating peak features beats the additive baseline, relative m/z adds a further gain, and the best result combines external signal probability with intensity and mass features: evidence that input representation, not just architecture, moves the needle on Transformer de novo accuracy.</li>
+<li><a href="../algorithms/fragment-ion-and-amino-acid-probability-models.html">Fragment-ion and amino-acid probability models</a>: Two local probability-prediction tasks for tandem mass spectra, aimed at telling sequence-informative fragment evidence from noise and from merely unobserved fragments. Fragment-Ion Probability scores whether a peak-supported mass position is a sequence-informative fragment ion; Amino Acid Probability scores whether two mass-consistent positions are adjacent fragments joined by a candidate residue. Encoder-only Transformers outperform CNN baselines on both, and feeding the probabilities to a separate sequencer raises amino-acid recall, amino-acid precision and peptide recall.</li>
 </ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
