@@ -210,6 +210,10 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         L.append(f"| Publisher | {md_escape(row['publisher'])} |")
     if kind:
         L.append(f"| Contribution | {md_escape(kind)} |")
+    if ctx.get("supervisors"):
+        L.append("| Supervisor | " + ", ".join(
+            site.link("authors", aid, nm, from_kind=K)
+            for aid, nm in ctx["supervisors"]) + " |")
     if row["doi"]:
         L.append(f"| DOI | [{md_escape(row['doi'])}](https://doi.org/{row['doi']}) |")
     elif row["url"]:
@@ -323,6 +327,21 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             if meta:
                 line += f" ({', '.join(meta)})"
             L.append(line)
+        L.append("")
+
+    if ctx.get("supervisor"):
+        L += ["## Thesis supervisor", ""]
+        for aid, nm, pub_id, title in ctx["supervisor"]:
+            L.append(f"- {site.link('authors', aid, nm, from_kind=K)}, for "
+                     + site.link("publications", pub_id, title, from_kind=K))
+        L.append("")
+
+    if ctx.get("supervised"):
+        n = len(ctx["supervised"])
+        L += [f"## Theses supervised ({n})", ""]
+        for pub_id, title, date, student in ctx["supervised"]:
+            L.append(f"- {site.link('publications', pub_id, title, from_kind=K)}"
+                     f" ({str(date)[:4]}), by {md_escape(student)}")
         L.append("")
 
     if ctx["algorithms"]:
@@ -578,6 +597,31 @@ def load(conn: sqlite3.Connection) -> dict:
     # and 8 algorithms are in that position. Without this the page promised
     # "live stars on the Code activity chart" for repos that can never appear
     # there.
+    # Thesis supervision, both directions. Kept out of publication_author on
+    # purpose: a supervisor is not an author, and treating them as one would
+    # inflate their publication count and forge a co-authorship edge. This is
+    # also the only thing that connects several thesis students to the field at
+    # all: 4 of the catalog's 6 authors with zero co-authors are thesis students.
+    d["supervisors_of"] = defaultdict(list)     # publication id -> [(aid, name)]
+    d["supervised_by"] = defaultdict(list)      # supervisor id -> [(pub, title, date, student)]
+    d["supervisor_for_student"] = defaultdict(list)  # student id -> [(aid, name, pub, title)]
+    for r in q("SELECT ts.publication_id, ts.author_id, sup.display_name AS sup_name, "
+               "p.title, p.publication_date, "
+               "stu.id AS student_id, stu.display_name AS student_name "
+               "FROM thesis_supervisor ts "
+               "JOIN publication p ON p.id = ts.publication_id "
+               "JOIN author_display sup ON sup.id = ts.author_id "
+               "JOIN publication_author pa ON pa.publication_id = p.id "
+               "JOIN author_display stu ON stu.id = pa.author_id "
+               "ORDER BY p.publication_date DESC, ts.author_id, pa.author_order"):
+        pair = (r["author_id"], r["sup_name"])
+        if pair not in d["supervisors_of"][r["publication_id"]]:
+            d["supervisors_of"][r["publication_id"]].append(pair)
+        d["supervised_by"][r["author_id"]].append(
+            (r["publication_id"], r["title"], r["publication_date"], r["student_name"]))
+        d["supervisor_for_student"][r["student_id"]].append(
+            (r["author_id"], r["sup_name"], r["publication_id"], r["title"]))
+
     d["metric_urls"] = {r["url"] for r in
                         q("SELECT url FROM repository_metrics ORDER BY url")}
 
@@ -743,6 +787,7 @@ def main() -> int:
                 "venue_citedness": ji[0] if ji else None,
                 "venue_ids": d["venue_key"],
                 "counterpart": counterpart,
+                "supervisors": d["supervisors_of"].get(pid, []),
             }
             body, mtime = render_publication(site, row, ctx)
             emit("publications", site.slugs["publications"][pid], body, mtime)
@@ -765,6 +810,8 @@ def main() -> int:
                         algs.append((a, n))
             ctx = {
                 "pubs": d["author_pubs"].get(aid, []),
+                "supervisor": d["supervisor_for_student"].get(aid, []),
+                "supervised": d["supervised_by"].get(aid, []),
                 "affiliations": affs,
                 "countries": countries,
                 "algorithms": sorted(algs, key=lambda t: t[1]),

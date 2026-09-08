@@ -8712,6 +8712,16 @@ INSERT INTO publication_version VALUES(201,203,'manual');
 INSERT INTO publication_version VALUES(4,269,'biorxiv');
 INSERT INTO publication_version VALUES(10,270,'biorxiv');
 INSERT INTO publication_version VALUES(12,271,'biorxiv');
+CREATE TABLE thesis_supervisor (
+    publication_id INTEGER NOT NULL
+        REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    author_id      INTEGER NOT NULL
+        REFERENCES author(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (publication_id, author_id)
+);
+INSERT INTO thesis_supervisor VALUES(265,272);
+INSERT INTO thesis_supervisor VALUES(274,272);
+INSERT INTO thesis_supervisor VALUES(11,161);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
@@ -8794,6 +8804,20 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
+CREATE TRIGGER thesis_supervisor_sanity
+BEFORE INSERT ON thesis_supervisor
+FOR EACH ROW
+BEGIN
+    SELECT CASE
+      WHEN (SELECT publication_type FROM publication WHERE id = NEW.publication_id)
+           <> 'thesis'
+        THEN RAISE(ABORT, 'thesis_supervisor.publication_id must reference a publication_type=thesis row')
+      WHEN EXISTS (SELECT 1 FROM publication_author pa
+                   WHERE pa.publication_id = NEW.publication_id
+                     AND pa.author_id = NEW.author_id)
+        THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
+    END;
+END;
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
 CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
