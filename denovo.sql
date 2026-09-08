@@ -8725,6 +8725,8 @@ INSERT INTO thesis_supervisor VALUES(265,272);
 INSERT INTO thesis_supervisor VALUES(274,272);
 INSERT INTO thesis_supervisor VALUES(11,161);
 INSERT INTO thesis_supervisor VALUES(196,1069);
+INSERT INTO thesis_supervisor VALUES(57,161);
+INSERT INTO thesis_supervisor VALUES(119,99);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',252);
