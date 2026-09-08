@@ -8385,7 +8385,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',4
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,NULL,NULL,NULL,NULL,'2026-08-19T22:27:40Z','2026-08-20T06:21:16',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',92,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-07-26T08:01:21','v1.1.2');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',67,23,14,109,1,131,'2026-08-01T10:54:00Z','2026-08-02T07:58:17','v4.0.1');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',67,23,14,109,0,133,'2026-09-07T18:46:41Z','2026-09-08T10:08:55','v4.0.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',55,21,48,505,1,17,'2026-08-01T11:58:34Z','2026-08-28T17:45:28',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,19,4,82,0,183,'2026-07-13T17:01:59Z','2026-08-29T11:49:56','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',2,0,0,0,0,0,'2026-05-13T07:08:03Z','2026-07-23T08:04:55',NULL);
@@ -8711,12 +8711,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',558);
 INSERT INTO sqlite_sequence VALUES('author',1067);
 INSERT INTO sqlite_sequence VALUES('algorithm',238);
 INSERT INTO sqlite_sequence VALUES('publication',273);
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8771,6 +8765,12 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8786,10 +8786,10 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 COMMIT;
