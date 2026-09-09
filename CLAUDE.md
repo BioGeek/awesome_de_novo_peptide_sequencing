@@ -214,6 +214,24 @@ Every `algorithm` row carries three classifier columns:
 
 When adding a new entry, fill all three. The site's filters (and the hero counters) depend on them.
 
+`algorithm.subdomain` is a free-text slug used only by `kind='downstream-application'`
+rows (17 values in use: `venomics`, `palaeoproteomics`, `immunopeptidomics`,
+`antibodyomics`, `glycoproteomics`, `astrobiology` and others). **A new subdomain
+must also be registered in the four `subdomain_*` OJS cells in `index.qmd`**
+(`subdomain_order`, `subdomain_label`, `subdomain_color`, `subdomain_lane_height`),
+which feed both the Application-areas swim lanes and the Sankey diagram. All four
+must carry the same key set.
+
+Forgetting used to be fatal: an unregistered subdomain made the timeline
+dereference a missing lane and throw `TypeError: Cannot read properties of
+undefined (reading 'y0')`, which kills that OJS cell and every one after it on
+the page. Both charts now fall back to the raw slug and a neutral grey instead,
+and the timeline appends unregistered subdomains rather than dropping them, so a
+missing registration degrades visibly instead of breaking the page. Register it
+anyway: the fallback is a safety net, not the intended appearance. Pick a colour
+at least ~20 CIE Lab deltaE from the existing ones, and dark enough to read as a
+small dot (the existing set's own minimum pairwise distance is 11.1).
+
 ### Local dev
 
 ```bash

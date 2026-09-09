@@ -1308,18 +1308,26 @@ innovations_timeline = {
 //| echo: false
 // Single source of truth for subdomain metadata, shared by the swim-lane
 // timeline below and the Sankey diagram further down the page. Add a new
-// subdomain here ONCE (order + label + color [+ lane height for the
-// timeline]) and both charts pick it up automatically — no need to touch
+// subdomain here ONCE (order + label + color, plus lane height for the
+// timeline) and both charts pick it up automatically, with no need to touch
 // this in two places.
+//
+// Registering a new `algorithm.subdomain` here is expected but no longer
+// REQUIRED: both charts now fall back to the raw slug and a neutral grey for
+// anything they do not recognise. That fallback exists because forgetting to
+// register one used to throw "Cannot read properties of undefined (reading
+// 'y0')" from the timeline and take down every OJS cell after it on the page.
 subdomain_order = [
-  "general-proteomics", "plant-pathogen", "metaproteomics", "wastewater-metaproteomics",
+  "general-proteomics", "glycoproteomics", "plant-pathogen", "metaproteomics",
+  "wastewater-metaproteomics",
   "immunopeptidomics", "antibodyomics", "venomics", "neuropeptidomics",
   "bioactive-peptides", "wildlife-proteomics",
   "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics",
-  "toxin-identification"
+  "astrobiology", "toxin-identification"
 ]
 subdomain_label = ({
   "general-proteomics":       "General proteomics",
+  "glycoproteomics":          "Glycoproteomics",
   "plant-pathogen":           "Plant-pathogen effectors",
   "metaproteomics":           "Metaproteomics",
   "wastewater-metaproteomics":"Wastewater metaproteomics",
@@ -1333,10 +1341,12 @@ subdomain_label = ({
   "pathogen-identification":  "Clinical pathogen ID",
   "forensics":                "Forensics",
   "palaeoproteomics":         "Palaeoproteomics",
+  "astrobiology":             "Astrobiology / life detection",
   "toxin-identification":     "Toxin identification (biodefense)"
 })
 subdomain_color = ({
   "general-proteomics":       "#8a96a0",
+  "glycoproteomics":          "#701a75",
   "plant-pathogen":           "#4c8b3a",
   "metaproteomics":           "#1a7f37",
   "wastewater-metaproteomics":"#218380",
@@ -1350,6 +1360,7 @@ subdomain_color = ({
   "pathogen-identification":  "#0a3069",
   "forensics":                "#953800",
   "palaeoproteomics":         "#8250df",
+  "astrobiology":             "#155e75",
   "toxin-identification":     "#4338ca"
 })
 // Per-lane vertical room, only used by the timeline (the Sankey sizes nodes
@@ -1357,6 +1368,7 @@ subdomain_color = ({
 // per-subdomain metadata.
 subdomain_lane_height = ({
   "general-proteomics":       1.0,
+  "glycoproteomics":          1.0,
   "plant-pathogen":           1.0,
   "metaproteomics":           1.2,
   "wastewater-metaproteomics":1.0,
@@ -1370,6 +1382,7 @@ subdomain_lane_height = ({
   "pathogen-identification":  1.0,
   "forensics":                1.0,
   "palaeoproteomics":         1.8,
+  "astrobiology":             1.0,
   "toxin-identification":     1.0
 })
 ```
@@ -1378,21 +1391,29 @@ subdomain_lane_height = ({
 //| echo: false
 application_timeline = {
   // Same swim-lane pattern as the architectures chart, keyed on subdomain
-  // instead of family. Lanes ordered oldest-application-adoption at the top
-  // (immunopeptidomics + general proteomics were first) down to the newest
-  // adopters. Currently one entry only sits in each single-entry lane
-  // (plant-pathogen, general-proteomics), so lane heights adjust accordingly.
+  // instead of family. Lane order is THEMATIC, not chronological: general and
+  // environmental proteomics at the top, then immune and organismal domains,
+  // then the identification-driven ones, ending with the three where no
+  // reference proteome exists at all (forensics, palaeoproteomics,
+  // astrobiology). Lane heights scale with how crowded a lane is.
   // Metadata (order/label/color/height) lives in the shared subdomain_* cells
   // above so this chart and the Sankey diagram below stay in sync.
-  const lane_order  = subdomain_order
-  const lane_label  = subdomain_label
-  const lane_color  = subdomain_color
-  const lane_height = subdomain_lane_height
-
   const rows = algorithms_t
     .filter(a => a.kind === "downstream-application" && a.subdomain && a.first_pub)
     .slice()
     .sort((a, b) => a.first_pub - b.first_pub)
+
+  // A subdomain present in the data but absent from subdomain_order is
+  // APPENDED rather than dropped, so a new one always shows up somewhere even
+  // before anyone registers it. Dropping it would hide real rows silently,
+  // and dereferencing an unregistered lane is what used to crash this cell.
+  const extra = Array.from(new Set(rows.map(r => r.subdomain)))
+    .filter(sd => !subdomain_order.includes(sd))
+    .sort()
+  const lane_order  = subdomain_order.concat(extra)
+  const lane_label  = subdomain_label
+  const lane_color  = subdomain_color
+  const lane_height = subdomain_lane_height
 
   let y_cursor = 0
   const lanes = lane_order.map(sd => {
@@ -1476,7 +1497,7 @@ application_timeline = {
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, total_height], axis: null },
-    color: { domain: lane_order, range: lane_order.map(s => lane_color[s]), legend: false },
+    color: { domain: lane_order, range: lane_order.map(s => lane_color[s] ?? "#888"), legend: false },
     marks: [
       Plot.rect(lanes, {
         x1: () => x_pad_min, x2: () => x_pad_max,
@@ -1487,7 +1508,7 @@ application_timeline = {
       Plot.ruleY(lanes.flatMap(l => [l.y0, l.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
       Plot.text(lanes, {
         x: () => x_pad_min, y: "center",
-        text: d => lane_label[d.subdomain],
+        text: d => lane_label[d.subdomain] ?? d.subdomain,
         textAnchor: "end", dx: -8,
         fontSize: 12, fontWeight: "bold",
         fill: "subdomain"
