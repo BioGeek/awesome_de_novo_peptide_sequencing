@@ -1054,6 +1054,23 @@ INSERT INTO author VALUES(1071,'Mohammed Esameldin Adam Nagi',NULL,NULL,NULL,NUL
 INSERT INTO author VALUES(1072,'Vicent Mwanda',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1073,'Tasneem Midhat Mustafa Attaallah',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1074,'Abel Legese Shibiru',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1075,'Ziqin Ni','zni@umd.edu',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1076,'Ricardo Arevalo Jr.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1077,'Anais Bardyn',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1078,'Lori Willhite',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1079,'Soumya Ray',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1080,'Adrian Southard',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1081,'Ryan Danell',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1082,'Jacob Graham',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1083,'Xiang Li',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1084,'Luoth Chou',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1085,'Christelle Briois',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1086,'Laurent Thirkell',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1087,'Alexander Makarov',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1088,'William Brinckerhoff',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1089,'Jennifer Eigenbrode',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1090,'Karen Junge',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1091,'Brook L. Nunn',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1328,6 +1345,11 @@ INSERT INTO city VALUES(249,'New Orleans',8,NULL,NULL);
 INSERT INTO city VALUES(250,'Hefei',2,NULL,NULL);
 INSERT INTO city VALUES(251,'Wenzhou',2,NULL,NULL);
 INSERT INTO city VALUES(252,'Chengdu',2,NULL,NULL);
+INSERT INTO city VALUES(253,'College Park',8,NULL,NULL);
+INSERT INTO city VALUES(254,'Greenbelt',8,NULL,NULL);
+INSERT INTO city VALUES(255,'Winterville',8,NULL,NULL);
+INSERT INTO city VALUES(256,'Washington',8,NULL,NULL);
+INSERT INTO city VALUES(257,'Orléans',14,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1853,6 +1875,12 @@ INSERT INTO affiliation VALUES(556,'Technical University of Denmark','Center for
 INSERT INTO affiliation VALUES(557,'Novonesis',NULL,3,4);
 INSERT INTO affiliation VALUES(558,'Technical University of Denmark','Novo Nordisk Foundation Biotechnology Research Institute for the Green Transition',3,4);
 INSERT INTO affiliation VALUES(559,'African Institute for Mathematical Sciences','AIMS South Africa',45,186);
+INSERT INTO affiliation VALUES(560,'University of Maryland',NULL,8,253);
+INSERT INTO affiliation VALUES(561,'CRESST II',NULL,8,253);
+INSERT INTO affiliation VALUES(562,'Danell Consulting',NULL,8,255);
+INSERT INTO affiliation VALUES(563,'NASA Goddard Space Flight Center',NULL,8,254);
+INSERT INTO affiliation VALUES(564,'Georgetown University',NULL,8,256);
+INSERT INTO affiliation VALUES(565,'Laboratoire de Physique et Chimie de l''Environnement et de l''Espace',NULL,14,257);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3324,6 +3352,22 @@ INSERT INTO author_affiliation VALUES(1067,559);
 INSERT INTO author_affiliation VALUES(1071,559);
 INSERT INTO author_affiliation VALUES(1073,559);
 INSERT INTO author_affiliation VALUES(1072,559);
+INSERT INTO author_affiliation VALUES(1075,560);
+INSERT INTO author_affiliation VALUES(1076,560);
+INSERT INTO author_affiliation VALUES(1077,560);
+INSERT INTO author_affiliation VALUES(1078,560);
+INSERT INTO author_affiliation VALUES(1079,560);
+INSERT INTO author_affiliation VALUES(1080,561);
+INSERT INTO author_affiliation VALUES(1081,562);
+INSERT INTO author_affiliation VALUES(1082,563);
+INSERT INTO author_affiliation VALUES(1083,563);
+INSERT INTO author_affiliation VALUES(1084,563);
+INSERT INTO author_affiliation VALUES(1084,564);
+INSERT INTO author_affiliation VALUES(1088,563);
+INSERT INTO author_affiliation VALUES(1089,563);
+INSERT INTO author_affiliation VALUES(1085,565);
+INSERT INTO author_affiliation VALUES(1086,565);
+INSERT INTO author_affiliation VALUES(1087,533);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3573,6 +3617,7 @@ INSERT INTO algorithm VALUES(242,'Diffusion spectrum foundation model',NULL,NULL
 INSERT INTO algorithm VALUES(243,'INSearch',NULL,NULL,'Hybrid de novo + database search','Prototype AI-native database search that replaces the combinatorial scan with retrieval. A dual encoder projects experimental spectra and theoretical peptide sequences into one shared latent space under a contrastive objective with variance regularisation to prevent feature collapse, and an alternative alignment-and-uniformity loss; approximate nearest-neighbour search then returns the top-k candidates, cutting retrieval from the O(S × ρP) of a conventional engine to O(S(log P + K)). Because retrieval is approximate, candidates are re-ranked by InstaNovo''s decoder run in teacher-forcing mode as a scoring function, aggregating residue log-probabilities by geometric mean. On the nine-species benchmark the held-out yeast split reaches Recall@1/5/100 of 60.0/78.9/91.9%, with neural re-scoring lifting Recall@1 to 82.9%; the harder S. brodae proteome reaches only 55.5% Recall@100, pointing to a need for larger-scale training.','adjacent',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(244,'CPC spectrum encoder pretraining',NULL,NULL,'Transformer (encoder-only)','Unsupervised pretraining of a transformer spectrum encoder by Contrastive Predictive Coding, aimed at the two things that limit supervised de novo sequencing: scarce training data for post-translational modifications, and noisy or incomplete spectra. Exploits the large volume of unlabelled tandem mass spectra that supervised training cannot use. Evaluated on spectral library search rather than sequencing, where on 9-species-V2 it beats OpenMS by 3.73% average amino-acid precision and 4.15% recall, gains 3.8% peptide-level recall, and scales better on inference speed across dataset sizes.','adjacent',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(245,'InstaNovo glycopeptide fine-tuning',NULL,NULL,'Transformer (AR)','Adaptation of InstaNovo, a transformer de novo peptide sequencer, to glycoproteomics by fine-tuning on glycopeptide spectra. Learning from glyco spectra is measurable but limited, and every fine-tuning setting suffers catastrophic forgetting, losing accuracy on peptides the base model handled well; fine-tuning on unfiltered spectra that partly overlap the original training set gives the strongest learning signal but does not remove the effect. PCA of spectrum embeddings shows a large domain shift that explains the difficulty, and the study argues for treating overlapping glyco spectra as informative examples rather than outliers to discard, alongside multi-task and contrastive objectives and embedding transformations that pull glyco spectra toward the original distribution.','downstream-application',1,'DDA',NULL,'glycoproteomics');
+INSERT INTO algorithm VALUES(246,'CORALS peptide biosignature detection',NULL,NULL,NULL,'Laser desorption mass spectrometry workflow for detecting and sequencing short peptides as candidate biosignatures on icy ocean worlds such as Enceladus, demonstrated on the CORALS spaceflight prototype: a pulsed UV laser source feeding an Orbitrap mass analyser at ultrahigh mass resolving power and accuracy. Targets the 3-mer and 4-mer peptides found enriched in the psychrophile Colwellia psychrerythraea, on the premise that life persisting in cryogenic extraterrestrial brines might converge on a similar set. Adding silicon nanoparticles raises ionisation efficiency and improves mass resolving power and accuracy by suppressing metastable decay, which is what makes peptide de novo sequencing feasible; protonated peptides, their dimers and metal adducts are all detected. Sequencing rather than database matching is the only option available here, since no reference proteome exists for an unknown organism.','downstream-application',0,'DDA',NULL,'astrobiology');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3864,6 +3909,7 @@ INSERT INTO publication VALUES(278,'Diffusion-based Foundation Model For Mass Sp
 INSERT INTO publication VALUES(279,'INSearch: AI-native framework for large scale proteomic database search via contrastive joint embeddings and transformer-based scoring function','2026-06-29',NULL,'MSc thesis','In mass spectrometry-based proteomics, identifying the peptide sequence that generated a specific spectrum is a complex challenge. The main method that is used for peptide-spectrum matching is searching against a reference database using traditional search engines; these search engines use a tailored score function to assign a score to each match based on certain criteria. However, as datasets grow in size, the search space expands combinatorially due to the inclusion of many organism proteomes or post-translational modifications, and the time complexity of these search engines is O(S × ρP) (Kalogeropoulos et al., 2026), where S and P are the number of query spectra and peptides, respectively. The aim of this project is to design a preliminary framework prototype called INSearch. The INSearch objective is to provide a sublinear candidate retrieval complexity O(S(log P + K)) while efficiently maintaining identification accuracy in large-scale database searches. INSearch utilises a dual-encoder architecture to jointly project the experimental tandem mass spectra and theoretical peptide sequences into a shared latent space so that the spectra and their corresponding ground truth peptides align. The standard contrastive loss was used as the objective loss function with an additional component, variance regularisation (Bardes et al., 2022), to prevent feature collapse. Another loss function was used as an alternative to the standard contrastive loss, alignment and uniformity loss (Wang and Isola, 2020) that optimises the contrastive learning objective asymptotically. The similarity search is conducted through an approximate nearest neighbour search algorithm to retrieve the top-k peptide candidates for a certain spectrum query, providing a sublinear time complexity. Since the similarity search is approximate, the retrieved candidate list undergoes a neural re-ranking stage: the decoder of InstaNovo (Eloff et al., 2025) is used in teacher-forcing mode as a scoring function to assign residue-specific log-probabilities, which are aggregated using the geometric mean into a final confidence score for each match. On the nine-species benchmark, the two-stage INSearch achieved strong recall on the held-out yeast test split: a Stage-1 Recall@1/5/100 of 60.0/78.9/91.9%, with the neural re-scoring stage lifting Recall@1 to 82.9%, indicating cross-species generalisation. On the more challenging S. brodae proteome the results were more moderate (a Stage-1 Recall@100 of 55.5%), indicating a further need for scaling and training on massive datasets.','https://jeroen.vangoey.be/files/theses/ai-guided-database-search-proteomics.pdf',NULL,'thesis',NULL,NULL);
 INSERT INTO publication VALUES(280,'Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding','2024-06-16',NULL,'MSc thesis','Proteins are an important elements of life which plays an important role in several applications, including therapies and materials. Proteins are represented by a sequence, a specific order of amino acids linked together. Identification of protein sequences is necessary to perform various tasks that include designing new drugs, predicting protein function, and determining protein structure. Low cost sequencing technologies enables the identification of massive volume of new protein sequences. However, analyzing these vast datasets presents a challenge and require sophisticated tools. Database search-based algorithms have emerged as the predominant methods for sequence identification from mass spectra. However, one notable disadvantage of these approaches is the small number of peptide sequences available in the database compared to the huge array of peptides observed in nature. Deep learning techniques enabled advanced peptide mass spectrum sequencing. Despite advances in deep learning, de novo peptide sequencing remains challenging for peptide identification from spectra. Current methods struggle with both Post Translational Modification (PTMs) due to limited training data and noisy/incomplete spectra. One possible approach to overcome the challenge of the current methods is by using unsupervised learning to pretrain the networks. There are a massive volume of unlabelled mass spectra data that can be harnessed to pre-train the de novo architectures. This study aims to improve de novo peptide sequencing by pretraining transformer encoder using Contrastive Predictive Coding (CPC) based unsupervised learning. The result highlights CPC''s effectiveness for spectra library search task. On the 9-species-V2 dataset, CPC outperform OpenMS by 3.73% and 4.15% in average amino acid level precision and recall, respectively. It also shows a 3.8% improvement in peptide-level recall, highlighting the effectiveness of CPC pre-training method. Comparison on inference speed revealed that CPC significantly outperforms OpenMS on various dataset size, indicating that it is scalable at large dataset size. This research has established a solid groundwork for the effective pretraining of mass spectra encoders using CPC.','https://jeroen.vangoey.be/files/theses/spectra-encoder-cpc-pretraining.pdf',NULL,'thesis',NULL,NULL);
 INSERT INTO publication VALUES(281,'Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics','2025-06-12',NULL,'MSc thesis','This study investigates the adaptation of InstaNovo, a transformer-based model originally designed for de novo peptide sequencing, to the more complex domain of glycoproteomics. Through a series of fine-tuning experiments on glycopeptide datasets, we observe that while the model shows some capacity to learn from glyco spectra, the overall improvements remain limited. Notably, fine-tuning on unfiltered spectra, which partially overlap with a dataset the model was trained on, results in stronger learning signals. However, across all fine-tuning settings, the model suffers from catastrophic forgetting, losing accuracy on peptide sequences it previously handled well. Even when using unfiltered spectra, which provide stronger learning signals for glycopeptides, this forgetting effect persists. PCA (Principal Component Analysis) projections of spectrum embeddings further reveal a significant domain shift, which helps explain why InstaNovo struggles on glycopeptides sequencing adaptation. To address this, we propose treating overlapping, glyco spectra not as outliers to discard, but as informative examples that help the model distinguish between glycosylated and non-glycosylated peptides. While fine-tuning strategies prove insufficient for reliable glycopeptide sequencing, our results highlight promising directions for improvement. Future work should explore richer datasets, multi-task learning, attention-guided learning mechanism, contrastive learning, and transformations that preserve the embedding of the original InstaNovo spectra while shifting glyco spectra closer to them in embedding space, helping align their distributions.','https://jeroen.vangoey.be/files/theses/glyco-finetuning-instanovo.pdf',NULL,'thesis',NULL,NULL);
+INSERT INTO publication VALUES(282,'Detection of Short Peptides as Putative Biosignatures of Psychrophiles via Laser Desorption Mass Spectrometry','2023-06-01','10.1089/ast.2022.0138','Mary Ann Liebert','Studies of psychrophilic life on Earth provide chemical clues as to how extraterrestrial life could maintain viability in cryogenic environments. If living systems in ocean worlds (e.g., Enceladus) share a similar set of 3-mer and 4-mer peptides to the psychrophile Colwellia psychrerythraea on Earth, spaceflight technologies and analytical methods need to be developed to detect and sequence these putative biosignatures. We demonstrate that laser desorption mass spectrometry, as implemented by the CORALS spaceflight prototype instrument, enables the detection of protonated peptides, their dimers, and metal adducts. The addition of silicon nanoparticles promotes the ionization efficiency, improves mass resolving power and mass accuracies via reduction of metastable decay, and facilitates peptide de novo sequencing. The CORALS instrument, which integrates a pulsed UV laser source and an Orbitrap mass analyzer capable of ultrahigh mass resolving powers and mass accuracies, represents an emerging technology for planetary exploration and a pathfinder for advanced technique development for astrobiological objectives.','https://www.liebertpub.com/doi/10.1089/ast.2022.0138','Astrobiology','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4191,6 +4237,7 @@ INSERT INTO publication_algorithm VALUES(279,1);
 INSERT INTO publication_algorithm VALUES(280,244);
 INSERT INTO publication_algorithm VALUES(281,1);
 INSERT INTO publication_algorithm VALUES(281,245);
+INSERT INTO publication_algorithm VALUES(282,246);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6068,6 +6115,23 @@ INSERT INTO publication_author VALUES(278,1072,1);
 INSERT INTO publication_author VALUES(279,1073,1);
 INSERT INTO publication_author VALUES(280,1074,1);
 INSERT INTO publication_author VALUES(281,1067,1);
+INSERT INTO publication_author VALUES(282,1075,1);
+INSERT INTO publication_author VALUES(282,1076,2);
+INSERT INTO publication_author VALUES(282,1077,3);
+INSERT INTO publication_author VALUES(282,1078,4);
+INSERT INTO publication_author VALUES(282,1079,5);
+INSERT INTO publication_author VALUES(282,1080,6);
+INSERT INTO publication_author VALUES(282,1081,7);
+INSERT INTO publication_author VALUES(282,1082,8);
+INSERT INTO publication_author VALUES(282,1083,9);
+INSERT INTO publication_author VALUES(282,1084,10);
+INSERT INTO publication_author VALUES(282,1085,11);
+INSERT INTO publication_author VALUES(282,1086,12);
+INSERT INTO publication_author VALUES(282,1087,13);
+INSERT INTO publication_author VALUES(282,1088,14);
+INSERT INTO publication_author VALUES(282,1089,15);
+INSERT INTO publication_author VALUES(282,1090,16);
+INSERT INTO publication_author VALUES(282,1091,17);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8790,11 +8854,11 @@ INSERT INTO thesis_supervisor VALUES(280,1);
 INSERT INTO thesis_supervisor VALUES(281,15);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
-INSERT INTO sqlite_sequence VALUES('city',252);
-INSERT INTO sqlite_sequence VALUES('affiliation',559);
-INSERT INTO sqlite_sequence VALUES('author',1074);
-INSERT INTO sqlite_sequence VALUES('algorithm',245);
-INSERT INTO sqlite_sequence VALUES('publication',281);
+INSERT INTO sqlite_sequence VALUES('city',257);
+INSERT INTO sqlite_sequence VALUES('affiliation',565);
+INSERT INTO sqlite_sequence VALUES('author',1091);
+INSERT INTO sqlite_sequence VALUES('algorithm',246);
+INSERT INTO sqlite_sequence VALUES('publication',282);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
