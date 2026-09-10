@@ -8456,7 +8456,7 @@ CREATE TABLE repository_metrics (
             last_pushed    TEXT,
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',130,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-09-02T10:00:47','1.2.2');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',131,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-09-10T10:07:27','1.2.2');
 INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',3,0,0,0,1,6,'2026-08-31T15:06:17Z','2026-09-02T10:00:47','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',5,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-09-02T10:00:47','v1.5.0-release');
@@ -8510,7 +8510,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_Ph
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',3,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-03T10:11:08',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',1,0,0,0,5,10,'2026-09-09T10:14:26Z','2026-09-09T10:11:46','v0.1.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',6,1,0,0,4,13,'2026-09-09T14:38:30Z','2026-09-10T10:07:27','v0.1.0');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -8859,12 +8859,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',565);
 INSERT INTO sqlite_sequence VALUES('author',1091);
 INSERT INTO sqlite_sequence VALUES('algorithm',246);
 INSERT INTO sqlite_sequence VALUES('publication',282);
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8919,6 +8913,12 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8934,6 +8934,12 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -8948,10 +8954,4 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
