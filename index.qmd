@@ -375,6 +375,91 @@ ojs_define(
     repo_metrics=repo_metrics,
     build_date=build_date,
 )
+
+# ---------------------------------------------------------------------------
+# NETWORK STATISTICS OF THE AUTHOR-MODEL BIPARTITE GRAPH
+# Measured 2026-09-14. Recorded deliberately and NOT published yet.
+#
+# The graph is the one built by the `author_algo_network` OJS cell further down
+# ("Models and the authors behind them"): authors with >= 3 publications linked
+# to version-suffixed algorithm labels. 297 nodes (150 authors, 147 models),
+# 653 edges, confirmed bipartite, 8 components, giant component 247 nodes (83%).
+#
+# These notes live in the PYTHON chunk on purpose. Quarto embeds OJS cell source
+# into _site/index.html and search.json even under `echo: false`, because the
+# client-side OJS runtime needs it, so a comment next to the chart would ship to
+# the live site and be full-text searchable. Python chunk comments are genuinely
+# dropped from the output (verified both ways). Keep it here until published on
+# purpose.
+#
+# Numbers are a snapshot and will drift as the catalog grows. They came from an
+# ad-hoc networkx script, not a committed builder, so there is no build_*.py to
+# go looking for.
+#
+# A statistic was judged publishable only if it is STABLE (survives changing the
+# >= 3 filter or deleting a single node), INTERPRETABLE without graph theory,
+# and NOT AN ARTIFACT of how the catalog was assembled. Most graph metrics fail
+# at least one.
+#
+# WORTH PUBLISHING
+#
+#   1. Two papers carry the connectivity. Dropping "Living proteomics benchmark"
+#      and "AI proteomics perspective" collapses the giant component from 247
+#      nodes to 69, so roughly 72% of the apparent connectivity rests on two
+#      multi-author consortium papers rather than on method-level collaboration.
+#      The most useful number here, because it changes how the chart should be
+#      read: it belongs as a caveat ON that visualisation, not as a trophy.
+#      "Living proteomics benchmark" alone carries 38 co-authors, is the unique
+#      node whose eccentricity equals the radius, and has betweenness 0.648.
+#
+#   2. Seven satellite components with no path to the giant one. Doubles as a
+#      curation worklist: some are genuinely separate communities (Xuan Guo's
+#      DIA cluster, the Malmstrom epitope group, the Merkley/Jenson forensics
+#      pair), others are probably a co-authorship link not yet catalogued.
+#
+#   3. Paradigm migration. Of 593 authors with a family-tagged method, 146 touch
+#      >= 2 families and 133 of those end in a different family than they
+#      started. Ming Li and Bin Ma both run "Graph / DP" (2003) to
+#      "Transformer (AR)" (2026 and 2023 respectively). The deep-learning
+#      transition was carried by incumbents adapting, not newcomers displacing
+#      them.
+#
+# BORDERLINE: 26 articulation points (top authors Jurgen Cox, Bin Ma, Jeroen Van
+# Goey, Lennart Martens, William Stafford Noble) and 35 bridges are meaningful
+# but fail the stability test, since the set depends on the arbitrary >= 3
+# threshold and is partly manufactured by the same two mega-papers.
+# Architectural breadth per author (Bin Ma and Pavel A. Pevzner at 5 families
+# each) is really a per-author slice of finding 3.
+#
+# REJECTED, WITH REASONS, SO THEY ARE NOT RE-PROPOSED
+#
+#   * Longest simple path. NP-hard here: the giant component has 342 independent
+#     cycles and not one of the 8 components is a tree (checked, because a
+#     forest would have made it exactly solvable in linear time). A randomised
+#     DFS exhibited a 94-node simple path, but that is an uncertifiable lower
+#     bound, not an optimum.
+#   * Diameter (12 hops), radius (6), mean shortest path (4.96 hops). These look
+#     like the respectable choice and are not. Hops alternate author/model, so
+#     12 hops is 6 collaborative steps, which no reader will infer, and the
+#     value is unstable: deleting one node moved it 12 -> 14. The diameter PATH
+#     is a decent narrative object and runs "CID/HCD spectra pairs" -> Yan Yan
+#     -> "Spectral-library-assisted de novo" -> Kaizhong Zhang -> "PEAKS" ->
+#     Ming Li -> "Living proteomics benchmark" -> Konstantinos Kalogeropoulos ->
+#     "InstaNovo-P" -> Lennart Martens -> "DeNovoGUI" -> Marc Vaudel ->
+#     "SearchGUI". The number itself is not worth quoting.
+#   * Degree assortativity (-0.037). A null result; publishing it is noise.
+#   * Betweenness ranking. Redundant with the articulation points and less
+#     interpretable than "removing this person splits the network".
+#   * Method concentration. Top 5 authors appear on 20% of the 128
+#     algorithm/post-processor rows, top 50 on 45%. Unremarkable, no story.
+#   * Newcomer share by year. Looked like the most promising finding (88% of
+#     2022's new methods came from first-time teams, falling to 27% in 2025 and
+#     9% in 2026) and was discarded on inspection: the "already seen" author set
+#     grows monotonically, so the share declines mechanically whether or not
+#     anything real changed, and 2026 was only ~70% elapsed when measured.
+#     Salvageable by switching to a bounded window ("no method in the prior
+#     three years") instead of a cumulative set. Do that before believing it.
+# ---------------------------------------------------------------------------
 ```
 
 ```{ojs}

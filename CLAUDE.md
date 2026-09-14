@@ -230,6 +230,20 @@ When adding rows by hand, always check whether the entity already exists before 
 - **OJS cells** call Quarto's built-in `transpose()` to convert column-oriented data into row-oriented arrays, then render with **Observable Plot** (bars / scatter / timeline) and **d3-force** (co-authorship network). Every counter, axis label, and prose number flows from those datasets; never hardcode anything in the .qmd.
 - `.github/workflows/publish.yml` rebuilds on every push to `main` and pushes to the `gh-pages` branch via `quarto-actions/publish@v2`. Cache is via `astral-sh/setup-uv@v3`; no PAT needed (uses `GITHUB_TOKEN`).
 
+### OJS source is public, Python chunk source is not
+
+`echo: false` hides a cell's source from the rendered *page*, but Quarto still
+embeds every **OJS** cell's source into `_site/index.html` and `_site/search.json`,
+because the client-side OJS runtime needs it. So an OJS comment ships to the live
+site and is full-text searchable. **Python** chunk comments really are dropped
+(verified both ways: a distinctive comment from the Python chunk appears 0 times
+in both files, one from an OJS cell appears in both).
+
+Consequence: any note you do not want published (an unpublished analysis, a TODO
+naming people, a half-finished finding) belongs in the Python chunk, not beside
+the chart it describes. The network-statistics notes at the end of the Python
+chunk in `index.qmd` are there for exactly this reason and say so.
+
 ### Editorial conventions
 
 - **Italicize *de novo*** in every piece of user-facing copy (page title, subtitle, prose, chart titles, README). In markdown: `*de novo*`. In HTML cells: `<em>de novo</em>`. Don't italicize it inside copied paper titles, DB string literals, or identifiers.
