@@ -117,11 +117,11 @@ other's new rows.
 
 ## Schema shape (read before editing data)
 
-**Fifteen tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 920 of 1066 authors have at least one.
+**Fifteen tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 920 of 1067 authors have at least one.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (184), `'preprint'` (69), `'thesis'` (14), `'ML conference'` (9), `'resource'` (3, for field resources that have no manuscript: this catalog's own Zenodo record, a third-party link collection, and a daily literature-briefing Space), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (184), `'preprint'` (70), `'thesis'` (14), `'ML conference'` (9), `'resource'` (3, for field resources that have no manuscript: this catalog's own Zenodo record, a third-party link collection, and a daily literature-briefing Space), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. The single case is publication 30, an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
@@ -159,6 +159,37 @@ Three rows legitimately keep 1 January (146, 158, 187: Mass Spectrometry Reviews
 January issue. Publication 196 keeps a year-only `2013-01-01` because its source,
 a Digital Commons ETD record, publishes "Date of Award 2013" with no month.
 
+## Preprint versions
+
+Normally one `publication` row per preprint, with `url` pinned to the version
+whose metadata the row reflects (InstaNovo's points at `v3`). BiATNovo is the
+exception and the worked example: bioRxiv v1 and v2 differ in BOTH title and
+author list (5 authors, one of whom is dropped, versus 10), so each version gets
+its own row and its own `publication_author` byline. `publication.version`
+distinguishes them, the same column that separates Casanovo v1 from v2.
+
+Two traps if you ever do this again:
+
+- **The DOI must go on the EARLIER row.** bioRxiv mints one DOI for all versions
+  (the versioned form `10.1101/...540352v1` is a Crossref 404) and
+  `publication.doi` is UNIQUE, so only one row can hold it. Citation harvesting
+  resolves the DOI to whichever row holds it, and papers cite a preprint from
+  before a later revision exists. With the DOI on the later row,
+  `build_citations.py`'s `is_valid_citation()` discards those edges as citations
+  of a future paper, silently and with no audit entry, on every monthly rebuild.
+  Anchored on the earliest row every edge stays valid. The cost is that the
+  newer row shows no DOI and no OpenAlex count, which is the right place for
+  them anyway: both describe the preprint as a whole.
+- **Do NOT link the versions through `publication_version`.** That table drives
+  the Publication-lifecycle chart's preprint-to-journal gap; a v1-to-v2 pair
+  would render as a preprint that took 17 months to be "published" when neither
+  version is. The versions are already linked by sharing an `algorithm` row plus
+  distinct `version` labels, which is how the architectures swim lane groups
+  them.
+
+Note this makes `n_preprints` count both versions, exactly as it already counts
+Casanovo's several preprints.
+
 ## Abstracts
 
 `build_abstracts.py` fills `publication.abstract`, trying bioRxiv, arXiv,
@@ -167,7 +198,7 @@ OpenAlex and Crossref in that order and recording which one won in
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 231/281. The 50 without one are mostly theses, conference pages and
+Coverage is 232/282. The 50 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
 
 Two guards worth knowing about, because both were hit in practice:

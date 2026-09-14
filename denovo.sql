@@ -1071,6 +1071,7 @@ INSERT INTO author VALUES(1088,'William Brinckerhoff',NULL,NULL,NULL,NULL,NULL,N
 INSERT INTO author VALUES(1089,'Jennifer Eigenbrode',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1090,'Karen Junge',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1091,'Brook L. Nunn',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1092,'Zhenxin Fu',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1881,6 +1882,7 @@ INSERT INTO affiliation VALUES(562,'Danell Consulting',NULL,8,255);
 INSERT INTO affiliation VALUES(563,'NASA Goddard Space Flight Center',NULL,8,254);
 INSERT INTO affiliation VALUES(564,'Georgetown University',NULL,8,256);
 INSERT INTO affiliation VALUES(565,'Laboratoire de Physique et Chimie de l''Environnement et de l''Espace',NULL,14,257);
+INSERT INTO affiliation VALUES(566,'Peking University','Computer Center',2,9);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3368,6 +3370,7 @@ INSERT INTO author_affiliation VALUES(1089,563);
 INSERT INTO author_affiliation VALUES(1085,565);
 INSERT INTO author_affiliation VALUES(1086,565);
 INSERT INTO author_affiliation VALUES(1087,533);
+INSERT INTO author_affiliation VALUES(1092,566);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3415,7 +3418,7 @@ INSERT INTO algorithm VALUES(39,'GraphNovo',NULL,NULL,'GNN','Missing fragments',
 INSERT INTO algorithm VALUES(40,'SeqNovo',NULL,NULL,'Transformer (AR)','Seq2Seq for IoMT','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(41,'GlycanFinder',NULL,NULL,'CNN','Glycopeptide sequencing','adjacent',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(42,'DpNovo',NULL,NULL,'Transformer (AR)','Transformer + dynamic programming','algorithm',1,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(43,'BiATNovo',NULL,NULL,'Transformer (AR)','Bidirectional self-attention','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(43,'BiATNovo',NULL,NULL,'Transformer (AR)','Bidirectional self-attention','algorithm',1,'both',NULL,NULL);
 INSERT INTO algorithm VALUES(44,'PGPointNovo',NULL,NULL,'CNN + RNN','Parallel GPU-based PointNovo','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(45,'PaSER Novor',NULL,NULL,'Transformer (AR)','Real-time 4D-proteomics','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(46,'Denovo-GCN',NULL,NULL,'GNN','GCN on spectrum graph','algorithm',1,'DDA',NULL,NULL);
@@ -3673,7 +3676,7 @@ INSERT INTO publication VALUES(41,'Mitigating the missing-fragmentation problem 
 INSERT INTO publication VALUES(42,'SeqNovo: De Novo Peptide Sequencing Prediction in IoMT via Seq2Seq','2023-10-04','10.1109/JBHI.2023.3321780','IEEE Journal of Biomedical and Health Informatics','In the Internet of Medical Things (IoMT), de novo peptide sequencing prediction is one of the most important techniques for the fields of disease prediction, diagnosis, and treatment. Recently, deep-learning-based peptide sequencing prediction has been a new trend. However, most popular deep learning models for peptide sequencing prediction suffer from poor interpretability and poor ability to capture long-range dependencies. To solve these issues, we propose a model named SeqNovo, which has the encoding-decoding structure of sequence to sequence (Seq2Seq), the highly nonlinear properties of multilayer perceptron (MLP), and the ability of the attention mechanism to capture long-range dependencies. SeqNovo use MLP to improve the feature extraction and utilize the attention mechanism to discover key information. A series of experiments have been conducted to show that the SeqNovo is superior to the Seq2Seq benchmark model, DeepNovo. SeqNovo improves both the accuracy and interpretability of the predictions, which will be expected to support more related research.','https://ieeexplore.ieee.org/document/10271529','IEEE Journal of Biomedical and Health Informatics','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(43,'Glycopeptide database search and de novo sequencing with PEAKS GlycanFinder enable highly sensitive glycoproteomics','2023-07-08','10.1038/s41467-023-39699-5','Nature Communications','Here we present GlycanFinder, a database search and de novo sequencing tool for the analysis of intact glycopeptides from mass spectrometry data. GlycanFinder integrates peptide-based and glycan-based search strategies to address the challenge of complex fragmentation of glycopeptides. A deep learning model is designed to capture glycan tree structures and their fragment ions for de novo sequencing of glycans that do not exist in the database. We performed extensive analyses to validate the false discovery rates (FDRs) at both peptide and glycan levels and to evaluate GlycanFinder based on comprehensive benchmarks from previous community-based studies. Our results show that GlycanFinder achieved comparable performance to other leading glycoproteomics softwares in terms of both FDR control and the number of identifications. Moreover, GlycanFinder was also able to identify glycopeptides not found in existing databases. Finally, we conducted a mass spectrometry experiment for antibody N-linked glycosylation profiling that could distinguish isomeric peptides and glycans in four immunoglobulin G subclasses, which had been a challenging problem to previous studies.','https://doi.org/10.1038/s41467-023-39699-5','Nature Communications','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(44,'DpNovo: A DEEP LEARNING MODEL COMBINED WITH DYNAMIC PROGRAMMING FOR DE NOVO PEPTIDE SEQUENCING','2023-07-07',NULL,'MSc thesis',NULL,'https://uwo.scholaris.ca/items/84378bf5-f2d9-45d6-8264-10823888cb9a',NULL,'thesis',NULL,NULL);
-INSERT INTO publication VALUES(45,'BiATNovo: An Attention-based Bidirectional De Novo Sequencing Framework for Data-Independent-Acquisition Mass Spectrometry','2023-05-11','10.1101/2023.05.11.540352','Cold Spring Harbor Laboratory','De novo sequencing from tandem mass spectra (MS/MS) data is a key technique for identifying novel peptides. In theory, the Data-Independent Acquisition (DIA) method can fragment all precursor ions in an unbiased and non-targeted fashion. However, each spectrum contains fragments from multiple precursor ions, and the unclear relationship between these ions and their fragments poses a significant challenge to the accuracy of de novo sequencing algorithms. Here we present BiATNovo, an attention-based bidirectional de novo peptide sequencing framework. BiATNovo comprises a bidirectional attention-based model and a bidirectional fusion-reranking post-processing module, which enables efficient capture of relationships between tandem mass spectra, fragment ions, and peptide patterns, while also expanding the candidate set to select the optimal sequence. This framework improves peptide prediction accuracy, particularly for long peptide sequences, and mitigates the imbalance where the initial amino acids are predicted more accurately than the last ones. Evaluation results demonstrate that BiATNovo outperforms existing algorithms, including DeepNovo-DIA and PepNet, in both peptid-level and amino acid-level. Furthermore, when extended to DDA datasets, BiATNovo achieves comparable performance to state-of-the-art models.','https://www.biorxiv.org/content/10.1101/2023.05.11.540352v2','bioRxiv','preprint',NULL,'biorxiv');
+INSERT INTO publication VALUES(45,'BiATNovo: An Attention-based Bidirectional De Novo Sequencing Framework for Data-Independent-Acquisition Mass Spectrometry','2024-10-28',NULL,'Cold Spring Harbor Laboratory','De novo sequencing from tandem mass spectra (MS/MS) data is a key technique for identifying novel peptides. In theory, the Data-Independent Acquisition (DIA) method can fragment all precursor ions in an unbiased and non-targeted fashion. However, each spectrum contains fragments from multiple precursor ions, and the unclear relationship between these ions and their fragments poses a significant challenge to the accuracy of de novo sequencing algorithms. Here we present BiATNovo, an attention-based bidirectional de novo peptide sequencing framework. BiATNovo comprises a bidirectional attention-based model and a bidirectional fusion-reranking post-processing module, which enables efficient capture of relationships between tandem mass spectra, fragment ions, and peptide patterns, while also expanding the candidate set to select the optimal sequence. This framework improves peptide prediction accuracy, particularly for long peptide sequences, and mitigates the imbalance where the initial amino acids are predicted more accurately than the last ones. Evaluation results demonstrate that BiATNovo outperforms existing algorithms, including DeepNovo-DIA and PepNet, in both peptid-level and amino acid-level. Furthermore, when extended to DDA datasets, BiATNovo achieves comparable performance to state-of-the-art models.','https://www.biorxiv.org/content/10.1101/2023.05.11.540352v2','bioRxiv','preprint','v2','biorxiv');
 INSERT INTO publication VALUES(46,'PGPointNovo: an efficient neural network-based tool for parallel de novo peptide sequencing','2023-04-25','10.1093/bioadv/vbad057','Bioinformatics Advances','Summary De novo peptide sequencing for tandem mass spectrometry data is not only a key technology for novel peptide identification, but also a precedent task for many downstream tasks, such as vaccine and antibody studies. In recent years, neural network models for de novo peptide sequencing have manifested a remarkable ability to accommodate various data sources and outperformed conventional peptide identification tools. However, the excellent model is computationally expensive, taking up to 1 week to process about 400 000 spectrums. This article presents PGPointNovo, a novel neural network-based tool for parallel de novo peptide sequencing. PGPointNovo uses data parallelization technology to accelerate training and inference and optimizes the training obstacles caused by large batch sizes. The results of extensive experiments conducted on multiple datasets of different sizes demonstrate that compared with PointNovo the excellent neural network-based de novo peptide sequencing tool, PGPointNovo, accelerates de novo peptide sequencing by up to 7.35× without precision or recall compromises. Availability and implementation The source code and the parameter settings are available at https://github.com/shallFun4Learning/PGPointNovo. Supplementary information Supplementary data are available at Bioinformatics Advances online.','https://doi.org/10.1093/bioadv/vbad057','Bioinformatics Advances','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(47,'PaSER Novor: Real-time de novo sequencing for 4D-Proteomics applications','2023-04-20',NULL,NULL,NULL,'https://www.bruker.com/en/news-and-events/news/2023/bruker-launches-de-novo-sequencing-for-immunopeptidomics.html',NULL,'preprint',NULL,NULL);
 INSERT INTO publication VALUES(48,'Denovo-GCN: De Novo Peptide Sequencing by Graph Convolutional Neural Networks','2023-04-05','10.3390/app13074604','MDPI Applied Sciences','The de novo peptide-sequencing method can be used to directly infer the peptide sequence from a tandem mass spectrum. It has the advantage of not relying on protein databases and plays a key role in the determination of the protein sequences of unknown species, monoclonal antibodies, and cancer neoantigens. In this paper, we propose a method based on graph convolutional neural networks and convolutional neural networks, Denovo-GCN, for de novo peptide sequencing. We constructed an undirected graph based on the mass difference between the spectral peaks in a tandem mass spectrum. The features of the nodes on the spectrum graph, which represent the spectral peaks, were the matching information of the peptide sequence and the mass spectrum. Next, the Denovo-GCN used CNN to extract the features of the nodes. The correlation between the nodes was represented by an adjacency matrix, which aggregated the features of neighboring nodes. Denovo-GCN provides a complete end-to-end training and prediction framework to sequence patterns of peptides. Our experiments on various data sets from different species show that Denovo-GCN outperforms DeepNovo with a relative improvement of 13.7–25.5% in terms of the peptide-level recall.','https://doi.org/10.3390/app13074604','Applied Sciences (MDPI)','peer-reviewed',NULL,'openalex');
@@ -3910,6 +3913,7 @@ INSERT INTO publication VALUES(279,'INSearch: AI-native framework for large scal
 INSERT INTO publication VALUES(280,'Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding','2024-06-16',NULL,'MSc thesis','Proteins are an important elements of life which plays an important role in several applications, including therapies and materials. Proteins are represented by a sequence, a specific order of amino acids linked together. Identification of protein sequences is necessary to perform various tasks that include designing new drugs, predicting protein function, and determining protein structure. Low cost sequencing technologies enables the identification of massive volume of new protein sequences. However, analyzing these vast datasets presents a challenge and require sophisticated tools. Database search-based algorithms have emerged as the predominant methods for sequence identification from mass spectra. However, one notable disadvantage of these approaches is the small number of peptide sequences available in the database compared to the huge array of peptides observed in nature. Deep learning techniques enabled advanced peptide mass spectrum sequencing. Despite advances in deep learning, de novo peptide sequencing remains challenging for peptide identification from spectra. Current methods struggle with both Post Translational Modification (PTMs) due to limited training data and noisy/incomplete spectra. One possible approach to overcome the challenge of the current methods is by using unsupervised learning to pretrain the networks. There are a massive volume of unlabelled mass spectra data that can be harnessed to pre-train the de novo architectures. This study aims to improve de novo peptide sequencing by pretraining transformer encoder using Contrastive Predictive Coding (CPC) based unsupervised learning. The result highlights CPC''s effectiveness for spectra library search task. On the 9-species-V2 dataset, CPC outperform OpenMS by 3.73% and 4.15% in average amino acid level precision and recall, respectively. It also shows a 3.8% improvement in peptide-level recall, highlighting the effectiveness of CPC pre-training method. Comparison on inference speed revealed that CPC significantly outperforms OpenMS on various dataset size, indicating that it is scalable at large dataset size. This research has established a solid groundwork for the effective pretraining of mass spectra encoders using CPC.','https://jeroen.vangoey.be/files/theses/spectra-encoder-cpc-pretraining.pdf',NULL,'thesis',NULL,NULL);
 INSERT INTO publication VALUES(281,'Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics','2025-06-12',NULL,'MSc thesis','This study investigates the adaptation of InstaNovo, a transformer-based model originally designed for de novo peptide sequencing, to the more complex domain of glycoproteomics. Through a series of fine-tuning experiments on glycopeptide datasets, we observe that while the model shows some capacity to learn from glyco spectra, the overall improvements remain limited. Notably, fine-tuning on unfiltered spectra, which partially overlap with a dataset the model was trained on, results in stronger learning signals. However, across all fine-tuning settings, the model suffers from catastrophic forgetting, losing accuracy on peptide sequences it previously handled well. Even when using unfiltered spectra, which provide stronger learning signals for glycopeptides, this forgetting effect persists. PCA (Principal Component Analysis) projections of spectrum embeddings further reveal a significant domain shift, which helps explain why InstaNovo struggles on glycopeptides sequencing adaptation. To address this, we propose treating overlapping, glyco spectra not as outliers to discard, but as informative examples that help the model distinguish between glycosylated and non-glycosylated peptides. While fine-tuning strategies prove insufficient for reliable glycopeptide sequencing, our results highlight promising directions for improvement. Future work should explore richer datasets, multi-task learning, attention-guided learning mechanism, contrastive learning, and transformations that preserve the embedding of the original InstaNovo spectra while shifting glyco spectra closer to them in embedding space, helping align their distributions.','https://jeroen.vangoey.be/files/theses/glyco-finetuning-instanovo.pdf',NULL,'thesis',NULL,NULL);
 INSERT INTO publication VALUES(282,'Detection of Short Peptides as Putative Biosignatures of Psychrophiles via Laser Desorption Mass Spectrometry','2023-06-01','10.1089/ast.2022.0138','Mary Ann Liebert','Studies of psychrophilic life on Earth provide chemical clues as to how extraterrestrial life could maintain viability in cryogenic environments. If living systems in ocean worlds (e.g., Enceladus) share a similar set of 3-mer and 4-mer peptides to the psychrophile Colwellia psychrerythraea on Earth, spaceflight technologies and analytical methods need to be developed to detect and sequence these putative biosignatures. We demonstrate that laser desorption mass spectrometry, as implemented by the CORALS spaceflight prototype instrument, enables the detection of protonated peptides, their dimers, and metal adducts. The addition of silicon nanoparticles promotes the ionization efficiency, improves mass resolving power and mass accuracies via reduction of metastable decay, and facilitates peptide de novo sequencing. The CORALS instrument, which integrates a pulsed UV laser source and an Orbitrap mass analyzer capable of ultrahigh mass resolving powers and mass accuracies, represents an emerging technology for planetary exploration and a pathfinder for advanced technique development for astrobiological objectives.','https://www.liebertpub.com/doi/10.1089/ast.2022.0138','Astrobiology','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(283,'BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method','2023-05-14','10.1101/2023.05.11.540352','Cold Spring Harbor Laboratory','Traditional database-based peptide sequencing methods have shortcomings in discoverability and universality, while de novo sequencing is the essential way to analyze unknown proteins and discover new peptides and proteins. Most existing de novo sequencing algorithms have the problem of accumulated deviation and unbalanced output. At the same time, some algorithms could be more suitable for Data-Independent Acquisition Mass Spectrometry (DIA-MS) data. This paper designed a bidirectional peptide sequencing method to alleviate the problems of unbalanced output and deviation accumulation in the sequencing process. The self-attention mechanism was applied to de novo sequencing to increase the interaction within the peptide sequence and the interaction between the MS/MS spectra and the peptide sequence. On the DIA-MS dataset, the peptide prediction accuracy improved by an average of 15.6% compared with the state-of-the-art method. On the DDA-MS dataset, our method achieved the best performance on partial datasets, the amino acid accuracy improved by an average of 3%. At the same time, two new evaluation scores, Position-BLEU and Alignment score, were proposed to evaluate the misalignment between the predicted sequence and the reference sequence, and the partial absence of fragment ions.','https://www.biorxiv.org/content/10.1101/2023.05.11.540352v1','bioRxiv','preprint','v1',NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4238,6 +4242,7 @@ INSERT INTO publication_algorithm VALUES(280,244);
 INSERT INTO publication_algorithm VALUES(281,1);
 INSERT INTO publication_algorithm VALUES(281,245);
 INSERT INTO publication_algorithm VALUES(282,246);
+INSERT INTO publication_algorithm VALUES(283,43);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6132,6 +6137,11 @@ INSERT INTO publication_author VALUES(282,1088,14);
 INSERT INTO publication_author VALUES(282,1089,15);
 INSERT INTO publication_author VALUES(282,1090,16);
 INSERT INTO publication_author VALUES(282,1091,17);
+INSERT INTO publication_author VALUES(283,216,1);
+INSERT INTO publication_author VALUES(283,217,2);
+INSERT INTO publication_author VALUES(283,1092,3);
+INSERT INTO publication_author VALUES(283,219,4);
+INSERT INTO publication_author VALUES(283,71,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -6248,7 +6258,7 @@ INSERT INTO publication_citation VALUES(12,76,'crossref');
 INSERT INTO publication_citation VALUES(12,93,'crossref');
 INSERT INTO publication_citation VALUES(13,29,'crossref');
 INSERT INTO publication_citation VALUES(13,39,'crossref');
-INSERT INTO publication_citation VALUES(13,45,'crossref');
+INSERT INTO publication_citation VALUES(13,283,'crossref');
 INSERT INTO publication_citation VALUES(13,60,'crossref');
 INSERT INTO publication_citation VALUES(13,62,'crossref');
 INSERT INTO publication_citation VALUES(15,2,'crossref');
@@ -6263,7 +6273,7 @@ INSERT INTO publication_citation VALUES(15,38,'crossref');
 INSERT INTO publication_citation VALUES(15,39,'crossref');
 INSERT INTO publication_citation VALUES(15,41,'crossref');
 INSERT INTO publication_citation VALUES(15,42,'crossref');
-INSERT INTO publication_citation VALUES(15,45,'crossref');
+INSERT INTO publication_citation VALUES(15,283,'crossref');
 INSERT INTO publication_citation VALUES(15,46,'crossref');
 INSERT INTO publication_citation VALUES(15,48,'crossref');
 INSERT INTO publication_citation VALUES(15,49,'crossref');
@@ -6393,7 +6403,7 @@ INSERT INTO publication_citation VALUES(32,77,'semanticscholar');
 INSERT INTO publication_citation VALUES(32,92,'semanticscholar');
 INSERT INTO publication_citation VALUES(33,1,'both');
 INSERT INTO publication_citation VALUES(33,41,'both');
-INSERT INTO publication_citation VALUES(33,45,'crossref');
+INSERT INTO publication_citation VALUES(33,283,'crossref');
 INSERT INTO publication_citation VALUES(33,49,'both');
 INSERT INTO publication_citation VALUES(33,54,'both');
 INSERT INTO publication_citation VALUES(33,62,'both');
@@ -6599,7 +6609,7 @@ INSERT INTO publication_citation VALUES(76,39,'crossref');
 INSERT INTO publication_citation VALUES(76,40,'crossref');
 INSERT INTO publication_citation VALUES(76,41,'crossref');
 INSERT INTO publication_citation VALUES(76,42,'crossref');
-INSERT INTO publication_citation VALUES(76,45,'crossref');
+INSERT INTO publication_citation VALUES(76,283,'crossref');
 INSERT INTO publication_citation VALUES(76,46,'crossref');
 INSERT INTO publication_citation VALUES(76,48,'crossref');
 INSERT INTO publication_citation VALUES(76,49,'crossref');
@@ -6758,7 +6768,7 @@ INSERT INTO publication_citation VALUES(98,34,'crossref');
 INSERT INTO publication_citation VALUES(98,37,'crossref');
 INSERT INTO publication_citation VALUES(98,38,'crossref');
 INSERT INTO publication_citation VALUES(98,39,'both');
-INSERT INTO publication_citation VALUES(98,45,'crossref');
+INSERT INTO publication_citation VALUES(98,283,'crossref');
 INSERT INTO publication_citation VALUES(98,49,'crossref');
 INSERT INTO publication_citation VALUES(98,52,'crossref');
 INSERT INTO publication_citation VALUES(98,54,'both');
@@ -6789,7 +6799,7 @@ INSERT INTO publication_citation VALUES(30,44,'semanticscholar');
 INSERT INTO publication_citation VALUES(30,110,'semanticscholar');
 INSERT INTO publication_citation VALUES(103,30,'crossref');
 INSERT INTO publication_citation VALUES(103,38,'crossref');
-INSERT INTO publication_citation VALUES(103,45,'crossref');
+INSERT INTO publication_citation VALUES(103,283,'crossref');
 INSERT INTO publication_citation VALUES(105,65,'crossref');
 INSERT INTO publication_citation VALUES(107,38,'crossref');
 INSERT INTO publication_citation VALUES(107,102,'crossref');
@@ -6804,13 +6814,13 @@ INSERT INTO publication_citation VALUES(116,2,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,41,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,49,'semanticscholar');
 INSERT INTO publication_citation VALUES(116,62,'semanticscholar');
-INSERT INTO publication_citation VALUES(45,49,'both');
-INSERT INTO publication_citation VALUES(45,54,'both');
-INSERT INTO publication_citation VALUES(45,55,'both');
-INSERT INTO publication_citation VALUES(45,60,'both');
-INSERT INTO publication_citation VALUES(45,62,'both');
-INSERT INTO publication_citation VALUES(45,77,'both');
-INSERT INTO publication_citation VALUES(45,101,'both');
+INSERT INTO publication_citation VALUES(283,49,'both');
+INSERT INTO publication_citation VALUES(283,54,'both');
+INSERT INTO publication_citation VALUES(283,55,'both');
+INSERT INTO publication_citation VALUES(283,60,'both');
+INSERT INTO publication_citation VALUES(283,62,'both');
+INSERT INTO publication_citation VALUES(283,77,'both');
+INSERT INTO publication_citation VALUES(283,101,'both');
 INSERT INTO publication_citation VALUES(106,60,'crossref');
 INSERT INTO publication_citation VALUES(106,62,'crossref');
 INSERT INTO publication_citation VALUES(114,49,'both');
@@ -7552,7 +7562,7 @@ INSERT INTO publication_citation VALUES(26,210,'both');
 INSERT INTO publication_citation VALUES(28,120,'crossref');
 INSERT INTO publication_citation VALUES(28,194,'both');
 INSERT INTO publication_citation VALUES(29,2,'crossref');
-INSERT INTO publication_citation VALUES(29,45,'crossref');
+INSERT INTO publication_citation VALUES(29,283,'crossref');
 INSERT INTO publication_citation VALUES(29,49,'crossref');
 INSERT INTO publication_citation VALUES(29,76,'crossref');
 INSERT INTO publication_citation VALUES(29,93,'crossref');
@@ -8308,7 +8318,7 @@ INSERT INTO publication_citation VALUES(270,124,'both');
 INSERT INTO publication_citation VALUES(270,146,'both');
 INSERT INTO publication_citation VALUES(270,210,'both');
 INSERT INTO publication_citation VALUES(271,26,'crossref');
-INSERT INTO publication_citation VALUES(271,45,'crossref');
+INSERT INTO publication_citation VALUES(271,283,'crossref');
 INSERT INTO publication_citation VALUES(271,49,'crossref');
 INSERT INTO publication_citation VALUES(271,62,'crossref');
 INSERT INTO publication_citation VALUES(271,76,'crossref');
@@ -8567,7 +8577,6 @@ INSERT INTO publication_impact VALUES(41,'W4387773470',37,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(42,'W4387350573',7,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(43,'W4383619439',60,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(44,NULL,NULL,'unmatched',20.1058201058201007,2026,'2026-09-13T12:07:46+00:00');
-INSERT INTO publication_impact VALUES(45,'W4376618222',9,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(46,'W4366982440',9,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(47,NULL,NULL,'unmatched',NULL,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(48,'W4362670833',12,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
@@ -8804,6 +8813,7 @@ INSERT INTO publication_impact VALUES(279,NULL,NULL,'unmatched',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(280,NULL,NULL,'unmatched',53.7142857142857152,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(281,NULL,NULL,'unmatched',48.0,2026,'2026-09-13T12:07:46+00:00');
 INSERT INTO publication_impact VALUES(282,'W4367840092',2,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
+INSERT INTO publication_impact VALUES(283,'W4376618222',9,'doi',NULL,2026,'2026-09-13T12:07:46+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -8865,10 +8875,16 @@ INSERT INTO thesis_supervisor VALUES(281,15);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',257);
-INSERT INTO sqlite_sequence VALUES('affiliation',565);
-INSERT INTO sqlite_sequence VALUES('author',1091);
+INSERT INTO sqlite_sequence VALUES('affiliation',566);
+INSERT INTO sqlite_sequence VALUES('author',1092);
 INSERT INTO sqlite_sequence VALUES('algorithm',246);
-INSERT INTO sqlite_sequence VALUES('publication',282);
+INSERT INTO sqlite_sequence VALUES('publication',283);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8923,12 +8939,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8944,12 +8954,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -8964,4 +8968,10 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
