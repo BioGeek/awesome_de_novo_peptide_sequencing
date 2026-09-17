@@ -8467,7 +8467,7 @@ CREATE TABLE repository_metrics (
             fetched_at     TEXT NOT NULL
         , latest_release TEXT);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/instanovo',131,30,8,27,5,96,'2026-07-31T08:25:54Z','2026-09-10T10:07:27','1.2.2');
-INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',3,0,0,0,1,6,'2026-08-31T15:06:17Z','2026-09-02T10:00:47','v1.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/InstaDeepAI/InstaNovo-P',4,0,0,0,1,6,'2026-08-31T15:06:17Z','2026-09-17T10:30:43','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/pairwise',3,0,0,0,0,0,'2026-06-17T17:17:59Z','2026-06-22T08:15:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',6,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-09-14T11:02:13','v1.5.0-release');
 INSERT INTO repository_metrics VALUES('https://github.com/alifare/PepGo/tree/main',1,0,0,0,0,0,'2026-07-03T06:41:39Z','2026-07-03T08:42:29','v1.1.0');
@@ -8513,14 +8513,14 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',4
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,NULL,NULL,NULL,NULL,'2026-08-19T22:27:40Z','2026-08-20T06:21:16',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',91,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-09-11T10:03:54','v1.1.2');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,23,16,109,0,133,'2026-09-07T18:46:41Z','2026-09-12T09:39:50','v4.0.2');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,23,16,109,0,133,'2026-09-17T07:16:03Z','2026-09-17T10:30:43','v4.0.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',56,21,48,505,1,17,'2026-08-01T11:58:34Z','2026-09-14T11:02:13',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,19,4,82,0,183,'2026-07-13T17:01:59Z','2026-08-29T11:49:56','v4.2.0');
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,20,4,82,0,183,'2026-07-13T17:01:59Z','2026-09-17T10:30:43','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',3,0,0,0,0,0,'2026-05-13T07:08:03Z','2026-09-09T10:11:46',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',3,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-03T10:11:08',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',10,2,0,0,3,15,'2026-09-15T08:51:54Z','2026-09-15T10:32:22','v0.1.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',10,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-17T10:30:43','v0.1.0');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
