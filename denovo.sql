@@ -8475,7 +8475,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo',32,3
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/Modanovo',4,1,0,1,0,0,'2025-12-04T11:10:34Z','2026-09-11T10:03:54','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/biocc/SP-MEGD_Fusion',4,1,0,0,0,0,'2026-02-10T08:43:17Z','2026-09-09T10:11:46',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',32,3,1,7,0,0,'2026-05-24T08:13:44Z','2026-09-14T11:02:13',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',5,1,1,0,0,0,'2025-11-12T22:57:57Z','2026-06-22T08:15:24',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',5,2,1,0,0,0,'2025-11-12T22:57:57Z','2026-09-19T09:48:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/ThatMatin/TransNovo',1,0,0,0,0,2,'2024-07-19T08:52:58Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo',12,4,2,2,1,0,'2025-02-27T04:18:01Z','2026-09-07T10:49:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/Transformer-DIA',2,1,0,0,0,0,'2025-09-20T20:57:39Z','2026-07-16T07:50:14',NULL);
@@ -8488,7 +8488,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',199,79,18,314,15,336,'2026-08-26T03:26:23Z','2026-09-18T10:07:12','v5.2.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',200,79,18,314,15,336,'2026-08-26T03:26:23Z','2026-09-19T09:48:15','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',6,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-09-07T10:49:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,0,6,'2026-08-19T05:02:25Z','2026-08-19T06:20:19','v1.1');
@@ -8520,7 +8520,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_Ph
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',10,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-17T10:30:43','v0.1.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',12,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-19T09:48:15','v0.1.0');
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
