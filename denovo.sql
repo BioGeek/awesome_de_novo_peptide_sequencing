@@ -1097,6 +1097,9 @@ INSERT INTO author VALUES(1114,'Arthur Moseley',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1115,'Hasan Koc',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1116,'Linda L. Spremulli',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1117,'Micromass UK Ltd',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1118,'Jediael Ng',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1119,'Zhijun Guo',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1120,'Oliver Mueller-Cajar',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1921,6 +1924,7 @@ INSERT INTO affiliation VALUES(573,'Freie Universität Berlin','Department of Bi
 INSERT INTO affiliation VALUES(574,'University of North Carolina','Department of Chemistry',8,260);
 INSERT INTO affiliation VALUES(575,'University of North Carolina','School of Public Health, Environmental Science and Engineering',8,260);
 INSERT INTO affiliation VALUES(576,'Glaxo Wellcome Research and Development','Department of Structural Chemistry',8,261);
+INSERT INTO affiliation VALUES(577,'Nanyang Technological University','School of Biological Sciences',19,63);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3435,6 +3439,9 @@ INSERT INTO author_affiliation VALUES(1113,576);
 INSERT INTO author_affiliation VALUES(1114,576);
 INSERT INTO author_affiliation VALUES(1115,575);
 INSERT INTO author_affiliation VALUES(1116,574);
+INSERT INTO author_affiliation VALUES(1118,577);
+INSERT INTO author_affiliation VALUES(1120,577);
+INSERT INTO author_affiliation VALUES(1119,577);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3691,6 +3698,7 @@ INSERT INTO algorithm VALUES(249,'Immunoglobulin peptide biomarker profiling',NU
 INSERT INTO algorithm VALUES(250,'Melanoma HLA peptidome immunogenicity',NULL,NULL,NULL,'HLA class I peptidomes of four melanoma cell lines, extracted from isolated HLA, separated by two-dimensional HPLC and sequenced by MALDI post-source-decay MS. Spectra were interpreted twice over, by database-dependent Mascot search and by database-independent de novo sequencing in Sequit!, with synthetic peptides used to confirm assignments and to measure immunogenicity. Overlap between the four peptidomes was small, indicating highly individual HLA peptidomes, yet they were broadly immunogenic both in the patients the lines came from and in unrelated patients, and that cross-patient immunogenicity was only exceptionally attributable to individual peptides. Most epitopes came from low to medium abundance proteins in sensitive processes such as cell cycle control, DNA replication and tumour suppression.','downstream-application',0,'DDA',NULL,'immunopeptidomics');
 INSERT INTO algorithm VALUES(251,'PepSeq',NULL,NULL,'Heuristic','Interactive de novo peptide sequencing application in BioLynx, the biopolymer analysis component of the MassLynx suite. The manual is explicit that it is user-driven rather than automatic: PepSeq "has been designed as an interactive program that allows the user to make decisions at each step in deducing the sequence of a peptide". It scores and annotates spectra on the a, b, y and z ions, and takes input either from a MassLynx data file or as a plain mass and intensity list. Three modes: typing a candidate sequence to see its theoretical fragments annotated against the spectrum; FindTag, which builds a set of sub-sequences whose series ions best match the spectrum and extends them step or leap-wise until the molecular weight matches the user-supplied precursor; and MassSeq, a separately purchased option that performs the sequencing automatically from the precursor mass, modifications and a mass-accuracy estimate. There is no methods paper: the method is documented only in the vendor manual, which is catalogued here as the accompanying resource. Provenance runs Micromass UK Ltd to Waters Corporation, and the Version 4.0 guide catches the handover in progress, carrying a Waters part number and a Micromass part number side by side over a 1993-2002 Micromass UK Ltd copyright.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(252,'Mitochondrial small subunit ribosome proteomics',NULL,NULL,NULL,'Bovine mitochondrial small subunit ribosomal proteins resolved by two-dimensional PAGE, in-gel tryptic digestion, capillary LC and electrospray MS/MS, with the resulting peptide sequences used as virtual probes to screen the human EST database by tBLASTN and assemble consensus cDNAs in silico. Spectra without an exact match in either the protein or EST databases were sequenced de novo, manually or with PepSeq. Seven proteins are reported in Table I, and the two de novo-derived peptides are the sole identifying evidence for two of them, MRP-S26 and MRP-S14; MRP-S14 is also one of only two proteins in the study with significant prokaryotic homology, to Escherichia coli S14. Five of the seven belong to a new class of ribosomal proteins with no prokaryotic counterpart.','downstream-application',0,'DDA',NULL,'general-proteomics');
+INSERT INTO algorithm VALUES(253,'Rubisco large subunit N-terminal determination',NULL,NULL,NULL,'De novo sequencing used to establish what the N terminus of a recombinant protein actually is, which the biological argument then rests on. Arabidopsis Rubisco large subunit variants expressed in E. coli are processed unpredictably by the host, so the construct sequence does not tell you which residues survive. Purified proteins were run on SDS gels, the RbcL band excised, and the N termini determined by de novo mass spectrometric sequencing in PEAKS Studio X+, alongside a semi-specific tryptic database search and peak-area quantification; the work was done as a service by the Bioprocessing Technology Institute, A*STAR. The result is Table 1 in full: the observed N termini for wild type and each truncation variant with their peak-area ratios, showing for instance that wild type is a mixture of MSPQTETKAS, SPQTETKAS and PQTETKAS at 36, 15 and 49 percent. Those assignments are what let the paper claim that large subunits lacking residues 1 to 4 are functional carboxylases that Rubisco activase cannot activate, and they drive a further inference about cooperativity, since some deltaN2 N termini proved identical to deltaN3 ones. A tryptic database search alone would not have found them, because host processing leaves ragged non-tryptic N termini.','downstream-application',0,'DDA',NULL,'general-proteomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3991,6 +3999,7 @@ INSERT INTO publication VALUES(287,'Immune Responses Are Characterized by Specif
 INSERT INTO publication VALUES(288,'High Immunogenicity of the Human Leukocyte Antigen Peptidomes of Melanoma Tumor Cells','2012-09-01','10.1074/jbc.M112.358903','American Society for Biochemistry and Molecular Biology','Human leukocyte antigens (HLA) bind peptides generated by limited proteolysis in cells and present them at the cell surfaces for recognition by T cells. Through this antigen presentation function they control the specificity of T cell responses and thereby adaptive immune responses. Knowledge of HLA-bound peptides is thus key to understanding adaptive immunity and to the development of vaccines and other specific immune intervention strategies. To gain insight into the antigenicity of melanomas, peptides were extracted from HLA isolated from the tumor cells, separated by two-dimensional HPLC, and sequenced by mass spectrometry. The spectra were analyzed by database-dependent MASCOT searches and database-independent de novo sequencing and, where required, confirmed with synthetic peptides, which were also used to determine their immunogenicity. Comparing four different melanoma cell lines, little overlap of the HLA-bound peptides was found, suggesting a high degree of individualization of the HLA peptidomes. This notwithstanding, the peptidomes were highly immunogenic in the patients from whom the tumor cells had been established and in unrelated patients. This broad cross-patient immunogenicity was only exceptionally related to individual peptides. The majority of the identified epitopes were derived from low to medium abundance proteins, mostly involved in sensitive cellular processes such as cell cycle control, DNA replication, control of gene expression, tumor suppressor function, and protein metabolism. The peptidomes thus provide insights into processes potentially related to tumorigenesis. Furthermore, analyses of the peptide sequences yield information on the specificity of peptide selection by HLA applicable to the developing prediction algorithms for T cell epitopes.','https://doi.org/10.1074/jbc.M112.358903','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(289,'A Proteomics Approach to the Identification of Mammalian Mitochondrial Small Subunit Ribosomal Proteins','2000-10-01','10.1074/jbc.M003596200','American Society for Biochemistry and Molecular Biology','Mammalian mitochondrial small subunit ribosomal proteins were separated by two-dimensional polyacrylamide gel electrophoresis. The proteins in six individual spots were subjected to in-gel tryptic digestion. Peptides were separated by capillary liquid chromatography, and the sequences of selected peptides were obtained by electrospray tandem mass spectrometry. The peptide sequences obtained were used to screen human expressed sequence tag data bases, and complete consensus cDNAs were assembled. Mammalian mitochondrial small subunit ribosomal proteins from six different classes of ribosomal proteins were identified. Only two of these proteins have significant sequence similarities to ribosomal proteins from prokaryotes. These proteins correspond to Escherichia coli S10 and S14. Homologs of two human mitochondrial proteins not found in prokaryotes were observed in the genomes of Drosophila melanogaster and Caenorhabditis elegans. A homolog of one of these proteins was observed in D. melanogaster but not in C. elegans, while a homolog of the other was present in C. elegans but not in D. melanogaster. A homolog of one of the ribosomal proteins not found in prokaryotes was tentatively identified in the yeast genome. This latter protein is the first reported example of a ribosomal protein that is shared by mitochondrial ribosomes from lower and higher eukaryotes that does not have a homolog in prokaryotes.','https://doi.org/10.1074/jbc.M003596200','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(290,'MassLynx NT BioLynx & ProteinLynx Guide','2001-12-10',NULL,'Micromass UK Ltd',NULL,'https://help.waters.com/content/dam/waters/de/support/usermanuals/2003/715000391/biolynx_proteinlynx_40.pdf',NULL,'resource',NULL,NULL);
+INSERT INTO publication VALUES(291,'Rubisco activase requires residues in the large subunit N terminus to remodel inhibited plant Rubisco','2020-11-01','10.1074/jbc.RA120.015759','American Society for Biochemistry and Molecular Biology','The photosynthetic CO 2 fixing enzyme ribulose 1,5-bisphosphate carboxylase/oxygenase (Rubisco) forms dead-end inhibited complexes while binding multiple sugar phosphates, including its substrate ribulose 1,5-bisphosphate. Rubisco can be rescued from this inhibited form by molecular chaperones belonging to the ATPases associated with diverse cellular activities (AAA+ proteins) termed Rubisco activases (Rcas). The mechanism of green-type Rca found in higher plants has proved elusive, in part because until recently higher-plant Rubiscos could not be expressed recombinantly. Identifying the interaction sites between Rubisco and Rca is critical to formulate mechanistic hypotheses. Toward that end here we purify and characterize a suite of 33 Arabidopsis Rubisco mutants for their ability to be activated by Rca. Mutation of 17 surface-exposed large subunit residues did not yield variants that were perturbed in their interaction with Rca. In contrast, we find that Rca activity is highly sensitive to truncations and mutations in the conserved N terminus of the Rubisco large subunit. Large subunits lacking residues 1–4 are functional Rubiscos but cannot be activated. Both T5A and T7A substitutions result in functional carboxylases that are poorly activated by Rca, indicating the side chains of these residues form a critical interaction with the chaperone. Many other AAA+ proteins function by threading macromolecules through a central pore of a disc-shaped hexamer. Our results are consistent with a model in which Rca transiently threads the Rubisco large subunit N terminus through the axial pore of the AAA+ hexamer.','https://doi.org/10.1074/jbc.RA120.015759','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4333,6 +4342,8 @@ INSERT INTO publication_algorithm VALUES(289,158);
 INSERT INTO publication_algorithm VALUES(289,252);
 INSERT INTO publication_algorithm VALUES(289,251);
 INSERT INTO publication_algorithm VALUES(290,251);
+INSERT INTO publication_algorithm VALUES(291,62);
+INSERT INTO publication_algorithm VALUES(291,253);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6268,6 +6279,9 @@ INSERT INTO publication_author VALUES(289,1114,4);
 INSERT INTO publication_author VALUES(289,1115,5);
 INSERT INTO publication_author VALUES(289,1116,6);
 INSERT INTO publication_author VALUES(290,1117,1);
+INSERT INTO publication_author VALUES(291,1118,1);
+INSERT INTO publication_author VALUES(291,1119,2);
+INSERT INTO publication_author VALUES(291,1120,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9003,10 +9017,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',261);
-INSERT INTO sqlite_sequence VALUES('affiliation',576);
-INSERT INTO sqlite_sequence VALUES('author',1117);
-INSERT INTO sqlite_sequence VALUES('algorithm',252);
-INSERT INTO sqlite_sequence VALUES('publication',290);
+INSERT INTO sqlite_sequence VALUES('affiliation',577);
+INSERT INTO sqlite_sequence VALUES('author',1120);
+INSERT INTO sqlite_sequence VALUES('algorithm',253);
+INSERT INTO sqlite_sequence VALUES('publication',291);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
