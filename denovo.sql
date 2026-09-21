@@ -9182,6 +9182,9 @@ INSERT INTO publication_version VALUES(10,270,'biorxiv');
 INSERT INTO publication_version VALUES(12,271,'biorxiv');
 INSERT INTO publication_version VALUES(224,152,'manual');
 INSERT INTO publication_version VALUES(284,285,'manual');
+INSERT INTO publication_version VALUES(1,2,'manual');
+INSERT INTO publication_version VALUES(14,122,'manual');
+INSERT INTO publication_version VALUES(126,127,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
