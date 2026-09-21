@@ -1620,7 +1620,6 @@ INSERT INTO affiliation VALUES(254,'Australian National University','Mathematica
 INSERT INTO affiliation VALUES(255,'University of Tübingen','Proteome Center Tuebingen, Interfakultaeres Institut fuer Zellbiologie',4,76);
 INSERT INTO affiliation VALUES(256,'University of Hohenheim','Institut fuer Botanik',4,115);
 INSERT INTO affiliation VALUES(257,'European Molecular Biology Laboratory','Protein & Peptide Group',4,80);
-INSERT INTO affiliation VALUES(258,'University of Manitoba','Department of Physics',9,116);
 INSERT INTO affiliation VALUES(259,'PE SCIEX',NULL,9,117);
 INSERT INTO affiliation VALUES(260,'University of Manitoba','Department of Physics and Astronomy',9,116);
 INSERT INTO affiliation VALUES(261,'Max Planck Institute of Molecular Cell Biology and Genetics',NULL,4,118);
@@ -2663,10 +2662,7 @@ INSERT INTO author_affiliation VALUES(566,254);
 INSERT INTO author_affiliation VALUES(567,257);
 INSERT INTO author_affiliation VALUES(568,257);
 INSERT INTO author_affiliation VALUES(569,257);
-INSERT INTO author_affiliation VALUES(570,258);
 INSERT INTO author_affiliation VALUES(570,259);
-INSERT INTO author_affiliation VALUES(571,258);
-INSERT INTO author_affiliation VALUES(572,258);
 INSERT INTO author_affiliation VALUES(573,259);
 INSERT INTO author_affiliation VALUES(572,260);
 INSERT INTO author_affiliation VALUES(574,261);
@@ -3390,6 +3386,8 @@ INSERT INTO author_affiliation VALUES(1093,567);
 INSERT INTO author_affiliation VALUES(1094,567);
 INSERT INTO author_affiliation VALUES(1095,567);
 INSERT INTO author_affiliation VALUES(1100,568);
+INSERT INTO author_affiliation VALUES(570,260);
+INSERT INTO author_affiliation VALUES(571,260);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
