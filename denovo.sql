@@ -1134,6 +1134,18 @@ INSERT INTO author VALUES(1151,'Larry Smarr',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1152,'Pieter C. Dorrestein',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1153,'Joshua S. Mylne',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1154,'Chuyi Liu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1155,'Thierry Le Bihan',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1156,'Teresa Nunez de Villavicencio Diaz',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1157,'Chelsea Reitzel',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1158,'Victoria Lange',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1159,'Minyoung Park',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1160,'Emma Beadle',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1161,'Lin Wu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1162,'Marko Jovic',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1163,'Rosalin M. Dubois',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1164,'Amber L. Couzens',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1165,'Jin Duan',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1166,'Xiaobing Han',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3593,6 +3605,18 @@ INSERT INTO author_affiliation VALUES(785,497);
 INSERT INTO author_affiliation VALUES(786,497);
 INSERT INTO author_affiliation VALUES(788,508);
 INSERT INTO author_affiliation VALUES(788,8);
+INSERT INTO author_affiliation VALUES(1164,104);
+INSERT INTO author_affiliation VALUES(1157,104);
+INSERT INTO author_affiliation VALUES(1160,104);
+INSERT INTO author_affiliation VALUES(1165,104);
+INSERT INTO author_affiliation VALUES(1161,104);
+INSERT INTO author_affiliation VALUES(1162,104);
+INSERT INTO author_affiliation VALUES(1159,104);
+INSERT INTO author_affiliation VALUES(1163,104);
+INSERT INTO author_affiliation VALUES(1156,104);
+INSERT INTO author_affiliation VALUES(1155,104);
+INSERT INTO author_affiliation VALUES(1158,104);
+INSERT INTO author_affiliation VALUES(1166,104);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3851,6 +3875,7 @@ INSERT INTO algorithm VALUES(251,'PepSeq',NULL,NULL,'Heuristic','Interactive de 
 INSERT INTO algorithm VALUES(252,'Mitochondrial small subunit ribosome proteomics',NULL,NULL,NULL,'Bovine mitochondrial small subunit ribosomal proteins resolved by two-dimensional PAGE, in-gel tryptic digestion, capillary LC and electrospray MS/MS, with the resulting peptide sequences used as virtual probes to screen the human EST database by tBLASTN and assemble consensus cDNAs in silico. Spectra without an exact match in either the protein or EST databases were sequenced de novo, manually or with PepSeq. Seven proteins are reported in Table I, and the two de novo-derived peptides are the sole identifying evidence for two of them, MRP-S26 and MRP-S14; MRP-S14 is also one of only two proteins in the study with significant prokaryotic homology, to Escherichia coli S14. Five of the seven belong to a new class of ribosomal proteins with no prokaryotic counterpart.','downstream-application',0,'DDA',NULL,'general-proteomics');
 INSERT INTO algorithm VALUES(253,'Rubisco large subunit N-terminal determination',NULL,NULL,NULL,'De novo sequencing used to establish what the N terminus of a recombinant protein actually is, which the biological argument then rests on. Arabidopsis Rubisco large subunit variants expressed in E. coli are processed unpredictably by the host, so the construct sequence does not tell you which residues survive. Purified proteins were run on SDS gels, the RbcL band excised, and the N termini determined by de novo mass spectrometric sequencing in PEAKS Studio X+, alongside a semi-specific tryptic database search and peak-area quantification; the work was done as a service by the Bioprocessing Technology Institute, A*STAR. The result is Table 1 in full: the observed N termini for wild type and each truncation variant with their peak-area ratios, showing for instance that wild type is a mixture of MSPQTETKAS, SPQTETKAS and PQTETKAS at 36, 15 and 49 percent. Those assignments are what let the paper claim that large subunits lacking residues 1 to 4 are functional carboxylases that Rubisco activase cannot activate, and they drive a further inference about cooperativity, since some deltaN2 N termini proved identical to deltaN3 ones. A tryptic database search alone would not have found them, because host processing leaves ragged non-tryptic N termini.','downstream-application',0,'DDA',NULL,'general-proteomics');
 INSERT INTO algorithm VALUES(254,'b-/y-ion staged neural network',NULL,NULL,'Neural network','Staged neural network that models ion fragmentation patterns and estimates the posterior probability of each ion type, used to pick the informative peaks out of an MS/MS spectrum before sequencing. The motivation is search-space control: too many peaks and the candidate peptide space grows exponentially, too few and the ion ladder has gaps that can only be explained by permutations of amino acid combinations, so either way candidate quality drops. Reported to beat other preprocessing techniques and to cut the candidate search space substantially without losing candidate quality. The authors note the step matters to any interpretation of MS/MS spectra, de novo or not. Two papers a year apart: the BIBM 2012 classifier, and the two-stage version in Proteome Science 2013 that states it improves on it.','adjacent',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(255,'Polyclonal IgG neutralizing antibody discovery',NULL,NULL,NULL,'Sequencing the circulating antibody repertoire itself rather than the B cells that make it. Human plasma-derived polyclonal IgG is sequenced by combining mass spectrometry with B-cell sequencing, applied to the IgG response to the Moderna Spikevax COVID-19 vaccine. Twelve recombinant antibodies were generated from the natural polyclonal response; six of them, including four derived by de novo protein sequencing, bound at least as well as the original polyclonal antibody, and all six neutralised the target antigen. The argument for the approach is that sequencing peripheral B cells may not represent the complete receptor repertoire, so the circulating IgG pool has to be examined directly. Notable as antibody discovery carried out end to end by a commercial de novo sequencing service.','downstream-application',0,'DDA',NULL,'antibodyomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4154,6 +4179,7 @@ INSERT INTO publication VALUES(290,'MassLynx NT BioLynx & ProteinLynx Guide','20
 INSERT INTO publication VALUES(291,'Rubisco activase requires residues in the large subunit N terminus to remodel inhibited plant Rubisco','2020-11-01','10.1074/jbc.RA120.015759','American Society for Biochemistry and Molecular Biology','The photosynthetic CO 2 fixing enzyme ribulose 1,5-bisphosphate carboxylase/oxygenase (Rubisco) forms dead-end inhibited complexes while binding multiple sugar phosphates, including its substrate ribulose 1,5-bisphosphate. Rubisco can be rescued from this inhibited form by molecular chaperones belonging to the ATPases associated with diverse cellular activities (AAA+ proteins) termed Rubisco activases (Rcas). The mechanism of green-type Rca found in higher plants has proved elusive, in part because until recently higher-plant Rubiscos could not be expressed recombinantly. Identifying the interaction sites between Rubisco and Rca is critical to formulate mechanistic hypotheses. Toward that end here we purify and characterize a suite of 33 Arabidopsis Rubisco mutants for their ability to be activated by Rca. Mutation of 17 surface-exposed large subunit residues did not yield variants that were perturbed in their interaction with Rca. In contrast, we find that Rca activity is highly sensitive to truncations and mutations in the conserved N terminus of the Rubisco large subunit. Large subunits lacking residues 1–4 are functional Rubiscos but cannot be activated. Both T5A and T7A substitutions result in functional carboxylases that are poorly activated by Rca, indicating the side chains of these residues form a critical interaction with the chaperone. Many other AAA+ proteins function by threading macromolecules through a central pore of a disc-shaped hexamer. Our results are consistent with a model in which Rca transiently threads the Rubisco large subunit N terminus through the axial pore of the AAA+ hexamer.','https://doi.org/10.1074/jbc.RA120.015759','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(292,'A neural network approach to the identification of b-/y-ions in MS/MS spectra','2012-10-01','10.1109/BIBM.2012.6392625','IEEE',NULL,'https://ieeexplore.ieee.org/document/6392625','2012 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(293,'Identification of b-/y-ions in MS/MS spectra using a two stage neural network','2013-11-07','10.1186/1477-5956-11-S1-S4','Springer Science and Business Media LLC','Independent of the approach used, the ability to correctly interpret tandem MS data depends on the quality of the original spectra. Even in the case of the highest quality spectra, the majority of spectral peaks can not be reliably interpreted. The accuracy of sequencing algorithms can be improved by filtering out such ''noise'' peaks. Preprocessing MS/MS spectra to select informative ion peaks increases accuracy and reduces the processing time. Intuitively, the mix of informative versus non-informative peaks has a direct effect on the quality and size of the resulting candidate peptide search space. As the number of selected peaks increases, the corresponding search space increases exponentially. If we select too few peaks then the ion-ladder interpretation of the spectrum will contain gaps that can only be explained by permutations of combinations of amino acids. This will result in a larger candidate peptide search space and poorer quality candidates. The dependency that peptide sequencing accuracy has on an initial peak selection regime makes this preprocessing step a crucial facet of any approach, whether de novo or not, to MS/MS spectra interpretation. We have developed a novel approach to address this problem. Our approach uses a staged neural network to model ion fragmentation patterns and estimate the posterior probability of each ion type. Our method improves upon other preprocessing techniques and shows a significant reduction in the search space for candidate peptides without sacrificing candidate peptide quality.','https://doi.org/10.1186/1477-5956-11-S1-S4','Proteome Science','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(294,'De novo protein sequencing of antibodies for identification of neutralizing antibodies in human plasma post SARS-CoV-2 vaccination','2024-10-10','10.1038/s41467-024-53105-8','Springer Science and Business Media LLC','The antibody response to vaccination and infection is a key component of the immune response to pathogens. Sequencing of peripheral B cells may not represent the complete B cell receptor repertoire. Here we present a method for sequencing human plasma-derived polyclonal IgG using a combination of mass spectrometry and B-cell sequencing. We investigate the IgG response to the Moderna Spikevax COVID-19 vaccine. From the sequencing data of the natural polyclonal response to vaccination, we generate 12 recombinant antibodies. Six derived recombinant antibodies, including four generated with de novo protein sequencing, exhibit similar or higher binding affinities than the original natural polyclonal antibody. Neutralization tests reveal that the six antibodies possess neutralizing capabilities against the target antigen. This research provides insights into sequencing polyclonal IgG antibodies and the potential of our approach in generating recombinant antibodies with robust binding affinity and neutralization capabilities. Directly examining the circulating IgG pool is crucial due to potential misrepresentations by B-cell analysis alone.','https://doi.org/10.1038/s41467-024-53105-8','Nature Communications','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4500,6 +4526,7 @@ INSERT INTO publication_algorithm VALUES(291,62);
 INSERT INTO publication_algorithm VALUES(291,253);
 INSERT INTO publication_algorithm VALUES(292,254);
 INSERT INTO publication_algorithm VALUES(293,254);
+INSERT INTO publication_algorithm VALUES(294,255);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6503,6 +6530,20 @@ INSERT INTO publication_author VALUES(292,649,1);
 INSERT INTO publication_author VALUES(292,1069,2);
 INSERT INTO publication_author VALUES(293,649,1);
 INSERT INTO publication_author VALUES(293,1069,2);
+INSERT INTO publication_author VALUES(294,1155,1);
+INSERT INTO publication_author VALUES(294,1156,2);
+INSERT INTO publication_author VALUES(294,1157,3);
+INSERT INTO publication_author VALUES(294,1158,4);
+INSERT INTO publication_author VALUES(294,1159,5);
+INSERT INTO publication_author VALUES(294,1160,6);
+INSERT INTO publication_author VALUES(294,1161,7);
+INSERT INTO publication_author VALUES(294,1162,8);
+INSERT INTO publication_author VALUES(294,1163,9);
+INSERT INTO publication_author VALUES(294,1164,10);
+INSERT INTO publication_author VALUES(294,1165,11);
+INSERT INTO publication_author VALUES(294,1166,12);
+INSERT INTO publication_author VALUES(294,229,13);
+INSERT INTO publication_author VALUES(294,234,14);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9239,9 +9280,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
 INSERT INTO sqlite_sequence VALUES('city',273);
 INSERT INTO sqlite_sequence VALUES('affiliation',607);
-INSERT INTO sqlite_sequence VALUES('author',1154);
-INSERT INTO sqlite_sequence VALUES('algorithm',254);
-INSERT INTO sqlite_sequence VALUES('publication',293);
+INSERT INTO sqlite_sequence VALUES('author',1166);
+INSERT INTO sqlite_sequence VALUES('algorithm',255);
+INSERT INTO sqlite_sequence VALUES('publication',294);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
