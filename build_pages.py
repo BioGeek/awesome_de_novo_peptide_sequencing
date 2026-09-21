@@ -37,6 +37,7 @@ two can never disagree.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sqlite3
@@ -150,10 +151,61 @@ class Site:
         return out
 
 
-def front_matter(title: str, subtitle: str | None = None) -> list[str]:
+def clip(text: str | None, limit: int = 155) -> str:
+    """One-line summary trimmed on a word boundary, for a meta description."""
+    if not text:
+        return ""
+    t = " ".join(str(text).split())
+    if len(t) <= limit:
+        return t
+    # Strip a trailing period too, or a cut landing just after one yields
+    # "...the spectrum...." with four dots.
+    return t[:limit].rsplit(" ", 1)[0].rstrip(" ,;:.") + "..."
+
+
+def join_sentences(parts: list[str]) -> str:
+    """Join fragments with ". ", without doubling an existing terminator.
+
+    Needed because a fragment can legitimately end in a period ("Eloff et
+    al."), and a naive ". ".join produces "Eloff et al.. Mass spectrometry".
+    """
+    out = ""
+    for part in [p for p in parts if p]:
+        if not out:
+            out = part
+        elif out.endswith((".", "!", "?", "\u2026")):
+            out += " " + part
+        else:
+            out += ". " + part
+    return out
+
+
+def json_ld(obj: dict) -> list[str]:
+    """A schema.org block for the page.
+
+    Google reads `description`, not `og:description`, for snippets, and reads
+    JSON-LD to understand what an entity is. Both were missing: every generated
+    page inherited the single site-level description, so 2000+ pages offered
+    identical text.
+
+    Deterministic by construction: sorted keys, no timestamps, nothing that can
+    reorder between runs. "<" is escaped so a title containing "</script>"
+    cannot close the block early.
+    """
+    payload = json.dumps(obj, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":")).replace("<", "\u003c")
+    return ["```{=html}",
+            f'<script type="application/ld+json">{payload}</script>',
+            "```", ""]
+
+
+def front_matter(title: str, subtitle: str | None = None,
+                 description: str | None = None) -> list[str]:
     lines = ["---", f"title: {yaml_quote(title)}"]
     if subtitle:
         lines.append(f"subtitle: {yaml_quote(subtitle)}")
+    if description:
+        lines.append(f"description: {yaml_quote(description)}")
     lines += [
         "toc: false",
         # These files are generated and gitignored; an "Edit this page" link
@@ -196,7 +248,31 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         bits.append(row["journal"])
     if row["publication_date"]:
         bits.append(str(row["publication_date"])[:4])
-    L += front_matter(row["title"], " · ".join(bits))
+    author_names = [nm for _aid, nm, _affs in ctx["authors"]]
+    desc_bits = [" · ".join(bits)]
+    if author_names:
+        desc_bits.append(author_names[0] + (" et al." if len(author_names) > 1 else ""))
+    if row["abstract"]:
+        desc_bits.append(clip(row["abstract"], 110))
+    L += front_matter(row["title"], " · ".join(bits),
+                      clip(join_sentences(desc_bits), 250))
+
+    ld = {"@context": "https://schema.org", "@type": "ScholarlyArticle",
+          "headline": row["title"], "name": row["title"]}
+    if row["publication_date"]:
+        ld["datePublished"] = str(row["publication_date"])
+    if author_names:
+        ld["author"] = [{"@type": "Person", "name": nm} for nm in author_names]
+    if row["journal"]:
+        ld["isPartOf"] = {"@type": "Periodical", "name": row["journal"]}
+    if row["publisher"]:
+        ld["publisher"] = {"@type": "Organization", "name": row["publisher"]}
+    if row["doi"]:
+        ld["identifier"] = f"https://doi.org/{row['doi']}"
+        ld["sameAs"] = f"https://doi.org/{row['doi']}"
+    if row["abstract"]:
+        ld["abstract"] = clip(row["abstract"], 500)
+    L += json_ld(ld)
 
     L.append("| | |")
     L.append("|---|---|")
@@ -296,7 +372,26 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         sub = "no catalogued papers"
     if ctx["countries"]:
         sub += " · " + ", ".join(ctx["countries"])
-    L += front_matter(row["display_name"], sub)
+    insts = [nm for _iid, nm, _d in ctx["affiliations"]]
+    a_desc = [f"{row['display_name']}: {sub}"]
+    if insts:
+        a_desc.append(", ".join(insts[:2]))
+    if ctx["algorithms"]:
+        a_desc.append("Works on " + ", ".join(
+            nm for _i, nm in list(ctx["algorithms"])[:3]))
+    L += front_matter(row["display_name"], sub, clip(" · ".join(a_desc), 250))
+
+    ld = {"@context": "https://schema.org", "@type": "Person",
+          "name": row["display_name"]}
+    if insts:
+        ld["affiliation"] = [{"@type": "Organization", "name": nm} for nm in insts]
+    same = [u for u in (
+        f"https://orcid.org/{row['orcid']}" if row["orcid"] else None,
+        f"https://openalex.org/{row['openalex_id']}" if row["openalex_id"] else None,
+    ) if u]
+    if same:
+        ld["sameAs"] = same
+    L += json_ld(ld)
 
     if ctx["affiliations"]:
         L += ["## Affiliations", ""]
@@ -385,7 +480,14 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     K = "algorithms"
     L = []
     sub_bits = [b for b in (row["kind"], row["algorithm_family"]) if b]
-    L += front_matter(row["name"], " · ".join(sub_bits) if sub_bits else None)
+    g_desc = [row["name"] + (": " + " · ".join(sub_bits) if sub_bits else "")]
+    if row["short_description"]:
+        g_desc.append(clip(row["short_description"], 170))
+    # No JSON-LD here on purpose: these rows span software, reviews, benchmarks
+    # and prose workflow descriptions, and no single schema.org type is honest
+    # for all of them. A wrong @type is worse than none.
+    L += front_matter(row["name"], " · ".join(sub_bits) if sub_bits else None,
+                      clip(join_sentences(g_desc), 250))
 
     if row["short_description"]:
         L += [md_escape(row["short_description"]), ""]
@@ -459,7 +561,18 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     if ctx["places"]:
         sub.append(", ".join(ctx["places"]))
     sub.append(f"{len(ctx['authors'])} author{'s' if len(ctx['authors']) != 1 else ''}")
-    L += front_matter(name, " · ".join(sub))
+    i_desc = (f"{name}"
+              + (f" ({', '.join(ctx['places'])})" if ctx["places"] else "")
+              + f": {len(ctx['authors'])} author"
+              + ("s" if len(ctx["authors"]) != 1 else "")
+              + f" and {len(ctx['pubs'])} paper"
+              + ("s" if len(ctx["pubs"]) != 1 else "")
+              + " in the de novo peptide sequencing catalog.")
+    L += front_matter(name, " · ".join(sub), clip(i_desc, 250))
+    ld = {"@context": "https://schema.org", "@type": "Organization", "name": name}
+    if ctx["places"]:
+        ld["address"] = ", ".join(ctx["places"])
+    L += json_ld(ld)
 
     if ctx["departments"]:
         L += ["## Departments", ""]
@@ -488,8 +601,12 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
 def render_venue(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     K = "venues"
     L = []
-    L += front_matter(name, f"{len(ctx['pubs'])} paper"
-                            f"{'s' if len(ctx['pubs']) != 1 else ''} in the catalog")
+    n_v = len(ctx["pubs"])
+    L += front_matter(name, f"{n_v} paper{'s' if n_v != 1 else ''} in the catalog",
+                      clip(f"{n_v} de novo peptide sequencing paper"
+                           f"{'s' if n_v != 1 else ''} published in {name}, "
+                           f"catalogued with authors, methods and citation counts.", 250))
+    L += json_ld({"@context": "https://schema.org", "@type": "Periodical", "name": name})
     if ctx["impact"]:
         two_yr, h_index, works = ctx["impact"]
         L += ["| | |", "|---|---|"]

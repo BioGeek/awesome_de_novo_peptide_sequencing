@@ -1,6 +1,7 @@
 ---
 title: "Awesome *De Novo* Peptide Sequencing"
 subtitle: "A comprehensive, interactive map of the field. Algorithms, post-processors, downstream applications and adjacent tools, deep-learning and classical alike."
+description: "A comprehensive, interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools, deep-learning and classical alike."
 execute:
   echo: false
   freeze: false
