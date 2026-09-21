@@ -788,12 +788,48 @@ acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filt
 
 ```{ojs}
 //| echo: false
-html`<div class="hero-grid">
-  <div class="hero-stat"><div class="hero-num">${n_papers}</div><div class="hero-lbl">papers</div></div>
-  <div class="hero-stat"><div class="hero-num">${n_models}</div><div class="hero-lbl">methods</div></div>
-  <div class="hero-stat"><div class="hero-num">${n_authors}</div><div class="hero-lbl">authors</div></div>
-  <div class="hero-stat"><div class="hero-num">${n_countries}</div><div class="hero-lbl">countries</div></div>
-</div>`
+{
+  // Each badge jumps to the section that lets you actually browse that number.
+  // Methods point at the architectures swim lane rather than a table because
+  // there is no per-method table on the page; that chart is the only view
+  // showing every method. Plain <a href> rather than a click handler, so
+  // keyboard, middle-click and open-in-new-tab all behave normally.
+  const stat = (n, label, href, title) => html`<a class="hero-stat-link" href="${href}" title="${title}">
+    <div class="hero-stat"><div class="hero-num">${n}</div><div class="hero-lbl">${label}</div></div>
+  </a>`
+  return html`<div class="hero-grid">
+    ${stat(n_papers,    "papers",    "#browse-all-papers",      "Browse all papers")}
+    ${stat(n_models,    "methods",   "#the-architectures",      "See every method on the architectures timeline")}
+    ${stat(n_authors,   "authors",   "#browse-all-authors",     "Browse all authors")}
+    ${stat(n_countries, "countries", "#where-the-work-happens", "See the geographic map")}
+  </div>`
+}
+```
+
+```{ojs}
+//| echo: false
+// Lets the breakdown rows below drive the three global filters.
+//
+// It references the viewof ELEMENTS, not their values. In OJS that is a
+// dependency on the element (stable for the life of the page) rather than on
+// the value, so this cell does not re-run every time a filter changes, and
+// there is no reactive loop back into the breakdown that reads it.
+breakdown_apply = {
+  const set = (view, value) => {
+    view.value = value
+    view.dispatchEvent(new Event("input", { bubbles: true }))
+    // The filter panel is collapsed by default on narrow screens, where a
+    // filter set from here would change page-wide state invisibly. Open it so
+    // the change is legible and reversible.
+    const wrap = document.querySelector(".sticky-filters")
+    if (wrap) wrap.setAttribute("aria-expanded", "true")
+  }
+  return {
+    kind:     k => set(viewof kind_filter, [k]),
+    approach: v => set(viewof dl_filter, v),
+    acq:      m => set(viewof acq_filter, [m])
+  }
+}
 ```
 
 ```{ojs}
@@ -808,37 +844,60 @@ html`<div class="hero-grid">
     "benchmark": "Benchmarks",
     "meta": "Meta"
   }
-  return html`<div class="breakdown-grid">
+  // Every row sets the matching global filter and lands on the papers table.
+  // href does the navigation so keyboard and middle-click still work; a click
+  // listener sets the filter. Only the clicked dimension is touched, so an
+  // approach or acquisition choice already made is preserved.
+  //
+  // Handlers are attached with addEventListener AFTER building the markup,
+  // not as onclick=${fn} inside the template. Quarto's OJS `html` is the
+  // observablehq/stdlib one, which builds through innerHTML and cannot take a
+  // function: it stringifies it, leaving a literal onclick attribute that
+  // throws "Failed to read the 'onclick' property ... Unexpected token ')'".
+  // Only the data-* strings survive the template, so the wiring reads them.
+  //
+  // Note the counts are of METHODS while the destination lists PAPERS, so the
+  // number on the row is not the number of rows you land on. They answer
+  // different questions; the filter is what they share.
+  const row = (n, label, colour, dim, val, hint) => html`<a
+      class="breakdown-row breakdown-row-link"
+      href="#browse-all-papers"
+      title="${hint}"
+      data-dim="${dim}" data-val="${val}">
+    <span class="bk-num">${n}</span>
+    <span class="bk-bar"><span class="bk-fill" style="width:${100 * n / n_models}%; background:${colour}"></span></span>
+    <span class="bk-lbl">${label}</span>
+  </a>`
+
+  const root = html`<div class="breakdown-grid">
     <div class="breakdown-cell">
       <div class="breakdown-title">By kind</div>
-      ${kind_counts.map(k => html`<div class="breakdown-row">
-        <span class="bk-num">${k.n}</span>
-        <span class="bk-bar"><span class="bk-fill" style="width:${100 * k.n / n_models}%"></span></span>
-        <span class="bk-lbl">${kind_label[k.kind] ?? k.kind}</span>
-      </div>`)}
+      ${kind_counts.map(k => row(k.n, kind_label[k.kind] ?? k.kind, "#1f6feb", "kind", k.kind,
+          `Filter the page to ${kind_label[k.kind] ?? k.kind} and jump to the papers table`))}
     </div>
     <div class="breakdown-cell">
       <div class="breakdown-title">By approach</div>
-      <div class="breakdown-row">
-        <span class="bk-num">${n_dl}</span>
-        <span class="bk-bar"><span class="bk-fill" style="width:${100 * n_dl / n_models}%; background:#1f6feb"></span></span>
-        <span class="bk-lbl">Deep learning</span>
-      </div>
-      <div class="breakdown-row">
-        <span class="bk-num">${n_non_dl}</span>
-        <span class="bk-bar"><span class="bk-fill" style="width:${100 * n_non_dl / n_models}%; background:#6f42c1"></span></span>
-        <span class="bk-lbl">Classical</span>
-      </div>
+      ${row(n_dl, "Deep learning", "#1f6feb", "approach", "DL only",
+          "Filter the page to deep-learning methods and jump to the papers table")}
+      ${row(n_non_dl, "Classical", "#6f42c1", "approach", "Classical only",
+          "Filter the page to classical methods and jump to the papers table")}
     </div>
     <div class="breakdown-cell">
       <div class="breakdown-title">By acquisition</div>
-      ${acq_counts.map(m => html`<div class="breakdown-row">
-        <span class="bk-num">${m.n}</span>
-        <span class="bk-bar"><span class="bk-fill" style="width:${100 * m.n / n_models}%; background:#1a7f37"></span></span>
-        <span class="bk-lbl">${m.acquisition}</span>
-      </div>`)}
+      ${acq_counts.map(m => row(m.n, m.acquisition, "#1a7f37", "acq", m.acquisition,
+          `Filter the page to ${m.acquisition} and jump to the papers table`))}
     </div>
   </div>`
+
+  for (const a of root.querySelectorAll("a.breakdown-row-link")) {
+    a.addEventListener("click", () => {
+      const { dim, val } = a.dataset
+      if (dim === "kind") breakdown_apply.kind(val)
+      else if (dim === "approach") breakdown_apply.approach(val)
+      else if (dim === "acq") breakdown_apply.acq(val)
+    })
+  }
+  return root
 }
 ```
 
@@ -857,6 +916,20 @@ html`<div class="hero-grid">
 .bk-bar { display: inline-block; height: 8px; background: #e7eaee; border-radius: 4px; position: relative; overflow: hidden; }
 .bk-fill { display: block; height: 100%; background: #1f6feb; border-radius: 4px; }
 .bk-lbl { font-size: 0.85rem; color: #424a53; }
+
+/* Click-through affordances. The hero badges jump to the matching section and
+   the breakdown rows additionally set the global filter they represent. */
+.hero-stat-link { text-decoration: none; color: inherit; display: block; border-radius: 0.5rem; }
+.hero-stat-link .hero-stat { transition: background 0.12s ease; }
+.hero-stat-link:hover .hero-stat { background: #eaeef2; }
+.hero-stat-link:hover .hero-lbl { color: #24292f; }
+.hero-stat-link:focus-visible { outline: 2px solid #1f6feb; outline-offset: 2px; }
+.breakdown-row-link { text-decoration: none; color: inherit; cursor: pointer;
+  padding: 0.1rem 0.25rem; margin-left: -0.25rem; margin-right: -0.25rem;
+  border-radius: 0.25rem; transition: background 0.12s ease; }
+.breakdown-row-link:hover { background: #eaeef2; }
+.breakdown-row-link:hover .bk-lbl { color: #0969da; text-decoration: underline; }
+.breakdown-row-link:focus-visible { outline: 2px solid #1f6feb; outline-offset: 1px; }
 </style>
 ```
 
