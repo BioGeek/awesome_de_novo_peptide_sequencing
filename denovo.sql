@@ -1083,6 +1083,11 @@ INSERT INTO author VALUES(1100,'Hui Ye',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1101,'Yi-Min She',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1102,'Dallas L. Seifers',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1103,'Steve Haber',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1104,'Martijn M. VanDuijn',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1105,'Lennard J.M. Dekker',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1106,'L. Zeneyedpour',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1107,'Peter A. E. Sillevis Smitt',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1108,'Theo M. Luider',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1363,6 +1368,7 @@ INSERT INTO city VALUES(255,'Winterville',8,NULL,NULL);
 INSERT INTO city VALUES(256,'Washington',8,NULL,NULL);
 INSERT INTO city VALUES(257,'Orléans',14,NULL,NULL);
 INSERT INTO city VALUES(258,'Hays',8,NULL,NULL);
+INSERT INTO city VALUES(259,'Rotterdam',5,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1899,6 +1905,7 @@ INSERT INTO affiliation VALUES(568,'Singapore Future Ready Food Safety Hub',NULL
 INSERT INTO affiliation VALUES(569,'Hospital for Sick Children','Structural Biology and Biochemistry',9,97);
 INSERT INTO affiliation VALUES(570,'Kansas State University','Agricultural Research Center',8,258);
 INSERT INTO affiliation VALUES(571,'Agriculture and Agri-Food Canada','Cereal Research Centre',9,116);
+INSERT INTO affiliation VALUES(572,'Erasmus MC','Department of Neurology',5,259);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3399,6 +3406,11 @@ INSERT INTO author_affiliation VALUES(1101,260);
 INSERT INTO author_affiliation VALUES(1101,569);
 INSERT INTO author_affiliation VALUES(1102,570);
 INSERT INTO author_affiliation VALUES(1103,571);
+INSERT INTO author_affiliation VALUES(1106,572);
+INSERT INTO author_affiliation VALUES(1105,572);
+INSERT INTO author_affiliation VALUES(1104,572);
+INSERT INTO author_affiliation VALUES(1107,572);
+INSERT INTO author_affiliation VALUES(1108,572);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3651,6 +3663,7 @@ INSERT INTO algorithm VALUES(245,'InstaNovo glycopeptide fine-tuning',NULL,NULL,
 INSERT INTO algorithm VALUES(246,'CORALS peptide biosignature detection',NULL,NULL,NULL,'Laser desorption mass spectrometry workflow for detecting and sequencing short peptides as candidate biosignatures on icy ocean worlds such as Enceladus, demonstrated on the CORALS spaceflight prototype: a pulsed UV laser source feeding an Orbitrap mass analyser at ultrahigh mass resolving power and accuracy. Targets the 3-mer and 4-mer peptides found enriched in the psychrophile Colwellia psychrerythraea, on the premise that life persisting in cryogenic extraterrestrial brines might converge on a similar set. Adding silicon nanoparticles raises ionisation efficiency and improves mass resolving power and accuracy by suppressing metastable decay, which is what makes peptide de novo sequencing feasible; protonated peptides, their dimers and metal adducts are all detected. Sequencing rather than database matching is the only option available here, since no reference proteome exists for an unknown organism.','downstream-application',0,'DDA',NULL,'astrobiology');
 INSERT INTO algorithm VALUES(247,'Cricket hydrolysate immunomodulatory peptides',NULL,NULL,NULL,'Sequence-resolved workflow for finding immunomodulatory peptides in cricket protein hydrolysate, an alternative-protein food ingredient. The hydrolysate is analysed without a proteolytic digest (PEAKS run with a non-specific enzyme setting) on a Q Exactive, and sequenced de novo with PEAKS to 25,582 assignments at ALC above 50%. Those are filtered to unmodified peptides scoring above 80 that together account for 95% of total abundance (n = 3231), then prioritised by structure-based screening against the STAT3 SH2 domain and molecular dynamics. Selected synthetic peptides reduced LPS-induced IL-6 and TNF-alpha secretion in BV2 microglia, and the hydrolysate itself reduced STAT3 phosphorylation. The paper labels the MS step ''de novo peptidomics''; its own methods and results call the same operation de novo sequencing, so the phrase denotes de novo sequencing of an undigested peptidome rather than a broader pipeline.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(248,'High plains disease agent characterization',NULL,NULL,NULL,'Downstream application of de novo peptide sequencing to an unidentified plant pathogen. The 32-kDa protein specific to high plains disease was sequenced by time-of-flight MS after the agent was isolated in pure culture by vascular puncture inoculation. De novo sequencing of peptides from proteolytic digests of the SDS-PAGE band corrected the public record: the GenBank nucleotide-derived sequence U60141, deposited as the probable N-protein of high plains virus, turned out to be incomplete, and 18 further residues were found at the N terminus. BLAST then returned no significant homology to any protein in the databases, indicating a hitherto unclassified virus group. A clean early demonstration of why de novo matters: the answer was unreachable by database search because the correct sequence was not in any database.','downstream-application',0,'DDA',NULL,'plant-pathogen');
+INSERT INTO algorithm VALUES(249,'Immunoglobulin peptide biomarker profiling',NULL,NULL,NULL,'Immunoglobulin peptides themselves used as biomarkers of an immune response, rather than the antigens they bind. Rats were immunised with one of two purified antigens and immunoglobulins from pre- and post-immune sera were profiled by nano-LC on an LTQ-Orbitrap with top-5 data-dependent fragmentation, giving 684 peptides differentially present between the treatment groups and cluster separation of the two. Sequences were obtained for 44% of spectral features by combining Mascot database search with de novo sequencing in PEAKS Studio 5.1, merged in Progenesis, which keeps the best-scoring sequence per feature. The authors state the de novo half was essential, because immunoglobulins are poorly represented in sequence databases. The shared peptides found across animals indicate that repertoire development is not fully random but under selection pressure favouring the best-binding sequences.','downstream-application',0,'DDA',NULL,'antibodyomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3947,6 +3960,7 @@ INSERT INTO publication VALUES(283,'BiATNovo: A Self-Attention based Bidirection
 INSERT INTO publication VALUES(284,'Sequence-Resolved Discovery of Immunomodulatory Peptides from Cricket Protein Hydrolysate as a Functional Alternative Protein Ingredient','2026-07-13','10.2139/ssrn.7102266','Elsevier BV (SSRN)',NULL,'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7102266','SSRN Electronic Journal','preprint',NULL,NULL);
 INSERT INTO publication VALUES(285,'Sequence-resolved discovery and cellular validation of immunomodulatory peptides from cricket protein hydrolysate','2026-09-18','10.1016/j.fufo.2026.101187','Elsevier','Cricket protein hydrolysate (CPH) is a promising alternative-protein-derived ingredient, but the active peptide sequences and mechanisms underlying its potential bioactivity remain difficult to define. In this study, CPH was evaluated in LPS-stimulated BV2 microglial cells using an integrated strategy combining cellular assays, transcriptomics, LC–MS/MS-based de novo peptidomics, structure-based screening, and peptide validation. CPH attenuated LPS-induced inflammatory activation, as shown by reduced pro-inflammatory cytokine production, nitric oxide release, and ROS accumulation. Transcriptomic analysis showed that CPH broadly modulated inflammation-related pathways, including TNF, Toll-like receptor, NOD-like receptor, IL-17, and JAK–STAT signaling. JAK–STAT signaling was subsequently selected as a biologically relevant cytokine-responsive pathway for further investigation rather than as the dominant transcriptomic response. De novo peptidomics revealed that CPH contained predominantly short peptides, which were subsequently subjected to peptide characterization, bioinformatic filtering, structure-based prioritization, molecular dynamics simulations, and cellular validation. Several CPH-derived peptides showed predicted compatibility with the STAT3 SH2 domain. Selected peptides reduced LPS-induced IL-6 and TNF-α secretion, while their effects on oxidative stress, IBA1 expression, and STAT3 phosphorylation varied among peptide sequences. CPH also reduced LPS-induced STAT3 phosphorylation, providing a link between the hydrolysate-level and peptide-level findings. Together, these results suggest that selected CPH-derived peptides may modulate STAT3-associated inflammatory signaling. Collectively, this study establishes a sequence-resolved workflow for identifying immunomodulatory peptides from cricket protein hydrolysate and supports CPH as a source of candidate functional peptides with cellular anti-inflammatory activity.','https://doi.org/10.1016/j.fufo.2026.101187','Future Foods','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(286,'Characterization of the Agent of "High Plains Disease": Mass Spectrometry Determines the Sequence of the Disease-specific Protein','2004-01-01','10.1074/jbc.M308506200','American Society for Biochemistry and Molecular Biology','The "32-kDa" protein specifically associated with high plains disease was characterized by time-of-flight mass spectrometry, after the agent had been isolated in pure culture by "vascular puncture inoculation," a novel mechanical means of transmission. Two isolates from different geographic locations each consisted of a mixture of subpopulations that were highly homologous to an amino acid sequence derived from a nucleotide sequence (U60141) deposited in GenBank trade mark by the Nebraska group as "the probable N-protein of high plains virus." However, the U60141 sequence was found to be incomplete; de novo sequencing of peptides produced by proteolytic digestions of the 32-kDa band from an SDS-PAGE separation showed that an additional 18 amino acid residues were present at the N terminus. BLAST (basic local alignment search tool) examination of the sequence showed no significant homology with any protein in the databases, indicating that the infectious agent of high plains disease is likely a member of a hitherto unclassified virus group.','https://doi.org/10.1074/jbc.M308506200','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(287,'Immune Responses Are Characterized by Specific Shared Immunoglobulin Peptides That Can Be Detected by Proteomic Techniques','2010-09-01','10.1074/jbc.M110.139071','American Society for Biochemistry and Molecular Biology','In the adaptive immune response, immunoglobulins develop that bind specifically to the antigens to which the organism was exposed. Immunoglobulins may bind to known or unknown antigens in a variety of diseases and have been used in the past to identify novel antigens for use as a biomarker. We propose that the immunoglobulins themselves could also be used as biomarkers in antibody-mediated disease. In this proteomic study, rats were immunized with one of two purified antigens, and immunoglobulins from pre- and postimmune sera were analyzed with nano-LC coupled mass spectrometry. It was found that the two treatment groups could be distinguished based on cluster analysis of the immunoglobulin peptides from the immune sera. In addition, we identified 684 specific peptides that were differentially present in one of the two treated groups. We could find an amino acid sequence for 44% of the features in the mass spectra by combining database-driven and de novo sequencing techniques. The latter were essential for sequence identification, as the more common database-driven approach suffers from a poor representation of immunoglobulins in the available databases. Our data show that the development of immunoglobulins during an immune response is not a fully random process, but that instead selection pressures exist that favor the best binding amino acid sequences, and that this selection is shared between different animals. This finding implies that immunoglobulin peptides could indeed be a powerful and easily accessible class of biomarkers.','https://doi.org/10.1074/jbc.M110.139071','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4281,6 +4295,8 @@ INSERT INTO publication_algorithm VALUES(285,62);
 INSERT INTO publication_algorithm VALUES(284,247);
 INSERT INTO publication_algorithm VALUES(284,62);
 INSERT INTO publication_algorithm VALUES(286,248);
+INSERT INTO publication_algorithm VALUES(287,249);
+INSERT INTO publication_algorithm VALUES(287,62);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6201,6 +6217,11 @@ INSERT INTO publication_author VALUES(286,1102,2);
 INSERT INTO publication_author VALUES(286,1103,3);
 INSERT INTO publication_author VALUES(286,571,4);
 INSERT INTO publication_author VALUES(286,572,5);
+INSERT INTO publication_author VALUES(287,1104,1);
+INSERT INTO publication_author VALUES(287,1105,2);
+INSERT INTO publication_author VALUES(287,1106,3);
+INSERT INTO publication_author VALUES(287,1107,4);
+INSERT INTO publication_author VALUES(287,1108,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8935,11 +8956,11 @@ INSERT INTO thesis_supervisor VALUES(280,1);
 INSERT INTO thesis_supervisor VALUES(281,15);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
-INSERT INTO sqlite_sequence VALUES('city',258);
-INSERT INTO sqlite_sequence VALUES('affiliation',571);
-INSERT INTO sqlite_sequence VALUES('author',1103);
-INSERT INTO sqlite_sequence VALUES('algorithm',248);
-INSERT INTO sqlite_sequence VALUES('publication',286);
+INSERT INTO sqlite_sequence VALUES('city',259);
+INSERT INTO sqlite_sequence VALUES('affiliation',572);
+INSERT INTO sqlite_sequence VALUES('author',1108);
+INSERT INTO sqlite_sequence VALUES('algorithm',249);
+INSERT INTO sqlite_sequence VALUES('publication',287);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
