@@ -1183,6 +1183,9 @@ INSERT INTO country VALUES(71,'Myanmar');
 INSERT INTO country VALUES(72,'Costa Rica');
 INSERT INTO country VALUES(73,'Uruguay');
 INSERT INTO country VALUES(74,'Portugal');
+INSERT INTO country VALUES(75,'Saudi Arabia');
+INSERT INTO country VALUES(76,'Tunisia');
+INSERT INTO country VALUES(77,'Lebanon');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1422,6 +1425,12 @@ INSERT INTO city VALUES(263,'Zhengzhou',2,NULL,NULL);
 INSERT INTO city VALUES(264,'Fuzhou',2,NULL,NULL);
 INSERT INTO city VALUES(265,'St. Petersburg',12,NULL,NULL);
 INSERT INTO city VALUES(266,'Crawley',15,NULL,NULL);
+INSERT INTO city VALUES(267,'Riyadh',75,NULL,NULL);
+INSERT INTO city VALUES(268,'Manouba',76,NULL,NULL);
+INSERT INTO city VALUES(269,'Byblos',77,NULL,NULL);
+INSERT INTO city VALUES(270,'Jiaxing',2,NULL,NULL);
+INSERT INTO city VALUES(271,'Phagwara',28,NULL,NULL);
+INSERT INTO city VALUES(272,'Meerut',28,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1977,6 +1986,16 @@ INSERT INTO affiliation VALUES(587,'University of California San Diego','Center 
 INSERT INTO affiliation VALUES(588,'University of California San Diego','Department of Pharmacology',8,56);
 INSERT INTO affiliation VALUES(589,'St. Petersburg State University','Center for Algorithmic Biotechnology, Institute of Translational Biomedicine',12,265);
 INSERT INTO affiliation VALUES(590,'University of Western Australia','School of Molecular Sciences and the ARC Centre of Excellence in Plant Energy Biology',15,266);
+INSERT INTO affiliation VALUES(591,'Prince Sultan University','Robotics and Internet-of-Things Laboratory',75,267);
+INSERT INTO affiliation VALUES(592,'University of Manouba','RIADI Laboratory, National School of Computer Sciences',76,268);
+INSERT INTO affiliation VALUES(593,'Lebanese American University','Department of Electrical and Computer Engineering',77,269);
+INSERT INTO affiliation VALUES(594,'Zhongda Group',NULL,2,270);
+INSERT INTO affiliation VALUES(595,'Jiaxing University','College of Information Science and Engineering',2,270);
+INSERT INTO affiliation VALUES(596,'Lovely Professional University','Division of Research and Development',28,271);
+INSERT INTO affiliation VALUES(597,'Nanjing University of Information Science and Technology','School of Artificial Intelligence',2,217);
+INSERT INTO affiliation VALUES(598,'Jinan University','State Key Laboratory of Bioactive Molecules and Druggability Assessment',2,16);
+INSERT INTO affiliation VALUES(599,'Chaudhary Charan Singh University','Department of Mathematics',28,272);
+INSERT INTO affiliation VALUES(600,'The University of Hong Kong','Department of Computer Science',2,17);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3530,6 +3549,18 @@ INSERT INTO author_affiliation VALUES(1152,587);
 INSERT INTO author_affiliation VALUES(1151,587);
 INSERT INTO author_affiliation VALUES(1151,586);
 INSERT INTO author_affiliation VALUES(1151,205);
+INSERT INTO author_affiliation VALUES(1130,591);
+INSERT INTO author_affiliation VALUES(1130,592);
+INSERT INTO author_affiliation VALUES(1131,591);
+INSERT INTO author_affiliation VALUES(1131,592);
+INSERT INTO author_affiliation VALUES(1132,594);
+INSERT INTO author_affiliation VALUES(1132,593);
+INSERT INTO author_affiliation VALUES(1132,595);
+INSERT INTO author_affiliation VALUES(1132,596);
+INSERT INTO author_affiliation VALUES(1133,597);
+INSERT INTO author_affiliation VALUES(1134,598);
+INSERT INTO author_affiliation VALUES(1135,599);
+INSERT INTO author_affiliation VALUES(1136,600);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -9164,9 +9195,9 @@ INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-G
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',74);
-INSERT INTO sqlite_sequence VALUES('city',266);
-INSERT INTO sqlite_sequence VALUES('affiliation',590);
+INSERT INTO sqlite_sequence VALUES('country',77);
+INSERT INTO sqlite_sequence VALUES('city',272);
+INSERT INTO sqlite_sequence VALUES('affiliation',600);
 INSERT INTO sqlite_sequence VALUES('author',1154);
 INSERT INTO sqlite_sequence VALUES('algorithm',253);
 INSERT INTO sqlite_sequence VALUES('publication',291);
