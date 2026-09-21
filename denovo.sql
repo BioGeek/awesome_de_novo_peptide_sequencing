@@ -1072,6 +1072,14 @@ INSERT INTO author VALUES(1089,'Jennifer Eigenbrode',NULL,NULL,NULL,NULL,NULL,NU
 INSERT INTO author VALUES(1090,'Karen Junge',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1091,'Brook L. Nunn',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1092,'Zhenxin Fu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1093,'Xinyue Qi',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1094,'Yuhao Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1095,'Yuliang Zhou',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1096,'Vibhavari Aysha Bansal',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1097,'Lijun Liu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1098,'Chew Hui Pung',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1099,'Lee How Lau',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1100,'Hui Ye',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1883,6 +1891,8 @@ INSERT INTO affiliation VALUES(563,'NASA Goddard Space Flight Center',NULL,8,254
 INSERT INTO affiliation VALUES(564,'Georgetown University',NULL,8,256);
 INSERT INTO affiliation VALUES(565,'Laboratoire de Physique et Chimie de l''Environnement et de l''Espace',NULL,14,257);
 INSERT INTO affiliation VALUES(566,'Peking University','Computer Center',2,9);
+INSERT INTO affiliation VALUES(567,'Nanyang Technological University','School of Chemistry, Chemical Engineering, and Biotechnology',19,63);
+INSERT INTO affiliation VALUES(568,'Singapore Future Ready Food Safety Hub',NULL,19,63);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3371,6 +3381,15 @@ INSERT INTO author_affiliation VALUES(1085,565);
 INSERT INTO author_affiliation VALUES(1086,565);
 INSERT INTO author_affiliation VALUES(1087,533);
 INSERT INTO author_affiliation VALUES(1092,566);
+INSERT INTO author_affiliation VALUES(1098,567);
+INSERT INTO author_affiliation VALUES(1100,567);
+INSERT INTO author_affiliation VALUES(1099,567);
+INSERT INTO author_affiliation VALUES(1097,567);
+INSERT INTO author_affiliation VALUES(1096,567);
+INSERT INTO author_affiliation VALUES(1093,567);
+INSERT INTO author_affiliation VALUES(1094,567);
+INSERT INTO author_affiliation VALUES(1095,567);
+INSERT INTO author_affiliation VALUES(1100,568);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3621,6 +3640,7 @@ INSERT INTO algorithm VALUES(243,'INSearch',NULL,NULL,'Hybrid de novo + database
 INSERT INTO algorithm VALUES(244,'CPC spectrum encoder pretraining',NULL,NULL,'Transformer (encoder-only)','Unsupervised pretraining of a transformer spectrum encoder by Contrastive Predictive Coding, aimed at the two things that limit supervised de novo sequencing: scarce training data for post-translational modifications, and noisy or incomplete spectra. Exploits the large volume of unlabelled tandem mass spectra that supervised training cannot use. Evaluated on spectral library search rather than sequencing, where on 9-species-V2 it beats OpenMS by 3.73% average amino-acid precision and 4.15% recall, gains 3.8% peptide-level recall, and scales better on inference speed across dataset sizes.','adjacent',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(245,'InstaNovo glycopeptide fine-tuning',NULL,NULL,'Transformer (AR)','Adaptation of InstaNovo, a transformer de novo peptide sequencer, to glycoproteomics by fine-tuning on glycopeptide spectra. Learning from glyco spectra is measurable but limited, and every fine-tuning setting suffers catastrophic forgetting, losing accuracy on peptides the base model handled well; fine-tuning on unfiltered spectra that partly overlap the original training set gives the strongest learning signal but does not remove the effect. PCA of spectrum embeddings shows a large domain shift that explains the difficulty, and the study argues for treating overlapping glyco spectra as informative examples rather than outliers to discard, alongside multi-task and contrastive objectives and embedding transformations that pull glyco spectra toward the original distribution.','downstream-application',1,'DDA',NULL,'glycoproteomics');
 INSERT INTO algorithm VALUES(246,'CORALS peptide biosignature detection',NULL,NULL,NULL,'Laser desorption mass spectrometry workflow for detecting and sequencing short peptides as candidate biosignatures on icy ocean worlds such as Enceladus, demonstrated on the CORALS spaceflight prototype: a pulsed UV laser source feeding an Orbitrap mass analyser at ultrahigh mass resolving power and accuracy. Targets the 3-mer and 4-mer peptides found enriched in the psychrophile Colwellia psychrerythraea, on the premise that life persisting in cryogenic extraterrestrial brines might converge on a similar set. Adding silicon nanoparticles raises ionisation efficiency and improves mass resolving power and accuracy by suppressing metastable decay, which is what makes peptide de novo sequencing feasible; protonated peptides, their dimers and metal adducts are all detected. Sequencing rather than database matching is the only option available here, since no reference proteome exists for an unknown organism.','downstream-application',0,'DDA',NULL,'astrobiology');
+INSERT INTO algorithm VALUES(247,'Cricket hydrolysate immunomodulatory peptides',NULL,NULL,NULL,'Sequence-resolved workflow for finding immunomodulatory peptides in cricket protein hydrolysate, an alternative-protein food ingredient. The hydrolysate is analysed without a proteolytic digest (PEAKS run with a non-specific enzyme setting) on a Q Exactive, and sequenced de novo with PEAKS to 25,582 assignments at ALC above 50%. Those are filtered to unmodified peptides scoring above 80 that together account for 95% of total abundance (n = 3231), then prioritised by structure-based screening against the STAT3 SH2 domain and molecular dynamics. Selected synthetic peptides reduced LPS-induced IL-6 and TNF-alpha secretion in BV2 microglia, and the hydrolysate itself reduced STAT3 phosphorylation. The paper labels the MS step ''de novo peptidomics''; its own methods and results call the same operation de novo sequencing, so the phrase denotes de novo sequencing of an undigested peptidome rather than a broader pipeline.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -3914,6 +3934,8 @@ INSERT INTO publication VALUES(280,'Enhancing Peptide Mass Spectra Encoder throu
 INSERT INTO publication VALUES(281,'Advancing De Novo Glycopeptide Sequencing with InstaNovo in Glycoproteomics','2025-06-12',NULL,'MSc thesis','This study investigates the adaptation of InstaNovo, a transformer-based model originally designed for de novo peptide sequencing, to the more complex domain of glycoproteomics. Through a series of fine-tuning experiments on glycopeptide datasets, we observe that while the model shows some capacity to learn from glyco spectra, the overall improvements remain limited. Notably, fine-tuning on unfiltered spectra, which partially overlap with a dataset the model was trained on, results in stronger learning signals. However, across all fine-tuning settings, the model suffers from catastrophic forgetting, losing accuracy on peptide sequences it previously handled well. Even when using unfiltered spectra, which provide stronger learning signals for glycopeptides, this forgetting effect persists. PCA (Principal Component Analysis) projections of spectrum embeddings further reveal a significant domain shift, which helps explain why InstaNovo struggles on glycopeptides sequencing adaptation. To address this, we propose treating overlapping, glyco spectra not as outliers to discard, but as informative examples that help the model distinguish between glycosylated and non-glycosylated peptides. While fine-tuning strategies prove insufficient for reliable glycopeptide sequencing, our results highlight promising directions for improvement. Future work should explore richer datasets, multi-task learning, attention-guided learning mechanism, contrastive learning, and transformations that preserve the embedding of the original InstaNovo spectra while shifting glyco spectra closer to them in embedding space, helping align their distributions.','https://jeroen.vangoey.be/files/theses/glyco-finetuning-instanovo.pdf',NULL,'thesis',NULL,NULL);
 INSERT INTO publication VALUES(282,'Detection of Short Peptides as Putative Biosignatures of Psychrophiles via Laser Desorption Mass Spectrometry','2023-06-01','10.1089/ast.2022.0138','Mary Ann Liebert','Studies of psychrophilic life on Earth provide chemical clues as to how extraterrestrial life could maintain viability in cryogenic environments. If living systems in ocean worlds (e.g., Enceladus) share a similar set of 3-mer and 4-mer peptides to the psychrophile Colwellia psychrerythraea on Earth, spaceflight technologies and analytical methods need to be developed to detect and sequence these putative biosignatures. We demonstrate that laser desorption mass spectrometry, as implemented by the CORALS spaceflight prototype instrument, enables the detection of protonated peptides, their dimers, and metal adducts. The addition of silicon nanoparticles promotes the ionization efficiency, improves mass resolving power and mass accuracies via reduction of metastable decay, and facilitates peptide de novo sequencing. The CORALS instrument, which integrates a pulsed UV laser source and an Orbitrap mass analyzer capable of ultrahigh mass resolving powers and mass accuracies, represents an emerging technology for planetary exploration and a pathfinder for advanced technique development for astrobiological objectives.','https://www.liebertpub.com/doi/10.1089/ast.2022.0138','Astrobiology','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(283,'BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method','2023-05-14','10.1101/2023.05.11.540352','Cold Spring Harbor Laboratory','Traditional database-based peptide sequencing methods have shortcomings in discoverability and universality, while de novo sequencing is the essential way to analyze unknown proteins and discover new peptides and proteins. Most existing de novo sequencing algorithms have the problem of accumulated deviation and unbalanced output. At the same time, some algorithms could be more suitable for Data-Independent Acquisition Mass Spectrometry (DIA-MS) data. This paper designed a bidirectional peptide sequencing method to alleviate the problems of unbalanced output and deviation accumulation in the sequencing process. The self-attention mechanism was applied to de novo sequencing to increase the interaction within the peptide sequence and the interaction between the MS/MS spectra and the peptide sequence. On the DIA-MS dataset, the peptide prediction accuracy improved by an average of 15.6% compared with the state-of-the-art method. On the DDA-MS dataset, our method achieved the best performance on partial datasets, the amino acid accuracy improved by an average of 3%. At the same time, two new evaluation scores, Position-BLEU and Alignment score, were proposed to evaluate the misalignment between the predicted sequence and the reference sequence, and the partial absence of fragment ions.','https://www.biorxiv.org/content/10.1101/2023.05.11.540352v1','bioRxiv','preprint','v1',NULL);
+INSERT INTO publication VALUES(284,'Sequence-Resolved Discovery of Immunomodulatory Peptides from Cricket Protein Hydrolysate as a Functional Alternative Protein Ingredient','2026-07-13','10.2139/ssrn.7102266','Elsevier BV (SSRN)',NULL,'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7102266','SSRN Electronic Journal','preprint',NULL,NULL);
+INSERT INTO publication VALUES(285,'Sequence-resolved discovery and cellular validation of immunomodulatory peptides from cricket protein hydrolysate','2026-09-18','10.1016/j.fufo.2026.101187','Elsevier','Cricket protein hydrolysate (CPH) is a promising alternative-protein-derived ingredient, but the active peptide sequences and mechanisms underlying its potential bioactivity remain difficult to define. In this study, CPH was evaluated in LPS-stimulated BV2 microglial cells using an integrated strategy combining cellular assays, transcriptomics, LC–MS/MS-based de novo peptidomics, structure-based screening, and peptide validation. CPH attenuated LPS-induced inflammatory activation, as shown by reduced pro-inflammatory cytokine production, nitric oxide release, and ROS accumulation. Transcriptomic analysis showed that CPH broadly modulated inflammation-related pathways, including TNF, Toll-like receptor, NOD-like receptor, IL-17, and JAK–STAT signaling. JAK–STAT signaling was subsequently selected as a biologically relevant cytokine-responsive pathway for further investigation rather than as the dominant transcriptomic response. De novo peptidomics revealed that CPH contained predominantly short peptides, which were subsequently subjected to peptide characterization, bioinformatic filtering, structure-based prioritization, molecular dynamics simulations, and cellular validation. Several CPH-derived peptides showed predicted compatibility with the STAT3 SH2 domain. Selected peptides reduced LPS-induced IL-6 and TNF-α secretion, while their effects on oxidative stress, IBA1 expression, and STAT3 phosphorylation varied among peptide sequences. CPH also reduced LPS-induced STAT3 phosphorylation, providing a link between the hydrolysate-level and peptide-level findings. Together, these results suggest that selected CPH-derived peptides may modulate STAT3-associated inflammatory signaling. Collectively, this study establishes a sequence-resolved workflow for identifying immunomodulatory peptides from cricket protein hydrolysate and supports CPH as a source of candidate functional peptides with cellular anti-inflammatory activity.','https://doi.org/10.1016/j.fufo.2026.101187','Future Foods','peer-reviewed',NULL,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4243,6 +4265,10 @@ INSERT INTO publication_algorithm VALUES(281,1);
 INSERT INTO publication_algorithm VALUES(281,245);
 INSERT INTO publication_algorithm VALUES(282,246);
 INSERT INTO publication_algorithm VALUES(283,43);
+INSERT INTO publication_algorithm VALUES(285,247);
+INSERT INTO publication_algorithm VALUES(285,62);
+INSERT INTO publication_algorithm VALUES(284,247);
+INSERT INTO publication_algorithm VALUES(284,62);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6142,6 +6168,22 @@ INSERT INTO publication_author VALUES(283,217,2);
 INSERT INTO publication_author VALUES(283,1092,3);
 INSERT INTO publication_author VALUES(283,219,4);
 INSERT INTO publication_author VALUES(283,71,5);
+INSERT INTO publication_author VALUES(284,1093,1);
+INSERT INTO publication_author VALUES(284,1095,2);
+INSERT INTO publication_author VALUES(284,1094,3);
+INSERT INTO publication_author VALUES(284,1096,4);
+INSERT INTO publication_author VALUES(284,1097,5);
+INSERT INTO publication_author VALUES(284,1098,6);
+INSERT INTO publication_author VALUES(284,1099,7);
+INSERT INTO publication_author VALUES(284,1100,8);
+INSERT INTO publication_author VALUES(285,1093,1);
+INSERT INTO publication_author VALUES(285,1094,2);
+INSERT INTO publication_author VALUES(285,1095,3);
+INSERT INTO publication_author VALUES(285,1096,4);
+INSERT INTO publication_author VALUES(285,1097,5);
+INSERT INTO publication_author VALUES(285,1098,6);
+INSERT INTO publication_author VALUES(285,1099,7);
+INSERT INTO publication_author VALUES(285,1100,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -8845,6 +8887,7 @@ INSERT INTO publication_version VALUES(4,269,'biorxiv');
 INSERT INTO publication_version VALUES(10,270,'biorxiv');
 INSERT INTO publication_version VALUES(12,271,'biorxiv');
 INSERT INTO publication_version VALUES(224,152,'manual');
+INSERT INTO publication_version VALUES(284,285,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -8876,10 +8919,16 @@ INSERT INTO thesis_supervisor VALUES(281,15);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',257);
-INSERT INTO sqlite_sequence VALUES('affiliation',566);
-INSERT INTO sqlite_sequence VALUES('author',1092);
-INSERT INTO sqlite_sequence VALUES('algorithm',246);
-INSERT INTO sqlite_sequence VALUES('publication',283);
+INSERT INTO sqlite_sequence VALUES('affiliation',568);
+INSERT INTO sqlite_sequence VALUES('author',1100);
+INSERT INTO sqlite_sequence VALUES('algorithm',247);
+INSERT INTO sqlite_sequence VALUES('publication',285);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -8934,12 +8983,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -8955,12 +8998,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -8975,4 +9012,10 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
