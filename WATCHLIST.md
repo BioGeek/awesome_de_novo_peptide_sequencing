@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 244 `algorithm` rows has at least one linked publication, because
+Every one of the 245 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -47,11 +47,69 @@ When a manuscript appears, the classification is already worked out:
 `kind='algorithm'`, `algorithm_family='Transformer (AR)'`, `is_deep_learning=1`,
 `acquisition_mode='DDA'` (NovoBench benchmarks are DDA), repo as above.
 
+### Hellbender antimicrobial peptides
+
+| | |
+|---|---|
+| Artifact | ASBMB Annual Meeting abstract, `10.1016/j.jbc.2026.112633`, J Biol Chem 302:112633 (May 2026) |
+| Title | "Abstract 4402 De Novo Peptidomics and Bioprospecting Reveal Antimicrobial Peptide Candidates in *Cryptobranchus alleganiensis* (Hellbender) Skin Secretions" |
+| Authors | Syeda Raika Shahid, Edward Bentil, Barney Bishop (George Mason University) |
+| Method | PEAKS de novo sequencing of skin-secretion peptides, SPE enrichment, Orbitrap Fusion, then AMP prediction over the de novo sequences |
+| Last checked | 2026-09-21 |
+
+In scope on the merits and the classification is already clear: de novo
+peptidomics is the subject rather than an aside, PEAKS is named, and AMP
+candidates from an under-sampled amphibian are a real downstream application.
+It waits here purely because of what the artifact IS.
+
+The jbc.org `/fulltext` URL makes it look like a research article; it is not.
+The title itself begins "Abstract 4402", OpenAlex types it `conference-abstract`,
+and Crossref carries no abstract text, all consistent with the meeting
+supplement. The catalog holds **no** meeting abstracts, and all nine
+`ML conference` rows are full peer-reviewed proceedings papers (ICML, ICLR,
+NeurIPS, IJCAI), not abstracts. A conference abstract is also thinner than the
+weakest precedent named above, DiffNovo-DIA, which at least has a thesis behind
+it, and no `publication_type` value fits without inventing an eighth.
+
+Do not confuse it with "Novel antimicrobial peptides and peptide-microbiome
+crosstalk in Appalachian salamander skin" (`10.1038/s41522-025-00837-0`, npj
+Biofilms and Microbiomes, 2025). Different group (Muletz-Wolz, Smithsonian),
+different species, no shared authors, and no de novo sequencing at all: it is
+transcriptome-guided database search. Not a substitute and not a candidate.
+
+When a full paper appears: `kind='downstream-application'`,
+`subdomain='bioactive-peptides'` (or a new amphibian/AMP subdomain if several
+such papers arrive together), `is_deep_learning=0`, `acquisition_mode='DDA'`,
+linked to the existing PEAKS row.
+
 ## Considered, not added
 
 - **CorrDIA** (`10.3390/app13105969`). DIA deconvolution feeding a conventional
   database search, with no *de novo* component, so it is out of scope even as an
   adjacent tool. Revisit only if it acquires one.
+- **"Bioactive Peptides from Common Beans: A Review"** (MDPI *Nutraceuticals*
+  6(3):62, 2026-09-17). A review of bean peptide bioactivity whose only *de novo*
+  content is one generic sentence, naming no tool: "In instances where a reliable
+  match is not available, de novo sequencing facilitates the inference of amino
+  acid composition and order through the analysis of fragmentation patterns."
+
+  This one also fixes the bar for `kind='review'`, which until now was only
+  implicit in the rows themselves. **All 20 existing review entries have de novo
+  sequencing as their subject, or as the method underpinning the body of work
+  being reviewed**: that holds even for the domain-flavoured ones, which is why
+  the snake venom proteomes review ("assembled largely via de novo sequencing")
+  and Flying under the radar ("argues de novo identification is
+  under-appreciated") qualify. There is no entry of the form "review of topic X
+  that mentions de novo in passing", and admitting one would admit the unbounded
+  set of food, venom and clinical peptide reviews that each carry a sentence like
+  the above. A `review` row should promise that reading it teaches you something
+  about de novo sequencing.
+
+  Reconsider only if a review of this shape turns out to compare de novo tools,
+  name software, or present de novo-derived sequences as evidence. Contrast the
+  cricket hydrolysate paper (`10.1016/j.fufo.2026.101187`), same food-peptide
+  space and same subdomain, which is IN because it ran PEAKS for 25,582
+  assignments and the peptides it identified are the result.
 
 ## Published elsewhere, already handled
 
