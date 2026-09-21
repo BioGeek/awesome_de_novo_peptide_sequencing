@@ -111,6 +111,41 @@ linked to the existing PEAKS row.
   space and same subdomain, which is IN because it ran PEAKS for 25,582
   assignments and the peptides it identified are the result.
 
+- **"The genetic origin of evolidine, the first cyclopeptide discovered in plants,
+  and related orbitides"** (`10.1074/jbc.RA120.014781`, J Biol Chem 2020; preprint
+  `10.1101/2020.06.10.145326`). The worked example of a **false friend**: it uses
+  *de novo* **transcriptomics**, which is not *de novo* peptide sequencing.
+
+  Both phrases use "de novo" to mean "without a reference", and there the
+  resemblance ends. *De novo* peptidomics is de novo peptide sequencing, reading
+  sequence off MS/MS fragment ladders, applied to a peptidome: same technique as
+  this catalog's subject, different analyte, so it counts. *De novo*
+  transcriptomics is reference-free assembly of RNA-seq reads into transcripts:
+  different molecule, different instrument, different algorithms, no mass
+  spectrometry at all. The adjective modifies the assembly, not the sequencing.
+
+  The paper settles it on its own terms. Its text has four uses of "de novo
+  transcriptom*" and **zero** of "de novo sequenc*"; the single "de novo peptide
+  sequencing" in the document is in reference 9, a citation. And the workflow runs
+  the opposite way from de novo: "Having the sequences for transcripts encoding
+  putative novel cyclic peptides facilitated their identification and sequencing
+  from LC-MS/MS data. We found peaks corresponding to six additional peptides of
+  ~13 predicted by transcriptomic data." The transcriptome supplied the candidate
+  sequences and MS confirmed them, which is targeted matching against a custom
+  database.
+
+  Two traps worth knowing if you re-check it. Grepping for "PEAKS" gives three
+  hits and none is the software: they are chromatographic and NMR *peaks*. And
+  the PMCID is PMC7573267, one digit from PMC7573262, which is an unrelated
+  chaperone paper.
+
+  Worth revisiting only if the group publishes cyclopeptide work that actually
+  sequences de novo. Reference 9 shows they know how: it is Behsaz et al.,
+  "De novo peptide sequencing reveals many cyclopeptides in the human gut",
+  the **CycloNovo** paper, already algorithm 53 and publication 56 here, with
+  Joshua S. Mylne as its author 9. Following that reference is what exposed the
+  seven truncated bylines fixed in 17b9a5e.
+
 ## Published elsewhere, already handled
 
 `build_versions.py` reports any tracked preprint whose bioRxiv `published` field
