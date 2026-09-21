@@ -380,6 +380,12 @@ ojs_define(
 # NETWORK STATISTICS OF THE AUTHOR-MODEL BIPARTITE GRAPH
 # Measured 2026-09-14. Recorded deliberately and NOT published yet.
 #
+# SNAPSHOT INVALIDATED 2026-09-21: repairing seven truncated bylines added 34
+# authors and 61 author-paper links, several of them on multi-author papers,
+# so the node and edge counts below and every figure derived from them are now
+# stale. Re-measure before publishing any of them. The judgements about WHICH
+# statistics are worth publishing still stand; only the numbers moved.
+#
 # The graph is the one built by the `author_algo_network` OJS cell further down
 # ("Models and the authors behind them"): authors with >= 3 publications linked
 # to version-suffixed algorithm labels. 297 nodes (150 authors, 147 models),
