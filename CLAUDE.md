@@ -193,13 +193,29 @@ Casanovo's several preprints.
 ## Abstracts
 
 `build_abstracts.py` fills `publication.abstract`, trying bioRxiv, arXiv,
-OpenAlex and Crossref in that order and recording which one won in
-`publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
+**Europe PMC**, OpenAlex and Crossref in that order and recording which one won
+in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
 Coverage is 240/293. The 51 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
+
+Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
+inverted index that, for Nature-family journals, has the journal's separate
+one-sentence editorial summary glued onto the abstract with no marker to cut
+on: Nat Commun 15 on `10.1038/s41467-024-53105-8` returns 1470 characters
+against a real abstract of 1151, the extra ending "Here the authors
+present...". Europe PMC serves the abstract alone. It does answer 200 with an
+empty `resultList` rather than 429 when pushed, which is indistinguishable from
+"no record", so `from_europepmc` retries once.
+
+`strip_publisher_extras()` removes the rest: Liebert and SAGE journals keep a
+promotional `Teaser:` field that Crossref AND Europe PMC both concatenate onto
+the abstract (Astrobiology 23:657 arrives 291 characters too long), plus two
+format artifacts, a space left inside a bracket by tag stripping ("( e.g.,")
+and trademark symbols. Between them the script now reproduces both
+hand-corrected abstracts byte for byte, and alters none of the other 240.
 
 Two guards worth knowing about, because both were hit in practice:
 

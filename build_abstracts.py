@@ -56,6 +56,8 @@ BIORXIV_BASE = "https://api.biorxiv.org/details/biorxiv"
 ARXIV_BASE = "http://export.arxiv.org/api/query"
 OPENALEX_BASE = "https://api.openalex.org/works"
 CROSSREF_BASE = "https://api.crossref.org/works"
+EUROPEPMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+EUROPEPMC_RETRY_DELAY = 1.5   # see from_europepmc: empty 200s when pushed
 
 REQUEST_DELAY = 0.2   # polite spacing; OpenAlex and Crossref both allow 10 req/sec
 ARXIV_DELAY = 3.0     # arXiv explicitly asks for one request every 3 seconds
@@ -99,6 +101,7 @@ def clean(text: str | None) -> str | None:
     # Some records prefix the literal word "Abstract".
     text = re.sub(r"^abstract[:.\s]+", "", text, flags=re.I).strip()
     text = scrub_contacts(text)
+    text = strip_publisher_extras(text)
     if len(text) < MIN_ABSTRACT_CHARS:
         return None
     if text.lower().rstrip(".") in PLACEHOLDERS:
@@ -112,6 +115,39 @@ def clean(text: str | None) -> str | None:
     if text[0].islower():
         return None
     return text
+
+
+def strip_publisher_extras(text: str) -> str:
+    """Remove non-abstract text that publishers keep in or beside the abstract.
+
+    THE TEASER FIELD. Mary Ann Liebert and SAGE journals store a promotional
+    one-liner in a labelled "Teaser:" field, and both Crossref and Europe PMC
+    hand it back concatenated onto the abstract. Astrobiology 23:657 arrives
+    1420 characters long from Europe PMC, of which the last 291 are "Teaser:
+    Current spaceflight prototype instrument proposed to visit ocean
+    worlds...". The label is literal, so cutting at it is exact.
+
+    NOT HANDLED HERE: Nature's separate one-sentence editorial summary, which
+    OpenAlex concatenates with no marker at all. Nat Commun 15 on
+    doi:10.1038/s41467-024-53105-8 comes back 1470 characters against a real
+    abstract of 1151, the extra ending "Here the authors present...". There is
+    nothing reliable to cut on, so that case is handled instead by asking
+    Europe PMC before OpenAlex, which carries the abstract alone. A paper with
+    no Europe PMC record may still pick up the summary from OpenAlex.
+
+    Two format artifacts, both found by hand-correcting one Astrobiology
+    abstract and both generic rather than journal-specific:
+
+      * Replacing tags with a SPACE is right between words and wrong inside a
+        bracket, so JATS "( <italic>e.g.</italic>," reassembles as "( e.g.,".
+      * Trademark symbols. No abstract in the catalog carries one, so
+        "Orbitrap(TM) mass analyzer" is noise rather than content.
+    """
+    text = re.split(r"\s*\bTeaser:\s*", text, maxsplit=1)[0].strip()
+    text = re.sub(r"\(\s+", "(", text)
+    text = re.sub(r"\s+\)", ")", text)
+    text = text.replace("\u2122", "").replace("\u00ae", "")
+    return re.sub(r"\s{2,}", " ", text).strip()
 
 
 def scrub_contacts(text: str) -> str:
@@ -177,6 +213,32 @@ def from_arxiv(doi: str) -> str | None:
     ns = {"a": "http://www.w3.org/2005/Atom"}
     node = root.find("a:entry/a:summary", ns)
     return clean(node.text if node is not None else None)
+
+
+def from_europepmc(doi: str) -> str | None:
+    """Abstract from Europe PMC, asked BEFORE OpenAlex.
+
+    Europe PMC serves the publisher-deposited abstract on its own, where
+    OpenAlex reassembles an inverted index that for Nature-family journals has
+    the separate editorial summary glued onto it. Measured on
+    doi:10.1038/s41467-024-53105-8: Europe PMC 1151 characters and correct,
+    OpenAlex 1470 with the summary appended. It is asked first rather than used
+    to repair OpenAlex afterwards, because there is no marker to repair on.
+
+    Retried once. Under load Europe PMC answers 200 with an EMPTY resultList
+    rather than 429, which is indistinguishable from "no record for this DOI".
+    Seen repeatedly while testing: a DOI returning 0 hits during a rapid
+    sequence of requests returned 1 hit on five consecutive spaced attempts.
+    """
+    for attempt in range(2):
+        data = get_json(f"{EUROPEPMC_BASE}?query=DOI:%22{doi}%22"
+                        "&resultType=core&format=json")
+        results = ((data or {}).get("resultList") or {}).get("result") or []
+        if results:
+            return clean(results[0].get("abstractText"))
+        if attempt == 0:
+            time.sleep(EUROPEPMC_RETRY_DELAY)
+    return None
 
 
 def from_openalex(openalex_id: str | None, doi: str | None = None) -> str | None:
@@ -265,6 +327,10 @@ def main() -> int:
         elif doi.startswith(ARXIV_PREFIX):
             abstract, source = from_arxiv(doi), "arxiv"
             time.sleep(ARXIV_DELAY)
+
+        if not abstract and doi:
+            abstract, source = from_europepmc(doi), "europepmc"
+            time.sleep(REQUEST_DELAY)
 
         if not abstract and (openalex_id or doi):
             abstract, source = from_openalex(openalex_id, doi), "openalex"
