@@ -1096,6 +1096,7 @@ INSERT INTO author VALUES(1113,'Kevin Blackburn',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1114,'Arthur Moseley',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1115,'Hasan Koc',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1116,'Linda L. Spremulli',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1117,'Micromass UK Ltd',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3688,7 +3689,7 @@ INSERT INTO algorithm VALUES(247,'Cricket hydrolysate immunomodulatory peptides'
 INSERT INTO algorithm VALUES(248,'High plains disease agent characterization',NULL,NULL,NULL,'Downstream application of de novo peptide sequencing to an unidentified plant pathogen. The 32-kDa protein specific to high plains disease was sequenced by time-of-flight MS after the agent was isolated in pure culture by vascular puncture inoculation. De novo sequencing of peptides from proteolytic digests of the SDS-PAGE band corrected the public record: the GenBank nucleotide-derived sequence U60141, deposited as the probable N-protein of high plains virus, turned out to be incomplete, and 18 further residues were found at the N terminus. BLAST then returned no significant homology to any protein in the databases, indicating a hitherto unclassified virus group. A clean early demonstration of why de novo matters: the answer was unreachable by database search because the correct sequence was not in any database.','downstream-application',0,'DDA',NULL,'plant-pathogen');
 INSERT INTO algorithm VALUES(249,'Immunoglobulin peptide biomarker profiling',NULL,NULL,NULL,'Immunoglobulin peptides themselves used as biomarkers of an immune response, rather than the antigens they bind. Rats were immunised with one of two purified antigens and immunoglobulins from pre- and post-immune sera were profiled by nano-LC on an LTQ-Orbitrap with top-5 data-dependent fragmentation, giving 684 peptides differentially present between the treatment groups and cluster separation of the two. Sequences were obtained for 44% of spectral features by combining Mascot database search with de novo sequencing in PEAKS Studio 5.1, merged in Progenesis, which keeps the best-scoring sequence per feature. The authors state the de novo half was essential, because immunoglobulins are poorly represented in sequence databases. The shared peptides found across animals indicate that repertoire development is not fully random but under selection pressure favouring the best-binding sequences.','downstream-application',0,'DDA',NULL,'antibodyomics');
 INSERT INTO algorithm VALUES(250,'Melanoma HLA peptidome immunogenicity',NULL,NULL,NULL,'HLA class I peptidomes of four melanoma cell lines, extracted from isolated HLA, separated by two-dimensional HPLC and sequenced by MALDI post-source-decay MS. Spectra were interpreted twice over, by database-dependent Mascot search and by database-independent de novo sequencing in Sequit!, with synthetic peptides used to confirm assignments and to measure immunogenicity. Overlap between the four peptidomes was small, indicating highly individual HLA peptidomes, yet they were broadly immunogenic both in the patients the lines came from and in unrelated patients, and that cross-patient immunogenicity was only exceptionally attributable to individual peptides. Most epitopes came from low to medium abundance proteins in sensitive processes such as cell cycle control, DNA replication and tumour suppression.','downstream-application',0,'DDA',NULL,'immunopeptidomics');
-INSERT INTO algorithm VALUES(251,'PepSeq',NULL,NULL,'Heuristic','Interactive de novo peptide sequencing application in BioLynx, the biopolymer analysis component of the MassLynx suite. The manual is explicit that it is user-driven rather than automatic: PepSeq "has been designed as an interactive program that allows the user to make decisions at each step in deducing the sequence of a peptide". It scores and annotates spectra on the a, b, y and z ions, and takes input either from a MassLynx data file or as a plain mass and intensity list. Three modes: typing a candidate sequence to see its theoretical fragments annotated against the spectrum; FindTag, which builds a set of sub-sequences whose series ions best match the spectrum and extends them step or leap-wise until the molecular weight matches the user-supplied precursor; and MassSeq, a separately purchased option that performs the sequencing automatically from the precursor mass, modifications and a mass-accuracy estimate. No methods publication appears to exist; it is vendor software documented only with the instrument, so this row hangs off a paper that used it. Provenance runs Micromass UK Ltd to Waters Corporation, and the 2003 BioLynx/ProteinLynx 4.0 manual catches the handover in progress, carrying a Waters part number and a Micromass part number side by side over a 1993-2002 Micromass UK Ltd copyright.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(251,'PepSeq',NULL,NULL,'Heuristic','Interactive de novo peptide sequencing application in BioLynx, the biopolymer analysis component of the MassLynx suite. The manual is explicit that it is user-driven rather than automatic: PepSeq "has been designed as an interactive program that allows the user to make decisions at each step in deducing the sequence of a peptide". It scores and annotates spectra on the a, b, y and z ions, and takes input either from a MassLynx data file or as a plain mass and intensity list. Three modes: typing a candidate sequence to see its theoretical fragments annotated against the spectrum; FindTag, which builds a set of sub-sequences whose series ions best match the spectrum and extends them step or leap-wise until the molecular weight matches the user-supplied precursor; and MassSeq, a separately purchased option that performs the sequencing automatically from the precursor mass, modifications and a mass-accuracy estimate. There is no methods paper: the method is documented only in the vendor manual, which is catalogued here as the accompanying resource. Provenance runs Micromass UK Ltd to Waters Corporation, and the Version 4.0 guide catches the handover in progress, carrying a Waters part number and a Micromass part number side by side over a 1993-2002 Micromass UK Ltd copyright.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(252,'Mitochondrial small subunit ribosome proteomics',NULL,NULL,NULL,'Bovine mitochondrial small subunit ribosomal proteins resolved by two-dimensional PAGE, in-gel tryptic digestion, capillary LC and electrospray MS/MS, with the resulting peptide sequences used as virtual probes to screen the human EST database by tBLASTN and assemble consensus cDNAs in silico. Spectra without an exact match in either the protein or EST databases were sequenced de novo, manually or with PepSeq. Seven proteins are reported in Table I, and the two de novo-derived peptides are the sole identifying evidence for two of them, MRP-S26 and MRP-S14; MRP-S14 is also one of only two proteins in the study with significant prokaryotic homology, to Escherichia coli S14. Five of the seven belong to a new class of ribosomal proteins with no prokaryotic counterpart.','downstream-application',0,'DDA',NULL,'general-proteomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -3989,6 +3990,7 @@ INSERT INTO publication VALUES(286,'Characterization of the Agent of "High Plain
 INSERT INTO publication VALUES(287,'Immune Responses Are Characterized by Specific Shared Immunoglobulin Peptides That Can Be Detected by Proteomic Techniques','2010-09-01','10.1074/jbc.M110.139071','American Society for Biochemistry and Molecular Biology','In the adaptive immune response, immunoglobulins develop that bind specifically to the antigens to which the organism was exposed. Immunoglobulins may bind to known or unknown antigens in a variety of diseases and have been used in the past to identify novel antigens for use as a biomarker. We propose that the immunoglobulins themselves could also be used as biomarkers in antibody-mediated disease. In this proteomic study, rats were immunized with one of two purified antigens, and immunoglobulins from pre- and postimmune sera were analyzed with nano-LC coupled mass spectrometry. It was found that the two treatment groups could be distinguished based on cluster analysis of the immunoglobulin peptides from the immune sera. In addition, we identified 684 specific peptides that were differentially present in one of the two treated groups. We could find an amino acid sequence for 44% of the features in the mass spectra by combining database-driven and de novo sequencing techniques. The latter were essential for sequence identification, as the more common database-driven approach suffers from a poor representation of immunoglobulins in the available databases. Our data show that the development of immunoglobulins during an immune response is not a fully random process, but that instead selection pressures exist that favor the best binding amino acid sequences, and that this selection is shared between different animals. This finding implies that immunoglobulin peptides could indeed be a powerful and easily accessible class of biomarkers.','https://doi.org/10.1074/jbc.M110.139071','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(288,'High Immunogenicity of the Human Leukocyte Antigen Peptidomes of Melanoma Tumor Cells','2012-09-01','10.1074/jbc.M112.358903','American Society for Biochemistry and Molecular Biology','Human leukocyte antigens (HLA) bind peptides generated by limited proteolysis in cells and present them at the cell surfaces for recognition by T cells. Through this antigen presentation function they control the specificity of T cell responses and thereby adaptive immune responses. Knowledge of HLA-bound peptides is thus key to understanding adaptive immunity and to the development of vaccines and other specific immune intervention strategies. To gain insight into the antigenicity of melanomas, peptides were extracted from HLA isolated from the tumor cells, separated by two-dimensional HPLC, and sequenced by mass spectrometry. The spectra were analyzed by database-dependent MASCOT searches and database-independent de novo sequencing and, where required, confirmed with synthetic peptides, which were also used to determine their immunogenicity. Comparing four different melanoma cell lines, little overlap of the HLA-bound peptides was found, suggesting a high degree of individualization of the HLA peptidomes. This notwithstanding, the peptidomes were highly immunogenic in the patients from whom the tumor cells had been established and in unrelated patients. This broad cross-patient immunogenicity was only exceptionally related to individual peptides. The majority of the identified epitopes were derived from low to medium abundance proteins, mostly involved in sensitive cellular processes such as cell cycle control, DNA replication, control of gene expression, tumor suppressor function, and protein metabolism. The peptidomes thus provide insights into processes potentially related to tumorigenesis. Furthermore, analyses of the peptide sequences yield information on the specificity of peptide selection by HLA applicable to the developing prediction algorithms for T cell epitopes.','https://doi.org/10.1074/jbc.M112.358903','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(289,'A Proteomics Approach to the Identification of Mammalian Mitochondrial Small Subunit Ribosomal Proteins','2000-10-01','10.1074/jbc.M003596200','American Society for Biochemistry and Molecular Biology','Mammalian mitochondrial small subunit ribosomal proteins were separated by two-dimensional polyacrylamide gel electrophoresis. The proteins in six individual spots were subjected to in-gel tryptic digestion. Peptides were separated by capillary liquid chromatography, and the sequences of selected peptides were obtained by electrospray tandem mass spectrometry. The peptide sequences obtained were used to screen human expressed sequence tag data bases, and complete consensus cDNAs were assembled. Mammalian mitochondrial small subunit ribosomal proteins from six different classes of ribosomal proteins were identified. Only two of these proteins have significant sequence similarities to ribosomal proteins from prokaryotes. These proteins correspond to Escherichia coli S10 and S14. Homologs of two human mitochondrial proteins not found in prokaryotes were observed in the genomes of Drosophila melanogaster and Caenorhabditis elegans. A homolog of one of these proteins was observed in D. melanogaster but not in C. elegans, while a homolog of the other was present in C. elegans but not in D. melanogaster. A homolog of one of the ribosomal proteins not found in prokaryotes was tentatively identified in the yeast genome. This latter protein is the first reported example of a ribosomal protein that is shared by mitochondrial ribosomes from lower and higher eukaryotes that does not have a homolog in prokaryotes.','https://doi.org/10.1074/jbc.M003596200','Journal of Biological Chemistry','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(290,'MassLynx NT BioLynx & ProteinLynx Guide','2001-12-10',NULL,'Micromass UK Ltd',NULL,'https://help.waters.com/content/dam/waters/de/support/usermanuals/2003/715000391/biolynx_proteinlynx_40.pdf',NULL,'resource',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4330,6 +4332,7 @@ INSERT INTO publication_algorithm VALUES(288,139);
 INSERT INTO publication_algorithm VALUES(289,158);
 INSERT INTO publication_algorithm VALUES(289,252);
 INSERT INTO publication_algorithm VALUES(289,251);
+INSERT INTO publication_algorithm VALUES(290,251);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6264,6 +6267,7 @@ INSERT INTO publication_author VALUES(289,1113,3);
 INSERT INTO publication_author VALUES(289,1114,4);
 INSERT INTO publication_author VALUES(289,1115,5);
 INSERT INTO publication_author VALUES(289,1116,6);
+INSERT INTO publication_author VALUES(290,1117,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9000,9 +9004,15 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',74);
 INSERT INTO sqlite_sequence VALUES('city',261);
 INSERT INTO sqlite_sequence VALUES('affiliation',576);
-INSERT INTO sqlite_sequence VALUES('author',1116);
+INSERT INTO sqlite_sequence VALUES('author',1117);
 INSERT INTO sqlite_sequence VALUES('algorithm',252);
-INSERT INTO sqlite_sequence VALUES('publication',289);
+INSERT INTO sqlite_sequence VALUES('publication',290);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -9057,12 +9067,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -9078,12 +9082,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -9098,4 +9096,10 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
