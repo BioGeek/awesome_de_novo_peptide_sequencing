@@ -1252,6 +1252,8 @@ INSERT INTO author VALUES(1269,'Nikola Tolić',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1270,'Mikhail Dvorkin',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1271,'Sonya Alexandrova',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1272,'Ljiljana Paša-Tolić',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1273,'Liangyi Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1274,'James P. Reilly','reilly@indiana.edu',NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2188,6 +2190,7 @@ INSERT INTO affiliation VALUES(654,'Saint Petersburg National Research Academic 
 INSERT INTO affiliation VALUES(655,'University of Oklahoma','Department of Chemistry and Biochemistry',NULL,287);
 INSERT INTO affiliation VALUES(656,'Indiana University-Purdue University Indianapolis','Department of BioHealth Informatics',NULL,288);
 INSERT INTO affiliation VALUES(657,'Indiana University School of Medicine','Center for Computational Biology and Bioinformatics',NULL,288);
+INSERT INTO affiliation VALUES(658,'Indiana University','Department of Chemistry',NULL,40);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3949,6 +3952,8 @@ INSERT INTO author_affiliation VALUES(1270,654);
 INSERT INTO author_affiliation VALUES(1271,654);
 INSERT INTO author_affiliation VALUES(1272,602);
 INSERT INTO author_affiliation VALUES(271,589);
+INSERT INTO author_affiliation VALUES(1273,658);
+INSERT INTO author_affiliation VALUES(1274,658);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4237,6 +4242,7 @@ INSERT INTO algorithm VALUES(282,'De novo sequencing methods in proteomics (revi
 INSERT INTO algorithm VALUES(283,'Champs',NULL,NULL,'Homology search','Sequences a complete novel protein by de novo sequencing its peptides and then assembling them against a HOMOLOGOUS database rather than an exact one, reaching near-full coverage and accuracy where neither approach alone would.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(284,'T-Bruijn graph top-down de novo sequencing',NULL,NULL,'Graph / DP','De novo sequencing from TOP-DOWN spectra, where the whole protein is fragmented rather than tryptic peptides: derives sequence tags and assembles them through a T-Bruijn graph, evaluated on carbonic anhydrase 2 and an alemtuzumab Fab.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(285,'Stitch',NULL,NULL,'Sequence assembly','Assembles de novo peptides from Casanovo, PEAKS, pNovo and MaxNovo into full antibody sequences, and corrects the two error classes that assembly alone cannot: mass coincidences, where a different residue combination matches the same mass, and I/L ambiguity.','post-processor',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(286,'157 nm photodissociation de novo sequencing',NULL,NULL,'Heuristic','De novo sequencing algorithm written for 157 nm photodissociation spectra, which yield clean x-ion series rather than the mixed b/y ions of CID. Reports per-residue accuracy and distinguishes leucine from isoleucine, which equal-mass residues normally make impossible.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4579,6 +4585,7 @@ INSERT INTO publication VALUES(329,'A Ranking-Based Scoring Function for Peptide
 INSERT INTO publication VALUES(330,'Automated protein (re)sequencing with MS/MS and a homologous database yields almost full coverage and accuracy','2009-09-01','10.1093/bioinformatics/btp366','Oxford University Press (OUP)','Motivation The bottom-up tandem mass spectrometry (MS/MS) is regularly used in proteomics nowadays for identifying proteins from a sequence database. De novo sequencing software is also available for sequencing novel peptides with relatively short sequence lengths. However, automated sequencing of novel proteins from MS/MS remains a challenging problem. Results Very often, although the target protein is novel, it has a homologous protein included in a known database. When this happens, we propose a novel algorithm and automated software tool, named Champs, for sequencing the complete protein from MS/MS data of a few enzymatic digestions of the purified protein. Validation with two standard proteins showed that our automated method yields >99% sequence coverage and 100% sequence accuracy on these two proteins. Our method is useful to sequence novel proteins or ''re-sequence'' a protein that has mutations comparing with the database protein sequence.','https://academic.oup.com/bioinformatics/article/25/17/2174/211002','Bioinformatics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(331,'De Novo Sequencing of Peptides from Top-Down Tandem Mass Spectra','2015-11-06','10.1021/pr501244v','American Chemical Society (ACS)','De novo sequencing of proteins and peptides is one of the most important problems in mass spectrometry-driven proteomics. A variety of methods have been developed to accomplish this task from a set of bottom-up tandem (MS/MS) mass spectra. However, a more recently emerged top-down technology, now gaining more and more popularity, opens new perspectives for protein analysis and characterization, implying a need for efficient algorithms to process this kind of MS/MS data. Here, we describe a method that allows for the retrieval, from a set of top-down MS/MS spectra, of long and accurate sequence fragments of the proteins contained in the sample. To this end, we outline a strategy for generating high-quality sequence tags from top-down spectra, and introduce the concept of a T-Bruijn graph by adapting to the case of tags the notion of an A-Bruijn graph widely used in genomics. The output of the proposed approach represents the set of amino acid strings spelled out by optimal paths in the connected components of a T-Bruijn graph. We illustrate its performance on top-down data sets acquired from carbonic anhydrase 2 (CAH2) and the Fab region of alemtuzumab.','https://pubs.acs.org/doi/10.1021/pr501244v','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(332,'A Handle on Mass Coincidence Errors in De Novo Sequencing of Antibodies by Bottom-up Proteomics','2024-08-02','10.1021/acs.jproteome.4c00188','American Chemical Society (ACS)','Antibody sequences can be determined at 99% accuracy directly from the polypeptide product by using bottom-up proteomics techniques. Sequencing accuracy at the peptide level is limited by the isobaric residues leucine and isoleucine, incomplete fragmentation spectra in which the order of two or more residues remains ambiguous due to lacking fragment ions for the intermediate positions, and isobaric combinations of amino acids, of potentially different lengths, for example, GG = N and GA = Q. Here, we present several updates to Stitch (v1.5), which performs template-based assembly of de novo peptides to reconstruct antibody sequences. This version introduces a mass-based alignment algorithm that explicitly accounts for mass coincidence errors. In addition, it incorporates a postprocessing procedure to assign I/L residues based on secondary fragments (satellite ions, i.e. , w- ions). Moreover, evidence for sequence assignments can now be directly evaluated with the addition of an integrated spectrum viewer. Lastly, input data from a wider selection of de novo peptide sequencing algorithms are allowed, now including Casanovo, PEAKS, Novor.Cloud, pNovo, and MaxNovo, in addition to flat text and FASTA. Combined, these changes make Stitch compatible with a larger range of data processing pipelines and improve its tolerance to peptide-level sequencing errors.','https://pubs.acs.org/doi/10.1021/acs.jproteome.4c00188','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(333,'Peptide de Novo Sequencing Using 157 nm Photodissociation in a Tandem Time-of-Flight Mass Spectrometer','2010-02-01','10.1021/ac902050y','American Chemical Society (ACS)','It has previously been shown that photodissociation of tryptic peptide ions with 157 nm light in a matrix-assisted laser desorption/ionization (MALDI) tandem time-of-flight (TOF) mass spectrometer generates an abundance of x-type ions. A peptide de novo sequencing algorithm has now been developed to interpret these data. By combination of photodissociation and postsource decay (PSD) spectra, the algorithm identifies x-type ions and derives peptide sequences. The confidence of amino acid assignments is evaluated by observing complementary y-, v-, and w-type ions that provide additional constraints to sequence identification. In the analysis of 31 tryptic peptides from 4 model proteins, the algorithm identified 322 (or 90.7%) of the 355 amino acids and made only 3 incorrect assignments. The other 30 amino acids were not identified because specific needed x-type ions were not detected. Based on the observation of v- and w-type ions, 45 of 50 detected leucine and isoleucine residues were successfully distinguished and there was only one mistake. The remaining four residues were not distinguished because the corresponding v- and w-type ions were not detected. These de novo sequencing results translated into successful identification of proteins through homology searches. To evaluate the robustness of the present sequencing approach, a collection of 266 tryptic peptides from 23 model proteins were analyzed and then sequenced. A total of 167 peptides yielded sequence tags of 5 or more residues. In 5 peptides, 1 or 2 residues were incorrectly assigned.','https://pubs.acs.org/doi/10.1021/ac902050y','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4969,6 +4976,7 @@ INSERT INTO publication_algorithm VALUES(329,63);
 INSERT INTO publication_algorithm VALUES(330,283);
 INSERT INTO publication_algorithm VALUES(331,284);
 INSERT INTO publication_algorithm VALUES(332,285);
+INSERT INTO publication_algorithm VALUES(333,286);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7198,6 +7206,8 @@ INSERT INTO publication_author VALUES(331,1272,10);
 INSERT INTO publication_author VALUES(331,271,11);
 INSERT INTO publication_author VALUES(332,657,1);
 INSERT INTO publication_author VALUES(332,659,2);
+INSERT INTO publication_author VALUES(333,1273,1);
+INSERT INTO publication_author VALUES(333,1274,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9943,10 +9953,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
-INSERT INTO sqlite_sequence VALUES('affiliation',657);
-INSERT INTO sqlite_sequence VALUES('author',1272);
-INSERT INTO sqlite_sequence VALUES('algorithm',285);
-INSERT INTO sqlite_sequence VALUES('publication',332);
+INSERT INTO sqlite_sequence VALUES('affiliation',658);
+INSERT INTO sqlite_sequence VALUES('author',1274);
+INSERT INTO sqlite_sequence VALUES('algorithm',286);
+INSERT INTO sqlite_sequence VALUES('publication',333);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
