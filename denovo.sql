@@ -253,7 +253,7 @@ INSERT INTO author VALUES(247,'Shan Chang','schang@jsut.edu.cn',NULL,NULL,NULL,N
 INSERT INTO author VALUES(248,'Lei Di',NULL,NULL,NULL,NULL,'0000-0002-0579-7579','A5065732161');
 INSERT INTO author VALUES(249,'Yongxing He',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(250,'Rui Qiao','rqiao@uwaterloo.ca',NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(251,'Xin Chen',NULL,NULL,NULL,NULL,'0000-0002-5189-5647','A5100363078');
+INSERT INTO author VALUES(251,'Xin Chen',NULL,NULL,'Waterloo',NULL,'0000-0002-5189-5647','A5100363078');
 INSERT INTO author VALUES(252,'Baozhen Shan','bshan@bioinfor.com',NULL,NULL,NULL,'0000-0002-8757-5493','A5013405579');
 INSERT INTO author VALUES(253,'Bahar Behsaz','bbehsaz@ucsd.edu',NULL,NULL,NULL,NULL,'A5035220791');
 INSERT INTO author VALUES(254,'Hosein Mohimani',NULL,NULL,NULL,NULL,'0000-0003-3980-2505','A5033781263');
@@ -1170,6 +1170,17 @@ INSERT INTO author VALUES(1187,'Shruti Nayak',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1188,'Berk Ozoglu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1189,'Darryl Davis',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1190,'Christopher Becker',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1191,'Jing Gao',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1192,'Hongxu Chen',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1193,'Hongrui Yin',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1194,'Xin Chen',NULL,NULL,'Nanjing',NULL,NULL,NULL);
+INSERT INTO author VALUES(1195,'Zhicheng Yang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1196,'Yuqiu Wang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1197,'Jianhong Wu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1198,'Yinping Tian',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1199,'Hong Shao',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1200,'Liuqing Wen','lwen@simm.ac.cn',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1201,'Hu Zhou','zhouhu@simm.ac.cn',NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2052,6 +2063,12 @@ INSERT INTO affiliation VALUES(611,'Kazusa DNA Research Institute','Department o
 INSERT INTO affiliation VALUES(612,'SCIEX',NULL,NULL,276);
 INSERT INTO affiliation VALUES(613,'Kitasato University','Department of Physics, School of Science',NULL,277);
 INSERT INTO affiliation VALUES(614,'Janssen Research and Development, LLC',NULL,NULL,278);
+INSERT INTO affiliation VALUES(615,'Chinese Academy of Sciences','Analytical Research Center for Organic and Biological Molecules, State Key Laboratory of Drug Research, Carbohydrate-Based Drug Research Center, Shanghai Institute of Materia Medica',NULL,18);
+INSERT INTO affiliation VALUES(616,'Nanjing University of Chinese Medicine','School of Chinese Materia Medica',NULL,217);
+INSERT INTO affiliation VALUES(617,'Shanghai Institute for Food and Drug Control','NMPA Key Laboratory for Quality Control of Therapeutic Monoclonal Antibodies',NULL,18);
+INSERT INTO affiliation VALUES(618,'Fudan University','Department of Otolaryngology, Eye & ENT Hospital',NULL,18);
+INSERT INTO affiliation VALUES(619,'Thermo Fisher Scientific','Shanghai',NULL,18);
+INSERT INTO affiliation VALUES(620,'University of Chinese Academy of Sciences','School of Pharmaceutical Science and Technology, Hangzhou Institute for Advanced Study',NULL,15);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3680,6 +3697,23 @@ INSERT INTO author_affiliation VALUES(1187,291);
 INSERT INTO author_affiliation VALUES(1188,614);
 INSERT INTO author_affiliation VALUES(1189,614);
 INSERT INTO author_affiliation VALUES(1190,289);
+INSERT INTO author_affiliation VALUES(1191,615);
+INSERT INTO author_affiliation VALUES(1192,616);
+INSERT INTO author_affiliation VALUES(1193,617);
+INSERT INTO author_affiliation VALUES(1194,616);
+INSERT INTO author_affiliation VALUES(1195,615);
+INSERT INTO author_affiliation VALUES(1195,19);
+INSERT INTO author_affiliation VALUES(1196,615);
+INSERT INTO author_affiliation VALUES(1196,618);
+INSERT INTO author_affiliation VALUES(1197,619);
+INSERT INTO author_affiliation VALUES(1198,615);
+INSERT INTO author_affiliation VALUES(1199,617);
+INSERT INTO author_affiliation VALUES(1200,615);
+INSERT INTO author_affiliation VALUES(1200,616);
+INSERT INTO author_affiliation VALUES(1201,615);
+INSERT INTO author_affiliation VALUES(1201,616);
+INSERT INTO author_affiliation VALUES(1201,19);
+INSERT INTO author_affiliation VALUES(1201,620);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3943,6 +3977,7 @@ INSERT INTO algorithm VALUES(256,'Proteome signature rescoring',NULL,NULL,'Infor
 INSERT INTO algorithm VALUES(257,'Me-Cou N-terminal derivatization de novo sequencing',NULL,NULL,'Chemical derivatization assisted','N-terminal derivatization with N-succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou), which boosts low-mass b-ion yield so de novo sequencing can read the N-terminal residues, applied to untargeted peptidomics on LC-TIMS-qTOF/MS.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(258,'Food inspection de novo peptide screening',NULL,NULL,'','Database-free food inspection workflow: de novo sequencing of MS/MS spectra on a ZenoTOF 7600 for species identification and quantitation in food extracts, with database search as a complementary step, aimed at unknown contaminants and food fraud.','downstream-application',0,'DDA',NULL,'food-authentication');
 INSERT INTO algorithm VALUES(259,'Supernovo',NULL,'https://www.proteinmetrics.com/products/byos','Template-guided assembly','Automated antibody de novo sequencing: finds the closest-matching germline V-J-C sequences by database search, then converges on the true heavy and light chains by iterative wildcard substitution against the MS/MS spectra. Commercial, shipped in Protein Metrics'' Byos platform.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(260,'Deglycosylation-assisted glycoprotein de novo sequencing',NULL,NULL,'','Integrative strategy for glycoprotein primary structure: enzymatic N-/O- deglycosylation to open up sequence coverage, EThcD to yield long peptides, PEAKS AB de novo sequencing to assemble the backbone, then glycosylation site and glycan characterisation on top. Demonstrated on Etanercept and three TNFR:Fc-fusion biologics of unknown sequence.','downstream-application',0,'DDA',NULL,'glycoproteomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4253,6 +4288,7 @@ INSERT INTO publication VALUES(297,'N-terminal Coumarin Derivatization-aided De 
 INSERT INTO publication VALUES(298,'Towards the establishment of a comprehensive food inspection system: An approach to utilize de novo peptide sequencing from MS/MS spectra','2026-07-16','10.1016/j.foohum.2026.101356','Elsevier BV',NULL,'https://www.sciencedirect.com/science/article/pii/S2949824426003642','Food and Humanity','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(299,'Towards the establishment of a comprehensive food inspection system: an approach to utilise de novo peptide sequencing from MS/MS spectra','2026-02-13','10.2139/ssrn.6234726','Elsevier BV (SSRN)','Ensuring food safety and preventing food fraud require analytical methods capable of identifying unknown and unexpected contaminants in foods. This study developed a proteomics-based strategy centered on de novo sequencing, in which peptide sequences are directly determined from MS/MS spectra without reliance on protein databases. To obtain high-confidence peptide sequences, mass spectrometry conditions were optimized using tryptic digests of K562 cells. Among the tested platforms, ZenoTOF 7600 operated with a Zeno trap accumulation time of 25 ms and 80 MS/MS events yielded the highest number of peptide sequences, averaging 1,057 peptides with an Average Local Confidence score of ≥99. The resulting peptide sequences were used for species identification and quantitative analysis, with database searching applied as a complementary step. Application of this strategy to oyster extract-supplemented soy sauce enabled identification of species associated with added ingredients and the manufacturing process, demonstrating its potential for detecting unknown adulteration and unexpected contamination.','https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6234726','SSRN Electronic Journal','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(300,'Automated Antibody De Novo Sequencing and Its Utility in Biopharmaceutical Discovery','2017-05-01','10.1007/s13361-016-1580-0','American Chemical Society (ACS)','Applications of antibody de novo sequencing in the biopharmaceutical industry range from the discovery of new antibody drug candidates to identifying reagents for research and determining the primary structure of innovator products for biosimilar development. When murine, phage display, or patient-derived monoclonal antibodies against a target of interest are available, but the cDNA or the original cell line is not, de novo protein sequencing is required to humanize and recombinantly express these antibodies, followed by in vitro and in vivo testing for functional validation. Availability of fully automated software tools for monoclonal antibody de novo sequencing enables efficient and routine analysis. Here, we present a novel method to automatically de novo sequence antibodies using mass spectrometry and the Supernovo software. The robustness of the algorithm is demonstrated through a series of stress tests. Graphical Abstract ᅟ.','https://link.springer.com/article/10.1007/s13361-016-1580-0','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(301,'Decoding Protein Glycosylation by an Integrative Mass Spectrometry-Based De Novo Sequencing Strategy','2025-01-22','10.1021/jacsau.4c00960','American Chemical Society (ACS)','Glycoproteins, representing more than 50% of human proteins and most biopharmaceuticals, are crucial for regulating various biological processes. The complexity of multiple glycosylation sites often leads to incomplete sequence coverage and ambiguous glycan modification profiles. Here, we developed an integrative mass spectrometry-based approach for decoding unknown glycoproteins, which is featured with the combination of deglycosylation-mediated de novo sequencing with glycosylation site characterization. We utilized the enzymatic deglycosylation of N- / O- glycans to achieve comprehensive sequence coverage. Additionally, EThcD fragmentation enables the identification of high-quality long peptides, facilitating precise protein assembly. We subsequently applied this method to de novo sequencing of the highly glycosylated therapeutic fusion protein Etanercept (Enbrel). We also sequenced three new tumor necrosis factor receptor:Fc-fusion biologics with largely unknown sequences, unveiling subtle distinctions in the primary sequences. Furthermore, we characterized N- and O- glycosylation modifications of these proteins at subunit, glycopeptide, and glycan levels. This strategy bridges the gap between the de novo sequencing and glycosylation modification, providing comprehensive information on the primary structure and glycosylation modifications for glycoproteins. Notably, our method could be a robust solution for accurate sequencing of the glycoproteins and has practical value not only in basic research but also in the biopharmaceutical industry.','https://pubs.acs.org/doi/10.1021/jacsau.4c00960','JACS Au','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4610,6 +4646,8 @@ INSERT INTO publication_algorithm VALUES(298,62);
 INSERT INTO publication_algorithm VALUES(299,258);
 INSERT INTO publication_algorithm VALUES(299,62);
 INSERT INTO publication_algorithm VALUES(300,259);
+INSERT INTO publication_algorithm VALUES(301,260);
+INSERT INTO publication_algorithm VALUES(301,62);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6673,6 +6711,17 @@ INSERT INTO publication_author VALUES(300,1188,6);
 INSERT INTO publication_author VALUES(300,630,7);
 INSERT INTO publication_author VALUES(300,1189,8);
 INSERT INTO publication_author VALUES(300,1190,9);
+INSERT INTO publication_author VALUES(301,1191,1);
+INSERT INTO publication_author VALUES(301,1192,2);
+INSERT INTO publication_author VALUES(301,1193,3);
+INSERT INTO publication_author VALUES(301,1194,4);
+INSERT INTO publication_author VALUES(301,1195,5);
+INSERT INTO publication_author VALUES(301,1196,6);
+INSERT INTO publication_author VALUES(301,1197,7);
+INSERT INTO publication_author VALUES(301,1198,8);
+INSERT INTO publication_author VALUES(301,1199,9);
+INSERT INTO publication_author VALUES(301,1200,10);
+INSERT INTO publication_author VALUES(301,1201,11);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9413,10 +9462,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
 INSERT INTO sqlite_sequence VALUES('city',278);
-INSERT INTO sqlite_sequence VALUES('affiliation',614);
-INSERT INTO sqlite_sequence VALUES('author',1190);
-INSERT INTO sqlite_sequence VALUES('algorithm',259);
-INSERT INTO sqlite_sequence VALUES('publication',300);
+INSERT INTO sqlite_sequence VALUES('affiliation',620);
+INSERT INTO sqlite_sequence VALUES('author',1201);
+INSERT INTO sqlite_sequence VALUES('algorithm',260);
+INSERT INTO sqlite_sequence VALUES('publication',301);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
