@@ -1259,6 +1259,11 @@ INSERT INTO author VALUES(1276,'Andrew Ellington',NULL,NULL,NULL,NULL,NULL,NULL)
 INSERT INTO author VALUES(1277,'Adam J. Liska',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1278,'Alexander Golod',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1279,'Changjiang Xu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1280,'Alicia L. Richards',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1281,'Catherine E. Vincent',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1282,'Christopher M. Rose',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1283,'Michael S. Westphall',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1284,'Joshua J. Coon',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2198,6 +2203,7 @@ INSERT INTO affiliation VALUES(657,'Indiana University School of Medicine','Cent
 INSERT INTO affiliation VALUES(658,'Indiana University','Department of Chemistry',NULL,40);
 INSERT INTO affiliation VALUES(659,'European Molecular Biology Laboratory',NULL,NULL,77);
 INSERT INTO affiliation VALUES(660,'Brigham & Women''s Hospital and Harvard Medical School','Genetics Division, Department of Medicine',NULL,81);
+INSERT INTO affiliation VALUES(661,'University of Wisconsin-Madison','Genome Center of Wisconsin',NULL,108);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3975,6 +3981,15 @@ INSERT INTO author_affiliation VALUES(1239,646);
 INSERT INTO author_affiliation VALUES(1243,646);
 INSERT INTO author_affiliation VALUES(1240,646);
 INSERT INTO author_affiliation VALUES(1241,646);
+INSERT INTO author_affiliation VALUES(1280,513);
+INSERT INTO author_affiliation VALUES(1280,661);
+INSERT INTO author_affiliation VALUES(1281,513);
+INSERT INTO author_affiliation VALUES(1281,661);
+INSERT INTO author_affiliation VALUES(1282,513);
+INSERT INTO author_affiliation VALUES(1282,661);
+INSERT INTO author_affiliation VALUES(1283,661);
+INSERT INTO author_affiliation VALUES(1284,513);
+INSERT INTO author_affiliation VALUES(1284,661);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4267,6 +4282,7 @@ INSERT INTO algorithm VALUES(286,'157 nm photodissociation de novo sequencing',N
 INSERT INTO algorithm VALUES(287,'351 nm UVPD de novo sequencing',NULL,NULL,'Chemical derivatization assisted','N-terminal chromophore derivatisation makes a peptide absorb at 351 nm, so selective UV photodissociation cleaves it into a simplified y-ion series instead of the mixed ladders CID gives, deliberately to make the spectra amenable to de novo sequencing.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(288,'MultiTag',NULL,NULL,'Sequence tag','Searches several error-tolerant peptide sequence tags at once, so a protein can be identified across species by sequence similarity even when no tag is individually correct. Tolerating errors in the tags is what lets de novo output drive a homology search.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(289,'TVNovo',NULL,NULL,'Constrained search','Turns de novo sequencing into a search problem by generating a VIRTUAL database per spectrum, enumerating the candidate sequences the precursor mass allows, then scoring them as a database search would. Built for high-resolution LTQ-FT data.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(290,'NeuCode y-ion annotation',NULL,NULL,'Chemical labeling assisted','Two lysine isotopologues differing by 36 mDa are embedded metabolically, so every C-terminal fragment appears as a resolvable doublet and N-terminal ones do not. An algorithm reads that signature to label y-type ions at 93.2% accuracy, which among other uses lifts correct de novo identifications with PepNovo+ by 34%.','adjacent',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4614,6 +4630,7 @@ INSERT INTO publication VALUES(334,'De Novo Sequencing of Peptides Using Selecti
 INSERT INTO publication VALUES(335,'MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry','2003-03-01','10.1021/ac026199a','American Chemical Society (ACS)','The characterization of proteomes by mass spectrometry is largely limited to organisms with sequenced genomes. To identify proteins from organisms with unsequenced genomes, database sequences from related species must be employed for sequence-similarity protein identifications. Peptide sequence tags (Mann, 1994) have been used successfully for the identification of proteins in sequence databases using partially interpreted tandem mass spectra of tryptic peptides. We have extended the ability of sequence tag searching to the identification of proteins whose sequences are yet unknown but are homologous to known database entries. The MultiTag method presented here assigns statistical significance to matches of multiple error-tolerant sequence tags to a database entry and ranks alignments by their significance. The MultiTag approach has the distinct advantage over other sequence-similarity approaches of being able to perform sequence-similarity identifications using only very short (2-4) amino acid residue stretches of peptide sequences, rather than complete peptide sequences deduced by de novo interpretation of tandem mass spectra. This feature facilitates the identification of low abundance proteins, since noisy and low-intensity tandem mass spectra can be utilized.','https://pubs.acs.org/doi/10.1021/ac026199a','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(336,'Complexity and scoring function of MS/MS peptide de novo sequencing','2006-07-01','10.1142/9781860947575_0043','World Scientific Pub Co Pte Lt','Tandem mass spectrometry (MS/MS) has become a standard way for identifying peptides and proteins. A scoring function plays an important role in the MS/MS data analysis. De novo sequencing is the computational step to derive a peptide sequence from an MS/MS spectrum, normally by constructing the peptide that maximizes the scoring function. A number of polynomial time algorithms have been developed based on scoring functions that consider only either the N-terminal or C-terminal fragment ions of the peptide. It remains unknown whether the consideration of the internal fragment ions will still be polynomial time solvable. In this paper, we prove that the internal fragment ions make the de novo sequencing problem NP-complete. We also propose a regression model based scoring method to incorporate correlations between the fragment ions. Our scoring function is combined with PEAKS de novo sequencing algorithm and tested on ion trap data. The experimental results show that the regression model based scoring method can remarkably improve the de novo sequencing accuracy.','https://www.worldscientific.com/doi/10.1142/9781860947575_0043','Computational Systems Bioinformatics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(337,'TVNovo: De novo peptide sequencing for high resolution LTQ-FT mass spectrometry using virtual database searching','2010-10-01','10.1109/bmei.2010.5639865','Institute of Electrical and Electronics Engineers (IEEE)',NULL,'https://ieeexplore.ieee.org/document/5639865','2010 3rd International Conference on Biomedical Engineering and Informatics','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(338,'Neutron-encoded Signatures Enable Product Ion Annotation From Tandem Mass Spectra','2013-12-01','10.1074/mcp.m113.028951','Elsevier BV','We report the use of neutron-encoded (NeuCode) stable isotope labeling of amino acids in cell culture for the purpose of C-terminal product ion annotation. Two NeuCode labeling isotopologues of lysine, (13)C6(15)N2 and (2)H8, which differ by 36 mDa, were metabolically embedded in a sample proteome, and the resultant labeled proteins were combined, digested, and analyzed via liquid chromatography and mass spectrometry. With MS/MS scan resolving powers of ~50,000 or higher, product ions containing the C terminus (i.e. lysine) appear as a doublet spaced by exactly 36 mDa, whereas N-terminal fragments exist as a single m/z peak. Through theory and experiment, we demonstrate that over 90% of all y-type product ions have detectable doublets. We report on an algorithm that can extract these neutron signatures with high sensitivity and specificity. In other words, of 15,503 y-type product ion peaks, the y-type ion identification algorithm correctly identified 14,552 (93.2%) based on detection of the NeuCode doublet; 6.8% were misclassified (i.e. other ion types that were assigned as y-type products). Searching NeuCode labeled yeast with PepNovo(+) resulted in a 34% increase in correct de novo identifications relative to searching through MS/MS only. We use this tool to simplify spectra prior to database searching, to sort unmatched tandem mass spectra for spectral richness, for correlation of co-fragmented ions to their parent precursor, and for de novo sequence identification.','https://www.mcponline.org/article/S1535-9476(20)33188-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5009,6 +5026,7 @@ INSERT INTO publication_algorithm VALUES(334,287);
 INSERT INTO publication_algorithm VALUES(335,288);
 INSERT INTO publication_algorithm VALUES(336,62);
 INSERT INTO publication_algorithm VALUES(337,289);
+INSERT INTO publication_algorithm VALUES(338,290);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7259,6 +7277,13 @@ INSERT INTO publication_author VALUES(337,1243,4);
 INSERT INTO publication_author VALUES(337,1240,5);
 INSERT INTO publication_author VALUES(337,1241,6);
 INSERT INTO publication_author VALUES(337,1242,7);
+INSERT INTO publication_author VALUES(338,1280,1);
+INSERT INTO publication_author VALUES(338,1281,2);
+INSERT INTO publication_author VALUES(338,473,3);
+INSERT INTO publication_author VALUES(338,1282,4);
+INSERT INTO publication_author VALUES(338,1283,5);
+INSERT INTO publication_author VALUES(338,475,6);
+INSERT INTO publication_author VALUES(338,1284,7);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -10004,10 +10029,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
-INSERT INTO sqlite_sequence VALUES('affiliation',660);
-INSERT INTO sqlite_sequence VALUES('author',1279);
-INSERT INTO sqlite_sequence VALUES('algorithm',289);
-INSERT INTO sqlite_sequence VALUES('publication',337);
+INSERT INTO sqlite_sequence VALUES('affiliation',661);
+INSERT INTO sqlite_sequence VALUES('author',1284);
+INSERT INTO sqlite_sequence VALUES('algorithm',290);
+INSERT INTO sqlite_sequence VALUES('publication',338);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
