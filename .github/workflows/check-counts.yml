@@ -1,0 +1,37 @@
+# Verify that the counts quoted in CLAUDE.md and WATCHLIST.md still match
+# denovo.db.
+#
+# .githooks/pre-commit already runs `check_counts.py --fix` whenever denovo.db
+# is staged, which is the real fix. But that hook is opt-in per clone
+# (`git config core.hooksPath .githooks`), so a contributor who has not enabled
+# it, or a commit made through the GitHub web UI, bypasses it entirely. This is
+# the backstop.
+#
+# Deliberately NOT on a schedule. These numbers derive from denovo.db in the
+# same commit rather than from an external API, so they cannot drift on their
+# own the way the four refresh-* workflows' metrics do. A nightly job would
+# find nothing changed on most days and, when something had, would push a
+# prose-only commit after the fact and join the push race that
+# .github/actions/commit-refreshed-db exists to solve.
+name: check-counts
+
+on:
+  push:
+    branches: [main]
+    paths: ['denovo.db', 'CLAUDE.md', 'WATCHLIST.md', 'check_counts.py']
+  pull_request:
+    paths: ['denovo.db', 'CLAUDE.md', 'WATCHLIST.md', 'check_counts.py']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-counts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # check_counts.py is stdlib-only, so no uv sync and no dependency install.
+      - name: Check documented counts against denovo.db
+        run: python3 check_counts.py

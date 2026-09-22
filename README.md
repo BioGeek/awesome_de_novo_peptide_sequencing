@@ -62,7 +62,7 @@ uv run quarto preview
 Dual-licensed so the data and the code each get the convention of their own community:
 
 - **Curated catalog + prose** (`denovo.db`, `denovo.sql`, `index.qmd`, README and other docs) → [**CC BY 4.0**](LICENSE). Use it for anything, commercial or otherwise; the only ask is appropriate credit (see [Citation](#citation)).
-- **Python scripts** (`build_citations.py`, `build_journal_metrics.py`, `build_repo_metrics.py`, `build_publication_impact.py`) → [**MIT**](LICENSE-CODE). Standard permissive terms; copyright notice must be preserved when redistributing.
+- **Python scripts** (every `.py` file in the repository root: the `build_*.py` refreshers, `check_counts.py`, `slugs.py`) → [**MIT**](LICENSE-CODE). Standard permissive terms; copyright notice must be preserved when redistributing.
 
 The Zenodo deposit is archived under CC BY 4.0 (the umbrella that covers the bulk of the artefact). The MIT terms on the helper scripts ride along for anyone who wants to lift the scripts into a permissively-licensed downstream tool.
 

@@ -33,5 +33,18 @@ fi
 sqlite3 denovo.db .dump > denovo.sql
 git add denovo.sql
 
+# Same idea for the counts quoted in CLAUDE.md and WATCHLIST.md, which argue
+# from numbers that go stale the moment a paper is added. check_counts.py is
+# stdlib-only on purpose so the hook needs no uv and no virtualenv.
+if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
+  python3 check_counts.py --fix --quiet || true
+  for doc in CLAUDE.md WATCHLIST.md; do
+    if ! git diff --quiet -- "$doc" 2>/dev/null; then
+      git add "$doc"
+      echo "pre-commit: refreshed documented counts in $doc."
+    fi
+  done
+fi
+
 # Report so the user knows why an extra file joined their commit.
 echo "pre-commit: regenerated denovo.sql from staged denovo.db."
