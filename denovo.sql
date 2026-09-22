@@ -1195,6 +1195,11 @@ INSERT INTO author VALUES(1212,'I. Katakuse',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1213,'Christian Bartels',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1214,'Savas Takan',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1215,'K.V. Vyatkina',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1216,'Stephen Tanner','stanner@ucsd.edu',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1217,'Hongjun Shu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1218,'Ling-Chi Wang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1219,'Ebrahim Zandi',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1220,'Marc Mumby',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2100,6 +2105,7 @@ INSERT INTO affiliation VALUES(630,'Ankara University','Department of Artificial
 INSERT INTO affiliation VALUES(631,'Hochschule Ruhr West','Medical Informatics and Bioinformatics, Institute for Measurement Engineering and Sensor Technology',NULL,282);
 INSERT INTO affiliation VALUES(632,'St. Petersburg State University',NULL,NULL,265);
 INSERT INTO affiliation VALUES(633,'Saint Petersburg National Research Academic University of the Russian Academy of Sciences',NULL,NULL,265);
+INSERT INTO affiliation VALUES(634,'University of California San Diego','Department of Bioengineering and Computer Science Department',NULL,56);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3772,6 +3778,7 @@ INSERT INTO author_affiliation VALUES(1138,43);
 INSERT INTO author_affiliation VALUES(627,52);
 INSERT INTO author_affiliation VALUES(1215,632);
 INSERT INTO author_affiliation VALUES(1215,633);
+INSERT INTO author_affiliation VALUES(1216,634);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4041,6 +4048,7 @@ INSERT INTO algorithm VALUES(262,'Fast peptide sequencing algorithm (Bartels)',N
 INSERT INTO algorithm VALUES(263,'De novo sequencing for proteogenomics (review)',NULL,NULL,'','Methods in Molecular Biology chapter reviewing de novo peptide sequencing from tandem mass spectra for the case where database search fails because the peptide is absent from sequence repositories, and its application in proteogenomics.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(264,'ALPS',NULL,NULL,'Sequence assembly','Assembles de novo sequenced peptides and their per-residue confidence scores into a de Bruijn graph to reconstruct complete monoclonal antibody heavy and light chains without a template.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(265,'De novo sequencing of proteins and peptides (review)',NULL,NULL,'','Review of de novo sequencing approaches for peptides and whole proteins, their applications and open problems.','review',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(266,'InsPecT',NULL,NULL,'Sequence tag','Uses peptide sequence tags derived from the spectrum as a database filter, discarding the vast majority of candidate peptides before scoring, which makes blind searches for post-translational modifications tractable.','adjacent',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4361,6 +4369,7 @@ INSERT INTO publication VALUES(307,'De Novo Sequencing of Peptides from Tandem M
 INSERT INTO publication VALUES(308,'Current state, existing challenges, and promising progress for de novo sequencing and assembly of monoclonal antibodies','2022-07-22','10.1101/2022.07.21.500409','Cold Spring Harbor Laboratory','Monoclonal antibodies (mAbs) are biotechnologically produced proteins with various applications in research, therapeutics, and diagnostics. Their ability to recognize and bind to specific molecule structures makes them essential research tools and therapeutic agents. Sequence information of antibodies is helpful for understanding antibody-antigen interactions and ensuring their affinity and specificity. De novo protein sequencing based on mass spectrometry is a useful method to obtain the amino acid sequence of peptides and proteins without a priori knowledge. Deep learning-based approaches have been developed and applied more frequently to increase the accuracy of de novo sequencing. In this study, we evaluated five recently developed de novo sequencing algorithms (Novor, pNovo 3, DeepNovo, SMSNet, and PointNovo) in their ability to identify and assemble antibody sequences. The deep learning-based tools PointNovo and SMSNet showed an increased peptide recall across different enzymes and datasets compared to spectrum-graph-based approaches. We evaluated different error types of de novo peptide sequencing tools and their performance for different numbers of missing cleavage sites, noisy spectra, and peptides of various lengths. We achieved a sequence coverage of 93.15% to 99.07% on the light chains of three different antibody datasets using the de Bruijn assembler ALPS and the predictions from PointNovo. However, low sequence coverage and accuracy on the heavy chains demonstrate that complete de novo protein sequencing remains a challenging issue in proteomics that requires improved de novo error correction, alternative digestion strategies, and hybrid approaches such as homology search to achieve high accuracy on long protein sequences.','https://www.biorxiv.org/content/10.1101/2022.07.21.500409','bioRxiv','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(309,'Complete De Novo Assembly of Monoclonal Antibody Sequences','2016-08-26','10.1038/srep31730','Springer Science and Business Media LLC','De novo protein sequencing is one of the key problems in mass spectrometry-based proteomics, especially for novel proteins such as monoclonal antibodies for which genome information is often limited or not available. However, due to limitations in peptides fragmentation and coverage, as well as ambiguities in spectra interpretation, complete de novo assembly of unknown protein sequences still remains challenging. To address this problem, we propose an integrated system, ALPS, which for the first time can automatically assemble full-length monoclonal antibody sequences. Our system integrates de novo sequencing peptides, their quality scores and error-correction information from databases into a weighted de Bruijn graph to assemble protein sequences. We evaluated ALPS performance on two antibody data sets, each including a heavy chain and a light chain. The results show that ALPS was able to assemble three complete monoclonal antibody sequences of length 216-441 AA, at 100% coverage, and 96.64-100% accuracy.','https://www.nature.com/articles/srep31730','Scientific Reports','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(310,'De Novo Sequencing of Proteins and Peptides: Algorithms, Applications, Perspectives','2018-01-01','10.18097/bmcrm00005','Institute of Biochemistry','Determination of the primary structure of proteins and peptides constitutes an important step in studying their properties. Currently, mass spectrometry is commonly applied to this end. The results of mass spectrometric measurements can be interpreted by means of either a database search or de novo sequencing methods. The appeal of the latter is due to their applicability to investigating unknown proteins, as well as the ones that cannot be analyzed with genomics or transcriptomics methods. In this paper, we briefly review the existing approaches to de novo sequencing of proteins and peptides, along with the problems that can be solved using those, and indicate directions and perspectives for their further development.','https://doi.org/10.18097/bmcrm00005','Biomedical Chemistry: Research and Methods','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(311,'InsPecT: Identification of Posttranslationally Modified Peptides from Tandem Mass Spectra','2005-07-01','10.1021/ac050102d','American Chemical Society (ACS)','Reliable identification of posttranslational modifications is key to understanding various cellular regulatory processes. We describe a tool, InsPecT, to identify posttranslational modifications using tandem mass spectrometry data. InsPecT constructs database filters that proved to be very successful in genomics searches. Given an MS/MS spectrum S and a database D, a database filter selects a small fraction of database D that is guaranteed (with high probability) to contain a peptide that produced S. InsPecT uses peptide sequence tags as efficient filters that reduce the size of the database by a few orders of magnitude while retaining the correct peptide with very high probability. In addition to filtering, InsPecT also uses novel algorithms for scoring and validating in the presence of modifications, without explicit enumeration of all variants. InsPecT identifies modified peptides with better or equivalent accuracy than other database search tools while being 2 orders of magnitude faster than SEQUEST, and substantially faster than X!TANDEM on complex mixtures. The tool was used to identify a number of novel modifications in different data sets, including many phosphopeptides in data provided by Alliance for Cellular Signaling that were missed by other tools.','https://pubs.acs.org/doi/10.1021/ac050102d','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4729,6 +4738,7 @@ INSERT INTO publication_algorithm VALUES(307,263);
 INSERT INTO publication_algorithm VALUES(308,168);
 INSERT INTO publication_algorithm VALUES(309,264);
 INSERT INTO publication_algorithm VALUES(310,265);
+INSERT INTO publication_algorithm VALUES(311,266);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6856,6 +6866,14 @@ INSERT INTO publication_author VALUES(309,105,4);
 INSERT INTO publication_author VALUES(309,252,5);
 INSERT INTO publication_author VALUES(309,107,6);
 INSERT INTO publication_author VALUES(310,1215,1);
+INSERT INTO publication_author VALUES(311,1216,1);
+INSERT INTO publication_author VALUES(311,1217,2);
+INSERT INTO publication_author VALUES(311,277,3);
+INSERT INTO publication_author VALUES(311,1218,4);
+INSERT INTO publication_author VALUES(311,1219,5);
+INSERT INTO publication_author VALUES(311,1220,6);
+INSERT INTO publication_author VALUES(311,271,7);
+INSERT INTO publication_author VALUES(311,519,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9598,10 +9616,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
 INSERT INTO sqlite_sequence VALUES('city',282);
-INSERT INTO sqlite_sequence VALUES('affiliation',633);
-INSERT INTO sqlite_sequence VALUES('author',1215);
-INSERT INTO sqlite_sequence VALUES('algorithm',265);
-INSERT INTO sqlite_sequence VALUES('publication',310);
+INSERT INTO sqlite_sequence VALUES('affiliation',634);
+INSERT INTO sqlite_sequence VALUES('author',1220);
+INSERT INTO sqlite_sequence VALUES('algorithm',266);
+INSERT INTO sqlite_sequence VALUES('publication',311);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
