@@ -13,7 +13,7 @@ website:
   repo-actions: [edit, issue]
   page-navigation: false
   back-to-top-navigation: true
-  # Without a navbar the ~1969 generated entity pages have no way back to the
+  # Without a navbar the ~2406 generated entity pages have no way back to the
   # map except the in-page links the generator writes. A sidebar is not an
   # option at that scale.
   navbar:
@@ -46,6 +46,9 @@ format:
                here. Quarto emits one per page from the front-matter
                description field, and every generated entity page now sets its
                own, so a hardcoded copy in this include produced two of them on
-               all 2126 pages. index.qmd carries its own description instead. -->
+               every generated page. index.qmd carries its own description
+               instead. (No count here on purpose: the page total moves with
+               the data, and nothing checks a number buried in an HTML
+               comment.) -->
           <meta property="og:title" content="Awesome De Novo Peptide Sequencing">
           <meta property="og:description" content="Comprehensive interactive map of the de novo peptide sequencing field: algorithms, post-processors, downstream applications, and adjacent tools (DL and classical).">

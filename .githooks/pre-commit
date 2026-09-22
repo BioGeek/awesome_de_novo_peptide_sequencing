@@ -38,7 +38,9 @@ git add denovo.sql
 # stdlib-only on purpose so the hook needs no uv and no virtualenv.
 if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
   python3 check_counts.py --fix --quiet || true
-  for doc in CLAUDE.md WATCHLIST.md; do
+  # Claims live in config and source comments too, not just the two docs, so
+  # re-stage every file the registry can touch rather than a hardcoded pair.
+  for doc in $(python3 check_counts.py --list-files); do
     if ! git diff --quiet -- "$doc" 2>/dev/null; then
       git add "$doc"
       echo "pre-commit: refreshed documented counts in $doc."

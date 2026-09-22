@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep the counts quoted in CLAUDE.md and WATCHLIST.md honest.
+"""Keep the counts quoted in the docs, config and source comments honest.
 
 Both files argue from numbers ("Coverage is 240/293", "every one of the 256
 `algorithm` rows"), and every one of them goes stale the moment a paper is
@@ -25,6 +25,18 @@ and "6 of 7 carry the print date" are findings from a verification run, and
 today's value would silently falsify the record, which is worse than letting it
 age. That is why this is a curated registry and not a regex that hunts for
 digits.
+
+NOT JUST MARKDOWN. Comments in _quarto.yml, publish.yml, build_pages.py,
+build_candidates.py and slugs.py argue from counts too, and rot the same way:
+an audit in September 2026 found "~1969 entity pages" in three files when the
+generator was emitting 2406, and "512 affiliation rows collapse to 335
+institutions" when it was 618 and 393. A number nothing checks is a number
+nothing maintains, wherever it lives. Any file in the repo can carry a claim.
+
+A claim's value can be a SQL string or a callable taking the connection, for
+the cases where re-deriving the number in SQL would duplicate logic that
+already exists: the generated-page total comes from slugs.all_slugs, the same
+function build_pages.py and index.qmd use, so the three can never disagree.
 """
 
 from __future__ import annotations
@@ -40,8 +52,17 @@ DB_PATH = Path(__file__).parent / "denovo.db"
 HAS_ID = ("COALESCE(orcid,'')<>'' OR COALESCE(openalex_id,'')<>'' "
           "OR COALESCE(scholar_id,'')<>'' OR COALESCE(sciprofiles_id,'')<>''")
 
-# (file, label, regex with ONE capture group around the number, SQL returning it)
-CLAIMS: list[tuple[str, str, str, str]] = [
+def _generated_pages(db) -> int:
+    """One page per slug, from the module build_pages.py itself uses."""
+    from slugs import all_slugs
+    tables = all_slugs(db)
+    tables.pop("__fallbacks__", None)
+    return sum(len(v) for v in tables.values())
+
+
+# (file, label, regex with ONE capture group around the number,
+#  SQL string OR a callable(db) returning it)
+CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "tables",
      r"\*\*(\d+) tables and one view\.\*\*",
      "SELECT COUNT(*) FROM sqlite_master WHERE type='table' "
@@ -74,6 +95,31 @@ CLAIMS: list[tuple[str, str, str, str]] = [
     ("WATCHLIST.md", "algorithm rows",
      r"Every one of the (\d+) `algorithm` rows",
      "SELECT COUNT(*) FROM algorithm"),
+    # Counts quoted in config and source comments, not just the two docs.
+    (".github/workflows/publish.yml", "entity pages (render time)",
+     r"it builds ~(\d+) entity pages", _generated_pages),
+    (".github/workflows/publish.yml", "entity pages (Quarto pin)",
+     r"~(\d+) pages at once", _generated_pages),
+    ("_quarto.yml", "entity pages (navbar)",
+     r"the ~(\d+) generated entity pages", _generated_pages),
+    ("build_pages.py", "entity pages (search.json)",
+     r"keeps ~(\d+) thin pages out of", _generated_pages),
+    ("build_pages.py", "algorithms with exactly one paper",
+     r"(\d+) of \d+ algorithms have exactly",
+     "SELECT COUNT(*) FROM (SELECT algorithm_id FROM publication_algorithm "
+     "GROUP BY algorithm_id HAVING COUNT(*)=1)"),
+    ("build_pages.py", "algorithms total",
+     r"\d+ of (\d+) algorithms have exactly", "SELECT COUNT(*) FROM algorithm"),
+    ("slugs.py", "affiliation rows",
+     r"(\d+) affiliation rows", "SELECT COUNT(*) FROM affiliation"),
+    ("slugs.py", "distinct institutions",
+     r"collapse to (\d+) institutions",
+     "SELECT COUNT(DISTINCT name) FROM affiliation"),
+    ("build_candidates.py", "publication_citation rows",
+     r"0 of its (\d+) rows point outside",
+     "SELECT COUNT(*) FROM publication_citation"),
+    ("build_candidates.py", "publications scored against",
+     r"our (\d+) publications link", "SELECT COUNT(*) FROM publication"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
@@ -96,7 +142,15 @@ def main() -> int:
                         help="rewrite stale numbers in place (default: report only)")
     parser.add_argument("--quiet", action="store_true",
                         help="print nothing when everything already agrees")
+    parser.add_argument("--list-files", action="store_true",
+                        help="print every file the registry can rewrite, one per "
+                             "line, so the pre-commit hook can re-stage them")
     args = parser.parse_args()
+
+    if args.list_files:
+        for fname in dict.fromkeys(c[0] for c in CLAIMS):
+            print(fname)
+        return 0
 
     if not DB_PATH.exists():
         print(f"error: {DB_PATH} not found", file=sys.stderr)
@@ -119,7 +173,7 @@ def main() -> int:
                             f"pattern matched {len(found)} times, expected 1"))
             continue
         m = found[0]
-        actual = str(db.execute(query).fetchone()[0])
+        actual = str(query(db) if callable(query) else db.execute(query).fetchone()[0])
         if m.group(1) != actual:
             stale.append((fname, label, m.group(1), actual))
             if args.fix:
