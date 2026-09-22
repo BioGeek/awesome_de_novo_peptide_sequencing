@@ -1215,6 +1215,7 @@ INSERT INTO author VALUES(1232,'Ning Li',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1233,'Enda Howley',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1234,'Florence Abram',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1235,'Yi Liu',NULL,NULL,'Western Ontario',NULL,NULL,NULL);
+INSERT INTO author VALUES(1236,'Bernhard Spengler','Bernhard.spengler@uni-giessen.de',NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2135,6 +2136,7 @@ INSERT INTO affiliation VALUES(640,'University of Southern California','Keck Sch
 INSERT INTO affiliation VALUES(641,'Regeneron Pharmaceuticals, Inc.','Department of Analytical Chemistry',NULL,285);
 INSERT INTO affiliation VALUES(642,'National University of Ireland, Galway','Functional Environmental Microbiology, School of Natural Sciences, Ryan Institute',NULL,286);
 INSERT INTO affiliation VALUES(643,'National University of Ireland, Galway','Department of Information Technology, School of Computer Science',NULL,286);
+INSERT INTO affiliation VALUES(644,'Justus Liebig University of Giessen','Institute of Inorganic and Analytical Chemistry',NULL,221);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3838,6 +3840,7 @@ INSERT INTO author_affiliation VALUES(992,643);
 INSERT INTO author_affiliation VALUES(1233,643);
 INSERT INTO author_affiliation VALUES(1234,642);
 INSERT INTO author_affiliation VALUES(1235,131);
+INSERT INTO author_affiliation VALUES(1236,644);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4114,6 +4117,7 @@ INSERT INTO algorithm VALUES(270,'De novo peptide sequencing (Proteome Informati
 INSERT INTO algorithm VALUES(271,'Lys-Sequencer',NULL,NULL,'Spectra pair','Database-independent de novo sequencing from paired Lys-C and Lys-N digests, whose single-residue-transposed peptides yield complementary high-resolution spectra, with residue-level confidence reported per call.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(272,'De novo robustness to noise and missing cleavages',NULL,NULL,'','Evaluation of how de novo sequencing algorithms degrade as spectra lose fragmentation cleavages and gain noise, run over eight published datasets with Novor and DeepNovo.','benchmark',NULL,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(273,'De novo sequencing of mixture spectra (Liu thesis)',NULL,NULL,'Graph / DP','PhD work on identifying peptides from MIXTURE tandem mass spectra, where two or more peptides co-fragment: formulates the de novo problem for a mixture spectrum and solves it by dynamic programming.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(274,'Composition-based sequencing',NULL,NULL,'Constrained search','Two-step database-free strategy enabled by FT-ICR mass accuracy: determine the peptide''s amino acid COMPOSITION first, then score only the permutations that composition allows, which is a far smaller search space than conventional de novo sequencing explores.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4442,6 +4446,7 @@ INSERT INTO publication VALUES(315,'De novo Peptide Sequencing','2016-11-23','10
 INSERT INTO publication VALUES(316,'Lys-Sequencer: An algorithm for de novo sequencing of peptides by paired single residue transposed Lys-C and Lys-N digestion coupled with high-resolution mass spectrometry','2020-02-15','10.1002/rcm.8574','Wiley','Rationale Database-dependent identification of proteins by mass spectrometry is well established, but has limitations when there are novel proteins, mutations, splice variants, and post-translational modifications (PTMs) not available in the established reference database. De novo sequencing as a database-independent approach could address these limitations by deducing peptide sequences directly from experimental tandem mass spectrometry spectra, while concomitantly yielding residue-by-residue confidence metrics. Methods Equal amounts of bovine serum albumin (BSA) sample aliquots were digested separately with Lys-C and Lys-N complementary peptidases, separated by reversed-phase ultra-high-performance liquid chromatography (UPLC), and analyzed by collision-induced dissociation (CID)-based mass spectrometry on an Orbitrap mass spectrometer. In the Lys-Sequencer algorithm, matched tandem mass spectra with equal precursor ion mass from complementary digestions were paired, and fragment ion types were identified based on the unique mass relationship between fragment ions extracted from a spectrum pair followed by de novo sequencing of peptides with identification confidence assigned at the residue level. Results In all the matched spectrum pairs, 34 top-ranked BSA peptides were identified, from which 391 amino acid residues were identified correctly, covering ~67% of the full sequence of BSA (583 residues) with only ~6% (35 residues) exhibiting ambiguity in the sequence order (although amino acid compositions were still correctly assigned). Of note, this approach identified peptide sequences up to 17 amino acids in length without ambiguity, with the exception of the N-terminal or C-terminal peptides containing lysine (18-mer). Conclusions The algorithm ("Lys-Sequencer") developed in this work achieves high precision for de novo sequencing of peptides. This method facilitates the identification of point mutation and new PTMs in the protein characterization and discovery of new peptides and proteins with varying levels of confidence.','https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/rcm.8574','Rapid Communications in Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(317,'The impact of noise and missing fragmentation cleavages on de novo peptide identification algorithms','2022-03-23','10.1016/j.csbj.2022.03.008','American Association for the Advancement of Science (AAAS)','Proteomics aims to characterise system-wide protein expression and typically relies on mass-spectrometry and peptide fragmentation, followed by a database search for protein identification. It has wide ranging applications from clinical to environmental settings and virtually impacts on every area of biology. In that context, de novo peptide sequencing is becoming increasingly popular. Historically its performance lagged behind database search methods but with the integration of machine learning, this field of research is gaining momentum. To enable de novo peptide sequencing to realise its full potential, it is critical to explore the mass spectrometry data underpinning peptide identification. In this research we investigate the characteristics of tandem mass spectra using 8 published datasets. We then evaluate two state of the art de novo peptide sequencing algorithms, Novor and DeepNovo, with a particular focus on their performance with regard to missing fragmentation cleavage sites and noise. DeepNovo was found to perform better than Novor overall. However, Novor recalled more correct amino acids when 6 or more cleavage sites were missing. Furthermore, less than 11% of each algorithms'' correct peptide predictions emanate from data with more than one missing cleavage site, highlighting the issues missing cleavages pose. We further investigate how the algorithms manage to correctly identify peptides with many of these missing fragmentation cleavages. We show how noise negatively impacts the performance of both algorithms, when high intensity peaks are considered. Finally, we provide recommendations regarding further algorithms'' improvements and offer potential avenues to overcome current inherent data limitations.','https://www.sciencedirect.com/science/article/pii/S2001037022000794','Computational and Structural Biotechnology Journal','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(318,'Algorithms for Peptide Identification from Mixture Tandem Mass Spectra','2015-09-01',NULL,'PhD thesis',NULL,'https://uwo.scholaris.ca/items/00880792-7b69-48b8-a358-59ae5f59e78c','','thesis',NULL,NULL);
+INSERT INTO publication VALUES(319,'De novo sequencing, peptide composition analysis, and composition-based sequencing: A new strategy employing accurate mass determination by Fourier transform ion cyclotron resonance mass spectrometry','2004-05-01','10.1016/j.jasms.2004.01.007','American Chemical Society (ACS)','A new strategy is described for the determination of amino acid sequences of unknown peptides. Different from the well-known but often inefficient de novo sequencing approach, the new method is based on a two-step process. In the first step the amino acid composition of an unknown peptide is determined on the basis of accurate mass values of the peptide precursor ion and a small number of accurate fragment ion mass values, and, as in de novo sequencing, without employing protein database information or other pre-information. In the second step the sequence of the found amino acids of the peptide is determined by scoring the agreement between expected and observed fragment ion signals of the permuted sequences. It was found that the new approach is highly efficient if accurate mass values are available and that it easily outstrips common approaches of de novo sequencing being based on lower accuracies and detailed knowledge of fragmentation behavior. Simple permutation and calculation of all possible amino acid sequences, however, is only efficient if the composition is known or if possible compositions are at least reduced to a small list. The latter requires the highest possible instrumental mass accuracy, which is currently provided only by fourier transform ion cyclotron resonance mass spectrometry. The connection between mass accuracy and peptide composition variability is described and an example of peptide compositioning and composition-based sequencing is presented.','https://pubs.acs.org/doi/10.1016/j.jasms.2004.01.007','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4818,6 +4823,7 @@ INSERT INTO publication_algorithm VALUES(315,270);
 INSERT INTO publication_algorithm VALUES(316,271);
 INSERT INTO publication_algorithm VALUES(317,272);
 INSERT INTO publication_algorithm VALUES(318,273);
+INSERT INTO publication_algorithm VALUES(319,274);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6981,6 +6987,7 @@ INSERT INTO publication_author VALUES(317,992,1);
 INSERT INTO publication_author VALUES(317,1233,2);
 INSERT INTO publication_author VALUES(317,1234,3);
 INSERT INTO publication_author VALUES(318,1235,1);
+INSERT INTO publication_author VALUES(319,1236,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9724,10 +9731,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
-INSERT INTO sqlite_sequence VALUES('affiliation',643);
-INSERT INTO sqlite_sequence VALUES('author',1235);
-INSERT INTO sqlite_sequence VALUES('algorithm',273);
-INSERT INTO sqlite_sequence VALUES('publication',318);
+INSERT INTO sqlite_sequence VALUES('affiliation',644);
+INSERT INTO sqlite_sequence VALUES('author',1236);
+INSERT INTO sqlite_sequence VALUES('algorithm',274);
+INSERT INTO sqlite_sequence VALUES('publication',319);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
