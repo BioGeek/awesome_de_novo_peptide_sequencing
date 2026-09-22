@@ -2175,6 +2175,7 @@ INSERT INTO affiliation VALUES(649,'National University of Singapore','Departmen
 INSERT INTO affiliation VALUES(650,'Beijing Normal University','College of Life Sciences',NULL,9);
 INSERT INTO affiliation VALUES(651,'Tsinghua University','Tsinghua Institute of Multidisciplinary Biomedical Research',NULL,9);
 INSERT INTO affiliation VALUES(652,'Changping Laboratory',NULL,NULL,9);
+INSERT INTO affiliation VALUES(653,'University College London','Ludwig Institute for Cancer Research, Department of Biochemistry',NULL,1);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3924,6 +3925,7 @@ INSERT INTO author_affiliation VALUES(1264,219);
 INSERT INTO author_affiliation VALUES(1265,132);
 INSERT INTO author_affiliation VALUES(1266,132);
 INSERT INTO author_affiliation VALUES(1033,43);
+INSERT INTO author_affiliation VALUES(1264,653);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -9898,7 +9900,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
-INSERT INTO sqlite_sequence VALUES('affiliation',652);
+INSERT INTO sqlite_sequence VALUES('affiliation',653);
 INSERT INTO sqlite_sequence VALUES('author',1266);
 INSERT INTO sqlite_sequence VALUES('algorithm',283);
 INSERT INTO sqlite_sequence VALUES('publication',330);
