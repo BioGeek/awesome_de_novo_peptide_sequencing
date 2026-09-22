@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="ETH Zurich (Zurich, Switzerland): 19 authors and 6 papers in the de novo peptide sequencing catalog.">
+<meta name="description" content="peer-reviewed · Algorithms for Molecular Biology · 2017. Thomas Tschager et al.&nbsp;Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be…">
 
-<title>ETH Zurich – Awesome De Novo Peptide Sequencing</title>
+<title>A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -76,8 +76,8 @@ ul.task-list li input[type="checkbox"] {
      description field, and every generated entity page now sets its
      own, so a hardcoded copy in this include produced two of them on
      all 2126 pages. index.qmd carries its own description instead. -->
-<meta property="og:title" content="ETH Zurich – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="ETH Zurich (Zurich, Switzerland): 19 authors and 6 papers in the de novo peptide sequencing catalog.">
+<meta property="og:title" content="A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="peer-reviewed · Algorithms for Molecular Biology · 2017. Thomas Tschager et al.&nbsp;Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be…">
 
 
 </head>
@@ -135,13 +135,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">ETH Zurich</h1>
-<p class="subtitle lead">Zurich, Switzerland · 19 authors</p>
+<h1 class="title">A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses</h1>
+<p class="subtitle lead">peer-reviewed · Algorithms for Molecular Biology · 2017</p>
 </div>
 
 <div>
   <div class="description">
-    ETH Zurich (Zurich, Switzerland): 19 authors and 6 papers in the de novo peptide sequencing catalog.
+    peer-reviewed · Algorithms for Molecular Biology · 2017. Thomas Tschager et al.&nbsp;Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be…
   </div>
 </div>
 
@@ -158,38 +158,58 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","address":"Zurich, Switzerland","name":"ETH Zurich"}</script>
-<section id="departments" class="level2">
-<h2 class="anchored" data-anchor-id="departments">Departments</h2>
-<ul>
-<li>Department of Biology</li>
-<li>Department of Biology, Institute of Molecular Systems Biology</li>
-<li>Department of Computer Science</li>
-<li>Institute of Computational Science, Institute of Plant Sciences, and Institute of Theoretical Computer Science</li>
-<li>Institute of Plant Science</li>
-<li>Institute of Theoretical Computer Science</li>
-</ul>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be found by a trivial linear scan through the amino acid masses. The inverse problem is the ideal de novo peptide sequencing problem : Given all prefix and suffix masses, determine the string of amino acids. In biological reality, the given masses are measured in a lab experiment, and measurements by necessity are noisy. The (real, noisy) de novo peptide sequencing problem therefore has a...","author":[{"@type":"Person","name":"Thomas Tschager"},{"@type":"Person","name":"Simon Rösch"},{"@type":"Person","name":"Ludovic Gillet"},{"@type":"Person","name":"Peter Widmayer"}],"datePublished":"2017-05-11","headline":"A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses","identifier":"https://doi.org/10.1186/s13015-017-0104-1","isPartOf":{"@type":"Periodical","name":"Algorithms for Molecular Biology"},"name":"A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses","publisher":{"@type":"Organization","name":"Springer Science and Business Media LLC"},"sameAs":"https://doi.org/10.1186/s13015-017-0104-1"}</script>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Date</td>
+<td>2017-05-11</td>
+</tr>
+<tr class="even">
+<td>Type</td>
+<td>peer-reviewed</td>
+</tr>
+<tr class="odd">
+<td>Venue</td>
+<td><a href="../venues/algorithms-for-molecular-biology.html">Algorithms for Molecular Biology</a></td>
+</tr>
+<tr class="even">
+<td>Publisher</td>
+<td>Springer Science and Business Media LLC</td>
+</tr>
+<tr class="odd">
+<td>Contribution</td>
+<td>algorithm</td>
+</tr>
+<tr class="even">
+<td>DOI</td>
+<td><a href="https://doi.org/10.1186/s13015-017-0104-1">10.1186/s13015-017-0104-1</a></td>
+</tr>
+</tbody>
+</table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be found by a trivial linear scan through the amino acid masses. The inverse problem is the ideal de novo peptide sequencing problem : Given all prefix and suffix masses, determine the string of amino acids. In biological reality, the given masses are measured in a lab experiment, and measurements by necessity are noisy. The (real, noisy) de novo peptide sequencing problem therefore has a noisy input: a few of the prefix and suffix masses of the peptide are missing and a few other masses are given in addition. For this setting, we ask for an amino acid string that explains the given masses as accurately as possible. Results Past approaches interpreted accuracy by searching for a string that explains as many masses as possible. We feel, however, that it is not only bad to not explain a mass that appears, but also to explain a mass that does not appear. We propose to minimize the symmetric difference between the set of given masses and the set of masses that the string explains. For this new optimization problem, we propose an efficient algorithm that computes both the best and the k best solutions. Proof-of-concept experiments on measurements of synthesized peptides show that our approach leads to better results compared to finding a string that explains as many given masses as possible. Conclusions We conclude that considering the symmetric difference as optimization goal can improve the identification rates for de novo peptide sequencing. A preliminary version of this work has been presented at WABI 2016.</p>
 </section>
-<section id="authors-19" class="level2">
-<h2 class="anchored" data-anchor-id="authors-19">Authors (19)</h2>
-<p><a href="../authors/ludovic-gillet.html">Ludovic Gillet</a>, <a href="../authors/ruedi-aebersold.html">Ruedi Aebersold</a>, <a href="../authors/peter-widmayer.html">Peter Widmayer</a>, <a href="../authors/simon-rosch.html">Simon Rösch</a>, <a href="../authors/thomas-tschager.html">Thomas Tschager</a>, <a href="../authors/tomas-hruz.html">Tomas Hruz</a>, <a href="../authors/valentin-venzin.html">Valentin Venzin</a>, <a href="../authors/yves-frank.html">Yves Frank</a>, <a href="../authors/bernd-fischer.html">Bernd Fischer</a>, <a href="../authors/franz-f-roos.html">Franz F. Roos</a>, <a href="../authors/joachim-m-buhmann.html">Joachim M. Buhmann</a>, <a href="../authors/jonas-grossmann.html">Jonas Grossmann</a>, <a href="../authors/sacha-baginsky.html">Sacha Baginsky</a>, <a href="../authors/volker-roth.html">Volker Roth</a>, <a href="../authors/wilhelm-gruissem.html">Wilhelm Gruissem</a>, <a href="../authors/lucas-k-mathis.html">Lucas K. Mathis</a>, <a href="../authors/mark-cieliebak.html">Mark Cieliebak</a>, <a href="../authors/matthias-muller.html">Matthias Müller</a>, <a href="../authors/zsuzsanna-liptak.html">Zsuzsanna Lipták</a></p>
+<section id="authors" class="level2">
+<h2 class="anchored" data-anchor-id="authors">Authors</h2>
+<ol type="1">
+<li><a href="../authors/thomas-tschager.html">Thomas Tschager</a> · <a href="../institutions/eth-zurich.html">ETH Zurich</a></li>
+<li><a href="../authors/simon-rosch.html">Simon Rösch</a> · <a href="../institutions/eth-zurich.html">ETH Zurich</a></li>
+<li><a href="../authors/ludovic-gillet.html">Ludovic Gillet</a> · <a href="../institutions/eth-zurich.html">ETH Zurich</a></li>
+<li><a href="../authors/peter-widmayer.html">Peter Widmayer</a> · <a href="../institutions/eth-zurich.html">ETH Zurich</a></li>
+</ol>
 </section>
-<section id="papers-6" class="level2">
-<h2 class="anchored" data-anchor-id="papers-6">Papers (6)</h2>
+<section id="methods-and-tools" class="level2">
+<h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
 <ul>
-<li><a href="../publications/ai-proteomics-from-protein-identification-to-virtual-cells.html">AI proteomics: from protein identification to virtual cells</a> (2026, Nature Methods)</li>
-<li><a href="../publications/improved-de-novo-peptide-sequencing-using-lc-retention-time-information.html">Improved de novo peptide sequencing using LC retention time information</a> (2018, Algorithms for Molecular Biology)</li>
-<li><a href="../publications/a-better-scoring-model-for-de-novo-peptide-sequencing-the-symmetric-difference.html">A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses</a> (2017, Algorithms for Molecular Biology)</li>
-<li><a href="../publications/novohmm-a-hidden-markov-model-for-de-novo-peptide-sequencing.html">NovoHMM: A Hidden Markov Model for de Novo Peptide Sequencing</a> (2005, Analytical Chemistry)</li>
-<li><a href="../publications/audens-a-tool-for-automated-peptide-de-novo-sequencing.html">AUDENS: A Tool for Automated Peptide de Novo Sequencing</a> (2005, Journal of Proteome Research)</li>
-<li><a href="../publications/a-hidden-markov-model-for-de-novo-peptide-sequencing.html">A Hidden Markov Model for de Novo Peptide Sequencing</a> (2004, NIPS 2004)</li>
+<li><a href="../algorithms/symmetric-difference-scoring-model.html">Symmetric difference scoring model</a>: Scores a candidate sequence by the symmetric difference between the masses it explains and the masses actually measured, penalising an explained mass that was not observed as well as an observed mass left unexplained. Earlier scoring models only maximised the number of explained masses.</li>
 </ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#where-the-work-happens">Where the work happens</a></li>
-<li><a href="../../index.html#browse-all-authors">Browse all authors</a></li>
+<li><a href="../../index.html#browse-all-papers">Browse all papers</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
