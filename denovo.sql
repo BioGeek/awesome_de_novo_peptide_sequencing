@@ -1273,6 +1273,12 @@ INSERT INTO author VALUES(1290,'Benjamin Dartigues',NULL,NULL,NULL,NULL,NULL,NUL
 INSERT INTO author VALUES(1291,'Miranda Evans',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1292,'Ruairidh Macleod',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1293,'Matthew J. Collins',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1294,'Yves Frank',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1295,'Tomas Hruz',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1296,'Thomas Tschager',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1297,'Valentin Venzin',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1298,'Simon Rösch',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1299,'Ludovic Gillet',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2220,6 +2226,8 @@ INSERT INTO affiliation VALUES(662,'University of Münster','Institute of Physio
 INSERT INTO affiliation VALUES(663,'University of Bordeaux','Department of Science and Technology',NULL,289);
 INSERT INTO affiliation VALUES(664,'University College Dublin','School of Archaeology',NULL,290);
 INSERT INTO affiliation VALUES(665,'University of Turin','Archaeobiomics, Department of Life Sciences and Systems Biology',NULL,291);
+INSERT INTO affiliation VALUES(666,'ETH Zurich','Department of Computer Science',16,59);
+INSERT INTO affiliation VALUES(667,'ETH Zurich','Department of Biology',16,59);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -4021,6 +4029,13 @@ INSERT INTO author_affiliation VALUES(1291,366);
 INSERT INTO author_affiliation VALUES(1292,307);
 INSERT INTO author_affiliation VALUES(1293,307);
 INSERT INTO author_affiliation VALUES(1293,305);
+INSERT INTO author_affiliation VALUES(283,666);
+INSERT INTO author_affiliation VALUES(1298,666);
+INSERT INTO author_affiliation VALUES(1296,666);
+INSERT INTO author_affiliation VALUES(1295,666);
+INSERT INTO author_affiliation VALUES(1297,666);
+INSERT INTO author_affiliation VALUES(1294,666);
+INSERT INTO author_affiliation VALUES(1299,667);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4316,6 +4331,8 @@ INSERT INTO algorithm VALUES(289,'TVNovo',NULL,NULL,'Constrained search','Turns 
 INSERT INTO algorithm VALUES(290,'NeuCode y-ion annotation',NULL,NULL,'Chemical labeling assisted','Two lysine isotopologues differing by 36 mDa are embedded metabolically, so every C-terminal fragment appears as a resolvable doublet and N-terminal ones do not. An algorithm reads that signature to label y-type ions at 93.2% accuracy, which among other uses lifts correct de novo identifications with PepNovo+ by 34%.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(291,'Bothrops moojeni venom protease de novo identification',NULL,NULL,'','Reviews the state of identifying wholly unknown proteins by mass spectrometry and demonstrates it on a snake venom serine protease from Bothrops moojeni, where de novo sequence tags such as D[K/Q]D[I/L]VDD[K/Q] made the identification.','downstream-application',0,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(292,'Degraded-protein search strategy benchmark',NULL,NULL,'','Benchmarks search strategies for ancient and degraded proteins on a controlled beta-lactoglobulin series, comparing database engines against de novo sequencing through DeNovoGUI (PepNovo+, DirecTag, Novor) to see which recovers coverage as degradation increases.','benchmark',NULL,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(293,'Symmetric difference scoring model','','','Graph / DP','Scores a candidate sequence by the symmetric difference between the masses it explains and the masses actually measured, penalising an explained mass that was not observed as well as an observed mass left unexplained. Earlier scoring models only maximised the number of explained masses.','algorithm',0,'DDA','','');
+INSERT INTO algorithm VALUES(294,'Retention-time-aware de novo sequencing','','','Graph / DP','Extends the symmetric difference scoring model with the chromatographic retention time, asking for a sequence consistent with both the fragment spectrum and the observed elution time. Develops an algorithm for each of three retention-time prediction models.','algorithm',0,'DDA','','');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4668,6 +4685,8 @@ INSERT INTO publication VALUES(339,'Evolutionary Algorithms for Improving De Nov
 INSERT INTO publication VALUES(340,'The Current State-of-the-Art Identification of Unknown Proteins Using Mass Spectrometry Exemplified on De Novo Sequencing of a Venom Protease from Bothrops moojeni','2022-08-05','10.3390/molecules27154976','MDPI AG','(1) Background: The amino acid sequence elucidation of peptides from the gas phase fragmentation mass spectra, de novo sequencing, is a valuable method for the identification of unknown proteins complementary to Edman sequencing. It is increasingly used in shot-gun mass spectrometry (MS)-based proteomics experiments. We review the current state-of-the-art and use the identification of an unknown snake venom protein targeting the human tissue factor (TF) as an example to describe the analysis process based on manual spectrum interrogation. (2) Methods: The immobilized TF was incubated with a crude B. moojeni venom solution. The potential binding partners were eluted and further purified by gel electrophoresis. Edman degradation was performed to elucidate the N-terminus of the 31 kDa protein of interest. High-resolution MS with collision-induced dissociation was employed to generate peptide fragmentation spectra. Sequence tags were deduced and used for searches in the NCBI and Uniprot databases. Protein matches from the snake species were further validated by target MS/MS. (3) Results: Sequence tag D [K/Q] D [I/L] VDD [K/Q] led to a snake venom serine protease (SVSP) from lancehead B. jararaca (P81824). With target MS/MS, 24% of the SVSP sequence were confirmed; an additional 41% were tentatively assigned by data-independent MS. Edman sequencing provided information for 10 N-terminal amino acid residues, also confirming the match to SVSP. (4) Conclusions: The identification of unknown proteins continues to be a challenge despite major advances in MS instrumentation and bioinformatic tools. The main requirement is the generation of meaningful, high-quality MS peptide fragmentation spectra. These are used to elucidate sufficiently long sequence tags, which can subsequently be submitted to searches in protein databases. This basic method does not require extensive bioinformatics because peptide MS/MS spectra, especially of doubly-charged ions, can be analysed manually. We demonstrated the procedure with the elucidation of SVSP. While de novo sequencing quickly indicates the correct protein group, the validation of the entire protein sequence of amino acid-by-amino acid will take time. Reasons are the need to properly assign isobaric amino acid residues and modifications. With the ongoing efforts in genomics and transcriptomics and the availability of ever more data in public databases, the need for de novo MS sequencing will decrease. Still, not every animal and plant species will be sequenced, so the combination of MS and Edman sequencing will continue to be of importance for the identification of unknown proteins.','https://www.mdpi.com/1420-3049/27/15/4976','Molecules','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(341,'Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins','2023-12-15','10.1101/2023.12.15.571577','Cold Spring Harbor Laboratory','Palaeoproteomics is a rapidly evolving discipline, and practitioners are constantly developing novel strategies for the analyses and interpretations of complex, degraded protein mixtures. The community has also established standards of good practice to interrogate our data. However, there is a lack of a systematic exploration of how these affect the identification of peptides, post-translational modifications (PTMs), proteins and their significance (through the False Discovery Rate) and correctness. We systematically investigated the performance of a wide range of sequencing tools and search engines in a controlled system: the experimental degradation of the single purified bovine β-lactoglobulin (BLG), heated at 95 °C and pH 7 for 0, 4 and 128 days. We target BLG since it is one of the most robust and ubiquitous proteins in the archaeological record. We tested different reference database choices, a targeted dairy protein one, and the whole bovine proteome and the three digestion options (tryptic-, semi-tryptic- and non-specific searches), in order to evaluate the effects of search space and the identification of peptides. We also explored alternative strategies, including open search that allows for the global identification of PTMs based upon wide precursor mass tolerance and de novo sequencing to boost sequence coverage. We analysed the samples using Mascot, MaxQuant, Metamorpheus, pFind, Fragpipe and DeNovoGUI (pepNovo+, DirecTag, Novor), benchmarked these tools and discuss the optimal strategy for the characterisation of ancient proteins. We also studied physicochemical properties of the BLG that correlate with bias in the identification coverage.','https://www.biorxiv.org/content/10.1101/2023.12.15.571577','bioRxiv','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(342,'Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins','2024-11-21','10.24072/pcjournal.491','Peer Community In','Palaeoproteomics is a rapidly evolving discipline, and practitioners are constantly developing novel strategies for the analyses and interpretations of complex, degraded protein mixtures. The community has also established standards of good practice to interrogate our data. However, there is a lack of a systematic exploration of how these affect the identification of peptides, post-translational modifications (PTMs), proteins and their significance (through the False Discovery Rate) and correctness. We systematically investigated the performance of a wide range of sequencing tools and search engines in a controlled system: the experimental degradation of the single purified bovine β-lactoglobulin (BLG), heated at 95°C and pH 7 for 0, 4 and 128 days. We target BLG since it is one of the most robust and ubiquitous proteins in the archaeological record. We tested different reference database choices, a targeted dairy protein one, and the whole bovine proteome and the three digestion options (tryptic-, semi-tryptic- and non-specific searches), in order to evaluate the effects of search space and the identification of peptides. We also explored alternative strategies, including open search that allows for the global identification of PTMs based upon wide precursor mass tolerance and de novo sequencing to boost sequence coverage. We analysed the samples using Mascot, MaxQuant, Metamorpheus, pFind, Fragpipe and DeNovoGUI (pepNovo+, DirecTag, Novor), benchmarked these tools and discuss the optimal strategy for the characterisation of ancient proteins. We also studied physicochemical properties of the BLG that correlate with bias in the identification coverage.','https://peercommunityjournal.org/articles/10.24072/pcjournal.491/','Peer Community Journal','peer-reviewed',NULL,'crossref');
+INSERT INTO publication VALUES(343,'A better scoring model for de novo peptide sequencing: the symmetric difference between explained and measured masses','2017-05-11','10.1186/s13015-017-0104-1','Springer Science and Business Media LLC','Background Given a peptide as a string of amino acids, the masses of all its prefixes and suffixes can be found by a trivial linear scan through the amino acid masses. The inverse problem is the ideal de novo peptide sequencing problem : Given all prefix and suffix masses, determine the string of amino acids. In biological reality, the given masses are measured in a lab experiment, and measurements by necessity are noisy. The (real, noisy) de novo peptide sequencing problem therefore has a noisy input: a few of the prefix and suffix masses of the peptide are missing and a few other masses are given in addition. For this setting, we ask for an amino acid string that explains the given masses as accurately as possible. Results Past approaches interpreted accuracy by searching for a string that explains as many masses as possible. We feel, however, that it is not only bad to not explain a mass that appears, but also to explain a mass that does not appear. We propose to minimize the symmetric difference between the set of given masses and the set of masses that the string explains. For this new optimization problem, we propose an efficient algorithm that computes both the best and the k best solutions. Proof-of-concept experiments on measurements of synthesized peptides show that our approach leads to better results compared to finding a string that explains as many given masses as possible. Conclusions We conclude that considering the symmetric difference as optimization goal can improve the identification rates for de novo peptide sequencing. A preliminary version of this work has been presented at WABI 2016.','https://link.springer.com/article/10.1186/s13015-017-0104-1','Algorithms for Molecular Biology','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(344,'Improved de novo peptide sequencing using LC retention time information','2018-08-29','10.1186/s13015-018-0132-5','Springer Science and Business Media LLC','Background Liquid chromatography combined with tandem mass spectrometry is an important tool in proteomics for peptide identification. Liquid chromatography temporally separates the peptides in a sample. The peptides that elute one after another are analyzed via tandem mass spectrometry by measuring the mass-to-charge ratio of a peptide and its fragments. De novo peptide sequencing is the problem of reconstructing the amino acid sequences of a peptide from this measurement data. Past de novo sequencing algorithms solely consider the mass spectrum of the fragments for reconstructing a sequence. Results We propose to additionally exploit the information obtained from liquid chromatography. We study the problem of computing a sequence that is not only in accordance with the experimental mass spectrum, but also with the chromatographic retention time. We consider three models for predicting the retention time and develop algorithms for de novo sequencing for each model. Conclusions Based on an evaluation for two prediction models on experimental data from synthesized peptides we conclude that the identification rates are improved by exploiting the chromatographic information. In our evaluation, we compare our algorithms using the retention time information with algorithms using the same scoring model, but not the retention time.','https://link.springer.com/article/10.1186/s13015-018-0132-5','Algorithms for Molecular Biology','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5069,6 +5088,8 @@ INSERT INTO publication_algorithm VALUES(339,195);
 INSERT INTO publication_algorithm VALUES(340,291);
 INSERT INTO publication_algorithm VALUES(341,292);
 INSERT INTO publication_algorithm VALUES(342,292);
+INSERT INTO publication_algorithm VALUES(343,293);
+INSERT INTO publication_algorithm VALUES(344,294);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7350,6 +7371,14 @@ INSERT INTO publication_author VALUES(342,1291,7);
 INSERT INTO publication_author VALUES(342,1292,8);
 INSERT INTO publication_author VALUES(342,691,9);
 INSERT INTO publication_author VALUES(342,1293,10);
+INSERT INTO publication_author VALUES(343,1296,1);
+INSERT INTO publication_author VALUES(343,1298,2);
+INSERT INTO publication_author VALUES(343,1299,3);
+INSERT INTO publication_author VALUES(343,283,4);
+INSERT INTO publication_author VALUES(344,1294,1);
+INSERT INTO publication_author VALUES(344,1295,2);
+INSERT INTO publication_author VALUES(344,1296,3);
+INSERT INTO publication_author VALUES(344,1297,4);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -11195,10 +11224,16 @@ INSERT INTO repository_metrics VALUES('https://github.com/snijderlab/stitch',32,
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',291);
-INSERT INTO sqlite_sequence VALUES('affiliation',665);
-INSERT INTO sqlite_sequence VALUES('author',1293);
-INSERT INTO sqlite_sequence VALUES('algorithm',292);
-INSERT INTO sqlite_sequence VALUES('publication',342);
+INSERT INTO sqlite_sequence VALUES('affiliation',667);
+INSERT INTO sqlite_sequence VALUES('author',1299);
+INSERT INTO sqlite_sequence VALUES('algorithm',294);
+INSERT INTO sqlite_sequence VALUES('publication',344);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -11253,12 +11288,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -11274,12 +11303,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -11294,4 +11317,10 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
