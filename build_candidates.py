@@ -210,6 +210,7 @@ def main() -> int:
     rows = []
     skipped_known = 0
     skipped_title = 0
+    skipped_unknown = 0
     for k in scored:
         w = meta.get(k, {})
         doi = norm_doi(w.get("doi"))
@@ -218,6 +219,13 @@ def main() -> int:
             continue
         if norm_title(w.get("title")) in our_titles:
             skipped_title += 1
+            continue
+        # OpenAlex keeps ids for merged and withdrawn records: they appear in
+        # other works' referenced_works but 404 on lookup, so nothing can be
+        # said about them. Emitting a row with no title just wastes the
+        # reviewer's time; one such id scored 19 links on the first run.
+        if not (w.get("title") or "").strip():
+            skipped_unknown += 1
             continue
         rows.append({
             "openalex_id": k,
@@ -244,7 +252,8 @@ def main() -> int:
         writer.writerows(rows)
 
     print(f"\nskipped {skipped_known} by DOI (in the catalog or on the watch list) "
-          f"and {skipped_title} more by title match", flush=True)
+          f"and {skipped_title} more by title match; dropped {skipped_unknown} "
+          f"whose OpenAlex record has no retrievable metadata", flush=True)
     print(f"wrote {len(rows)} candidates to {out}", flush=True)
     if rows:
         print("\ntop 15 by links to the catalog:", flush=True)
