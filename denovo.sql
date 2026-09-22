@@ -1264,6 +1264,8 @@ INSERT INTO author VALUES(1281,'Catherine E. Vincent',NULL,NULL,NULL,NULL,NULL,N
 INSERT INTO author VALUES(1282,'Christopher M. Rose',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1283,'Michael S. Westphall',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1284,'Joshua J. Coon',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1285,'Wolfgang M. J. Obermann',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1286,'Johannes A. Eble',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2204,6 +2206,7 @@ INSERT INTO affiliation VALUES(658,'Indiana University','Department of Chemistry
 INSERT INTO affiliation VALUES(659,'European Molecular Biology Laboratory',NULL,NULL,77);
 INSERT INTO affiliation VALUES(660,'Brigham & Women''s Hospital and Harvard Medical School','Genetics Division, Department of Medicine',NULL,81);
 INSERT INTO affiliation VALUES(661,'University of Wisconsin-Madison','Genome Center of Wisconsin',NULL,108);
+INSERT INTO affiliation VALUES(662,'University of Münster','Institute of Physiological Chemistry and Pathobiochemistry',NULL,237);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3990,6 +3993,8 @@ INSERT INTO author_affiliation VALUES(1282,661);
 INSERT INTO author_affiliation VALUES(1283,661);
 INSERT INTO author_affiliation VALUES(1284,513);
 INSERT INTO author_affiliation VALUES(1284,661);
+INSERT INTO author_affiliation VALUES(1285,662);
+INSERT INTO author_affiliation VALUES(1286,662);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4283,6 +4288,7 @@ INSERT INTO algorithm VALUES(287,'351 nm UVPD de novo sequencing',NULL,NULL,'Che
 INSERT INTO algorithm VALUES(288,'MultiTag',NULL,NULL,'Sequence tag','Searches several error-tolerant peptide sequence tags at once, so a protein can be identified across species by sequence similarity even when no tag is individually correct. Tolerating errors in the tags is what lets de novo output drive a homology search.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(289,'TVNovo',NULL,NULL,'Constrained search','Turns de novo sequencing into a search problem by generating a VIRTUAL database per spectrum, enumerating the candidate sequences the precursor mass allows, then scoring them as a database search would. Built for high-resolution LTQ-FT data.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(290,'NeuCode y-ion annotation',NULL,NULL,'Chemical labeling assisted','Two lysine isotopologues differing by 36 mDa are embedded metabolically, so every C-terminal fragment appears as a resolvable doublet and N-terminal ones do not. An algorithm reads that signature to label y-type ions at 93.2% accuracy, which among other uses lifts correct de novo identifications with PepNovo+ by 34%.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(291,'Bothrops moojeni venom protease de novo identification',NULL,NULL,'','Reviews the state of identifying wholly unknown proteins by mass spectrometry and demonstrates it on a snake venom serine protease from Bothrops moojeni, where de novo sequence tags such as D[K/Q]D[I/L]VDD[K/Q] made the identification.','downstream-application',0,'DDA',NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4632,6 +4638,7 @@ INSERT INTO publication VALUES(336,'Complexity and scoring function of MS/MS pep
 INSERT INTO publication VALUES(337,'TVNovo: De novo peptide sequencing for high resolution LTQ-FT mass spectrometry using virtual database searching','2010-10-01','10.1109/bmei.2010.5639865','Institute of Electrical and Electronics Engineers (IEEE)',NULL,'https://ieeexplore.ieee.org/document/5639865','2010 3rd International Conference on Biomedical Engineering and Informatics','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(338,'Neutron-encoded Signatures Enable Product Ion Annotation From Tandem Mass Spectra','2013-12-01','10.1074/mcp.m113.028951','Elsevier BV','We report the use of neutron-encoded (NeuCode) stable isotope labeling of amino acids in cell culture for the purpose of C-terminal product ion annotation. Two NeuCode labeling isotopologues of lysine, (13)C6(15)N2 and (2)H8, which differ by 36 mDa, were metabolically embedded in a sample proteome, and the resultant labeled proteins were combined, digested, and analyzed via liquid chromatography and mass spectrometry. With MS/MS scan resolving powers of ~50,000 or higher, product ions containing the C terminus (i.e. lysine) appear as a doublet spaced by exactly 36 mDa, whereas N-terminal fragments exist as a single m/z peak. Through theory and experiment, we demonstrate that over 90% of all y-type product ions have detectable doublets. We report on an algorithm that can extract these neutron signatures with high sensitivity and specificity. In other words, of 15,503 y-type product ion peaks, the y-type ion identification algorithm correctly identified 14,552 (93.2%) based on detection of the NeuCode doublet; 6.8% were misclassified (i.e. other ion types that were assigned as y-type products). Searching NeuCode labeled yeast with PepNovo(+) resulted in a 34% increase in correct de novo identifications relative to searching through MS/MS only. We use this tool to simplify spectra prior to database searching, to sort unmatched tandem mass spectra for spectral richness, for correlation of co-fragmented ions to their parent precursor, and for de novo sequence identification.','https://www.mcponline.org/article/S1535-9476(20)33188-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(339,'Evolutionary Algorithms for Improving De Novo Peptide Sequencing','2020-01-01','10.26686/wgtn.17145581.v1','PhD thesis',NULL,'https://openaccess.wgtn.ac.nz/articles/thesis/Evolutionary_Algorithms_for_Improving_De_Novo_Peptide_Sequencing/17145581','','thesis',NULL,NULL);
+INSERT INTO publication VALUES(340,'The Current State-of-the-Art Identification of Unknown Proteins Using Mass Spectrometry Exemplified on De Novo Sequencing of a Venom Protease from Bothrops moojeni','2022-08-05','10.3390/molecules27154976','MDPI AG','(1) Background: The amino acid sequence elucidation of peptides from the gas phase fragmentation mass spectra, de novo sequencing, is a valuable method for the identification of unknown proteins complementary to Edman sequencing. It is increasingly used in shot-gun mass spectrometry (MS)-based proteomics experiments. We review the current state-of-the-art and use the identification of an unknown snake venom protein targeting the human tissue factor (TF) as an example to describe the analysis process based on manual spectrum interrogation. (2) Methods: The immobilized TF was incubated with a crude B. moojeni venom solution. The potential binding partners were eluted and further purified by gel electrophoresis. Edman degradation was performed to elucidate the N-terminus of the 31 kDa protein of interest. High-resolution MS with collision-induced dissociation was employed to generate peptide fragmentation spectra. Sequence tags were deduced and used for searches in the NCBI and Uniprot databases. Protein matches from the snake species were further validated by target MS/MS. (3) Results: Sequence tag D [K/Q] D [I/L] VDD [K/Q] led to a snake venom serine protease (SVSP) from lancehead B. jararaca (P81824). With target MS/MS, 24% of the SVSP sequence were confirmed; an additional 41% were tentatively assigned by data-independent MS. Edman sequencing provided information for 10 N-terminal amino acid residues, also confirming the match to SVSP. (4) Conclusions: The identification of unknown proteins continues to be a challenge despite major advances in MS instrumentation and bioinformatic tools. The main requirement is the generation of meaningful, high-quality MS peptide fragmentation spectra. These are used to elucidate sufficiently long sequence tags, which can subsequently be submitted to searches in protein databases. This basic method does not require extensive bioinformatics because peptide MS/MS spectra, especially of doubly-charged ions, can be analysed manually. We demonstrated the procedure with the elucidation of SVSP. While de novo sequencing quickly indicates the correct protein group, the validation of the entire protein sequence of amino acid-by-amino acid will take time. Reasons are the need to properly assign isobaric amino acid residues and modifications. With the ongoing efforts in genomics and transcriptomics and the availability of ever more data in public databases, the need for de novo MS sequencing will decrease. Still, not every animal and plant species will be sequenced, so the combination of MS and Edman sequencing will continue to be of importance for the identification of unknown proteins.','https://www.mdpi.com/1420-3049/27/15/4976','Molecules','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5030,6 +5037,7 @@ INSERT INTO publication_algorithm VALUES(337,289);
 INSERT INTO publication_algorithm VALUES(338,290);
 INSERT INTO publication_algorithm VALUES(339,124);
 INSERT INTO publication_algorithm VALUES(339,195);
+INSERT INTO publication_algorithm VALUES(340,291);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7288,6 +7296,9 @@ INSERT INTO publication_author VALUES(338,1283,5);
 INSERT INTO publication_author VALUES(338,475,6);
 INSERT INTO publication_author VALUES(338,1284,7);
 INSERT INTO publication_author VALUES(339,508,1);
+INSERT INTO publication_author VALUES(340,938,1);
+INSERT INTO publication_author VALUES(340,1285,2);
+INSERT INTO publication_author VALUES(340,1286,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -10033,10 +10044,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
-INSERT INTO sqlite_sequence VALUES('affiliation',661);
-INSERT INTO sqlite_sequence VALUES('author',1284);
-INSERT INTO sqlite_sequence VALUES('algorithm',290);
-INSERT INTO sqlite_sequence VALUES('publication',339);
+INSERT INTO sqlite_sequence VALUES('affiliation',662);
+INSERT INTO sqlite_sequence VALUES('author',1286);
+INSERT INTO sqlite_sequence VALUES('algorithm',291);
+INSERT INTO sqlite_sequence VALUES('publication',340);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
