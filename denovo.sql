@@ -298,7 +298,7 @@ INSERT INTO author VALUES(292,'Chun-Qing Song',NULL,NULL,NULL,NULL,NULL,'A510084
 INSERT INTO author VALUES(293,'Le-Heng Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(294,'Chao Liu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(295,'Zuo-Fei Yuan',NULL,NULL,NULL,NULL,'0000-0003-1252-6766','A5074384904');
-INSERT INTO author VALUES(298,'Meng-Qiu Dong',NULL,NULL,NULL,NULL,'0000-0002-6094-1182','A5062310761');
+INSERT INTO author VALUES(298,'Meng-Qiu Dong','dongmengqiu@nibs.ac.cn',NULL,NULL,NULL,'0000-0002-6094-1182','A5062310761');
 INSERT INTO author VALUES(299,'Haifeng Chen',NULL,NULL,NULL,NULL,'0000-0002-1702-6771','A5100456777');
 INSERT INTO author VALUES(300,'Kun He',NULL,NULL,NULL,NULL,'0000-0002-0828-0794','A5101939666');
 INSERT INTO author VALUES(301,'Long Wu',NULL,NULL,NULL,NULL,'0000-0002-3566-9818','A5043381222');
@@ -1211,7 +1211,7 @@ INSERT INTO author VALUES(1228,'Feng Xu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1229,'Ritendra Datta',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1230,'Yuan Mao','yuan.mao@regeneron.com',NULL,NULL,NULL,'0000-0003-3271-4609',NULL);
 INSERT INTO author VALUES(1231,'Thomas J. Daly',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(1232,'Ning Li',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1232,'Ning Li',NULL,NULL,'Tarrytown',NULL,NULL,NULL);
 INSERT INTO author VALUES(1233,'Enda Howley',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1234,'Florence Abram',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1235,'Yi Liu',NULL,NULL,'Western Ontario',NULL,NULL,NULL);
@@ -1234,6 +1234,14 @@ INSERT INTO author VALUES(1251,'Hon Wai Leong',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1252,'Alejandro Gomez Toledo',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1253,'Yasaman Karami',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1254,'Hammed Khakzad',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1255,'Meng-Ting He',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1256,'Ning Li',NULL,NULL,'Beijing',NULL,NULL,NULL);
+INSERT INTO author VALUES(1257,'Jian-Hua Wang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1258,'Zhi-Zhong Wei',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1259,'Jie Feng',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1260,'Wen-Ting Li',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1261,'Jian-Hua Sui',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1262,'Niu Huang',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2160,6 +2168,9 @@ INSERT INTO affiliation VALUES(646,'Beijing Institute of Radiation Medicine','St
 INSERT INTO affiliation VALUES(647,'Zhejiang Gongshang University',NULL,NULL,15);
 INSERT INTO affiliation VALUES(648,'glyXera GmbH',NULL,NULL,146);
 INSERT INTO affiliation VALUES(649,'National University of Singapore','Department of Computer Science',NULL,63);
+INSERT INTO affiliation VALUES(650,'Beijing Normal University','College of Life Sciences',NULL,9);
+INSERT INTO affiliation VALUES(651,'Tsinghua University','Tsinghua Institute of Multidisciplinary Biomedical Research',NULL,9);
+INSERT INTO affiliation VALUES(652,'Changping Laboratory',NULL,NULL,9);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3887,6 +3898,22 @@ INSERT INTO author_affiliation VALUES(1251,649);
 INSERT INTO author_affiliation VALUES(1252,296);
 INSERT INTO author_affiliation VALUES(1253,297);
 INSERT INTO author_affiliation VALUES(1254,297);
+INSERT INTO author_affiliation VALUES(1255,650);
+INSERT INTO author_affiliation VALUES(1255,120);
+INSERT INTO author_affiliation VALUES(1255,651);
+INSERT INTO author_affiliation VALUES(1256,120);
+INSERT INTO author_affiliation VALUES(1256,651);
+INSERT INTO author_affiliation VALUES(1257,652);
+INSERT INTO author_affiliation VALUES(1258,120);
+INSERT INTO author_affiliation VALUES(1258,651);
+INSERT INTO author_affiliation VALUES(1259,120);
+INSERT INTO author_affiliation VALUES(1259,651);
+INSERT INTO author_affiliation VALUES(1260,52);
+INSERT INTO author_affiliation VALUES(1261,120);
+INSERT INTO author_affiliation VALUES(1261,651);
+INSERT INTO author_affiliation VALUES(1262,120);
+INSERT INTO author_affiliation VALUES(1262,651);
+INSERT INTO author_affiliation VALUES(298,651);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4169,6 +4196,7 @@ INSERT INTO algorithm VALUES(276,'ProbPS',NULL,NULL,'Peak selection','Peak selec
 INSERT INTO algorithm VALUES(277,'Tandem mass spectrum sequencing (review)',NULL,NULL,'','Book chapter presenting de novo sequencing as the alternative to database search engines in shotgun proteomics, covering its pitfalls and challenges and reviewing the main available tools.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(278,'De novo peptide sequencing tutorial',NULL,NULL,'','Self-contained tutorial on de novo peptide sequencing from MS/MS: models the problem formally, then reviews the major algorithmic approaches and their post-processing.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(279,'Cumulative MS score (cMS)',NULL,NULL,'Grouped spectra','Scoring framework that accumulates evidence for a residue across repeated injections rather than scoring one spectrum at a time, to make de novo annotation robust enough to read VH/VL and CDR sequences out of a POLYCLONAL antibody mixture.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(280,'DIY de novo antibody sequencing workflow',NULL,NULL,'','Assembled from off-the-shelf parts rather than new software: multi-protease digestion, complementary fragmentation and existing de novo tools, combined into a protocol that reached complete accuracy across antibody variable regions and decoded an unknown anti-HA antibody.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4504,6 +4532,7 @@ INSERT INTO publication VALUES(322,'Tandem Mass Spectrum Sequencing: An Alternat
 INSERT INTO publication VALUES(323,'Protein identification by spectral networks analysis','2007-04-10','10.1073/pnas.0701130104','National Academy of Sciences','Advances in tandem mass spectrometry (MS/MS) steadily increase the rate of generation of MS/MS spectra. As a result, the existing approaches that compare spectra against databases are already facing a bottleneck, particularly when interpreting spectra of modified peptides. Here we explore a concept that allows one to perform an MS/MS database search without ever comparing a spectrum against a database. We propose to take advantage of spectral pairs, which are pairs of spectra obtained from overlapping (often nontryptic) peptides or from unmodified and modified versions of the same peptide. Having a spectrum of a modified peptide paired with a spectrum of an unmodified peptide allows one to separate the prefix and suffix ladders, to greatly reduce the number of noise peaks, and to generate a small number of peptide reconstructions that are likely to contain the correct one. The MS/MS database search is thus reduced to extremely fast pattern-matching (rather than time-consuming matching of spectra against databases). In addition to speed, our approach provides a unique paradigm for identifying posttranslational modifications by means of spectral networks analysis.','https://www.pnas.org/doi/10.1073/pnas.0701130104','Proceedings of the National Academy of Sciences','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(324,'Tutorial on de novo peptide sequencing using MS/MS mass spectrometry','2012-12-01','10.1142/s0219720012310026','World Scientific Pub Co Pte Lt','This paper is a self-contained introductory tutorial on the problem in proteomics known as peptide sequencing using tandem mass spectrometry. This tutorial deals specifically with de novo sequencing methods (as opposed to database search methods). We first give an introduction to peptide sequencing, its importance and history and some background on proteins. Next we show the relationship between a peptide and the final spectrum produced from a tandem mass spectrometer, together with a description of the various sources of complications that arise during the process of generating the mass spectrum. From there we model the computational problem of de novo peptide sequencing, which is basically the reverse problem of identifying the peptide which produced the spectrum. We then present several major approaches to solve it (including reviewing some of the current algorithms in each approach), and also discuss related problems and post-processing approaches.','https://www.worldscientific.com/doi/10.1142/S0219720012310026','Journal of Bioinformatics and Computational Biology','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(325,'Cumulating MS Signal enables polyclonal antibody analysis','2025-04-05','10.1101/2025.03.31.645874','Cold Spring Harbor Laboratory','Unraveling the complexities of protein systems via Mass Spectrometry (MS), particularly polyclonal antibodies, demands innovative analytical strategies. Here, we introduce the cumulative MS score (cMS), a novel mathematical framework that transcends traditional spectrum-matching, integrating MS evidence across multiple sample injections to achieve robust de novo peptide sequencing annotation. This approach, shifting from isolated spectrum analysis to a holistic MS signal-based methodology, was rigorously evaluated and validated across diverse sample types and experimental conditions. We applied this framework to characterize a complex polyclonal antibody mixture of Streptococcus pyogenes M1 protein binders derived from intravenous immunoglobulin (IVIG), revealing predominant variable heavy (VH) and light (VL) chain subgroups consistent with established genetic studies. Furthermore, we successfully identified conserved complementarity-determining region (CDR) features and predicted stable antibody-antigen interactions through molecular dynamics simulations, demonstrating the method’s potential for dissecting intricate antibody responses. This work establishes a powerful alternative to conventional tandem mass spectrometry MS/MS data analysis, enabling deeper insights into protein systems and paving the way for targeted therapeutic development.','https://www.biorxiv.org/content/10.1101/2025.03.31.645874','bioRxiv','preprint',NULL,'crossref');
+INSERT INTO publication VALUES(326,'Do-It-Yourself De Novo Antibody Sequencing Workflow that Achieves Complete Accuracy of the Variable Regions','2025-06-06','10.1021/acs.jproteome.5c00210','American Chemical Society (ACS)','Antibodies are widely used as research tools or therapeutic agents. Knowing the sequences of the variable regions of an antibody─both the heavy chain and the light chain─is a prerequisite for the production of recombinant antibodies. Mass spectrometry-based de novo sequencing is a frequently used, and sometimes the only approach to gaining this information. Here, we describe a workflow that enables accurate sequence determination of monoclonal antibodies based on mass spectrometry data and freely available software tools. This workflow, which we developed using a homemade anti-FLAG monoclonal antibody as a reference sample, achieved 100% accuracy of the variable regions with clear distinction between leucine (L) and isoleucine (I). Using this workflow, we successfully decoded a monoclonal anti-HA antibody, for which we had no prior knowledge of its sequence. Based on the de novo sequencing result, we generated a recombinant anti-HA antibody, and demonstrated that it has the same specificity, sensitivity, and affinity as the commercial antibody.','https://pubs.acs.org/doi/10.1021/acs.jproteome.5c00210','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4887,6 +4916,7 @@ INSERT INTO publication_algorithm VALUES(322,277);
 INSERT INTO publication_algorithm VALUES(323,130);
 INSERT INTO publication_algorithm VALUES(324,278);
 INSERT INTO publication_algorithm VALUES(325,279);
+INSERT INTO publication_algorithm VALUES(326,280);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7083,6 +7113,15 @@ INSERT INTO publication_author VALUES(325,1253,5);
 INSERT INTO publication_author VALUES(325,1254,6);
 INSERT INTO publication_author VALUES(325,639,7);
 INSERT INTO publication_author VALUES(325,640,8);
+INSERT INTO publication_author VALUES(326,1255,1);
+INSERT INTO publication_author VALUES(326,1256,2);
+INSERT INTO publication_author VALUES(326,1257,3);
+INSERT INTO publication_author VALUES(326,1258,4);
+INSERT INTO publication_author VALUES(326,1259,5);
+INSERT INTO publication_author VALUES(326,1260,6);
+INSERT INTO publication_author VALUES(326,1261,7);
+INSERT INTO publication_author VALUES(326,1262,8);
+INSERT INTO publication_author VALUES(326,298,9);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9827,10 +9866,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
-INSERT INTO sqlite_sequence VALUES('affiliation',649);
-INSERT INTO sqlite_sequence VALUES('author',1254);
-INSERT INTO sqlite_sequence VALUES('algorithm',279);
-INSERT INTO sqlite_sequence VALUES('publication',325);
+INSERT INTO sqlite_sequence VALUES('affiliation',652);
+INSERT INTO sqlite_sequence VALUES('author',1262);
+INSERT INTO sqlite_sequence VALUES('algorithm',280);
+INSERT INTO sqlite_sequence VALUES('publication',326);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
