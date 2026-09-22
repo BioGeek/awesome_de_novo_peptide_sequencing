@@ -52,6 +52,14 @@ uv run python build_journal_metrics.py
 # author_id_audit.csv and are usually duplicate or merged author rows.
 uv run python build_author_ids.py
 
+# Look for papers that belong in the catalog but are not in it, by asking
+# OpenAlex what our publications cite and what cites them (offline, ~10 min).
+# Writes candidates.csv and NEVER touches denovo.db: deciding what belongs is a
+# judgement call, not something a citation count can automate.
+python3 build_candidates.py                        # both directions, >=3 links
+python3 build_candidates.py --direction citations   # only work that cites us
+python3 build_candidates.py --min-links 6           # tighter, less noise
+
 # Check (or refresh) the counts quoted in CLAUDE.md and WATCHLIST.md against
 # denovo.db. Stdlib only, no network, instant. The pre-commit hook runs --fix
 # automatically whenever denovo.db is staged, and check-counts.yml runs the
@@ -240,6 +248,43 @@ Two guards worth knowing about, because both were hit in practice:
 `build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or fuzzy-title match (token-set ratio ≥ 92), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI; it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
 
 When adding rows by hand, always check whether the entity already exists before inserting: author names and affiliation `(name, department)` pairs are the natural keys, not the surrogate IDs. A typical insert path for a new paper is: `country` → `city` → `affiliation` → `author` → `author_affiliation` → `algorithm` → `publication` → `publication_author` (with `author_order` set per author) → `publication_algorithm`. See any of the previously committed paper insertions (e.g. the `CausalNovo` commit) for the standard `INSERT … SELECT id FROM …` pattern.
+
+## Finding papers the catalog is missing
+
+`build_candidates.py` answers "what should be in here that isn't", which the
+database cannot answer by itself: `publication_citation` stores **only**
+intra-catalog edges (0 of its rows point outside), so every reference to the
+outside world is thrown away at build time. The script fetches the outside from
+OpenAlex in both directions and scores each external work by **how many of our
+publications link to it**, which is the signal that separates noise from a gap:
+linked to one of our papers means nothing, linked to eight means something.
+
+- **Backward** (works our papers cite) surfaces *foundational* gaps. The first
+  run found "Fast algorithm for peptide sequencing by mass spectroscopy" (1990,
+  29 of our papers cite it) and "PAAS 3: A computer program to determine
+  probable sequence of peptides" (1984, 23).
+- **Forward** (works citing our papers, scored by how many they cite) surfaces
+  *new* work, and is the half worth re-running as the field moves.
+
+Most high-scoring candidates are correctly out of scope: SEQUEST, Mascot,
+MaxQuant, X!Tandem and target-decoy top the backward list because every de novo
+paper cites a database-search baseline. That is expected, not a bug, and it is
+why the script writes `candidates.csv` for review instead of inserting
+anything. Apply the bar recorded in `WATCHLIST.md`: for a review, *de novo*
+must be the subject; for an application paper, *de novo* must have produced part
+of the result.
+
+Already-rejected papers do not come back: the script excludes every DOI in
+`WATCHLIST.md` as well as everything already in the catalog.
+
+`refresh-candidates.yml` runs it monthly on the 2nd, a day after
+`refresh-citation-graph`. It commits nothing and needs only read permission:
+`candidates.csv` is gitignored like the other builder audit CSVs, so the
+shortlist goes into the **job summary** (readable in the Actions UI without
+downloading) and the full file is attached as an artifact. **It must never use
+`.github/actions/commit-refreshed-db`**: that action recovers from a push race
+by hard-resetting to `origin/main` and replaying the one table it owns, and
+this job owns no table.
 
 ## Working with the notebook
 

@@ -23,6 +23,7 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every cata
 - **`index.qmd` + `_quarto.yml`**: the Quarto site. `index.qmd` is the interactive overview, charts powered by Observable JS; `pages/` holds a generated detail page for every publication, author, algorithm, institution and venue, written by `build_pages.py` at build time and not committed.
 - **Offline refresh scripts**, each rebuilding one slice of the database from an external API: `build_citations.py` (citation graph), `build_publication_impact.py` (OpenAlex citation counts), `build_journal_metrics.py` (venue metrics), `build_repo_metrics.py` (GitHub activity), `build_author_ids.py` (ORCID / OpenAlex ids), `build_abstracts.py` (abstracts), `build_versions.py` (preprint-to-published links). The first four also run on a cron; see `.github/workflows/`.
 - **`build_pages.py` + `slugs.py`**: generate the per-entity detail pages and their URLs.
+- **`build_candidates.py`**: looks for papers the catalog is missing, by asking OpenAlex what our publications cite and what cites them. Writes `candidates.csv` for review and never edits the database.
 - **`check_counts.py`**: verifies that the row counts quoted in the documentation still match `denovo.db`.
 - **`WATCHLIST.md`**: methods that belong in the catalog but have nothing citable yet, plus things deliberately left out and why.
 - **`plots.ipynb`**: Jupyter notebook for offline exploration / sanity checks (static matplotlib figures, not published).
