@@ -333,10 +333,10 @@ repo_metrics = pd.read_sql(
 # FIRST APPEARANCE OF EACH METHODOLOGICAL FAMILY.
 # The only dataset that covers the field's whole 42-year span. The wave chart
 # squashes the sparse early years against a linear count axis, and the
-# architectures swim lane drops any family outside its 13 hand-tuned bands
-# (visible_bands = band_order.filter(...)), which silently hides 36 of the 49
-# families and 76 of the 192 methods that carry one. Ten of the hidden families
-# first appeared before 2005, so the classical era is invisible on both charts.
+# architectures swim lane now gives all 49 families a lane, but it is 6069 px of
+# scroll and spends 20 of its 91 height units on Transformer (AR) alone, so the
+# classical era is still a thin band at the top of a very tall chart. Ten of the
+# families outside the 13 hand-tuned bands first appeared before 2005.
 # One row per family, dated by the earliest publication of its earliest method.
 family_firsts = pd.read_sql(
     """
@@ -1234,13 +1234,25 @@ innovations_timeline = {
   }
 
   // Only include bands that have at least one surviving model.
-  const present = new Set(algorithms_versioned_t.filter(matches_filters).map(a => a.family))
-  const visible_bands = band_order.filter(f => present.has(f))
+  const surviving = algorithms_versioned_t.filter(matches_filters)
+  const present = new Set(surviving.map(a => a.family))
+  // band_order names only the thirteen busiest families; the checkbox list offers all
+  // of them (49 at the time of writing). Intersecting with band_order alone silently
+  // dropped the other 36, so checking one of those produced an empty chart. Append the
+  // unregistered families after the canonical order instead, the same way the
+  // Application-areas lanes handle an unregistered subdomain.
+  const extra_bands = Array.from(present).filter(f => !band_order.includes(f)).sort(d3.ascending)
+  const visible_bands = band_order.filter(f => present.has(f)).concat(extra_bands)
+
+  // An unregistered family has no hand-tuned height, so derive one from how many
+  // entries it has to stack: enough per tier to read a wrapped label, with a floor for
+  // the 23 families that hold a single method.
+  const family_counts = d3.rollup(surviving, v => v.length, a => a.family)
 
   // Stack bands bottom-to-top, each at its own height.
   let y_cursor = 0
   const bands = visible_bands.map(family => {
-    const h = band_heights[family] ?? 1.2
+    const h = band_heights[family] ?? Math.max(0.9, (family_counts.get(family) ?? 1) * 0.4)
     const band = { family, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h / 2, height: h }
     y_cursor += h
     return band
@@ -1329,7 +1341,13 @@ innovations_timeline = {
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, total_height], axis: null },
-    color: { domain: band_order, range: band_order.map(f => band_color[f]), legend: false },
+    // Families outside band_order have no assigned colour; give them a neutral grey
+    // rather than leaving them off the scale domain.
+    color: {
+      domain: band_order.concat(extra_bands),
+      range: band_order.map(f => band_color[f]).concat(extra_bands.map(() => "#b1b8c0")),
+      legend: false
+    },
     marks: [
       // Background band per family, extended to the padded x domain so edge labels stay inside.
       Plot.rect(bands, {

@@ -317,29 +317,40 @@ naming people, a half-finished finding) belongs in the Python chunk, not beside
 the chart it describes. The network-statistics notes at the end of the Python
 chunk in `index.qmd` are there for exactly this reason and say so.
 
-### The architectures swim lane hides most families; "The long view" is why
+### Every family gets a lane; "The long view" is still the history chart
 
-`visible_bands = band_order.filter(f => present.has(f))` in the architectures
-timeline means a family **not named in its 13-entry `band_order`** is dropped
-from that chart entirely, not appended or greyed. As of writing that hides
-**36 of the 49 families and 76 of the 192 methods** that carry one, and ten of
-the hidden families first appeared before 2005: `Sequence tag` (5 methods),
-`Chemical labeling assisted` (8), `Chemical derivatization assisted` (5),
-`Constrained search` (4), `Homology search` (3), `Spectral assembly` (4) and
-others. The wave chart cannot show them either, because it counts papers per
-year on a linear axis where 1984's single paper is a sliver beside 2024's thirty.
+`band_order` names only the **13 busiest** families and carries a hand-tuned
+height for each. It used to be the whole story: `visible_bands` was
+`band_order.filter(f => present.has(f))`, so a family outside those 13 was
+dropped from the chart entirely, not appended or greyed. The checkbox list
+offers all 49, so unchecking everything and checking one of the other 36
+produced an **empty chart**: 36 families and 76 of the 192 methods were
+unreachable.
 
-So the classical era was invisible on both charts. **"The long view"** exists to
-cover it: one row per family from the `family_firsts` dataset, placed at the
-first publication of its earliest method, all 49 of them across the full span.
-Its x-domain is pinned to whole years rather than derived from the data, so the
-decade of quiet between 1984 and 1994 reads as a gap instead of being
-compressed away.
+`visible_bands` now appends the present-but-unregistered families, sorted, after
+the canonical 13, the same shape the Application-areas lanes use for an
+unregistered subdomain. A family with no entry in `band_heights` gets a height
+derived from how many entries it has to stack,
+`Math.max(0.9, count * 0.4)`, since 23 of the 36 hold a single method. The
+colour scale domain is extended in step, with a neutral grey for the appended
+families, so they are on the scale rather than off it.
 
-If you extend `band_order`, do not assume it is the list of families. Query
-`SELECT DISTINCT algorithm_family FROM algorithm` for that, and note that
-adding all 49 bands would make the swim lane unreadable, which is the reason
-the two charts are separate rather than one.
+Measured cost: the default all-checked view went from 13 lanes / 3136 px to
+**49 lanes / 196 dots / 6069 px**. That is the honest price of showing every
+family, and it only applies to the default. The height is reactive: filtering to
+one family renders one lane at the 420 px floor (verified for `Sequence tag`,
+`Chemical labeling assisted` and `Manual interpretation`, all previously
+unreachable).
+
+**"The long view"** is still the right chart for the field's history, and is not
+made redundant by this. It places one row per family at the first publication of
+its earliest method, with an x-domain pinned to whole years, so the decade of
+quiet between 1984 and 1994 reads as a gap. The swim lane, even at 49 lanes,
+still devotes 20 of its 91 height units to `Transformer (AR)` alone.
+
+If you add a family, it works without being registered. Add it to `band_order`
+and `band_heights` anyway when it grows busy enough to need tier spacing;
+`SELECT DISTINCT algorithm_family FROM algorithm` is the list, not `band_order`.
 
 ### Editorial conventions
 
