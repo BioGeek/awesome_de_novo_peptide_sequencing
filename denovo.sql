@@ -9396,6 +9396,7 @@ INSERT INTO algorithm_repository VALUES(235,'https://github.com/statisticalbiote
 INSERT INTO algorithm_repository VALUES(236,'https://github.com/Multiomics-Analytics-Group/InstaNexus',0);
 INSERT INTO algorithm_repository VALUES(237,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR',0);
 INSERT INTO algorithm_repository VALUES(238,'https://github.com/instadeepai/InstaNovo-FM',0);
+INSERT INTO algorithm_repository VALUES(279,'https://github.com/cguetot/cms',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
