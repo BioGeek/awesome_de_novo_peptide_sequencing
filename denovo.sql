@@ -1516,6 +1516,7 @@ INSERT INTO city VALUES(280,'Basel',16,NULL,NULL);
 INSERT INTO city VALUES(281,'Ankara',25,NULL,NULL);
 INSERT INTO city VALUES(282,'Mülheim an der Ruhr',4,NULL,NULL);
 INSERT INTO city VALUES(283,'Baoding',2,NULL,NULL);
+INSERT INTO city VALUES(284,'Dallas',8,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2119,6 +2120,8 @@ INSERT INTO affiliation VALUES(635,'Beijing Institute of Lifeomics','State Key L
 INSERT INTO affiliation VALUES(636,'University of British Columbia','Centre for Blood Research',NULL,20);
 INSERT INTO affiliation VALUES(637,'Wuhan University','Key Laboratory of Combinatorial Biosynthesis and Drug Discovery of Ministry of Education, School of Pharmaceutical Sciences',NULL,28);
 INSERT INTO affiliation VALUES(638,'Hebei University','College of Life Sciences',NULL,283);
+INSERT INTO affiliation VALUES(639,'University of Texas Southwestern Medical Center','Protein Chemistry Laboratory, Alliance for Cellular Signaling',NULL,284);
+INSERT INTO affiliation VALUES(640,'University of Southern California','Keck School of Medicine',NULL,34);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3806,6 +3809,13 @@ INSERT INTO author_affiliation VALUES(1034,636);
 INSERT INTO author_affiliation VALUES(50,635);
 INSERT INTO author_affiliation VALUES(50,637);
 INSERT INTO author_affiliation VALUES(50,638);
+INSERT INTO author_affiliation VALUES(277,634);
+INSERT INTO author_affiliation VALUES(271,634);
+INSERT INTO author_affiliation VALUES(519,634);
+INSERT INTO author_affiliation VALUES(1217,639);
+INSERT INTO author_affiliation VALUES(1220,639);
+INSERT INTO author_affiliation VALUES(1218,640);
+INSERT INTO author_affiliation VALUES(1219,640);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -9660,8 +9670,8 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
-INSERT INTO sqlite_sequence VALUES('city',283);
-INSERT INTO sqlite_sequence VALUES('affiliation',638);
+INSERT INTO sqlite_sequence VALUES('city',284);
+INSERT INTO sqlite_sequence VALUES('affiliation',640);
 INSERT INTO sqlite_sequence VALUES('author',1228);
 INSERT INTO sqlite_sequence VALUES('algorithm',267);
 INSERT INTO sqlite_sequence VALUES('publication',312);
