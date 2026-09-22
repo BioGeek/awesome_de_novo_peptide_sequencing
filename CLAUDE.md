@@ -327,13 +327,26 @@ offers all 49, so unchecking everything and checking one of the other 36
 produced an **empty chart**: 36 families and 76 of the 192 methods were
 unreachable.
 
-`visible_bands` now appends the present-but-unregistered families, sorted, after
-the canonical 13, the same shape the Application-areas lanes use for an
-unregistered subdomain. A family with no entry in `band_heights` gets a height
-derived from how many entries it has to stack,
-`Math.max(0.9, count * 0.4)`, since 23 of the 36 hold a single method. The
-colour scale domain is extended in step, with a neutral grey for the appended
-families, so they are on the scale rather than off it.
+`visible_bands` is now **every present family in chronological order of first
+appearance**, which is the order "The long view" uses, so the two charts can be
+read against each other. `band_order` survives only as the registry of
+hand-tuned colours and heights for the 13; it is no longer the lane order. A
+family with no entry in `band_heights` gets a height derived from how many
+entries it has to stack, `Math.max(0.9, count * 0.4)`, since 23 of the 36 hold a
+single method, and the colour scale domain is extended with a neutral grey for
+them so they are on the scale rather than off it.
+
+Two things to know about the ordering. It is computed over **all** entries, not
+the filtered ones, so a lane keeps its place relative to the others as the
+filters change. And the array runs **latest-first**, because bands stack upward
+from `y = 0`: verified in the rendered SVG, `Heuristic` sat at y=4236 of a
+6069 px chart and `Sparse autoencoder` at y=553, so the first array element is
+the BOTTOM lane. The long view puts earliest at the top, so matching it means
+reversing. `band_order` was already near-chronological for its 13 (only
+Decision tree / Random Forest, CNN + RNN / Learning-to-rank, CNN / GNN and
+Diffusion / Transformer (NAR) were out of order), so the visible change is
+mostly the 36 others interleaving into place rather than sitting in an
+alphabetical block at one end.
 
 Measured cost: the default all-checked view went from 13 lanes / 3136 px to
 **49 lanes / 196 dots / 6069 px**. That is the honest price of showing every
@@ -351,6 +364,22 @@ still devotes 20 of its 91 height units to `Transformer (AR)` alone.
 If you add a family, it works without being registered. Add it to `band_order`
 and `band_heights` anyway when it grows busy enough to need tier spacing;
 `SELECT DISTINCT algorithm_family FROM algorithm` is the list, not `band_order`.
+
+### Plot tooltips truncate the value, not the label
+
+`Plot`'s `tip` renders each line as "label value" and truncates it at
+`lineWidth`, which defaults to 20em, roughly 40 characters. The ellipsis eats
+the END of the line, which is the value. The Publication-lifecycle bars hit
+this: the x channel is labelled from the SCALE, "Preprint → peer-reviewed gap
+(months)" is 37 characters, and the tooltip showed no number at all, just "…".
+
+`plot_tip_style` now sets `lineWidth: 34`, which is safe because none of the
+five charts that share it put free text such as a paper title in a tip. Where a
+channel's own name would be wrong or ugly, name it explicitly with `channels`
+and switch the raw one off in `format`: the lifecycle bars pass
+`channels: { "Method": "label", "Gap (months)": "gap_months" }` with
+`format: { x1: false, x2: false, y: false }`, because `y` has no scale label and
+Plot otherwise falls back to the field name, giving "label DiffuNovo".
 
 ### Editorial conventions
 

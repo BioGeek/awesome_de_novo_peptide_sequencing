@@ -367,8 +367,11 @@ family_firsts = pd.read_sql(
            r.kind    AS first_kind,
            r.is_dl   AS first_is_dl,
            r.n_methods,
+           r.pub_id  AS first_pub_id,
            p.title   AS first_title,
-           p.journal AS first_journal
+           p.journal AS first_journal,
+           p.doi     AS first_doi,
+           p.url     AS first_url
     FROM ranked r
     JOIN publication p ON p.id = r.pub_id
     WHERE r.rn = 1
@@ -527,6 +530,12 @@ plot_tip_style = ({
   fontSize: 13,
   lineHeight: 1.35,
   textPadding: 10,
+  // Plot truncates each tip line at lineWidth (20em by default, roughly 40
+  // characters) and the ellipsis eats the END of the line, which is the value.
+  // Several x labels here are already 29-37 characters, so the default left no
+  // room for the number. None of these tips carry free text like a paper title,
+  // so a wider limit costs nothing.
+  lineWidth: 34,
   fill: "white",
   stroke: "#d0d7de"
 })
@@ -1152,6 +1161,8 @@ innovations_timeline = {
   // Notebook-style band order: oldest paradigm at the bottom, newest at the top.
   // Classical (non-DL) bands sit at the bottom: heuristic → graph/DP → HMM →
   // decision tree → random forest → learning-to-rank → CNN+RNN → ... → diffusion.
+  // NOT the lane order (that is chronological, computed below). This is the set of
+  // families with a hand-tuned colour and height; everything else falls back.
   const band_order = [
     "Heuristic", "Graph / DP", "HMM", "Decision tree",
     "Random Forest", "Learning-to-rank",
@@ -1236,13 +1247,25 @@ innovations_timeline = {
   // Only include bands that have at least one surviving model.
   const surviving = algorithms_versioned_t.filter(matches_filters)
   const present = new Set(surviving.map(a => a.family))
-  // band_order names only the thirteen busiest families; the checkbox list offers all
-  // of them (49 at the time of writing). Intersecting with band_order alone silently
-  // dropped the other 36, so checking one of those produced an empty chart. Append the
-  // unregistered families after the canonical order instead, the same way the
-  // Application-areas lanes handle an unregistered subdomain.
-  const extra_bands = Array.from(present).filter(f => !band_order.includes(f)).sort(d3.ascending)
-  const visible_bands = band_order.filter(f => present.has(f)).concat(extra_bands)
+  // Lanes run in chronological order of each family's FIRST appearance, which is the
+  // order "The long view" uses, so the two charts can be read against each other.
+  // band_order is no longer the lane order: it is only the registry of hand-tuned
+  // colours and heights for the thirteen busiest families. It never listed the other
+  // 36, so intersecting with it used to drop them entirely and checking one produced
+  // an empty chart.
+  //
+  // Computed over ALL entries rather than the filtered ones, so a lane keeps its place
+  // relative to the others as the filters change. Bands stack UPWARD from y = 0, so the
+  // array runs latest-first to put the earliest family at the top, matching the long
+  // view; family name breaks a tie so the order is deterministic.
+  const family_first = d3.rollup(
+    algorithms_versioned_t.filter(a => a.family && a.first_pub),
+    v => d3.min(v, a => a.first_pub),
+    a => a.family
+  )
+  const visible_bands = Array.from(present).sort((a, b) =>
+    d3.descending(family_first.get(a), family_first.get(b)) || d3.descending(a, b))
+  const extra_bands = visible_bands.filter(f => !band_order.includes(f))
 
   // An unregistered family has no hand-tuned height, so derive one from how many
   // entries it has to stack: enough per tier to read a wrapped label, with a floor for
@@ -1538,9 +1561,11 @@ innovations_timeline = {
 md`Every methodological family in the catalog, placed at the moment it first
 appeared. The span runs from **${ff_first_year}** to **${ff_last_year}**,
 **${ff_span}** years, across **${ff_rows.length}** distinct families. This is the
-only view here that shows all of them: the chart above groups methods into
-thirteen architectural bands and the volume chart below counts papers per year,
-where the early era is a one-paper sliver against a linear axis.`
+only view that fits them on one screen: the chart above gives each family a lane
+too, but spends 20 of its 91 height units on Transformer (AR) alone, and the
+volume chart below counts papers per year, where the early era is a one-paper
+sliver against a linear axis. Families appear here in the same order as the
+lanes above.`
 ```
 
 ```{ojs}
@@ -1659,6 +1684,24 @@ Inputs.table(
     sort: "First seen",
     reverse: false,
     layout: "auto",
+    // Same cell-linking convention as the other tables: an internal detail page,
+    // plus an arrow to the publisher where there is one. Inputs.table passes the
+    // index into the ORIGINAL array, not the sorted position, so ff_rows[i] is the
+    // right row however the reader sorts the table.
+    format: {
+      "Introduced by": (m, i) => page_link("algorithms", ff_rows[i].first_method, m),
+      "Paper": (t, i) => {
+        const row = ff_rows[i]
+        const internal = page_href("publications", row.first_pub_id)
+        const external = row.first_url || (row.first_doi ? `https://doi.org/${row.first_doi}` : null)
+        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
+        return external
+          ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
+              title="Publisher / DOI" style="text-decoration:none">↗</a>`
+          : label
+      },
+      "Venue": v => v ? page_link("venues", v, v) : ""
+    },
     width: { "First seen": 92, "Methods since": 92, "Approach": 100 }
   }
 )
@@ -4464,7 +4507,15 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
         y: "label",
         fill: "#1f6feb",
         sort: { y: "x2", reverse: true },
-        tip: plot_tip_style,
+        // Plot's tip labels the x channel with the SCALE's label and truncates
+        // each line at lineWidth. "Preprint -> peer-reviewed gap (months)" is 37
+        // characters, so the line overflowed and the ellipsis ate the number
+        // itself, leaving a tooltip that showed no gap at all. Give the tip its
+        // own short channel and hide the raw endpoints.
+        // y has no scale label, so Plot fell back to the field name and the tip
+        // read "label DiffuNovo". Name both channels explicitly.
+        channels: { "Method": "label", "Gap (months)": "gap_months" },
+        tip: { ...plot_tip_style, format: { x1: false, x2: false, y: false } },
         href: d => page_href("publications", d.peer_id),
         target: "_self"
       }),
