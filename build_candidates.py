@@ -88,7 +88,12 @@ def batched(seq, n):
         yield seq[i:i + n]
 
 
-def load_ours(db: sqlite3.Connection) -> tuple[list[str], set[str], set[str]]:
+def norm_title(t: str | None) -> str:
+    """Lowercase, strip everything but alphanumerics. Matches build_versions.py."""
+    return re.sub(r"[^a-z0-9]+", " ", (t or "").lower()).strip()
+
+
+def load_ours(db: sqlite3.Connection) -> tuple[list[str], set[str], set[str], set[str]]:
     ids = [short(r[0]) for r in db.execute(
         "SELECT openalex_id FROM publication_impact WHERE COALESCE(openalex_id,'') <> ''")]
     dois = {norm_doi(r[0]) for r in db.execute(
@@ -97,7 +102,8 @@ def load_ours(db: sqlite3.Connection) -> tuple[list[str], set[str], set[str]]:
     if WATCHLIST.exists():
         for m in re.findall(r"10\.\d{4,9}/[^\s`)>,]+", WATCHLIST.read_text(encoding="utf-8")):
             watch.add(norm_doi(m.rstrip(".,")))
-    return sorted(set(ids)), dois - {""}, watch - {""}
+    titles = {norm_title(r[0]) for r in db.execute("SELECT title FROM publication")}
+    return sorted(set(ids)), dois - {""}, watch - {""}, titles - {""}
 
 
 def harvest_references(ids: list[str]) -> dict[str, int]:
@@ -175,7 +181,7 @@ def main() -> int:
         print(f"error: {DB_PATH} not found", file=sys.stderr)
         return 2
     db = sqlite3.connect(DB_PATH)
-    ids, our_dois, watch_dois = load_ours(db)
+    ids, our_dois, watch_dois, our_titles = load_ours(db)
     our_ids = set(ids)
     print(f"catalog: {len(ids)} works with an OpenAlex id, {len(our_dois)} DOIs, "
           f"{len(watch_dois)} DOIs already on the watch list", flush=True)
@@ -203,11 +209,15 @@ def main() -> int:
 
     rows = []
     skipped_known = 0
+    skipped_title = 0
     for k in scored:
         w = meta.get(k, {})
         doi = norm_doi(w.get("doi"))
         if doi and (doi in our_dois or doi in watch_dois):
             skipped_known += 1
+            continue
+        if norm_title(w.get("title")) in our_titles:
+            skipped_title += 1
             continue
         rows.append({
             "openalex_id": k,
@@ -233,7 +243,8 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f"\nskipped {skipped_known} already in the catalog or on the watch list", flush=True)
+    print(f"\nskipped {skipped_known} by DOI (in the catalog or on the watch list) "
+          f"and {skipped_title} more by title match", flush=True)
     print(f"wrote {len(rows)} candidates to {out}", flush=True)
     if rows:
         print("\ntop 15 by links to the catalog:", flush=True)
