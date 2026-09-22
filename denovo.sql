@@ -1244,6 +1244,8 @@ INSERT INTO author VALUES(1261,'Jian-Hua Sui',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1262,'Niu Huang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1263,'Peter Baker',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1264,'Alma L. Burlingame','alb@itsa.ucsf.edu',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1265,'Christopher Hughes',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1266,'Gilles A. Lajoie',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3919,6 +3921,8 @@ INSERT INTO author_affiliation VALUES(298,651);
 INSERT INTO author_affiliation VALUES(269,219);
 INSERT INTO author_affiliation VALUES(1263,219);
 INSERT INTO author_affiliation VALUES(1264,219);
+INSERT INTO author_affiliation VALUES(1265,132);
+INSERT INTO author_affiliation VALUES(1266,132);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4203,6 +4207,7 @@ INSERT INTO algorithm VALUES(278,'De novo peptide sequencing tutorial',NULL,NULL
 INSERT INTO algorithm VALUES(279,'Cumulative MS score (cMS)',NULL,NULL,'Grouped spectra','Scoring framework that accumulates evidence for a residue across repeated injections rather than scoring one spectrum at a time, to make de novo annotation robust enough to read VH/VL and CDR sequences out of a POLYCLONAL antibody mixture.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(280,'DIY de novo antibody sequencing workflow',NULL,NULL,'','Assembled from off-the-shelf parts rather than new software: multi-protease digestion, complementary fragmentation and existing de novo tools, combined into a protocol that reached complete accuracy across antibody variable regions and decoded an unknown anti-HA antibody.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(281,'Accurate-mass constrained de novo interpretation',NULL,NULL,'Constrained search','Uses 10 ppm parent-mass accuracy plus immonium-ion composition to replace the database with the set of sequence permutations the mass allows, then feeds the resulting de novo sequences into a similarity search. An early statement of the hybrid de novo plus homology strategy.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(282,'De novo sequencing methods in proteomics (review)',NULL,NULL,'','Methods in Molecular Biology chapter describing de novo sequencing of peptides by mass spectrometry and the concepts behind the main algorithms.','review',NULL,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4540,6 +4545,7 @@ INSERT INTO publication VALUES(324,'Tutorial on de novo peptide sequencing using
 INSERT INTO publication VALUES(325,'Cumulating MS Signal enables polyclonal antibody analysis','2025-04-05','10.1101/2025.03.31.645874','Cold Spring Harbor Laboratory','Unraveling the complexities of protein systems via Mass Spectrometry (MS), particularly polyclonal antibodies, demands innovative analytical strategies. Here, we introduce the cumulative MS score (cMS), a novel mathematical framework that transcends traditional spectrum-matching, integrating MS evidence across multiple sample injections to achieve robust de novo peptide sequencing annotation. This approach, shifting from isolated spectrum analysis to a holistic MS signal-based methodology, was rigorously evaluated and validated across diverse sample types and experimental conditions. We applied this framework to characterize a complex polyclonal antibody mixture of Streptococcus pyogenes M1 protein binders derived from intravenous immunoglobulin (IVIG), revealing predominant variable heavy (VH) and light (VL) chain subgroups consistent with established genetic studies. Furthermore, we successfully identified conserved complementarity-determining region (CDR) features and predicted stable antibody-antigen interactions through molecular dynamics simulations, demonstrating the method’s potential for dissecting intricate antibody responses. This work establishes a powerful alternative to conventional tandem mass spectrometry MS/MS data analysis, enabling deeper insights into protein systems and paving the way for targeted therapeutic development.','https://www.biorxiv.org/content/10.1101/2025.03.31.645874','bioRxiv','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(326,'Do-It-Yourself De Novo Antibody Sequencing Workflow that Achieves Complete Accuracy of the Variable Regions','2025-06-06','10.1021/acs.jproteome.5c00210','American Chemical Society (ACS)','Antibodies are widely used as research tools or therapeutic agents. Knowing the sequences of the variable regions of an antibody─both the heavy chain and the light chain─is a prerequisite for the production of recombinant antibodies. Mass spectrometry-based de novo sequencing is a frequently used, and sometimes the only approach to gaining this information. Here, we describe a workflow that enables accurate sequence determination of monoclonal antibodies based on mass spectrometry data and freely available software tools. This workflow, which we developed using a homemade anti-FLAG monoclonal antibody as a reference sample, achieved 100% accuracy of the variable regions with clear distinction between leucine (L) and isoleucine (I). Using this workflow, we successfully decoded a monoclonal anti-HA antibody, for which we had no prior knowledge of its sequence. Based on the de novo sequencing result, we generated a recombinant anti-HA antibody, and demonstrated that it has the same specificity, sensitivity, and affinity as the commercial antibody.','https://pubs.acs.org/doi/10.1021/acs.jproteome.5c00210','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(327,'Role of Accurate Mass Measurement (±10 ppm) in Protein Identification Strategies Employing MS or MS/MS and Database Searching','1999-07-01','10.1021/ac9810516','American Chemical Society (ACS)','We describe the impact of advances in mass measurement accuracy, +/- 10 ppm (internally calibrated), on protein identification experiments. This capability was brought about by delayed extraction techniques used in conjunction with matrix-assisted laser desorption ionization (MALDI) on a reflectron time-of-flight (TOF) mass spectrometer. This work explores the advantage of using accurate mass measurement (and thus constraint on the possible elemental composition of components in a protein digest) in strategies for searching protein, gene, and EST databases that employ (a) mass values alone, (b) fragment-ion tagging derived from MS/MS spectra, and (c) de novo interpretation of MS/MS spectra. Significant improvement in the discriminating power of database searches has been found using only molecular weight values (i.e., measured mass) of > 10 peptide masses. When MALDI-TOF instruments are able to achieve the +/- 0.5-5 ppm mass accuracy necessary to distinguish peptide elemental compositions, it is possible to match homologous proteins having > 70% sequence identity to the protein being analyzed. The combination of a +/- 10 ppm measured parent mass of a single tryptic peptide and the near-complete amino acid (AA) composition information from immonium ions generated by MS/MS is capable of tagging a peptide in a database because only a few sequence permutations > 11 AA''s in length for an AA composition can ever be found in a proteome. De novo interpretation of peptide MS/MS spectra may be accomplished by altering our MS-Tag program to replace an entire database with calculation of only the sequence permutations possible from the accurate parent mass and immonium ion limited AA compositions. A hybrid strategy is employed using de novo MS/MS interpretation followed by text-based sequence similarity searching of a database.','https://pubs.acs.org/doi/10.1021/ac9810516','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(328,'De Novo Sequencing Methods in Proteomics','2009-12-05','10.1007/978-1-60761-444-9_8','Humana Press','The review describes methods of de novo sequencing of peptides by mass spectrometry. De novo methods utilize computational approaches to deduce the sequence or partial sequence of peptides directly from the experimental MS/MS spectra. The concepts behind a number of de novo sequencing methods are discussed. The other approach to identify peptides by tandem mass spectrometry is to match the fragment ions with virtual peptide ions generated from a genomic or protein database. De novo methods are essential to identify proteins when the genomes are not known but they are also extremely useful even when the genomes are known since they are not affected by errors in a search database. Another advantage of de novo methods is that the partial sequence can be used to search for posttranslation modifications or for the identification of mutations by homology based software.','https://link.springer.com/protocol/10.1007/978-1-60761-444-9_8','Methods in Molecular Biology','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4925,6 +4931,7 @@ INSERT INTO publication_algorithm VALUES(324,278);
 INSERT INTO publication_algorithm VALUES(325,279);
 INSERT INTO publication_algorithm VALUES(326,280);
 INSERT INTO publication_algorithm VALUES(327,281);
+INSERT INTO publication_algorithm VALUES(328,282);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7133,6 +7140,9 @@ INSERT INTO publication_author VALUES(326,298,9);
 INSERT INTO publication_author VALUES(327,269,1);
 INSERT INTO publication_author VALUES(327,1263,2);
 INSERT INTO publication_author VALUES(327,1264,3);
+INSERT INTO publication_author VALUES(328,1265,1);
+INSERT INTO publication_author VALUES(328,234,2);
+INSERT INTO publication_author VALUES(328,1266,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9878,9 +9888,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
 INSERT INTO sqlite_sequence VALUES('affiliation',652);
-INSERT INTO sqlite_sequence VALUES('author',1264);
-INSERT INTO sqlite_sequence VALUES('algorithm',281);
-INSERT INTO sqlite_sequence VALUES('publication',327);
+INSERT INTO sqlite_sequence VALUES('author',1266);
+INSERT INTO sqlite_sequence VALUES('algorithm',282);
+INSERT INTO sqlite_sequence VALUES('publication',328);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
