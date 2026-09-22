@@ -1266,6 +1266,13 @@ INSERT INTO author VALUES(1283,'Michael S. Westphall',NULL,NULL,NULL,NULL,NULL,N
 INSERT INTO author VALUES(1284,'Joshua J. Coon',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1285,'Wolfgang M. J. Obermann',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1286,'Johannes A. Eble',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1287,'Ismael Rodriguez Palomo','ismael@palaeome.org',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1288,'Bharath Nair',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1289,'Joannes Dekker',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1290,'Benjamin Dartigues',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1291,'Miranda Evans',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1292,'Ruairidh Macleod',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1293,'Matthew J. Collins',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1580,6 +1587,9 @@ INSERT INTO city VALUES(285,'Tarrytown',8,NULL,NULL);
 INSERT INTO city VALUES(286,'Galway',78,NULL,NULL);
 INSERT INTO city VALUES(287,'Norman',8,NULL,NULL);
 INSERT INTO city VALUES(288,'Indianapolis',8,NULL,NULL);
+INSERT INTO city VALUES(289,'Bordeaux',14,NULL,NULL);
+INSERT INTO city VALUES(290,'Dublin',78,NULL,NULL);
+INSERT INTO city VALUES(291,'Turin',38,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2207,6 +2217,9 @@ INSERT INTO affiliation VALUES(659,'European Molecular Biology Laboratory',NULL,
 INSERT INTO affiliation VALUES(660,'Brigham & Women''s Hospital and Harvard Medical School','Genetics Division, Department of Medicine',NULL,81);
 INSERT INTO affiliation VALUES(661,'University of Wisconsin-Madison','Genome Center of Wisconsin',NULL,108);
 INSERT INTO affiliation VALUES(662,'University of Münster','Institute of Physiological Chemistry and Pathobiochemistry',NULL,237);
+INSERT INTO affiliation VALUES(663,'University of Bordeaux','Department of Science and Technology',NULL,289);
+INSERT INTO affiliation VALUES(664,'University College Dublin','School of Archaeology',NULL,290);
+INSERT INTO affiliation VALUES(665,'University of Turin','Archaeobiomics, Department of Life Sciences and Systems Biology',NULL,291);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3995,6 +4008,19 @@ INSERT INTO author_affiliation VALUES(1284,513);
 INSERT INTO author_affiliation VALUES(1284,661);
 INSERT INTO author_affiliation VALUES(1285,662);
 INSERT INTO author_affiliation VALUES(1286,662);
+INSERT INTO author_affiliation VALUES(1287,307);
+INSERT INTO author_affiliation VALUES(1288,307);
+INSERT INTO author_affiliation VALUES(1288,305);
+INSERT INTO author_affiliation VALUES(1289,305);
+INSERT INTO author_affiliation VALUES(1289,366);
+INSERT INTO author_affiliation VALUES(1290,663);
+INSERT INTO author_affiliation VALUES(676,664);
+INSERT INTO author_affiliation VALUES(676,665);
+INSERT INTO author_affiliation VALUES(1291,307);
+INSERT INTO author_affiliation VALUES(1291,366);
+INSERT INTO author_affiliation VALUES(1292,307);
+INSERT INTO author_affiliation VALUES(1293,307);
+INSERT INTO author_affiliation VALUES(1293,305);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4289,6 +4315,7 @@ INSERT INTO algorithm VALUES(288,'MultiTag',NULL,NULL,'Sequence tag','Searches s
 INSERT INTO algorithm VALUES(289,'TVNovo',NULL,NULL,'Constrained search','Turns de novo sequencing into a search problem by generating a VIRTUAL database per spectrum, enumerating the candidate sequences the precursor mass allows, then scoring them as a database search would. Built for high-resolution LTQ-FT data.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(290,'NeuCode y-ion annotation',NULL,NULL,'Chemical labeling assisted','Two lysine isotopologues differing by 36 mDa are embedded metabolically, so every C-terminal fragment appears as a resolvable doublet and N-terminal ones do not. An algorithm reads that signature to label y-type ions at 93.2% accuracy, which among other uses lifts correct de novo identifications with PepNovo+ by 34%.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(291,'Bothrops moojeni venom protease de novo identification',NULL,NULL,'','Reviews the state of identifying wholly unknown proteins by mass spectrometry and demonstrates it on a snake venom serine protease from Bothrops moojeni, where de novo sequence tags such as D[K/Q]D[I/L]VDD[K/Q] made the identification.','downstream-application',0,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(292,'Degraded-protein search strategy benchmark',NULL,NULL,'','Benchmarks search strategies for ancient and degraded proteins on a controlled beta-lactoglobulin series, comparing database engines against de novo sequencing through DeNovoGUI (PepNovo+, DirecTag, Novor) to see which recovers coverage as degradation increases.','benchmark',NULL,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4639,6 +4666,8 @@ INSERT INTO publication VALUES(337,'TVNovo: De novo peptide sequencing for high 
 INSERT INTO publication VALUES(338,'Neutron-encoded Signatures Enable Product Ion Annotation From Tandem Mass Spectra','2013-12-01','10.1074/mcp.m113.028951','Elsevier BV','We report the use of neutron-encoded (NeuCode) stable isotope labeling of amino acids in cell culture for the purpose of C-terminal product ion annotation. Two NeuCode labeling isotopologues of lysine, (13)C6(15)N2 and (2)H8, which differ by 36 mDa, were metabolically embedded in a sample proteome, and the resultant labeled proteins were combined, digested, and analyzed via liquid chromatography and mass spectrometry. With MS/MS scan resolving powers of ~50,000 or higher, product ions containing the C terminus (i.e. lysine) appear as a doublet spaced by exactly 36 mDa, whereas N-terminal fragments exist as a single m/z peak. Through theory and experiment, we demonstrate that over 90% of all y-type product ions have detectable doublets. We report on an algorithm that can extract these neutron signatures with high sensitivity and specificity. In other words, of 15,503 y-type product ion peaks, the y-type ion identification algorithm correctly identified 14,552 (93.2%) based on detection of the NeuCode doublet; 6.8% were misclassified (i.e. other ion types that were assigned as y-type products). Searching NeuCode labeled yeast with PepNovo(+) resulted in a 34% increase in correct de novo identifications relative to searching through MS/MS only. We use this tool to simplify spectra prior to database searching, to sort unmatched tandem mass spectra for spectral richness, for correlation of co-fragmented ions to their parent precursor, and for de novo sequence identification.','https://www.mcponline.org/article/S1535-9476(20)33188-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(339,'Evolutionary Algorithms for Improving De Novo Peptide Sequencing','2020-01-01','10.26686/wgtn.17145581.v1','PhD thesis',NULL,'https://openaccess.wgtn.ac.nz/articles/thesis/Evolutionary_Algorithms_for_Improving_De_Novo_Peptide_Sequencing/17145581','','thesis',NULL,NULL);
 INSERT INTO publication VALUES(340,'The Current State-of-the-Art Identification of Unknown Proteins Using Mass Spectrometry Exemplified on De Novo Sequencing of a Venom Protease from Bothrops moojeni','2022-08-05','10.3390/molecules27154976','MDPI AG','(1) Background: The amino acid sequence elucidation of peptides from the gas phase fragmentation mass spectra, de novo sequencing, is a valuable method for the identification of unknown proteins complementary to Edman sequencing. It is increasingly used in shot-gun mass spectrometry (MS)-based proteomics experiments. We review the current state-of-the-art and use the identification of an unknown snake venom protein targeting the human tissue factor (TF) as an example to describe the analysis process based on manual spectrum interrogation. (2) Methods: The immobilized TF was incubated with a crude B. moojeni venom solution. The potential binding partners were eluted and further purified by gel electrophoresis. Edman degradation was performed to elucidate the N-terminus of the 31 kDa protein of interest. High-resolution MS with collision-induced dissociation was employed to generate peptide fragmentation spectra. Sequence tags were deduced and used for searches in the NCBI and Uniprot databases. Protein matches from the snake species were further validated by target MS/MS. (3) Results: Sequence tag D [K/Q] D [I/L] VDD [K/Q] led to a snake venom serine protease (SVSP) from lancehead B. jararaca (P81824). With target MS/MS, 24% of the SVSP sequence were confirmed; an additional 41% were tentatively assigned by data-independent MS. Edman sequencing provided information for 10 N-terminal amino acid residues, also confirming the match to SVSP. (4) Conclusions: The identification of unknown proteins continues to be a challenge despite major advances in MS instrumentation and bioinformatic tools. The main requirement is the generation of meaningful, high-quality MS peptide fragmentation spectra. These are used to elucidate sufficiently long sequence tags, which can subsequently be submitted to searches in protein databases. This basic method does not require extensive bioinformatics because peptide MS/MS spectra, especially of doubly-charged ions, can be analysed manually. We demonstrated the procedure with the elucidation of SVSP. While de novo sequencing quickly indicates the correct protein group, the validation of the entire protein sequence of amino acid-by-amino acid will take time. Reasons are the need to properly assign isobaric amino acid residues and modifications. With the ongoing efforts in genomics and transcriptomics and the availability of ever more data in public databases, the need for de novo MS sequencing will decrease. Still, not every animal and plant species will be sequenced, so the combination of MS and Edman sequencing will continue to be of importance for the identification of unknown proteins.','https://www.mdpi.com/1420-3049/27/15/4976','Molecules','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(341,'Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins','2023-12-15','10.1101/2023.12.15.571577','Cold Spring Harbor Laboratory','Palaeoproteomics is a rapidly evolving discipline, and practitioners are constantly developing novel strategies for the analyses and interpretations of complex, degraded protein mixtures. The community has also established standards of good practice to interrogate our data. However, there is a lack of a systematic exploration of how these affect the identification of peptides, post-translational modifications (PTMs), proteins and their significance (through the False Discovery Rate) and correctness. We systematically investigated the performance of a wide range of sequencing tools and search engines in a controlled system: the experimental degradation of the single purified bovine β-lactoglobulin (BLG), heated at 95 °C and pH 7 for 0, 4 and 128 days. We target BLG since it is one of the most robust and ubiquitous proteins in the archaeological record. We tested different reference database choices, a targeted dairy protein one, and the whole bovine proteome and the three digestion options (tryptic-, semi-tryptic- and non-specific searches), in order to evaluate the effects of search space and the identification of peptides. We also explored alternative strategies, including open search that allows for the global identification of PTMs based upon wide precursor mass tolerance and de novo sequencing to boost sequence coverage. We analysed the samples using Mascot, MaxQuant, Metamorpheus, pFind, Fragpipe and DeNovoGUI (pepNovo+, DirecTag, Novor), benchmarked these tools and discuss the optimal strategy for the characterisation of ancient proteins. We also studied physicochemical properties of the BLG that correlate with bias in the identification coverage.','https://www.biorxiv.org/content/10.1101/2023.12.15.571577','bioRxiv','preprint',NULL,'crossref');
+INSERT INTO publication VALUES(342,'Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins','2024-11-21','10.24072/pcjournal.491','Peer Community In','Palaeoproteomics is a rapidly evolving discipline, and practitioners are constantly developing novel strategies for the analyses and interpretations of complex, degraded protein mixtures. The community has also established standards of good practice to interrogate our data. However, there is a lack of a systematic exploration of how these affect the identification of peptides, post-translational modifications (PTMs), proteins and their significance (through the False Discovery Rate) and correctness. We systematically investigated the performance of a wide range of sequencing tools and search engines in a controlled system: the experimental degradation of the single purified bovine β-lactoglobulin (BLG), heated at 95°C and pH 7 for 0, 4 and 128 days. We target BLG since it is one of the most robust and ubiquitous proteins in the archaeological record. We tested different reference database choices, a targeted dairy protein one, and the whole bovine proteome and the three digestion options (tryptic-, semi-tryptic- and non-specific searches), in order to evaluate the effects of search space and the identification of peptides. We also explored alternative strategies, including open search that allows for the global identification of PTMs based upon wide precursor mass tolerance and de novo sequencing to boost sequence coverage. We analysed the samples using Mascot, MaxQuant, Metamorpheus, pFind, Fragpipe and DeNovoGUI (pepNovo+, DirecTag, Novor), benchmarked these tools and discuss the optimal strategy for the characterisation of ancient proteins. We also studied physicochemical properties of the BLG that correlate with bias in the identification coverage.','https://peercommunityjournal.org/articles/10.24072/pcjournal.491/','Peer Community Journal','peer-reviewed',NULL,'crossref');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5038,6 +5067,8 @@ INSERT INTO publication_algorithm VALUES(338,290);
 INSERT INTO publication_algorithm VALUES(339,124);
 INSERT INTO publication_algorithm VALUES(339,195);
 INSERT INTO publication_algorithm VALUES(340,291);
+INSERT INTO publication_algorithm VALUES(341,292);
+INSERT INTO publication_algorithm VALUES(342,292);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7299,6 +7330,26 @@ INSERT INTO publication_author VALUES(339,508,1);
 INSERT INTO publication_author VALUES(340,938,1);
 INSERT INTO publication_author VALUES(340,1285,2);
 INSERT INTO publication_author VALUES(340,1286,3);
+INSERT INTO publication_author VALUES(341,1287,1);
+INSERT INTO publication_author VALUES(341,1288,2);
+INSERT INTO publication_author VALUES(341,650,3);
+INSERT INTO publication_author VALUES(341,1289,4);
+INSERT INTO publication_author VALUES(341,1290,5);
+INSERT INTO publication_author VALUES(341,676,6);
+INSERT INTO publication_author VALUES(341,1291,7);
+INSERT INTO publication_author VALUES(341,1292,8);
+INSERT INTO publication_author VALUES(341,691,9);
+INSERT INTO publication_author VALUES(341,1293,10);
+INSERT INTO publication_author VALUES(342,1287,1);
+INSERT INTO publication_author VALUES(342,1288,2);
+INSERT INTO publication_author VALUES(342,650,3);
+INSERT INTO publication_author VALUES(342,1289,4);
+INSERT INTO publication_author VALUES(342,1290,5);
+INSERT INTO publication_author VALUES(342,676,6);
+INSERT INTO publication_author VALUES(342,1291,7);
+INSERT INTO publication_author VALUES(342,1292,8);
+INSERT INTO publication_author VALUES(342,691,9);
+INSERT INTO publication_author VALUES(342,1293,10);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9946,6 +9997,7 @@ INSERT INTO publication_version VALUES(297,296,'crossref');
 INSERT INTO publication_version VALUES(299,298,'manual');
 INSERT INTO publication_version VALUES(5,302,'manual');
 INSERT INTO publication_version VALUES(308,194,'crossref');
+INSERT INTO publication_version VALUES(341,342,'crossref');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -10043,11 +10095,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
-INSERT INTO sqlite_sequence VALUES('city',288);
-INSERT INTO sqlite_sequence VALUES('affiliation',662);
-INSERT INTO sqlite_sequence VALUES('author',1286);
-INSERT INTO sqlite_sequence VALUES('algorithm',291);
-INSERT INTO sqlite_sequence VALUES('publication',340);
+INSERT INTO sqlite_sequence VALUES('city',291);
+INSERT INTO sqlite_sequence VALUES('affiliation',665);
+INSERT INTO sqlite_sequence VALUES('author',1293);
+INSERT INTO sqlite_sequence VALUES('algorithm',292);
+INSERT INTO sqlite_sequence VALUES('publication',342);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
