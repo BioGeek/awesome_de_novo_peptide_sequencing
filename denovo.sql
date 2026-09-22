@@ -1184,7 +1184,7 @@ INSERT INTO author VALUES(1201,'Hu Zhou','zhouhu@simm.ac.cn',NULL,NULL,NULL,NULL
 INSERT INTO author VALUES(1202,'Yaoyu He',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1203,'Dongseok Choi',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1204,'Ashley L. McCormack',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(1205,'Shamil Sunyaev',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1205,'Shamil Sunyaev','ssunyaev@rics.bwh.harvard.edu',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1206,'Alexander Loboda',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1207,'Anna Shevchenko',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1208,'Peer Bork',NULL,NULL,NULL,NULL,NULL,NULL);
@@ -1256,6 +1256,8 @@ INSERT INTO author VALUES(1273,'Liangyi Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1274,'James P. Reilly','reilly@indiana.edu',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1275,'Christien Kluwe',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1276,'Andrew Ellington',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1277,'Adam J. Liska',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1278,'Alexander Golod',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2193,6 +2195,8 @@ INSERT INTO affiliation VALUES(655,'University of Oklahoma','Department of Chemi
 INSERT INTO affiliation VALUES(656,'Indiana University-Purdue University Indianapolis','Department of BioHealth Informatics',NULL,288);
 INSERT INTO affiliation VALUES(657,'Indiana University School of Medicine','Center for Computational Biology and Bioinformatics',NULL,288);
 INSERT INTO affiliation VALUES(658,'Indiana University','Department of Chemistry',NULL,40);
+INSERT INTO affiliation VALUES(659,'European Molecular Biology Laboratory',NULL,NULL,77);
+INSERT INTO affiliation VALUES(660,'Brigham & Women''s Hospital and Harvard Medical School','Genetics Division, Department of Medicine',NULL,81);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3958,6 +3962,11 @@ INSERT INTO author_affiliation VALUES(1273,658);
 INSERT INTO author_affiliation VALUES(1274,658);
 INSERT INTO author_affiliation VALUES(1275,143);
 INSERT INTO author_affiliation VALUES(1276,143);
+INSERT INTO author_affiliation VALUES(1205,659);
+INSERT INTO author_affiliation VALUES(1205,660);
+INSERT INTO author_affiliation VALUES(1277,261);
+INSERT INTO author_affiliation VALUES(1278,659);
+INSERT INTO author_affiliation VALUES(1207,261);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4248,6 +4257,7 @@ INSERT INTO algorithm VALUES(284,'T-Bruijn graph top-down de novo sequencing',NU
 INSERT INTO algorithm VALUES(285,'Stitch',NULL,NULL,'Sequence assembly','Assembles de novo peptides from Casanovo, PEAKS, pNovo and MaxNovo into full antibody sequences, and corrects the two error classes that assembly alone cannot: mass coincidences, where a different residue combination matches the same mass, and I/L ambiguity.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(286,'157 nm photodissociation de novo sequencing',NULL,NULL,'Heuristic','De novo sequencing algorithm written for 157 nm photodissociation spectra, which yield clean x-ion series rather than the mixed b/y ions of CID. Reports per-residue accuracy and distinguishes leucine from isoleucine, which equal-mass residues normally make impossible.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(287,'351 nm UVPD de novo sequencing',NULL,NULL,'Chemical derivatization assisted','N-terminal chromophore derivatisation makes a peptide absorb at 351 nm, so selective UV photodissociation cleaves it into a simplified y-ion series instead of the mixed ladders CID gives, deliberately to make the spectra amenable to de novo sequencing.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(288,'MultiTag',NULL,NULL,'Sequence tag','Searches several error-tolerant peptide sequence tags at once, so a protein can be identified across species by sequence similarity even when no tag is individually correct. Tolerating errors in the tags is what lets de novo output drive a homology search.','adjacent',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4592,6 +4602,7 @@ INSERT INTO publication VALUES(331,'De Novo Sequencing of Peptides from Top-Down
 INSERT INTO publication VALUES(332,'A Handle on Mass Coincidence Errors in De Novo Sequencing of Antibodies by Bottom-up Proteomics','2024-08-02','10.1021/acs.jproteome.4c00188','American Chemical Society (ACS)','Antibody sequences can be determined at 99% accuracy directly from the polypeptide product by using bottom-up proteomics techniques. Sequencing accuracy at the peptide level is limited by the isobaric residues leucine and isoleucine, incomplete fragmentation spectra in which the order of two or more residues remains ambiguous due to lacking fragment ions for the intermediate positions, and isobaric combinations of amino acids, of potentially different lengths, for example, GG = N and GA = Q. Here, we present several updates to Stitch (v1.5), which performs template-based assembly of de novo peptides to reconstruct antibody sequences. This version introduces a mass-based alignment algorithm that explicitly accounts for mass coincidence errors. In addition, it incorporates a postprocessing procedure to assign I/L residues based on secondary fragments (satellite ions, i.e. , w- ions). Moreover, evidence for sequence assignments can now be directly evaluated with the addition of an integrated spectrum viewer. Lastly, input data from a wider selection of de novo peptide sequencing algorithms are allowed, now including Casanovo, PEAKS, Novor.Cloud, pNovo, and MaxNovo, in addition to flat text and FASTA. Combined, these changes make Stitch compatible with a larger range of data processing pipelines and improve its tolerance to peptide-level sequencing errors.','https://pubs.acs.org/doi/10.1021/acs.jproteome.4c00188','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(333,'Peptide de Novo Sequencing Using 157 nm Photodissociation in a Tandem Time-of-Flight Mass Spectrometer','2010-02-01','10.1021/ac902050y','American Chemical Society (ACS)','It has previously been shown that photodissociation of tryptic peptide ions with 157 nm light in a matrix-assisted laser desorption/ionization (MALDI) tandem time-of-flight (TOF) mass spectrometer generates an abundance of x-type ions. A peptide de novo sequencing algorithm has now been developed to interpret these data. By combination of photodissociation and postsource decay (PSD) spectra, the algorithm identifies x-type ions and derives peptide sequences. The confidence of amino acid assignments is evaluated by observing complementary y-, v-, and w-type ions that provide additional constraints to sequence identification. In the analysis of 31 tryptic peptides from 4 model proteins, the algorithm identified 322 (or 90.7%) of the 355 amino acids and made only 3 incorrect assignments. The other 30 amino acids were not identified because specific needed x-type ions were not detected. Based on the observation of v- and w-type ions, 45 of 50 detected leucine and isoleucine residues were successfully distinguished and there was only one mistake. The remaining four residues were not distinguished because the corresponding v- and w-type ions were not detected. These de novo sequencing results translated into successful identification of proteins through homology searches. To evaluate the robustness of the present sequencing approach, a collection of 266 tryptic peptides from 23 model proteins were analyzed and then sequenced. A total of 167 peptides yielded sequence tags of 5 or more residues. In 5 peptides, 1 or 2 residues were incorrectly assigned.','https://pubs.acs.org/doi/10.1021/ac902050y','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(334,'De Novo Sequencing of Peptides Using Selective 351 nm Ultraviolet Photodissociation Mass Spectrometry','2013-10-15','10.1021/ac402309h','American Chemical Society (ACS)','Although in silico database search methods remain more popular for shotgun proteomics methods, de novo sequencing offers the ability to identify peptides derived from proteins lacking sequenced genomes and ones with subtle splice variants or truncations. Ultraviolet photodissociation (UVPD) of peptides derivatized by selective attachment of a chromophore at the N-terminus generates a characteristic series of y ions. The UVPD spectra of the chromophore-labeled peptides are simplified and thus amenable to de novo sequencing. This method resulted in an observed sequence coverage of 79% for cytochrome C (eight peptides), 47% for β-lactoglobulin (five peptides), 25% for carbonic anhydrase (six peptides), and 51% for bovine serum albumin (33 peptides). This strategy also allowed differentiation of proteins with high sequence homology as evidenced by de novo sequencing of two variants of green fluorescent protein.','https://pubs.acs.org/doi/10.1021/ac402309h','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(335,'MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry','2003-03-01','10.1021/ac026199a','American Chemical Society (ACS)','The characterization of proteomes by mass spectrometry is largely limited to organisms with sequenced genomes. To identify proteins from organisms with unsequenced genomes, database sequences from related species must be employed for sequence-similarity protein identifications. Peptide sequence tags (Mann, 1994) have been used successfully for the identification of proteins in sequence databases using partially interpreted tandem mass spectra of tryptic peptides. We have extended the ability of sequence tag searching to the identification of proteins whose sequences are yet unknown but are homologous to known database entries. The MultiTag method presented here assigns statistical significance to matches of multiple error-tolerant sequence tags to a database entry and ranks alignments by their significance. The MultiTag approach has the distinct advantage over other sequence-similarity approaches of being able to perform sequence-similarity identifications using only very short (2-4) amino acid residue stretches of peptide sequences, rather than complete peptide sequences deduced by de novo interpretation of tandem mass spectra. This feature facilitates the identification of low abundance proteins, since noisy and low-intensity tandem mass spectra can be utilized.','https://pubs.acs.org/doi/10.1021/ac026199a','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4984,6 +4995,7 @@ INSERT INTO publication_algorithm VALUES(331,284);
 INSERT INTO publication_algorithm VALUES(332,285);
 INSERT INTO publication_algorithm VALUES(333,286);
 INSERT INTO publication_algorithm VALUES(334,287);
+INSERT INTO publication_algorithm VALUES(335,288);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7220,6 +7232,11 @@ INSERT INTO publication_author VALUES(334,1275,2);
 INSERT INTO publication_author VALUES(334,360,3);
 INSERT INTO publication_author VALUES(334,1276,4);
 INSERT INTO publication_author VALUES(334,363,5);
+INSERT INTO publication_author VALUES(335,1205,1);
+INSERT INTO publication_author VALUES(335,1277,2);
+INSERT INTO publication_author VALUES(335,1278,3);
+INSERT INTO publication_author VALUES(335,1207,4);
+INSERT INTO publication_author VALUES(335,569,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9965,10 +9982,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
-INSERT INTO sqlite_sequence VALUES('affiliation',658);
-INSERT INTO sqlite_sequence VALUES('author',1276);
-INSERT INTO sqlite_sequence VALUES('algorithm',287);
-INSERT INTO sqlite_sequence VALUES('publication',334);
+INSERT INTO sqlite_sequence VALUES('affiliation',660);
+INSERT INTO sqlite_sequence VALUES('author',1278);
+INSERT INTO sqlite_sequence VALUES('algorithm',288);
+INSERT INTO sqlite_sequence VALUES('publication',335);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
