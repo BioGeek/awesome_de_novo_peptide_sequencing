@@ -1156,6 +1156,14 @@ INSERT INTO author VALUES(1173,'Yizhi Xiao',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1174,'Saya Nakamura',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1175,'Toshiro Matsui',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1176,'Mitsuru Tanaka','mitsurut@agr.kyushu-u.ac.jp',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1177,'Hiromasa Mitsui',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1178,'Ryo Konno',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1179,'Takeshi Shibata',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1180,'Ushio Takeda',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1181,'Yusei Okuda',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1182,'Daisuke Nakajima',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1183,'Osamu Ohara',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1184,'Yusuke Kawashima',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1455,6 +1463,9 @@ INSERT INTO city VALUES(271,'Phagwara',28,NULL,NULL);
 INSERT INTO city VALUES(272,'Meerut',28,NULL,NULL);
 INSERT INTO city VALUES(273,'Newcastle',15,NULL,NULL);
 INSERT INTO city VALUES(274,'Fukuoka',29,NULL,NULL);
+INSERT INTO city VALUES(275,'Kisarazu',29,NULL,NULL);
+INSERT INTO city VALUES(276,'Tokyo',29,NULL,NULL);
+INSERT INTO city VALUES(277,'Sagamihara',29,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2030,6 +2041,9 @@ INSERT INTO affiliation VALUES(607,'University of Newcastle','Clinical Toxicolog
 INSERT INTO affiliation VALUES(608,'University of South Carolina','Department of Pathology, Microbiology and Immunology, School of Medicine',NULL,138);
 INSERT INTO affiliation VALUES(609,'Kyushu University','Faculty of Agriculture, Graduate School',NULL,274);
 INSERT INTO affiliation VALUES(610,'Kyushu University','Research and Development Center for Five-Sense Devices',NULL,274);
+INSERT INTO affiliation VALUES(611,'Kazusa DNA Research Institute','Department of Applied Genomics',NULL,275);
+INSERT INTO affiliation VALUES(612,'SCIEX',NULL,NULL,276);
+INSERT INTO affiliation VALUES(613,'Kitasato University','Department of Physics, School of Science',NULL,277);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3643,6 +3657,15 @@ INSERT INTO author_affiliation VALUES(1175,609);
 INSERT INTO author_affiliation VALUES(1175,610);
 INSERT INTO author_affiliation VALUES(1176,609);
 INSERT INTO author_affiliation VALUES(1176,610);
+INSERT INTO author_affiliation VALUES(1177,611);
+INSERT INTO author_affiliation VALUES(1178,611);
+INSERT INTO author_affiliation VALUES(1179,612);
+INSERT INTO author_affiliation VALUES(1180,612);
+INSERT INTO author_affiliation VALUES(1181,611);
+INSERT INTO author_affiliation VALUES(1181,613);
+INSERT INTO author_affiliation VALUES(1182,611);
+INSERT INTO author_affiliation VALUES(1183,611);
+INSERT INTO author_affiliation VALUES(1184,611);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3904,6 +3927,7 @@ INSERT INTO algorithm VALUES(254,'b-/y-ion staged neural network',NULL,NULL,'Neu
 INSERT INTO algorithm VALUES(255,'Polyclonal IgG neutralizing antibody discovery',NULL,NULL,NULL,'Sequencing the circulating antibody repertoire itself rather than the B cells that make it. Human plasma-derived polyclonal IgG is sequenced by combining mass spectrometry with B-cell sequencing, applied to the IgG response to the Moderna Spikevax COVID-19 vaccine. Twelve recombinant antibodies were generated from the natural polyclonal response; six of them, including four derived by de novo protein sequencing, bound at least as well as the original polyclonal antibody, and all six neutralised the target antigen. The argument for the approach is that sequencing peripheral B cells may not represent the complete receptor repertoire, so the circulating IgG pool has to be examined directly. Notable as antibody discovery carried out end to end by a commercial de novo sequencing service.','downstream-application',0,'DDA',NULL,'antibodyomics');
 INSERT INTO algorithm VALUES(256,'Proteome signature rescoring',NULL,NULL,'Information theory','Rescores de novo peptide candidates using proteome signatures, the amino acid usage patterns compiled across a proteome, so the scoring function can prefer plausible residue combinations.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(257,'Me-Cou N-terminal derivatization de novo sequencing',NULL,NULL,'Chemical derivatization assisted','N-terminal derivatization with N-succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou), which boosts low-mass b-ion yield so de novo sequencing can read the N-terminal residues, applied to untargeted peptidomics on LC-TIMS-qTOF/MS.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(258,'Food inspection de novo peptide screening',NULL,NULL,'','Database-free food inspection workflow: de novo sequencing of MS/MS spectra on a ZenoTOF 7600 for species identification and quantitation in food extracts, with database search as a complementary step, aimed at unknown contaminants and food fraud.','downstream-application',0,'DDA',NULL,'food-authentication');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4211,6 +4235,8 @@ INSERT INTO publication VALUES(294,'De novo protein sequencing of antibodies for
 INSERT INTO publication VALUES(295,'An Information Theoretic Approach to Rescoring Peptides Produced by De Novo Peptide Sequencing','2010-10-29','10.5281/zenodo.1070516','WASET','Tandem mass spectrometry (MS/MS) is the engine driving high-throughput protein identification. Protein mixtures possibly representing thousands of proteins from multiple species are treated with proteolytic enzymes, cutting the proteins into smaller peptides that are then analyzed generating MS/MS spectra. The task of determining the identity of the peptide from its spectrum is currently the weak point in the process. Current approaches to de novo sequencing are able to compute candidate peptides efficiently. The problem lies in the limitations of current scoring functions. In this paper we introduce the concept of proteome signature. By examining proteins and compiling proteome signatures (amino acid usage) it is possible to characterize likely combinations of amino acids and better distinguish between candidate peptides. Our results strongly support the hypothesis that a scoring function that considers amino acid usage patterns is better able to distinguish between candidate peptides. This in turn leads to higher accuracy in peptide prediction.','https://publications.waset.org/8237/an-information-theoretic-approach-to-rescoring-peptides-produced-by-de-novo-peptide-sequencing','World Academy of Science, Engineering and Technology','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(296,'N-Terminal Coumarin Derivatization-Aided De Novo Peptide Sequencing and Its Application to Peptidomics Using LC-Trapped Ion Mobility Spectrometry-qTOF/MS','2026-06-30','10.1021/acs.analchem.6c01542','American Chemical Society (ACS)','De novo peptide sequencing using LC-MS/MS enables database-independent sequence determination and facilitates the discovery of bioactive peptides and biomarkers in untargeted peptidomics. However, conventional MS/MS analyses often produce fragment ions that are insufficient for complete sequencing. Here, we established an LC-MS/MS workflow using N -succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou) as an N -terminal tag to improve de novo sequencing performance. Me-Cou derivatization generated highly informative fragment ions, particularly b 1 -b 3 ions, for (Gly) 4 at 1 μmol/L, surpassing the performance of established tags, such as 2,4,6-trinitrobenzenesulfonic acid, 3-aminopyridyl-hydroxy-succinimidyl carbamate, and N -succinimidyl [tris(2,4,6-trimethoxyphenyl)phosphonio]acetate bromide. The Me-Cou tag also enabled confident sequencing of (Gly) 10 , generating abundant b 1 -b 9 ions. Notably, intact de novo sequencing identified 74 peptides with 32 misidentified peptides that were not included in a 132-standard peptide mixture (86 dipeptides and 46 oligopeptides). However, all peptides were correctly identified using Me-Cou-aided de novo sequencing with no misidentification, demonstrating high specificity and accuracy. Additionally, Me-Cou-aided de novo sequencing successfully identified 328 peptides in casein peptone, all of which were assigned as casein protein fragments. Overall, Me-Cou-based LC-MS/MS significantly enhanced peptide detection and the characterization of sequence diversity compared with intact analysis. This methodology is a promising strategy for untargeted peptidomics, enabling comprehensive characterization of endogenous peptides in both protein hydrolysates and biological fluids.','https://pubs.acs.org/doi/10.1021/acs.analchem.6c01542','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(297,'N-terminal Coumarin Derivatization-aided De Novo Peptide Sequencing and its Application to Peptidomics using LC-trapped Ion Mobility Spectrometry-qTOF/MS','2026-03-03','10.26434/chemrxiv.15000573/v1','ChemRxiv','De novo peptide sequencing using LC-MS/MS enables database-independent sequence determination and facilitates the discovery of novel bioactive peptides and biomarkers in untargeted peptidomics. However, conventional MS/MS analyses often produces fragment ions that are insufficient for complete sequencing. Here, we established an LC-MS/MS workflow using N -succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou) as an N -terminal tag to improve de novo sequencing performance. Me-Cou derivatization generated highly informative fragment ions, particularly b₁-b₃ ions, for (Gly)₄ at 1 μmol/L, surpassing the performance of established tags, such as 2,4,6-trinitrobenzenesulfonic acid, 3-aminopyridyl-hydroxy-succinimidyl carbamate, and N -succinimidyl [tris(2,4,6-trimethoxyphenyl)phosphonio]acetate bromide. The Me-Cou tag also enabled confident sequencing of (Gly)₁₀, generating abundant b₁-b9 ions. Notably, intact de novo sequencing identified 74 peptides with 32 misannotated peptides that were not included in a 132 standard peptide mixture (86 dipeptides and 46 oligopeptides). However, all peptides were correctly identified using Me-Cou-aided de novo sequencing with no misannotations, demonstrating high specificity and accuracy. Additionally, Me-Cou-aided de novo sequencing successfully identified 328 peptides in casein peptone, all of which were assigned as casein protein fragments. Overall, Me-Cou-based LC-MS/MS significantly enhanced peptide detection and the characterization of sequence diversity compared with intact analysis. This methodology is a promising strategy for untargeted peptidomics, enabling comprehensive characterization of endogenous peptides in both protein hydrolysates and biological fluids.','https://chemrxiv.org/doi/full/10.26434/chemrxiv.15000573/v1','ChemRxiv','preprint',NULL,'crossref');
+INSERT INTO publication VALUES(298,'Towards the establishment of a comprehensive food inspection system: An approach to utilize de novo peptide sequencing from MS/MS spectra','2026-07-16','10.1016/j.foohum.2026.101356','Elsevier BV',NULL,'https://www.sciencedirect.com/science/article/pii/S2949824426003642','Food and Humanity','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(299,'Towards the establishment of a comprehensive food inspection system: an approach to utilise de novo peptide sequencing from MS/MS spectra','2026-02-13','10.2139/ssrn.6234726','Elsevier BV (SSRN)','Ensuring food safety and preventing food fraud require analytical methods capable of identifying unknown and unexpected contaminants in foods. This study developed a proteomics-based strategy centered on de novo sequencing, in which peptide sequences are directly determined from MS/MS spectra without reliance on protein databases. To obtain high-confidence peptide sequences, mass spectrometry conditions were optimized using tryptic digests of K562 cells. Among the tested platforms, ZenoTOF 7600 operated with a Zeno trap accumulation time of 25 ms and 80 MS/MS events yielded the highest number of peptide sequences, averaging 1,057 peptides with an Average Local Confidence score of ≥99. The resulting peptide sequences were used for species identification and quantitative analysis, with database searching applied as a complementary step. Application of this strategy to oyster extract-supplemented soy sauce enabled identification of species associated with added ingredients and the manufacturing process, demonstrating its potential for detecting unknown adulteration and unexpected contamination.','https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6234726','SSRN Electronic Journal','preprint',NULL,'crossref');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4563,6 +4589,10 @@ INSERT INTO publication_algorithm VALUES(296,257);
 INSERT INTO publication_algorithm VALUES(296,62);
 INSERT INTO publication_algorithm VALUES(297,257);
 INSERT INTO publication_algorithm VALUES(297,62);
+INSERT INTO publication_algorithm VALUES(298,258);
+INSERT INTO publication_algorithm VALUES(298,62);
+INSERT INTO publication_algorithm VALUES(299,258);
+INSERT INTO publication_algorithm VALUES(299,62);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6601,6 +6631,22 @@ INSERT INTO publication_author VALUES(297,1173,6);
 INSERT INTO publication_author VALUES(297,1174,7);
 INSERT INTO publication_author VALUES(297,1175,8);
 INSERT INTO publication_author VALUES(297,1176,9);
+INSERT INTO publication_author VALUES(298,1177,1);
+INSERT INTO publication_author VALUES(298,1178,2);
+INSERT INTO publication_author VALUES(298,1179,3);
+INSERT INTO publication_author VALUES(298,1180,4);
+INSERT INTO publication_author VALUES(298,1181,5);
+INSERT INTO publication_author VALUES(298,1182,6);
+INSERT INTO publication_author VALUES(298,1183,7);
+INSERT INTO publication_author VALUES(298,1184,8);
+INSERT INTO publication_author VALUES(299,1177,1);
+INSERT INTO publication_author VALUES(299,1178,2);
+INSERT INTO publication_author VALUES(299,1179,3);
+INSERT INTO publication_author VALUES(299,1180,4);
+INSERT INTO publication_author VALUES(299,1181,5);
+INSERT INTO publication_author VALUES(299,1182,6);
+INSERT INTO publication_author VALUES(299,1183,7);
+INSERT INTO publication_author VALUES(299,1184,8);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9243,6 +9289,7 @@ INSERT INTO publication_version VALUES(1,2,'manual');
 INSERT INTO publication_version VALUES(14,122,'manual');
 INSERT INTO publication_version VALUES(126,127,'manual');
 INSERT INTO publication_version VALUES(297,296,'crossref');
+INSERT INTO publication_version VALUES(299,298,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -9339,11 +9386,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
-INSERT INTO sqlite_sequence VALUES('city',274);
-INSERT INTO sqlite_sequence VALUES('affiliation',610);
-INSERT INTO sqlite_sequence VALUES('author',1176);
-INSERT INTO sqlite_sequence VALUES('algorithm',257);
-INSERT INTO sqlite_sequence VALUES('publication',297);
+INSERT INTO sqlite_sequence VALUES('city',277);
+INSERT INTO sqlite_sequence VALUES('affiliation',613);
+INSERT INTO sqlite_sequence VALUES('author',1184);
+INSERT INTO sqlite_sequence VALUES('algorithm',258);
+INSERT INTO sqlite_sequence VALUES('publication',299);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
