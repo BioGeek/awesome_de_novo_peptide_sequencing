@@ -48,5 +48,19 @@ if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
   done
 fi
 
+# URL guard. A slug is derived from mutable data -- a paper's title, an author's
+# name -- so editing that data silently rewrites a published URL and 404s the old
+# one, which is invisible now and expensive months later. Unlike the counts
+# above this is deliberately NOT auto-fixed: rewriting the baseline
+# automatically IS the failure being guarded against.
+if [ -f slugs.py ] && command -v python3 >/dev/null 2>&1; then
+  if ! python3 slugs.py --check --quiet; then
+    echo "pre-commit: refusing this commit, it would change a published URL." >&2
+    echo "  If the rename is intended:" >&2
+    echo "    python3 slugs.py --write && git add slugs.lock" >&2
+    exit 1
+  fi
+fi
+
 # Report so the user knows why an extra file joined their commit.
 echo "pre-commit: regenerated denovo.sql from staged denovo.db."

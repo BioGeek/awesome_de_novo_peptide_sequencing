@@ -1,0 +1,36 @@
+# Verify that no generated page's URL changed.
+#
+# Every slug in slugs.lock is a live, published address, and ~2400 of them are
+# indexed. A slug is derived from mutable data -- a paper's title, an author's
+# name, an algorithm's name -- so an ordinary data edit can rewrite a URL, 404
+# the old one and discard whatever search equity it had. Nothing about that is
+# visible in a normal diff.
+#
+# .githooks/pre-commit runs the same check, but it is opt-in per clone
+# (`git config core.hooksPath .githooks`) and a commit made through the GitHub
+# web UI bypasses it entirely. This is the backstop.
+#
+# The fix for a legitimate rename is `python3 slugs.py --write`, committed
+# alongside the change, so the lock diff records the URL that moved.
+name: check-slugs
+
+on:
+  push:
+    branches: [main]
+    paths: ['denovo.db', 'slugs.py', 'slugs.lock']
+  pull_request:
+    paths: ['denovo.db', 'slugs.py', 'slugs.lock']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-slugs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # slugs.py is stdlib-only, so no uv sync and no dependency install.
+      - name: Check published URLs against slugs.lock
+        run: python3 slugs.py --check

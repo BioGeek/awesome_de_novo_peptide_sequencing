@@ -8,15 +8,35 @@ that does not exist.
 
 Run this file directly to audit the whole catalog:
 
-    uv run python slugs.py
+    python3 slugs.py
 
 It prints one line per entity type and exits non-zero if any slug had to fall
 back to an id suffix, which is the signal that either the disambiguation policy
 needs extending or the DB has a duplicate that should be merged instead.
+
+SLUGS.LOCK
+----------
+Every slug is a published URL, and 2400-odd of them are indexed by Google. A
+slug is derived from mutable data -- a paper's title, an author's name, an
+algorithm's name -- so an innocuous edit silently rewrites a URL, 404s the old
+one and throws away whatever search equity it had. That is invisible at commit
+time and expensive months later.
+
+    python3 slugs.py --check     # fail if any existing URL changed or vanished
+    python3 slugs.py --write     # accept the current slugs as the new baseline
+
+`slugs.lock` is a committed record of every (type, id) -> slug. `--check` is a
+backstop in CI and in the pre-commit hook; `--write` is deliberate and manual.
+
+It is deliberately NOT auto-refreshed by the hook, unlike check_counts.py.
+Rewriting the baseline automatically is exactly the failure being guarded
+against: it would turn a URL change from a loud error into a silent one. When a
+rename is intended, run --write and let the lock diff record it.
 """
 
 from __future__ import annotations
 
+import argparse
 import re
 import sqlite3
 import sys
@@ -24,6 +44,7 @@ import unicodedata
 from pathlib import Path
 
 DB_PATH = Path(__file__).parent / "denovo.db"
+LOCK_PATH = Path(__file__).parent / "slugs.lock"
 
 MAX_SLUG_CHARS = 80
 
@@ -151,8 +172,8 @@ def assign_unique(
 # --------------------------------------------------------------------------
 # The catalog's five entity types, and how each is keyed.
 #
-# Institutions are keyed by NAME, not by affiliation row: 618 affiliation rows
-# collapse to 393 institutions because one institution has many departments,
+# Institutions are keyed by NAME, not by affiliation row: 621 affiliation rows
+# collapse to 395 institutions because one institution has many departments,
 # and every chart groups on `af.name` (index.qmd projects `af.name AS
 # affiliation` with no department). A page per row would leave a click on
 # "Utrecht University" ambiguous across three targets.
@@ -213,10 +234,109 @@ def all_slugs(conn: sqlite3.Connection) -> dict[str, dict[int, str]]:
     return out
 
 
+LOCK_HEADER = (
+    "# slugs.lock -- the published URL of every generated entity page.\n"
+    "# Written by `python3 slugs.py --write`, checked by `--check`.\n"
+    "# A diff here is a URL change: every line is a live, indexed address.\n"
+    "# Format: type<TAB>entity id<TAB>slug\n"
+)
+
+
+def lock_lines(slugs: dict[str, dict[int, str]]) -> list[str]:
+    """Deterministic TSV: sorted by type then id, so a diff is readable."""
+    out = []
+    for kind in sorted(slugs):
+        for entity_id in sorted(slugs[kind]):
+            out.append(f"{kind}\t{entity_id}\t{slugs[kind][entity_id]}")
+    return out
+
+
+def read_lock() -> dict[tuple[str, int], str]:
+    if not LOCK_PATH.exists():
+        return {}
+    found = {}
+    for line in LOCK_PATH.read_text(encoding="utf-8").splitlines():
+        if not line or line.startswith("#"):
+            continue
+        kind, entity_id, slug = line.split("\t")
+        found[(kind, int(entity_id))] = slug
+    return found
+
+
+def check_lock(slugs: dict[str, dict[int, str]], quiet: bool = False) -> int:
+    """Compare current slugs against the committed baseline.
+
+    A CHANGED or REMOVED entry breaks a URL that is already published and
+    probably indexed, so either is an error. ADDED entries are new pages and are
+    always fine.
+    """
+    if not LOCK_PATH.exists():
+        print(f"{LOCK_PATH.name} does not exist. Create it with "
+              f"`python3 slugs.py --write`.")
+        return 1
+
+    was = read_lock()
+    now = {(k, i): s for k, ids in slugs.items() for i, s in ids.items()}
+
+    changed = sorted((k, i, was[(k, i)], now[(k, i)])
+                     for (k, i) in was.keys() & now.keys()
+                     if was[(k, i)] != now[(k, i)])
+    removed = sorted(k_i for k_i in was.keys() - now.keys())
+    added = sorted(k_i for k_i in now.keys() - was.keys())
+
+    for kind, entity_id, old, new in changed:
+        print(f"  URL CHANGED  {kind} {entity_id}")
+        print(f"                 was pages/{kind}/{old}.html")
+        print(f"                 now pages/{kind}/{new}.html")
+    for kind, entity_id in removed:
+        print(f"  URL REMOVED  {kind} {entity_id} -> "
+              f"pages/{kind}/{was[(kind, entity_id)]}.html will 404")
+    if added and not (changed or removed) and not quiet:
+        print(f"  {len(added)} new page(s), no existing URL touched.")
+
+    if changed or removed:
+        print(f"\n{len(changed)} changed, {len(removed)} removed, "
+              f"{len(added)} added.")
+        print("Each one breaks a published, probably-indexed URL.")
+        print("If the rename is intended, run `python3 slugs.py --write` and "
+              "commit the lock diff alongside it.")
+        return 1
+
+    if not quiet:
+        print(f"{len(now)} slugs, {len(added)} new, no existing URL changed.")
+    return 0
+
+
+def write_lock(slugs: dict[str, dict[int, str]]) -> int:
+    lines = lock_lines(slugs)
+    LOCK_PATH.write_text(LOCK_HEADER + "\n".join(lines) + "\n", encoding="utf-8")
+    print(f"wrote {LOCK_PATH.name}: {len(lines)} slugs")
+    return 0
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--check", action="store_true",
+                       help="fail if an existing page's URL changed or vanished")
+    group.add_argument("--write", action="store_true",
+                       help="accept the current slugs as the new baseline")
+    parser.add_argument("--quiet", action="store_true",
+                        help="with --check, print nothing unless a URL changed")
+    args = parser.parse_args()
+
     conn = sqlite3.connect(DB_PATH)
     result = all_slugs(conn)
     fallbacks = result.pop("__fallbacks__", {})  # type: ignore[arg-type]
+
+    if args.check or args.write:
+        # A fallback to an id suffix is a URL too, so the lock records it either
+        # way; it is reported by the default audit, not here.
+        rc = (write_lock(result) if args.write
+              else check_lock(result, quiet=args.quiet))
+        conn.close()
+        return rc
 
     total = 0
     for kind, slugs in result.items():
