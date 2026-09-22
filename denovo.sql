@@ -407,11 +407,11 @@ INSERT INTO author VALUES(413,'Fangzheng Li',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(414,'Jiaxing Qi',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(415,'Xiaohui Liang',NULL,NULL,NULL,NULL,'0000-0003-4064-2393','A5101655447');
 INSERT INTO author VALUES(416,'Tim Van Den Bossche',NULL,NULL,NULL,NULL,'0000-0002-5916-2587',NULL);
-INSERT INTO author VALUES(417,'Denis Beslic',NULL,NULL,NULL,NULL,'0000-0001-6346-7896','A5038655641');
+INSERT INTO author VALUES(417,'Denis Beslic','beslicd@rki.de',NULL,NULL,NULL,'0000-0001-6346-7896','A5038655641');
 INSERT INTO author VALUES(418,'Tomi Suomi',NULL,NULL,NULL,NULL,'0000-0003-3639-979X','A5082176570');
 INSERT INTO author VALUES(419,'Tanja Holstein',NULL,NULL,NULL,NULL,'0000-0002-1552-1453','A5058055751');
 INSERT INTO author VALUES(420,'Laura L. Elo',NULL,NULL,NULL,NULL,'0000-0001-5648-4532','A5062339398');
-INSERT INTO author VALUES(421,'Thilo Muth',NULL,NULL,NULL,NULL,'0000-0001-8304-2684','A5062883616');
+INSERT INTO author VALUES(421,'Thilo Muth','thilo.muth@bam.de',NULL,NULL,NULL,'0000-0001-8304-2684','A5062883616');
 INSERT INTO author VALUES(422,'Joerg Seidler',NULL,NULL,NULL,NULL,NULL,'A5041247224');
 INSERT INTO author VALUES(423,'Nico Zinn',NULL,NULL,NULL,NULL,'0000-0003-3592-5751','A5062464369');
 INSERT INTO author VALUES(424,'Martin E. Boehm',NULL,NULL,NULL,NULL,NULL,'A5078833992');
@@ -420,7 +420,7 @@ INSERT INTO author VALUES(426,'Yonghan Yu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(427,'Sandro Andreotti',NULL,NULL,NULL,NULL,'0000-0001-7678-9720','A5074757485');
 INSERT INTO author VALUES(428,'Gunnar W. Klau',NULL,NULL,NULL,NULL,'0000-0002-6340-0090','A5029642674');
 INSERT INTO author VALUES(429,'Knut Reinert',NULL,NULL,NULL,NULL,'0000-0003-3078-8129','A5078948324');
-INSERT INTO author VALUES(430,'Bernhard Y. Renard',NULL,NULL,NULL,NULL,'0000-0003-4589-9809','A5005996110');
+INSERT INTO author VALUES(430,'Bernhard Y. Renard','bernhard.renard@hpi.de',NULL,NULL,NULL,'0000-0003-4589-9809','A5005996110');
 INSERT INTO author VALUES(431,'Jiale Zhao','zhaojiale22z@ict.ac.cn',NULL,NULL,NULL,'0000-0002-3330-732X','A5136986590');
 INSERT INTO author VALUES(432,'Pengzhi Mao',NULL,NULL,NULL,NULL,NULL,'A5052180619');
 INSERT INTO author VALUES(433,'Kaifei Wang',NULL,NULL,NULL,NULL,'0000-0002-3046-707X','A5101530762');
@@ -629,8 +629,8 @@ INSERT INTO author VALUES(637,'Moritz Heusel',NULL,NULL,NULL,NULL,'0000-0002-850
 INSERT INTO author VALUES(638,'Hamed Khakzad',NULL,NULL,NULL,NULL,'0000-0002-8556-0650','A5082401528');
 INSERT INTO author VALUES(639,'Johan Malmström',NULL,NULL,NULL,NULL,'0000-0002-2889-7169','A5036451897');
 INSERT INTO author VALUES(640,'Lars Malmström',NULL,NULL,NULL,NULL,'0000-0001-9885-9312','A5089221737');
-INSERT INTO author VALUES(641,'Georg Tscheuschner',NULL,NULL,NULL,NULL,'0000-0002-2311-1016','A5061133069');
-INSERT INTO author VALUES(642,'Michael G. Weller',NULL,NULL,NULL,NULL,'0000-0003-2767-2029','A5089404192');
+INSERT INTO author VALUES(641,'Georg Tscheuschner','georg.tscheuschner@bam.de',NULL,NULL,NULL,'0000-0002-2311-1016','A5061133069');
+INSERT INTO author VALUES(642,'Michael G. Weller','michael.weller@bam.de',NULL,NULL,NULL,'0000-0003-2767-2029','A5089404192');
 INSERT INTO author VALUES(643,'Lissa C. Anderson',NULL,NULL,NULL,NULL,'0000-0001-8633-0251','A5043502978');
 INSERT INTO author VALUES(644,'Dina L. Bai',NULL,NULL,NULL,NULL,'0000-0001-9595-1199','A5007906852');
 INSERT INTO author VALUES(645,'Greg T. Blakney',NULL,NULL,NULL,NULL,'0000-0002-4205-9866','A5052939226');
@@ -4349,6 +4349,7 @@ INSERT INTO publication VALUES(304,'Charting the Proteomes of Organisms with Uns
 INSERT INTO publication VALUES(305,'PAAS 3: A computer program to determine probable sequence of peptides from mass spectrometric data','1984-08-01','10.1002/bms.1200110806','Wiley',NULL,'https://onlinelibrary.wiley.com/doi/10.1002/bms.1200110806','Biological Mass Spectrometry','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(306,'Fast algorithm for peptide sequencing by mass spectroscopy','1990-06-01','10.1002/bms.1200190607','Wiley','An automatic algorithm for sequencing polypeptides from fast atom bombardment tandem mass spectra is presented.Based on graph theory considerations it finds the most probable sequences, even if the amino acid composition is unknown, by scoring mass differences. The algorithm is fast as the computing time increases by less than the square of the number of amino acids. Pairs of two or three amino acids are proposed to explain the gap if peaks are missing.','https://onlinelibrary.wiley.com/doi/10.1002/bms.1200190607','Biological Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(307,'De Novo Sequencing of Peptides from Tandem Mass Spectra and Applications in Proteogenomics','2024-10-23','10.1007/978-1-0716-4152-1_1','Springer US','The changes in protein expression are hallmarks of development and disease. Protein expression can be established qualitatively and quantitatively using mass spectrometry (MS). Samples are prepared, proteins extracted and then analyzed using MS and MS/MS. The resulting spectra need to be processed computationally to assign peptide spectrum match. Database searches employ sequence databases or spectral libraries for matching possible peptides with the measured spectra. This route is well established but fails when peptides are not found in sequence repositories. In this case, de novo sequencing of MS/MS spectra can be employed. Many computational algorithms that establish the peptide sequence from MS/MS spectrum alone are available. While de novo sequencing assigns a sequence to an MS/MS spectrum, this assignment can be used in further processes for genome annotation. For example, novel exons can be assigned, known exons can be extended, and splice sites can be validated at the protein level. We compiled an extensive list of such algorithms, grouped them, and discussed the selected approaches. We also provide a roadmap of how de novo sequencing can enter mainstream proteogenomic analysis. In the future, de novo predictions can be added to sample-specific protein databases, including RNA-seq translations. These enriched databases can then be used for proteogenomics studies with existing pipelines.','https://link.springer.com/protocol/10.1007/978-1-0716-4152-1_1','Methods in Molecular Biology','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(308,'Current state, existing challenges, and promising progress for de novo sequencing and assembly of monoclonal antibodies','2022-07-22','10.1101/2022.07.21.500409','Cold Spring Harbor Laboratory','Monoclonal antibodies (mAbs) are biotechnologically produced proteins with various applications in research, therapeutics, and diagnostics. Their ability to recognize and bind to specific molecule structures makes them essential research tools and therapeutic agents. Sequence information of antibodies is helpful for understanding antibody-antigen interactions and ensuring their affinity and specificity. De novo protein sequencing based on mass spectrometry is a useful method to obtain the amino acid sequence of peptides and proteins without a priori knowledge. Deep learning-based approaches have been developed and applied more frequently to increase the accuracy of de novo sequencing. In this study, we evaluated five recently developed de novo sequencing algorithms (Novor, pNovo 3, DeepNovo, SMSNet, and PointNovo) in their ability to identify and assemble antibody sequences. The deep learning-based tools PointNovo and SMSNet showed an increased peptide recall across different enzymes and datasets compared to spectrum-graph-based approaches. We evaluated different error types of de novo peptide sequencing tools and their performance for different numbers of missing cleavage sites, noisy spectra, and peptides of various lengths. We achieved a sequence coverage of 93.15% to 99.07% on the light chains of three different antibody datasets using the de Bruijn assembler ALPS and the predictions from PointNovo. However, low sequence coverage and accuracy on the heavy chains demonstrate that complete de novo protein sequencing remains a challenging issue in proteomics that requires improved de novo error correction, alternative digestion strategies, and hybrid approaches such as homology search to achieve high accuracy on long protein sequences.','https://www.biorxiv.org/content/10.1101/2022.07.21.500409','bioRxiv','preprint',NULL,'crossref');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4714,6 +4715,7 @@ INSERT INTO publication_algorithm VALUES(304,150);
 INSERT INTO publication_algorithm VALUES(305,261);
 INSERT INTO publication_algorithm VALUES(306,262);
 INSERT INTO publication_algorithm VALUES(307,263);
+INSERT INTO publication_algorithm VALUES(308,168);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6829,6 +6831,11 @@ INSERT INTO publication_author VALUES(305,1212,4);
 INSERT INTO publication_author VALUES(306,1213,1);
 INSERT INTO publication_author VALUES(307,1214,1);
 INSERT INTO publication_author VALUES(307,492,2);
+INSERT INTO publication_author VALUES(308,417,1);
+INSERT INTO publication_author VALUES(308,641,2);
+INSERT INTO publication_author VALUES(308,430,3);
+INSERT INTO publication_author VALUES(308,642,4);
+INSERT INTO publication_author VALUES(308,421,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9473,6 +9480,7 @@ INSERT INTO publication_version VALUES(126,127,'manual');
 INSERT INTO publication_version VALUES(297,296,'crossref');
 INSERT INTO publication_version VALUES(299,298,'manual');
 INSERT INTO publication_version VALUES(5,302,'manual');
+INSERT INTO publication_version VALUES(308,194,'crossref');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -9573,7 +9581,7 @@ INSERT INTO sqlite_sequence VALUES('city',282);
 INSERT INTO sqlite_sequence VALUES('affiliation',631);
 INSERT INTO sqlite_sequence VALUES('author',1214);
 INSERT INTO sqlite_sequence VALUES('algorithm',263);
-INSERT INTO sqlite_sequence VALUES('publication',307);
+INSERT INTO sqlite_sequence VALUES('publication',308);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
