@@ -4631,6 +4631,7 @@ INSERT INTO publication VALUES(335,'MultiTag: Multiple Error-Tolerant Sequence T
 INSERT INTO publication VALUES(336,'Complexity and scoring function of MS/MS peptide de novo sequencing','2006-07-01','10.1142/9781860947575_0043','World Scientific Pub Co Pte Lt','Tandem mass spectrometry (MS/MS) has become a standard way for identifying peptides and proteins. A scoring function plays an important role in the MS/MS data analysis. De novo sequencing is the computational step to derive a peptide sequence from an MS/MS spectrum, normally by constructing the peptide that maximizes the scoring function. A number of polynomial time algorithms have been developed based on scoring functions that consider only either the N-terminal or C-terminal fragment ions of the peptide. It remains unknown whether the consideration of the internal fragment ions will still be polynomial time solvable. In this paper, we prove that the internal fragment ions make the de novo sequencing problem NP-complete. We also propose a regression model based scoring method to incorporate correlations between the fragment ions. Our scoring function is combined with PEAKS de novo sequencing algorithm and tested on ion trap data. The experimental results show that the regression model based scoring method can remarkably improve the de novo sequencing accuracy.','https://www.worldscientific.com/doi/10.1142/9781860947575_0043','Computational Systems Bioinformatics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(337,'TVNovo: De novo peptide sequencing for high resolution LTQ-FT mass spectrometry using virtual database searching','2010-10-01','10.1109/bmei.2010.5639865','Institute of Electrical and Electronics Engineers (IEEE)',NULL,'https://ieeexplore.ieee.org/document/5639865','2010 3rd International Conference on Biomedical Engineering and Informatics','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(338,'Neutron-encoded Signatures Enable Product Ion Annotation From Tandem Mass Spectra','2013-12-01','10.1074/mcp.m113.028951','Elsevier BV','We report the use of neutron-encoded (NeuCode) stable isotope labeling of amino acids in cell culture for the purpose of C-terminal product ion annotation. Two NeuCode labeling isotopologues of lysine, (13)C6(15)N2 and (2)H8, which differ by 36 mDa, were metabolically embedded in a sample proteome, and the resultant labeled proteins were combined, digested, and analyzed via liquid chromatography and mass spectrometry. With MS/MS scan resolving powers of ~50,000 or higher, product ions containing the C terminus (i.e. lysine) appear as a doublet spaced by exactly 36 mDa, whereas N-terminal fragments exist as a single m/z peak. Through theory and experiment, we demonstrate that over 90% of all y-type product ions have detectable doublets. We report on an algorithm that can extract these neutron signatures with high sensitivity and specificity. In other words, of 15,503 y-type product ion peaks, the y-type ion identification algorithm correctly identified 14,552 (93.2%) based on detection of the NeuCode doublet; 6.8% were misclassified (i.e. other ion types that were assigned as y-type products). Searching NeuCode labeled yeast with PepNovo(+) resulted in a 34% increase in correct de novo identifications relative to searching through MS/MS only. We use this tool to simplify spectra prior to database searching, to sort unmatched tandem mass spectra for spectral richness, for correlation of co-fragmented ions to their parent precursor, and for de novo sequence identification.','https://www.mcponline.org/article/S1535-9476(20)33188-0/fulltext','Molecular & Cellular Proteomics','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(339,'Evolutionary Algorithms for Improving De Novo Peptide Sequencing','2020-01-01','10.26686/wgtn.17145581.v1','PhD thesis',NULL,'https://openaccess.wgtn.ac.nz/articles/thesis/Evolutionary_Algorithms_for_Improving_De_Novo_Peptide_Sequencing/17145581','','thesis',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5027,6 +5028,8 @@ INSERT INTO publication_algorithm VALUES(335,288);
 INSERT INTO publication_algorithm VALUES(336,62);
 INSERT INTO publication_algorithm VALUES(337,289);
 INSERT INTO publication_algorithm VALUES(338,290);
+INSERT INTO publication_algorithm VALUES(339,124);
+INSERT INTO publication_algorithm VALUES(339,195);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7284,6 +7287,7 @@ INSERT INTO publication_author VALUES(338,1282,4);
 INSERT INTO publication_author VALUES(338,1283,5);
 INSERT INTO publication_author VALUES(338,475,6);
 INSERT INTO publication_author VALUES(338,1284,7);
+INSERT INTO publication_author VALUES(339,508,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -10032,7 +10036,7 @@ INSERT INTO sqlite_sequence VALUES('city',288);
 INSERT INTO sqlite_sequence VALUES('affiliation',661);
 INSERT INTO sqlite_sequence VALUES('author',1284);
 INSERT INTO sqlite_sequence VALUES('algorithm',290);
-INSERT INTO sqlite_sequence VALUES('publication',338);
+INSERT INTO sqlite_sequence VALUES('publication',339);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

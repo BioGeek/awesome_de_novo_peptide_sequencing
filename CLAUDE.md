@@ -136,7 +136,7 @@ other's new rows.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (232), `'preprint'` (75), `'thesis'` (15), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (232), `'preprint'` (75), `'thesis'` (16), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. The single case is publication 30, an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
@@ -154,7 +154,7 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 104 rows use day
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 105 rows use day
   `01` and 98 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
@@ -172,8 +172,12 @@ before settling for `YYYY-01-01`.
 Five rows legitimately keep 1 January (146, 158, 187, 286 and 310: Mass Spectrometry
 Reviews 34(1), Mol Cell Proteomics 8(1), AIChE Journal 53(1), J Biol Chem 279(1),
 Biomedical Chemistry: Research and Methods 1(1)) because each really is a
-January issue. Publication 196 keeps a year-only `2013-01-01` because its source,
-a Digital Commons ETD record, publishes "Date of Award 2013" with no month.
+January issue. Two theses keep a year-only 1 January because their repositories publish no
+month: publication 196, whose Digital Commons ETD record gives "Date of Award
+2013", and publication 339, whose figshare-backed record at Victoria University
+of Wellington gives "Date of Award = 2020-01-01" as a literal placeholder. Note
+that record's `published_date` is 2023-09-26, which is when the repository
+deposited the thesis, not when it was awarded.
 
 ## Preprint versions
 
@@ -214,7 +218,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 280/337. The 57 without one are mostly theses, conference pages and
+Coverage is 280/338. The 58 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
 
 Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
