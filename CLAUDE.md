@@ -372,7 +372,14 @@ and the timeline appends unregistered subdomains rather than dropping them, so a
 missing registration degrades visibly instead of breaking the page. Register it
 anyway: the fallback is a safety net, not the intended appearance. Pick a colour
 at least ~20 CIE Lab deltaE from the existing ones, and dark enough to read as a
-small dot (the existing set's own minimum pairwise distance is 11.1).
+small dot. **What matters is distance to the lanes ADJACENT in
+`subdomain_order`**, not to the whole palette: two similar colours six lanes
+apart are fine, two in neighbouring lanes are not. Every adjacent pair is now
+at least 20 (worst 21.9); the global minimum is 12.7 between
+immunopeptidomics and food-authentication, which are six lanes apart. Two
+adjacent pairs used to fail this, antibodyomics against venomics at 16.0 and
+plant-pathogen against metaproteomics at 11.1, both of them same-hue pairs
+sitting side by side.
 
 ### Local dev
 

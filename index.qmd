@@ -1690,14 +1690,22 @@ subdomain_label = ({
   "astrobiology":             "Astrobiology / life detection",
   "toxin-identification":     "Toxin identification (biodefense)"
 })
+// Lane colours must stay apart in CIE Lab, and ADJACENCY IN subdomain_order IS
+// WHAT MATTERS: two similar colours far apart in the stack are tolerable, two
+// similar colours in neighbouring lanes are not. Every adjacent pair here is now
+// at least deltaE 20 (worst: neuropeptidomics against bioactive-peptides at
+// 21.9). Two pairs used to fail that, both same-hue and side by side:
+// antibodyomics against venomics at 16.0, two reds, and plant-pathogen against
+// metaproteomics at 11.1, two greens. The global minimum is 12.7, between
+// immunopeptidomics and food-authentication, which sit six lanes apart.
 subdomain_color = ({
   "general-proteomics":       "#8a96a0",
   "glycoproteomics":          "#701a75",
-  "plant-pathogen":           "#4c8b3a",
+  "plant-pathogen":           "#6f4e37",
   "metaproteomics":           "#1a7f37",
   "wastewater-metaproteomics":"#218380",
   "immunopeptidomics":        "#bf8700",
-  "antibodyomics":            "#cf222e",
+  "antibodyomics":            "#bf3989",
   "venomics":                 "#a40e26",
   "neuropeptidomics":         "#116329",
   "bioactive-peptides":       "#4e7a1a",
