@@ -5,6 +5,18 @@ description: "A comprehensive, interactive map of the de novo peptide sequencing
 execute:
   echo: false
   freeze: false
+format:
+  html:
+    include-in-header:
+      # Quarto has no canonical-URL option: site-url only drives og:url and the
+      # sitemap. This page is served at BOTH `.../` and `.../index.html` with
+      # byte-identical bodies, which Google reported as "Duplicate without
+      # user-selected canonical". The directory form is the one site-url, the
+      # README and the repo homepage field all use, so it gets the canonical.
+      # A page-level include-in-header MERGES with the project-level one rather
+      # than replacing it (verified: og:title and og:description survive).
+      - text: |
+          <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/">
 ---
 
 ```{python}

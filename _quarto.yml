@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: _site
+  # Rewrites the home page's sitemap entry from index.html to the directory
+  # form, so the sitemap agrees with the canonical index.qmd declares.
+  post-render:
+    - python3 postrender.py
   render:
     - index.qmd
     - pages/

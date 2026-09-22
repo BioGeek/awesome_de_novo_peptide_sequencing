@@ -49,6 +49,18 @@ from pathlib import Path
 from slugs import all_slugs
 
 DB_PATH = Path(__file__).parent / "denovo.db"
+
+
+def _site_url() -> str:
+    """Read site-url from _quarto.yml so the two cannot drift apart."""
+    text = (Path(__file__).parent / "_quarto.yml").read_text(encoding="utf-8")
+    m = re.search(r"^\s*site-url:\s*(\S+)\s*$", text, re.M)
+    if not m:
+        raise SystemExit("build_pages: no site-url in _quarto.yml")
+    return m.group(1).rstrip("/") + "/"
+
+
+SITE_URL = _site_url()
 OUT_ROOT = Path(__file__).parent / "pages"
 
 KINDS = ("publications", "authors", "algorithms", "institutions", "venues")
@@ -215,6 +227,27 @@ def front_matter(title: str, subtitle: str | None = None,
         "",
     ]
     return lines
+
+
+def with_canonical(body: str, url: str) -> str:
+    """Insert a per-page <link rel="canonical"> into a generated page's front matter.
+
+    Quarto has no canonical-URL option of its own; site-url only drives og:url
+    and the sitemap. A page-level include-in-header MERGES with the
+    project-level one rather than replacing it (verified: og:title and
+    og:description survive), so this is purely additive.
+
+    These pages each have exactly one URL form, so this is prevention rather
+    than a fix -- the duplicate Google reported was the home page, which is
+    reachable both as `.../` and `.../index.html`.
+    """
+    end = body.index("\n---\n")
+    block = ("\nformat:\n"
+             "  html:\n"
+             "    include-in-header:\n"
+             "      - text: |\n"
+             f'          <link rel="canonical" href="{url}">')
+    return body[:end] + block + body[end:]
 
 
 def dominant_kind(kinds: list[str]) -> str | None:
@@ -874,6 +907,7 @@ def main() -> int:
         written[kind] = written.get(kind, 0) + 1
         if args.dry_run:
             return
+        body = with_canonical(body, f"{SITE_URL}pages/{kind}/{slug}.html")
         path = args.out / kind / f"{slug}.qmd"
         path.parent.mkdir(parents=True, exist_ok=True)
         meta = path.parent / "_metadata.yml"
