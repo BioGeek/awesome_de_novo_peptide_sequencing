@@ -11114,16 +11114,16 @@ INSERT INTO publication_version VALUES(201,203,'manual');
 INSERT INTO publication_version VALUES(4,269,'biorxiv');
 INSERT INTO publication_version VALUES(10,270,'biorxiv');
 INSERT INTO publication_version VALUES(12,271,'biorxiv');
-INSERT INTO publication_version VALUES(224,152,'manual');
+INSERT INTO publication_version VALUES(224,152,'title');
 INSERT INTO publication_version VALUES(284,285,'manual');
-INSERT INTO publication_version VALUES(1,2,'manual');
+INSERT INTO publication_version VALUES(1,2,'biorxiv');
 INSERT INTO publication_version VALUES(14,122,'manual');
 INSERT INTO publication_version VALUES(126,127,'manual');
 INSERT INTO publication_version VALUES(297,296,'crossref');
 INSERT INTO publication_version VALUES(299,298,'manual');
 INSERT INTO publication_version VALUES(5,302,'manual');
-INSERT INTO publication_version VALUES(308,194,'crossref');
-INSERT INTO publication_version VALUES(341,342,'crossref');
+INSERT INTO publication_version VALUES(308,194,'biorxiv');
+INSERT INTO publication_version VALUES(341,342,'biorxiv');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,

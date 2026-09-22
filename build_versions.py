@@ -248,7 +248,14 @@ def main() -> int:
             writer.writerows(audit)
 
     # --- write -------------------------------------------------------------
-    inserted, rejected = 0, []
+    # A link recorded by hand can later be confirmed by a real source, and that
+    # is worth recording: InstaNovo's bioRxiv record reported published="NA" for
+    # 19 months, so the preprint-to-journal link had to be entered manually, and
+    # when bioRxiv finally populated the field INSERT OR IGNORE left the row
+    # saying "manual". Upgrade the provenance when a stronger source agrees with
+    # the link already stored; never rewrite the link itself.
+    SOURCE_RANK = {"manual": 0, "title": 1, "crossref": 2, "biorxiv": 3}
+    inserted, upgraded, rejected = 0, [], []
     if not args.dry_run:
         for pid, (target, source) in sorted(links.items()):
             try:
@@ -258,13 +265,27 @@ def main() -> int:
                     (pid, target, source),
                 )
                 inserted += cur.rowcount
+                if cur.rowcount == 0:
+                    row = cur.execute(
+                        "SELECT source FROM publication_version "
+                        "WHERE preprint_id = ? AND published_id = ?", (pid, target)
+                    ).fetchone()
+                    if row and SOURCE_RANK.get(source, -1) > SOURCE_RANK.get(row[0], -1):
+                        cur.execute(
+                            "UPDATE publication_version SET source = ? "
+                            "WHERE preprint_id = ? AND published_id = ?",
+                            (source, pid, target),
+                        )
+                        upgraded.append((pid, target, row[0], source))
             except sqlite3.IntegrityError as exc:
                 rejected.append((pid, target, str(exc)))
         conn.commit()
 
     total = cur.execute("SELECT COUNT(*) FROM publication_version").fetchone()[0]
     print(f"\nDone. {len(links)} links resolved, {inserted} inserted, "
-          f"{total} rows in publication_version.")
+          f"{len(upgraded)} provenance upgraded, {total} rows in publication_version.")
+    for pid, target, was, now in upgraded:
+        print(f"  {pid} -> {target}: source {was} -> {now}")
     by_source = cur.execute(
         "SELECT source, COUNT(*) FROM publication_version GROUP BY source ORDER BY 2 DESC"
     ).fetchall()
