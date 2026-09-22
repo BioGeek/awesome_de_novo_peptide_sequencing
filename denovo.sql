@@ -1227,6 +1227,7 @@ INSERT INTO author VALUES(1244,'Hong Zhang',NULL,NULL,'Hangzhou',NULL,NULL,NULL)
 INSERT INTO author VALUES(1245,'Shenghui Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1246,'Yaojun Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1247,'Shiwei Sun',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1248,'Frode S. Berven',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -2151,6 +2152,7 @@ INSERT INTO affiliation VALUES(644,'Justus Liebig University of Giessen','Instit
 INSERT INTO affiliation VALUES(645,'National University of Defense Technology','Department of Automatic Control, College of Mechatronics and Automation',NULL,62);
 INSERT INTO affiliation VALUES(646,'Beijing Institute of Radiation Medicine','State Key Laboratory of Proteomics, Beijing Proteome Research Center',NULL,9);
 INSERT INTO affiliation VALUES(647,'Zhejiang Gongshang University',NULL,NULL,15);
+INSERT INTO affiliation VALUES(648,'glyXera GmbH',NULL,NULL,146);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3867,6 +3869,11 @@ INSERT INTO author_affiliation VALUES(1244,647);
 INSERT INTO author_affiliation VALUES(1245,18);
 INSERT INTO author_affiliation VALUES(1246,18);
 INSERT INTO author_affiliation VALUES(1247,18);
+INSERT INTO author_affiliation VALUES(421,648);
+INSERT INTO author_affiliation VALUES(672,648);
+INSERT INTO author_affiliation VALUES(1248,322);
+INSERT INTO author_affiliation VALUES(1248,604);
+INSERT INTO author_affiliation VALUES(1248,605);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4146,6 +4153,7 @@ INSERT INTO algorithm VALUES(273,'De novo sequencing of mixture spectra (Liu the
 INSERT INTO algorithm VALUES(274,'Composition-based sequencing',NULL,NULL,'Constrained search','Two-step database-free strategy enabled by FT-ICR mass accuracy: determine the peptide''s amino acid COMPOSITION first, then score only the permutations that composition allows, which is a far smaller search space than conventional de novo sequencing explores.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(275,'Algorithm development for de novo sequencing (Chinese-language review)',NULL,NULL,'','Review of de novo peptide sequencing algorithm development from tandem mass spectra, published in Chinese in Progress in Biochemistry and Biophysics.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(276,'ProbPS',NULL,NULL,'Peak selection','Peak selection model that quantifies how the presence of a derivative peak depends on its primary ion''s intensity, so noise can be discarded before sequencing. Benchmarked on the de novo and sequence-tag performance it enables rather than on peak counts.','post-processor',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(277,'Tandem mass spectrum sequencing (review)',NULL,NULL,'','Book chapter presenting de novo sequencing as the alternative to database search engines in shotgun proteomics, covering its pitfalls and challenges and reviewing the main available tools.','review',NULL,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4477,6 +4485,7 @@ INSERT INTO publication VALUES(318,'Algorithms for Peptide Identification from M
 INSERT INTO publication VALUES(319,'De novo sequencing, peptide composition analysis, and composition-based sequencing: A new strategy employing accurate mass determination by Fourier transform ion cyclotron resonance mass spectrometry','2004-05-01','10.1016/j.jasms.2004.01.007','American Chemical Society (ACS)','A new strategy is described for the determination of amino acid sequences of unknown peptides. Different from the well-known but often inefficient de novo sequencing approach, the new method is based on a two-step process. In the first step the amino acid composition of an unknown peptide is determined on the basis of accurate mass values of the peptide precursor ion and a small number of accurate fragment ion mass values, and, as in de novo sequencing, without employing protein database information or other pre-information. In the second step the sequence of the found amino acids of the peptide is determined by scoring the agreement between expected and observed fragment ion signals of the permuted sequences. It was found that the new approach is highly efficient if accurate mass values are available and that it easily outstrips common approaches of de novo sequencing being based on lower accuracies and detailed knowledge of fragmentation behavior. Simple permutation and calculation of all possible amino acid sequences, however, is only efficient if the composition is known or if possible compositions are at least reduced to a small list. The latter requires the highest possible instrumental mass accuracy, which is currently provided only by fourier transform ion cyclotron resonance mass spectrometry. The connection between mass accuracy and peptide composition variability is described and an example of peptide compositioning and composition-based sequencing is presented.','https://pubs.acs.org/doi/10.1016/j.jasms.2004.01.007','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(320,'Algorithm Development of de novo Peptide Sequencing Via Tandem Mass Spectrometry','2010-12-20','10.3724/sp.j.1206.2010.00226','China Science Publishing & Media Ltd.','High-throughput mass spectrometry-based proteomics is developing rapidly in recent years. A key and essential issue in proteomics data processing is to identify proteins via tandem mass spectra. De novo peptide sequencing approach is database independent, which is a distinct advantage compared to database searching approach, so it can be used to analyze the data of new organisms or unsequenced organisms. De novo peptide sequencing problem is briefly described at first, and then the state-of-the-art of this problem is introduced from different aspects, which include the strategies with their advantages and disadvantages, frequently used algorithms and tools, criteria for algorithm assessment, and frequently used datasets for algorithm comparison. At last, the characteristics of some algorithms are summarized and some possible improvements of de novo peptide sequencing algorithm design are proposed.','https://www.pibb.ac.cn/pibben/article/abstract/20100226','Progress in Biochemistry and Biophysics','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(321,'ProbPS: A new model for peak selection based on quantifying the dependence of the existence of derivative peaks on primary ion intensity','2011-08-17','10.1186/1471-2105-12-346','Springer Science and Business Media LLC','Background The analysis of mass spectra suggests that the existence of derivative peaks is strongly dependent on the intensity of the primary peaks. Peak selection from tandem mass spectrum is used to filter out noise and contaminant peaks. It is widely accepted that a valid primary peak tends to have high intensity and is accompanied by derivative peaks, including isotopic peaks, neutral loss peaks, and complementary peaks. Existing models for peak selection ignore the dependence between the existence of the derivative peaks and the intensity of the primary peaks. Simple models for peak selection assume that these two attributes are independent; however, this assumption is contrary to real data and prone to error. Results In this paper, we present a statistical model to quantitatively measure the dependence of the derivative peak''s existence on the primary peak''s intensity. Here, we propose a statistical model, named ProbPS, to capture the dependence in a quantitative manner and describe a statistical model for peak selection. Our results show that the quantitative understanding can successfully guide the peak selection process. By comparing ProbPS with AuDeNS we demonstrate the advantages of our method in both filtering out noise peaks and in improving de novo identification. In addition, we present a tag identification approach based on our peak selection method. Our results, using a test data set, suggest that our tag identification method (876 correct tags in 1000 spectra) outperforms PepNovoTag (790 correct tags in 1000 spectra). Conclusions We have shown that ProbPS improves the accuracy of peak selection which further enhances the performance of de novo sequencing and tag identification. Thus, our model saves valuable computation time and improving the accuracy of the results.','https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-12-346','BMC Bioinformatics','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(322,'Tandem Mass Spectrum Sequencing: An Alternative to Database Search Engines in Shotgun Proteomics','2016-12-15','10.1007/978-3-319-41448-5_10','Springer International Publishing','Protein identification via database searches has become the gold standard in mass spectrometry based shotgun proteomics. However, as the quality of tandem mass spectra improves, direct mass spectrum sequencing gains interest as a database-independent alternative. In this chapter, the general principle of this so-called de novo sequencing is introduced along with pitfalls and challenges of the technique. The main tools available are presented with a focus on user friendly open source software which can be directly applied in everyday proteomic workflows.','https://link.springer.com/chapter/10.1007/978-3-319-41448-5_10','Advances in Experimental Medicine and Biology','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4856,6 +4865,7 @@ INSERT INTO publication_algorithm VALUES(318,273);
 INSERT INTO publication_algorithm VALUES(319,274);
 INSERT INTO publication_algorithm VALUES(320,275);
 INSERT INTO publication_algorithm VALUES(321,276);
+INSERT INTO publication_algorithm VALUES(322,277);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7033,6 +7043,11 @@ INSERT INTO publication_author VALUES(321,1246,2);
 INSERT INTO publication_author VALUES(321,1124,3);
 INSERT INTO publication_author VALUES(321,1244,4);
 INSERT INTO publication_author VALUES(321,1247,5);
+INSERT INTO publication_author VALUES(322,421,1);
+INSERT INTO publication_author VALUES(322,672,2);
+INSERT INTO publication_author VALUES(322,1248,3);
+INSERT INTO publication_author VALUES(322,674,4);
+INSERT INTO publication_author VALUES(322,673,5);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9776,10 +9791,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
-INSERT INTO sqlite_sequence VALUES('affiliation',647);
-INSERT INTO sqlite_sequence VALUES('author',1247);
-INSERT INTO sqlite_sequence VALUES('algorithm',276);
-INSERT INTO sqlite_sequence VALUES('publication',321);
+INSERT INTO sqlite_sequence VALUES('affiliation',648);
+INSERT INTO sqlite_sequence VALUES('author',1248);
+INSERT INTO sqlite_sequence VALUES('algorithm',277);
+INSERT INTO sqlite_sequence VALUES('publication',322);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
