@@ -82,6 +82,48 @@ When a full paper appears: `kind='downstream-application'`,
 such papers arrive together), `is_deep_learning=0`, `acquisition_mode='DDA'`,
 linked to the existing PEAKS row.
 
+### bedrock (MS2 foundation model) and MDLMDec
+
+| | |
+|---|---|
+| Repos | <https://github.com/jlapin1/foundation> (Apache-2.0, Python) and the MDLMDec submission at <https://github.com/bittremieuxlab/denovo_benchmarks/pull/87> |
+| Authors | Joel Lapin (author 31, TUM Computational Mass Spectrometry) and Alfred Nilsson (author 32, KTH Science for Life Laboratory) |
+| First released | 2026-08-06; still being pushed to on 2026-09-21 |
+| Last checked | 2026-09-22 |
+
+Two artefacts from the same pair, tracked together because they appear to be one
+line of work. The repo is named `foundation`, described as "Foundational model
+take 2", and its README reads in full: "# bedrock / Alfred and Joel's project on
+foundation models for ms2 spectra". The other is **MDLMDec**, opened as PR 87
+against the Bittremieux lab's `denovo_benchmarks` on 2026-08-20 and still open,
+whose author describes it in the PR body as "Unpublished model I've worked on".
+
+Both authors are already in the catalog as co-authors of Pairwise Attention
+(publications 4 and 269), which is how the README's first names resolve: "Joel"
+is Joel Lapin at TUM and "Alfred" is Alfred Nilsson at KTH. That is inference
+from the pairing and the repo owner, not something either artefact states.
+
+Searched 2026-09-22 with nothing found: Crossref by title and by author, arXiv
+(`all:MDLMDec`, 0 entries), and OpenAlex (`search=MDLMDec`, 0 works). The repo
+carries no citation file, no preprint link and no homepage.
+
+One connection worth noting but NOT relied on: PR 87 targets a benchmark that is
+plausibly the project behind publication 259, "A living proteomics benchmark for
+comprehensive evaluation of deep learning-based de novo peptide sequencing
+tools" (algorithm 229, a Nature Methods Registered Report on which Lapin is an
+author). The repo itself carries no description, licence, homepage or README
+reference to that registered report or its figshare DOI, so the link is likely
+rather than established, and no repository URL has been recorded against
+algorithm 229 on the strength of it.
+
+When a manuscript appears, two entries are likely rather than one, and they need
+separating before classification: a foundation model for MS2 spectra is not
+necessarily a de novo sequencer at all (compare `Diffusion spectrum foundation
+model`, algorithm 242, which is `kind='adjacent'`, against `InstaNovo-FM` and
+`Casanovo Foundation`, which are `kind='algorithm'`), and MDLMDec being
+submitted to a de novo benchmark implies it is one. Do not assume the repo and
+the PR describe the same model.
+
 ## Considered, not added
 
 - **CorrDIA** (`10.3390/app13105969`). DIA deconvolution feeding a conventional
