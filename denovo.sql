@@ -1192,6 +1192,7 @@ INSERT INTO author VALUES(1209,'T. Sakurai',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1210,'T. Matsuo',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1211,'H. Matsuda',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1212,'I. Katakuse',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1213,'Christian Bartels',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1496,6 +1497,7 @@ INSERT INTO city VALUES(276,'Tokyo',29,NULL,NULL);
 INSERT INTO city VALUES(277,'Sagamihara',29,NULL,NULL);
 INSERT INTO city VALUES(278,'Spring House',8,NULL,NULL);
 INSERT INTO city VALUES(279,'Toyonaka',29,NULL,NULL);
+INSERT INTO city VALUES(280,'Basel',16,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2089,6 +2091,7 @@ INSERT INTO affiliation VALUES(625,'European Molecular Biology Laboratory','Stru
 INSERT INTO affiliation VALUES(626,'MDS Sciex',NULL,NULL,117);
 INSERT INTO affiliation VALUES(627,'Osaka University','Institute of Physics, College of General Education',NULL,279);
 INSERT INTO affiliation VALUES(628,'Osaka University','Department of Physics, Faculty of Science',NULL,279);
+INSERT INTO affiliation VALUES(629,'University of Basel','Biocentre',NULL,280);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3754,6 +3757,7 @@ INSERT INTO author_affiliation VALUES(1209,627);
 INSERT INTO author_affiliation VALUES(1210,627);
 INSERT INTO author_affiliation VALUES(1211,627);
 INSERT INTO author_affiliation VALUES(1212,628);
+INSERT INTO author_affiliation VALUES(1213,629);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4019,6 +4023,7 @@ INSERT INTO algorithm VALUES(258,'Food inspection de novo peptide screening',NUL
 INSERT INTO algorithm VALUES(259,'Supernovo',NULL,'https://www.proteinmetrics.com/products/de-novo-sequencing-workflows','Template-guided assembly','Automated antibody de novo sequencing: finds the closest-matching germline V-J-C sequences by database search, then converges on the true heavy and light chains by iterative wildcard substitution against the MS/MS spectra. Commercial, shipped in Protein Metrics'' Byos platform.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(260,'Deglycosylation-assisted glycoprotein de novo sequencing',NULL,NULL,'','Integrative strategy for glycoprotein primary structure: enzymatic N-/O- deglycosylation to open up sequence coverage, EThcD to yield long peptides, PEAKS AB de novo sequencing to assemble the backbone, then glycosylation site and glycan characterisation on top. Demonstrated on Etanercept and three TNFR:Fc-fusion biologics of unknown sequence.','downstream-application',0,'DDA',NULL,'glycoproteomics');
 INSERT INTO algorithm VALUES(261,'PAAS 3',NULL,NULL,'Heuristic','1984 FORTRAN program that determines the probable amino acid sequence of a peptide from the sequence ion peaks of its mass spectrum, without a database. One of the earliest de novo peptide sequencing programs.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(262,'Fast peptide sequencing algorithm (Bartels)',NULL,NULL,'Graph / DP','1990 graph-theory algorithm that sequences polypeptides from FAB tandem mass spectra by scoring mass differences, without needing the amino acid composition, and proposes amino acid pairs or triples to bridge missing peaks. Sub-quadratic in the number of residues.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4334,6 +4339,7 @@ INSERT INTO publication VALUES(302,'DiNovo enables high-coverage and high-confid
 INSERT INTO publication VALUES(303,'High-Throughput Identification of Proteins and Unanticipated Sequence Modifications Using a Mass-Based Alignment Algorithm for MS/MS de Novo Sequencing Results','2004-04-01','10.1021/ac035258x','American Chemical Society (ACS)','With the increasing availability of de novo sequencing algorithms for interpreting high-mass accuracy tandem mass spectrometry (MS/MS) data, there is a growing need for programs that accurately identify proteins from de novo sequencing results. De novo sequences derived from tandem mass spectra of peptides often contain ambiguous regions where the exact amino acid order cannot be determined. One problem this poses for sequence alignment algorithms is the difficulty in distinguishing discrepancies due to de novo sequencing errors from actual genomic sequence variation and posttranslational modifications. We present a novel, mass-based approach to sequence alignment, implemented as a program called OpenSea, to resolve these problems. In this approach, de novo and database sequences are interpreted as masses of residues, and the masses, rather than the amino acid codes, are compared. To provide further flexibility, the masses can be aligned in groups, which can resolve many de novo sequencing errors. The performance of OpenSea was tested with three types of data: a mixture of known proteins, a mixture of unknown proteins that commonly contain sequence variations, and a mixture of posttranslationally modified known proteins. In all three cases, we demonstrate that OpenSea can identify more peptides and proteins than commonly used database-searching programs (SEQUEST and ProteinLynx) while accurately locating sequence variation sites and unanticipated posttranslational modifications in a high-throughput environment.','https://pubs.acs.org/doi/10.1021/ac035258x','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(304,'Charting the Proteomes of Organisms with Unsequenced Genomes by MALDI-Quadrupole Time-of-Flight Mass Spectrometry and BLAST Homology Searching','2001-05-01','10.1021/ac0013709','American Chemical Society (ACS)','MALDI-quadrupole time-of-flight mass spectrometry was applied to identify proteins from organisms whose genomes are still unknown. The identification was carried out by successively searching a sequence database-first with a peptide mass fingerprint, then with a packet of noninterpreted MS/MS spectra, and finally with peptide sequences obtained by automated interpretation of the MS/MS spectra. A "MS BLAST" homology searching protocol was developed to overcome specific limitations imposed by mass spectrometric data, such as the limited accuracy of de novo sequence predictions. This approach was tested in a small-scale proteomic project involving the identification of 15 bands of gel-separated proteins from the methylotrophic yeast Pichia pastoris, whose genome has not yet been sequenced and which is only distantly related to other fungi.','https://pubs.acs.org/doi/10.1021/ac0013709','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(305,'PAAS 3: A computer program to determine probable sequence of peptides from mass spectrometric data','1984-08-01','10.1002/bms.1200110806','Wiley',NULL,'https://onlinelibrary.wiley.com/doi/10.1002/bms.1200110806','Biological Mass Spectrometry','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(306,'Fast algorithm for peptide sequencing by mass spectroscopy','1990-06-01','10.1002/bms.1200190607','Wiley','An automatic algorithm for sequencing polypeptides from fast atom bombardment tandem mass spectra is presented.Based on graph theory considerations it finds the most probable sequences, even if the amino acid composition is unknown, by scoring mass differences. The algorithm is fast as the computing time increases by less than the square of the number of amino acids. Pairs of two or three amino acids are proposed to explain the gap if peaks are missing.','https://onlinelibrary.wiley.com/doi/10.1002/bms.1200190607','Biological Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4697,6 +4703,7 @@ INSERT INTO publication_algorithm VALUES(302,5);
 INSERT INTO publication_algorithm VALUES(303,126);
 INSERT INTO publication_algorithm VALUES(304,150);
 INSERT INTO publication_algorithm VALUES(305,261);
+INSERT INTO publication_algorithm VALUES(306,262);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6809,6 +6816,7 @@ INSERT INTO publication_author VALUES(305,1209,1);
 INSERT INTO publication_author VALUES(305,1210,2);
 INSERT INTO publication_author VALUES(305,1211,3);
 INSERT INTO publication_author VALUES(305,1212,4);
+INSERT INTO publication_author VALUES(306,1213,1);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9549,11 +9557,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
-INSERT INTO sqlite_sequence VALUES('city',279);
-INSERT INTO sqlite_sequence VALUES('affiliation',628);
-INSERT INTO sqlite_sequence VALUES('author',1212);
-INSERT INTO sqlite_sequence VALUES('algorithm',261);
-INSERT INTO sqlite_sequence VALUES('publication',305);
+INSERT INTO sqlite_sequence VALUES('city',280);
+INSERT INTO sqlite_sequence VALUES('affiliation',629);
+INSERT INTO sqlite_sequence VALUES('author',1213);
+INSERT INTO sqlite_sequence VALUES('algorithm',262);
+INSERT INTO sqlite_sequence VALUES('publication',306);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
