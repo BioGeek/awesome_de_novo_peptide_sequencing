@@ -48,7 +48,7 @@ INSERT INTO author VALUES(40,'Hao Chi','chihao@ict.ac.cn',NULL,NULL,NULL,'0000-0
 INSERT INTO author VALUES(41,'Ruitao Wu',NULL,NULL,NULL,NULL,'0000-0002-3131-7284',NULL);
 INSERT INTO author VALUES(42,'Zhiyuan Cheng',NULL,NULL,NULL,NULL,'0000-0002-8136-5911','A5033261372');
 INSERT INTO author VALUES(43,'Yao Zhang',NULL,NULL,NULL,NULL,'0000-0001-5924-9052','A5100446989');
-INSERT INTO author VALUES(44,'Jiaxin Dai',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(44,'Jiaxing Dai',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(45,'Yanchang Li',NULL,NULL,NULL,NULL,'0000-0002-4177-3726','A5064351041');
 INSERT INTO author VALUES(46,'Lijin Yao',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(47,'Xinming Li',NULL,NULL,NULL,NULL,'0000-0003-3117-9421','A5100688678');
@@ -1181,6 +1181,7 @@ INSERT INTO author VALUES(1198,'Yinping Tian',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1199,'Hong Shao',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1200,'Liuqing Wen','lwen@simm.ac.cn',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1201,'Hu Zhou','zhouhu@simm.ac.cn',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1202,'Yaoyu He',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3714,6 +3715,8 @@ INSERT INTO author_affiliation VALUES(1201,615);
 INSERT INTO author_affiliation VALUES(1201,616);
 INSERT INTO author_affiliation VALUES(1201,19);
 INSERT INTO author_affiliation VALUES(1201,620);
+INSERT INTO author_affiliation VALUES(1202,15);
+INSERT INTO author_affiliation VALUES(1202,19);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4289,6 +4292,7 @@ INSERT INTO publication VALUES(298,'Towards the establishment of a comprehensive
 INSERT INTO publication VALUES(299,'Towards the establishment of a comprehensive food inspection system: an approach to utilise de novo peptide sequencing from MS/MS spectra','2026-02-13','10.2139/ssrn.6234726','Elsevier BV (SSRN)','Ensuring food safety and preventing food fraud require analytical methods capable of identifying unknown and unexpected contaminants in foods. This study developed a proteomics-based strategy centered on de novo sequencing, in which peptide sequences are directly determined from MS/MS spectra without reliance on protein databases. To obtain high-confidence peptide sequences, mass spectrometry conditions were optimized using tryptic digests of K562 cells. Among the tested platforms, ZenoTOF 7600 operated with a Zeno trap accumulation time of 25 ms and 80 MS/MS events yielded the highest number of peptide sequences, averaging 1,057 peptides with an Average Local Confidence score of ≥99. The resulting peptide sequences were used for species identification and quantitative analysis, with database searching applied as a complementary step. Application of this strategy to oyster extract-supplemented soy sauce enabled identification of species associated with added ingredients and the manufacturing process, demonstrating its potential for detecting unknown adulteration and unexpected contamination.','https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6234726','SSRN Electronic Journal','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(300,'Automated Antibody De Novo Sequencing and Its Utility in Biopharmaceutical Discovery','2017-05-01','10.1007/s13361-016-1580-0','American Chemical Society (ACS)','Applications of antibody de novo sequencing in the biopharmaceutical industry range from the discovery of new antibody drug candidates to identifying reagents for research and determining the primary structure of innovator products for biosimilar development. When murine, phage display, or patient-derived monoclonal antibodies against a target of interest are available, but the cDNA or the original cell line is not, de novo protein sequencing is required to humanize and recombinantly express these antibodies, followed by in vitro and in vivo testing for functional validation. Availability of fully automated software tools for monoclonal antibody de novo sequencing enables efficient and routine analysis. Here, we present a novel method to automatically de novo sequence antibodies using mass spectrometry and the Supernovo software. The robustness of the algorithm is demonstrated through a series of stress tests. Graphical Abstract ᅟ.','https://link.springer.com/article/10.1007/s13361-016-1580-0','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(301,'Decoding Protein Glycosylation by an Integrative Mass Spectrometry-Based De Novo Sequencing Strategy','2025-01-22','10.1021/jacsau.4c00960','American Chemical Society (ACS)','Glycoproteins, representing more than 50% of human proteins and most biopharmaceuticals, are crucial for regulating various biological processes. The complexity of multiple glycosylation sites often leads to incomplete sequence coverage and ambiguous glycan modification profiles. Here, we developed an integrative mass spectrometry-based approach for decoding unknown glycoproteins, which is featured with the combination of deglycosylation-mediated de novo sequencing with glycosylation site characterization. We utilized the enzymatic deglycosylation of N- / O- glycans to achieve comprehensive sequence coverage. Additionally, EThcD fragmentation enables the identification of high-quality long peptides, facilitating precise protein assembly. We subsequently applied this method to de novo sequencing of the highly glycosylated therapeutic fusion protein Etanercept (Enbrel). We also sequenced three new tumor necrosis factor receptor:Fc-fusion biologics with largely unknown sequences, unveiling subtle distinctions in the primary sequences. Furthermore, we characterized N- and O- glycosylation modifications of these proteins at subunit, glycopeptide, and glycan levels. This strategy bridges the gap between the de novo sequencing and glycosylation modification, providing comprehensive information on the primary structure and glycosylation modifications for glycoproteins. Notably, our method could be a robust solution for accurate sequencing of the glycoproteins and has practical value not only in basic research but also in the biopharmaceutical industry.','https://pubs.acs.org/doi/10.1021/jacsau.4c00960','JACS Au','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(302,'DiNovo enables high-coverage and high-confidence de novo peptide sequencing via mirror proteases and deep learning','2026-03-05','10.1038/s41467-026-70224-6','Springer Science and Business Media LLC','Despite the recent advancements driven by deep learning, de novo peptide sequencing is still constrained by incomplete peptide fragmentation and insufficient protein digestion in current single protease-based proteomic experiments. Here, we present a software system, named DiNovo, for high-coverage and high-confidence de novo peptide sequencing by leveraging the complementarity of mirror proteases. DiNovo is empowered by several innovative algorithms, including a mirror-spectra recognition algorithm independent of pre-sequencing, two sequencing algorithms based on deep learning and graph theory, respectively, and target-decoy mapping, a method for sequencing result evaluation free of prior peptide identification. Compared with the trypsin protease used alone, DiNovo using two pairs of mirror proteases leads to two to three times high-confidence amino acids sequenced. Compared with previous single-protease de novo sequencing algorithms, DiNovo achieves much higher sequence coverage. DiNovo also shows great potential as a practical and powerful alternative to database search for peptide identification with quality control.','https://www.nature.com/articles/s41467-026-70224-6','Nature Communications','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4648,6 +4652,7 @@ INSERT INTO publication_algorithm VALUES(299,62);
 INSERT INTO publication_algorithm VALUES(300,259);
 INSERT INTO publication_algorithm VALUES(301,260);
 INSERT INTO publication_algorithm VALUES(301,62);
+INSERT INTO publication_algorithm VALUES(302,5);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6722,6 +6727,24 @@ INSERT INTO publication_author VALUES(301,1198,8);
 INSERT INTO publication_author VALUES(301,1199,9);
 INSERT INTO publication_author VALUES(301,1200,10);
 INSERT INTO publication_author VALUES(301,1201,11);
+INSERT INTO publication_author VALUES(302,35,1);
+INSERT INTO publication_author VALUES(302,36,2);
+INSERT INTO publication_author VALUES(302,37,3);
+INSERT INTO publication_author VALUES(302,38,4);
+INSERT INTO publication_author VALUES(302,39,5);
+INSERT INTO publication_author VALUES(302,40,6);
+INSERT INTO publication_author VALUES(302,41,7);
+INSERT INTO publication_author VALUES(302,42,8);
+INSERT INTO publication_author VALUES(302,43,9);
+INSERT INTO publication_author VALUES(302,44,10);
+INSERT INTO publication_author VALUES(302,45,11);
+INSERT INTO publication_author VALUES(302,46,12);
+INSERT INTO publication_author VALUES(302,47,13);
+INSERT INTO publication_author VALUES(302,1202,14);
+INSERT INTO publication_author VALUES(302,48,15);
+INSERT INTO publication_author VALUES(302,49,16);
+INSERT INTO publication_author VALUES(302,50,17);
+INSERT INTO publication_author VALUES(302,51,18);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9365,6 +9388,7 @@ INSERT INTO publication_version VALUES(14,122,'manual');
 INSERT INTO publication_version VALUES(126,127,'manual');
 INSERT INTO publication_version VALUES(297,296,'crossref');
 INSERT INTO publication_version VALUES(299,298,'manual');
+INSERT INTO publication_version VALUES(5,302,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -9463,9 +9487,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
 INSERT INTO sqlite_sequence VALUES('city',278);
 INSERT INTO sqlite_sequence VALUES('affiliation',620);
-INSERT INTO sqlite_sequence VALUES('author',1201);
+INSERT INTO sqlite_sequence VALUES('author',1202);
 INSERT INTO sqlite_sequence VALUES('algorithm',260);
-INSERT INTO sqlite_sequence VALUES('publication',301);
+INSERT INTO sqlite_sequence VALUES('publication',302);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
