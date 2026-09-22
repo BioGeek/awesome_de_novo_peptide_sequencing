@@ -317,6 +317,30 @@ naming people, a half-finished finding) belongs in the Python chunk, not beside
 the chart it describes. The network-statistics notes at the end of the Python
 chunk in `index.qmd` are there for exactly this reason and say so.
 
+### The architectures swim lane hides most families; "The long view" is why
+
+`visible_bands = band_order.filter(f => present.has(f))` in the architectures
+timeline means a family **not named in its 13-entry `band_order`** is dropped
+from that chart entirely, not appended or greyed. As of writing that hides
+**36 of the 49 families and 76 of the 192 methods** that carry one, and ten of
+the hidden families first appeared before 2005: `Sequence tag` (5 methods),
+`Chemical labeling assisted` (8), `Chemical derivatization assisted` (5),
+`Constrained search` (4), `Homology search` (3), `Spectral assembly` (4) and
+others. The wave chart cannot show them either, because it counts papers per
+year on a linear axis where 1984's single paper is a sliver beside 2024's thirty.
+
+So the classical era was invisible on both charts. **"The long view"** exists to
+cover it: one row per family from the `family_firsts` dataset, placed at the
+first publication of its earliest method, all 49 of them across the full span.
+Its x-domain is pinned to whole years rather than derived from the data, so the
+decade of quiet between 1984 and 1994 reads as a gap instead of being
+compressed away.
+
+If you extend `band_order`, do not assume it is the list of families. Query
+`SELECT DISTINCT algorithm_family FROM algorithm` for that, and note that
+adding all 49 bands would make the swim lane unreadable, which is the reason
+the two charts are separate rather than one.
+
 ### Editorial conventions
 
 - **Italicize *de novo*** in every piece of user-facing copy (page title, subtitle, prose, chart titles, README). In markdown: `*de novo*`. In HTML cells: `<em>de novo</em>`. Don't italicize it inside copied paper titles, DB string literals, or identifiers.

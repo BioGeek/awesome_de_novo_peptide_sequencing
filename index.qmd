@@ -330,6 +330,53 @@ repo_metrics = pd.read_sql(
     conn,
 )
 
+# FIRST APPEARANCE OF EACH METHODOLOGICAL FAMILY.
+# The only dataset that covers the field's whole 42-year span. The wave chart
+# squashes the sparse early years against a linear count axis, and the
+# architectures swim lane drops any family outside its 13 hand-tuned bands
+# (visible_bands = band_order.filter(...)), which silently hides 36 of the 49
+# families and 76 of the 192 methods that carry one. Ten of the hidden families
+# first appeared before 2005, so the classical era is invisible on both charts.
+# One row per family, dated by the earliest publication of its earliest method.
+family_firsts = pd.read_sql(
+    """
+    WITH per_method AS (
+        SELECT alg.id                  AS alg_id,
+               alg.algorithm_family    AS family,
+               alg.name                AS method,
+               alg.kind                AS kind,
+               alg.is_deep_learning    AS is_dl,
+               MIN(p.publication_date) AS first_date,
+               MIN(p.id)               AS pub_id
+        FROM algorithm alg
+        JOIN publication_algorithm pa ON pa.algorithm_id = alg.id
+        JOIN publication p            ON p.id = pa.publication_id
+        WHERE COALESCE(alg.algorithm_family, '') <> ''
+        GROUP BY alg.id
+    ),
+    ranked AS (
+        SELECT per_method.*,
+               ROW_NUMBER() OVER (PARTITION BY family
+                                  ORDER BY first_date, alg_id) AS rn,
+               COUNT(*)     OVER (PARTITION BY family)          AS n_methods
+        FROM per_method
+    )
+    SELECT r.family,
+           r.first_date,
+           r.method  AS first_method,
+           r.kind    AS first_kind,
+           r.is_dl   AS first_is_dl,
+           r.n_methods,
+           p.title   AS first_title,
+           p.journal AS first_journal
+    FROM ranked r
+    JOIN publication p ON p.id = r.pub_id
+    WHERE r.rn = 1
+    ORDER BY r.first_date
+    """,
+    conn,
+)
+
 # One lookup replaces threading ids through seven datasets. `key` is exactly the
 # string the charts ALREADY aggregate on -- a display name, an algorithm name,
 # an institution name, a journal -- with publications keyed by id. That matters
@@ -370,6 +417,7 @@ ojs_define(
     author_details=author_details,
     citations=citations,
     pub_versions=pub_versions,
+    family_firsts=family_firsts,
     entity_slugs=entity_slugs,
     journal_impact=journal_impact,
     publication_impact=publication_impact,
@@ -1463,6 +1511,139 @@ innovations_timeline = {
   border: 1px solid rgba(31, 35, 40, 0.35); flex: 0 0 auto;
 }
 </style>
+```
+
+## The long view
+
+```{ojs}
+//| echo: false
+md`Every methodological family in the catalog, placed at the moment it first
+appeared. The span runs from **${ff_first_year}** to **${ff_last_year}**,
+**${ff_span}** years, across **${ff_rows.length}** distinct families. This is the
+only view here that shows all of them: the chart above groups methods into
+thirteen architectural bands and the volume chart below counts papers per year,
+where the early era is a one-paper sliver against a linear axis.`
+```
+
+```{ojs}
+//| echo: false
+ff_rows = transpose(family_firsts)
+  .map(r => ({ ...r, date: new Date(r.first_date), year: +r.first_date.slice(0, 4) }))
+  .sort((a, b) => a.date - b.date)
+```
+
+```{ojs}
+//| echo: false
+ff_first_year = d3.min(ff_rows, r => r.year)
+```
+
+```{ojs}
+//| echo: false
+ff_last_year = d3.max(ff_rows, r => r.year)
+```
+
+```{ojs}
+//| echo: false
+ff_span = ff_last_year - ff_first_year
+```
+
+```{ojs}
+//| echo: false
+// Approach is derived from the introducing method's is_deep_learning, not from
+// the family name: several families (Graph / DP + neural network, Sparse
+// autoencoder) are only classifiable that way, and NULL is its own case rather
+// than being folded into classical.
+ff_approach = r => r.first_is_dl === true || r.first_is_dl === 1 ? "Deep learning"
+              : r.first_is_dl === false || r.first_is_dl === 0 ? "Classical"
+              : "Not applicable"
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  width: 1100,
+  height: 22 * ff_rows.length + 70,
+  marginLeft: 250,
+  marginRight: 30,
+  marginTop: 34,
+  x: {
+    label: "First appearance",
+    grid: true,
+    // Fixed to whole years so the 1984-to-1994 gap reads as a real decade of
+    // quiet rather than being compressed away by a data-driven domain.
+    domain: [new Date(`${ff_first_year - 1}-01-01`), new Date(`${ff_last_year + 1}-01-01`)]
+  },
+  y: { label: null, domain: ff_rows.map(r => r.family), tickSize: 0 },
+  color: {
+    legend: true,
+    domain: ["Classical", "Deep learning", "Not applicable"],
+    range: ["#6c757d", "#C44E52", "#b0b7bd"]
+  },
+  marks: [
+    // A rule from the axis to the dot: without it, a 49-row dot plot is hard to
+    // read across 250px of label gutter.
+    Plot.ruleY(ff_rows, {
+      y: "family",
+      x1: new Date(`${ff_first_year - 1}-01-01`),
+      x2: "date",
+      stroke: "#e3e6e9",
+      strokeWidth: 1
+    }),
+    Plot.dot(ff_rows, {
+      x: "date",
+      y: "family",
+      r: r => 3 + Math.min(r.n_methods, 9) * 0.55,
+      fill: ff_approach,
+      stroke: "white",
+      strokeWidth: 0.8,
+      tip: true,
+      channels: {
+        "introduced by": "first_method",
+        "paper": "first_title",
+        "venue": "first_journal",
+        "methods in this family": "n_methods"
+      }
+    }),
+    Plot.text(ff_rows, {
+      x: "date",
+      y: "family",
+      text: "first_method",
+      dx: 10,
+      textAnchor: "start",
+      fontSize: 10,
+      fill: "#444"
+    })
+  ]
+})
+```
+
+```{ojs}
+//| echo: false
+md`Dot size is the number of methods the family has accumulated since, so a
+large dot on the left is an idea that kept being used. The table below is the
+same data, sortable.`
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(
+  ff_rows.map(r => ({
+    "First seen": r.first_date,
+    "Family": r.family,
+    "Approach": ff_approach(r),
+    "Introduced by": r.first_method,
+    "Methods since": r.n_methods,
+    "Paper": r.first_title,
+    "Venue": r.first_journal || ""
+  })),
+  {
+    rows: 20,
+    sort: "First seen",
+    reverse: false,
+    layout: "auto",
+    width: { "First seen": 92, "Methods since": 92, "Approach": 100 }
+  }
+)
 ```
 
 ## Application areas
