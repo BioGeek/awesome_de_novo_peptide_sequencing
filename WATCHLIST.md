@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 253 `algorithm` rows has at least one linked publication, because
+Every one of the 256 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -145,6 +145,29 @@ linked to the existing PEAKS row.
   the **CycloNovo** paper, already algorithm 53 and publication 56 here, with
   Joshua S. Mylne as its author 9. Following that reference is what exposed the
   seven truncated bylines fixed in 17b9a5e.
+
+- **The Research Square posting of InstaNovo** (`10.21203/rs.3.rs-3376248/v1`,
+  posted 2024-05-02). A second preprint of a paper already in the catalog, and a
+  deliberate decision not to add it rather than an oversight.
+
+  It is a genuinely distinct record, which is what makes it tempting: its title
+  says "Diffusion-powered" where the bioRxiv row (publication 1) says "Accurate,
+  database-free", and its first author is Timothy Jenkins rather than Kevin Eloff.
+  By the BiATNovo precedent that is normally enough to earn its own row.
+
+  The reason to leave it out is `publication_version`. Its UNIQUE index on
+  `published_id` lets only one preprint claim the Nature Machine Intelligence
+  paper, so adding this row forces a choice between a 19-month gap measured from
+  bioRxiv and an 11-month gap measured from Research Square. Crossref would argue
+  for the latter, since the Nature article's `has-preprint` names only the
+  Research Square DOI, but the lifecycle chart is answering "how long until this
+  work was formally published", and the honest clock starts when the work first
+  became public in August 2023.
+
+  Worth knowing for its own sake: that same Crossref asymmetry is why bioRxiv
+  reports `published: "NA"` for `10.1101/2023.08.30.555055` to this day. The
+  bioRxiv record carries no relation at all, so bioRxiv's matcher has nothing to
+  work from. It is not a bioRxiv bug.
 
 ## Published elsewhere, already handled
 
