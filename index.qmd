@@ -1782,8 +1782,12 @@ application_timeline = {
   ]
   const x_min = d3.min(rows, d => d.first_pub)
   const x_max = d3.max(rows, d => d.first_pub)
-  const x_pad_min = d3.timeMonth.offset(x_min, -12)
-  const x_pad_max = d3.timeMonth.offset(x_max, 12)
+  // Pinned to whole years rather than a month offset from the data, so the
+  // gridlines land on years and a quiet stretch reads as a real gap. Same
+  // treatment as "The long view"; the month-offset form put the axis bounds on
+  // arbitrary dates.
+  const x_pad_min = new Date(Date.UTC(x_min.getUTCFullYear() - 1, 0, 1))
+  const x_pad_max = new Date(Date.UTC(x_max.getUTCFullYear() + 1, 0, 1))
   // MIN_GAP_DAYS auto-tunes to the actual x-scale. Labels here are longer than
   // in the architectures chart (workflow names average 25 chars ≈ 180 px), and
   // the venomics lane has 10 papers clustered in 2018/2020/2022 — so we need
@@ -2017,7 +2021,32 @@ application_sankey = {
   }
 
   // Layout parameters.
-  const width = 1100, height = 480
+  //
+  // HEIGHT IS DERIVED, NOT FIXED. Node heights are proportional to traffic, so
+  // the many single-paper sequencers on the right collapse to slivers: at the
+  // old fixed 480px the six sequencers with one paper each got about 13px
+  // against an 11px font, so their labels all but touched. Sizing from the
+  // busier side keeps the proportions honest -- a minimum-node-height floor
+  // would lie about the flows -- and simply gives them room. MIN_NODE_PX is the
+  // vertical budget per node; 34 leaves an 11px label clear of its neighbours.
+  // The chart now grows as sequencers are added instead of squeezing them.
+  // HEIGHT SCALES WITH THE NUMBER OF NODES ON THE BUSIER SIDE. The default
+  // signal is "Either", which unions curated tool usage with the citation
+  // graph and puts 36 sequencers on the right; at the old fixed 480px their
+  // labels shared about 430px of inner height, roughly 12px each including
+  // padding, which is where the right-hand crowding came from. "Uses" alone has
+  // only 10 and was never the problem.
+  //
+  // Sizing by each node's SHARE of the flow was tried and is wrong: shares are
+  // so skewed (the smallest is 1/109 of the total under "Either") that
+  // guaranteeing a label for the thinnest ribbon would demand a 2700px chart.
+  // Node count is the constraint that actually binds, and the thinnest ribbons
+  // stay thin, which is honest about how little traffic they carry.
+  const PAD_Y = 8
+  const ROW_PX = 24
+  const n_rows = Math.max(sd_totals.size, seq_totals.size)
+  const width = 1100
+  const height = Math.min(1200, Math.max(480, 50 + n_rows * ROW_PX))
   const margin = { top: 30, right: 260, bottom: 20, left: 260 }
   const inner_w = width  - margin.left - margin.right
   const inner_h = height - margin.top  - margin.bottom
@@ -2035,7 +2064,7 @@ application_sankey = {
   // drift out of sync.
 
   // Assign Y positions (stacked, proportional to traffic + a small padding).
-  const pad_y = 8
+  const pad_y = PAD_Y
   const total_left  = d3.sum(left_nodes,  d => d.total)
   const total_right = d3.sum(right_nodes, d => d.total)
   const avail_left  = inner_h - pad_y * (left_nodes.length  - 1)
