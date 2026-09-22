@@ -1228,6 +1228,7 @@ INSERT INTO author VALUES(1245,'Shenghui Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1246,'Yaojun Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1247,'Shiwei Sun',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1248,'Frode S. Berven',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1249,'Dekel Tsur',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3874,6 +3875,7 @@ INSERT INTO author_affiliation VALUES(672,648);
 INSERT INTO author_affiliation VALUES(1248,322);
 INSERT INTO author_affiliation VALUES(1248,604);
 INSERT INTO author_affiliation VALUES(1248,605);
+INSERT INTO author_affiliation VALUES(1249,205);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4486,6 +4488,7 @@ INSERT INTO publication VALUES(319,'De novo sequencing, peptide composition anal
 INSERT INTO publication VALUES(320,'Algorithm Development of de novo Peptide Sequencing Via Tandem Mass Spectrometry','2010-12-20','10.3724/sp.j.1206.2010.00226','China Science Publishing & Media Ltd.','High-throughput mass spectrometry-based proteomics is developing rapidly in recent years. A key and essential issue in proteomics data processing is to identify proteins via tandem mass spectra. De novo peptide sequencing approach is database independent, which is a distinct advantage compared to database searching approach, so it can be used to analyze the data of new organisms or unsequenced organisms. De novo peptide sequencing problem is briefly described at first, and then the state-of-the-art of this problem is introduced from different aspects, which include the strategies with their advantages and disadvantages, frequently used algorithms and tools, criteria for algorithm assessment, and frequently used datasets for algorithm comparison. At last, the characteristics of some algorithms are summarized and some possible improvements of de novo peptide sequencing algorithm design are proposed.','https://www.pibb.ac.cn/pibben/article/abstract/20100226','Progress in Biochemistry and Biophysics','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(321,'ProbPS: A new model for peak selection based on quantifying the dependence of the existence of derivative peaks on primary ion intensity','2011-08-17','10.1186/1471-2105-12-346','Springer Science and Business Media LLC','Background The analysis of mass spectra suggests that the existence of derivative peaks is strongly dependent on the intensity of the primary peaks. Peak selection from tandem mass spectrum is used to filter out noise and contaminant peaks. It is widely accepted that a valid primary peak tends to have high intensity and is accompanied by derivative peaks, including isotopic peaks, neutral loss peaks, and complementary peaks. Existing models for peak selection ignore the dependence between the existence of the derivative peaks and the intensity of the primary peaks. Simple models for peak selection assume that these two attributes are independent; however, this assumption is contrary to real data and prone to error. Results In this paper, we present a statistical model to quantitatively measure the dependence of the derivative peak''s existence on the primary peak''s intensity. Here, we propose a statistical model, named ProbPS, to capture the dependence in a quantitative manner and describe a statistical model for peak selection. Our results show that the quantitative understanding can successfully guide the peak selection process. By comparing ProbPS with AuDeNS we demonstrate the advantages of our method in both filtering out noise peaks and in improving de novo identification. In addition, we present a tag identification approach based on our peak selection method. Our results, using a test data set, suggest that our tag identification method (876 correct tags in 1000 spectra) outperforms PepNovoTag (790 correct tags in 1000 spectra). Conclusions We have shown that ProbPS improves the accuracy of peak selection which further enhances the performance of de novo sequencing and tag identification. Thus, our model saves valuable computation time and improving the accuracy of the results.','https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-12-346','BMC Bioinformatics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(322,'Tandem Mass Spectrum Sequencing: An Alternative to Database Search Engines in Shotgun Proteomics','2016-12-15','10.1007/978-3-319-41448-5_10','Springer International Publishing','Protein identification via database searches has become the gold standard in mass spectrometry based shotgun proteomics. However, as the quality of tandem mass spectra improves, direct mass spectrum sequencing gains interest as a database-independent alternative. In this chapter, the general principle of this so-called de novo sequencing is introduced along with pitfalls and challenges of the technique. The main tools available are presented with a focus on user friendly open source software which can be directly applied in everyday proteomic workflows.','https://link.springer.com/chapter/10.1007/978-3-319-41448-5_10','Advances in Experimental Medicine and Biology','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(323,'Protein identification by spectral networks analysis','2007-04-10','10.1073/pnas.0701130104','National Academy of Sciences','Advances in tandem mass spectrometry (MS/MS) steadily increase the rate of generation of MS/MS spectra. As a result, the existing approaches that compare spectra against databases are already facing a bottleneck, particularly when interpreting spectra of modified peptides. Here we explore a concept that allows one to perform an MS/MS database search without ever comparing a spectrum against a database. We propose to take advantage of spectral pairs, which are pairs of spectra obtained from overlapping (often nontryptic) peptides or from unmodified and modified versions of the same peptide. Having a spectrum of a modified peptide paired with a spectrum of an unmodified peptide allows one to separate the prefix and suffix ladders, to greatly reduce the number of noise peaks, and to generate a small number of peptide reconstructions that are likely to contain the correct one. The MS/MS database search is thus reduced to extremely fast pattern-matching (rather than time-consuming matching of spectra against databases). In addition to speed, our approach provides a unique paradigm for identifying posttranslational modifications by means of spectral networks analysis.','https://www.pnas.org/doi/10.1073/pnas.0701130104','Proceedings of the National Academy of Sciences','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4866,6 +4869,7 @@ INSERT INTO publication_algorithm VALUES(319,274);
 INSERT INTO publication_algorithm VALUES(320,275);
 INSERT INTO publication_algorithm VALUES(321,276);
 INSERT INTO publication_algorithm VALUES(322,277);
+INSERT INTO publication_algorithm VALUES(323,130);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7048,6 +7052,10 @@ INSERT INTO publication_author VALUES(322,672,2);
 INSERT INTO publication_author VALUES(322,1248,3);
 INSERT INTO publication_author VALUES(322,674,4);
 INSERT INTO publication_author VALUES(322,673,5);
+INSERT INTO publication_author VALUES(323,475,1);
+INSERT INTO publication_author VALUES(323,1249,2);
+INSERT INTO publication_author VALUES(323,277,3);
+INSERT INTO publication_author VALUES(323,271,4);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9792,9 +9800,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',286);
 INSERT INTO sqlite_sequence VALUES('affiliation',648);
-INSERT INTO sqlite_sequence VALUES('author',1248);
+INSERT INTO sqlite_sequence VALUES('author',1249);
 INSERT INTO sqlite_sequence VALUES('algorithm',277);
-INSERT INTO sqlite_sequence VALUES('publication',322);
+INSERT INTO sqlite_sequence VALUES('publication',323);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
