@@ -3949,7 +3949,7 @@ INSERT INTO algorithm VALUES(126,'OpenSea',NULL,NULL,'Alignment','Alignment algo
 INSERT INTO algorithm VALUES(127,'Lookup Peaks',NULL,NULL,'Hybrid search','Hybrid de novo sequencing and database-search method for protein identification by tandem MS.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(128,'2D-MS network peptide mixtures',NULL,NULL,'Network analysis','Framework for de novo sequencing of peptide mixtures via network analysis and two-dimensional tandem MS.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(129,'SILAC group de novo',NULL,NULL,'Grouped spectra','Algorithm for peptide de novo sequencing from a group of SILAC-labeled MS/MS spectra.','algorithm',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(130,'Shotgun Protein Sequencing',NULL,NULL,'Spectral assembly','Assembly of overlapping tandem mass spectra for shotgun protein sequencing.','algorithm',0,'DDA','SPS',NULL);
+INSERT INTO algorithm VALUES(130,'Shotgun Protein Sequencing',NULL,NULL,'Spectral assembly','Assembles overlapping MS/MS spectra of related peptides into contigs before any sequence is called, so a protein is sequenced from the assembly rather than from individual spectra. Tolerates mixtures and unanticipated modifications.','algorithm',0,'DDA','SPS',NULL);
 INSERT INTO algorithm VALUES(131,'MS-Dictionary',NULL,NULL,'Spectral dictionary','Hybrid method that integrates de novo spectral dictionaries with database search of tandem mass spectra.','adjacent',0,'DDA','Spectral Dictionaries',NULL);
 INSERT INTO algorithm VALUES(132,'Native antibody de novo MS/MS',NULL,NULL,'Spectral assembly','De novo MS/MS sequencing workflow for native human antibodies.','downstream-application',0,'DDA',NULL,'antibodyomics');
 INSERT INTO algorithm VALUES(133,'PFIA',NULL,NULL,'Fragment ion analysis','Peptide Fragment Ion Analyser for interpreting tandem MS data and de novo peptide sequencing.','algorithm',0,'DDA','Peptide Fragment Ion Analyser',NULL);
@@ -4087,7 +4087,6 @@ INSERT INTO algorithm VALUES(264,'ALPS',NULL,NULL,'Sequence assembly','Assembles
 INSERT INTO algorithm VALUES(265,'De novo sequencing of proteins and peptides (review)',NULL,NULL,'','Review of de novo sequencing approaches for peptides and whole proteins, their applications and open problems.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(266,'InsPecT',NULL,NULL,'Sequence tag','Uses peptide sequence tags derived from the spectrum as a database filter, discarding the vast majority of candidate peptides before scoring, which makes blind searches for post-translational modifications tractable.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(267,'pNovoM',NULL,NULL,'Spectra pair','De novo sequencing from mirror spectrum pairs: digesting the same sample with Ac-LysargiNase and with trypsin yields two spectra whose b and y ion series complement each other, which pins down the sequence far more confidently than either alone.','algorithm',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(268,'Shotgun Protein Sequencing (SPS)',NULL,NULL,'Spectral assembly','Assembles overlapping MS/MS spectra of related peptides into contigs before any sequence is called, so a protein is sequenced from the assembly rather than from individual spectra. Tolerates mixtures and unanticipated modifications.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4781,7 +4780,7 @@ INSERT INTO publication_algorithm VALUES(309,264);
 INSERT INTO publication_algorithm VALUES(310,265);
 INSERT INTO publication_algorithm VALUES(311,266);
 INSERT INTO publication_algorithm VALUES(312,267);
-INSERT INTO publication_algorithm VALUES(313,268);
+INSERT INTO publication_algorithm VALUES(313,130);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
