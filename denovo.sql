@@ -1258,6 +1258,7 @@ INSERT INTO author VALUES(1275,'Christien Kluwe',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1276,'Andrew Ellington',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1277,'Adam J. Liska',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1278,'Alexander Golod',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1279,'Changjiang Xu',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3967,6 +3968,7 @@ INSERT INTO author_affiliation VALUES(1205,660);
 INSERT INTO author_affiliation VALUES(1277,261);
 INSERT INTO author_affiliation VALUES(1278,659);
 INSERT INTO author_affiliation VALUES(1207,261);
+INSERT INTO author_affiliation VALUES(1279,131);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4603,6 +4605,7 @@ INSERT INTO publication VALUES(332,'A Handle on Mass Coincidence Errors in De No
 INSERT INTO publication VALUES(333,'Peptide de Novo Sequencing Using 157 nm Photodissociation in a Tandem Time-of-Flight Mass Spectrometer','2010-02-01','10.1021/ac902050y','American Chemical Society (ACS)','It has previously been shown that photodissociation of tryptic peptide ions with 157 nm light in a matrix-assisted laser desorption/ionization (MALDI) tandem time-of-flight (TOF) mass spectrometer generates an abundance of x-type ions. A peptide de novo sequencing algorithm has now been developed to interpret these data. By combination of photodissociation and postsource decay (PSD) spectra, the algorithm identifies x-type ions and derives peptide sequences. The confidence of amino acid assignments is evaluated by observing complementary y-, v-, and w-type ions that provide additional constraints to sequence identification. In the analysis of 31 tryptic peptides from 4 model proteins, the algorithm identified 322 (or 90.7%) of the 355 amino acids and made only 3 incorrect assignments. The other 30 amino acids were not identified because specific needed x-type ions were not detected. Based on the observation of v- and w-type ions, 45 of 50 detected leucine and isoleucine residues were successfully distinguished and there was only one mistake. The remaining four residues were not distinguished because the corresponding v- and w-type ions were not detected. These de novo sequencing results translated into successful identification of proteins through homology searches. To evaluate the robustness of the present sequencing approach, a collection of 266 tryptic peptides from 23 model proteins were analyzed and then sequenced. A total of 167 peptides yielded sequence tags of 5 or more residues. In 5 peptides, 1 or 2 residues were incorrectly assigned.','https://pubs.acs.org/doi/10.1021/ac902050y','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(334,'De Novo Sequencing of Peptides Using Selective 351 nm Ultraviolet Photodissociation Mass Spectrometry','2013-10-15','10.1021/ac402309h','American Chemical Society (ACS)','Although in silico database search methods remain more popular for shotgun proteomics methods, de novo sequencing offers the ability to identify peptides derived from proteins lacking sequenced genomes and ones with subtle splice variants or truncations. Ultraviolet photodissociation (UVPD) of peptides derivatized by selective attachment of a chromophore at the N-terminus generates a characteristic series of y ions. The UVPD spectra of the chromophore-labeled peptides are simplified and thus amenable to de novo sequencing. This method resulted in an observed sequence coverage of 79% for cytochrome C (eight peptides), 47% for β-lactoglobulin (five peptides), 25% for carbonic anhydrase (six peptides), and 51% for bovine serum albumin (33 peptides). This strategy also allowed differentiation of proteins with high sequence homology as evidenced by de novo sequencing of two variants of green fluorescent protein.','https://pubs.acs.org/doi/10.1021/ac402309h','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(335,'MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry','2003-03-01','10.1021/ac026199a','American Chemical Society (ACS)','The characterization of proteomes by mass spectrometry is largely limited to organisms with sequenced genomes. To identify proteins from organisms with unsequenced genomes, database sequences from related species must be employed for sequence-similarity protein identifications. Peptide sequence tags (Mann, 1994) have been used successfully for the identification of proteins in sequence databases using partially interpreted tandem mass spectra of tryptic peptides. We have extended the ability of sequence tag searching to the identification of proteins whose sequences are yet unknown but are homologous to known database entries. The MultiTag method presented here assigns statistical significance to matches of multiple error-tolerant sequence tags to a database entry and ranks alignments by their significance. The MultiTag approach has the distinct advantage over other sequence-similarity approaches of being able to perform sequence-similarity identifications using only very short (2-4) amino acid residue stretches of peptide sequences, rather than complete peptide sequences deduced by de novo interpretation of tandem mass spectra. This feature facilitates the identification of low abundance proteins, since noisy and low-intensity tandem mass spectra can be utilized.','https://pubs.acs.org/doi/10.1021/ac026199a','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(336,'Complexity and scoring function of MS/MS peptide de novo sequencing','2006-07-01','10.1142/9781860947575_0043','World Scientific Pub Co Pte Lt','Tandem mass spectrometry (MS/MS) has become a standard way for identifying peptides and proteins. A scoring function plays an important role in the MS/MS data analysis. De novo sequencing is the computational step to derive a peptide sequence from an MS/MS spectrum, normally by constructing the peptide that maximizes the scoring function. A number of polynomial time algorithms have been developed based on scoring functions that consider only either the N-terminal or C-terminal fragment ions of the peptide. It remains unknown whether the consideration of the internal fragment ions will still be polynomial time solvable. In this paper, we prove that the internal fragment ions make the de novo sequencing problem NP-complete. We also propose a regression model based scoring method to incorporate correlations between the fragment ions. Our scoring function is combined with PEAKS de novo sequencing algorithm and tested on ion trap data. The experimental results show that the regression model based scoring method can remarkably improve the de novo sequencing accuracy.','https://www.worldscientific.com/doi/10.1142/9781860947575_0043','Computational Systems Bioinformatics','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4996,6 +4999,7 @@ INSERT INTO publication_algorithm VALUES(332,285);
 INSERT INTO publication_algorithm VALUES(333,286);
 INSERT INTO publication_algorithm VALUES(334,287);
 INSERT INTO publication_algorithm VALUES(335,288);
+INSERT INTO publication_algorithm VALUES(336,62);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7237,6 +7241,8 @@ INSERT INTO publication_author VALUES(335,1277,2);
 INSERT INTO publication_author VALUES(335,1278,3);
 INSERT INTO publication_author VALUES(335,1207,4);
 INSERT INTO publication_author VALUES(335,569,5);
+INSERT INTO publication_author VALUES(336,1279,1);
+INSERT INTO publication_author VALUES(336,234,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9983,9 +9989,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
 INSERT INTO sqlite_sequence VALUES('affiliation',660);
-INSERT INTO sqlite_sequence VALUES('author',1278);
+INSERT INTO sqlite_sequence VALUES('author',1279);
 INSERT INTO sqlite_sequence VALUES('algorithm',288);
-INSERT INTO sqlite_sequence VALUES('publication',335);
+INSERT INTO sqlite_sequence VALUES('publication',336);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
