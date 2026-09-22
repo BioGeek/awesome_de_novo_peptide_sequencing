@@ -1164,6 +1164,12 @@ INSERT INTO author VALUES(1181,'Yusei Okuda',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1182,'Daisuke Nakajima',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1183,'Osamu Ohara',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1184,'Yusuke Kawashima',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1185,'K. Ilker Sen',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1186,'Wilfred H. Tang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1187,'Shruti Nayak',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1188,'Berk Ozoglu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1189,'Darryl Davis',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1190,'Christopher Becker',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1466,6 +1472,7 @@ INSERT INTO city VALUES(274,'Fukuoka',29,NULL,NULL);
 INSERT INTO city VALUES(275,'Kisarazu',29,NULL,NULL);
 INSERT INTO city VALUES(276,'Tokyo',29,NULL,NULL);
 INSERT INTO city VALUES(277,'Sagamihara',29,NULL,NULL);
+INSERT INTO city VALUES(278,'Spring House',8,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2044,6 +2051,7 @@ INSERT INTO affiliation VALUES(610,'Kyushu University','Research and Development
 INSERT INTO affiliation VALUES(611,'Kazusa DNA Research Institute','Department of Applied Genomics',NULL,275);
 INSERT INTO affiliation VALUES(612,'SCIEX',NULL,NULL,276);
 INSERT INTO affiliation VALUES(613,'Kitasato University','Department of Physics, School of Science',NULL,277);
+INSERT INTO affiliation VALUES(614,'Janssen Research and Development, LLC',NULL,NULL,278);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -3666,6 +3674,12 @@ INSERT INTO author_affiliation VALUES(1181,613);
 INSERT INTO author_affiliation VALUES(1182,611);
 INSERT INTO author_affiliation VALUES(1183,611);
 INSERT INTO author_affiliation VALUES(1184,611);
+INSERT INTO author_affiliation VALUES(1185,289);
+INSERT INTO author_affiliation VALUES(1186,289);
+INSERT INTO author_affiliation VALUES(1187,291);
+INSERT INTO author_affiliation VALUES(1188,614);
+INSERT INTO author_affiliation VALUES(1189,614);
+INSERT INTO author_affiliation VALUES(1190,289);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -3928,6 +3942,7 @@ INSERT INTO algorithm VALUES(255,'Polyclonal IgG neutralizing antibody discovery
 INSERT INTO algorithm VALUES(256,'Proteome signature rescoring',NULL,NULL,'Information theory','Rescores de novo peptide candidates using proteome signatures, the amino acid usage patterns compiled across a proteome, so the scoring function can prefer plausible residue combinations.','post-processor',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(257,'Me-Cou N-terminal derivatization de novo sequencing',NULL,NULL,'Chemical derivatization assisted','N-terminal derivatization with N-succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou), which boosts low-mass b-ion yield so de novo sequencing can read the N-terminal residues, applied to untargeted peptidomics on LC-TIMS-qTOF/MS.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(258,'Food inspection de novo peptide screening',NULL,NULL,'','Database-free food inspection workflow: de novo sequencing of MS/MS spectra on a ZenoTOF 7600 for species identification and quantitation in food extracts, with database search as a complementary step, aimed at unknown contaminants and food fraud.','downstream-application',0,'DDA',NULL,'food-authentication');
+INSERT INTO algorithm VALUES(259,'Supernovo',NULL,'https://www.proteinmetrics.com/products/byos','Template-guided assembly','Automated antibody de novo sequencing: finds the closest-matching germline V-J-C sequences by database search, then converges on the true heavy and light chains by iterative wildcard substitution against the MS/MS spectra. Commercial, shipped in Protein Metrics'' Byos platform.','algorithm',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4237,6 +4252,7 @@ INSERT INTO publication VALUES(296,'N-Terminal Coumarin Derivatization-Aided De 
 INSERT INTO publication VALUES(297,'N-terminal Coumarin Derivatization-aided De Novo Peptide Sequencing and its Application to Peptidomics using LC-trapped Ion Mobility Spectrometry-qTOF/MS','2026-03-03','10.26434/chemrxiv.15000573/v1','ChemRxiv','De novo peptide sequencing using LC-MS/MS enables database-independent sequence determination and facilitates the discovery of novel bioactive peptides and biomarkers in untargeted peptidomics. However, conventional MS/MS analyses often produces fragment ions that are insufficient for complete sequencing. Here, we established an LC-MS/MS workflow using N -succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou) as an N -terminal tag to improve de novo sequencing performance. Me-Cou derivatization generated highly informative fragment ions, particularly b₁-b₃ ions, for (Gly)₄ at 1 μmol/L, surpassing the performance of established tags, such as 2,4,6-trinitrobenzenesulfonic acid, 3-aminopyridyl-hydroxy-succinimidyl carbamate, and N -succinimidyl [tris(2,4,6-trimethoxyphenyl)phosphonio]acetate bromide. The Me-Cou tag also enabled confident sequencing of (Gly)₁₀, generating abundant b₁-b9 ions. Notably, intact de novo sequencing identified 74 peptides with 32 misannotated peptides that were not included in a 132 standard peptide mixture (86 dipeptides and 46 oligopeptides). However, all peptides were correctly identified using Me-Cou-aided de novo sequencing with no misannotations, demonstrating high specificity and accuracy. Additionally, Me-Cou-aided de novo sequencing successfully identified 328 peptides in casein peptone, all of which were assigned as casein protein fragments. Overall, Me-Cou-based LC-MS/MS significantly enhanced peptide detection and the characterization of sequence diversity compared with intact analysis. This methodology is a promising strategy for untargeted peptidomics, enabling comprehensive characterization of endogenous peptides in both protein hydrolysates and biological fluids.','https://chemrxiv.org/doi/full/10.26434/chemrxiv.15000573/v1','ChemRxiv','preprint',NULL,'crossref');
 INSERT INTO publication VALUES(298,'Towards the establishment of a comprehensive food inspection system: An approach to utilize de novo peptide sequencing from MS/MS spectra','2026-07-16','10.1016/j.foohum.2026.101356','Elsevier BV',NULL,'https://www.sciencedirect.com/science/article/pii/S2949824426003642','Food and Humanity','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(299,'Towards the establishment of a comprehensive food inspection system: an approach to utilise de novo peptide sequencing from MS/MS spectra','2026-02-13','10.2139/ssrn.6234726','Elsevier BV (SSRN)','Ensuring food safety and preventing food fraud require analytical methods capable of identifying unknown and unexpected contaminants in foods. This study developed a proteomics-based strategy centered on de novo sequencing, in which peptide sequences are directly determined from MS/MS spectra without reliance on protein databases. To obtain high-confidence peptide sequences, mass spectrometry conditions were optimized using tryptic digests of K562 cells. Among the tested platforms, ZenoTOF 7600 operated with a Zeno trap accumulation time of 25 ms and 80 MS/MS events yielded the highest number of peptide sequences, averaging 1,057 peptides with an Average Local Confidence score of ≥99. The resulting peptide sequences were used for species identification and quantitative analysis, with database searching applied as a complementary step. Application of this strategy to oyster extract-supplemented soy sauce enabled identification of species associated with added ingredients and the manufacturing process, demonstrating its potential for detecting unknown adulteration and unexpected contamination.','https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6234726','SSRN Electronic Journal','preprint',NULL,'crossref');
+INSERT INTO publication VALUES(300,'Automated Antibody De Novo Sequencing and Its Utility in Biopharmaceutical Discovery','2017-05-01','10.1007/s13361-016-1580-0','American Chemical Society (ACS)','Applications of antibody de novo sequencing in the biopharmaceutical industry range from the discovery of new antibody drug candidates to identifying reagents for research and determining the primary structure of innovator products for biosimilar development. When murine, phage display, or patient-derived monoclonal antibodies against a target of interest are available, but the cDNA or the original cell line is not, de novo protein sequencing is required to humanize and recombinantly express these antibodies, followed by in vitro and in vivo testing for functional validation. Availability of fully automated software tools for monoclonal antibody de novo sequencing enables efficient and routine analysis. Here, we present a novel method to automatically de novo sequence antibodies using mass spectrometry and the Supernovo software. The robustness of the algorithm is demonstrated through a series of stress tests. Graphical Abstract ᅟ.','https://link.springer.com/article/10.1007/s13361-016-1580-0','Journal of the American Society for Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4593,6 +4609,7 @@ INSERT INTO publication_algorithm VALUES(298,258);
 INSERT INTO publication_algorithm VALUES(298,62);
 INSERT INTO publication_algorithm VALUES(299,258);
 INSERT INTO publication_algorithm VALUES(299,62);
+INSERT INTO publication_algorithm VALUES(300,259);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6647,6 +6664,15 @@ INSERT INTO publication_author VALUES(299,1181,5);
 INSERT INTO publication_author VALUES(299,1182,6);
 INSERT INTO publication_author VALUES(299,1183,7);
 INSERT INTO publication_author VALUES(299,1184,8);
+INSERT INTO publication_author VALUES(300,1185,1);
+INSERT INTO publication_author VALUES(300,1186,2);
+INSERT INTO publication_author VALUES(300,1187,3);
+INSERT INTO publication_author VALUES(300,629,4);
+INSERT INTO publication_author VALUES(300,450,5);
+INSERT INTO publication_author VALUES(300,1188,6);
+INSERT INTO publication_author VALUES(300,630,7);
+INSERT INTO publication_author VALUES(300,1189,8);
+INSERT INTO publication_author VALUES(300,1190,9);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9386,11 +9412,17 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',77);
-INSERT INTO sqlite_sequence VALUES('city',277);
-INSERT INTO sqlite_sequence VALUES('affiliation',613);
-INSERT INTO sqlite_sequence VALUES('author',1184);
-INSERT INTO sqlite_sequence VALUES('algorithm',258);
-INSERT INTO sqlite_sequence VALUES('publication',299);
+INSERT INTO sqlite_sequence VALUES('city',278);
+INSERT INTO sqlite_sequence VALUES('affiliation',614);
+INSERT INTO sqlite_sequence VALUES('author',1190);
+INSERT INTO sqlite_sequence VALUES('algorithm',259);
+INSERT INTO sqlite_sequence VALUES('publication',300);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -9445,12 +9477,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -9466,12 +9492,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -9486,4 +9506,10 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 COMMIT;
