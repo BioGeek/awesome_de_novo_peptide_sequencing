@@ -129,6 +129,7 @@ def main() -> int:
     fetched_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     year = datetime.now(timezone.utc).year
     matched_doi = matched_title = unmatched = 0
+    consecutive = 0
 
     for idx, (pid, title, doi) in enumerate(pubs, 1):
         work = None
@@ -163,10 +164,21 @@ def main() -> int:
                 (publication_id, openalex_id, cited_by_count, match_method,
                  match_score, year_collected, fetched_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
+            -- COALESCE, not plain assignment. A lookup that fails for a
+            -- TRANSIENT reason (OpenAlex 429 when the shared free daily IP
+            -- budget is exhausted, or any network error) arrives here
+            -- indistinguishable from a genuine no-match, and a plain
+            -- assignment then overwrites a perfectly good id with NULL. That
+            -- happened: one rate-limited run took openalex_id from 315 rows
+            -- down to 191, and this script runs WEEKLY in CI. A publication
+            -- that genuinely has no match has nothing to preserve, so keeping
+            -- the old value costs nothing and cannot lose data.
             ON CONFLICT(publication_id) DO UPDATE SET
-                openalex_id = excluded.openalex_id,
-                cited_by_count = excluded.cited_by_count,
-                match_method = excluded.match_method,
+                openalex_id = COALESCE(excluded.openalex_id, publication_impact.openalex_id),
+                cited_by_count = COALESCE(excluded.cited_by_count, publication_impact.cited_by_count),
+                match_method = CASE WHEN excluded.openalex_id IS NULL
+                                    THEN publication_impact.match_method
+                                    ELSE excluded.match_method END,
                 match_score = excluded.match_score,
                 year_collected = excluded.year_collected,
                 fetched_at = excluded.fetched_at
@@ -175,6 +187,19 @@ def main() -> int:
         )
         label = f"{cited_by_count} citations" if cited_by_count is not None else "unmatched"
         print(f"[{idx}/{len(pubs)}] pub {pid}: {label} ({method})")
+
+        # Stop rather than grind through hundreds of publications once the API
+        # has clearly stopped answering. Without this, a rate-limited run looks
+        # like a catalog-wide matching collapse.
+        consecutive = consecutive + 1 if work is None else 0
+        if consecutive >= 10:
+            conn.commit()
+            conn.close()
+            print(f"\nAborted: {consecutive} consecutive lookups returned nothing. "
+                  "OpenAlex is probably rate-limiting this IP (HTTP 429 on the "
+                  "shared free daily budget). Existing ids were preserved. "
+                  "Re-run later, or set an OpenAlex API key.")
+            return 1
 
     conn.commit()
     conn.close()

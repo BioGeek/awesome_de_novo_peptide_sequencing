@@ -13,3 +13,8 @@ version_audit.csv
 candidates.csv
 pages/
 author_id_audit.csv
+
+# OpenAlex response cache for build_affiliations.py (institutions are static,
+# so this has no expiry; safe to delete, just slower on the next run).
+.cache/
+affiliation_audit.csv

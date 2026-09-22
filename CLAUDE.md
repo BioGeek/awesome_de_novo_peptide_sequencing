@@ -67,6 +67,20 @@ python3 build_candidates.py --min-links 6           # tighter, less noise
 python3 check_counts.py           # report stale counts, exit 1 if any
 python3 check_counts.py --fix     # rewrite them in place
 
+# Fill affiliations, departments, city coordinates and country ISO codes from
+# OpenAlex, matched PER BYLINE (offline, ~10 min, responses cached in .cache/).
+# REPORT-ONLY by default: writes nothing until --write, and never overwrites a
+# hand-curated value. Everything it declines to write goes to
+# affiliation_audit.csv.
+python3 build_affiliations.py                  # report only
+python3 build_affiliations.py --write          # apply
+python3 build_affiliations.py --only-new        # just the papers added since last time
+
+# Check that no generated page's URL changed. Every slug in slugs.lock is a
+# live, indexed address. Run --write ONLY when a rename is intended.
+python3 slugs.py --check
+python3 slugs.py --write
+
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
@@ -132,11 +146,11 @@ other's new rows.
 
 ## Schema shape (read before editing data)
 
-**16 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 921 of 1274 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**17 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 921 of 1299 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (236), `'preprint'` (76), `'thesis'` (16), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (242), `'preprint'` (76), `'thesis'` (16), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (1) and `'commentary'` (1). Use one of those seven; do not invent an eighth without updating this list, and never leave it empty.
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. The single case is publication 30, an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
@@ -154,8 +168,8 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 105 rows use day
-  `01` and 98 of those are in non-January months, so a first-of-the-month date is
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 106 rows use day
+  `01` and 99 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
 **The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
@@ -218,7 +232,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 285/343. The 58 without one are mostly theses, conference pages and
+Coverage is 319/349. The 30 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
 
 Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
@@ -247,6 +261,77 @@ Two guards worth knowing about, because both were hit in practice:
 - arXiv DOIs are minted as `10.48550/arXiv.2512.12272`, but the API's `id_list`
   wants the bare `2512.12272`. Leaving the prefix on returns an empty feed
   rather than an error, which silently falls through to OpenAlex.
+
+## Affiliations, and why the ROR matters
+
+`build_affiliations.py` was the catalog's last unautomated entity. Until it
+existed, `affiliation`, `author_affiliation`, `city` and `country` were the only
+entity tables with **no writer at all**: every institution, department, city and
+country was typed in by hand from a byline. Nine of sixteen tables had no
+builder; this closes the largest gap.
+
+The data was already being fetched and discarded. `build_author_ids.py:135`
+loops `authorships[]` reading only the author fields, and drops
+`institutions[]` and `raw_affiliation_strings` on the same matched authorship.
+
+**Identity is the ROR, not the name.** The apparent disagreement between
+OpenAlex and the curated rows is two facts in one column:
+
+| column | meaning | shown on the site |
+|---|---|---|
+| `affiliation.name` | as PRINTED on the paper | yes |
+| `affiliation.canonical_name` | current legal name (OpenAlex) | no |
+| `affiliation.ror` | identity | no |
+
+"Swiss Federal Institute of Technology" is what a 1999 byline says; "Ecole
+Polytechnique Federale de Lausanne" is what EPFL is called now. Keyed on the
+ROR they stop competing and the site keeps saying what the paper said. Note
+`ix_affiliation_ror` is deliberately **NOT unique**: a ROR identifies an
+institution, but this table's grain is (institution, department), and Technical
+University of Munich alone has ten rows.
+
+**Resolution is tiered, and the tiers are not equally trusted.** Tier 1 matches
+a known ROR, tier 2 an exact normalised name, tier 3 our as-printed name
+appearing verbatim in the paper's own affiliation string. Tier 3 establishes
+which of our rows a byline belongs to, but **must never write a ROR**: one raw
+string routinely names a company and a funding body, so trusting it bound
+"Baizhen Biotechnologies Inc." to the Wuhan Science and Technology Bureau's ROR
+and "Talus Bioscience" to TRIA Bioscience's. That was caught and reverted; the
+guard is `if ror and tier in ("ror", "name")`.
+
+**Departments are parsed, so they are never auto-written.** OpenAlex has no
+structured department field. Because `affiliation` is UNIQUE(name, department),
+a wrong department does not mislabel a row, it creates a duplicate institution
+and pollutes both the institution page set and the geo chart. Candidates go to
+`affiliation_audit.csv` for a human.
+
+**Per-byline, not per-author.** `author_affiliation` is author-level, so joining
+`publication_author -> author_affiliation` returns every institution an author
+was ever given rather than the one on that byline, which makes any per-paper
+geography claim wrong for the authors who have several. The new
+`publication_author_affiliation` table records the precise relation; the
+curated author-level rows are left untouched.
+
+Results of the first full run: 1922 per-byline rows, 427 of 621 affiliations
+given a ROR, and city coordinates filled from `/institutions/{ror}` geo, taking
+the cities missing lat/lng from 106 down to 27. 818 findings went to the audit
+CSV, of which the largest group is institutions OpenAlex models as separate
+entities where this catalog records them as departments of a parent (Novo
+Nordisk Foundation under DTU, Science for Life Laboratory under KTH, Academy of
+Mathematics and Systems Science under CAS). Those are correct refusals, not
+failures.
+
+## URLs are a lock file
+
+`slugs.lock` records the published URL of every generated page. A slug is
+derived from mutable data, so editing a title or a name silently rewrites a URL,
+404s the old one and discards its search equity. `python3 slugs.py --check`
+fails on a CHANGED or REMOVED entry and passes on an ADDED one; it runs in
+`.githooks/pre-commit` and in `check-slugs.yml`.
+
+It is deliberately **not** auto-refreshed by the hook, unlike `check_counts.py`.
+Rewriting the baseline automatically is the very failure being guarded against.
+When a rename is intended, run `--write` and let the lock diff record it.
 
 ## Citation graph
 
