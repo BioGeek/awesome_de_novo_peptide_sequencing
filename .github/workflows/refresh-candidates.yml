@@ -79,7 +79,13 @@ jobs:
           for r in rows[:40]:
               title = r["title"][:90].replace("|", "\\|")
               venue = r["venue"][:40].replace("|", "\\|")
-              doi = f"[{r['doi']}]({r['url']})" if r["doi"] else ""
+              # Parentheses and angle brackets are legal in a DOI (Wiley's
+              # 10.1002/(SICI)... style) and both break Markdown link syntax,
+              # so percent-encode them in the target.
+              safe = (r["url"].replace("(", "%28").replace(")", "%29")
+                              .replace("<", "%3C").replace(">", "%3E"))
+              label = r["doi"].replace("|", "\\|")
+              doi = f"[{label}]({safe})" if r["doi"] else ""
               print(f"| {r['links_total']} | {r['cited_by_our_papers']} | "
                     f"{r['cites_our_papers']} | {r['year']} | {title} | {venue} | {doi} |")
           print()
