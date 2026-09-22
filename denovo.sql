@@ -4236,6 +4236,7 @@ INSERT INTO algorithm VALUES(281,'Accurate-mass constrained de novo interpretati
 INSERT INTO algorithm VALUES(282,'De novo sequencing methods in proteomics (review)',NULL,NULL,'','Methods in Molecular Biology chapter describing de novo sequencing of peptides by mass spectrometry and the concepts behind the main algorithms.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(283,'Champs',NULL,NULL,'Homology search','Sequences a complete novel protein by de novo sequencing its peptides and then assembling them against a HOMOLOGOUS database rather than an exact one, reaching near-full coverage and accuracy where neither approach alone would.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(284,'T-Bruijn graph top-down de novo sequencing',NULL,NULL,'Graph / DP','De novo sequencing from TOP-DOWN spectra, where the whole protein is fragmented rather than tryptic peptides: derives sequence tags and assembles them through a T-Bruijn graph, evaluated on carbonic anhydrase 2 and an alemtuzumab Fab.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(285,'Stitch',NULL,NULL,'Sequence assembly','Assembles de novo peptides from Casanovo, PEAKS, pNovo and MaxNovo into full antibody sequences, and corrects the two error classes that assembly alone cannot: mass coincidences, where a different residue combination matches the same mass, and I/L ambiguity.','post-processor',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4577,6 +4578,7 @@ INSERT INTO publication VALUES(328,'De Novo Sequencing Methods in Proteomics','2
 INSERT INTO publication VALUES(329,'A Ranking-Based Scoring Function for Peptide-Spectrum Matches','2009-05-01','10.1021/pr800678b','American Chemical Society (ACS)','The analysis of the large volume of tandem mass spectrometry (MS/MS) proteomics data that is generated these days relies on automated algorithms that identify peptides from their mass spectra. An essential component of these algorithms is the scoring function used to evaluate the quality of peptide-spectrum matches (PSMs). In this paper, we present new approach to scoring of PSMs. We argue that since this problem is at its core a ranking task (especially in the case of de novo sequencing), it can be solved effectively using machine learning ranking algorithms. We developed a new discriminative boosting-based approach to scoring. Our scoring models draw upon a large set of diverse feature functions that measure different qualities of PSMs. Our method improves the performance of our de novo sequencing algorithm beyond the current state-of-the-art, and also greatly enhances the performance of database search programs. Furthermore, by increasing the efficiency of tag filtration and improving the sensitivity of PSM scoring, we make it practical to perform large-scale MS/MS analysis, such as proteogenomic search of a six-frame translation of the human genome (in which we achieve a reduction of the running time by a factor of 15 and a 60% increase in the number of identified peptides, compared to the InsPecT database search tool). Our scoring function is incorporated into PepNovo+ which is available for download or can be run online at http://bix.ucsd.edu.','https://pubs.acs.org/doi/10.1021/pr800678b','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(330,'Automated protein (re)sequencing with MS/MS and a homologous database yields almost full coverage and accuracy','2009-09-01','10.1093/bioinformatics/btp366','Oxford University Press (OUP)','Motivation The bottom-up tandem mass spectrometry (MS/MS) is regularly used in proteomics nowadays for identifying proteins from a sequence database. De novo sequencing software is also available for sequencing novel peptides with relatively short sequence lengths. However, automated sequencing of novel proteins from MS/MS remains a challenging problem. Results Very often, although the target protein is novel, it has a homologous protein included in a known database. When this happens, we propose a novel algorithm and automated software tool, named Champs, for sequencing the complete protein from MS/MS data of a few enzymatic digestions of the purified protein. Validation with two standard proteins showed that our automated method yields >99% sequence coverage and 100% sequence accuracy on these two proteins. Our method is useful to sequence novel proteins or ''re-sequence'' a protein that has mutations comparing with the database protein sequence.','https://academic.oup.com/bioinformatics/article/25/17/2174/211002','Bioinformatics','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(331,'De Novo Sequencing of Peptides from Top-Down Tandem Mass Spectra','2015-11-06','10.1021/pr501244v','American Chemical Society (ACS)','De novo sequencing of proteins and peptides is one of the most important problems in mass spectrometry-driven proteomics. A variety of methods have been developed to accomplish this task from a set of bottom-up tandem (MS/MS) mass spectra. However, a more recently emerged top-down technology, now gaining more and more popularity, opens new perspectives for protein analysis and characterization, implying a need for efficient algorithms to process this kind of MS/MS data. Here, we describe a method that allows for the retrieval, from a set of top-down MS/MS spectra, of long and accurate sequence fragments of the proteins contained in the sample. To this end, we outline a strategy for generating high-quality sequence tags from top-down spectra, and introduce the concept of a T-Bruijn graph by adapting to the case of tags the notion of an A-Bruijn graph widely used in genomics. The output of the proposed approach represents the set of amino acid strings spelled out by optimal paths in the connected components of a T-Bruijn graph. We illustrate its performance on top-down data sets acquired from carbonic anhydrase 2 (CAH2) and the Fab region of alemtuzumab.','https://pubs.acs.org/doi/10.1021/pr501244v','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(332,'A Handle on Mass Coincidence Errors in De Novo Sequencing of Antibodies by Bottom-up Proteomics','2024-08-02','10.1021/acs.jproteome.4c00188','American Chemical Society (ACS)','Antibody sequences can be determined at 99% accuracy directly from the polypeptide product by using bottom-up proteomics techniques. Sequencing accuracy at the peptide level is limited by the isobaric residues leucine and isoleucine, incomplete fragmentation spectra in which the order of two or more residues remains ambiguous due to lacking fragment ions for the intermediate positions, and isobaric combinations of amino acids, of potentially different lengths, for example, GG = N and GA = Q. Here, we present several updates to Stitch (v1.5), which performs template-based assembly of de novo peptides to reconstruct antibody sequences. This version introduces a mass-based alignment algorithm that explicitly accounts for mass coincidence errors. In addition, it incorporates a postprocessing procedure to assign I/L residues based on secondary fragments (satellite ions, i.e. , w- ions). Moreover, evidence for sequence assignments can now be directly evaluated with the addition of an integrated spectrum viewer. Lastly, input data from a wider selection of de novo peptide sequencing algorithms are allowed, now including Casanovo, PEAKS, Novor.Cloud, pNovo, and MaxNovo, in addition to flat text and FASTA. Combined, these changes make Stitch compatible with a larger range of data processing pipelines and improve its tolerance to peptide-level sequencing errors.','https://pubs.acs.org/doi/10.1021/acs.jproteome.4c00188','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4966,6 +4968,7 @@ INSERT INTO publication_algorithm VALUES(328,282);
 INSERT INTO publication_algorithm VALUES(329,63);
 INSERT INTO publication_algorithm VALUES(330,283);
 INSERT INTO publication_algorithm VALUES(331,284);
+INSERT INTO publication_algorithm VALUES(332,285);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7193,6 +7196,8 @@ INSERT INTO publication_author VALUES(331,1271,8);
 INSERT INTO publication_author VALUES(331,1108,9);
 INSERT INTO publication_author VALUES(331,1272,10);
 INSERT INTO publication_author VALUES(331,271,11);
+INSERT INTO publication_author VALUES(332,657,1);
+INSERT INTO publication_author VALUES(332,659,2);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9507,6 +9512,7 @@ INSERT INTO algorithm_repository VALUES(236,'https://github.com/Multiomics-Analy
 INSERT INTO algorithm_repository VALUES(237,'https://huggingface.co/spaces/yangtingpeng/DNPS-DR',0);
 INSERT INTO algorithm_repository VALUES(238,'https://github.com/instadeepai/InstaNovo-FM',0);
 INSERT INTO algorithm_repository VALUES(279,'https://github.com/cguetot/cms',0);
+INSERT INTO algorithm_repository VALUES(285,'https://github.com/snijderlab/stitch',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -9939,8 +9945,8 @@ INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',288);
 INSERT INTO sqlite_sequence VALUES('affiliation',657);
 INSERT INTO sqlite_sequence VALUES('author',1272);
-INSERT INTO sqlite_sequence VALUES('algorithm',284);
-INSERT INTO sqlite_sequence VALUES('publication',331);
+INSERT INTO sqlite_sequence VALUES('algorithm',285);
+INSERT INTO sqlite_sequence VALUES('publication',332);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
