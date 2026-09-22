@@ -3765,6 +3765,8 @@ INSERT INTO author_affiliation VALUES(1212,628);
 INSERT INTO author_affiliation VALUES(1213,629);
 INSERT INTO author_affiliation VALUES(1214,630);
 INSERT INTO author_affiliation VALUES(492,631);
+INSERT INTO author_affiliation VALUES(1138,43);
+INSERT INTO author_affiliation VALUES(627,52);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4032,6 +4034,7 @@ INSERT INTO algorithm VALUES(260,'Deglycosylation-assisted glycoprotein de novo 
 INSERT INTO algorithm VALUES(261,'PAAS 3',NULL,NULL,'Heuristic','1984 FORTRAN program that determines the probable amino acid sequence of a peptide from the sequence ion peaks of its mass spectrum, without a database. One of the earliest de novo peptide sequencing programs.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(262,'Fast peptide sequencing algorithm (Bartels)',NULL,NULL,'Graph / DP','1990 graph-theory algorithm that sequences polypeptides from FAB tandem mass spectra by scoring mass differences, without needing the amino acid composition, and proposes amino acid pairs or triples to bridge missing peaks. Sub-quadratic in the number of residues.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(263,'De novo sequencing for proteogenomics (review)',NULL,NULL,'','Methods in Molecular Biology chapter reviewing de novo peptide sequencing from tandem mass spectra for the case where database search fails because the peptide is absent from sequence repositories, and its application in proteogenomics.','review',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(264,'ALPS',NULL,NULL,'Sequence assembly','Assembles de novo sequenced peptides and their per-residue confidence scores into a de Bruijn graph to reconstruct complete monoclonal antibody heavy and light chains without a template.','post-processor',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4350,6 +4353,7 @@ INSERT INTO publication VALUES(305,'PAAS 3: A computer program to determine prob
 INSERT INTO publication VALUES(306,'Fast algorithm for peptide sequencing by mass spectroscopy','1990-06-01','10.1002/bms.1200190607','Wiley','An automatic algorithm for sequencing polypeptides from fast atom bombardment tandem mass spectra is presented.Based on graph theory considerations it finds the most probable sequences, even if the amino acid composition is unknown, by scoring mass differences. The algorithm is fast as the computing time increases by less than the square of the number of amino acids. Pairs of two or three amino acids are proposed to explain the gap if peaks are missing.','https://onlinelibrary.wiley.com/doi/10.1002/bms.1200190607','Biological Mass Spectrometry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(307,'De Novo Sequencing of Peptides from Tandem Mass Spectra and Applications in Proteogenomics','2024-10-23','10.1007/978-1-0716-4152-1_1','Springer US','The changes in protein expression are hallmarks of development and disease. Protein expression can be established qualitatively and quantitatively using mass spectrometry (MS). Samples are prepared, proteins extracted and then analyzed using MS and MS/MS. The resulting spectra need to be processed computationally to assign peptide spectrum match. Database searches employ sequence databases or spectral libraries for matching possible peptides with the measured spectra. This route is well established but fails when peptides are not found in sequence repositories. In this case, de novo sequencing of MS/MS spectra can be employed. Many computational algorithms that establish the peptide sequence from MS/MS spectrum alone are available. While de novo sequencing assigns a sequence to an MS/MS spectrum, this assignment can be used in further processes for genome annotation. For example, novel exons can be assigned, known exons can be extended, and splice sites can be validated at the protein level. We compiled an extensive list of such algorithms, grouped them, and discussed the selected approaches. We also provide a roadmap of how de novo sequencing can enter mainstream proteogenomic analysis. In the future, de novo predictions can be added to sample-specific protein databases, including RNA-seq translations. These enriched databases can then be used for proteogenomics studies with existing pipelines.','https://link.springer.com/protocol/10.1007/978-1-0716-4152-1_1','Methods in Molecular Biology','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(308,'Current state, existing challenges, and promising progress for de novo sequencing and assembly of monoclonal antibodies','2022-07-22','10.1101/2022.07.21.500409','Cold Spring Harbor Laboratory','Monoclonal antibodies (mAbs) are biotechnologically produced proteins with various applications in research, therapeutics, and diagnostics. Their ability to recognize and bind to specific molecule structures makes them essential research tools and therapeutic agents. Sequence information of antibodies is helpful for understanding antibody-antigen interactions and ensuring their affinity and specificity. De novo protein sequencing based on mass spectrometry is a useful method to obtain the amino acid sequence of peptides and proteins without a priori knowledge. Deep learning-based approaches have been developed and applied more frequently to increase the accuracy of de novo sequencing. In this study, we evaluated five recently developed de novo sequencing algorithms (Novor, pNovo 3, DeepNovo, SMSNet, and PointNovo) in their ability to identify and assemble antibody sequences. The deep learning-based tools PointNovo and SMSNet showed an increased peptide recall across different enzymes and datasets compared to spectrum-graph-based approaches. We evaluated different error types of de novo peptide sequencing tools and their performance for different numbers of missing cleavage sites, noisy spectra, and peptides of various lengths. We achieved a sequence coverage of 93.15% to 99.07% on the light chains of three different antibody datasets using the de Bruijn assembler ALPS and the predictions from PointNovo. However, low sequence coverage and accuracy on the heavy chains demonstrate that complete de novo protein sequencing remains a challenging issue in proteomics that requires improved de novo error correction, alternative digestion strategies, and hybrid approaches such as homology search to achieve high accuracy on long protein sequences.','https://www.biorxiv.org/content/10.1101/2022.07.21.500409','bioRxiv','preprint',NULL,'crossref');
+INSERT INTO publication VALUES(309,'Complete De Novo Assembly of Monoclonal Antibody Sequences','2016-08-26','10.1038/srep31730','Springer Science and Business Media LLC','De novo protein sequencing is one of the key problems in mass spectrometry-based proteomics, especially for novel proteins such as monoclonal antibodies for which genome information is often limited or not available. However, due to limitations in peptides fragmentation and coverage, as well as ambiguities in spectra interpretation, complete de novo assembly of unknown protein sequences still remains challenging. To address this problem, we propose an integrated system, ALPS, which for the first time can automatically assemble full-length monoclonal antibody sequences. Our system integrates de novo sequencing peptides, their quality scores and error-correction information from databases into a weighted de Bruijn graph to assemble protein sequences. We evaluated ALPS performance on two antibody data sets, each including a heavy chain and a light chain. The results show that ALPS was able to assemble three complete monoclonal antibody sequences of length 216-441 AA, at 100% coverage, and 96.64-100% accuracy.','https://www.nature.com/articles/srep31730','Scientific Reports','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -4716,6 +4720,7 @@ INSERT INTO publication_algorithm VALUES(305,261);
 INSERT INTO publication_algorithm VALUES(306,262);
 INSERT INTO publication_algorithm VALUES(307,263);
 INSERT INTO publication_algorithm VALUES(308,168);
+INSERT INTO publication_algorithm VALUES(309,264);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -6836,6 +6841,12 @@ INSERT INTO publication_author VALUES(308,641,2);
 INSERT INTO publication_author VALUES(308,430,3);
 INSERT INTO publication_author VALUES(308,642,4);
 INSERT INTO publication_author VALUES(308,421,5);
+INSERT INTO publication_author VALUES(309,211,1);
+INSERT INTO publication_author VALUES(309,1138,2);
+INSERT INTO publication_author VALUES(309,627,3);
+INSERT INTO publication_author VALUES(309,105,4);
+INSERT INTO publication_author VALUES(309,252,5);
+INSERT INTO publication_author VALUES(309,107,6);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -9580,8 +9591,8 @@ INSERT INTO sqlite_sequence VALUES('country',77);
 INSERT INTO sqlite_sequence VALUES('city',282);
 INSERT INTO sqlite_sequence VALUES('affiliation',631);
 INSERT INTO sqlite_sequence VALUES('author',1214);
-INSERT INTO sqlite_sequence VALUES('algorithm',263);
-INSERT INTO sqlite_sequence VALUES('publication',308);
+INSERT INTO sqlite_sequence VALUES('algorithm',264);
+INSERT INTO sqlite_sequence VALUES('publication',309);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
