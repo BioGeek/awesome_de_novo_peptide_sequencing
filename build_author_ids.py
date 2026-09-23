@@ -23,6 +23,13 @@ than a missing one:
 Neither is written. Both go to author_id_audit.csv, because each one is a
 data-quality finding about the catalog rather than a lookup failure.
 
+TWO SOURCES. OpenAlex supplies both ORCID and openalex_id; Crossref supplies
+ORCIDs only, but independently -- publishers deposit them from their submission
+systems and OpenAlex does not always propagate them. Both feed the same vote
+dict, so the conflict checks above apply ACROSS sources as well as across
+papers. Either pass can be skipped (--skip-openalex is useful when OpenAlex is
+rate-limiting the shared free IP budget, which it does readily).
+
 Google Scholar is deliberately NOT attempted. There is no public API, profile
 ids are not programmatically discoverable, and scraping the profile search is
 both blocked and against their terms. The handful of scholar_id values in the
@@ -52,6 +59,7 @@ USER_AGENT = (
     "mailto:j.vangoey@instadeep.com)"
 )
 OPENALEX_BASE = "https://api.openalex.org/works"
+CROSSREF_BASE = "https://api.crossref.org/works"
 REQUEST_DELAY = 0.12   # OpenAlex allows 10 req/sec for the polite pool
 
 
@@ -93,6 +101,10 @@ def main() -> int:
                         help="report what would be written, change nothing")
     parser.add_argument("--force", action="store_true",
                         help="overwrite ids that are already set")
+    parser.add_argument("--skip-openalex", action="store_true",
+                        help="skip the OpenAlex pass (e.g. while it is rate-limiting)")
+    parser.add_argument("--skip-crossref", action="store_true",
+                        help="skip the Crossref ORCID pass")
     args = parser.parse_args()
 
     conn = sqlite3.connect(DB_PATH)
@@ -119,7 +131,7 @@ def main() -> int:
     oa_votes: dict[int, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     names = {aid: nm for aid, nm in cur.execute("SELECT id, name FROM author")}
 
-    for idx, (pid, openalex_id) in enumerate(works, 1):
+    for idx, (pid, openalex_id) in enumerate([] if args.skip_openalex else works, 1):
         try:
             r = requests.get(f"{OPENALEX_BASE}/{openalex_id}",
                              headers={"User-Agent": USER_AGENT}, timeout=30)
@@ -153,6 +165,47 @@ def main() -> int:
         if idx % 25 == 0:
             print(f"[{idx}/{len(works)}] pub {pid}: {matched}/{len(ours.get(pid, []))} "
                   f"authors matched")
+
+    # ------------------------------------------------------- crossref orcids
+    # A SECOND, independent ORCID source. Publishers deposit ORCIDs to Crossref
+    # from their submission systems, and OpenAlex does not always propagate
+    # them: measured over this catalog, Crossref supplies 82 ORCIDs for authors
+    # OpenAlex left with none, while confirming 276 it already gave us.
+    #
+    # Votes go into the SAME orcid_votes dict rather than a fallback chain, so a
+    # disagreement BETWEEN the two sources surfaces as a forward conflict and is
+    # refused, instead of whichever source ran last quietly winning.
+    #
+    # Crossref carries no OpenAlex id, so this pass only contributes ORCIDs.
+    if not args.skip_crossref:
+        with_doi = cur.execute(
+            "SELECT id, doi FROM publication WHERE IFNULL(doi,'') <> '' ORDER BY id"
+        ).fetchall()
+        print(f"\nCrossref pass over {len(with_doi)} publications with a DOI")
+        for idx, (pid, doi) in enumerate(with_doi, 1):
+            try:
+                r = requests.get(f"{CROSSREF_BASE}/{doi}",
+                                 headers={"User-Agent": USER_AGENT}, timeout=30)
+                msg = r.json().get("message") if r.status_code == 200 else None
+            except (requests.RequestException, ValueError):
+                msg = None
+            time.sleep(0.05)
+            if not msg:
+                continue
+            remote = [
+                (f"{a.get('given', '')} {a.get('family', '')}".strip(),
+                 (a.get("ORCID") or "").rstrip("/").rsplit("/", 1)[-1] or None)
+                for a in (msg.get("author") or [])
+            ]
+            for aid, name in ours.get(pid, []):
+                hits = [t for t in remote if same_person(name, t[0])]
+                if len(hits) != 1:      # ambiguous within one paper: never guess
+                    continue
+                _rname, orcid = hits[0]
+                if orcid:
+                    orcid_votes[aid][orcid].append(pid)
+            if idx % 60 == 0:
+                print(f"[{idx}/{len(with_doi)}] crossref")
 
     # ---------------------------------------------------------------- resolve
     audit: list[dict] = []
