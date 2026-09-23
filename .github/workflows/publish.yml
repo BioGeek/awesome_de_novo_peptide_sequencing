@@ -51,10 +51,32 @@ jobs:
       - name: Generate entity pages
         run: uv run python build_pages.py
 
-      - name: Render and publish to gh-pages
+      # Render and publish are SEPARATE steps, and postrender.py runs between
+      # them rather than as a Quarto `post-render` hook.
+      #
+      # Quarto hands a post-render script the full list of output files in the
+      # QUARTO_PROJECT_OUTPUT_FILES environment variable, and Linux caps any
+      # single argv/env string at MAX_ARG_STRLEN, 128 KiB. At 2446 pages that
+      # list is 130,993 bytes with local paths -- 79 bytes under the limit --
+      # and CI paths are ~45 characters longer per file, so the hook died with
+      # "Failed to spawn '/usr/bin/python3': Argument list too long". It would
+      # have broken locally too within a couple of pages.
+      #
+      # Splitting them also matches the reasoning above for build_pages.py: an
+      # explicit step fails the build loudly instead of failing inside a hook.
+      - name: Render
+        run: uv run quarto render
+        env:
+          QUARTO_PYTHON: .venv/bin/python
+
+      - name: Fix the home page's sitemap entry
+        run: python3 postrender.py
+
+      - name: Publish to gh-pages
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
+          render: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           QUARTO_PYTHON: .venv/bin/python
