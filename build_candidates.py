@@ -14,7 +14,7 @@ gets the outside, from OpenAlex, in both directions:
                          very likely a de novo paper itself. This is the half
                          that surfaces NEW work, month after month.
 
-Both scores are "how many of our 350 publications link to this thing", which is
+Both scores are "how many of our 351 publications link to this thing", which is
 the useful signal: a work linked to one of our papers is noise, a work linked to
 eight is a gap. It writes candidates.csv for review and NEVER touches denovo.db,
 because deciding what belongs in the catalog is a judgement call (see the bar

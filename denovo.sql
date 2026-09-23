@@ -4727,6 +4727,7 @@ INSERT INTO publication VALUES(348,'Mass Spectrometry-Based Profiling of Persona
 INSERT INTO publication VALUES(349,'Mass-Invariant Natural Log-Transformed Mass Spectra Enable Internal Calibration and De Novo Sequencing of Intact Proteins','2026-01-27','10.1021/acs.analchem.5c06165','American Chemical Society (ACS)','A key limitation of top-down proteomics is reliance on averagine-based deconvolution to estimate monoisotopic masses, which introduces systematic errors when isotope envelopes are distorted. We present a framework that bypasses averagine by operating directly in natural log-transformed m / z space, where charge-state spacing is mass-invariant and provides an intrinsic reference for internal calibration on both FT-ICR and Orbitrap analyzers. Isotopologue pairing in this domain supports de novo sequencing and discriminates near-isobaric residues. By shifting the paradigm from monoisotopic mass estimation to connectivity-driven inference, the approach offers resilience against distorted isotope envelopes and unknown PTMs, establishing a database-independent strategy for discovery-oriented proteoform characterization without known calibrants.','https://pubs.acs.org/doi/10.1021/acs.analchem.5c06165','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(350,'Precise Discovery of Novel N-Terminal Proteoforms beyond the Limitations of Proteogenomics and De Novo Sequencing','2025-08-12','10.1021/acs.analchem.5c02498','American Chemical Society (ACS)','Alternative splicing-mediated protein N-terminal sequence variation is closely associated with diseases, but its identification by mass spectrometry faces technical bottlenecks. Traditional proteogenomic methods cannot identify novel N-terminal proteins undetected in transcriptome data, while de novo sequencing has limitations in accuracy and traceability. To address this, we developed the first dedicated algorithm, NovelNSeq, which is specifically designed to parse signature peptides (novel N-terminal extension peptides) of novel N-terminal proteins from mass spectrometry data without relying on transcriptome data or de novo sequencing. NovelNSeq fully exploits peptide encoding rules, demonstrating significantly higher accuracy than de novo sequencing algorithms such as PEAKS, pNovo3, SpliceNovo, Casanovo, and InstaNovo, and enables tracing back the peptide encoding mechanisms. Using NovelNSeq, we identified and validated novel N-terminal proteoforms from human genes CALM2, CAPNS1, and CPNE7 in mass spectrometry data where large-scale proteogenomics failed to detect them, which establishes NovelNSeq as an essential complement to conventional approaches. Furthermore, we revealed that a recently reported AAG-initiated novel N-terminus in human ATP9A is actually generated through translational frameshifting from the canonical ATG start codon, highlighting the need for rigorous validation of noncanonical start codon annotations in novel N-terminal proteoforms.','https://pubs.acs.org/doi/10.1021/acs.analchem.5c02498','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(351,'High-accuracy glycan de novo prediction for N- and O-linked glycopeptides across multiple fragmentation techniques','2026-09-10','10.1038/s41467-026-77012-2','Springer Science and Business Media LLC','N- and O-glycosylation are structurally diverse post-translational modifications that affect a range of biological functions. Glycoproteomics faces substantial challenges, particularly in the analysis of O-glycans due to their diversity compared to that of N-glycans. In addition, tandem mass spectrometry data patterns exhibit variability between different fragmentation methods. Existing de novo algorithms often lack sensitivity and are limited to sceHCD fragmentation, restricting their practical application. To address these limitations, we introduce DeepGlycan, a deep-learning-based method for de novo glycopeptide sequencing that captures relationships between glycopeptide spectra and fragment ions from both N- and O-glycans. DeepGlycan achieves over 92% glycan recall and around 95% glycan precision on N-glycopeptide spectra generated using both sceHCD and EThcD. In addition, it enables O-glycan de novo sequencing without additional training. Beyond benchmarking, DeepGlycan identifies an O-glycopeptide in mouse heart tissue whose assignment is supported by exoglycosidase treatment and comparison with a synthetic standard.','https://www.nature.com/articles/s41467-026-77012-2','Nature Communications','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(352,'Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing','2025-05-23','10.48550/arXiv.2505.17552','arXiv','De novo peptide sequencing is a critical task in proteomics. However, the performance of current deep learning-based methods is limited by the inherent complexity of mass spectrometry data and the heterogeneous distribution of noise signals, leading to data-specific biases. We present RankNovo, the first deep reranking framework that enhances de novo peptide sequencing by leveraging the complementary strengths of multiple sequencing models. RankNovo employs a list-wise reranking approach, modeling candidate peptides as multiple sequence alignments and utilizing axial attention to extract informative features across candidates. Additionally, we introduce two new metrics, PMD (Peptide Mass Deviation) and RMD (residual Mass Deviation), which offer delicate supervision by quantifying mass differences between peptides at both the sequence and residue levels. Extensive experiments demonstrate that RankNovo not only surpasses its base models used to generate training candidates for reranking pre-training, but also sets a new state-of-the-art benchmark. Moreover, RankNovo exhibits strong zero-shot generalization to unseen models whose generations were not exposed during training, highlighting its robustness and potential as a universal reranking framework for peptide sequencing. Our work presents a novel reranking strategy that fundamentally challenges existing single-model paradigms and advances the frontier of accurate de novo sequencing. Our source code is provided on GitHub.','https://arxiv.org/abs/2505.17552','arXiv','postprint',NULL,'arxiv');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5137,6 +5138,7 @@ INSERT INTO publication_algorithm VALUES(348,298);
 INSERT INTO publication_algorithm VALUES(349,299);
 INSERT INTO publication_algorithm VALUES(350,300);
 INSERT INTO publication_algorithm VALUES(351,301);
+INSERT INTO publication_algorithm VALUES(352,23);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7470,6 +7472,15 @@ INSERT INTO publication_author VALUES(351,102,3);
 INSERT INTO publication_author VALUES(351,252,4);
 INSERT INTO publication_author VALUES(351,106,5);
 INSERT INTO publication_author VALUES(351,107,6);
+INSERT INTO publication_author VALUES(352,67,1);
+INSERT INTO publication_author VALUES(352,66,2);
+INSERT INTO publication_author VALUES(352,62,3);
+INSERT INTO publication_author VALUES(352,63,4);
+INSERT INTO publication_author VALUES(352,162,5);
+INSERT INTO publication_author VALUES(352,74,6);
+INSERT INTO publication_author VALUES(352,60,7);
+INSERT INTO publication_author VALUES(352,75,8);
+INSERT INTO publication_author VALUES(352,73,9);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -11185,6 +11196,7 @@ INSERT INTO publication_impact VALUES(348,'W7118128152',0,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(349,'W7124301763',0,'doi',NULL,2026,'2026-09-23T06:38:09+00:00');
 INSERT INTO publication_impact VALUES(350,'W4412725747',1,'doi',NULL,2026,'2026-09-23T06:38:09+00:00');
 INSERT INTO publication_impact VALUES(351,'W7212149644',0,'doi',NULL,2026,'2026-09-23T07:10:09+00:00');
+INSERT INTO publication_impact VALUES(352,'W6910847234',0,'doi',NULL,2026,'2026-09-23T15:21:10+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -13296,7 +13308,13 @@ INSERT INTO sqlite_sequence VALUES('city',293);
 INSERT INTO sqlite_sequence VALUES('affiliation',675);
 INSERT INTO sqlite_sequence VALUES('author',1327);
 INSERT INTO sqlite_sequence VALUES('algorithm',301);
-INSERT INTO sqlite_sequence VALUES('publication',351);
+INSERT INTO sqlite_sequence VALUES('publication',352);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -13351,12 +13369,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -13372,12 +13384,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -13392,6 +13398,12 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
 CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
 COMMIT;
