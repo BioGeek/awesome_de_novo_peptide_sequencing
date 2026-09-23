@@ -50,15 +50,31 @@ fi
 
 # URL guard. A slug is derived from mutable data -- a paper's title, an author's
 # name -- so editing that data silently rewrites a published URL and 404s the old
-# one, which is invisible now and expensive months later. Unlike the counts
-# above this is deliberately NOT auto-fixed: rewriting the baseline
-# automatically IS the failure being guarded against.
+# one, which is invisible now and expensive months later.
+#
+# The two cases are treated differently on purpose. A CHANGED or REMOVED URL is
+# never auto-fixed and fails the commit, because rewriting the baseline for
+# those IS the failure being guarded against. An ADDED URL is recorded
+# automatically, because a new page cannot break an old one and an incomplete
+# lock guards nothing.
 if [ -f slugs.py ] && command -v python3 >/dev/null 2>&1; then
   if ! python3 slugs.py --check --quiet; then
     echo "pre-commit: refusing this commit, it would change a published URL." >&2
     echo "  If the rename is intended:" >&2
     echo "    python3 slugs.py --write && git add slugs.lock" >&2
     exit 1
+  fi
+  # The check passed, so the only possible difference is ADDED entries: a
+  # CHANGED or REMOVED one exits non-zero above. Adding a brand-new URL to the
+  # baseline cannot hide a regression, and leaving it out silently means the
+  # lock stops being a complete inventory -- publication 352's page was live
+  # and in the sitemap while absent from the lock, so a later rename of it
+  # would not have been caught. Refreshing here is safe precisely BECAUSE the
+  # dangerous cases already failed.
+  python3 slugs.py --write >/dev/null
+  if ! git diff --quiet -- slugs.lock 2>/dev/null; then
+    git add slugs.lock
+    echo "pre-commit: recorded new page URLs in slugs.lock."
   fi
 fi
 

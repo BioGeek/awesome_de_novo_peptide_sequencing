@@ -329,9 +329,16 @@ derived from mutable data, so editing a title or a name silently rewrites a URL,
 fails on a CHANGED or REMOVED entry and passes on an ADDED one; it runs in
 `.githooks/pre-commit` and in `check-slugs.yml`.
 
-It is deliberately **not** auto-refreshed by the hook, unlike `check_counts.py`.
-Rewriting the baseline automatically is the very failure being guarded against.
+A **changed or removed** URL is never auto-fixed: it fails the commit, because
+rewriting the baseline for those is the very failure being guarded against.
 When a rename is intended, run `--write` and let the lock diff record it.
+
+A **new** URL is recorded automatically by the hook, right after `--check`
+passes. That is safe precisely because the dangerous cases already failed by
+then, and the alternative is worse: `--check` passes on additions, so the lock
+quietly stopped being a complete inventory. Publication 352's page was live and
+in the sitemap while absent from the lock, which means a later rename of it
+would not have been caught at all.
 
 ## Citation graph
 
