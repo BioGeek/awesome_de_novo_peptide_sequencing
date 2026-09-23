@@ -23,12 +23,17 @@ than a missing one:
 Neither is written. Both go to author_id_audit.csv, because each one is a
 data-quality finding about the catalog rather than a lookup failure.
 
-TWO SOURCES. OpenAlex supplies both ORCID and openalex_id; Crossref supplies
+THREE SOURCES. OpenAlex supplies both ORCID and openalex_id; Crossref supplies
 ORCIDs only, but independently -- publishers deposit them from their submission
 systems and OpenAlex does not always propagate them. Both feed the same vote
 dict, so the conflict checks above apply ACROSS sources as well as across
 papers. Either pass can be skipped (--skip-openalex is useful when OpenAlex is
-rate-limiting the shared free IP budget, which it does readily).
+rate-limiting the shared free IP budget, which it does readily). The ORCID
+registry is the third and the only one where the PERSON is the authority: it
+returns holders who claimed the DOI in their own record.
+
+ORCID is queried BY DOI, never by name. Its name search returns 712 records for
+"Xiang Zhang", and this catalog holds three different people by that name.
 
 Google Scholar is deliberately NOT attempted. There is no public API, profile
 ids are not programmatically discoverable, and scraping the profile search is
@@ -60,7 +65,83 @@ USER_AGENT = (
 )
 OPENALEX_BASE = "https://api.openalex.org/works"
 CROSSREF_BASE = "https://api.crossref.org/works"
+ORCID_SEARCH = "https://pub.orcid.org/v3.0/expanded-search/"
+ORCID_RECORD = "https://pub.orcid.org/v3.0/{}/record"
 REQUEST_DELAY = 0.12   # OpenAlex allows 10 req/sec for the polite pool
+
+
+# Forward conflicts that HAVE been resolved by hand, so the builder stops
+# re-reporting them on every run. An audit CSV that always contains the same
+# three rows is one nobody reads, and the point of it is that every row is
+# actionable.
+#
+# Each entry needs evidence, not a preference:
+#
+#   105 Lei Xin -- TWO ORCID registrations for ONE person, not two people.
+#       0000-0001-6900-8973 (6 works) and 0000-0003-1619-1545 (4 works) are
+#       both named "Lei Xin" and BOTH claim the same glycopeptide paper, one of
+#       them also holding its Author Correction. Two different researchers do
+#       not co-claim a paper. The older and fuller registration wins; ORCID
+#       itself has a duplicate-account process, which is the author's to use.
+#
+#    73 Siqi Sun -- two genuinely different people, but only one of them is in
+#       this catalog. 0000-0001-7240-8724 is Fudan (Associate Professor, 2022)
+#       and Microsoft Research, 38 works on structure prediction, cryo-EM and
+#       AI proteomics. 0009-0007-7298-7288 is a WashU/Fudan postdoc with 3
+#       works on bronchopulmonary dysplasia and IHC cell detection. Publications
+#       21 and 107 are the SAME paper (pi-PrimeNovo in Nature Communications and
+#       its bioRxiv preprint), so the preprint simply has the wrong ORCID
+#       deposited against a namesake.
+ORCID_RESOLVED: dict[int, str] = {
+    105: "0000-0001-6900-8973",
+    73:  "0000-0001-7240-8724",
+}
+
+
+def describe_orcid(orcid: str) -> str:
+    """"0000-0001-7240-8724 = Siqi Sun, Fudan University, 38 works".
+
+    Resolved from the public ORCID record, and cached per run. This is what
+    turns a conflict from "two ids, pick one" into evidence: a DUPLICATE
+    registration shows the same name with overlapping works, while a NAMESAKE
+    shows a different employer and a disjoint field.
+    """
+    if orcid in _orcid_cache:
+        return _orcid_cache[orcid]
+    out = orcid
+    try:
+        r = requests.get(ORCID_RECORD.format(orcid),
+                         headers={"Accept": "application/json",
+                                  "User-Agent": USER_AGENT}, timeout=30)
+        if r.status_code == 200:
+            d = r.json()
+            person = d.get("person") or {}
+            nm = person.get("name") or {}
+            given = ((nm.get("given-names") or {}) or {}).get("value") or ""
+            family = ((nm.get("family-name") or {}) or {}).get("value") or ""
+            acts = d.get("activities-summary") or {}
+            groups = ((acts.get("employments") or {}).get("affiliation-group")) or []
+            orgs = []
+            for grp in groups:
+                for summary in (grp.get("summaries") or []):
+                    emp = summary.get("employment-summary") or {}
+                    org = (emp.get("organization") or {}).get("name")
+                    if org:
+                        orgs.append(org)
+            n_works = len(((acts.get("works") or {}).get("group")) or [])
+            bits = [f"{given} {family}".strip() or "(name private)"]
+            if orgs:
+                bits.append(orgs[0])
+            bits.append(f"{n_works} works")
+            out = f"{orcid} = " + ", ".join(bits)
+    except (requests.RequestException, ValueError):
+        pass
+    time.sleep(REQUEST_DELAY)
+    _orcid_cache[orcid] = out
+    return out
+
+
+_orcid_cache: dict[str, str] = {}
 
 
 def ensure_columns(cur: sqlite3.Cursor) -> None:
@@ -105,6 +186,8 @@ def main() -> int:
                         help="skip the OpenAlex pass (e.g. while it is rate-limiting)")
     parser.add_argument("--skip-crossref", action="store_true",
                         help="skip the Crossref ORCID pass")
+    parser.add_argument("--skip-orcid", action="store_true",
+                        help="skip the ORCID-registry pass")
     args = parser.parse_args()
 
     conn = sqlite3.connect(DB_PATH)
@@ -207,6 +290,52 @@ def main() -> int:
             if idx % 60 == 0:
                 print(f"[{idx}/{len(with_doi)}] crossref")
 
+    # -------------------------------------------------- orcid registry, by DOI
+    # A THIRD source, and the only one where the person themselves is the
+    # authority: these are ORCID holders who have CLAIMED the DOI in their own
+    # record. Measured over this catalog it supplies 34 ORCIDs the other two
+    # sources miss, independently confirms 387 of the ones they gave, and
+    # disagrees with 5 -- disagreements that are invisible without a third
+    # opinion, and which become forward conflicts here rather than silent
+    # overwrites.
+    #
+    # KEYED ON DOI, NEVER ON NAME. ORCID also exposes a name search, and it must
+    # not be used: "given-names:Xiang AND family-name:Zhang" returns 712
+    # records, and this catalog contains three different Xiang Zhangs. Searching
+    # per publication is the same discipline the OpenAlex pass uses and the
+    # reason that pass is safe.
+    if not args.skip_orcid:
+        with_doi = cur.execute(
+            "SELECT id, doi FROM publication WHERE IFNULL(doi,'') <> '' ORDER BY id"
+        ).fetchall()
+        print(f"\nORCID registry pass over {len(with_doi)} publications with a DOI")
+        for idx, (pid, doi) in enumerate(with_doi, 1):
+            try:
+                r = requests.get(
+                    ORCID_SEARCH,
+                    params={"q": f'doi-self:"{doi}"', "rows": 100},
+                    headers={"Accept": "application/json", "User-Agent": USER_AGENT},
+                    timeout=30)
+                res = (r.json().get("expanded-result") or []) if r.status_code == 200 else None
+            except (requests.RequestException, ValueError):
+                res = None
+            time.sleep(0.15)
+            if not res:
+                continue
+            remote = [
+                (f"{x.get('given-names') or ''} {x.get('family-names') or ''}".strip(),
+                 x.get("orcid-id"))
+                for x in res
+            ]
+            for aid, name in ours.get(pid, []):
+                hits = [t for t in remote if same_person(name, t[0])]
+                if len(hits) != 1:      # ambiguous within one paper: never guess
+                    continue
+                if hits[0][1]:
+                    orcid_votes[aid][hits[0][1]].append(pid)
+            if idx % 60 == 0:
+                print(f"[{idx}/{len(with_doi)}] orcid")
+
     # ---------------------------------------------------------------- resolve
     audit: list[dict] = []
 
@@ -214,6 +343,22 @@ def main() -> int:
         """id -> value, refusing anything ambiguous in either direction."""
         clean, forward_conflicts = {}, 0
         for aid, options in votes.items():
+            if len(options) > 1 and label == "orcid" and aid in ORCID_RESOLVED:
+                chosen = ORCID_RESOLVED[aid]
+                if chosen in options:
+                    clean[aid] = chosen
+                    continue
+                # The hand-resolved value is no longer among the reported ones,
+                # so the evidence behind it has changed and it must be revisited
+                # rather than trusted.
+                audit.append({
+                    "kind": f"stale hand resolution ({label})",
+                    "author_id": aid, "author": names.get(aid, "?"),
+                    "values": f"ORCID_RESOLVED says {chosen}, sources now say "
+                              + "; ".join(sorted(options)),
+                    "who": "",
+                })
+                continue
             if len(options) > 1:
                 forward_conflicts += 1
                 audit.append({
@@ -221,6 +366,12 @@ def main() -> int:
                     "author_id": aid, "author": names.get(aid, "?"),
                     "values": "; ".join(f"{v} on pubs {sorted(p)}"
                                         for v, p in sorted(options.items())),
+                    # Say WHO each candidate is, so the reader can tell a
+                    # duplicate registration (same name, overlapping works)
+                    # from a namesake (different employer, disjoint field)
+                    # without doing the API archaeology by hand.
+                    "who": " | ".join(describe_orcid(v) for v in sorted(options))
+                                if label == "orcid" else "",
                 })
                 continue
             clean[aid] = next(iter(options))
@@ -235,6 +386,7 @@ def main() -> int:
                 "author_id": ";".join(map(str, sorted(aids))),
                 "author": " | ".join(names.get(a, "?") for a in sorted(aids)),
                 "values": value,
+                "who": describe_orcid(value) if label == "orcid" else "",
             })
         final = {aid: v for aid, v in clean.items() if v not in reverse}
         print(f"\n{label}: {len(final)} resolved, {forward_conflicts} forward "
@@ -266,6 +418,12 @@ def main() -> int:
             w = csv.DictWriter(fh, fieldnames=list(audit[0].keys()))
             w.writeheader()
             w.writerows(audit)
+    elif AUDIT_PATH.exists():
+        # Delete it rather than leaving the previous run's findings on disk.
+        # The file only ever means "there is something to read", so a stale one
+        # is worse than none: it reports conflicts that have since been fixed.
+        AUDIT_PATH.unlink()
+        print(f"{AUDIT_PATH.name} removed: nothing unresolved.")
 
     total = cur.execute("SELECT COUNT(*) FROM author").fetchone()[0]
     have = cur.execute("SELECT COUNT(*) FROM author WHERE IFNULL(orcid,'') <> ''").fetchone()[0]

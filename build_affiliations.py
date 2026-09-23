@@ -551,6 +551,10 @@ def main() -> int:
             w = csv.DictWriter(fh, fieldnames=list(audit[0].keys()))
             w.writeheader()
             w.writerows(audit)
+    elif AUDIT_PATH.exists():
+        # Same reasoning as build_author_ids.py: a stale audit file reports
+        # findings that have since been resolved, so a clean run clears it.
+        AUDIT_PATH.unlink()
 
     # --- report -----------------------------------------------------------
     print("\n--- summary ---")
