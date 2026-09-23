@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.">
+<meta name="description" content="peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.&nbsp;De novo peptide sequencing is a valuable technique in mass-spectrometry-based proteomics, as it deduces…">
 
 <title>NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,9 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.">
+<meta property="og:description" content="peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.&nbsp;De novo peptide sequencing is a valuable technique in mass-spectrometry-based proteomics, as it deduces…">
+<style>#title-block-header .description { display: none; }</style>
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/novorank-refinement-for-de-novo-peptide-sequencing-based-on-spectral-clustering.html">
 
 
 </head>
@@ -144,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.
+    peer-reviewed · Journal of Proteome Research · 2022. Jangho Seo et al.&nbsp;De novo peptide sequencing is a valuable technique in mass-spectrometry-based proteomics, as it deduces…
   </div>
 </div>
 
@@ -161,7 +163,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","author":[{"@type":"Person","name":"Jangho Seo"},{"@type":"Person","name":"Seunghyuk Choi"},{"@type":"Person","name":"Eunok Paek"}],"datePublished":"2022-08-01","headline":"NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning","identifier":"https://doi.org/10.1021/acs.jproteome.4c00300","isPartOf":{"@type":"Periodical","name":"Journal of Proteome Research"},"name":"NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning","publisher":{"@type":"Organization","name":"American Chemical Society (ACS)"},"sameAs":"https://doi.org/10.1021/acs.jproteome.4c00300"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"De novo peptide sequencing is a valuable technique in mass-spectrometry-based proteomics, as it deduces peptide sequences directly from tandem mass spectra without relying on sequence databases. This database-independent method, however, relies solely on imperfect scoring functions that often lead to erroneous peptide identifications. To boost correct identification, we present NovoRank, a postprocessing tool that employs spectral clustering and machine learning to assign more plausible peptide...","author":[{"@type":"Person","name":"Jangho Seo"},{"@type":"Person","name":"Seunghyuk Choi"},{"@type":"Person","name":"Eunok Paek"}],"datePublished":"2022-08-01","headline":"NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning","identifier":"https://doi.org/10.1021/acs.jproteome.4c00300","isPartOf":{"@type":"Periodical","name":"Journal of Proteome Research"},"name":"NovoRank: Refinement for De Novo Peptide Sequencing Based on Spectral Clustering and Deep Learning","publisher":{"@type":"Organization","name":"American Chemical Society (ACS)"},"sameAs":"https://doi.org/10.1021/acs.jproteome.4c00300"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -198,6 +200,10 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>De novo peptide sequencing is a valuable technique in mass-spectrometry-based proteomics, as it deduces peptide sequences directly from tandem mass spectra without relying on sequence databases. This database-independent method, however, relies solely on imperfect scoring functions that often lead to erroneous peptide identifications. To boost correct identification, we present NovoRank, a postprocessing tool that employs spectral clustering and machine learning to assign more plausible peptide sequences to spectra. Prior to de novo peptide sequencing, spectral clustering is applied to group similar spectra under the assumption that they originated from the same peptide species. NovoRank then employs a deep learning model, incorporating both cluster-derived proteomic features and individual spectrum characteristics, to rerank the candidate peptides produced by de novo peptide sequencing. Our results show that NovoRank significantly enhances the performance of various de novo peptide sequencing tools, increasing both recall and precision by 0.020 to 0.080 at the peptide-spectrum match (PSM) level. Notably, NovoRank achieves a recall as high as 0.830 for Casanovo at the PSM level. The source code of NovoRank is freely available at https://github.com/HanyangBISLab/NovoRank and is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">

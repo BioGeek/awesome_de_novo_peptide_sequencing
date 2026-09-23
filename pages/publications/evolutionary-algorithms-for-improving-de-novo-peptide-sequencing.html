@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="thesis · 2020. Samaneh Azari">
+<meta name="description" content="thesis · 2020. Samaneh Azari. De novo peptide sequencing algorithms have been developed for peptide identification in proteomics from…">
 
 <title>Evolutionary Algorithms for Improving De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,9 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="Evolutionary Algorithms for Improving De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="thesis · 2020. Samaneh Azari">
+<meta property="og:description" content="thesis · 2020. Samaneh Azari. De novo peptide sequencing algorithms have been developed for peptide identification in proteomics from…">
+<style>#title-block-header .description { display: none; }</style>
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/evolutionary-algorithms-for-improving-de-novo-peptide-sequencing.html">
 
 
 </head>
@@ -144,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    thesis · 2020. Samaneh Azari
+    thesis · 2020. Samaneh Azari. De novo peptide sequencing algorithms have been developed for peptide identification in proteomics from…
   </div>
 </div>
 
@@ -161,7 +163,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","author":[{"@type":"Person","name":"Samaneh Azari"}],"datePublished":"2020-01-01","headline":"Evolutionary Algorithms for Improving De Novo Peptide Sequencing","identifier":"https://doi.org/10.26686/wgtn.17145581.v1","name":"Evolutionary Algorithms for Improving De Novo Peptide Sequencing","publisher":{"@type":"Organization","name":"PhD thesis"},"sameAs":"https://doi.org/10.26686/wgtn.17145581.v1"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"De novo peptide sequencing algorithms have been developed for peptide identification in proteomics from tandem mass spectra (MS/MS), which can be used to identify and discover novel peptides and proteins that do not have a database available. Despite improvements in MS instrumentation and de novo sequencing methods, a significant number of CID MS/MS spectra still remain unassigned with the current algorithms, often leading to low confidence of peptide assignments to the spectra. Moreover...","author":[{"@type":"Person","name":"Samaneh Azari"}],"datePublished":"2020-01-01","headline":"Evolutionary Algorithms for Improving De Novo Peptide Sequencing","identifier":"https://doi.org/10.26686/wgtn.17145581.v1","name":"Evolutionary Algorithms for Improving De Novo Peptide Sequencing","publisher":{"@type":"Organization","name":"PhD thesis"},"sameAs":"https://doi.org/10.26686/wgtn.17145581.v1"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -190,6 +192,10 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>De novo peptide sequencing algorithms have been developed for peptide identification in proteomics from tandem mass spectra (MS/MS), which can be used to identify and discover novel peptides and proteins that do not have a database available. Despite improvements in MS instrumentation and de novo sequencing methods, a significant number of CID MS/MS spectra still remain unassigned with the current algorithms, often leading to low confidence of peptide assignments to the spectra. Moreover, current algorithms often fail to construct the completely matched sequences, and produce partial matches. Therefore, identification of full-length peptides remains challenging. Another major challenge is the existence of noise in MS/MS spectra which makes the data highly imbalanced. Also missing peaks, caused by incomplete MS fragmentation makes it more difficult to infer a full-length peptide sequence. In addition, the large search space of all possible amino acid sequences for each spectrum leads to a high false discovery rate. This thesis focuses on improving the performance of current methods by developing new algorithms corresponding to three steps of preprocessing, sequence optimisation and post-processing using machine learning for more comprehensive interrogation of MS/MS datasets. From the machine learning point of view, the three steps can be addressed by solving different tasks such as classification, optimisation, and symbolic regression. Since Evolutionary Algorithms (EAs), as effective global search techniques, have shown promising results in solving these problems, this thesis investigates the capability of EAs in improving the de novo peptide sequencing. In the preprocessing step, this thesis proposes an effective GP-based method for classification of signal and noise peaks in highly imbalanced MS/MS spectra with the purpose of having a positive influence on the reliability of the peptide identification. The results show that the proposed algorithm is the most stable classification method across various noise ratios, outperforming six other benchmark classification algorithms. The experimental results show a significant improvement in high confidence peptide assignments to MS/MS spectra when the data is preprocessed by the proposed GP method. Moreover, the first multi-objective GP approach for classification of peaks in MS/MS data, aiming at maximising the accuracy of the minority class (signal peaks) and the accuracy of the majority class (noise peaks) is also proposed in this thesis. The results show that the multi-objective GP method outperforms the single objective GP algorithm and a popular multi-objective approach in terms of retaining more signal peaks and removing more noise peaks. The multi-objective GP approach significantly improved the reliability of peptide identification. This thesis proposes a GA-based method to solve the complex optimisation task of de novo peptide sequencing, aiming at constructing full-length sequences. The proposed GA method benefits the GA capability of searching a large search space of potential amino acid sequences to find the most likely full-length sequence. The experimental results show that the proposed method outperforms the most commonly used de novo sequencing method at both amino acid level and peptide level. This thesis also proposes a novel method for re-scoring and re-ranking the peptide spectrum matches (PSMs) from the result of de novo peptide sequencing, aiming at minimising the false discovery rate as a post-processing approach. The proposed GP method evolves the computer programs to perform regression and classification simultaneously in order to generate an effective scoring function for finding the correct PSMs from many incorrect ones. The results show that the new GP-based PSM scoring function significantly improves the identification of full-length peptides when it is used to post-process the de novo sequencing results.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">
