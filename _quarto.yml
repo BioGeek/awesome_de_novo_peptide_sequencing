@@ -17,7 +17,7 @@ website:
   repo-actions: [edit, issue]
   page-navigation: false
   back-to-top-navigation: true
-  # Without a navbar the ~2441 generated entity pages have no way back to the
+  # Without a navbar the ~2445 generated entity pages have no way back to the
   # map except the in-page links the generator writes. A sidebar is not an
   # option at that scale.
   navbar:

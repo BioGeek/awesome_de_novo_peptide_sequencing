@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 
-# The render now takes ~9 minutes because it builds ~2441 entity pages, so two
+# The render now takes ~9 minutes because it builds ~2445 entity pages, so two
 # publishes can genuinely overlap: all four refresh workflows dispatch this one,
 # and `quarto publish gh-pages` force-pushes the branch. Without this, the
 # second push wins and the first job goes red for no real reason.
@@ -36,7 +36,7 @@ jobs:
       # Pinned deliberately. Every rendered page embeds
       # <meta name="generator" content="quarto-x.y.z"> and links the theme CSS
       # by a CONTENT-HASHED filename, so a Quarto upgrade rewrites a byte in all
-      # ~2441 pages at once and gh-pages gains ~45 MB of blobs in one commit.
+      # ~2445 pages at once and gh-pages gains ~45 MB of blobs in one commit.
       # Pinning makes that an intentional, occasional event.
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2

@@ -299,6 +299,7 @@ algorithms	297	ms-ms-proteotyping-in-clinical-microbiology-perspective
 algorithms	298	thai-rcc-personalised-immunopeptidomics
 algorithms	299	log-transformed-mass-domain-de-novo-sequencing
 algorithms	300	novelnseq
+algorithms	301	deepglycan
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -1988,6 +1989,8 @@ institutions	664	university-college-dublin
 institutions	665	university-of-turin
 institutions	668	state-university-of-new-york
 institutions	669	wuxi-jiangnan-institute-of-computing-technology
+institutions	674	yangtze-delta-region-institute-of-tsinghua-university
+institutions	675	central-china-institute-of-artificial-intelligence
 publications	1	de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide
 publications	2	instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale
 publications	3	instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics-preprint
@@ -2337,6 +2340,7 @@ publications	347	from-identification-to-insight-making-full-use-of-the-diagnosti
 publications	348	mass-spectrometry-based-profiling-of-personalized-immunopeptidomes-in-thai
 publications	349	mass-invariant-natural-log-transformed-mass-spectra-enable-internal-calibration
 publications	350	precise-discovery-of-novel-n-terminal-proteoforms-beyond-the-limitations-of
+publications	351	high-accuracy-glycan-de-novo-prediction-for-n-and-o-linked-glycopeptides-across
 venues	1	biorxiv
 venues	2	nature-machine-intelligence
 venues	7	aaai-2026

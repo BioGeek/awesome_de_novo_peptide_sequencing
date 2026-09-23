@@ -117,6 +117,29 @@ def clean(text: str | None) -> str | None:
     return text
 
 
+# Editorial third person. An author writes "here we present"; the journal's own
+# summary writer says "here the authors present".
+_EDITORIAL_VOICE = re.compile(r"\bHere,?\s+(?:the\s+)?authors?\b", re.I)
+_SENTENCE_START = re.compile(r"(?<=[.!?])\s+")
+
+
+def _strip_nature_summary(text: str) -> str:
+    """Drop a trailing Nature-style editorial summary. See strip_publisher_extras."""
+    matches = list(_EDITORIAL_VOICE.finditer(text))
+    if not matches:
+        return text
+    at = matches[-1].start()
+    if at < len(text) * 0.5:          # not a trailing addition
+        return text
+    starts = [0] + [m.end() for m in _SENTENCE_START.finditer(text)]
+    idx = max(i for i, pos in enumerate(starts) if pos <= at)
+    cut = starts[max(0, idx - 1)]     # also drop the sentence before it
+    kept = text[:cut].rstrip()
+    if len(kept) < 200 or len(kept) < len(text) * 0.5:
+        return text                   # refuse to gut a real abstract
+    return kept
+
+
 def strip_publisher_extras(text: str) -> str:
     """Remove non-abstract text that publishers keep in or beside the abstract.
 
@@ -127,13 +150,28 @@ def strip_publisher_extras(text: str) -> str:
     Current spaceflight prototype instrument proposed to visit ocean
     worlds...". The label is literal, so cutting at it is exact.
 
-    NOT HANDLED HERE: Nature's separate one-sentence editorial summary, which
-    OpenAlex concatenates with no marker at all. Nat Commun 15 on
-    doi:10.1038/s41467-024-53105-8 comes back 1470 characters against a real
-    abstract of 1151, the extra ending "Here the authors present...". There is
-    nothing reliable to cut on, so that case is handled instead by asking
-    Europe PMC before OpenAlex, which carries the abstract alone. A paper with
-    no Europe PMC record may still pick up the summary from OpenAlex.
+    NATURE'S EDITORIAL SUMMARY. Nature-family journals publish a separate
+    two-sentence editorial summary, and OpenAlex concatenates it onto the
+    abstract with no marker. Asking Europe PMC first avoids it, but only for a
+    paper Europe PMC has indexed: Nat Commun on doi:10.1038/s41467-026-77012-2
+    was 13 days old, had no Europe PMC record and no Crossref abstract, and
+    duly arrived with the summary attached.
+
+    There IS something reliable to cut on, from two specimens with identical
+    structure. The summary is the final TWO sentences, and the second is in the
+    editorial third person:
+
+      ...crucial due to potential misrepresentations by B-cell analysis alone.
+      | The antibody response to infection and vaccination is an essential
+      | component of the anti-infective immune response. Here the authors
+      | present a de novo protein sequencing method for antibody discovery...
+
+    Authors write "here we"; an editor writes "here the authors". So the marker
+    is that third-person phrase, and the cut goes back to the start of the
+    sentence BEFORE the one containing it. Guarded: the phrase must fall in the
+    second half of the text, the cut must leave at least 200 characters, and it
+    must not remove more than half. Verified to reproduce publication 294's
+    hand-corrected abstract byte for byte (1470 -> 1151).
 
     Two format artifacts, both found by hand-correcting one Astrobiology
     abstract and both generic rather than journal-specific:
@@ -144,6 +182,7 @@ def strip_publisher_extras(text: str) -> str:
         "Orbitrap(TM) mass analyzer" is noise rather than content.
     """
     text = re.split(r"\s*\bTeaser:\s*", text, maxsplit=1)[0].strip()
+    text = _strip_nature_summary(text)
     text = re.sub(r"\(\s+", "(", text)
     text = re.sub(r"\s+\)", ")", text)
     text = text.replace("\u2122", "").replace("\u00ae", "")

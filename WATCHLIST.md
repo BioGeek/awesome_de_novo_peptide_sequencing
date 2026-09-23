@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 297 `algorithm` rows has at least one linked publication, because
+Every one of the 298 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -125,6 +125,28 @@ submitted to a de novo benchmark implies it is one. Do not assume the repo and
 the PR describe the same model.
 
 ## Considered, not added
+
+- **"De Novo Peptide Sequencing by Tandem Mass Spectrometry"**, ResolveMass
+  Laboratories Inc. (<https://resolvemass.ca/de-novo-peptide-sequencing-by-tandem-mass-spectrometry/>),
+  bylined Anusha Sinha, 2026-08-07. **Kept here because it is a genuinely good
+  summary of the field**, not because it is close to admissible.
+
+  What it covers, in ~8-9k words: the core idea of sequencing without a
+  database; when it is needed (unsequenced organisms, monoclonal antibodies,
+  endogenous peptides, venom, novel PTMs); the underlying chemistry (proton
+  mobility, backbone cleavage, the b/y/a/c/z/d/w ion series); the standard
+  failure modes (leucine/isoleucine, missing fragments, near-isobaric masses,
+  chimeric spectra); and PEAKS, Novor, pNovo, Lutefisk, Casanovo, InstaNovo and
+  pi-PrimeNovo by name. Six peer-reviewed citations.
+
+  Why it stays out: it is a commercial laboratory's service page as much as an
+  article, with no DOI, no venue and no peer review, so it is not citable in the
+  sense `publication` requires. The nearest precedent cuts both ways -- the
+  Micromass MassLynx guide is `publication_type='resource'` and is also vendor
+  documentation -- but that row exists because it is the ONLY documentation of
+  PepSeq's method, i.e. it is the primary source for something in the catalog.
+  This page documents nothing that is not already better documented by the seven
+  tools it names. Useful as an orientation for a newcomer; redundant as a row.
 
 - **CorrDIA** (`10.3390/app13105969`). DIA deconvolution feeding a conventional
   database search, with no *de novo* component, so it is out of scope even as an

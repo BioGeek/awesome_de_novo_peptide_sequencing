@@ -339,8 +339,25 @@ def main() -> int:
     # ---------------------------------------------------------------- resolve
     audit: list[dict] = []
 
-    def resolve(votes, label):
-        """id -> value, refusing anything ambiguous in either direction."""
+    def resolve(votes, label, plurality=False):
+        """id -> value, refusing anything ambiguous in either direction.
+
+        `plurality` treats a forward conflict as ONE person split across several
+        identifiers and takes the one with the most supporting publications.
+        That is right for openalex_id and wrong for ORCID, and the asymmetry is
+        not a convenience:
+
+          * An ORCID is claimed by a PERSON, so two ORCIDs on one of our rows
+            may be two real people (measured: Siqi Sun really is two). Picking
+            the more frequent one would silently merge them.
+          * An openalex_id is assigned by OpenAlex's own disambiguation, so two
+            of them on one row is almost always OpenAlex splitting one person.
+            Kevin Eloff has A5039211008 on four papers and A5130920657 on one;
+            Ming Li has the near-consecutive A5100351398 and A5100351454. The
+            plurality is the person and the remainder is the artifact.
+
+        A tie is still refused, because then there is no plurality to trust.
+        """
         clean, forward_conflicts = {}, 0
         for aid, options in votes.items():
             if len(options) > 1 and label == "orcid" and aid in ORCID_RESOLVED:
@@ -359,6 +376,19 @@ def main() -> int:
                     "who": "",
                 })
                 continue
+            if len(options) > 1 and plurality:
+                ranked = sorted(options.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+                if len(ranked[0][1]) > len(ranked[1][1]):
+                    clean[aid] = ranked[0][0]
+                    audit.append({
+                        "kind": f"resolved by plurality ({label})",
+                        "author_id": aid, "author": names.get(aid, "?"),
+                        "values": "; ".join(f"{v} on {len(p)} pub(s)"
+                                            for v, p in ranked),
+                        "who": "",
+                    })
+                    continue
+                # A tie: no plurality to trust, so fall through and refuse.
             if len(options) > 1:
                 forward_conflicts += 1
                 audit.append({
@@ -394,7 +424,7 @@ def main() -> int:
         return final
 
     orcids = resolve(orcid_votes, "orcid")
-    oa_ids = resolve(oa_votes, "openalex_id")
+    oa_ids = resolve(oa_votes, "openalex_id", plurality=True)
 
     # ------------------------------------------------------------------ write
     written = {"orcid": 0, "openalex_id": 0}
