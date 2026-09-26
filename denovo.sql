@@ -11330,7 +11330,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_Ph
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,2,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-21T11:11:57','v0.1.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,3,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-26T10:21:53','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/snijderlab/stitch',32,3,22,237,0,2,'2024-10-15T11:26:17Z','2026-09-22T15:22:30','v1.5.0');
 CREATE TABLE publication_author_affiliation (
