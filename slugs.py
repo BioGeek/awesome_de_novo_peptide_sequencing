@@ -172,8 +172,8 @@ def assign_unique(
 # --------------------------------------------------------------------------
 # The catalog's five entity types, and how each is keyed.
 #
-# Institutions are keyed by NAME, not by affiliation row: 625 affiliation rows
-# collapse to 398 institutions because one institution has many departments,
+# Institutions are keyed by NAME, not by affiliation row: 626 affiliation rows
+# collapse to 399 institutions because one institution has many departments,
 # and every chart groups on `af.name` (index.qmd projects `af.name AS
 # affiliation` with no department). A page per row would leave a click on
 # "Utrecht University" ambiguous across three targets.
@@ -217,7 +217,7 @@ def all_slugs(conn: sqlite3.Connection) -> dict[str, dict[int, str]]:
         pid: suffix
         for pid, suffix in conn.execute(
             "SELECT id, publication_type FROM publication "
-            "WHERE publication_type IN ('preprint', 'postprint')"
+            "WHERE publication_type IN ('preprint', 'postprint', 'abstract')"
         )
     }
 

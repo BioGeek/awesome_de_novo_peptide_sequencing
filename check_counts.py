@@ -131,7 +131,7 @@ CLAIMS += [
      r"`'" + re.escape(t) + r"'` \((\d+)",
      f"SELECT COUNT(*) FROM publication WHERE publication_type='{t}'")
     for t in ("peer-reviewed", "preprint", "thesis", "ML conference",
-              "resource", "postprint", "commentary")
+              "resource", "postprint", "commentary", "abstract")
 ]
 
 

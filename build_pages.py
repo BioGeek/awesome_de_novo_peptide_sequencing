@@ -889,7 +889,7 @@ def main() -> int:
     written: dict[str, int] = {}
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~2459 thin pages out of
+    # committed under pages/. search: false keeps ~2470 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -1000,7 +1000,7 @@ def main() -> int:
     if "algorithms" in kinds:
         for row in d["algorithms"]:
             gid = row["id"]
-            # Byline order, not alphabetical. 243 of 300 algorithms have exactly
+            # Byline order, not alphabetical. 245 of 302 algorithms have exactly
             # one paper, so for most pages the byline is unambiguous and sorting
             # by name simply loses it: Denovo-GCN read "Haipeng Wang, Ruitao Wu,
             # Runtao Wang, Xiang Zhang" against a byline of "Ruitao Wu, Xiang
