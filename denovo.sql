@@ -11391,7 +11391,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',9,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',201,81,23,315,18,339,'2026-08-26T03:26:23Z','2026-09-28T12:06:05','v5.2.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',201,82,23,315,18,339,'2026-08-26T03:26:23Z','2026-09-29T11:38:55','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',6,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-09-07T10:49:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,5,0,4,1,6,'2026-08-19T05:02:25Z','2026-09-24T10:34:46','v1.1');
@@ -11417,11 +11417,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denov
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,NULL,NULL,NULL,NULL,'2026-08-19T22:27:40Z','2026-08-20T06:21:16',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',91,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-09-11T10:03:54','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,23,16,109,0,133,'2026-09-22T00:59:48Z','2026-09-22T10:25:00','v4.0.2');
-INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',56,21,48,505,1,17,'2026-08-01T11:58:34Z','2026-09-14T11:02:13',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',56,21,48,505,1,18,'2026-09-28T21:18:13Z','2026-09-29T11:38:55',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,20,4,82,0,183,'2026-07-13T17:01:59Z','2026-09-17T10:30:43','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',3,0,0,0,0,0,'2026-05-13T07:08:03Z','2026-09-09T10:11:46',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
-INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,0,12,0,29,'2026-07-15T08:23:44Z','2026-08-17T06:25:27',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,1,12,0,29,'2026-07-15T08:23:44Z','2026-09-29T11:38:55',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,3,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-26T10:21:53','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
@@ -13417,12 +13417,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',680);
 INSERT INTO sqlite_sequence VALUES('author',1344);
 INSERT INTO sqlite_sequence VALUES('algorithm',307);
 INSERT INTO sqlite_sequence VALUES('publication',358);
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -13477,6 +13471,12 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -13492,6 +13492,12 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -13506,12 +13512,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
 CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
 COMMIT;
