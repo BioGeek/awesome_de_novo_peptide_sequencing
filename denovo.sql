@@ -1313,6 +1313,9 @@ INSERT INTO author VALUES(1338,'Andy Wu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1339,'Manisha Lnu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1340,'Barney Bishop',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1341,'Syeda Raika Shahid',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1342,'Jonathan Oluranti',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1343,'Osalodion E. Uwidia',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1344,'Hassana Jonathan',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1366,6 +1369,7 @@ INSERT INTO country VALUES(75,'Saudi Arabia',NULL);
 INSERT INTO country VALUES(76,'Tunisia',NULL);
 INSERT INTO country VALUES(77,'Lebanon',NULL);
 INSERT INTO country VALUES(78,'Ireland',NULL);
+INSERT INTO country VALUES(79,'Nigeria','NG');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -1632,6 +1636,7 @@ INSERT INTO city VALUES(290,'Dublin',78,53.3330600000000032,-6.24889000000000027
 INSERT INTO city VALUES(291,'Turin',38,45.0704899999999994,7.68681999999999998,'openalex','openalex');
 INSERT INTO city VALUES(292,'Wuxi',2,31.4911999999999991,120.311899999999994,NULL,NULL);
 INSERT INTO city VALUES(294,'Fairfax',8,38.8462000000000031,-77.3063999999999964,NULL,NULL);
+INSERT INTO city VALUES(295,'Ota',79,6.68039999999999967,3.2355999999999998,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2272,6 +2277,8 @@ INSERT INTO affiliation VALUES(675,'Central China Institute of Artificial Intell
 INSERT INTO affiliation VALUES(676,'Dalian Minzu University',NULL,2,96,'https://ror.org/02hxfx521','Dalian Minzu University',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(677,'Beijing Institute of Technology','Key Laboratory of Molecular Medicine and Biotherapy, The Ministry of Industry and Information Technology, School of Life Science',2,9,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(678,'George Mason University','Department of Chemistry and Biochemistry',8,294,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(679,'Covenant University','Department of Computer and Information Sciences',79,295,'https://ror.org/00frr1n84','Covenant University',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(680,'Covenant University','Department of Chemistry',79,295,'https://ror.org/00frr1n84','Covenant University',NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -4097,6 +4104,9 @@ INSERT INTO author_affiliation VALUES(1337,678);
 INSERT INTO author_affiliation VALUES(1336,678);
 INSERT INTO author_affiliation VALUES(1339,678);
 INSERT INTO author_affiliation VALUES(1341,678);
+INSERT INTO author_affiliation VALUES(1342,679);
+INSERT INTO author_affiliation VALUES(1343,679);
+INSERT INTO author_affiliation VALUES(1344,680);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4406,6 +4416,7 @@ INSERT INTO algorithm VALUES(303,'GyroNovo','','','Transformer (AR)','Attacks mi
 INSERT INTO algorithm VALUES(304,'Hemp seed antimicrobial peptides','','',NULL,'Screens HAN-J6 hemp seed (Cannabis sativa L.) protein for antimicrobial peptides, a source not previously characterised this way. Defatting, alkaline extraction and acid precipitation, then trypsin/Lys-C digestion and LC-MS; PEAKS 12 de novo sequencing returned 3,985 peptides, and CAMP R3 and AMP Scanner_V2 screened the ALC>=80% list to 56 and 260 candidates respectively, 27 of which both tools agreed on.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(305,'Red-legged salamander skin AMPs','','',NULL,'Looks for antimicrobial peptides in red-legged salamander skin secretions, where amphibian work has concentrated on frogs and toads and salamander secretions are barely characterised. nanoLC-MS/MS with PEAKS de novo sequencing found 135 unique peptides across four injections, of which CAMP-R3 and AMP Scanner predicted 36 to be antimicrobial.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(306,'Hellbender skin AMPs','','',NULL,'Bioprospects the skin secretions of Cryptobranchus alleganiensis, the hellbender salamander, for antimicrobial peptide candidates. Solid-phase extraction enrichment and Orbitrap Fusion acquisition, PEAKS de novo sequencing of the secretion peptides, then antimicrobial prediction over the de novo sequences. The third GMU host-defence peptide record in the catalog, alongside the red-legged salamander and hemp seed abstracts from the same lab.','downstream-application',0,'DDA','','bioactive-peptides');
+INSERT INTO algorithm VALUES(307,'Transformer architectures in LC-MS/MS proteomics (scoping review)','','',NULL,'Scoping review of Transformer and Transformer-hybrid models across de novo peptide sequencing and peptide property prediction. Searched PubMed/MEDLINE, Scopus and Web of Science for January 2017 to June 2026: 439 records, 207 after deduplication, 49 full texts assessed, 27 studies included, of which 13 were primarily de novo sequencing, 12 property prediction and 2 both. Finds encoder-decoder models dominant for spectrum-to-sequence generation and encoder-style or hybrid architectures common for fragment intensity, retention time, collision cross section and ion mobility. Its main argument is that reported gains are hard to compare at all, because benchmarks are heterogeneous, sequence-overlap auditing is incomplete, calibrated uncertainty is scarce and reporting is inconsistent.','review',NULL,NULL,'','');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4773,6 +4784,7 @@ INSERT INTO publication VALUES(354,'GyroNovo: Error-Guided Fragment Imputation w
 INSERT INTO publication VALUES(355,'Identification of Antimicrobial Peptides from HAN-J6 Hemp Seeds Using Mass Spectrometry and De Novo Peptide Sequencing','2026-09-24','10.13021/jssr2026.5545','George Mason University',NULL,'https://journals.gmu.edu/jssr/article/view/5545','Journal of Student-Scientists'' Research','abstract',NULL,NULL);
 INSERT INTO publication VALUES(356,'Discovering Antimicrobial Peptides in Red-Legged Salamander Skin Secretions using De Novo Protein Sequencing','2026-09-24','10.13021/jssr2026.5544','George Mason University',NULL,'https://journals.gmu.edu/jssr/article/view/5544','Journal of Student-Scientists'' Research','abstract',NULL,NULL);
 INSERT INTO publication VALUES(357,'Abstract 4402 De Novo Peptidomics and Bioprospecting Reveal Antimicrobial Peptide Candidates in Cryptobranchus alleganiensis (Hellbender) Skin Secretions','2026-05-01','10.1016/j.jbc.2026.112633','American Society for Biochemistry and Molecular Biology',NULL,'https://doi.org/10.1016/j.jbc.2026.112633','Journal of Biological Chemistry','abstract',NULL,NULL);
+INSERT INTO publication VALUES(358,'Transformer Architectures for De Novo Peptide Sequencing and Peptide Property Prediction in LC–MS/MS Proteomics','2026-09-01','10.1016/j.ailsci.2026.100184','Elsevier BV','Transformer architectures are increasingly used to interpret peptide-centred liquid chromatography-tandem mass spectrometry (LC-MS/MS) data, yet reported gains remain difficult to compare because studies differ in tasks, training corpora, peptide-overlap controls, acquisition settings, metrics and deployment criteria. This scoping review mapped Transformer and Transformer-hybrid applications in de novo peptide sequencing and peptide property prediction, with attention to architecture, evaluation validity, determinants of performance, reproducibility and research-workflow readiness. PubMed/MEDLINE, Scopus and Web of Science Core Collection were searched for English-language studies published from January 2017 through June 2026. Of 439 records identified, 207 remained after deduplication, 49 full texts were assessed and 27 studies were included. Thirteen studies primarily addressed de novo sequencing, 12 addressed property prediction and two covered both. Encoder-decoder models predominated in spectrum-to-sequence generation, whereas encoder-style and hybrid architectures were common for fragment intensity, retention time, collision cross section and ion-mobility prediction. Performance depended on architecture, but also on training-data quality, acquisition context, peptide length, fragment completeness, post-translational-modification representation, domain adaptation, physicochemical constraints and decoding strategy. Cross-study comparison was limited by heterogeneous benchmarks, incomplete sequence-overlap auditing, scarce calibrated uncertainty and inconsistent reporting of compute and reproducibility. Property prediction offered the clearest route to reusable workflow integration, while de novo sequencing remained a confidence-sensitive complement to established identification methods. Future evaluations require versioned benchmarks, auditable data independence, broader distribution-shift testing and standardised reporting of uncertainty and efficiency.','https://www.sciencedirect.com/science/article/pii/S2667318526000322','Artificial Intelligence in the Life Sciences','peer-reviewed',NULL,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5189,6 +5201,7 @@ INSERT INTO publication_algorithm VALUES(354,303);
 INSERT INTO publication_algorithm VALUES(355,304);
 INSERT INTO publication_algorithm VALUES(356,305);
 INSERT INTO publication_algorithm VALUES(357,306);
+INSERT INTO publication_algorithm VALUES(358,307);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7555,6 +7568,9 @@ INSERT INTO publication_author VALUES(356,1340,4);
 INSERT INTO publication_author VALUES(357,1341,1);
 INSERT INTO publication_author VALUES(357,1337,2);
 INSERT INTO publication_author VALUES(357,1340,3);
+INSERT INTO publication_author VALUES(358,1342,1);
+INSERT INTO publication_author VALUES(358,1343,2);
+INSERT INTO publication_author VALUES(358,1344,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -11273,6 +11289,7 @@ INSERT INTO publication_impact VALUES(351,'W7212149644',0,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(352,'W6910847234',0,'doi',NULL,2026,'2026-09-27T12:14:33+00:00');
 INSERT INTO publication_impact VALUES(353,'W7214396987',0,'doi',NULL,2026,'2026-09-29T06:36:42+00:00');
 INSERT INTO publication_impact VALUES(354,NULL,NULL,'unmatched',NULL,2026,'2026-09-29T06:53:55+00:00');
+INSERT INTO publication_impact VALUES(358,'W7214481012',0,'doi',NULL,2026,'2026-09-29T07:08:44+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -13390,13 +13407,16 @@ INSERT INTO publication_author_affiliation VALUES(353,1333,676,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(353,1334,501,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(353,147,532,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(353,151,532,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(358,1342,679,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(358,1343,679,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(358,1344,680,0,'openalex');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',78);
-INSERT INTO sqlite_sequence VALUES('city',294);
-INSERT INTO sqlite_sequence VALUES('affiliation',678);
-INSERT INTO sqlite_sequence VALUES('author',1341);
-INSERT INTO sqlite_sequence VALUES('algorithm',306);
-INSERT INTO sqlite_sequence VALUES('publication',357);
+INSERT INTO sqlite_sequence VALUES('country',79);
+INSERT INTO sqlite_sequence VALUES('city',295);
+INSERT INTO sqlite_sequence VALUES('affiliation',680);
+INSERT INTO sqlite_sequence VALUES('author',1344);
+INSERT INTO sqlite_sequence VALUES('algorithm',307);
+INSERT INTO sqlite_sequence VALUES('publication',358);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
