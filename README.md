@@ -39,7 +39,7 @@ If you're comfortable with SQLite, the source of truth is `denovo.db` and you ca
 - One row in **`algorithm`** if the method is new (set `name`, `algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, and `subdomain` for a `downstream-application`). Code repositories are **not** a column here: add one row per repo to **`algorithm_repository`** (`algorithm_id`, `url`, `sort_order`).
 - One row in **`publication`** (`title`, `publication_date`, `doi`, `publisher`, `url`, `journal`, `publication_type`).
 - One row per author in **`author`** if they are new, then one row per author in **`publication_author`** with `author_order` set to the byline position.
-- One row in **`publication_algorithm`** connecting the new publication to its model(s).
+- One row in **`publication_algorithm`** connecting the new publication to its model(s). Set `role` to `'uses'` for a tool the paper runs but does not introduce, and leave it at the `'describes'` default for the method the paper is about. The distinction drives what each method page lists as its papers and its authors, so a paper that ran PEAKS on a snake venom does not turn its authors into PEAKS authors.
 - Affiliations: insert into **`country` → `city` → `affiliation`** and link each author with **`author_affiliation`** (re-use existing rows where possible: author names and `(affiliation.name, department)` are the natural keys).
 
 Then regenerate the human-readable dump so the diff is reviewable:

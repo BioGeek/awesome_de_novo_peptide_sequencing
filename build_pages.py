@@ -358,9 +358,15 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             L.append(line)
         L.append("")
 
-    if ctx["algorithms"]:
-        L += ["## Methods and tools", ""]
-        for alg_id, name, descr in ctx["algorithms"]:
+    # The mirror of the split on the algorithm pages: what this paper
+    # contributes, then what it merely runs.
+    for heading, role in (("Methods and tools", "describes"),
+                          ("Methods it uses", "uses")):
+        rows = [r for r in ctx["algorithms"] if r[3] == role]
+        if not rows:
+            continue
+        L += [f"## {heading}", ""]
+        for alg_id, name, descr, _role in rows:
             line = "- " + site.link("algorithms", alg_id, name, from_kind=K)
             if descr:
                 line += f": {md_escape(descr)}"
@@ -554,15 +560,32 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                   "from the GitHub API, and this link is not a public GitHub "
                   "repository.", ""]
 
-    if ctx["pubs"]:
-        L += ["## Papers", ""]
-        for pub_id, title, date, journal, ptype in ctx["pubs"]:
+    # Two sections, never one: a paper that introduced this method and a paper
+    # that ran it on a snake venom are not the same claim, and PEAKS's list of
+    # 21 was 18 of the latter.
+    def paper_lines(rows: list[tuple]) -> None:
+        for pub_id, title, date, journal, ptype, _role in rows:
             line = f"- {site.link('publications', pub_id, title, from_kind=K)}"
             meta = [m for m in (str(date)[:4] if date else None, journal, ptype) if m]
             if meta:
                 line += f" ({md_escape(', '.join(meta))})"
             L.append(line)
         L.append("")
+
+    if ctx["described"]:
+        n = len(ctx["described"])
+        L += [f"## Paper{'s' if n != 1 else ''} describing it"
+              + (f" ({n})" if n > 1 else ""), ""]
+        paper_lines(ctx["described"])
+    if ctx["used"]:
+        n = len(ctx["used"])
+        L += [f"## Paper{'s' if n != 1 else ''} using it"
+              + (f" ({n})" if n > 1 else ""), "",
+              ("Applications and evaluations that ran this method. They are not "
+               "counted among its authors below." if n != 1 else
+               "An application or evaluation that ran this method. It is not "
+               "counted among its authors below."), ""]
+        paper_lines(ctx["used"])
 
     if ctx["authors"]:
         L += [f"## Authors ({len(ctx['authors'])})", "",
@@ -583,7 +606,10 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     if ctx["has_prolific_author"]:
         keys.append("bipartite")
     L += site.seen_in(keys)
-    earliest = min((p[2] for p in ctx["pubs"] if p[2]), default=None)
+    # The page's mtime is the date of the paper that DESCRIBES the method, not
+    # of the most recent paper to use it: the mtime is what the sitemap reports
+    # as <lastmod>, and a method does not change because someone ran it.
+    earliest = min((p[2] for p in ctx["described"] if p[2]), default=None)
     return "\n".join(L) + "\n", date_to_mtime(earliest)
 
 
@@ -731,19 +757,29 @@ def load(conn: sqlite3.Connection) -> dict:
     for r in q("SELECT name, MIN(id) AS k FROM affiliation GROUP BY name ORDER BY name"):
         d["inst_key"][r["name"]] = r["k"]
 
+    # publication_algorithm.role says what the paper does with the method,
+    # 'describes' or 'uses'. It is carried through both directions here: an
+    # algorithm page separates the papers that define it from the papers that
+    # merely run it, and a publication page says which of its methods it
+    # introduces. 47 of 408 links are 'uses', but they are concentrated: 18 of
+    # PEAKS's 21 papers are applications, and listing them as its papers also
+    # credited all 107 of their authors as its authors.
     d["pub_algs"] = defaultdict(list)
     d["alg_pubs"] = defaultdict(list)
     for r in q("SELECT pa.publication_id, a.id AS aid, a.name, a.short_description, "
-               "p.title, p.publication_date, p.journal, p.publication_type, a.kind "
+               "p.title, p.publication_date, p.journal, p.publication_type, a.kind, "
+               "pa.role "
                "FROM publication_algorithm pa "
                "JOIN algorithm a ON a.id = pa.algorithm_id "
                "JOIN publication p ON p.id = pa.publication_id "
                "ORDER BY pa.publication_id, a.name, a.id"):
         d["pub_algs"][r["publication_id"]].append(
-            (r["aid"], r["name"], r["short_description"], r["kind"]))
+            (r["aid"], r["name"], r["short_description"], r["kind"], r["role"]))
+        # role goes LAST: by_date_desc below reads the publication id at index 0
+        # and the date at index 2 of every tuple in these buckets.
         d["alg_pubs"][r["aid"]].append(
             (r["publication_id"], r["title"], r["publication_date"],
-             r["journal"], r["publication_type"]))
+             r["journal"], r["publication_type"], r["role"]))
 
     d["repos"] = defaultdict(list)
     for r in q("SELECT algorithm_id, url FROM algorithm_repository "
@@ -954,7 +990,8 @@ def main() -> int:
                         seen.add(nm)
                         uniq.append((k, nm))
                 authors.append((aid, name, uniq))
-            algs = [(a, n, desc) for a, n, desc, _k in d["pub_algs"].get(pid, [])]
+            algs = [(a, n, desc, role)
+                    for a, n, desc, _k, role in d["pub_algs"].get(pid, [])]
             counterpart = None
             if pid in d["versions"]:
                 relation, other_id = d["versions"][pid]
@@ -963,7 +1000,9 @@ def main() -> int:
                     counterpart = (other, relation)
             ji = d["journal_impact"].get(row["journal"] or "")
             ctx = {
-                "kinds": [k for *_x, k in d["pub_algs"].get(pid, [])],
+                # Indexed, not unpacked with a star: the tuple grew a role at
+                # the end, and `for *_x, k in` would have silently read that.
+                "kinds": [t[3] for t in d["pub_algs"].get(pid, [])],
                 "authors": authors,
                 "algorithms": algs,
                 "cites": d["cites"].get(pid, []),
@@ -987,10 +1026,13 @@ def main() -> int:
                     country = place.split(", ")[-1]
                     if country not in countries:
                         countries.append(country)
+            # Only the methods this author's papers DESCRIBE. Counting a
+            # 'uses' link here credited every venomics author with PEAKS,
+            # which the page then headlined as "Works on PEAKS".
             algs, seen = [], set()
             for pub_id, *_rest in d["author_pubs"].get(aid, []):
-                for a, n, _desc, _k in d["pub_algs"].get(pub_id, []):
-                    if n not in seen:
+                for a, n, _desc, _k, role in d["pub_algs"].get(pub_id, []):
+                    if role == "describes" and n not in seen:
                         seen.add(n)
                         algs.append((a, n))
             ctx = {
@@ -1018,15 +1060,27 @@ def main() -> int:
             # defining paper's byline leads, then append anyone who first
             # appears on a later paper. alg_pubs is newest-first for the Papers
             # section, hence the reversed().
+            #
+            # Authors come from the DESCRIBING papers only. Taking them from
+            # every linked paper made PEAKS an entry with 107 authors, most of
+            # whom had simply run it on a snake venom.
+            # alg_pubs is newest-first. The describing papers are flipped to
+            # oldest-first: the paper that introduced the method should lead the
+            # section, and its byline should lead the author list. The using
+            # papers stay newest-first, where the recent applications are.
+            pubs = d["alg_pubs"].get(gid, [])
+            described = [t for t in pubs if t[5] == "describes"][::-1]
+            used = [t for t in pubs if t[5] == "uses"]
             authors, seen = [], set()
-            for pub_id, *_r in reversed(d["alg_pubs"].get(gid, [])):
+            for pub_id, *_r in described:
                 for a, name in d["pub_authors"].get(pub_id, []):
                     if name not in seen:
                         seen.add(name)
                         authors.append((a, name))
             repos = d["repos"].get(gid, [])
             ctx = {
-                "pubs": d["alg_pubs"].get(gid, []),
+                "described": described,
+                "used": used,
                 "repos": repos,
                 "authors": authors,
                 "has_metrics": any(u in d["metric_urls"] for u in repos),

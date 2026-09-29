@@ -154,13 +154,70 @@ other's new rows.
 
 **17 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
-Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm`; thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
+Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
 `publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (244), `'preprint'` (78), `'thesis'` (16), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1) and `'abstract'` (3). Use one of those eight; do not invent a ninth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. Two cases so far. Publication 30 is an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Publication 352 is RankNovo's arXiv posting, `10.48550/arXiv.2505.17552`, dated 2025-05-23, which is AFTER ICLR 2025 in April; the conference version is publication 24, from OpenReview. Note the arXiv title differs from the conference one ("Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing" against "RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing"), so unlike publication 30 it needs no slug suffix, and it is deliberately NOT linked through `publication_version`. **The arXiv id is the tell: a `25xx` id on a paper whose version of record predates it is a postprint, however the submitter labels it.** Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
+
+## Describing a method or using it
+
+`publication_algorithm.role` says what a paper does with a method: `'describes'`
+or `'uses'`. 47 of the 408 are `'uses'`, and they are concentrated rather than
+spread: 18 of PEAKS's 21 papers are applications that ran it, mostly snake-venom
+proteomics.
+
+Without the column the two were the same link, and the consequences were not
+cosmetic. PEAKS's page listed 21 papers under one heading and credited **107
+authors**, nearly all of whom had merely used it; the true byline is 8. The
+author→model graph carried 24 edges asserting that a venomics author had helped
+publish PEAKS. And `MIN(publication_date)` over every link dated PepSeq and
+manual interpretation to publication 289, an application paper, rather than to
+the Micromass manual and the Current Protocols tutorial that document them.
+
+The rule:
+
+- **`'describes'`** — introduces, defines, extends or documents the method.
+  Includes the other version of the same work (a preprint and its version of
+  record both describe), a follow-up method paper by the same group (PEAKS has
+  three), and an author's own thesis about their method.
+- **`'uses'`** — applies it or reports results from it, while the method itself
+  is described elsewhere.
+
+`'describes'` is the DEFAULT, so an insert that predates the column still means
+what it meant, and a new application link has to say `role = 'uses'` explicitly.
+When adding a paper that runs an existing tool, the tool link is `'uses'` and the
+paper's own workflow row is `'describes'`.
+
+**The invariant worth re-checking after any role edit** is that every publication
+with a link still has a describing one. A paper with only `'uses'` links claims to
+contribute nothing, which for a paper in this catalog means the role is wrong:
+
+```sql
+SELECT p.id, p.title FROM publication p
+ WHERE EXISTS (SELECT 1 FROM publication_algorithm WHERE publication_id = p.id)
+   AND NOT EXISTS (SELECT 1 FROM publication_algorithm
+                    WHERE publication_id = p.id AND role = 'describes');
+```
+
+The backfill was mechanical, and the two things it got wrong are the two shapes
+to watch for. A link is `'describes'` when the paper links to no other method at
+all, or when it is that method's earliest paper (or the other version of that
+earliest paper); everything else is `'uses'`. That misread **publication 289**,
+an application that is nonetheless the earliest catalog paper for both PepSeq and
+manual interpretation, and **publication 339**, Samaneh Azari's thesis, which is
+the sole author of both methods it links and so describes rather than uses them.
+The rule cannot see either case, which is why the column is curated data and not
+a view.
+
+Four places read the role rather than the raw link: the algorithm page splits its
+papers and takes its authors from the describing ones, the publication page
+mirrors the split, `algorithms.first_pub` and `family_firsts` date a method by
+the paper that describes it, and the author→model graph uses the `models_described`
+column rather than `models`. The publications table keeps the full `models` list,
+because "which papers involved PEAKS" is a question worth being able to answer.
 
 ## Publication dates
 

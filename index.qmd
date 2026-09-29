@@ -53,6 +53,16 @@ pubs = pd.read_sql(
            (SELECT GROUP_CONCAT(alg.name, ', ')
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS models,
+           -- The methods this paper DESCRIBES, as opposed to every method it
+           -- names. `models` above stays the full list, because the table and
+           -- the BibTeX are about what a paper involved; the author-to-model
+           -- graph needs the narrower one, or every venomics author becomes a
+           -- PEAKS author. 47 of 408 publication_algorithm links are 'uses',
+           -- and 18 of PEAKS's own 21 papers are applications of it.
+           (SELECT GROUP_CONCAT(alg.name, ', ')
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id AND pal.role = 'describes')
+             AS models_described,
            -- Repository URLs come from algorithm_repository (1-N rows per algo).
            -- Concatenate with whitespace so the OJS multi-link renderer keeps working.
            (SELECT GROUP_CONCAT(ar.url, ' ')
@@ -69,9 +79,16 @@ pubs = pd.read_sql(
            --   5. post-processor (paper introduces a post-processor)
            --   6. adjacent (paper introduces adjacent tooling)
            --   7. algorithm (default — paper introduces a de novo algorithm)
+           --
+           -- Restricted to the links the paper DESCRIBES, which is what "what
+           -- IT contributes" means. Measured: identical for all 357 rows to
+           -- what the priority order alone returned, because a paper that uses
+           -- a method almost always describes something further down the list.
+           -- The filter is still worth having, since it states the rule the
+           -- priority order was approximating.
            (SELECT alg.kind
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
-              WHERE pal.publication_id = p.id
+              WHERE pal.publication_id = p.id AND pal.role = 'describes'
               ORDER BY CASE alg.kind
                 WHEN 'downstream-application' THEN 1
                 WHEN 'review'                 THEN 2
@@ -223,7 +240,18 @@ algorithms = pd.read_sql(
            alg.is_deep_learning AS is_dl,
            alg.acquisition_mode AS acquisition,
            alg.subdomain AS subdomain,
-           MIN(p.publication_date) AS first_pub
+           -- A method's first publication is the paper that DESCRIBES it, not
+           -- the first paper to mention it. Two rows differ: PepSeq and manual
+           -- interpretation were both dated 2000-10-01 by publication 289, an
+           -- application that used them, rather than by the Micromass manual
+           -- (2001-12-10) and the Current Protocols tutorial (2002-03-01) that
+           -- actually document them. COALESCE is a safety net: every algorithm
+           -- with a link has a 'describes' link today, and that is an invariant
+           -- worth re-checking after any role edit, but an empty axis value
+           -- would drop a method off the swim lane silently.
+           COALESCE(
+             MIN(CASE WHEN pal.role = 'describes' THEN p.publication_date END),
+             MIN(p.publication_date)) AS first_pub
     FROM algorithm alg
     LEFT JOIN publication_algorithm pal ON alg.id = pal.algorithm_id
     LEFT JOIN publication p ON pal.publication_id = p.id
@@ -363,7 +391,10 @@ family_firsts = pd.read_sql(
         FROM algorithm alg
         JOIN publication_algorithm pa ON pa.algorithm_id = alg.id
         JOIN publication p            ON p.id = pa.publication_id
+        -- Describing papers only, for the same reason as first_pub above: this
+        -- chart dates a family by when its earliest method APPEARED.
         WHERE COALESCE(alg.algorithm_family, '') <> ''
+          AND pa.role = 'describes'
         GROUP BY alg.id
     ),
     ranked AS (
@@ -2051,8 +2082,8 @@ application_timeline = {
 
 Which sequencing tools does each application community actually reach for? Two signals can drive the Sankey and they're different strengths:
 
-- **Uses**: the paper has a curated `publication_algorithm` link asserting "this method was used" — usually because the methods section names the tool explicitly.
-- **Cites**: the paper's Crossref reference list contains a publication describing the tool — a weaker signal (the tool might just be mentioned as prior art). Rebuilt monthly by `build_citations.py`.
+- **Uses**: the paper has a curated `publication_algorithm` link to the tool — usually because the methods section names it explicitly. These are the links whose `role` is `uses`, plus the rare case of an application paper that also introduces a tool.
+- **Cites**: the paper's Crossref reference list contains a publication *describing* the tool — a weaker signal (the tool might just be mentioned as prior art). Rebuilt monthly by `build_citations.py`.
 
 Use the toggle to switch between them, or view the union of both. An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper satisfies the selected signal. Edge thickness is the paper count.
 
@@ -2071,9 +2102,15 @@ application_sankey = {
   // For each pub, gather its algorithm rows (parsed from the comma-joined
   // 'models' string).
   const pub_algs = new Map()
+  // And separately the methods each paper DESCRIBES, for the citation signal
+  // below: citing a venomics paper that happened to run PEAKS is not evidence
+  // that the citing paper uses PEAKS, but citing the PEAKS paper is.
+  const pub_described = new Map()
   for (const p of pubs_t) {
-    const names = (p.models ?? "").split(",").map(s => s.trim()).filter(Boolean)
-    pub_algs.set(p.id, names.map(n => alg_by_name.get(n)).filter(Boolean))
+    const resolve = field => (field ?? "").split(",").map(s => s.trim())
+      .filter(Boolean).map(n => alg_by_name.get(n)).filter(Boolean)
+    pub_algs.set(p.id, resolve(p.models))
+    pub_described.set(p.id, resolve(p.models_described))
   }
 
   // For each downstream-application publication, resolve its subdomain via
@@ -2118,7 +2155,7 @@ application_sankey = {
     for (const e of citations_t) {
       const sd = pub_subdomain.get(e.citing_id)
       if (!sd) continue
-      for (const a of pub_algs.get(e.cited_id) || []) record(e.citing_id, sd, a)
+      for (const a of pub_described.get(e.cited_id) || []) record(e.citing_id, sd, a)
     }
   }
 
@@ -3296,10 +3333,14 @@ author_algo_network = {
   // points at the version-suffixed label so each release becomes its own node.
   const edge_w = new Map()  // key: `${author}|${algo}`
   const algo_to_base = new Map()  // versioned label → base algorithm name (for family lookup)
+  // models_described, not models: an edge here says "helped publish this
+  // model", so a paper that merely ran PEAKS must not make its authors PEAKS
+  // authors. That edge set is what the algorithm pages show as a method's
+  // authors, and it took PEAKS from 107 of them to 6.
   for (const p of pubs_t) {
-    if (!p.authors || !p.models) continue
+    if (!p.authors || !p.models_described) continue
     const authors = String(p.authors).split(",").map(s => s.trim()).filter(Boolean)
-    const models  = String(p.models).split(",").map(s => s.trim()).filter(Boolean)
+    const models  = String(p.models_described).split(",").map(s => s.trim()).filter(Boolean)
     for (const a of authors) {
       if (!prolific.has(a)) continue
       for (const m of models) {
@@ -4964,7 +5005,7 @@ viewof author_search = Inputs.search(authors_table_rows, {
 
 The site is generated from `denovo.db` (SQLite, the source of truth). If you're comfortable with SQL:
 
-1. Edit `denovo.db` with any SQLite tool (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), DataGrip, …). A new paper typically needs rows in `publication`, `publication_author`, and `publication_algorithm`; a new model also needs a row in `algorithm` (set `kind`, `is_deep_learning`, `acquisition_mode`). Affiliations cascade through `country → city → affiliation` and link to authors via `author_affiliation`.
+1. Edit `denovo.db` with any SQLite tool (`sqlite3` CLI, [DB Browser for SQLite](https://sqlitebrowser.org/), DataGrip, …). A new paper typically needs rows in `publication`, `publication_author`, and `publication_algorithm` (set `role` to `uses` for a tool the paper runs rather than introduces, which keeps it out of that tool's authors and papers); a new model also needs a row in `algorithm` (set `kind`, `is_deep_learning`, `acquisition_mode`). Affiliations cascade through `country → city → affiliation` and link to authors via `author_affiliation`.
 2. Regenerate the human-readable SQL dump so the diff is reviewable:
    ```bash
    sqlite3 denovo.db .dump > denovo.sql
