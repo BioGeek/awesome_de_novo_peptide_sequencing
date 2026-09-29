@@ -206,6 +206,11 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
 <ul>
 <li><a href="../algorithms/insearch.html">INSearch</a>: Prototype AI-native database search that replaces the combinatorial scan with retrieval. A dual encoder projects experimental spectra and theoretical peptide sequences into one shared latent space under a contrastive objective with variance regularisation to prevent feature collapse, and an alternative alignment-and-uniformity loss; approximate nearest-neighbour search then returns the top-k candidates, cutting retrieval from the O(S × ρP) of a conventional engine to O(S(log P + K)). Because retrieval is approximate, candidates are re-ranked by InstaNovo’s decoder run in teacher-forcing mode as a scoring function, aggregating residue log-probabilities by geometric mean. On the nine-species benchmark the held-out yeast split reaches Recall@1/5/100 of 60.0/78.9/91.9%, with neural re-scoring lifting Recall@1 to 82.9%; the harder S. brodae proteome reaches only 55.5% Recall@100, pointing to a need for larger-scale training.</li>
+</ul>
+</section>
+<section id="methods-it-uses" class="level2">
+<h2 class="anchored" data-anchor-id="methods-it-uses">Methods it uses</h2>
+<ul>
 <li><a href="../algorithms/instanovo.html">InstaNovo</a>: Knapsack beam search</li>
 </ul>
 </section>
