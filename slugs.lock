@@ -304,6 +304,7 @@ algorithms	302	pi-mnovo
 algorithms	303	gyronovo
 algorithms	304	hemp-seed-antimicrobial-peptides
 algorithms	305	red-legged-salamander-skin-amps
+algorithms	306	hellbender-skin-amps
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -1611,6 +1612,7 @@ authors	1337	edward-bentil
 authors	1338	andy-wu
 authors	1339	manisha-lnu
 authors	1340	barney-bishop
+authors	1341	syeda-raika-shahid
 institutions	1	instadeep-ltd
 institutions	2	technical-university-of-denmark
 institutions	4	delft-university-of-technology
@@ -2365,6 +2367,7 @@ publications	353	pi-mnovo-improves-de-novo-peptide-sequencing-through-microbial-
 publications	354	gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo
 publications	355	identification-of-antimicrobial-peptides-from-han-j6-hemp-seeds-using-mass
 publications	356	discovering-antimicrobial-peptides-in-red-legged-salamander-skin-secretions
+publications	357	abstract-4402-de-novo-peptidomics-and-bioprospecting-reveal-antimicrobial
 venues	1	biorxiv
 venues	2	nature-machine-intelligence
 venues	7	aaai-2026

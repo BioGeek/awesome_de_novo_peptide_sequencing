@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 302 `algorithm` rows has at least one linked publication, because
+Every one of the 303 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -47,40 +47,16 @@ When a manuscript appears, the classification is already worked out:
 `kind='algorithm'`, `algorithm_family='Transformer (AR)'`, `is_deep_learning=1`,
 `acquisition_mode='DDA'` (NovoBench benchmarks are DDA), repo as above.
 
-### Hellbender antimicrobial peptides
+### Hellbender antimicrobial peptides — ADDED 2026-09-29
 
-| | |
-|---|---|
-| Artifact | ASBMB Annual Meeting abstract, `10.1016/j.jbc.2026.112633`, J Biol Chem 302:112633 (May 2026) |
-| Title | "Abstract 4402 De Novo Peptidomics and Bioprospecting Reveal Antimicrobial Peptide Candidates in *Cryptobranchus alleganiensis* (Hellbender) Skin Secretions" |
-| Authors | Syeda Raika Shahid, Edward Bentil, Barney Bishop (George Mason University) |
-| Method | PEAKS de novo sequencing of skin-secretion peptides, SPE enrichment, Orbitrap Fusion, then AMP prediction over the de novo sequences |
-| Last checked | 2026-09-21 |
-
-In scope on the merits and the classification is already clear: de novo
-peptidomics is the subject rather than an aside, PEAKS is named, and AMP
-candidates from an under-sampled amphibian are a real downstream application.
-It waits here purely because of what the artifact IS.
-
-The jbc.org `/fulltext` URL makes it look like a research article; it is not.
-The title itself begins "Abstract 4402", OpenAlex types it `conference-abstract`,
-and Crossref carries no abstract text, all consistent with the meeting
-supplement. The catalog holds **no** meeting abstracts, and all nine
-`ML conference` rows are full peer-reviewed proceedings papers (ICML, ICLR,
-NeurIPS, IJCAI), not abstracts. A conference abstract is also thinner than the
-weakest precedent named above, DiffNovo-DIA, which at least has a thesis behind
-it, and no `publication_type` value fits without inventing an eighth.
-
-Do not confuse it with "Novel antimicrobial peptides and peptide-microbiome
-crosstalk in Appalachian salamander skin" (`10.1038/s41522-025-00837-0`, npj
-Biofilms and Microbiomes, 2025). Different group (Muletz-Wolz, Smithsonian),
-different species, no shared authors, and no de novo sequencing at all: it is
-transcriptome-guided database search. Not a substitute and not a candidate.
-
-When a full paper appears: `kind='downstream-application'`,
-`subdomain='bioactive-peptides'` (or a new amphibian/AMP subdomain if several
-such papers arrive together), `is_deep_learning=0`, `acquisition_mode='DDA'`,
-linked to the existing PEAKS row.
+Promoted into the catalog as publication 357, once `publication_type`
+`'abstract'` existed. This entry had recorded that it was "in scope on the
+merits" and waiting "purely because of what the artifact IS", since "no
+`publication_type` value fits without inventing an eighth". Two GMU
+Journal of Student-Scientists' Research abstracts from the same lab forced that
+eighth type, and this became addable in the same move. Kept as a short note
+because the entry is the reason the type exists; see CLAUDE.md's schema
+section.
 
 ### bedrock (MS2 foundation model) and MDLMDec
 

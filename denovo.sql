@@ -1312,6 +1312,7 @@ INSERT INTO author VALUES(1337,'Edward Bentil',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1338,'Andy Wu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1339,'Manisha Lnu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1340,'Barney Bishop',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1341,'Syeda Raika Shahid',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4095,6 +4096,7 @@ INSERT INTO author_affiliation VALUES(1340,678);
 INSERT INTO author_affiliation VALUES(1337,678);
 INSERT INTO author_affiliation VALUES(1336,678);
 INSERT INTO author_affiliation VALUES(1339,678);
+INSERT INTO author_affiliation VALUES(1341,678);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4403,6 +4405,7 @@ INSERT INTO algorithm VALUES(302,'π-MNovo','','',NULL,'De novo sequencer adapte
 INSERT INTO algorithm VALUES(303,'GyroNovo','','','Transformer (AR)','Attacks missing b- and y-ion fragments on two fronts. Rather than treating imputation as a fixed reconstruction task, it uses the decoder errors seen during training to steer the imputation objective toward the fragments that actually cause mistakes, and to build easy and hard augmented views of each spectrum so the decoder learns under varying spectral corruption. It also gives self-attention a mass-aware inductive bias, using rotary embeddings to encode pairwise mass differences between peaks. Inference needs no extra inputs or search. Reports about 9 points of peptide-level and 7 points of amino-acid-level precision over the previous best on NovoBench.','algorithm',1,'DDA','','');
 INSERT INTO algorithm VALUES(304,'Hemp seed antimicrobial peptides','','',NULL,'Screens HAN-J6 hemp seed (Cannabis sativa L.) protein for antimicrobial peptides, a source not previously characterised this way. Defatting, alkaline extraction and acid precipitation, then trypsin/Lys-C digestion and LC-MS; PEAKS 12 de novo sequencing returned 3,985 peptides, and CAMP R3 and AMP Scanner_V2 screened the ALC>=80% list to 56 and 260 candidates respectively, 27 of which both tools agreed on.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(305,'Red-legged salamander skin AMPs','','',NULL,'Looks for antimicrobial peptides in red-legged salamander skin secretions, where amphibian work has concentrated on frogs and toads and salamander secretions are barely characterised. nanoLC-MS/MS with PEAKS de novo sequencing found 135 unique peptides across four injections, of which CAMP-R3 and AMP Scanner predicted 36 to be antimicrobial.','downstream-application',0,'DDA','','bioactive-peptides');
+INSERT INTO algorithm VALUES(306,'Hellbender skin AMPs','','',NULL,'Bioprospects the skin secretions of Cryptobranchus alleganiensis, the hellbender salamander, for antimicrobial peptide candidates. Solid-phase extraction enrichment and Orbitrap Fusion acquisition, PEAKS de novo sequencing of the secretion peptides, then antimicrobial prediction over the de novo sequences. The third GMU host-defence peptide record in the catalog, alongside the red-legged salamander and hemp seed abstracts from the same lab.','downstream-application',0,'DDA','','bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4769,6 +4772,7 @@ INSERT INTO publication VALUES(353,'π-MNovo improves de novo peptide sequencing
 INSERT INTO publication VALUES(354,'GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing','2026-09-24','10.48550/arXiv.2609.30542','arXiv','De novo peptide sequencing from tandem mass spectra is essential for identifying peptides without relying on reference databases. Despite advances in deep learning, accurate sequencing remains challenging because experimental spectra are often sparse, noisy, and incomplete, leaving informative b- and y-ion fragments unobserved. Existing methods attempt to recover this missing evidence via latent-space imputation before autoregressive decoding. However, they typically treat imputation as a fixed reconstruction task, without considering which missing fragments are most relevant to decoder errors. Moreover, existing peak representations do not explicitly model mass differences between peaks, despite their fundamental importance. We introduce GyroNovo, a framework with two main contributions. First, we use decoder errors observed during training to adapt the imputation objective, prioritizing fragments associated with frequent decoding errors. We further use the decoder error distribution to construct easy and hard augmented views of each spectrum, enabling the decoder to learn under varying degrees of spectral corruption and missing-fragment severity. Second, we introduce a mass-aware inductive bias into self-attention by using rotary embeddings to encode pairwise mass differences between spectral peaks. Together, these components align missing-fragment recovery with decoder behavior while explicitly incorporating the mass relationships that underlie peptide fragmentation. At inference time, GyroNovo retains a standard encoder-imputer-decoder architecture and requires neither additional inputs nor auxiliary search procedures. Experiments on NovoBench show gains of about 9 percentage points in peptide-level precision and 7 percentage points in amino-acid-level precision over the state-of-the-art baseline. Code: https://github.com/UBC-NLP/gyronovo.','https://arxiv.org/abs/2609.30542','arXiv','preprint',NULL,'arxiv');
 INSERT INTO publication VALUES(355,'Identification of Antimicrobial Peptides from HAN-J6 Hemp Seeds Using Mass Spectrometry and De Novo Peptide Sequencing','2026-09-24','10.13021/jssr2026.5545','George Mason University',NULL,'https://journals.gmu.edu/jssr/article/view/5545','Journal of Student-Scientists'' Research','abstract',NULL,NULL);
 INSERT INTO publication VALUES(356,'Discovering Antimicrobial Peptides in Red-Legged Salamander Skin Secretions using De Novo Protein Sequencing','2026-09-24','10.13021/jssr2026.5544','George Mason University',NULL,'https://journals.gmu.edu/jssr/article/view/5544','Journal of Student-Scientists'' Research','abstract',NULL,NULL);
+INSERT INTO publication VALUES(357,'Abstract 4402 De Novo Peptidomics and Bioprospecting Reveal Antimicrobial Peptide Candidates in Cryptobranchus alleganiensis (Hellbender) Skin Secretions','2026-05-01','10.1016/j.jbc.2026.112633','American Society for Biochemistry and Molecular Biology',NULL,'https://doi.org/10.1016/j.jbc.2026.112633','Journal of Biological Chemistry','abstract',NULL,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5184,6 +5188,7 @@ INSERT INTO publication_algorithm VALUES(353,302);
 INSERT INTO publication_algorithm VALUES(354,303);
 INSERT INTO publication_algorithm VALUES(355,304);
 INSERT INTO publication_algorithm VALUES(356,305);
+INSERT INTO publication_algorithm VALUES(357,306);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7547,6 +7552,9 @@ INSERT INTO publication_author VALUES(356,1338,1);
 INSERT INTO publication_author VALUES(356,1339,2);
 INSERT INTO publication_author VALUES(356,1337,3);
 INSERT INTO publication_author VALUES(356,1340,4);
+INSERT INTO publication_author VALUES(357,1341,1);
+INSERT INTO publication_author VALUES(357,1337,2);
+INSERT INTO publication_author VALUES(357,1340,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -13386,9 +13394,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',294);
 INSERT INTO sqlite_sequence VALUES('affiliation',678);
-INSERT INTO sqlite_sequence VALUES('author',1340);
-INSERT INTO sqlite_sequence VALUES('algorithm',305);
-INSERT INTO sqlite_sequence VALUES('publication',356);
+INSERT INTO sqlite_sequence VALUES('author',1341);
+INSERT INTO sqlite_sequence VALUES('algorithm',306);
+INSERT INTO sqlite_sequence VALUES('publication',357);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
