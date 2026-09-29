@@ -102,6 +102,41 @@ the PR describe the same model.
 
 ## Considered, not added
 
+- **"Artificial intelligence integration into biological sciences: Applications,
+  opportunities and challenges"** (`10.56612/ijaaeb.v6i1.259`, Int J Applied and
+  Experimental Biology, online 2026-09-14). A single-author review, filed under
+  the journal's **Plant Biology** section and written from a Botany department,
+  whose entire *de novo* content is one clause: "Models such as XL-MSDigger can
+  predict peptide sequences from MS spectra, while DLDN-Bench can perform *de
+  novo* peptide sequencing."
+
+  This is the shape the review bar exists to exclude, and topic X here is all of
+  AI in biology. Admitting it would admit every AI-in-biology review ever
+  written. Same call as the bean-peptides review above, for the same reason.
+
+  Two notes for anyone who revisits it. The PDF reads as an unfinished proof:
+  the header says `2027, Vol. 6, NO. 1, ???` and `Published: ????????`, both
+  placeholders, while Crossref indexed it 2026-09-14, so the volume year and the
+  online date disagree by a year. And of the two tools it names, DLDN-Bench is
+  already algorithm 174 here.
+
+- **XL-MSDigger** (`10.1038/s41467-026-69489-8`, Nat Commun 17:2554,
+  2026-02-10). Reached via the review above, which describes it as a tool that
+  "can predict peptide sequences from MS spectra". It does not. Reading the
+  paper: it is a deep-learning platform for cross-linking MS built on Deep4D-XL,
+  which predicts **retention time, collisional cross-section and fragment ion
+  intensity** for cross-linked peptides, and uses those predictions for
+  rescoring, FDR evaluation and predicted spectral libraries in DDA and DIA
+  cross-link identification.
+
+  Property prediction and rescoring over a database search, with no *de novo*
+  component anywhere, which is exactly the ground CorrDIA was refused on: out of
+  scope even as an adjacent tool. Revisit only if a later version sequences
+  cross-linked peptides without a database.
+
+  Worth recording that the review's paraphrase of it was wrong, since that
+  paraphrase is the only reason it looked like a candidate.
+
 - **"De Novo Peptide Sequencing by Tandem Mass Spectrometry"**, ResolveMass
   Laboratories Inc. (<https://resolvemass.ca/de-novo-peptide-sequencing-by-tandem-mass-spectrometry/>),
   bylined Anusha Sinha, 2026-08-07. **Kept here because it is a genuinely good
