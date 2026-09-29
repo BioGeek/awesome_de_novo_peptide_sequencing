@@ -581,13 +581,16 @@ country_color = {
 // The first 13 hexes are the architectures swim-lane's canonical band colours,
 // so the scatter and the swim-lane now agree.
 family_color_scale = {
+  // Heuristic, Graph / DP and Learning-to-rank used to be pinned to three near
+  // identical greys (#8a96a0, #6c757d, #5f6b7a). They are not here any more, so
+  // they get a generated colour like any other family. Heuristic and Graph / DP
+  // are the two oldest and therefore the two biggest lanes at the TOP of the
+  // swim lane, 12.8 deltaE apart: the chart opened on two grey slabs, which is
+  // the main reason it read as colourless.
   const canonical = {
-    "Heuristic":         "#8a96a0",
-    "Graph / DP":        "#6c757d",
     "HMM":               "#4d6a8c",
     "Decision tree":     "#7b6f43",
     "Random Forest":     "#a5673f",
-    "Learning-to-rank":  "#5f6b7a",
     "CNN + RNN":         "#4C72B0",
     "Transformer (AR)":  "#DD8452",
     "GNN":               "#937860",
@@ -596,22 +599,61 @@ family_color_scale = {
     "Diffusion":         "#C44E52",
     "Flow":              "#937DC2"
   }
-  // Non-canonical families draw from these schemes, filtered for contrast:
-  // Set3 and Paired carry near-white pastels (#ffffb3, #ffed6f) that vanish as
-  // small dots on the page background. Drop anything too light to see.
-  const luminance = hex => {
+  // The other 36 families get a GENERATED colour rather than a slot in a d3
+  // scheme. No scheme is long enough: cycling `i % palette.length` repeats a
+  // colour, which is exactly the ambiguity this scale exists to prevent, and the
+  // schemes carry near-white pastels (#ffffb3, #ffed6f) that vanish as a small
+  // dot. Colours are drawn instead from a 24-hue grid at FIXED CIE lightness and
+  // chroma, `d3.lch(46, 58, h)`, which keeps every one equally dark: these have
+  // to carry a 10 px bold label as well as a dot. LCh and not HSL because HSL at
+  // one lightness renders yellow far paler than blue.
+  //
+  // Assignment walks families in order of FIRST APPEARANCE and picks, for each,
+  // the grid hue furthest in CIE Lab from its neighbours in that order. Both
+  // swim lanes and "The long view" lay families out chronologically, so a
+  // family's neighbours in this walk are the lanes it will actually sit next
+  // to, which is the only adjacency the eye compares. Alphabetical assignment
+  // measured four adjacent pairs under the deltaE >= 20 bar, worst 11.1; this
+  // measured none. The order is a property of the data, not of one chart, so
+  // the scale stays chart-independent.
+  const lab = hex => {
     const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
-      .map(c => c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+      .map(c => c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+    const X = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047
+    const Y =  0.2126 * r + 0.7152 * g + 0.0722 * b
+    const Z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883
+    const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116
+    return [116 * f(Y) - 16, 500 * (f(X) - f(Y)), 200 * (f(Y) - f(Z))]
   }
-  const extra_palette = d3.schemeTableau10
-    .concat(d3.schemeDark2, d3.schemeSet1, d3.schemeSet2, d3.schemeSet3)
-    .filter(c => /^#[0-9a-f]{6}$/i.test(c) && luminance(c) < 0.5)
-  const rest = Array.from(new Set(
+  const dE = (p, q) => {
+    const a = lab(p), b = lab(q)
+    return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2])
+  }
+  const first_pub = d3.rollup(
+    transpose(algorithms).filter(r => r.family && r.first_pub),
+    v => d3.min(v, r => r.first_pub),
+    r => r.family
+  )
+  const ordered = Array.from(new Set(
     transpose(algorithms).map(r => r.family).filter(Boolean)
-  )).filter(f => !(f in canonical)).sort()
+  )).sort((a, b) =>
+    d3.ascending(first_pub.get(a) ?? "9999", first_pub.get(b) ?? "9999") ||
+    d3.ascending(a, b))
+  const grid = d3.range(24).map(i => d3.lch(46, 58, i * 15).formatHex())
   const map = new Map(Object.entries(canonical))
-  rest.forEach((f, i) => map.set(f, extra_palette[i % extra_palette.length]))
+  const taken = Object.values(canonical)
+  ordered.forEach((f, i) => {
+    if (map.has(f)) return
+    // Neighbours in the chronological walk: the one before (already coloured)
+    // and the one after when it is canonical, so a generated colour is never
+    // dropped between two similar fixed ones.
+    const near = [map.get(ordered[i - 1]), canonical[ordered[i + 1]]].filter(Boolean)
+    const score = c => (near.length ? d3.min(near, n => dE(c, n)) : 999)
+                       + 0.25 * d3.min(taken, t => dE(c, t))
+    const pick = d3.greatest(grid, score)
+    map.set(f, pick)
+    taken.push(pick)
+  })
   return f => map.get(f) ?? "#9c755f"     // fallback also covers the no-family group
 }
 top_authors_t = transpose(top_authors)
@@ -1138,7 +1180,11 @@ Plot.plot({
   marginLeft: 50,
   width: 1100,
   height: 360,
-  x: { label: "Year", tickFormat: "d", interval: 1 },
+  marginBottom: 48,
+  // labelOffset + the matching marginBottom put the axis label on its own line
+  // below the ticks. Plot centres it on the tick baseline for a band scale,
+  // where it touched the 2005 tick by 3 px.
+  x: { label: "Year", tickFormat: "d", interval: 1, labelOffset: 40 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
   color: { legend: true, scheme: "blues", domain: ["preprint", "postprint", "peer-reviewed", "ML conference", "thesis", "commentary", "abstract"] },
   marks: [
@@ -1170,80 +1216,43 @@ viewof family_filter = Inputs.checkbox(families, { label: "Families", value: fam
 ```{ojs}
 //| echo: false
 innovations_timeline = {
-  // Notebook-style band order: oldest paradigm at the bottom, newest at the top.
-  // Classical (non-DL) bands sit at the bottom: heuristic → graph/DP → HMM →
-  // decision tree → random forest → learning-to-rank → CNN+RNN → ... → diffusion.
-  // NOT the lane order (that is chronological, computed below). This is the set of
-  // families with a hand-tuned colour and height; everything else falls back.
-  const band_order = [
-    "Heuristic", "Graph / DP", "HMM", "Decision tree",
-    "Random Forest", "Learning-to-rank",
-    "CNN + RNN", "Transformer (AR)", "GNN", "CNN", "Transformer (NAR)", "Diffusion", "Flow"
-  ]
-  const band_color = {
-    "Heuristic":         "#8a96a0",
-    "Graph / DP":        "#6c757d",
-    "HMM":               "#4d6a8c",
-    "Decision tree":     "#7b6f43",
-    "Random Forest":     "#a5673f",
-    "Learning-to-rank":  "#5f6b7a",
-    "CNN + RNN":         "#4C72B0",
-    "Transformer (AR)":  "#DD8452",
-    "GNN":               "#937860",
-    "CNN":               "#8172B3",
-    "Transformer (NAR)": "#55A868",
-    "Diffusion":         "#C44E52",
-    "Flow":              "#937DC2"
-  }
-  // Tiers chosen to spread labels both above and below the band center.
-  // Tier positions are GENERATED, not hard-coded, and there are always at least
-  // as many as the busiest band has entries (see Y_TIERS below). A fixed list
-  // is the wrong shape here: MIN_GAP_DAYS is derived from the full ~38-year
-  // chart span and therefore pins to its 1400-day cap, so in a dense band
-  // almost every entry demands its own tier. With 25 fixed tiers the 38-entry
-  // Transformer (AR) band overflowed and dumped 11 models onto the
-  // band.center fallback line, piling them into one unreadable row.
-  //
-  // van der Corput (bit-reversal) ordering: successive tiers land far apart
-  // vertically, so near-simultaneous neighbours never get adjacent rows.
-  const vdc = i => {
-    let out = 0, f = 0.5
-    for (let n = i + 1; n > 0; n = Math.floor(n / 2)) { out += (n % 2) * f; f /= 2 }
-    return out
-  }
-  const make_tiers = n => {
-    const N = Math.max(9, n)
-    // Even positions inset from the band edges so labels don't clip.
-    const pos = Array.from({ length: N }, (_, i) => N === 1 ? 0.5 : 0.06 + 0.88 * i / (N - 1))
-    return Array.from({ length: N }, (_, i) => i)
-      .sort((a, b) => vdc(a) - vdc(b))
-      .map(i => pos[i])
-  }
-  // MIN_GAP_DAYS is computed dynamically below from the actual x-range so it self-tunes
-  // when more years of data come in (e.g. older classical methods extending back to 1997).
+  // Colour comes from the SHARED family scale, which every family-coloured chart
+  // on the page uses, so a family is the same colour in the swim lane, the
+  // code-activity scatter and the bipartite graph. It used to stop at these 13:
+  // the other 36 shared one neutral grey, so most of the chart read as a single
+  // undifferentiated family. See family_color_scale for how the rest are
+  // generated. Defining a second local generator here would be the bug that
+  // scale exists to prevent.
+  const color_of = f => family_color_scale(f)
 
-  // Per-family band heights: busy families get more vertical room (matches plots.ipynb).
-  // Graph / DP now holds seven classical algorithms (Sherenga, PEAKS, PepNovo, MSNovo,
-  // pNovo, pNovo+, CycloNovo) so it needs a taller swimlane.
-  const band_heights = {
-    "Heuristic":         2.5,   // 2001-2006 cluster: MALDI-QIT / MALDI-TOF-TOF / Adaptive GA all needed vertical room
-    "Graph / DP":        4.0,   // 2003-2005 burst: Sherenga / DP-based / Suboptimal / DeNovo / PepNovo overlap
-    "HMM":               1.0,
-    "Decision tree":     1.0,
-    "Random Forest":     1.2,
-    "Learning-to-rank":  1.2,
-    "CNN + RNN":         5.0,   // 2018-2024 cluster of DeepNovo variants + neighbours (was 3.5, still tight)
-    // Transformer (AR) is by far the densest band (38 versioned entries vs 20
-    // for the next-busiest). Tiers are now generated one-per-entry, so this
-    // height sets the per-tier spacing: 20 units * 70 px / 38 tiers = ~37 px,
-    // enough for a two-line wrapped label at fontSize 10.
-    "Transformer (AR)":  20.0,
-    "GNN":               1.2,
-    "CNN":               1.2,
-    "Transformer (NAR)": 3.5,   // 2024-2025 CrossNovo/OmniNovo/π-PrimeNovo/DiffNovo/Refinovo cluster
-    "Diffusion":         1.8,
-    "Flow":              1.2
-  }
+  const family_first = d3.rollup(
+    algorithms_versioned_t.filter(a => a.family && a.first_pub),
+    v => d3.min(v, a => a.first_pub),
+    a => a.family
+  )
+  // Lanes stack UPWARD from y = 0, so the array runs latest-first to put the
+  // earliest family at the top, matching "The long view". Family name breaks a
+  // tie so the order is deterministic; an undated family sorts as latest.
+  const LATEST = new Date(8640000000000)
+  const lane_sort = (a, b) =>
+    d3.descending(family_first.get(a) ?? LATEST, family_first.get(b) ?? LATEST)
+    || d3.descending(a, b)
+  const all_families = Array.from(new Set(
+    algorithms_versioned_t.filter(a => a.family).map(a => a.family))).sort(lane_sort)
+
+  // Lane geometry is measured in PIXELS, because the thing that must not
+  // collide is a rendered label. It used to be assigned from a date gap against
+  // a per-family tier list sized to the BUSIEST family, which handed a 2-unit
+  // band 38 tier positions ~4 px apart and piled its labels on top of each
+  // other: 7 label-label and 15 label-dot collisions, measured in the DOM.
+  // Packing by measured label width removes the class rather than retuning it,
+  // and it makes the hand-tuned band_heights table unnecessary -- a lane is now
+  // exactly as tall as the rows its labels need.
+  const ROW_PX = 43           // 24 px for up to two label lines, 3 gap, 16 dot
+  const DOT_IN_ROW_PX = 35    // dot centre from the row top, label in the 24 above
+  const CHAR_PX = 5.7         // mean advance of 10 px bold Source Sans Pro
+  const LABEL_GAP_PX = 8      // clear air between two labels sharing a row
+  const PLOT_WIDTH_PX = 1130  // width 1400 minus marginLeft 210 and marginRight 60
 
   // Apply every filter (family, kind, approach, acquisition) up front.
   const matches_filters = a => {
@@ -1256,70 +1265,17 @@ innovations_timeline = {
     return true
   }
 
-  // Only include bands that have at least one surviving model.
+  // Only include bands that have at least one surviving model. Every present
+  // family gets a lane: the lane list used to be intersected with the thirteen
+  // hand-tuned ones, which dropped the other 36 entirely and made checking any
+  // one of them produce an empty chart.
   const surviving = algorithms_versioned_t.filter(matches_filters)
   const present = new Set(surviving.map(a => a.family))
-  // Lanes run in chronological order of each family's FIRST appearance, which is the
-  // order "The long view" uses, so the two charts can be read against each other.
-  // band_order is no longer the lane order: it is only the registry of hand-tuned
-  // colours and heights for the thirteen busiest families. It never listed the other
-  // 36, so intersecting with it used to drop them entirely and checking one produced
-  // an empty chart.
-  //
-  // Computed over ALL entries rather than the filtered ones, so a lane keeps its place
-  // relative to the others as the filters change. Bands stack UPWARD from y = 0, so the
-  // array runs latest-first to put the earliest family at the top, matching the long
-  // view; family name breaks a tie so the order is deterministic.
-  const family_first = d3.rollup(
-    algorithms_versioned_t.filter(a => a.family && a.first_pub),
-    v => d3.min(v, a => a.first_pub),
-    a => a.family
-  )
-  const visible_bands = Array.from(present).sort((a, b) =>
-    d3.descending(family_first.get(a), family_first.get(b)) || d3.descending(a, b))
-  const extra_bands = visible_bands.filter(f => !band_order.includes(f))
-
-  // An unregistered family has no hand-tuned height, so derive one from how many
-  // entries it has to stack: enough per tier to read a wrapped label, with a floor for
-  // the 23 families that hold a single method.
-  const family_counts = d3.rollup(surviving, v => v.length, a => a.family)
-
-  // Stack bands bottom-to-top, each at its own height.
-  let y_cursor = 0
-  const bands = visible_bands.map(family => {
-    const h = band_heights[family] ?? Math.max(0.9, (family_counts.get(family) ?? 1) * 0.4)
-    const band = { family, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h / 2, height: h }
-    y_cursor += h
-    return band
-  })
-  const total_height = y_cursor
-  const band_index = new Map(bands.map(b => [b.family, b]))
-
-  // Assign each model a tier so labels at similar dates don't overlap; the tier fraction
-  // is interpreted relative to the *band's* height so taller bands spread further apart.
-  // The band_index check is a safety net for any future family name that's not yet listed
-  // X-range computed first so MIN_GAP_DAYS can self-tune to the actual scale.
-  const all_dates = algorithms_versioned_t.filter(a => a.first_pub).map(a => a.first_pub)
-  const x_min = d3.min(all_dates)
-  const x_max = d3.max(all_dates)
-  // Pad each side so labels at the temporal extremes (DeepNovo, DiffuNovo) stay inside the band.
-  const x_pad_min = d3.timeMonth.offset(x_min, -8)
-  const x_pad_max = d3.timeMonth.offset(x_max, 8)
-
-  // MIN_GAP_DAYS: how many days of horizontal space we want between two labels on
-  // the same tier. We compute it from the actual x-scale (so the spacing self-tunes
-  // when the timeline extends) but cap it so dense bursts (e.g. 2024-2026 Transformer
-  // (AR) papers) don't all fall through to the center-line fallback.
-  const PLOT_WIDTH_PX  = 1200          // chart 1400 minus left+right margins
-  const LABEL_RESERVE_PX = 150         // median label width AFTER wrap_label (2-line labels ~120-150 px wide)
-  const MAX_GAP_DAYS = 1400            // cap ~3.8 yr so busy years (2003/2005) get proper tier spread
-  const total_days = (x_pad_max - x_pad_min) / 86400000
-  const px_per_day = PLOT_WIDTH_PX / total_days
-  const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
+  const visible_bands = Array.from(present).sort(lane_sort)
 
   // Wrap the display label onto two lines at a word boundary when it exceeds
   // the max width (Plot renders \n as separate tspans). Same helper as the
-  // application-areas chart below — labels here can be long too
+  // application-areas chart below -- labels here can be long too
   // ('MALDI-QIT de novo sequencing', 'Robust FL-Sequencing', etc).
   const wrap_label = (s, max_chars = 22) => {
     if (!s || s.length <= max_chars) return s
@@ -1335,52 +1291,89 @@ innovations_timeline = {
     const line2 = words.slice(i).join(' ')
     return line2 ? `${line1}\n${line2}` : line1
   }
+  // Half the width a label will occupy, floored at the dot so a one-word label
+  // still reserves the dot's own footprint.
+  const half_px = label => Math.max(9,
+    d3.max(String(label).split('\n'), l => l.length) * CHAR_PX / 2)
 
-  // in band_order (without it the chart would crash on .y0 of undefined).
-  const rows = algorithms_versioned_t
-    .filter(a => matches_filters(a) && band_index.has(a.family))
-    .slice()
+  const rows = surviving
+    .filter(a => present.has(a.family))
+    .map(a => ({ ...a, label: wrap_label(a.model) }))
     .sort((a, b) => a.first_pub - b.first_pub)
-  // Enough tiers for the busiest visible band, so nothing has to fall back.
-  const busiest_band = d3.max(
-    d3.rollup(rows, v => v.length, d => d.family).values()
-  ) ?? 9
-  const Y_TIERS = make_tiers(busiest_band)
 
-  const last_date_at_tier = new Map()
-  const items = []
+  // The x domain is padded by exactly the widest label's half width, solved for
+  // rather than guessed: with plot width W, data span S days and pad P days,
+  // P * W / (S + 2P) = half, so P = half * S / (W - 2 * half). An eight-month
+  // guess left 'PepSeq' 7 px outside the frame.
+  const x_min = d3.min(rows, a => a.first_pub) ?? new Date(Date.UTC(1984, 0, 1))
+  const x_max = d3.max(rows, a => a.first_pub) ?? new Date()
+  const max_half = d3.max(rows, a => half_px(a.label)) ?? 9
+  const span_days = Math.max(365, (x_max - x_min) / 86400000)
+  const pad_days = Math.min(3650,
+    max_half * span_days / Math.max(1, PLOT_WIDTH_PX - 2 * max_half))
+  const x_pad_min = new Date(+x_min - pad_days * 86400000)
+  const x_pad_max = new Date(+x_max + pad_days * 86400000)
+  const px_per_day = PLOT_WIDTH_PX / ((x_pad_max - x_pad_min) / 86400000)
+  const x_px = d => (d - x_pad_min) / 86400000 * px_per_day
+
+  // Greedy first-fit row packing per family: a row is reused only when the two
+  // labels cannot touch. Rows are filled in date order, so an early paper never
+  // gets pushed down by a later one.
+  const row_right = new Map()   // `${family}|${row}` -> right edge in px
+  const rows_used = new Map()   // family -> how many rows it needed
+  const placed = []
   for (const row of rows) {
-    let placed = false
-    for (let ti = 0; ti < Y_TIERS.length; ti++) {
-      const key = `${row.family}|${ti}`
-      const last = last_date_at_tier.get(key)
-      if (last === undefined || (row.first_pub - last) / 86400000 >= MIN_GAP_DAYS) {
-        last_date_at_tier.set(key, row.first_pub)
-        const band = band_index.get(row.family)
-        items.push({ ...row, y: band.y0 + band.height * Y_TIERS[ti], y_frac: Y_TIERS[ti] })
-        placed = true
+    const cx = x_px(row.first_pub)
+    const half = half_px(row.label)
+    let r = 0
+    for (;; r++) {
+      const key = `${row.family}|${r}`
+      const right = row_right.get(key)
+      if (right === undefined || cx - half >= right + LABEL_GAP_PX) {
+        row_right.set(key, cx + half)
         break
       }
     }
-    if (!placed) {
-      const band = band_index.get(row.family)
-      items.push({ ...row, y: band.center, y_frac: 0.5 })
-    }
+    rows_used.set(row.family, Math.max(rows_used.get(row.family) ?? 0, r + 1))
+    placed.push({ ...row, row: r })
   }
+
+  // Stack bands bottom-to-top, each exactly as tall as its packed rows.
+  // visible_bands is already latest-first and y grows upward, so walking it in
+  // order puts the latest family at the bottom and the earliest at the top,
+  // which is the order "The long view" uses. Reversing here would insist on
+  // the opposite and did: the first cut of this put Sparse autoencoder on top.
+  let y_cursor = 0
+  const bands = visible_bands.map(family => {
+    const h = Math.max(1, rows_used.get(family) ?? 1) * ROW_PX
+    const band = { family, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h / 2, height: h }
+    y_cursor += h
+    return band
+  })
+  const total_height = y_cursor
+  const band_index = new Map(bands.map(b => [b.family, b]))
+
+  // Row 0 is the TOP row of its band (y grows upward here), so within a lane the
+  // rows also read earliest-first.
+  const items = placed.map(d => {
+    const band = band_index.get(d.family)
+    return { ...d, y: band.y1 - d.row * ROW_PX - DOT_IN_ROW_PX }
+  })
 
   const chart = Plot.plot({
     width: 1400,
-    height: Math.max(420, total_height * 70),
+    // total_height is in pixels, so 1 y unit = 1 px: the row packing above
+    // computed real label geometry and the plot must not rescale it.
+    height: Math.max(240, total_height + 60),
     marginLeft: 210,   // measured 49 px, then 10 px still over at 195
     marginRight: 60,
+    marginTop: 20,
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, total_height], axis: null },
-    // Families outside band_order have no assigned colour; give them a neutral grey
-    // rather than leaving them off the scale domain.
     color: {
-      domain: band_order.concat(extra_bands),
-      range: band_order.map(f => band_color[f]).concat(extra_bands.map(() => "#b1b8c0")),
+      domain: all_families,
+      range: all_families.map(color_of),
       legend: false
     },
     marks: [
@@ -1419,28 +1412,18 @@ innovations_timeline = {
         href: d => algo_href(d.base_model ?? d.model),
         target: "_self"
       }),
-      // Labels anchored above the dot (top half of band). Wrap onto two
-      // lines when the model name exceeds ~22 chars so long names don't
-      // collide horizontally with neighbours. Full name stays in the tip.
-      Plot.text(items.filter(d => d.y_frac >= 0.5), {
+      // One label per dot, always directly above it. The old above-or-below
+      // split was there to buy vertical space from a fixed band height; the row
+      // packing gives every label its own 24 px instead, so a single anchor is
+      // both simpler and collision-free. Names over ~22 chars wrap onto two
+      // lines; the full name stays in the tooltip.
+      Plot.text(items, {
         x: "first_pub",
         y: "y",
-        text: d => wrap_label(d.model),
+        text: "label",
         textAnchor: "middle",
         lineAnchor: "bottom",
-        dy: -12,
-        fontSize: 10,
-        fontWeight: "bold",
-        fill: "family"
-      }),
-      // Labels anchored below the dot (bottom half of band)
-      Plot.text(items.filter(d => d.y_frac < 0.5), {
-        x: "first_pub",
-        y: "y",
-        text: d => wrap_label(d.model),
-        textAnchor: "middle",
-        lineAnchor: "top",
-        dy: 12,
+        dy: -11,
         fontSize: 10,
         fontWeight: "bold",
         fill: "family"
@@ -1475,7 +1458,7 @@ innovations_timeline = {
         <div class="map-tooltip-title">${d.model}</div>
         <div class="map-tooltip-meta">${d.first_pub.toISOString().slice(0,10)}</div>
         <div class="map-tooltip-row">
-          <span class="map-tooltip-swatch" style=${`background:${band_color[d.family] ?? "#999"}`}></span>
+          <span class="map-tooltip-swatch" style=${`background:${color_of(d.family)}`}></span>
           <span>${d.family}</span>
         </div>
         ${d.description ? html`<div class="map-tooltip-meta" style="margin-top:6px; max-width:280px; white-space:normal;">${d.description}</div>` : ""}
@@ -1676,12 +1659,30 @@ Plot.plot({
     // Flipping them to the left of the dot costs nothing, because the right
     // side of a late dot is empty by definition, whereas reserving 215 px of
     // marginRight would squeeze 42 years of timeline into less width.
-    Plot.text(ff_rows, {
+    //
+    // TWO MARKS, not one with functions. Plot's `dx`, `dy` and `textAnchor` are
+    // CONSTANT options, not channels: passing a function silently applies
+    // neither, so the first attempt at this left every label centred on its own
+    // dot with dx 0. That is what put a dot in the middle of all 49 names, and
+    // it was invisible in the code because a function is a perfectly legal
+    // value. Measured before: 49 label-over-dot collisions, 9 px each.
+    //
+    // dx of 11 clears the largest dot, whose radius is 3 + 9 * 0.55 = 7.95.
+    Plot.text(ff_rows.filter(d => !ff_label_flips(d)), {
       x: "date",
       y: "family",
       text: "first_method",
-      dx: d => ff_label_flips(d) ? -10 : 10,
-      textAnchor: d => ff_label_flips(d) ? "end" : "start",
+      dx: 11,
+      textAnchor: "start",
+      fontSize: 10,
+      fill: "#444"
+    }),
+    Plot.text(ff_rows.filter(ff_label_flips), {
+      x: "date",
+      y: "family",
+      text: "first_method",
+      dx: -11,
+      textAnchor: "end",
       fontSize: 10,
       fill: "#444"
     })
@@ -1807,28 +1808,6 @@ subdomain_color = ({
   "astrobiology":             "#155e75",
   "toxin-identification":     "#4338ca"
 })
-// Per-lane vertical room, only used by the timeline (the Sankey sizes nodes
-// by traffic instead), kept here anyway so it lives next to the rest of the
-// per-subdomain metadata.
-subdomain_lane_height = ({
-  "general-proteomics":       1.0,
-  "glycoproteomics":          1.0,
-  "plant-pathogen":           1.0,
-  "metaproteomics":           1.2,
-  "wastewater-metaproteomics":1.0,
-  "immunopeptidomics":        1.5,
-  "antibodyomics":            1.2,
-  "venomics":                 3.0,  // 10 papers spanning 2014-2024 with clustering in 2018/2020/2022
-  "neuropeptidomics":         1.0,
-  "bioactive-peptides":       1.0,
-  "wildlife-proteomics":      1.2,
-  "food-authentication":      1.0,
-  "pathogen-identification":  1.0,
-  "forensics":                1.0,
-  "palaeoproteomics":         1.8,
-  "astrobiology":             1.0,
-  "toxin-identification":     1.0
-})
 ```
 
 ```{ojs}
@@ -1879,46 +1858,18 @@ application_timeline = {
                     || d3.descending(a, b))
   const lane_label  = subdomain_label
   const lane_color  = subdomain_color
-  const lane_height = subdomain_lane_height
 
-  let y_cursor = 0
-  const lanes = lane_order.map(sd => {
-    const h = lane_height[sd] ?? 1.2
-    const lane = { subdomain: sd, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h/2, height: h }
-    y_cursor += h
-    return lane
-  })
-  const total_height = y_cursor
-  const lane_index = new Map(lanes.map(l => [l.subdomain, l]))
-
-  // Within-lane tier assignment so dots at similar dates don't overlap labels.
-  // Ported from the architectures chart above: 25 interleaved tiers + dynamic
-  // MIN_GAP_DAYS. The venomics lane alone has 10 papers with clustering in
-  // 2018/2020/2022, so the old 9-tier / static-400-day setup was over-crowded.
-  const Y_TIERS = [
-    0.5, 0.8, 0.2, 0.9, 0.1, 0.7, 0.3, 0.6, 0.4,
-    0.85, 0.15, 0.95, 0.05, 0.75, 0.25, 0.65, 0.35, 0.55, 0.45,
-    0.88, 0.12, 0.78, 0.22, 0.58, 0.42
-  ]
-  const x_min = d3.min(rows, d => d.first_pub)
-  const x_max = d3.max(rows, d => d.first_pub)
-  // Pinned to whole years rather than a month offset from the data, so the
-  // gridlines land on years and a quiet stretch reads as a real gap. Same
-  // treatment as "The long view"; the month-offset form put the axis bounds on
-  // arbitrary dates.
-  const x_pad_min = new Date(Date.UTC(x_min.getUTCFullYear() - 1, 0, 1))
-  const x_pad_max = new Date(Date.UTC(x_max.getUTCFullYear() + 1, 0, 1))
-  // MIN_GAP_DAYS auto-tunes to the actual x-scale. Labels here are longer than
-  // in the architectures chart (workflow names average 25 chars ≈ 180 px), and
-  // the venomics lane has 10 papers clustered in 2018/2020/2022 — so we need
-  // both a bigger label reserve AND a much larger max-gap cap so tier packing
-  // spreads dots across 5-6 tiers instead of collapsing to 2 rows.
-  const PLOT_WIDTH_PX = 950            // chart 1200 minus 210 left + 40 right margins
-  const LABEL_RESERVE_PX = 200         // conservative for taxon-focused labels ≤22 chars
-  const MAX_GAP_DAYS = 1200            // cap ~3.3 yr so dense years spread vertically
-  const total_days = (x_pad_max - x_pad_min) / 86400000
-  const px_per_day = PLOT_WIDTH_PX / total_days
-  const MIN_GAP_DAYS = Math.min(MAX_GAP_DAYS, LABEL_RESERVE_PX / px_per_day)
+  // Lane geometry is measured in PIXELS, the same first-fit row packing the
+  // architectures chart above uses and for the same reason: fixed per-lane
+  // heights plus a date-gap tier list collided, 7 label-label and 9 label-dot
+  // overlaps measured in the DOM. A lane is now exactly as tall as the rows its
+  // labels need, which is also why there is no subdomain_lane_height registry
+  // any more.
+  const ROW_PX = 43           // 24 px for up to two label lines, 3 gap, 16 dot
+  const DOT_IN_ROW_PX = 35    // dot centre from the row top, label in the 24 above
+  const CHAR_PX = 5.7         // mean advance of 10 px bold Source Sans Pro
+  const LABEL_GAP_PX = 8      // clear air between two labels sharing a row
+  const PLOT_WIDTH_PX = 925   // width 1200 minus marginLeft 215 and marginRight 60
 
   // Wrap the display label onto two lines at a word boundary when it exceeds
   // the max width (Plot renders \n as separate tspans). Falls back to the raw
@@ -1937,33 +1888,76 @@ application_timeline = {
     const line2 = words.slice(i).join(' ')
     return line2 ? `${line1}\n${line2}` : line1
   }
+  const half_px = label => Math.max(9,
+    d3.max(String(label).split('\n'), l => l.length) * CHAR_PX / 2)
 
-  const last_at_tier = new Map()
-  const items = []
-  for (const row of rows) {
-    let placed = false
-    for (let ti = 0; ti < Y_TIERS.length; ti++) {
-      const key = `${row.subdomain}|${ti}`
-      const last = last_at_tier.get(key)
-      if (last === undefined || (row.first_pub - last)/86400000 >= MIN_GAP_DAYS) {
-        last_at_tier.set(key, row.first_pub)
-        const lane = lane_index.get(row.subdomain)
-        items.push({ ...row, y: lane.y0 + lane.height * Y_TIERS[ti], y_frac: Y_TIERS[ti] })
-        placed = true
+  const labelled = rows.map(r => ({ ...r, label: wrap_label(r.model) }))
+  const max_half = d3.max(labelled, r => half_px(r.label)) ?? 9
+
+  // The x domain stays pinned to whole years, so the gridlines land on years and
+  // a quiet stretch reads as a real gap. How MANY years of padding is chosen by
+  // measurement rather than fixed at one: the widest label needs 63 px of half
+  // width and a year is only ~35 px wide here, so one year clipped it.
+  const y_lo = d3.min(rows, d => d.first_pub).getUTCFullYear()
+  const y_hi = d3.max(rows, d => d.first_pub).getUTCFullYear()
+  let pad_years = 1
+  const px_per_day_for = p => PLOT_WIDTH_PX /
+    ((Date.UTC(y_hi + p, 0, 1) - Date.UTC(y_lo - p, 0, 1)) / 86400000)
+  while (pad_years < 5 && max_half > pad_years * 365 * px_per_day_for(pad_years)) pad_years++
+  const x_pad_min = new Date(Date.UTC(y_lo - pad_years, 0, 1))
+  const x_pad_max = new Date(Date.UTC(y_hi + pad_years, 0, 1))
+  const px_per_day = px_per_day_for(pad_years)
+  const x_px = d => (d - x_pad_min) / 86400000 * px_per_day
+
+  // Greedy first-fit row packing per lane: a row is reused only when the two
+  // labels cannot touch. Filled in date order, so an early paper is never
+  // pushed down by a later one.
+  const row_right = new Map()
+  const rows_used = new Map()
+  const packed = []
+  for (const row of labelled) {
+    const cx = x_px(row.first_pub)
+    const half = half_px(row.label)
+    let r = 0
+    for (;; r++) {
+      const key = `${row.subdomain}|${r}`
+      const right = row_right.get(key)
+      if (right === undefined || cx - half >= right + LABEL_GAP_PX) {
+        row_right.set(key, cx + half)
         break
       }
     }
-    if (!placed) {
-      const lane = lane_index.get(row.subdomain)
-      items.push({ ...row, y: lane.center, y_frac: 0.5 })
-    }
+    rows_used.set(row.subdomain, Math.max(rows_used.get(row.subdomain) ?? 0, r + 1))
+    packed.push({ ...row, row: r })
   }
+
+  // lane_order is latest-first and y grows upward, so walking it in order puts
+  // the earliest subdomain at the top, matching "The long view".
+  let y_cursor = 0
+  const lanes = lane_order.map(sd => {
+    const h = Math.max(1, rows_used.get(sd) ?? 1) * ROW_PX
+    const lane = { subdomain: sd, y0: y_cursor, y1: y_cursor + h, center: y_cursor + h/2, height: h }
+    y_cursor += h
+    return lane
+  })
+  const total_height = y_cursor
+  const lane_index = new Map(lanes.map(l => [l.subdomain, l]))
+
+  // Row 0 is the TOP row of its lane (y grows upward), so within a lane the rows
+  // also read earliest-first.
+  const items = packed.map(d => {
+    const lane = lane_index.get(d.subdomain)
+    return { ...d, y: lane.y1 - d.row * ROW_PX - DOT_IN_ROW_PX }
+  })
 
   const chart = Plot.plot({
     width: 1200,
-    height: Math.max(340, total_height * 90),
+    // total_height is in pixels, so 1 y unit = 1 px and the row packing above
+    // survives the scale unchanged.
+    height: Math.max(240, total_height + 60),
     marginLeft: 215,   // measured 2 px over
     marginRight: 60,   // measured 15 px over
+    marginTop: 20,
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, total_height], axis: null },
@@ -1990,17 +1984,13 @@ application_timeline = {
         href: d => algo_href(d.base_model ?? d.model),
         target: "_self"
       }),
-      // Labels sit just above the dot (upper half of lane) or just below (lower half).
-      // Display label wraps onto two lines at a word boundary when it exceeds
-      // ~22 chars; the full untruncated name is still available via the tooltip.
-      Plot.text(items.filter(d => d.y_frac >= 0.5), {
-        x: "first_pub", y: "y", text: d => wrap_label(d.model),
-        textAnchor: "middle", lineAnchor: "bottom", dy: -12,
-        fontSize: 10, fontWeight: "bold", fill: "subdomain"
-      }),
-      Plot.text(items.filter(d => d.y_frac < 0.5), {
-        x: "first_pub", y: "y", text: d => wrap_label(d.model),
-        textAnchor: "middle", lineAnchor: "top", dy: 12,
+      // One label per dot, always directly above it: the row packing gives each
+      // its own 24 px, so the old above-or-below split is no longer needed to
+      // buy vertical space. Names over ~22 chars wrap onto two lines; the full
+      // name stays in the tooltip.
+      Plot.text(items, {
+        x: "first_pub", y: "y", text: "label",
+        textAnchor: "middle", lineAnchor: "bottom", dy: -11,
         fontSize: 10, fontWeight: "bold", fill: "subdomain"
       })
     ]
@@ -2167,7 +2157,9 @@ application_sankey = {
   const n_rows = Math.max(sd_totals.size, seq_totals.size)
   const width = 1100
   const height = Math.min(1200, Math.max(480, 50 + n_rows * ROW_PX))
-  const margin = { top: 30, right: 260, bottom: 20, left: 260 }
+  // right 285: the longest sequencer name, 'PSD MALDI high-sensitivity de novo
+  // sequencing', ran 6 px past the frame at 260.
+  const margin = { top: 30, right: 285, bottom: 20, left: 260 }
   const inner_w = width  - margin.left - margin.right
   const inner_h = height - margin.top  - margin.bottom
 
@@ -2743,7 +2735,9 @@ ${type_breakdown(d)}`
 
   const max_value = max_country
   const max_r = countryR(max_value)
-  const size_legend = svg.append("g").attr("transform", `translate(${width - 170}, ${height - 86})`)
+  // width - 210, not - 170: the longest legend line is '11229 global citations'
+  // at ~121 px from its x of 70, which ran 6 px past the frame.
+  const size_legend = svg.append("g").attr("transform", `translate(${width - 210}, ${height - 86})`)
   size_legend.append("circle").attr("cx", 28).attr("cy", 36).attr("r", max_r).attr("fill", "none").attr("stroke", "#57606a")
   size_legend.append("circle").attr("cx", 28).attr("cy", 36 + max_r - countryR(max_value / 4)).attr("r", countryR(max_value / 4)).attr("fill", "none").attr("stroke", "#57606a")
   size_legend.append("text").attr("x", 70).attr("y", 24).attr("fill", "#57606a").text(`${max_value} ${metric_label}`)
@@ -2805,7 +2799,9 @@ ${type_breakdown(d)}`
     marginLeft: 280,
     width: 1100,
     height: Math.max(260, rows.length * 26),
-    x: { label: `Distinct authors (${pubs_filtered.length} papers)`, grid: true },
+    marginBottom: 48,
+    // See the note on the wave chart: the label needs its own line.
+    x: { label: `Distinct authors (${pubs_filtered.length} papers)`, grid: true, labelOffset: 40 },
     y: { label: null },
     marks: [
       Plot.barX(rows, {
@@ -2886,7 +2882,8 @@ The chart below shows the twenty most-published authors.
     // country too, and a few authors list several.
     marginLeft: 300,
     height: Math.max(260, top.length * 22),
-    x: { label: `Papers in current filter (${pubs_filtered.length} total)`, grid: true },
+    marginBottom: 48,
+    x: { label: `Papers in current filter (${pubs_filtered.length} total)`, grid: true, labelOffset: 40 },
     y: { label: null },
     marks: [
       Plot.barX(top, {
@@ -3142,8 +3139,48 @@ network_chart = {
     .attr("font-size", 10)
     .attr("font-weight", 500)
     .attr("fill", "#1d2330")
+    // A white halo under the glyphs, so a label that sits over an edge or a
+    // pie-slice node still reads.
+    .attr("paint-order", "stroke")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2.5)
     .attr("dx", d => NODE_R(d) + 3)
     .attr("dy", 3)
+
+  // HIDE COLLIDING LABELS. 201 names cannot all be shown in one 1400x790 frame:
+  // measured 123 overlapping label pairs and 109 labels lying over a node. A
+  // greedy pass in descending degree keeps the most connected name wherever two
+  // clash and hides the rest, which is the same rule the citation-flow chart
+  // uses. Nothing is lost: every node still answers a hover with its full name,
+  // and the hidden ones are the least connected.
+  const LABEL_CHAR_PX = 5.8      // 10 px, weight 500, measured against the widest names
+  const label_order = nodes.slice().sort((a, b) => d3.descending(a.degree, b.degree))
+  // Six candidate positions per name, nearest first: right of the dot, left of
+  // it, then each of those nudged a line up or down. Trying only the right side
+  // showed 52 of 173 names; with all six it is 96, for the same zero overlaps.
+  const SIDES = [[1, 0], [-1, 0], [1, -11], [-1, -11], [1, 11], [-1, 11]]
+  const place_labels = () => {
+    const shown = []
+    for (const d of label_order) {
+      const w = d.id.length * LABEL_CHAR_PX
+      d.label_on = false
+      for (const [side, dy] of SIDES) {
+        const x0 = side > 0 ? d.x + NODE_R(d) + 3 : d.x - NODE_R(d) - 3 - w
+        const y = d.y + dy
+        const box = { x0, x1: x0 + w, y0: y - 6, y1: y + 6 }
+        if (box.x0 < 0 || box.x1 > width || box.y0 < TITLE_PX || box.y1 > PLOT_H) continue
+        const clash =
+          shown.some(o => box.x0 < o.x1 + 2 && box.x1 + 2 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0) ||
+          nodes.some(n => box.x0 < n.x + NODE_R(n) && box.x1 > n.x - NODE_R(n)
+                       && box.y0 < n.y + NODE_R(n) && box.y1 > n.y - NODE_R(n))
+        if (!clash) {
+          d.label_on = true; d.label_side = side; d.label_dy = dy
+          shown.push(box)
+          break
+        }
+      }
+    }
+  }
 
   // CONTAIN THE SIMULATION. Neither force chart constrained node positions, and
   // charge (-220 here, -350 for algorithm nodes in the bipartite) overwhelms
@@ -3157,23 +3194,34 @@ network_chart = {
   //
   // Clamping positions in the tick handler is the standard remedy and costs
   // nothing: a node pinned at the edge still feels every force, it just cannot
-  // leave. The label also flips to the inside near the right edge, because a
-  // node can be legally inside while a 150 px name hangs off the frame.
-  const LABEL_FLIP_PX = 170
+  // leave. Labels are kept inside by place_labels above, which rejects any
+  // candidate box that leaves the frame, so a node can sit legally at the right
+  // edge without its name hanging off it.
+  const TITLE_PX = 34
+  let tick_n = 0
   sim.on("tick", () => {
     for (const d of nodes) {
       const r = NODE_R(d) + 2
       d.x = Math.max(r, Math.min(width - r, d.x))
-      d.y = Math.max(r, Math.min(PLOT_H - r, d.y))
+      // TITLE_PX keeps the network clear of the chart title, which is drawn at
+      // y = 22 outside the zoom group: clamping only to the node radius let a
+      // top-row node and its label sit under the title text, 14 px deep.
+      d.y = Math.max(TITLE_PX + r, Math.min(PLOT_H - r, d.y))
     }
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
     node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
+    // The collision pass is O(n^2) over 201 nodes, so run it every fourth tick
+    // rather than on all of them. Positions move by a pixel or two per tick, so
+    // the placement stays current and the flicker of a label appearing and
+    // disappearing is damped rather than amplified.
+    if ((tick_n++ & 3) === 0) place_labels()
     label
-      .attr("x", d => d.x).attr("y", d => d.y)
-      .attr("dx", d => d.x > width - LABEL_FLIP_PX ? -(NODE_R(d) + 3) : NODE_R(d) + 3)
-      .attr("text-anchor", d => d.x > width - LABEL_FLIP_PX ? "end" : "start")
+      .attr("x", d => d.x).attr("y", d => d.y + (d.label_dy ?? 0))
+      .attr("display", d => d.label_on ? null : "none")
+      .attr("dx", d => (d.label_side ?? 1) > 0 ? NODE_R(d) + 3 : -(NODE_R(d) + 3))
+      .attr("text-anchor", d => (d.label_side ?? 1) > 0 ? "start" : "end")
   })
 
   // Affiliation legend at the bottom, now sized to show every affiliation.
@@ -3305,45 +3353,13 @@ author_algo_network = {
   }
 
   // Color palette: gray for authors, family color for algorithms.
-  // Canonical colors for the 13 arch-chart families (kept consistent with the
-  // architectures swim-lane above). Everything else — adjacent-tool families
-  // like 'Sequence tag' or 'Hybrid search', post-processor families like
-  // 'Sequence assembly' — gets a deterministic slot from an extended palette
-  // so no algorithm falls through to gray anymore.
-  const family_color_canonical = {
-    "Heuristic":         "#8a96a0",
-    "Graph / DP":        "#6c757d",
-    "HMM":               "#4d6a8c",
-    "Decision tree":     "#7b6f43",
-    "Random Forest":     "#a5673f",
-    "Learning-to-rank":  "#5f6b7a",
-    "CNN + RNN":         "#4C72B0",
-    "Transformer (AR)":  "#DD8452",
-    "GNN":               "#937860",
-    "CNN":               "#8172B3",
-    "Transformer (NAR)": "#55A868",
-    "Diffusion":         "#C44E52",
-    "Flow":              "#937DC2",
-    "Unknown":           "#999999"
-  }
-  const extra_palette = [
-    "#17becf", "#ff7f0e", "#98df8a", "#c5b0d5", "#e377c2",
-    "#bcbd22", "#7cb342", "#ba55d3", "#4682b4", "#20b2aa",
-    "#daa520", "#8250df", "#0a3069", "#ffa726", "#cd853f",
-    "#a0522d", "#6b8e23", "#f7b6d2", "#ff9896", "#dbdb8d",
-    "#aec7e8", "#9edae5", "#d5b895", "#b8860b", "#708090",
-    "#116329", "#953800", "#0969da", "#a40e26", "#d4a72c",
-    "#4e7a1a", "#e07c00", "#c71585", "#556b2f", "#5e35b1"
-  ]
-  // Build the full family→color map from canonical + deterministic fallback
-  // (families sorted alphabetically so the assignment is stable across renders).
-  const family_color = { ...family_color_canonical }
-  const extra_families = Array.from(new Set(nodes.filter(n => n.kind === "algo").map(n => n.family)))
-    .filter(f => !(f in family_color))
-    .sort()
-  extra_families.forEach((f, i) => { family_color[f] = extra_palette[i % extra_palette.length] })
+  // Family colour comes from the shared scale, so a family is the same colour
+  // here, in the architectures swim lane and in the code-activity scatter. This
+  // block used to hold its own copy of the 13 canonical hexes plus a 20-colour
+  // fallback palette, which drifted from the others as families were added.
+  const family_color = f => f === "Unknown" ? "#999999" : family_color_scale(f)
 
-  const nodeFill = d => d.kind === "author" ? "#cdd6e0" : (family_color[d.family] ?? "#999")
+  const nodeFill = d => d.kind === "author" ? "#cdd6e0" : (family_color(d.family))
   const nodeStroke = d => d.kind === "author" ? "#8a94a3" : "#222"
   const max_algo_deg = d3.max(nodes.filter(n => n.kind === "algo"), n => n.degree) || 1
   const max_auth_deg = d3.max(nodes.filter(n => n.kind === "author"), n => n.degree) || 1
@@ -3437,7 +3453,7 @@ author_algo_network = {
         <div class="map-tooltip-title">${d.id}</div>
         <div class="map-tooltip-meta">algorithm · ${d.degree} author link${d.degree === 1 ? "" : "s"}</div>
         <div class="map-tooltip-row">
-          <span class="map-tooltip-swatch" style=${`background:${family_color[d.family] ?? "#999"}`}></span>
+          <span class="map-tooltip-swatch" style=${`background:${family_color(d.family)}`}></span>
           <span>${d.family}</span>
         </div>
       </div>`)
@@ -3491,27 +3507,65 @@ author_algo_network = {
     .attr("font-size", d => d.kind === "algo" ? 12 : 9)
     .attr("font-weight", d => d.kind === "algo" ? "bold" : 500)
     .attr("fill", d => d.kind === "algo" ? "#0b0d12" : "#3b4150")
+    .attr("paint-order", "stroke")
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2.5)
     .attr("dx", d => nodeR(d) + 3)
     .attr("dy", 3)
 
+  // Same greedy label placement as the co-authorship chart above, and needed
+  // more: this frame held 457 overlapping label pairs and 282 labels over a
+  // node. Model names outrank author names whatever the degree, because the
+  // models are what the chart is arranged around; ties go to the more connected
+  // node. Every hidden name is still one hover away.
+  const label_order = nodes.slice().sort((a, b) =>
+    d3.descending(a.kind === "algo", b.kind === "algo") || d3.descending(a.degree, b.degree))
+  const label_px = d => d.kind === "algo" ? 7.0 : 5.2
+  const SIDES = [[1, 0], [-1, 0], [1, -11], [-1, -11], [1, 11], [-1, 11]]
+  const place_labels = () => {
+    const shown = []
+    for (const d of label_order) {
+      const w = d.id.length * label_px(d)
+      const h = d.kind === "algo" ? 7 : 5.5
+      d.label_on = false
+      for (const [side, dy] of SIDES) {
+        const x0 = side > 0 ? d.x + nodeR(d) + 3 : d.x - nodeR(d) - 3 - w
+        const y = d.y + dy
+        const box = { x0, x1: x0 + w, y0: y - h, y1: y + h }
+        if (box.x0 < 0 || box.x1 > width || box.y0 < TITLE_PX || box.y1 > PLOT_H) continue
+        const clash =
+          shown.some(o => box.x0 < o.x1 + 2 && box.x1 + 2 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0) ||
+          nodes.some(n => box.x0 < n.x + nodeR(n) && box.x1 > n.x - nodeR(n)
+                       && box.y0 < n.y + nodeR(n) && box.y1 > n.y - nodeR(n))
+        if (!clash) {
+          d.label_on = true; d.label_side = side; d.label_dy = dy
+          shown.push(box)
+          break
+        }
+      }
+    }
+  }
+
   // Same containment as the co-authorship chart above; see the note there.
-  // The threshold is wider here because algorithm names run much longer than
-  // author names: at 190 px three labels still escaped by up to 73 px.
-  const LABEL_FLIP_PX = 300
+  const TITLE_PX = 34
+  let tick_n = 0
   sim.on("tick", () => {
     for (const d of nodes) {
       const r = nodeR(d) + 2
       d.x = Math.max(r, Math.min(width - r, d.x))
-      d.y = Math.max(r, Math.min(PLOT_H - r, d.y))
+      // Clear of the title, as in the co-authorship chart above.
+      d.y = Math.max(TITLE_PX + r, Math.min(PLOT_H - r, d.y))
     }
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
     node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
+    if ((tick_n++ & 3) === 0) place_labels()
     label
-      .attr("x", d => d.x).attr("y", d => d.y)
-      .attr("dx", d => d.x > width - LABEL_FLIP_PX ? -(nodeR(d) + 3) : nodeR(d) + 3)
-      .attr("text-anchor", d => d.x > width - LABEL_FLIP_PX ? "end" : "start")
+      .attr("x", d => d.x).attr("y", d => d.y + (d.label_dy ?? 0))
+      .attr("display", d => d.label_on ? null : "none")
+      .attr("dx", d => (d.label_side ?? 1) > 0 ? nodeR(d) + 3 : -(nodeR(d) + 3))
+      .attr("text-anchor", d => (d.label_side ?? 1) > 0 ? "start" : "end")
   })
 
   // Legend: algorithm-family colors + the author swatch.
@@ -3522,7 +3576,7 @@ author_algo_network = {
     .attr("font-size", 12)
     .attr("fill", "#57606a")
     .text("Algorithm family")
-  const legend_items = families_seen.map(f => ({ label: f, fill: family_color[f] ?? "#999", shape: "diamond" }))
+  const legend_items = families_seen.map(f => ({ label: f, fill: family_color(f), shape: "diamond" }))
     .concat([{ label: "Author (size = # model links)", fill: "#cdd6e0", shape: "circle" }])
   legend_g.selectAll("g.leg-item")
     .data(legend_items)
@@ -3794,7 +3848,24 @@ citation_arcs = {
     if (top_per_row.get(r).length < 5 && n.in_deg >= 4) top_per_row.get(r).push(n)
   }
   const labelled = Array.from(top_per_row.values()).flat()
-  const labelText = d => (d.models?.split(",")[0]?.trim()) || d.title.slice(0, 22)
+  // Truncated at 26 characters: the box the placer reserves is estimated from
+  // the character count, and an unbounded model name made that estimate wrong
+  // by enough to land the label on a dot.
+  const labelText = d => {
+    const t = (d.models?.split(",")[0]?.trim()) || d.title
+    return t.length > 26 ? t.slice(0, 25) + "…" : t
+  }
+  // EVERY node is an obstacle, not just the five per row that carry a label: a
+  // label was landing on unlabelled dots, 18 of them, up to 7 px deep.
+  //
+  // Candidate positions are expressed RELATIVE TO THE DOT rather than as fixed
+  // offsets clamped into the row. Two things went wrong with the clamped form.
+  // A label near the top of its row got clamped back down onto its own dot, and
+  // its own dot was exempt from the collision test, so nothing objected: that is
+  // the last four of the original 18. And the box was centred on the text's
+  // ANCHOR, which is its baseline, not its middle -- glyphs sit ~11 px above the
+  // baseline and ~3 px below it, so the box was half a line out.
+  const ASC = 11, DESC = 3
   const label_boxes = []
   for (const group of d3.groups(labelled, d => d.kind).map(([, values]) => values)) {
     const placed = []
@@ -3804,17 +3875,29 @@ citation_arcs = {
       const ri = row_index.get(d.kind) ?? KIND_ORDER.length - 1
       const rowTop = ri * row_h + 6
       const rowBottom = (ri + 1) * row_h - 6
-      const baseY = d.y - nodeR(d) - 5
-      const w = Math.min(150, Math.max(32, text.length * 5.7))
-      const h = 12
-      const offsets = [0, -14, 14, -28, 28, -42, 42]
+      const r = nodeR(d)
+      // No upper cap on the width: the estimate used to stop at 150 px while the
+      // text kept going, so a long model name overhung its own box by 67 px and
+      // the collision test never saw it.
+      const w = Math.max(32, text.length * 6.6)
+      // Baselines that clear the dot, nearest first: just above it, just below
+      // it, then in 14 px steps outward.
+      const cands = []
+      for (let k = 0; k < 4; k++) {
+        cands.push(d.y - r - DESC - 2 - k * 14)
+        cands.push(d.y + r + ASC + 2 + k * 14)
+      }
       let chosen = null
-      for (const offset of offsets) {
-        const y = Math.max(rowTop + h / 2, Math.min(rowBottom - h / 2, baseY + offset))
-        const box = { x0: d.x - w / 2, x1: d.x + w / 2, y0: y - h / 2, y1: y + h / 2 }
+      for (const y of cands) {
+        const box = { x0: d.x - w / 2, x1: d.x + w / 2, y0: y - ASC, y1: y + DESC }
+        if (box.y0 < rowTop || box.y1 > rowBottom) continue
+        const hits = o => box.x0 < o.x1 && box.x1 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0
         const overlaps = placed.some(p =>
           box.x0 < p.x1 + 6 && box.x1 + 6 > p.x0 && box.y0 < p.y1 + 3 && box.y1 + 3 > p.y0
-        )
+        ) || nodes.some(n => hits({
+          x0: n.x - nodeR(n) - 2, x1: n.x + nodeR(n) + 2,
+          y0: n.y - nodeR(n) - 2, y1: n.y + nodeR(n) + 2
+        }))
         if (!overlaps) {
           chosen = { ...box, d, text, y }
           break
@@ -4043,7 +4126,10 @@ viewof repo_metric = Inputs.radio(
   const chart = Plot.plot({
     marginLeft: 235, width: 1100,   // measured 50 px of repo-name overflow
     height: Math.max(280, top.length * 24),
-    x: { label: labelfmt[repo_metric], grid: true },
+    marginBottom: 48,
+    // labelOffset drops the axis label onto its own line; on the tick baseline
+    // it touched the '200' tick by 3 px.
+    x: { label: labelfmt[repo_metric], grid: true, labelOffset: 40 },
     y: { label: null },
     marks: [
       Plot.barX(top, {
@@ -4584,7 +4670,8 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
   const chart = Plot.plot({
     marginLeft: 270,   // measured 64 px of method-label overflow
     height: Math.max(220, paired.length * 20),
-    x: { label: "Preprint → peer-reviewed gap (months)", grid: true },
+    marginBottom: 48,
+    x: { label: "Preprint → peer-reviewed gap (months)", grid: true, labelOffset: 40 },
     y: { label: null },
     marks: [
       Plot.barX(paired, {

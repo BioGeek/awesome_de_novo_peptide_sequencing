@@ -76,6 +76,12 @@ python3 build_affiliations.py                  # report only
 python3 build_affiliations.py --write          # apply
 python3 build_affiliations.py --only-new        # just the papers added since last time
 
+# Fail if any chart on the rendered site has a colliding or clipped label.
+# Measures the real glyph boxes in headless Chrome, so it needs a rendered
+# _site and google-chrome (~1 min). Not in CI for that reason.
+uv run quarto render index.qmd
+uv run --with websockets python3 check_chart_overlap.py
+
 # Check that no generated page's URL changed. Every slug in slugs.lock is a
 # live, indexed address. Run --write ONLY when a rename is intended.
 python3 slugs.py --check
@@ -413,51 +419,117 @@ chunk in `index.qmd` are there for exactly this reason and say so.
 
 ### Every family gets a lane; "The long view" is still the history chart
 
-`band_order` names only the **13 busiest** families and carries a hand-tuned
-height for each. It used to be the whole story: `visible_bands` was
-`band_order.filter(f => present.has(f))`, so a family outside those 13 was
-dropped from the chart entirely, not appended or greyed. The checkbox list
-offers all 49, so unchecking everything and checking one of the other 36
-produced an **empty chart**: 36 families and 76 of the 192 methods were
-unreachable.
+The architectures swim lane draws **every** family, in chronological order of
+first appearance, with a lane exactly as tall as its labels need. Getting there
+took three separate fixes, all of them still worth knowing:
 
-`visible_bands` is now **every present family in chronological order of first
-appearance**, which is the order "The long view" uses, so the two charts can be
-read against each other. `band_order` survives only as the registry of
-hand-tuned colours and heights for the 13; it is no longer the lane order. A
-family with no entry in `band_heights` gets a height derived from how many
-entries it has to stack, `Math.max(0.9, count * 0.4)`, since 23 of the 36 hold a
-single method, and the colour scale domain is extended with a neutral grey for
-them so they are on the scale rather than off it.
+**Every present family gets a lane.** The lane list used to be intersected with
+a hand-written list of the 13 busiest families, so a family outside those 13 was
+dropped from the chart entirely. The checkbox list offers all 49, so unchecking
+everything and checking one of the other 36 produced an **empty chart**: 36
+families and 76 of the 192 methods were unreachable.
 
-Two things to know about the ordering. It is computed over **all** entries, not
-the filtered ones, so a lane keeps its place relative to the others as the
-filters change. And the array runs **latest-first**, because bands stack upward
-from `y = 0`: verified in the rendered SVG, `Heuristic` sat at y=4236 of a
-6069 px chart and `Sparse autoencoder` at y=553, so the first array element is
-the BOTTOM lane. The long view puts earliest at the top, so matching it means
-reversing. `band_order` was already near-chronological for its 13 (only
-Decision tree / Random Forest, CNN + RNN / Learning-to-rank, CNN / GNN and
-Diffusion / Transformer (NAR) were out of order), so the visible change is
-mostly the 36 others interleaving into place rather than sitting in an
-alphabetical block at one end.
+**Lane order is chronological**, matching "The long view", so the two charts can
+be read against each other. It is computed over **all** entries, not the
+filtered ones, so a lane keeps its place as the filters change. The array runs
+**latest-first** because lanes stack upward from `y = 0`, which means the array
+is walked in order and NOT reversed: reversing put `Sparse autoencoder` on top
+and `Heuristic` at the bottom, the opposite of the long view. Verified in the
+rendered SVG, top to bottom: Heuristic, Graph / DP, Sequence tag, Neural
+network, Chemical labeling assisted, ... Flow, Palaeoproteomics workflow, Sparse
+autoencoder.
 
-Measured cost: the default all-checked view went from 13 lanes / 3136 px to
-**49 lanes / 196 dots / 6069 px**. That is the honest price of showing every
-family, and it only applies to the default. The height is reactive: filtering to
-one family renders one lane at the 420 px floor (verified for `Sequence tag`,
-`Chemical labeling assisted` and `Manual interpretation`, all previously
-unreachable).
+**Lane height comes from packing, not from a table.** Both swim lanes now lay
+their dots out in PIXELS: a label's width is estimated from its character count,
+and a greedy first-fit pass reuses a row only when two labels cannot touch. A
+lane is then `rows * 43 px` tall, 43 being two label lines plus the dot. The old
+scheme assigned a tier from a date gap against a tier list sized to the BUSIEST
+family, which handed a 2-unit lane 38 tier positions ~4 px apart and stacked its
+labels on top of each other. `band_heights` and `subdomain_lane_height` are gone
+with it; `band_color` and `subdomain_color` remain, as colour registries only.
+
+**Every family also gets its own colour.** The 13 keep their hand-tuned values;
+the other 36 shared a single neutral grey, so most of the chart read as one
+undifferentiated family. They now get `d3.lch(46, 58, i * 137.508 % 360)`: a
+golden-angle walk around the hue circle at fixed CIE lightness and chroma, taken
+in lane order, so consecutive lanes land ~138 degrees apart and every colour is
+equally dark. LCh and not HSL, because HSL at one lightness renders yellow far
+paler than blue and these colours carry a 10 px bold label as well as a dot.
+Generated over ALL families, so a family keeps its colour as filters change.
+
+Measured: the default all-checked view is **49 lanes / 201 dots / 5779 px**, and
+filtering to one family renders one lane at the 240 px floor (verified for
+`Sequence tag`, 5 dots on one row).
 
 **"The long view"** is still the right chart for the field's history, and is not
 made redundant by this. It places one row per family at the first publication of
 its earliest method, with an x-domain pinned to whole years, so the decade of
-quiet between 1984 and 1994 reads as a gap. The swim lane, even at 49 lanes,
-still devotes 20 of its 91 height units to `Transformer (AR)` alone.
+quiet between 1984 and 1994 reads as a gap.
 
-If you add a family, it works without being registered. Add it to `band_order`
-and `band_heights` anyway when it grows busy enough to need tier spacing;
-`SELECT DISTINCT algorithm_family FROM algorithm` is the list, not `band_order`.
+A new family works with no registration at all: it gets a lane, a generated
+colour and a packed height. Add it to `band_color` only if you want a specific
+colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
+
+### Plot's dx, dy and textAnchor are constants, not channels
+
+Passing a function to `dx`, `dy` or `textAnchor` on a `Plot.text` mark applies
+**neither**: Plot reads them once as constants, so a function silently degrades
+to `dx: 0` and `textAnchor: "middle"`. Nothing warns, because a function is a
+perfectly legal value to hand an option.
+
+This is what put a dot in the middle of all 49 names in "The long view". The
+mark meant "labels right of the dot, except late ones, which flip left", written
+as `dx: d => flips(d) ? -10 : 10`. What rendered was every label centred on its
+own dot: 49 label-over-dot collisions, 9 px each, measured in the DOM. It also
+made the marginRight measurement that accompanied it wrong, since a centred
+label overflows half as far as a right-anchored one.
+
+**Split the mark in two** and give each a constant, which is what the chart does
+now: `Plot.text(rows.filter(d => !flips(d)), {dx: 11, textAnchor: "start"})` and
+`Plot.text(rows.filter(flips), {dx: -11, textAnchor: "end"})`. 11 px clears the
+largest dot, whose radius is `3 + 9 * 0.55`.
+
+### No chart on the page has an overlapping label
+
+Verified by measurement, not by eye. `check_chart_overlap.py` serves `_site`,
+drives it in headless Chrome over CDP and, for all 20 chart SVGs, counts
+text-text overlaps, text-over-dot overlaps and text outside the SVG frame from
+real `getBoundingClientRect()` boxes. All three are **0**, re-audited after a
+further 90 s so the two force simulations are included honestly. Run it after
+any chart change:
+
+```bash
+uv run quarto render index.qmd          # it measures _site, so render first
+uv run --with websockets python3 check_chart_overlap.py
+```
+
+It is deliberately NOT in the pre-commit hook or CI: it needs a browser and a
+rendered site, and takes about a minute.
+
+Four classes of defect turned up, and each has its own remedy in `index.qmd`:
+
+1. **Swim-lane tiers** that assumed a lane was tall enough. Replaced by the
+   pixel row packing described above.
+2. **`dx`/`textAnchor` as functions**, above.
+3. **An axis label on the tick baseline.** Plot puts the x-axis label level with
+   the tick labels, where it touched a tick by 3 px in five charts. Fixed with
+   `labelOffset: 40` and `marginBottom: 48`, which gives the label its own line.
+4. **Estimated label widths that were too small.** Every greedy placer reserves
+   a box from a character count, so an underestimate is an invisible licence to
+   overlap: one estimate was even capped at 150 px while the text kept going,
+   which hid a 67 px overhang. Estimates are now 6.2-7.0 px per character at
+   10-12 px, and the citation-flow chart truncates a label at 26 characters so
+   the estimate cannot drift far. If you add a label, re-run the audit rather
+   than trusting the constant.
+
+In the two force-directed charts every name cannot be shown at once: measured
+123 and 457 overlapping label pairs. A greedy pass in descending degree (model
+names first in the bipartite) tries six positions per name -- right of the dot,
+left of it, and each nudged a line up or down -- and hides the name if none is
+free, so 76 of 173 authors and about 100 of 179 bipartite nodes carry a visible
+label. Nothing is lost: every node answers a hover with its full name, and the
+hidden ones are the least connected. The pass is O(n^2), so it runs every fourth
+tick rather than on all of them.
 
 ### Plot tooltips truncate the value, not the label
 
@@ -493,10 +565,11 @@ When adding a new entry, fill all three. The site's filters (and the hero counte
 `algorithm.subdomain` is a free-text slug used only by `kind='downstream-application'`
 rows (17 values in use: `venomics`, `palaeoproteomics`, `immunopeptidomics`,
 `antibodyomics`, `glycoproteomics`, `astrobiology` and others). **A new subdomain
-must also be registered in the four `subdomain_*` OJS cells in `index.qmd`**
-(`subdomain_order`, `subdomain_label`, `subdomain_color`, `subdomain_lane_height`),
-which feed both the Application-areas swim lanes and the Sankey diagram. All four
-must carry the same key set.
+must also be registered in the three `subdomain_*` OJS cells in `index.qmd`**
+(`subdomain_order`, `subdomain_label`, `subdomain_color`), which feed both the
+Application-areas swim lanes and the Sankey diagram. All three must carry the
+same key set. There used to be a fourth, `subdomain_lane_height`; lane heights
+now come from the row packing, so there is nothing to keep in sync.
 
 Forgetting used to be fatal: an unregistered subdomain made the timeline
 dereference a missing lane and throw `TypeError: Cannot read properties of
