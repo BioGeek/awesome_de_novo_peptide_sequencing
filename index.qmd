@@ -3145,12 +3145,35 @@ network_chart = {
     .attr("dx", d => NODE_R(d) + 3)
     .attr("dy", 3)
 
+  // CONTAIN THE SIMULATION. Neither force chart constrained node positions, and
+  // charge (-220 here, -350 for algorithm nodes in the bipartite) overwhelms
+  // centring forces of strength 0.05, so nodes drift outward and KEEP drifting.
+  // Measured in headless Chrome against the SVG box: this chart had 8 of 201
+  // nodes outside after 60 s of simulated time and 19 after 180 s, worst 198 px
+  // out; the bipartite went from 34 of 179 to 47, worst 488 px. It diverges
+  // rather than settling, and since the simulation runs until the cell is
+  // invalidated, the longer a reader leaves the page open the more of the
+  // network silently leaves the frame.
+  //
+  // Clamping positions in the tick handler is the standard remedy and costs
+  // nothing: a node pinned at the edge still feels every force, it just cannot
+  // leave. The label also flips to the inside near the right edge, because a
+  // node can be legally inside while a 150 px name hangs off the frame.
+  const LABEL_FLIP_PX = 170
   sim.on("tick", () => {
+    for (const d of nodes) {
+      const r = NODE_R(d) + 2
+      d.x = Math.max(r, Math.min(width - r, d.x))
+      d.y = Math.max(r, Math.min(PLOT_H - r, d.y))
+    }
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
     node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
-    label.attr("x", d => d.x).attr("y", d => d.y)
+    label
+      .attr("x", d => d.x).attr("y", d => d.y)
+      .attr("dx", d => d.x > width - LABEL_FLIP_PX ? -(NODE_R(d) + 3) : NODE_R(d) + 3)
+      .attr("text-anchor", d => d.x > width - LABEL_FLIP_PX ? "end" : "start")
   })
 
   // Affiliation legend at the bottom, now sized to show every affiliation.
@@ -3471,12 +3494,24 @@ author_algo_network = {
     .attr("dx", d => nodeR(d) + 3)
     .attr("dy", 3)
 
+  // Same containment as the co-authorship chart above; see the note there.
+  // The threshold is wider here because algorithm names run much longer than
+  // author names: at 190 px three labels still escaped by up to 73 px.
+  const LABEL_FLIP_PX = 300
   sim.on("tick", () => {
+    for (const d of nodes) {
+      const r = nodeR(d) + 2
+      d.x = Math.max(r, Math.min(width - r, d.x))
+      d.y = Math.max(r, Math.min(PLOT_H - r, d.y))
+    }
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
     node_g.attr("transform", d => `translate(${d.x}, ${d.y})`)
-    label.attr("x", d => d.x).attr("y", d => d.y)
+    label
+      .attr("x", d => d.x).attr("y", d => d.y)
+      .attr("dx", d => d.x > width - LABEL_FLIP_PX ? -(nodeR(d) + 3) : nodeR(d) + 3)
+      .attr("text-anchor", d => d.x > width - LABEL_FLIP_PX ? "end" : "start")
   })
 
   // Legend: algorithm-family colors + the author swatch.
