@@ -1371,7 +1371,7 @@ innovations_timeline = {
   const chart = Plot.plot({
     width: 1400,
     height: Math.max(420, total_height * 70),
-    marginLeft: 140,
+    marginLeft: 210,   // measured 49 px, then 10 px still over at 195
     marginRight: 60,
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
@@ -1608,6 +1608,16 @@ ff_span = ff_last_year - ff_first_year
 // the family name: several families (Graph / DP + neural network, Sparse
 // autoencoder) are only classifiable that way, and NULL is its own case rather
 // than being folded into classical.
+// A label flips to the left of its dot once the dot is far enough right that a
+// ~40-character name would leave the plot area. 0.62 of the span was chosen
+// from the measurement: it flips every family that overflowed and none that
+// did not.
+ff_label_flips = d => {
+  const lo = new Date(`${ff_first_year - 1}-01-01`).getTime()
+  const hi = new Date(`${ff_last_year + 1}-01-01`).getTime()
+  return (d.date.getTime() - lo) / (hi - lo) > 0.62
+}
+
 ff_approach = r => r.first_is_dl === true || r.first_is_dl === 1 ? "Deep learning"
               : r.first_is_dl === false || r.first_is_dl === 0 ? "Classical"
               : "Not applicable"
@@ -1619,7 +1629,8 @@ Plot.plot({
   width: 1100,
   height: 22 * ff_rows.length + 70,
   marginLeft: 250,
-  marginRight: 30,
+  marginRight: 100,  // flipping late labels left cut 182 px of overflow to
+                     // 68; this clears the rest without crushing the axis
   marginTop: 34,
   x: {
     label: "First appearance",
@@ -1659,12 +1670,18 @@ Plot.plot({
         "methods in this family": "n_methods"
       }
     }),
+    // Labels sit to the RIGHT of the dot, except for late families, whose
+    // labels would run off the chart: measured 182 px of overflow, worst case
+    // "Sparse autoencoder interpretability of InstaNovo" at 2026-06-25.
+    // Flipping them to the left of the dot costs nothing, because the right
+    // side of a late dot is empty by definition, whereas reserving 215 px of
+    // marginRight would squeeze 42 years of timeline into less width.
     Plot.text(ff_rows, {
       x: "date",
       y: "family",
       text: "first_method",
-      dx: 10,
-      textAnchor: "start",
+      dx: d => ff_label_flips(d) ? -10 : 10,
+      textAnchor: d => ff_label_flips(d) ? "end" : "start",
       fontSize: 10,
       fill: "#444"
     })
@@ -1837,7 +1854,29 @@ application_timeline = {
   const extra = Array.from(new Set(rows.map(r => r.subdomain)))
     .filter(sd => !subdomain_order.includes(sd))
     .sort()
+  // Lane order is CHRONOLOGICAL by each subdomain's first appearance, the order
+  // "The long view" and the architectures swim lane both use, so all three
+  // timelines can be read against one another. subdomain_order survives as the
+  // registry of labels, colours and lane heights, and as the test for an
+  // unregistered subdomain; it is no longer the display order.
+  //
+  // Reordering was free on the constraint that matters: the CIE Lab rule below
+  // cares about ADJACENT pairs, and chronological order improves the worst
+  // adjacent distance from 21.9 to 38.4, comfortably past the 20 threshold.
+  //
+  // Computed over ALL entries rather than the filtered ones so a lane keeps its
+  // place as filters change, and latest-first because lanes stack upward from
+  // y = 0, which puts the earliest subdomain at the top to match the long view.
+  // A registered subdomain with no dated entry sorts as "latest", at the bottom.
+  const sd_first = d3.rollup(
+    algorithms_t.filter(a => a.subdomain && a.first_pub),
+    v => d3.min(v, a => a.first_pub),
+    a => a.subdomain
+  )
   const lane_order  = subdomain_order.concat(extra)
+    .sort((a, b) => d3.descending(sd_first.get(a) ?? "9999",
+                                  sd_first.get(b) ?? "9999")
+                    || d3.descending(a, b))
   const lane_label  = subdomain_label
   const lane_color  = subdomain_color
   const lane_height = subdomain_lane_height
@@ -1923,8 +1962,8 @@ application_timeline = {
   const chart = Plot.plot({
     width: 1200,
     height: Math.max(340, total_height * 90),
-    marginLeft: 210,
-    marginRight: 40,
+    marginLeft: 215,   // measured 2 px over
+    marginRight: 60,   // measured 15 px over
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
     y: { domain: [0, total_height], axis: null },
@@ -3515,7 +3554,7 @@ citation_arcs = {
   const marginTop    = 120          // extra headroom for arc apexes near the top rows
   const marginBottom = 60
   const marginLeft   = 130
-  const marginRight  = 30
+  const marginRight  = 52   // 12 px over, then 4 px still over at 45
   const innerWidth   = width  - marginLeft - marginRight
   const innerHeight  = height - marginTop  - marginBottom
 
@@ -3967,7 +4006,7 @@ viewof repo_metric = Inputs.radio(
   )
 
   const chart = Plot.plot({
-    marginLeft: 180, width: 1100,
+    marginLeft: 235, width: 1100,   // measured 50 px of repo-name overflow
     height: Math.max(280, top.length * 24),
     x: { label: labelfmt[repo_metric], grid: true },
     y: { label: null },
@@ -4246,7 +4285,7 @@ viewof venue_type = Inputs.radio(
   )
 
   const chart = Plot.plot({
-    marginLeft: 180,
+    marginLeft: 270,   // measured 85 px of venue-name overflow
     height: Math.max(260, grouped.length * 24),
     x: { label: "Papers", grid: true },
     y: { label: null },
@@ -4508,7 +4547,7 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
   )
 
   const chart = Plot.plot({
-    marginLeft: 200,
+    marginLeft: 270,   // measured 64 px of method-label overflow
     height: Math.max(220, paired.length * 20),
     x: { label: "Preprint → peer-reviewed gap (months)", grid: true },
     y: { label: null },
