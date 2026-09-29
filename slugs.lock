@@ -301,6 +301,7 @@ algorithms	299	log-transformed-mass-domain-de-novo-sequencing
 algorithms	300	novelnseq
 algorithms	301	deepglycan
 algorithms	302	pi-mnovo
+algorithms	303	gyronovo
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -1602,6 +1603,7 @@ authors	1331	yuan-zheng
 authors	1332	hui-jin
 authors	1333	liming-jin
 authors	1334	zikai-hao
+authors	1335	abdellah-el-mekki
 institutions	1	instadeep-ltd
 institutions	2	technical-university-of-denmark
 institutions	4	delft-university-of-technology
@@ -2352,6 +2354,7 @@ publications	350	precise-discovery-of-novel-n-terminal-proteoforms-beyond-the-li
 publications	351	high-accuracy-glycan-de-novo-prediction-for-n-and-o-linked-glycopeptides-across
 publications	352	universal-biological-sequence-reranking-for-improved-de-novo-peptide-sequencing
 publications	353	pi-mnovo-improves-de-novo-peptide-sequencing-through-microbial-domain
+publications	354	gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo
 venues	1	biorxiv
 venues	2	nature-machine-intelligence
 venues	7	aaai-2026

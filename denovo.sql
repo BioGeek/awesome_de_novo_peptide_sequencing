@@ -1306,6 +1306,7 @@ INSERT INTO author VALUES(1331,'Yuan Zheng',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1332,'Hui Jin',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1333,'Liming Jin',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1334,'Zikai Hao',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1335,'Abdellah El Mekki',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4081,6 +4082,7 @@ INSERT INTO author_affiliation VALUES(1333,676);
 INSERT INTO author_affiliation VALUES(1334,677);
 INSERT INTO author_affiliation VALUES(1330,638);
 INSERT INTO author_affiliation VALUES(164,509);
+INSERT INTO author_affiliation VALUES(1335,34);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4386,6 +4388,7 @@ INSERT INTO algorithm VALUES(299,'Log-transformed mass domain de novo sequencing
 INSERT INTO algorithm VALUES(300,'NovelNSeq','','',NULL,'Dedicated algorithm for novel N-terminal proteoforms arising from alternative splicing, parsing signature N-terminal extension peptides. Positioned as an alternative to both proteogenomics, which cannot see proteins absent from the transcriptome, and de novo sequencing, which the authors argue lacks the accuracy and traceability required here.','adjacent',0,'DDA','','');
 INSERT INTO algorithm VALUES(301,'DeepGlycan','','',NULL,'Deep-learning de novo glycopeptide sequencing that learns the relationship between glycopeptide spectra and fragment ions for both N- and O-glycans, rather than being tied to one fragmentation method. Reports over 92% glycan recall and about 95% precision on N-glycopeptide spectra under both sceHCD and EThcD, and sequences O-glycans with no additional training. Identifies an O-glycopeptide in mouse heart tissue confirmed by exoglycosidase treatment and a synthetic standard.','adjacent',1,'DDA','','');
 INSERT INTO algorithm VALUES(302,'π-MNovo','','',NULL,'De novo sequencer adapted to microbial spectra, addressing the fact that existing models were trained largely on non-microbial proteomic data. Built on a purpose-made resource of over 10 million annotated spectra from 72 cultured microbial isolates, each digest split into five high-pH reversed-phase fractions for deeper peptide sampling, and paired with evidence-guided candidate selection. Reports 66.30% complete-peptide recall on a seven-species benchmark, 6.9-21.7% relative above four published models, and recovered 1,587 reference-matched peptides from spectra pFind left unidentified.','algorithm',1,'DDA','','');
+INSERT INTO algorithm VALUES(303,'GyroNovo','','','Transformer (AR)','Attacks missing b- and y-ion fragments on two fronts. Rather than treating imputation as a fixed reconstruction task, it uses the decoder errors seen during training to steer the imputation objective toward the fragments that actually cause mistakes, and to build easy and hard augmented views of each spectrum so the decoder learns under varying spectral corruption. It also gives self-attention a mass-aware inductive bias, using rotary embeddings to encode pairwise mass differences between peaks. Inference needs no extra inputs or search. Reports about 9 points of peptide-level and 7 points of amino-acid-level precision over the previous best on NovoBench.','algorithm',1,'DDA','','');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4749,6 +4752,7 @@ INSERT INTO publication VALUES(350,'Precise Discovery of Novel N-Terminal Proteo
 INSERT INTO publication VALUES(351,'High-accuracy glycan de novo prediction for N- and O-linked glycopeptides across multiple fragmentation techniques','2026-09-10','10.1038/s41467-026-77012-2','Springer Science and Business Media LLC','N- and O-glycosylation are structurally diverse post-translational modifications that affect a range of biological functions. Glycoproteomics faces substantial challenges, particularly in the analysis of O-glycans due to their diversity compared to that of N-glycans. In addition, tandem mass spectrometry data patterns exhibit variability between different fragmentation methods. Existing de novo algorithms often lack sensitivity and are limited to sceHCD fragmentation, restricting their practical application. To address these limitations, we introduce DeepGlycan, a deep-learning-based method for de novo glycopeptide sequencing that captures relationships between glycopeptide spectra and fragment ions from both N- and O-glycans. DeepGlycan achieves over 92% glycan recall and around 95% glycan precision on N-glycopeptide spectra generated using both sceHCD and EThcD. In addition, it enables O-glycan de novo sequencing without additional training. Beyond benchmarking, DeepGlycan identifies an O-glycopeptide in mouse heart tissue whose assignment is supported by exoglycosidase treatment and comparison with a synthetic standard.','https://www.nature.com/articles/s41467-026-77012-2','Nature Communications','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(352,'Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing','2025-05-23','10.48550/arXiv.2505.17552','arXiv','De novo peptide sequencing is a critical task in proteomics. However, the performance of current deep learning-based methods is limited by the inherent complexity of mass spectrometry data and the heterogeneous distribution of noise signals, leading to data-specific biases. We present RankNovo, the first deep reranking framework that enhances de novo peptide sequencing by leveraging the complementary strengths of multiple sequencing models. RankNovo employs a list-wise reranking approach, modeling candidate peptides as multiple sequence alignments and utilizing axial attention to extract informative features across candidates. Additionally, we introduce two new metrics, PMD (Peptide Mass Deviation) and RMD (residual Mass Deviation), which offer delicate supervision by quantifying mass differences between peptides at both the sequence and residue levels. Extensive experiments demonstrate that RankNovo not only surpasses its base models used to generate training candidates for reranking pre-training, but also sets a new state-of-the-art benchmark. Moreover, RankNovo exhibits strong zero-shot generalization to unseen models whose generations were not exposed during training, highlighting its robustness and potential as a universal reranking framework for peptide sequencing. Our work presents a novel reranking strategy that fundamentally challenges existing single-model paradigms and advances the frontier of accurate de novo sequencing. Our source code is provided on GitHub.','https://arxiv.org/abs/2505.17552','arXiv','postprint',NULL,'arxiv');
 INSERT INTO publication VALUES(353,'π-MNovo improves de novo peptide sequencing through microbial-domain adaptation and evidence-guided candidate selection','2026-09-24','10.64898/2026.09.22.753549','Cold Spring Harbor Laboratory','The high taxonomic and strain-level diversity of microbial communities makes it difficult for reference databases to fully represent the protein sequences present in metaproteomic samples, limiting database-dependent peptide identification. De novo peptide sequencing can recover peptide sequences directly from tandem mass spectra without relying on reference databases, providing complementary peptide evidence for metaproteomics. However, most existing de novo sequencing models were developed largely from non-microbial proteomic data and lack specific adaptation to microbial spectra. Here, we established a dedicated microbial spectral resource comprising more than 10 million annotated high-quality tandem mass spectra from 72 cultured microbial isolates, with peptide digests from each isolate separated into five high-pH reversed-phase fractions to increase the opportunity for deeper and more diverse peptide sampling. Using this resource, we developed {pi}-MNovo, which combines adaptation to microbial spectra with evidence-guided candidate selection to improve full-length peptide sequencing precision. On a seven-species external benchmark, {pi}-MNovo achieved 66.30% complete-peptide recall under the same residue-mass-based complete-peptide matching criterion applied to all models, exceeding four published models by 6.9-21.7% in relative recall, with consistent gains across species and peptide-length groups. In two independent metaproteomic datasets, {pi}-MNovo increased reference-supported taxonomic coverage, while synthetic-community analysis recapitulated the designed abundance ranking. From pFind-unidentified spectra, {pi}-MNovo recovered 1,587 pFind-unreported, reference-matched peptides that passed spectrum-evidence filtering. These results show that {pi}-MNovo expands recoverable peptide evidence and enhances the utility of de novo sequencing for metaproteomic analysis.','https://www.biorxiv.org/content/10.64898/2026.09.22.753549v1','bioRxiv','preprint',NULL,'biorxiv');
+INSERT INTO publication VALUES(354,'GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing','2026-09-24','10.48550/arXiv.2609.30542','arXiv','De novo peptide sequencing from tandem mass spectra is essential for identifying peptides without relying on reference databases. Despite advances in deep learning, accurate sequencing remains challenging because experimental spectra are often sparse, noisy, and incomplete, leaving informative b- and y-ion fragments unobserved. Existing methods attempt to recover this missing evidence via latent-space imputation before autoregressive decoding. However, they typically treat imputation as a fixed reconstruction task, without considering which missing fragments are most relevant to decoder errors. Moreover, existing peak representations do not explicitly model mass differences between peaks, despite their fundamental importance. We introduce GyroNovo, a framework with two main contributions. First, we use decoder errors observed during training to adapt the imputation objective, prioritizing fragments associated with frequent decoding errors. We further use the decoder error distribution to construct easy and hard augmented views of each spectrum, enabling the decoder to learn under varying degrees of spectral corruption and missing-fragment severity. Second, we introduce a mass-aware inductive bias into self-attention by using rotary embeddings to encode pairwise mass differences between spectral peaks. Together, these components align missing-fragment recovery with decoder behavior while explicitly incorporating the mass relationships that underlie peptide fragmentation. At inference time, GyroNovo retains a standard encoder-imputer-decoder architecture and requires neither additional inputs nor auxiliary search procedures. Experiments on NovoBench show gains of about 9 percentage points in peptide-level precision and 7 percentage points in amino-acid-level precision over the state-of-the-art baseline. Code: https://github.com/UBC-NLP/gyronovo.','https://arxiv.org/abs/2609.30542','arXiv','preprint',NULL,'arxiv');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -5161,6 +5165,7 @@ INSERT INTO publication_algorithm VALUES(350,300);
 INSERT INTO publication_algorithm VALUES(351,301);
 INSERT INTO publication_algorithm VALUES(352,23);
 INSERT INTO publication_algorithm VALUES(353,302);
+INSERT INTO publication_algorithm VALUES(354,303);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7515,6 +7520,9 @@ INSERT INTO publication_author VALUES(353,1333,9);
 INSERT INTO publication_author VALUES(353,1334,10);
 INSERT INTO publication_author VALUES(353,147,11);
 INSERT INTO publication_author VALUES(353,151,12);
+INSERT INTO publication_author VALUES(354,1335,1);
+INSERT INTO publication_author VALUES(354,149,2);
+INSERT INTO publication_author VALUES(354,148,3);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -11232,6 +11240,7 @@ INSERT INTO publication_impact VALUES(350,'W4412725747',1,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(351,'W7212149644',0,'doi',NULL,2026,'2026-09-27T12:14:33+00:00');
 INSERT INTO publication_impact VALUES(352,'W6910847234',0,'doi',NULL,2026,'2026-09-27T12:14:33+00:00');
 INSERT INTO publication_impact VALUES(353,'W7214396987',0,'doi',NULL,2026,'2026-09-29T06:36:42+00:00');
+INSERT INTO publication_impact VALUES(354,NULL,NULL,'unmatched',NULL,2026,'2026-09-29T06:53:55+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -13353,9 +13362,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',78);
 INSERT INTO sqlite_sequence VALUES('city',293);
 INSERT INTO sqlite_sequence VALUES('affiliation',677);
-INSERT INTO sqlite_sequence VALUES('author',1334);
-INSERT INTO sqlite_sequence VALUES('algorithm',302);
-INSERT INTO sqlite_sequence VALUES('publication',353);
+INSERT INTO sqlite_sequence VALUES('author',1335);
+INSERT INTO sqlite_sequence VALUES('algorithm',303);
+INSERT INTO sqlite_sequence VALUES('publication',354);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
