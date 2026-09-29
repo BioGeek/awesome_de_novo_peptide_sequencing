@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      full_render:
+        description: "Re-render every page, ignoring the incremental check"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -43,14 +48,6 @@ jobs:
         with:
           version: 1.9.38
 
-      # Writes pages/{publications,authors,algorithms,institutions,venues}/.
-      # A separate step rather than a Quarto pre-render hook: the hook works
-      # (Quarto recomputes the render list afterwards), but keeping it explicit
-      # means a failure here stops the build instead of silently publishing a
-      # stale or empty page set.
-      - name: Generate entity pages
-        run: uv run python build_pages.py
-
       # Render and publish are SEPARATE steps, and postrender.py runs between
       # them rather than as a Quarto `post-render` hook.
       #
@@ -64,10 +61,51 @@ jobs:
       #
       # Splitting them also matches the reasoning above for build_pages.py: an
       # explicit step fails the build loudly instead of failing inside a hook.
-      - name: Render
+      # Restore the previous build. gh-pages IS the last published _site, so it
+      # is a free and always-exact cache, and it makes _site complete before
+      # anything is rendered into it. That matters for the fast path below,
+      # which renders index.qmd alone: publishing a _site holding only
+      # index.html would be catastrophic if `quarto publish gh-pages` mirrors
+      # rather than merges. Restoring first means the answer never matters.
+      - name: Restore the previous site from gh-pages
+        run: |
+          if git fetch --depth=1 origin gh-pages 2>/dev/null; then
+            mkdir -p _site
+            git archive FETCH_HEAD | tar -x -C _site
+            echo "restored $(find _site -name '*.html' | wc -l) html files"
+          else
+            echo "no gh-pages branch yet; a full render will follow"
+          fi
+
+      - name: Generate entity pages
+        run: uv run python build_pages.py
+
+      # A full render is ~17 minutes and ~98.7% of this job. Almost every push
+      # does not need it: build_pages.py keeps volatile metrics out of the
+      # pages, so the DAILY refresh-repo-metrics commit changes zero of them.
+      - name: Decide render scope
+        id: scope
+        env:
+          FULL_RENDER: ${{ inputs.full_render }}
+        run: python3 render_scope.py
+
+      - name: Render everything
+        if: steps.scope.outputs.mode == 'full'
         run: uv run quarto render
         env:
           QUARTO_PYTHON: .venv/bin/python
+
+      # index.qmd is rendered on EVERY run regardless: its footer carries the
+      # build date and its charts read the database at render time, so its
+      # output changes even when no page does.
+      - name: Render index.qmd only
+        if: steps.scope.outputs.mode == 'index'
+        run: uv run quarto render index.qmd
+        env:
+          QUARTO_PYTHON: .venv/bin/python
+
+      - name: Record what _site now contains
+        run: python3 render_scope.py --write-key
 
       - name: Fix the home page's sitemap entry
         run: python3 postrender.py

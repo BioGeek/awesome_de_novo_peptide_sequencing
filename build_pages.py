@@ -887,6 +887,13 @@ def main() -> int:
     d = load(conn)
 
     written: dict[str, int] = {}
+    # Every path this run produced, so anything else under a generated
+    # directory can be pruned afterwards. Without this the generator only ever
+    # ADDS: renaming an algorithm or giving an author a disambiguator leaves the
+    # old .qmd behind for ever. That happened twice -- six stale pages survived
+    # the MS BLAST rename and four author disambiguations -- and it also breaks
+    # render_scope.py, whose key is computed over the page set on disk.
+    produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
     # committed under pages/. search: false keeps ~2480 thin pages out of
@@ -922,6 +929,7 @@ def main() -> int:
             return
         body = with_canonical(body, f"{SITE_URL}pages/{kind}/{slug}.html")
         path = args.out / kind / f"{slug}.qmd"
+        produced.add(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         # Rewrite when the CONTENT differs, not just when the file is absent.
         # These are generated files ("Do not edit"), and an existence-only check
@@ -1050,6 +1058,21 @@ def main() -> int:
                    "impact": d["journal_impact"].get(name)}
             body, mtime = render_venue(site, name, ctx)
             emit("venues", site.slugs["venues"][key], body, mtime)
+
+    # Prune only the directories this run actually generated, so
+    # `--only authors` cannot delete the publication pages.
+    pruned = 0
+    if not args.dry_run:
+        for kind in kinds:
+            d = args.out / kind
+            if not d.is_dir():
+                continue
+            for stale in sorted(d.glob("*.qmd")):
+                if stale not in produced:
+                    stale.unlink()
+                    pruned += 1
+    if pruned:
+        print(f"pruned {pruned} page(s) no longer in the catalog")
 
     total = sum(written.values())
     print("Done. " + ", ".join(f"{v} {k}" for k, v in sorted(written.items()))
