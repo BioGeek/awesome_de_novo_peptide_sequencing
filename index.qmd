@@ -627,9 +627,11 @@ family_color_scale = {
     "GNN":               "#937860",
     "CNN":               "#8172B3",
     "Transformer (NAR)": "#55A868",
-    "Diffusion":         "#C44E52",
-    "Flow":              "#937DC2"
+    "Diffusion":         "#C44E52"
   }
+  // Flow is not pinned either. Its notebook colour, #937DC2, sat 5.8 deltaE
+  // from CNN's #8172B3, which was the worst pair on the whole page and a real
+  // ambiguity in a 71-entry legend.
   // The other 36 families get a GENERATED colour rather than a slot in a d3
   // scheme. No scheme is long enough: cycling `i % palette.length` repeats a
   // colour, which is exactly the ambiguity this scale exists to prevent, and the
@@ -665,22 +667,47 @@ family_color_scale = {
     v => d3.min(v, r => r.first_pub),
     r => r.family
   )
+  // The author-model graph labels a FAMILY-LESS algorithm by its kind, so
+  // 'Reviews', 'Adjacent tools (misc)' and 'Application: venomics' are families
+  // as far as a legend is concerned. They have to be coloured here or they all
+  // fall through to the single unknown fallback: consolidating that chart's own
+  // palette into this scale is what exposed it, with 20-odd legend entries
+  // coming out the same brown. Built from the same columns the graph reads, so
+  // the two cannot drift; they sort last because they have no first-appearance
+  // date of their own.
+  const pseudo = ["Reviews", "Benchmarks", "Meta / catalogs",
+                  "Post-processors (misc)", "Adjacent tools (misc)"]
+    .concat(Array.from(new Set(
+      transpose(algorithms)
+        .filter(r => r.kind === "downstream-application")
+        .map(r => `Application: ${r.subdomain ?? "misc"}`))).sort())
   const ordered = Array.from(new Set(
     transpose(algorithms).map(r => r.family).filter(Boolean)
   )).sort((a, b) =>
     d3.ascending(first_pub.get(a) ?? "9999", first_pub.get(b) ?? "9999") ||
-    d3.ascending(a, b))
-  const grid = d3.range(24).map(i => d3.lch(46, 58, i * 15).formatHex())
+    d3.ascending(a, b)).concat(pseudo)
+  // The candidate palette is 24 hues at two lightnesses and two chromas, 96
+  // colours, not 24 hues at one of each. With 71 families to colour (49 real
+  // plus the graph's 22 pseudo-families) a single-hue-ring palette runs out
+  // after 24 and the picker below starts reusing: the legend came out as
+  // alternating greens and purples. Lightness 40 and 54 both carry a bold
+  // label on white, which is the constraint that keeps this grid small.
+  const grid = d3.cross(d3.range(24), [40, 54], [42, 62])
+    .map(([h, l, c]) => d3.lch(l, c, h * 15).formatHex())
   const map = new Map(Object.entries(canonical))
   const taken = Object.values(canonical)
   ordered.forEach((f, i) => {
     if (map.has(f)) return
-    // Neighbours in the chronological walk: the one before (already coloured)
-    // and the one after when it is canonical, so a generated colour is never
-    // dropped between two similar fixed ones.
+    // Farthest-point assignment: the dominant term is the distance to EVERY
+    // colour already assigned, which spreads 71 of them as far apart as the
+    // palette allows. The second term is the distance to this family's
+    // neighbours in the chronological walk -- the one before, and the one after
+    // when it is canonical -- which breaks ties in favour of lanes that will
+    // sit next to each other. Weighted the other way round, the walk produced
+    // good lane contrast and a legend full of near-duplicates.
     const near = [map.get(ordered[i - 1]), canonical[ordered[i + 1]]].filter(Boolean)
-    const score = c => (near.length ? d3.min(near, n => dE(c, n)) : 999)
-                       + 0.25 * d3.min(taken, t => dE(c, t))
+    const score = c => d3.min(taken, t => dE(c, t))
+                       + 0.35 * (near.length ? d3.min(near, n => dE(c, n)) : 0)
     const pick = d3.greatest(grid, score)
     map.set(f, pick)
     taken.push(pick)
@@ -3045,25 +3072,46 @@ network_chart = {
     primary_aff.set(n.id, best)
   }
 
-  // Within-component clustering force: pull nodes of the same primary-aff together.
+  // Within-component clustering force: pull nodes of the same primary-aff
+  // together, toward a target laid out across the INTERIOR of the frame.
+  //
+  // These targets used to sit on a single ellipse, cos/sin of i/n at 0.3 width
+  // and 0.35 height, which put every one of the 60-odd affiliations on one ring
+  // and left the middle of the chart empty. Combined with the global repulsion
+  // below it pressed the whole network outward against the frame: measured, 39
+  // of 173 nodes within 4 px of an edge, as a visible ring of circles with an
+  // empty middle.
+  //
+  // A phyllotaxis disc instead: radius sqrt((i + 0.5) / n) is area-uniform, so
+  // the targets fill the ellipse rather than tracing it, and the golden angle
+  // keeps consecutive ones from lining up.
+  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
   const aff_centers = new Map()
-  for (const aff of all_affs) {
-    const i = all_affs.indexOf(aff)
+  all_affs.forEach((aff, i) => {
+    const r = Math.sqrt((i + 0.5) / all_affs.length)
+    const a = i * GOLDEN_ANGLE
     aff_centers.set(aff, [
-      width / 2 + Math.cos(i * 2 * Math.PI / all_affs.length) * width * 0.3,
-      PLOT_H / 2 + Math.sin(i * 2 * Math.PI / all_affs.length) * PLOT_H * 0.35
+      width / 2 + Math.cos(a) * r * width * 0.48,
+      PLOT_H / 2 + Math.sin(a) * r * PLOT_H * 0.30
     ])
-  }
+  })
 
   const NODE_R = d => 8 + 10 * Math.sqrt(d.degree / max_deg)
 
   const sim = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(70).strength(d => 0.15 + 0.25 * Math.min(1, d.weight)))
-    .force("charge", d3.forceManyBody().strength(-220))
+    // distanceMax is what makes this layout CONVERGE inside the frame. An
+    // unbounded forceManyBody repels every pair at any distance, so the outward
+    // pressure grows with the square of the node count while the positional
+    // forces below stay constant: with 173 nodes the equilibrium was wider than
+    // the chart, and clamping positions in the tick handler turned that into a
+    // ring of nodes parked on the border rather than a layout. Capped at 170 px
+    // the repulsion only separates neighbours, which is all it is for.
+    .force("charge", d3.forceManyBody().strength(-220).distanceMax(170))
     .force("collide", d3.forceCollide().radius(d => NODE_R(d) + 4))
     .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
-    .force("aff_x", d3.forceX(d => aff_centers.get(primary_aff.get(d.id))[0]).strength(0.05))
-    .force("aff_y", d3.forceY(d => aff_centers.get(primary_aff.get(d.id))[1]).strength(0.05))
+    .force("aff_x", d3.forceX(d => aff_centers.get(primary_aff.get(d.id))[0]).strength(0.10))
+    .force("aff_y", d3.forceY(d => aff_centers.get(primary_aff.get(d.id))[1]).strength(0.10))
 
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
@@ -3229,11 +3277,14 @@ network_chart = {
   // invalidated, the longer a reader leaves the page open the more of the
   // network silently leaves the frame.
   //
-  // Clamping positions in the tick handler is the standard remedy and costs
-  // nothing: a node pinned at the edge still feels every force, it just cannot
-  // leave. Labels are kept inside by place_labels above, which rejects any
-  // candidate box that leaves the frame, so a node can sit legally at the right
-  // edge without its name hanging off it.
+  // Clamping positions in the tick handler is the GUARD, not the fix, and
+  // taking it for the fix was a mistake worth recording: a clamp turns
+  // divergence into a ring of nodes parked on the frame with an empty middle,
+  // which looks worse than the drift it prevents and hides the cause. The cause
+  // was unbounded repulsion plus cluster targets on a ring, both addressed
+  // above; with those right the clamp almost never binds (measured: 0 of 173
+  // nodes within 4 px of an edge, against 39 before). Labels are kept inside by
+  // place_labels above, which rejects any box that leaves the frame.
   const TITLE_PX = 34
   let tick_n = 0
   sim.on("tick", () => {
@@ -3317,7 +3368,11 @@ author_algo_network = {
   const width = 1400
   // Legend height computed dynamically after families_seen is known (below);
   // hardcoded 90 clipped anything past the first 3 rows × 5 cols = 15 items.
-  const PLOT_H = 650
+  // 820, not the 650 the co-authorship chart uses: this graph holds 360 nodes
+  // against 173, and at 650 the density alone pushed 19 of them onto the top
+  // and bottom edges however the forces were tuned. 1400 x 820 gives each node
+  // about 3200 px2, which is where the layout settles inside the frame.
+  const PLOT_H = 820
   const legend_cols_per_row = 5
   const legend_col_w = 260
   const legend_row_h = 22
@@ -3420,22 +3475,37 @@ author_algo_network = {
   const legend_row_count = Math.ceil((families_seen.length + 1) / legend_cols_per_row)   // +1 for the author swatch
   const LEGEND_H = LEGEND_TITLE_PX + legend_row_count * legend_row_h + 20
   const height = PLOT_H + LEGEND_H
+  // Family targets on a phyllotaxis disc, for the reason spelled out on the
+  // co-authorship chart above: on a ring they left the middle empty and, with
+  // unbounded repulsion, pushed the network onto the frame.
+  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
   const family_target = new Map()
-  for (let i = 0; i < families_seen.length; i++) {
-    const angle = i * 2 * Math.PI / families_seen.length
-    family_target.set(families_seen[i], [
-      width / 2 + Math.cos(angle) * width * 0.25,
-      PLOT_H / 2 + Math.sin(angle) * PLOT_H * 0.30
+  families_seen.forEach((f, i) => {
+    const r = Math.sqrt((i + 0.5) / families_seen.length)
+    const a = i * GOLDEN_ANGLE
+    family_target.set(f, [
+      width / 2 + Math.cos(a) * r * width * 0.50,
+      PLOT_H / 2 + Math.sin(a) * r * PLOT_H * 0.30
     ])
-  }
+  })
 
   const sim = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(d => 60 + 8 / d.weight).strength(0.35))
-    .force("charge", d3.forceManyBody().strength(d => d.kind === "algo" ? -350 : -90))
+    // Capped repulsion, as on the co-authorship chart. This one was worse: an
+    // author node was held in the frame only by forceX/forceY of strength 0.01,
+    // against 360 nodes repelling each other at any range, so 94 of them ended
+    // up within 4 px of an edge, lining the top and bottom.
+    .force("charge", d3.forceManyBody()
+      .strength(d => d.kind === "algo" ? -350 : -90).distanceMax(200))
     .force("collide", d3.forceCollide().radius(d => nodeR(d) + 4))
     .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
-    .force("fam_x", d3.forceX(d => d.kind === "algo" ? family_target.get(d.family)[0] : width / 2).strength(d => d.kind === "algo" ? 0.08 : 0.01))
-    .force("fam_y", d3.forceY(d => d.kind === "algo" ? family_target.get(d.family)[1] : PLOT_H / 2).strength(d => d.kind === "algo" ? 0.08 : 0.01))
+    // An author is placed by the models it links, which is the point of the
+    // chart, so its own pull to the centre stays weak -- but not so weak that
+    // repulsion wins.
+    .force("fam_x", d3.forceX(d => d.kind === "algo" ? family_target.get(d.family)[0] : width / 2)
+      .strength(d => d.kind === "algo" ? 0.15 : 0.06))
+    .force("fam_y", d3.forceY(d => d.kind === "algo" ? family_target.get(d.family)[1] : PLOT_H / 2)
+      .strength(d => d.kind === "algo" ? 0.15 : 0.06))
 
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])

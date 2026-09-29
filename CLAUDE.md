@@ -505,14 +505,33 @@ family, which handed a 2-unit lane 38 tier positions ~4 px apart and stacked its
 labels on top of each other. `band_heights` and `subdomain_lane_height` are gone
 with it; `band_color` and `subdomain_color` remain, as colour registries only.
 
-**Every family also gets its own colour.** The 13 keep their hand-tuned values;
-the other 36 shared a single neutral grey, so most of the chart read as one
-undifferentiated family. They now get `d3.lch(46, 58, i * 137.508 % 360)`: a
-golden-angle walk around the hue circle at fixed CIE lightness and chroma, taken
-in lane order, so consecutive lanes land ~138 degrees apart and every colour is
-equally dark. LCh and not HSL, because HSL at one lightness renders yellow far
-paler than blue and these colours carry a 10 px bold label as well as a dot.
-Generated over ALL families, so a family keeps its colour as filters change.
+**Every family also gets its own colour, from ONE scale.** The other 36 used to
+share a single neutral grey, so most of the chart read as one undifferentiated
+family. There were also three separate family-colour maps on the page, which is
+what `family_color_scale` exists to prevent, so all three now defer to it: the
+swim lane, the code-activity scatter and the author-model graph.
+
+It has to colour **71** families: 49 real ones plus the 22 pseudo-families the
+author-model graph mints for a family-less method (`Reviews`,
+`Adjacent tools (misc)`, `Application: venomics`). Ten keep a hand-tuned value.
+The rest are assigned from a grid of 24 hues at two CIE lightnesses and two
+chromas, 96 candidates, by a farthest-point walk: each family takes the
+candidate furthest in Lab from every colour already assigned, with distance to
+its neighbours in the chronological walk as a tiebreaker.
+
+Both halves of that were learned by measuring the wrong thing first. A single
+24-hue ring at one lightness ran out after 24 and started reusing, and weighting
+the walk-neighbour term above the global one gave good lane contrast and a
+legend of alternating greens and purples. Now: 50 legend entries, 50 distinct
+colours, exactly one pair under 10 deltaE, worst adjacent lane pair 23.9.
+`Heuristic`, `Graph / DP`, `Learning-to-rank` and `Flow` lost their pinned
+values on purpose -- the first three were near-identical greys at the top of the
+chart, and Flow's `#937DC2` sat 5.8 deltaE from CNN's `#8172B3`, the worst pair
+on the page.
+
+LCh and not HSL throughout, because HSL at one lightness renders yellow far
+paler than blue, and these colours carry a 10 px bold label as well as a dot.
+Assigned over ALL families, so a family keeps its colour as filters change.
 
 Measured: the default all-checked view is **49 lanes / 201 dots / 5779 px**, and
 filtering to one family renders one lane at the 240 px floor (verified for
@@ -583,10 +602,43 @@ In the two force-directed charts every name cannot be shown at once: measured
 123 and 457 overlapping label pairs. A greedy pass in descending degree (model
 names first in the bipartite) tries six positions per name -- right of the dot,
 left of it, and each nudged a line up or down -- and hides the name if none is
-free, so 76 of 173 authors and about 100 of 179 bipartite nodes carry a visible
+free, so about 100 of 173 authors and 103 of 360 bipartite nodes carry a visible
 label. Nothing is lost: every node answers a hover with its full name, and the
 hidden ones are the least connected. The pass is O(n^2), so it runs every fourth
 tick rather than on all of them.
+
+### Clamping a force layout hides the bug; it does not fix it
+
+Both force charts clamp node positions in the tick handler, which stopped nodes
+drifting off-canvas. It also produced a **worse-looking chart**: a ring of nodes
+parked on the frame with an empty middle, 23% of the co-authorship nodes and 26%
+of the bipartite's sitting within 4 px of an edge. A clamp turns divergence into
+a neat pile against the wall, and the pile is the tell.
+
+Two causes, both fixed by making the layout actually converge:
+
+- **`forceManyBody` with no `distanceMax`** repels every pair at any distance, so
+  the outward pressure grows with the square of the node count while the
+  positional forces stay constant. At 173 and 360 nodes the equilibrium was
+  wider than the frame. Capped at 170 px and 200 px, the repulsion only
+  separates neighbours, which is all it was ever for.
+- **Cluster targets on a ring.** Each affiliation (and each family, in the
+  bipartite) was pulled toward `cos/sin(i/n)` at 0.3 of the frame, so all 108
+  targets sat on one ellipse and none in the middle. They are now on a
+  phyllotaxis disc, `r = sqrt((i + 0.5) / n)` at the golden angle, which is
+  area-uniform and so fills the interior.
+
+Measured after: 0 of 173 and 2 of 360 nodes near an edge, x spanning 122-1231 and
+240-1299 of 1400. The bipartite also needed a taller frame, 650 to 820 px: at 360
+nodes the density alone kept 19 of them pinned to the top and bottom however the
+forces were tuned, which is a signal to give a graph more canvas rather than more
+force. The clamp stays as a guard, and now almost never binds.
+
+The knobs that matter, in the order worth trying: `distanceMax` on the charge,
+then the shape of the positional targets, then the frame size, and only then the
+force strengths. `wall_probe.js` (in the scratchpad, not the repo) counts nodes
+within 4 px of the frame and reports the position spread, which is the number to
+tune against -- the label-overlap audit passes happily on a ring.
 
 ### Plot tooltips truncate the value, not the label
 
