@@ -11,7 +11,14 @@ index.qmd now declares the directory form as canonical. This makes the sitemap
 agree with that instead of contradicting it, which is the state that caused the
 report in the first place.
 
-Stdlib only, no network. Quarto runs it via project.post-render.
+Stdlib only, no network. publish.yml runs it as its own step, after whichever
+render scope render_scope.py chose, NOT as a Quarto post-render hook -- that
+hook is handed the full output file list in an environment variable and dies on
+Linux's 128 KiB MAX_ARG_STRLEN at this page count.
+
+It runs on every scope, including the fast paths, because Quarto merges into an
+existing sitemap.xml on a single-file render rather than leaving it alone: the
+home-page entry comes back as `index.html` and needs rewriting again.
 """
 
 from __future__ import annotations
@@ -34,8 +41,9 @@ def site_url() -> str:
 
 
 def main() -> int:
-    # A single-file render (`quarto render index.qmd`) does not regenerate the
-    # sitemap, so its absence is normal and not an error.
+    # A sitemap is normally always there, since even a single-file render
+    # merges into it. The one way to be here without one is a first build with
+    # no gh-pages branch to restore from, which is not an error.
     if not SITEMAP.exists():
         return 0
 

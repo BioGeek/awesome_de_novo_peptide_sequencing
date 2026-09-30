@@ -1003,7 +1003,8 @@ def main() -> int:
     # ADDS: renaming an algorithm or giving an author a disambiguator leaves the
     # old .qmd behind for ever. That happened twice -- six stale pages survived
     # the MS BLAST rename and four author disambiguations -- and it also breaks
-    # render_scope.py, whose key is computed over the page set on disk.
+    # render_scope.py, whose manifest is keyed by the page paths on disk: a
+    # stale .qmd would keep its published .html alive for ever.
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing

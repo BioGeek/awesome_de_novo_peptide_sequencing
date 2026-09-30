@@ -410,9 +410,69 @@ These ARE baked into the pages, unlike repository stars. The rule is how often
 the number moves: stars change daily, so putting them on a page would rewrite
 the whole page set nightly for nothing, whereas benchmark results change when an
 upstream repository commits new runs and the refresh workflow only commits when
-they actually changed. The cost is that such a week triggers a full render
-instead of an index-only one, which is the trade `render_scope.py` is there to
-make visible.
+they actually changed. And a week where they do costs 17 page renders, not 2485,
+because of the next section.
+
+## The publish renders what changed, not everything
+
+`render_scope.py` decides, before Quarto is invoked, whether the publish needs
+**full**, **partial** or **index** scope. A full render is 1017 seconds and
+98.7% of the job, essentially all of it the ~2485 generated pages at ~0.4s each;
+index.qmd alone is 13.5s.
+
+| mode | when | what runs |
+|---|---|---|
+| `index` | no generated page changed | `quarto render index.qmd` |
+| `partial` | 1 to 60 pages changed | index.qmd, then one `quarto render` per changed page |
+| `full` | Quarto version, `_quarto.yml` or `custom.scss` changed; no usable `_site`; more than 60 pages changed; or the workflow's `full_render` input | `quarto render` |
+
+`index` is the common case: build_pages.py keeps volatile metrics out of the
+pages, so the daily repo-metrics commit changes zero of them. `partial` is the
+case this section is about, and the two that produce it are a new paper and the
+weekly benchmark refresh, which touches the 17 method pages carrying a benchmark
+line and nothing else. Authors, publications, institutions and venues are not
+affected by a benchmark number, so they are not re-rendered.
+
+**`_site/.render-manifest`** is how one run tells the next what it built: the
+Quarto version plus `_quarto.yml` and `custom.scss` in one "global" hash, and
+then a hash per page keyed by path. Path as well as content, so a slug rename
+registers as a removal and an addition rather than as nothing. It lives inside
+`_site` because gh-pages carries it to the next run, the same trick that makes
+the restore step a free and exact cache. It replaced `.render-key`, a single
+hash over everything, which could only answer "did anything change".
+
+**One `quarto render` per file, because `quarto render a.qmd b.qmd` silently
+renders only the first input.** That is the kind of thing that ships as "the
+partial render works" while quietly publishing stale pages, so it is worth
+saying twice. The per-file cost is ~5s against ~0.4s inside a project render,
+which is what sets the 60-file cap: past that the full render is both faster and
+more predictable.
+
+A **full** project render empties `_site` and repopulates it at the end, so the
+directory is bare for the whole 17 minutes; a partial render writes into
+whatever is already there. The restore step therefore matters only to the two
+fast paths, and the manifest is recreated after every render rather than carried
+through one.
+
+**What a partial render leaves alone**, all verified rather than assumed:
+
+- the other pages in `_site`, which keep their bytes;
+- `sitemap.xml`, which Quarto MERGES into rather than rewrites: it keeps all
+  2449 entries and refreshes the ones it rendered. It only merges when the file
+  is already there, though. Delete it and an index-only render produces a
+  sitemap with **one** URL, which is the second reason the workflow restores
+  `_site` from gh-pages before rendering anything;
+- `search.json`, which never carried the generated pages anyway
+  (`search: false` in their metadata), so nothing there can go stale.
+
+**A removed page forces the full render**, and the reason is the sitemap rather
+than the page. Since Quarto merges into an existing `sitemap.xml`, neither fast
+path can drop the entry, and the restore brings both the entry and the orphaned
+`.html` back on the next run; only a full render, which empties `_site` and
+writes the sitemap from what it produced, forgets a page. Removals are rare and
+deliberate -- `slugs.py --check` fails the commit on one -- so 17 minutes is the
+right price. Before the manifest this happened by accident, because any change
+to the single key meant a full render anyway.
 
 ## Publication dates
 
