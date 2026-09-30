@@ -1,0 +1,63 @@
+name: Refresh public benchmarks
+
+on:
+  schedule:
+    # Weekly on Monday at 09:00 UTC. The upstream repository commits results in
+    # batches when a tool or a dataset is added, not continuously, so a weekly
+    # look is plenty; 09:00 keeps the slot-per-hour staircase intact (06:00
+    # daily, 06:30 Sunday, 07:00 on the 1st, 08:00 on Jan/Jul 1), and Monday is
+    # the one weekday no other refresh runs.
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even if the upstream commit is unchanged
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions:  write   # trigger publish.yml after a successful commit
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      # The builder exits early when bittremieuxlab/denovo_benchmarks is at the
+      # commit already recorded in benchmark_source, so a quiet week costs one
+      # API call rather than 168 file downloads.
+      - name: Refresh benchmark results
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run python build_benchmarks.py ${{ inputs.force && '--force' || '' }}
+          sqlite3 denovo.db .dump > denovo.sql
+
+      - name: Commit if the benchmark results changed
+        id: commit
+        uses: ./.github/actions/commit-refreshed-db
+        with:
+          # Five tables, parents first: benchmark_result and benchmark_curve
+          # carry foreign keys into the first two.
+          table: benchmark_dataset benchmark_tool benchmark_result benchmark_curve benchmark_source
+          message: Refresh public benchmark results
+          workflow-file: refresh-benchmarks.yml
+          no-changes-message: Upstream benchmarks unchanged this week, nothing to commit.
+
+      - name: Trigger site rebuild
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish.yml --ref main

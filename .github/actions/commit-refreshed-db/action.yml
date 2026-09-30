@@ -6,10 +6,12 @@ description: >
 inputs:
   table:
     description: >
-      The single table this workflow owns and is the sole writer of
-      (e.g. repository_metrics). On a push race the freshly-built rows for
-      this table are replayed onto the updated remote database, so concurrent
-      changes to every OTHER table are preserved.
+      The table, or space-separated tables, this workflow owns and is the sole
+      writer of (e.g. repository_metrics). On a push race the freshly-built rows
+      for these tables are replayed onto the updated remote database, so
+      concurrent changes to every OTHER table are preserved. List them in an
+      order that satisfies their foreign keys, parents first: they are dropped
+      and replayed in the order given.
     required: true
   message:
     description: Commit message (first line; a provenance line is appended).
@@ -73,18 +75,38 @@ runs:
 
           # denovo.db is binary, so a normal rebase always conflicts on it and a
           # textual merge of denovo.sql is not trustworthy. Instead: keep only
-          # the rows for the table this workflow owns, take the remote database
+          # the rows for the table(s) this workflow owns, take the remote database
           # wholesale (preserving whatever else was pushed), then replay our
           # rows back on top. This is safe precisely because each refresh
-          # workflow is the sole writer of its own table.
-          sqlite3 denovo.db ".dump ${TABLE}" > /tmp/owned_table.sql
-          test -s /tmp/owned_table.sql || { echo "::error::Empty dump for ${TABLE}; refusing to continue."; exit 1; }
+          # workflow is the sole writer of its own tables.
+          # One dump per owned table, concatenated. Each `.dump <table>` emits its
+          # own PRAGMA/BEGIN/COMMIT wrapper, which is still valid SQL in series.
+          #
+          # `.dump <table>` emits the table and its rows but NOT the indexes and
+          # TRIGGERS attached to it, and this step drops the table. Left alone
+          # that silently discards both: publication_citation carries
+          # idx_publication_citation_cited and the two
+          # prevent_future_publication_citation_* triggers, which are the guard
+          # against recording a citation of a paper that did not exist yet.
+          # Their DDL is captured here and replayed after the table.
+          : > /tmp/owned_tables.sql
+          for t in ${TABLE}; do
+            sqlite3 denovo.db ".dump ${t}" >> /tmp/owned_tables.sql
+            sqlite3 denovo.db "SELECT sql || ';' FROM sqlite_master
+              WHERE type IN ('index', 'trigger') AND sql IS NOT NULL
+                AND tbl_name = '${t}';" >> /tmp/owned_tables.sql
+          done
+          test -s /tmp/owned_tables.sql || { echo "::error::Empty dump for ${TABLE}; refusing to continue."; exit 1; }
 
           git fetch origin main
           git reset --hard origin/main
 
-          sqlite3 denovo.db "DROP TABLE IF EXISTS ${TABLE};"
-          sqlite3 denovo.db < /tmp/owned_table.sql
+          # Dropped in reverse of the declared order and replayed in it, so a
+          # child table never outlives the parent it references.
+          for t in $(echo ${TABLE} | tr ' ' '\n' | tac); do
+            sqlite3 denovo.db "DROP TABLE IF EXISTS ${t};"
+          done
+          sqlite3 denovo.db < /tmp/owned_tables.sql
           sqlite3 denovo.db .dump > denovo.sql
 
           if [[ -z "$(git status --porcelain denovo.db denovo.sql)" ]]; then

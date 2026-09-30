@@ -423,6 +423,57 @@ family_firsts = pd.read_sql(
     conn,
 )
 
+# ---------------------------------------------------------------------------
+# Public benchmarks. Written by build_benchmarks.py from
+# bittremieuxlab/denovo_benchmarks; see the docstring there for what the numbers
+# are. Everything the charts need is three small frames plus a provenance dict.
+#
+# is_latest = 1 keeps one row per (tool, dataset): the newest version of that
+# tool which ran on it. The rule needs a natural version comparison with an
+# `_old` suffix exception, so the builder applies it and flags the row.
+benchmark_results = pd.read_sql(
+    """
+    SELECT r.dataset,
+           d.category,
+           d.cat_group,
+           r.tool,
+           t.display_name,
+           t.version,
+           t.n_datasets,
+           t.algorithm_id,
+           alg.algorithm_family AS family,
+           r.ap_peptide,
+           r.ap_aa
+    FROM benchmark_result r
+    JOIN benchmark_dataset d ON d.name = r.dataset
+    JOIN benchmark_tool t    ON t.tool = r.tool
+    LEFT JOIN algorithm alg  ON alg.id = t.algorithm_id
+    WHERE r.is_latest = 1
+    ORDER BY r.tool, r.dataset
+    """,
+    conn,
+)
+
+benchmark_curves = pd.read_sql(
+    """
+    SELECT c.tool, t.display_name, alg.algorithm_family AS family,
+           t.n_datasets, c.level, c.coverage, c.precision
+    FROM benchmark_curve c
+    JOIN benchmark_tool t   ON t.tool = c.tool
+    LEFT JOIN algorithm alg ON alg.id = t.algorithm_id
+    ORDER BY c.level, c.tool, c.coverage
+    """,
+    conn,
+)
+
+# Dataset order inside each category group, so the heatmap's columns are stable
+# between renders rather than following whatever order the join returns.
+benchmark_datasets = pd.read_sql(
+    "SELECT name, category, cat_group, n_tools FROM benchmark_dataset "
+    "ORDER BY cat_group, category, name", conn)
+
+benchmark_source = dict(conn.execute("SELECT key, value FROM benchmark_source"))
+
 # One lookup replaces threading ids through seven datasets. `key` is exactly the
 # string the charts ALREADY aggregate on -- a display name, an algorithm name,
 # an institution name, a journal -- with publications keyed by id. That matters
@@ -468,6 +519,10 @@ ojs_define(
     journal_impact=journal_impact,
     publication_impact=publication_impact,
     repo_metrics=repo_metrics,
+    benchmark_results=benchmark_results,
+    benchmark_curves=benchmark_curves,
+    benchmark_datasets=benchmark_datasets,
+    benchmark_source=benchmark_source,
     build_date=build_date,
 )
 
@@ -1793,6 +1848,498 @@ Inputs.table(
     width: { "First seen": 92, "Methods since": 92, "Approach": 100 }
   }
 )
+```
+
+## How they score
+
+Everything above is what the methods ARE. This is how they do, on the one
+apples-to-apples comparison the field has: the
+[denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) project
+runs every tool in its own container over the same public datasets, against the
+same ground-truth PSMs and the same metric code, and commits the resulting
+curves. Nobody there is marking their own homework.
+
+```{ojs}
+//| echo: false
+md`${bench_provenance}`
+```
+
+```{ojs}
+//| echo: false
+viewof bench_level = Inputs.radio(["peptide", "amino acid"], {
+  label: "Metric level",
+  value: "peptide"
+})
+```
+
+```{ojs}
+//| echo: false
+// One row per (tool, dataset) on the tool's latest version; see the note at the
+// bottom of the section for what "latest" means and what it costs.
+bench_t = transpose(benchmark_results)
+```
+
+```{ojs}
+//| echo: false
+bench_curves_t = transpose(benchmark_curves)
+```
+
+```{ojs}
+//| echo: false
+bench_n_datasets = transpose(benchmark_datasets).length
+```
+
+```{ojs}
+//| echo: false
+bench_ap_key = bench_level === "peptide" ? "ap_peptide" : "ap_aa"
+```
+
+```{ojs}
+//| echo: false
+bench_level_label = bench_level === "peptide" ? "Peptide" : "Amino acid"
+```
+
+```{ojs}
+//| echo: false
+// A tool that ran on every dataset can be ranked against the others; one that
+// did not, cannot. The only such entry is casanovo-scaling, a scaling
+// experiment over a 24-dataset subset rather than a released tool, so it stays
+// in the heatmap, where every cell stands on its own, and out of the two charts
+// that compare tools across datasets.
+bench_full = bench_t.filter(d => d.n_datasets === bench_n_datasets)
+```
+
+```{ojs}
+//| echo: false
+bench_provenance = {
+  const src = benchmark_source
+  const tools = new Set(bench_full.map(d => d.display_name))
+  const linked = new Set(bench_full.filter(d => d.algorithm_id != null)
+    .map(d => d.display_name))
+  return `**${tools.size} tools** over **${bench_n_datasets} datasets**, ${linked.size}
+of them with a page in this catalog. Numbers as committed to
+[\`${src.repo}\`](https://github.com/${src.repo}) at
+[\`${src.commit.slice(0, 7)}\`](https://github.com/${src.repo}/commit/${src.commit})
+(${src.commit_date.slice(0, 10)}), read on ${src.fetched} by \`build_benchmarks.py\`.`
+}
+```
+
+```{ojs}
+//| echo: false
+// The family colour scale is shared with the architectures swim lane, so a
+// Transformer (AR) dot is the same colour here as it is there. A tool with no
+// catalog row has no family and gets the unknown grey.
+bench_family_domain = Array.from(new Set(bench_t.map(d => d.family ?? "Unknown")))
+```
+
+```{ojs}
+//| echo: false
+bench_family_range = bench_family_domain.map(
+  f => f === "Unknown" ? "#9aa5b1" : family_color_scale(f))
+```
+
+```{ojs}
+//| echo: false
+// Both charts label an axis with a method name, so both get the tick-label
+// links every other chart on the page uses.
+bench_linkify = chart => linkify_tick_labels(
+  chart,
+  new Map(bench_t.filter(d => d.algorithm_id != null)
+    .map(d => [d.display_name, page_href("algorithms", d.display_name)])
+    .filter(([, href]) => href))
+)
+```
+
+### Rank across every dataset
+
+```{ojs}
+//| echo: false
+md`A tool's rank is its position on ONE dataset, 1 being the best
+${bench_level}-level average precision. Each dot is a dataset, so the spread
+answers what a headline number cannot: whether a method is *consistently* good
+or good on average. Ordered by median rank.`
+```
+
+```{ojs}
+//| echo: false
+bench_ranked = {
+  const rows = bench_full.filter(d => d[bench_ap_key] != null)
+  const out = []
+  for (const [, group] of d3.group(rows, d => d.dataset)) {
+    group.slice()
+      .sort((a, b) => d3.descending(a[bench_ap_key], b[bench_ap_key]))
+      .forEach((d, i) => out.push({ ...d, ap: d[bench_ap_key], rank: i + 1 }))
+  }
+  return out
+}
+```
+
+```{ojs}
+//| echo: false
+bench_order = {
+  // By median rank, best first, with median AP breaking ties: with 17 tools
+  // over 84 datasets two medians do land on the same half-integer.
+  const med = d3.rollup(bench_ranked,
+    v => [d3.median(v, d => d.rank), -d3.median(v, d => d.ap)],
+    d => d.display_name)
+  return Array.from(med)
+    .sort((a, b) => d3.ascending(a[1][0], b[1][0]) || d3.ascending(a[1][1], b[1][1]))
+    .map(d => d[0])
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  // Box plus dots, the shape of plot_ranking_boxplot.py in the upstream
+  // visualisation PR, turned on its side because the tool names are long
+  // enough that the vertical version needs rotated labels.
+  //
+  // The dots are SIZED BY COUNT rather than jittered into a strip. A rank is an
+  // integer, so 84 datasets land on 17 x positions and a strip plot stacks
+  // about five dots per position; jittering them inside a 30 px row separates
+  // nothing and the alpha pile-up reads as a colour, not a count. One dot whose
+  // area is the number of datasets says the same thing exactly.
+  const n = bench_order.length
+  const chart = Plot.plot({
+    width: 1100,
+    height: Math.max(320, n * 30 + 90),
+    marginLeft: 135,
+    marginRight: 30,
+    marginBottom: 48,
+    x: { domain: [0.5, n + 0.5], grid: true, label: "Rank (1 = best)",
+         labelOffset: 40 },
+    r: { range: [2, 9] },
+    y: { domain: bench_order, label: null },
+    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    marks: [
+      Plot.boxX(bench_ranked, {
+        x: "rank", y: "display_name",
+        fill: "#e3e9ef", stroke: "#57606a", strokeWidth: 1,
+        // The dots below already show every dataset, so the box's own outlier
+        // dots would be a second, differently sized copy of some of them.
+        r: 0
+      }),
+      Plot.dot(bench_ranked, Plot.group(
+        { r: "count" },
+        {
+          x: "rank", y: "display_name", fill: "family", fillOpacity: 0.85,
+          stroke: "white", strokeWidth: 0.6,
+          tip: { format: { x: false, y: false, fill: false, r: false } },
+          channels: { "Method": "display_name", "Rank": "rank",
+                      "Datasets at this rank": "count" }
+        })),
+      // A method's own median, drawn on top of its box: the box's median line
+      // is the same value, but at this row height it is one pixel wide and sits
+      // under the dots.
+      Plot.tickX(bench_ranked, Plot.groupY({ x: "median" }, {
+        x: "rank", y: "display_name", stroke: "#24292f", strokeWidth: 2
+      }))
+    ],
+    tip: plot_tip_style
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${bench_linkify(chart)}</div>
+  </div>`
+}
+```
+
+### Precision against coverage
+
+```{ojs}
+//| echo: false
+md`Every tool scores every spectrum it is handed, so precision is a function of
+how many of those answers you keep. These curves are that trade-off, averaged
+over all ${bench_n_datasets} datasets: down the y axis is "how right is it when
+it answers", across the x axis is "how often does it answer". **AP** in the
+legend is the area under the curve, and the greyed lines are the tools you have
+not ticked.`
+```
+
+```{ojs}
+//| echo: false
+viewof bench_show = Inputs.checkbox(bench_order, {
+  label: "Highlight",
+  value: bench_order.slice(0, 5)
+})
+```
+
+```{ojs}
+//| echo: false
+bench_ap_of_curve = {
+  // Trapezoid over the 101 grid points, per tool and level. This is the number
+  // the legend quotes, and it is NOT the median of the per-dataset APs: it is
+  // the AP of the AVERAGED curve, which is what the benchmark manuscript's
+  // figure 1b reports. The two differ by up to 0.12 (InstaNovo: median 0.854,
+  // averaged curve 0.736) because averaging curves is not averaging areas.
+  const out = new Map()
+  for (const [key, pts] of d3.group(bench_curves_t, d => `${d.level}|${d.tool}`)) {
+    const p = pts.slice().sort((a, b) => d3.ascending(a.coverage, b.coverage))
+    let area = 0
+    for (let i = 1; i < p.length; i++) {
+      area += (p[i].precision + p[i - 1].precision) / 2
+              * (p[i].coverage - p[i - 1].coverage)
+    }
+    out.set(key, area)
+  }
+  return out
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  const rows = bench_curves_t.filter(d => d.level === bench_level
+                                          && d.n_datasets === bench_n_datasets)
+  const shown = new Set(bench_show)
+  const ap = d => bench_ap_of_curve.get(`${bench_level}|${d.tool}`) ?? 0
+  const label = d => `${d.display_name} (AP = ${ap(d).toFixed(3)})`
+  const highlighted = rows.filter(d => shown.has(d.display_name))
+  // Legend order follows AP, so the legend doubles as the ranking. Built from
+  // the tools rather than from the labels, which saves parsing the number back
+  // out of the string.
+  const domain = Array.from(d3.group(highlighted, d => d.tool))
+    .sort((a, b) => d3.descending(ap(a[1][0]), ap(b[1][0])))
+    .map(d => label(d[1][0]))
+  const chart = Plot.plot({
+    width: 780,
+    height: 500,
+    marginLeft: 60,
+    marginBottom: 48,
+    x: { label: `${bench_level_label} coverage`, domain: [0, 1], grid: true,
+         labelOffset: 40 },
+    y: { label: `${bench_level_label} precision`, domain: [0, 1], grid: true },
+    color: { domain, range: domain.map((_, i) => d3.schemeTableau10[i % 10]),
+             legend: true, columns: "50%" },
+    marks: [
+      // The unticked tools stay grey and behind: the chart should still show
+      // where the field is, and 17 distinguishable line colours do not exist.
+      Plot.line(rows.filter(d => !shown.has(d.display_name)), {
+        x: "coverage", y: "precision", z: "tool",
+        stroke: "#c6cdd5", strokeWidth: 1
+      }),
+      Plot.line(highlighted, {
+        x: "coverage", y: "precision", z: "tool",
+        stroke: label, strokeWidth: 2
+      }),
+      Plot.ruleY([0]), Plot.ruleX([0])
+    ]
+  })
+  return html`<div class="chart-wrap">
+    <div class="chart-scroll">${chart}</div>
+  </div>`
+}
+```
+
+### Every tool on every dataset
+
+```{ojs}
+//| echo: false
+md`The same numbers with no averaging at all: one cell per tool and dataset,
+coloured by ${bench_level}-level average precision. Rows run best to worst,
+columns easiest to hardest within each group, and the groups themselves
+easiest-first. A blank cell is a run that does not exist upstream.`
+```
+
+```{ojs}
+//| echo: false
+{
+  const rows = bench_t.filter(d => d[bench_ap_key] != null)
+    .map(d => ({ ...d, ap: d[bench_ap_key] }))
+  // Median AP orders everything: rows (tools), columns (datasets) and column
+  // groups (categories). Note the columns are NOT faceted by category: Plot
+  // shares the x scale across facets, so 17 facets would each carry all 84
+  // columns. The grouping is drawn instead, as a header per group plus a rule
+  // at its left edge.
+  const med_by = keyfn => {
+    const med = d3.rollup(rows, v => d3.median(v, d => d.ap), keyfn)
+    return Array.from(med).sort((a, b) => d3.descending(a[1], b[1])).map(d => d[0])
+  }
+  // Column and group order come from the tools that ran EVERYWHERE, so a
+  // partially evaluated tool cannot move a dataset's difficulty ranking. Row
+  // order uses every tool, because a partially evaluated tool still needs a
+  // row to sit in.
+  const full = rows.filter(d => d.n_datasets === bench_n_datasets)
+  const med_full = keyfn => {
+    const med = d3.rollup(full, v => d3.median(v, d => d.ap), keyfn)
+    return Array.from(med).sort((a, b) => d3.descending(a[1], b[1])).map(d => d[0])
+  }
+  const cat_order = med_full(d => d.cat_group)
+  const ds_med = d3.rollup(full, v => d3.median(v, d => d.ap), d => d.dataset)
+  const ds_cat = new Map(rows.map(d => [d.dataset, d.cat_group]))
+  const datasets = Array.from(ds_med.keys()).sort((a, b) =>
+    d3.ascending(cat_order.indexOf(ds_cat.get(a)), cat_order.indexOf(ds_cat.get(b)))
+    || d3.descending(ds_med.get(a), ds_med.get(b)))
+  // One header per group, anchored on the group's middle column, plus a rule
+  // half a band to the left of its first column.
+  const groups = cat_order.map(category => {
+    const members = datasets.filter(d => ds_cat.get(d) === category)
+    return { category, n: members.length, first: members[0],
+             mid: members[Math.floor(members.length / 2)] }
+  })
+  const width = 1400, marginLeft = 135, marginRight = 20
+  const band = (width - marginLeft - marginRight) / datasets.length
+  const tools = med_by(d => d.display_name)
+  // A run that does not exist upstream would otherwise show the page
+  // background, and on a white-to-teal scale that is indistinguishable from an
+  // average precision of 0. Grey says "not run" and cannot be misread as a
+  // score. 60 of the 1512 cells, all of them casanovo-scaling's.
+  const present = new Set(rows.map(d => `${d.display_name}|${d.dataset}`))
+  const missing = tools.flatMap(t => datasets
+    .filter(ds => !present.has(`${t}|${ds}`))
+    .map(ds => ({ display_name: t, dataset: ds })))
+  const chart = Plot.plot({
+    width,
+    height: tools.length * 22 + 320,
+    marginLeft, marginRight,
+    marginTop: 34,
+    marginBottom: 230,   // the rotated dataset names live in here
+    x: { domain: datasets, tickRotate: -90, label: null, tickSize: 0 },
+    y: { domain: tools, label: null },
+    color: { scheme: "BuGn", domain: [0, 1] },
+    style: { fontSize: "10px" },
+    marks: [
+      Plot.cell(missing, {
+        x: "dataset", y: "display_name", fill: "#e7eaee", inset: 0.5,
+        title: d => `${d.display_name} was not run on ${d.dataset}`
+      }),
+      Plot.cell(rows, {
+        x: "dataset", y: "display_name", fill: "ap", inset: 0.5,
+        tip: { format: { x: false, y: false, fill: false } },
+        channels: { "Method": "display_name", "Dataset": "dataset",
+                    "Kind": "category", "AP": d => d.ap.toFixed(3) }
+      }),
+      Plot.text(groups, {
+        x: "mid", text: "category", frameAnchor: "top", dy: -20,
+        fontWeight: "bold", fontSize: 11, fill: "#57606a"
+      }),
+      Plot.ruleX(groups.slice(1), {
+        x: "first", dx: -band / 2, stroke: "#8c959f", strokeWidth: 1,
+        insetTop: -14
+      })
+    ],
+    tip: plot_tip_style
+  })
+  // The ramp legend is rendered here rather than by `legend: true` on the
+  // scale: Plot sizes that one to the ramp exactly, so the 0.0 and 1.0 tick
+  // labels, which are centred on the ends, hang 7 and 8 px outside its frame.
+  const legend = Plot.legend({
+    color: { scheme: "BuGn", domain: [0, 1],
+             label: `${bench_level_label}-level average precision` },
+    width: 320, marginLeft: 18, marginRight: 18
+  })
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    ${legend}
+    <div class="chart-scroll">${bench_linkify(chart)}</div>
+  </div>`
+}
+```
+
+### The table
+
+```{ojs}
+//| echo: false
+bench_summary = {
+  const rank_by = d3.rollup(bench_ranked, v => d3.median(v, d => d.rank),
+                            d => d.display_name)
+  const rows = []
+  for (const [name, mine] of d3.group(bench_t, d => d.display_name)) {
+    const aps = mine.map(d => d[bench_ap_key]).filter(v => v != null)
+    if (!aps.length) continue
+    rows.push({
+      Method: name,
+      Family: mine[0].family ?? "",
+      Version: mine[0].version,
+      Datasets: mine[0].n_datasets,
+      "Median rank": rank_by.get(name) ?? null,
+      "Median AP": d3.median(aps),
+      "AP of mean curve": bench_ap_of_curve.get(`${bench_level}|${mine[0].tool}`) ?? null,
+      "Worst": d3.min(aps),
+      "Best": d3.max(aps)
+    })
+  }
+  return rows.sort((a, b) => d3.descending(a["Median AP"], b["Median AP"]))
+}
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(bench_summary, {
+  rows: 20,
+  sort: "Median AP",
+  reverse: true,
+  layout: "auto",
+  format: {
+    Method: (m, i) => page_link("algorithms", bench_summary[i].Method, m),
+    "Median rank": v => v == null ? "" : v.toFixed(1),
+    "Median AP": v => v.toFixed(3),
+    "AP of mean curve": v => v == null ? "" : v.toFixed(3),
+    Worst: v => v.toFixed(3),
+    Best: v => v.toFixed(3)
+  },
+  width: { Method: 150, Family: 150, Version: 110, Datasets: 80 }
+})
+```
+
+```{ojs}
+//| echo: false
+bench_zeros = {
+  // Exact zeros are worth counting rather than hiding: they are what a tool
+  // scores on a condition it does not support at all.
+  const z = bench_full.filter(d => d[bench_ap_key] === 0)
+  const per_dataset = d3.rollups(z, v => v.length, d => d.dataset)
+    .sort((a, b) => d3.descending(a[1], b[1]))
+  return {
+    cells: z.length,
+    total: bench_full.filter(d => d[bench_ap_key] != null).length,
+    datasets: new Set(z.map(d => d.dataset)).size,
+    tools: new Set(z.map(d => d.display_name)).size,
+    worst: per_dataset[0] ?? ["-", 0]
+  }
+}
+```
+
+```{ojs}
+//| echo: false
+md`Four things worth knowing before quoting any of this.
+
+**A tool's latest version, not its best.** Four tools have two versions in the
+results: \`_old\` twins for PEAKS and Novor, and two container builds each for
+InstaNovo and π-HelixNovo. The charts take the newest version that ran on each
+dataset. Taking the higher-scoring one instead, as the upstream visualisation
+PR's loader does, lets a tool use a different version on every dataset; it
+changes 83 of the 1452 (tool, dataset) pairs in the results, with a median
+difference of 0.000 and a maximum of 0.209.
+
+**These are not the manuscript's numbers.** The benchmark preprint's figure 1
+was drawn over 29 datasets. This is the ${bench_n_datasets} now in the
+repository, run with newer containers. The shape of the story survives; the
+individual numbers do not.
+
+**A rank is only as fair as the dataset set.** Every tool ranked above ran on
+all ${bench_n_datasets} datasets, which is why casanovo-scaling, evaluated on
+24, appears in the heatmap but not in the ranking. Two tools can also sit close
+enough that their order is noise, which is what the box plot is for; the
+upstream PR carries a critical-difference diagram that tests it properly.
+
+**A zero is a real answer, not a failed run.** ${bench_zeros.cells} of the
+${bench_zeros.total} cells are exactly 0, spread over ${bench_zeros.datasets}
+datasets and ${bench_zeros.tools} tools, and \`${bench_zeros.worst[0]}\` alone
+accounts for ${bench_zeros.worst[1]} of them: a LysN digest with TMT labelling
+that most tools do not support at all. Their amino-acid scores on the same
+spectra are not zero, which is the tell. The benchmark deliberately keeps those
+runs in, because the aggregate is meant to be practical performance over the
+whole benchmark rather than performance on each method's own supported domain.`
 ```
 
 ## Application areas

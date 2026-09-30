@@ -76,6 +76,13 @@ python3 build_affiliations.py                  # report only
 python3 build_affiliations.py --write          # apply
 python3 build_affiliations.py --only-new        # just the papers added since last time
 
+# Refresh the public-benchmark results from bittremieuxlab/denovo_benchmarks
+# (offline, ~2 min, responses cached in .cache/benchmarks/). Exits early when
+# the upstream commit is the one already recorded, so a quiet week costs one API
+# call. --dry-run prints the per-tool table and writes nothing.
+uv run python build_benchmarks.py
+uv run python build_benchmarks.py --force
+
 # Fail if any chart on the rendered site has a colliding or clipped label.
 # Measures the real glyph boxes in headless Chrome, so it needs a rendered
 # _site and google-chrome (~1 min). Not in CI for that reason.
@@ -95,7 +102,7 @@ uv run python build_abstracts.py
 
 ### Scheduled refreshes (GitHub Actions)
 
-All four builders also run on a cron in `.github/workflows/`, scoped to the
+All five builders also run on a cron in `.github/workflows/`, scoped to the
 cadence at which each metric meaningfully moves. Each workflow commits only
 when its data actually changed (no quiet-day churn) and then triggers
 `publish.yml` to redeploy the site.
@@ -106,15 +113,18 @@ when its data actually changed (no quiet-day churn) and then triggers
 | `refresh-publication-impact`  | `build_publication_impact.py`| Weekly Sun 06:30 UTC             | `30 6 * * 0`     |
 | `refresh-citation-graph`      | `build_citations.py`         | Monthly 1st 07:00 UTC            | `0 7 1 * *`      |
 | `refresh-journal-metrics`     | `build_journal_metrics.py`   | Semi-annual Jan 1 + Jul 1 08:00 UTC | `0 8 1 1,7 *` |
+| `refresh-benchmarks`          | `build_benchmarks.py`        | Weekly Mon 09:00 UTC             | `0 9 * * 1`      |
 
 The slot-per-hour staircase is deliberate: when two workflows are scheduled
-on the same calendar day (e.g. daily + weekly on a Sunday, all four on
+on the same calendar day (e.g. daily + weekly on a Sunday, four of them on
 Jan 1 / Jul 1) the earlier one finishes before the next one starts, so they
 never race for `main` and the conditional-commit + `gh workflow run` chain
 stays deterministic.
 
-All four are also `workflow_dispatch`-able from the Actions tab if you need an
-on-demand refresh (e.g., right after adding a new paper).
+All five are also `workflow_dispatch`-able from the Actions tab if you need an
+on-demand refresh (e.g., right after adding a new paper); `refresh-benchmarks`
+takes a `force` input, because its builder otherwise no-ops when the upstream
+commit has not moved.
 
 ### Push races and `.github/actions/commit-refreshed-db`
 
@@ -123,14 +133,14 @@ The staircase only separates the workflows from *each other* — it can't stop a
 run: the job checked out, rebuilt, committed, and by the time it pushed `main`
 had moved, so `git push` was rejected and the whole workflow failed.
 
-All four refresh workflows now commit through the shared composite action
+All five refresh workflows now commit through the shared composite action
 `.github/actions/commit-refreshed-db`, which retries a rejected push (5 attempts,
 increasing backoff). The interesting part is *how* it rebases, because a plain
 `git pull --rebase` is not an option here: `denovo.db` is binary so it conflicts
 every time, and a textual merge of `denovo.sql` can't be trusted.
 
 Instead it exploits an invariant of this repo — **each refresh workflow is the
-sole writer of exactly one table**:
+sole writer of its own tables, which no other writer touches**:
 
 | Workflow                     | Owns table            |
 |------------------------------|-----------------------|
@@ -138,21 +148,36 @@ sole writer of exactly one table**:
 | `refresh-publication-impact` | `publication_impact`  |
 | `refresh-citation-graph`     | `publication_citation`|
 | `refresh-journal-metrics`    | `journal_impact`      |
+| `refresh-benchmarks`         | the five `benchmark_*` tables |
 
-On a rejected push it dumps just its own table (`sqlite3 denovo.db ".dump
+On a rejected push it dumps just those tables (`sqlite3 denovo.db ".dump
 <table>"`), hard-resets to `origin/main` to pick up whatever landed, replays its
 rows on top, regenerates `denovo.sql`, and pushes again. Everything the other
 side changed survives untouched, and the refreshed rows are not lost — no need
 to re-run the (slow, network-bound) builder.
 
-If you add a fifth refresh workflow, give it its own table and pass that table
-as the action's `table:` input. If a workflow ever needs to write two tables,
-the action needs extending first — replaying one table would silently drop the
-other's new rows.
+`table:` takes a space-separated LIST, parents first: the action dumps each
+table in turn, drops them in reverse order so a child never outlives its
+parent, and replays them in the declared order. `refresh-benchmarks` owns five.
+A new refresh workflow still needs tables nobody else writes.
+
+**`.dump <table>` carries neither indexes nor triggers**, and this step drops
+the table, so the action captures their DDL from `sqlite_master` and replays it
+after the rows. Without that, a push race on `refresh-citation-graph` silently
+discarded `idx_publication_citation_cited` and both
+`prevent_future_publication_citation_*` triggers, which are the guard against
+recording a citation of a paper that did not exist yet. Verified after the fix
+by dumping six tables, dropping them, replaying, and diffing the sorted dump
+against the original: identical, with all six triggers present.
+
+One cosmetic consequence is unavoidable. A dropped-and-recreated table moves to
+the END of `denovo.sql`, because `.dump` follows `sqlite_master` order, so the
+diff after a race recovery is large while the content is unchanged. That was
+true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**17 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned metric tables, one per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**22 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the five `benchmark_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -218,6 +243,75 @@ mirrors the split, `algorithms.first_pub` and `family_firsts` date a method by
 the paper that describes it, and the author→model graph uses the `models_described`
 column rather than `models`. The publications table keeps the full `models` list,
 because "which papers involved PEAKS" is a question worth being able to answer.
+
+## Public benchmarks
+
+`build_benchmarks.py` reads
+[bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks),
+which runs 18 tools in their own containers over 84 public datasets and commits
+the evaluation curves. It is the only apples-to-apples comparison the field has,
+and this catalog's own data cannot produce it: everything else here describes
+what a method IS.
+
+Five tables, all written by that one builder and by nothing else:
+`benchmark_dataset` (84 rows), `benchmark_tool` (18), `benchmark_result`
+(1782 = one per tool, dataset and version), `benchmark_curve` (3636 = a
+101-point averaged curve per tool and metric level) and `benchmark_source` (the
+upstream commit, its date and the fetch date, which the site quotes).
+
+**What the numbers are.** `auc` in the upstream CSVs is the area under a
+precision-coverage curve, which the benchmark manuscript calls AP. Two levels
+are stored, peptide and amino acid. `benchmark_curve` holds the
+**dataset-macro-averaged** curve: each run's curve is interpolated onto a shared
+101-point coverage grid and the grid points are averaged, which is the only
+correct way to average curves whose own x values differ per run. That is figure
+1b/1c of the manuscript, and the site's ranking chart and heatmap are its
+figure 1d.
+
+**The AP of the averaged curve is not the median of the per-dataset APs**, and
+the gap is large: InstaNovo's median AP is 0.854 and the AP of its averaged
+curve is 0.736. Both are in the summary table, labelled. Averaging curves is not
+averaging areas.
+
+**Latest version, not best.** Four tools ship two versions in the results
+(`_old` twins for PEAKS and Novor, two container builds each for InstaNovo and
+π-HelixNovo). `version_key()` prefers the unsuffixed twin, then compares the
+embedded numbers, and the chosen row is flagged `is_latest` because the rule is
+not expressible in SQL. The upstream visualisation PR keeps the highest-AUC
+version instead, which lets a tool use a different version on every dataset;
+measured, the two rules disagree on 83 of 1452 (tool, dataset) pairs with a
+median AP difference of 0.0000 and a maximum of 0.2088. Note the upstream
+dashboard's own "latest" is `sorted(versions)[-1]`, which picks `12.5_old` over
+`12.5`.
+
+**Tool names are matched to `algorithm` rows, and a miss stays NULL.** Matching
+normalises case and punctuation and folds `π` to `pi`, against both
+`algorithm.name` and `algorithm.aliases`. `TOOL_ALIASES` in the builder carries
+the four that cannot match that way, with the reasoning for each; `gcnovo` to
+`Denovo-GCN` is the one that is an identification rather than a spelling, and it
+rests on the container being DeepNovoV2's code plus a `model_gcn` module.
+`casanovo-scaling` is deliberately unmapped: it is a scaling experiment over a
+24-dataset subset, not a released tool. An unmatched tool keeps its upstream
+name and simply has no link, which is visible; a wrong guess would not be.
+
+**A partial tool is in the heatmap and out of the ranking.** Ranking a tool that
+ran on 24 of 84 datasets against tools that ran on all of them would be
+meaningless, so the two cross-dataset charts filter on
+`n_datasets = the dataset count` while the heatmap shows every cell that exists.
+Missing cells are drawn grey, because on a white-to-teal scale an absent run and
+an AP of 0 are the same colour.
+
+**The numbers will not match the manuscript** and are not meant to: its figure 1
+was drawn over 29 datasets, and this is the 84 the repository holds now, with
+newer containers. The site quotes the commit it was built from for exactly that
+reason.
+
+**Dataset grouping is editorial, twice.** `categorize()` is the upstream
+visualisation PR's name-based categoriser plus three rules that empty its
+`Other` bucket, giving 17 fine categories; `CATEGORY_GROUP` then folds those
+into 8 coarse groups for the heatmap's column headers, because 17 groups over 84
+columns leaves a group two columns wide and no room for its label. The fine
+category survives in `benchmark_dataset.category` and in the chart's tooltip.
 
 ## Publication dates
 
