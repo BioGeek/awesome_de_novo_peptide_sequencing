@@ -238,6 +238,17 @@ def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, 
         # A preprint and its version of record share a title; the year decides.
         top = [(s, p) for s, p in top
                if str(p["publication_date"])[:4] == year] or top
+    if len(top) > 1:
+        # Still tied, which happens when the two rows differ ONLY in the
+        # title's capitalisation and carry the same year: publication 108's
+        # "NovoBoard: a comprehensive framework" against publication 80's
+        # "A Comprehensive Framework", or 14 against 122. Normalising for the
+        # comparison erases exactly the difference, so the pick was arbitrary
+        # and `rename` then wanted to recase a file it had just accepted,
+        # every run, forever. A file already named for one of the candidates
+        # IS that candidate: prefer it, which makes rename idempotent.
+        named = [(s, p) for s, p in top if zotero_name(p) == stem + ".pdf"]
+        top = named or top
     return (top[0][1], f"title {top[0][0]:.0f}") if top else (None, "")
 
 
