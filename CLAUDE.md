@@ -99,6 +99,20 @@ uv run --with websockets python3 check_chart_overlap.py
 python3 slugs.py --check
 python3 slugs.py --write
 
+# Keep a LOCAL folder of paper PDFs in step with the catalog: report what is
+# missing, fetch what is legally free, name every file the same way. Offline,
+# and the only script here that writes OUTSIDE the repository (--dir). Never in
+# CI: there is no library there. See 'The local PDF library' below.
+python3 build_pdf_library.py report              # coverage + missing/*.txt
+python3 build_pdf_library.py fetch               # download what is free (~20 min)
+python3 build_pdf_library.py rename --apply      # re-derive every filename
+python3 build_pdf_library.py dedupe --apply      # drop byte-identical copies
+# Filing hand-downloaded PDFs, including slicing one chapter out of a
+# proceedings volume. Slicing needs pypdf, which is deliberately NOT a project
+# dependency -- CI would install it for a script CI never runs.
+uv run --with pypdf python3 build_pdf_library.py ingest manual/ --apply \
+    --map 978-3-031-94039-2.pdf=13:106-114
+
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
@@ -700,6 +714,53 @@ entities where this catalog records them as departments of a parent (Novo
 Nordisk Foundation under DTU, Science for Life Laboratory under KTH, Academy of
 Mathematics and Systems Science under CAS). Those are correct refusals, not
 failures.
+
+## The local PDF library
+
+`build_pdf_library.py` maintains a folder of paper PDFs beside the catalog:
+`report` says what is missing and why, `fetch` downloads what a source states
+is free, `ingest` files hand-downloaded PDFs, `rename` re-derives every
+filename from the catalog and `dedupe` drops byte-identical copies. It writes
+`pdf_status.csv` and `missing/*.txt` into the LIBRARY, never into the repo, and
+touches no table.
+
+**It must never run in CI.** There is no library on a runner, and a full
+`fetch` is a few hundred HTTP requests. `pypdf`, needed only for slicing, is
+deliberately not a project dependency for the same reason; the command line
+above passes it with `uv run --with`.
+
+Four things in it were learned the hard way and are worth not re-learning:
+
+- **Fetch through `curl`, not `requests`.** HTTPS on the machine this was
+  written for is intercepted by a Perimeter81 Secure Web Gateway whose
+  re-signed certificates carry no Authority Key Identifier, so Python rejects
+  them with `[SSL: CERTIFICATE_VERIFY_FAILED] Missing Authority Key
+  Identifier` while `curl`, against the *same* CA bundle, returns 200. The
+  first run read that as the publishers blocking us: 36 downloads of 322, with
+  140 filed under "open access but the download failed", including five theses
+  hosted on this project's own domain. Switching transport took it to 101. If
+  everything fails at once, suspect the transport.
+- **Match a filename to a title prefix-against-prefix, cut to the shorter
+  string.** A filename is a truncated title, and both obvious metrics are
+  wrong in opposite directions: `partial_ratio` scores a short title sitting
+  inside a long filename at 100, which filed DeepNovoV2's paper under
+  publication 57 ("Peptide Sequencing with Deep Learning"), and
+  `token_set_ratio` ignores unmatched tokens, so publication 315 ("De novo
+  Peptide Sequencing", two words) scored 100 against 26 of 37 files. Where a
+  preprint and its version of record share a title, the filename's year breaks
+  the tie; `--map` handles the rest.
+- **Take the first author from an ordered subquery**, never from
+  `GROUP_CONCAT` with a trailing `ORDER BY` -- see the byline note under **The
+  Quarto site**. It named 52 of 107 downloads after the wrong author.
+- **Slice with `pypdf`, not `pdfseparate` + `pdfunite`.** The latter copies the
+  volume's shared fonts onto every page: a 9-page slice of a 31 MB proceedings
+  volume came out at 32.7 MB, against 0.3 MB from `pypdf` with
+  `compress_identical_objects`.
+
+**Only locations a source says are free are ever fetched**, and a paper with
+nothing free is reported rather than worked around. PMC is not tried at all:
+every automated route into it is shut by design, and it directs bulk users to
+its FTP/cloud packages instead.
 
 ## URLs are a lock file
 
