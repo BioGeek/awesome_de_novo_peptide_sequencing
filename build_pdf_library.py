@@ -349,19 +349,38 @@ def candidates(cache: Path, pub: dict) -> tuple[list[tuple[str, str]], bool]:
         # is NOT evidence that the paper is free -- a paywalled article has a
         # landing page too -- so it does not set `free`.
         add("own-url", url)
-        ok, body = fetch(url)
-        if ok and not body.startswith(b"%PDF"):
-            # citation_pdf_url is what Google Scholar requires, so DSpace,
-            # figshare and most publishers emit it. Digital Commons prefixes it
-            # with bepress_, which is why scholarcommons looked tagless.
-            m = (re.search(rb'name="(?:bepress_)?citation_pdf_url"[^>]*content="([^"]+)"', body)
-                 or re.search(rb'content="([^"]+)"[^>]*name="(?:bepress_)?citation_pdf_url"', body))
-            if m:
-                cand = m.group(1).decode("utf-8", "replace").replace("&amp;", "&")
-                if cand.startswith("/"):
-                    cand = re.match(r"(https?://[^/]+)", url).group(1) + cand
-                add("citation_pdf_url", cand)
+        add("citation_pdf_url", pdf_from_landing(url))
+
+    # A doi.org URL is not a PDF location, whatever OpenAlex says: the resolver
+    # only redirects. 31 publications had doi.org as their ONLY offered "PDF",
+    # so follow the DOI to wherever it lands and read that page's declaration.
+    # Done last and only when nothing better turned up, because it costs an
+    # extra request per paper.
+    if doi and not any(src not in ("own-url",) and "doi.org" not in u
+                       for src, u in out):
+        add("doi-landing", pdf_from_landing(f"https://doi.org/{doi}"))
     return out, free
+
+
+def pdf_from_landing(url: str) -> str | None:
+    """The PDF a landing page declares, via citation_pdf_url.
+
+    That tag is what Google Scholar requires, so DSpace, Digital Commons,
+    figshare and most publishers emit it. Digital Commons prefixes it with
+    bepress_, which is why scholarcommons.sc.edu looked tagless.
+    """
+    ok, body = fetch(url)
+    if not ok or body.startswith(b"%PDF"):
+        return None
+    m = (re.search(rb'name="(?:bepress_)?citation_pdf_url"[^>]*content="([^"]+)"', body)
+         or re.search(rb'content="([^"]+)"[^>]*name="(?:bepress_)?citation_pdf_url"', body))
+    if not m:
+        return None
+    cand = m.group(1).decode("utf-8", "replace").replace("&amp;", "&")
+    if cand.startswith("/"):
+        base = re.match(r"(https?://[^/]+)", url)
+        cand = (base.group(1) if base else "") + cand
+    return cand
 
 
 # --------------------------------------------------------------------------
@@ -411,16 +430,37 @@ def cmd_fetch(args, conn, pubs, root):
 
 
 def merge_status(root: Path, rows: list[dict]) -> list[dict]:
-    """Fold this run's outcomes into pdf_status.csv, newest wins."""
+    """Fold this run's outcomes into pdf_status.csv, newest wins.
+
+    The column set is the UNION of what is on disk and what this run produced,
+    with absent values blank. An earlier version wrote the new rows' keys as the
+    header and then handed DictWriter the old rows too, which raised "dict
+    contains fields not in fieldnames: 'source'" after the CSV's columns were
+    revised -- losing a whole run's bookkeeping while the PDFs it had already
+    downloaded stayed on disk.
+    """
     path = root / "pdf_status.csv"
-    old = {r["id"]: r for r in csv.DictReader(open(path))} if path.exists() else {}
+    have = {r["id"]: dict(r) for r in csv.DictReader(open(path))} \
+        if path.exists() else {}
     for r in rows:
-        old[str(r["id"])] = {k: str(v) for k, v in r.items()}
-    merged = sorted(old.values(), key=lambda r: (r["verdict"], int(r["id"])))
-    with open(path, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(merged[0].keys()))
+        have[str(r["id"])] = {k: str(v) for k, v in r.items()}
+    fields: list[str] = []
+    for r in have.values():
+        for k in r:
+            if k not in fields:
+                fields.append(k)
+    merged = sorted(have.values(), key=lambda r: (r.get("verdict", ""), int(r["id"])))
+    # Written to a sibling temp file and moved into place. Writing in "w" mode
+    # truncates BEFORE the rows go out, so the earlier version of this function
+    # destroyed 312 of 323 rows when DictWriter raised partway through -- the
+    # file was already empty by the time the exception fired, and the next run
+    # merged into the remains. A crash must not be able to take the history.
+    tmp = path.with_suffix(".csv.tmp")
+    with open(tmp, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=fields, restval="")
         w.writeheader()
         w.writerows(merged)
+    tmp.replace(path)
     return merged
 
 
@@ -530,10 +570,10 @@ REPORT_BUCKETS = """\
 paywalled.txt
     No source reports any free full text: neither OpenAlex nor Europe PMC.
 
-blocked-doi-resolver.txt
-    Reported open access, but the only "PDF" URL on offer is doi.org, which
-    does not serve PDFs. START HERE: the DOI lands on the publisher and the PDF
-    is usually one click away.
+blocked-but-open-in-pmc.txt
+    Open access with a PMC copy, listed as a PMC link. START HERE: every
+    scripted route into PMC is shut by design, but the link opens normally and
+    the PDF is one click away.
 
 blocked-publisher.txt
     Reported free, and the publisher refuses a scripted request anyway. Bot
@@ -568,6 +608,29 @@ def cmd_report(args, conn, pubs, root):
         return (f"https://doi.org/{p['doi']}" if (p["doi"] or "").strip()
                 else (p["url"] or "").strip() or None)
 
+    cache = HERE / ".cache" / "pdfs"
+
+    def pmcid(p):
+        """An open-access PMC id for this paper, from the cached Europe PMC answer."""
+        doi = (p["doi"] or "").strip().lower()
+        if not doi:
+            return None
+        f = cache / (re.sub(r"[^A-Za-z0-9._-]", "_", f"epmc_{doi}")[:180] + ".json")
+        if not f.exists():
+            return None
+        try:
+            d = json.loads(f.read_text())
+        except ValueError:
+            return None
+        for res in (d.get("resultList", {}) or {}).get("result", [])[:1]:
+            if res.get("pmcid") and res.get("isOpenAccess") == "Y":
+                return res["pmcid"]
+        return None
+
+    def pmc_url(p):
+        pid = pmcid(p)
+        return f"https://pmc.ncbi.nlm.nih.gov/articles/{pid}/" if pid else None
+
     buckets = collections.defaultdict(list)
     for p in pubs:
         if p["id"] in have:
@@ -583,11 +646,22 @@ def cmd_report(args, conn, pubs, root):
             key = "no-doi-and-not-indexed"
         elif r["verdict"] == "paywalled":
             key = "paywalled"
-        elif host == "doi.org":
-            key = "blocked-doi-resolver"
+        elif pmcid(p):
+            # An open-access PMC copy exists, and a PMC link is one click from
+            # the PDF in a browser even though every scripted route in is shut.
+            key = "blocked-but-open-in-pmc"
         else:
             key = "blocked-publisher"
-        buckets[key].append((p, link(p)))
+        # NOT bucketed on the last host tried. That produced a
+        # "blocked-doi-resolver" list of 31 which this file then recommended as
+        # "the largest recoverable group", on the theory that OpenAlex had
+        # offered doi.org as their PDF. It had not: doi.org was simply the
+        # record's own url, tried LAST after the real open-access candidates
+        # failed. Following the DOI and reading the landing page's
+        # citation_pdf_url recovered 0 of the 31 -- ACS, OUP and MDPI answer
+        # 403 at the landing page itself, and Wiley and Elsevier's linkinghub
+        # answer 200 with no such tag.
+        buckets[key].append((p, pmc_url(p) or link(p)))
 
     for f in out.glob("*.txt"):
         f.unlink()

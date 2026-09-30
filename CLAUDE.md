@@ -760,7 +760,20 @@ Four things in it were learned the hard way and are worth not re-learning:
 **Only locations a source says are free are ever fetched**, and a paper with
 nothing free is reported rather than worked around. PMC is not tried at all:
 every automated route into it is shut by design, and it directs bulk users to
-its FTP/cloud packages instead.
+its FTP/cloud packages instead. `report` therefore lists a paper with an
+open-access PMC copy as a **PMC link**, in `blocked-but-open-in-pmc.txt`,
+because that link opens normally in a browser and is one click from the PDF.
+
+**Do not bucket on the last host tried.** Doing that produced a
+`blocked-doi-resolver` list of 31 which the README then recommended as the
+largest recoverable group, on the theory that OpenAlex had offered `doi.org` as
+their PDF location. It had not: `doi.org` was simply the record's own `url`,
+tried LAST after the real open-access candidates failed. Following the DOI and
+reading the landing page's `citation_pdf_url` recovered **0 of 31** -- ACS, OUP
+and MDPI answer 403 at the landing page itself, and Wiley and Elsevier's
+linkinghub answer 200 with no such tag. The bucket now keys on whether an
+open-access copy is known to exist, which is a fact about the paper rather than
+an artefact of the attempt order.
 
 ## URLs are a lock file
 
