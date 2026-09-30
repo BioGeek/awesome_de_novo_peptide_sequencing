@@ -2033,6 +2033,26 @@ bench_order = {
 
 ```{ojs}
 //| echo: false
+bench_rank_counts = {
+  // One dot per (method, rank): how many datasets put that method there and the
+  // median AP of those datasets.
+  const out = []
+  for (const [, rows] of d3.group(bench_ranked, d => `${d.display_name}|${d.rank}`)) {
+    out.push({
+      display_name: rows[0].display_name,
+      family: rows[0].family,
+      rank: rows[0].rank,
+      n: rows.length,
+      total: bench_n_datasets,
+      median_ap: d3.median(rows, d => d.ap)
+    })
+  }
+  return out
+}
+```
+
+```{ojs}
+//| echo: false
 {
   // Box plus dots, the shape of plot_ranking_boxplot.py in the upstream
   // visualisation PR, turned on its side because the tool names are long
@@ -2063,15 +2083,26 @@ bench_order = {
         // dots would be a second, differently sized copy of some of them.
         r: 0
       }),
-      Plot.dot(bench_ranked, Plot.group(
-        { r: "count" },
-        {
-          x: "rank", y: "display_name", fill: "family", fillOpacity: 0.85,
-          stroke: "white", strokeWidth: 0.6,
-          tip: { format: { x: false, y: false, fill: false, r: false } },
-          channels: { "Method": "display_name", "Rank": "rank",
-                      "Datasets at this rank": "count" }
-        })),
+      // Grouped in bench_rank_counts rather than by Plot.group, because a
+      // `channels` entry naming a field the GROUP transform produces ("count")
+      // does not resolve: the tooltip came out empty, having been told to hide
+      // x, y, fill and r and then given three channels it could not find.
+      Plot.dot(bench_rank_counts, {
+        x: "rank", y: "display_name", r: "n", fill: "family", fillOpacity: 0.85,
+        stroke: "white", strokeWidth: 0.6,
+        href: d => page_href("algorithms", d.display_name), target: "_self",
+        tip: { format: { x: false, y: false, r: false, fill: false } },
+        channels: {
+          "Method": "display_name",
+          "Rank": d => `${d.rank} of ${bench_order.length}`,
+          "Datasets at this rank": d => `${d.n} of ${d.total}`,
+          "Median AP here": d => d.median_ap.toFixed(3)
+          // No list of dataset names: plot_tip_style caps a tip line at 34em
+          // and the ellipsis eats the end of it, which is the whole list, and a
+          // method can hold one rank on 72 of the 84 datasets anyway. The
+          // heatmap below is the chart that answers "which datasets".
+        }
+      }),
       // A method's own median, drawn on top of its box: the box's median line
       // is the same value, but at this row height it is one pixel wide and sits
       // under the dots.
@@ -2332,7 +2363,11 @@ not ticked.`
 //| echo: false
 viewof bench_show = Inputs.checkbox(bench_order, {
   label: "Highlight",
-  value: bench_order.slice(0, 5)
+  // Everything on by default. The grey-behind treatment is what the benchmark
+  // manuscript's figure 1b does, and it is still one click away, but a chart
+  // that starts by hiding twelve of seventeen tools answers a narrower question
+  // than the reader asked.
+  value: bench_order
 })
 ```
 
@@ -2374,33 +2409,67 @@ bench_ap_of_curve = {
     .sort((a, b) => d3.descending(ap(a[1][0]), ap(b[1][0])))
     .map(d => label(d[1][0]))
   const chart = Plot.plot({
-    width: 780,
-    height: 500,
+    width: 1100,
+    height: 560,
     marginLeft: 60,
     marginBottom: 48,
     x: { label: `${bench_level_label} coverage`, domain: [0, 1], grid: true,
          labelOffset: 40 },
     y: { label: `${bench_level_label} precision`, domain: [0, 1], grid: true },
-    color: { domain, range: domain.map((_, i) => d3.schemeTableau10[i % 10]),
-             legend: true, columns: "50%" },
+    // Seventeen legend entries at full width fit four to a row.
+    color: { domain, range: domain.map((_, i) => bench_curve_colour(i)),
+             legend: true, columns: "25%" },
     marks: [
-      // The unticked tools stay grey and behind: the chart should still show
-      // where the field is, and 17 distinguishable line colours do not exist.
+      // Both line marks carry the same tip, so an unticked grey line still
+      // answers "which tool is this". `stroke` is hidden on the highlighted
+      // mark because its channel value is the legend string, which already
+      // ends in the AP the tip prints on its own row.
       Plot.line(rows.filter(d => !shown.has(d.display_name)), {
         x: "coverage", y: "precision", z: "tool",
-        stroke: "#c6cdd5", strokeWidth: 1
+        stroke: "#c6cdd5", strokeWidth: 1,
+        tip: { format: { x: false, y: false, z: false } },
+        channels: bench_curve_tip(ap)
       }),
       Plot.line(highlighted, {
         x: "coverage", y: "precision", z: "tool",
-        stroke: label, strokeWidth: 2
+        stroke: label, strokeWidth: 2,
+        tip: { format: { x: false, y: false, z: false, stroke: false } },
+        channels: bench_curve_tip(ap)
       }),
       Plot.ruleY([0]), Plot.ruleX([0])
     ]
   })
   return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
     <div class="chart-scroll">${chart}</div>
   </div>`
 }
+```
+
+```{ojs}
+//| echo: false
+// The AP is the whole curve's; the coverage and precision are the point the
+// cursor is nearest, which is what makes a hover on a bundle of 17 lines useful
+// rather than just an identification.
+bench_curve_tip = ap => ({
+  "Method": "display_name",
+  "AP": d => ap(d).toFixed(3),
+  "at coverage": d => d.coverage.toFixed(2),
+  "precision": d => d.precision.toFixed(3)
+})
+```
+
+```{ojs}
+//| echo: false
+// With every tool ticked by default there are 17 lines, and Tableau10 would
+// repeat a colour every tenth. Extending it with Set2 and Dark2 gives 17
+// distinct ones in a consistent register; the ORDER is by AP, so neighbours in
+// the legend are neighbours in the ranking.
+bench_curve_colour = i => (d3.schemeTableau10.concat(d3.schemeSet2, d3.schemeDark2))[i % 26]
 ```
 
 ### Every tool on every dataset
