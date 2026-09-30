@@ -89,8 +89,23 @@ MAILTO = "j.vangoey@instadeep.com"          # same contact the other builders se
 UA = ("awesome_de_novo_peptide_sequencing/1.0 "
       "(https://github.com/BioGeek/awesome_de_novo_peptide_sequencing; "
       f"mailto:{MAILTO})")
+# A desktop browser's UA, sent only when --browser-ua is passed. The papers it
+# is for are ones a source reports as OPEN ACCESS and which a person can open in
+# a browser and save; what blocks the scripted fetch is bot detection, not a
+# paywall, and nothing here touches a paywall either way. It is opt-in because
+# misrepresenting the client is a choice the person running this should make
+# knowingly, and because a publisher's terms may still forbid bulk download
+# however the request is labelled: it is for assembling your own reading copies,
+# at one request per host per 1.5s, not for crawling.
+# MEASURED: 0 of 27. ACS, Europe PMC's pdf=render and IEEE answered exactly as
+# before -- 403, 403, 202 -- so on this network the block is not the user agent.
+# The flag stays because another network may fare differently and because the
+# alternative to trying it was guessing, but do not expect it to help.
+BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36")
 MIN_GAP = 1.5                                # seconds between hits on one host
 _last: dict[str, float] = collections.defaultdict(float)
+_ua = UA                                     # swapped by --browser-ua
 
 
 # --------------------------------------------------------------------------
@@ -109,9 +124,11 @@ def fetch(url: str, want_json: bool = False, tries: int = 3):
         tmp = Path(tempfile.mkstemp(prefix="pdflib-")[1])
         try:
             cp = subprocess.run(
-                ["curl", "-sS", "-L", "--max-time", "90", "-A", UA,
+                ["curl", "-sS", "-L", "--max-time", "90", "-A", _ua,
                  "-H", "Accept: application/json" if want_json
                        else "Accept: application/pdf,*/*",
+                 *(["-H", "Accept-Language: en-US,en;q=0.9"]
+                   if _ua is BROWSER_UA else []),
                  "-o", str(tmp), "-w", "%{http_code}", url],
                 capture_output=True, text=True, timeout=120)
             code, body = (cp.stdout or "").strip()[-3:], tmp.read_bytes()
@@ -611,20 +628,30 @@ def cmd_report(args, conn, pubs, root):
     cache = HERE / ".cache" / "pdfs"
 
     def pmcid(p):
-        """An open-access PMC id for this paper, from the cached Europe PMC answer."""
+        """This paper's PMC id, from any cached answer that names one.
+
+        Read out of the RAW cached JSON rather than from a single field. The
+        first version of this asked Europe PMC for `pmcid` and required
+        `isOpenAccess == "Y"`, and missed publications 86, 91, 95 and 120 --
+        all four of which Europe PMC had already handed us an "Open access"
+        PDF location for, with the PMC id sitting in the URL. They were filed
+        as merely publisher-blocked, which is the harder bucket, when a PMC
+        link would have opened.
+
+        Only called for rows a source already reported as free, so a PMC id
+        here means a readable copy rather than just a record.
+        """
         doi = (p["doi"] or "").strip().lower()
-        if not doi:
-            return None
-        f = cache / (re.sub(r"[^A-Za-z0-9._-]", "_", f"epmc_{doi}")[:180] + ".json")
-        if not f.exists():
-            return None
-        try:
-            d = json.loads(f.read_text())
-        except ValueError:
-            return None
-        for res in (d.get("resultList", {}) or {}).get("result", [])[:1]:
-            if res.get("pmcid") and res.get("isOpenAccess") == "Y":
-                return res["pmcid"]
+        blobs = []
+        for key in ((f"epmc_{doi}", f"oa_{doi}") if doi
+                    else (f"oatitle_{norm(p['title'])[:120]}",)):
+            f = cache / (re.sub(r"[^A-Za-z0-9._-]", "_", key)[:180] + ".json")
+            if f.exists():
+                blobs.append(f.read_text())
+        for blob in blobs:
+            m = re.search(r"PMC\d{4,}", blob)
+            if m:
+                return m.group(0)
         return None
 
     def pmc_url(p):
@@ -694,6 +721,10 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dir", type=Path, default=DEFAULT_DIR,
                     help=f"library root (default {DEFAULT_DIR})")
+    ap.add_argument("--browser-ua", action="store_true",
+                    help="send a desktop browser User-Agent. For open-access "
+                         "papers whose publisher refuses the default agent; it "
+                         "gets past bot detection, never a paywall")
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, fn, helptext in (
             ("report", cmd_report, "write missing/*.txt and print coverage"),
@@ -715,6 +746,9 @@ def main() -> int:
                            help="identify a file by hand, optionally slicing "
                                 "those PDF pages out of a larger volume")
     args = ap.parse_args()
+    global _ua
+    if args.browser_ua:
+        _ua = BROWSER_UA
     root = args.dir
     if not root.is_dir():
         sys.exit(f"no library at {root}")

@@ -764,6 +764,22 @@ its FTP/cloud packages instead. `report` therefore lists a paper with an
 open-access PMC copy as a **PMC link**, in `blocked-but-open-in-pmc.txt`,
 because that link opens normally in a browser and is one click from the PDF.
 
+**A browser User-Agent changes nothing here, measured.** `--browser-ua` sends
+one, for open-access papers whose publisher refuses the default agent; it is
+opt-in because misrepresenting the client is a choice worth making knowingly,
+and it gets past bot detection rather than any paywall. Run over the 27
+publisher-blocked papers it recovered **0**: ACS, Europe PMC's `?pdf=render`
+and IEEE answered 403, 403 and 202 exactly as before, so the block is not the
+agent. What that run did expose is the next entry.
+
+**Read the PMC id out of the raw cached JSON, not from one field.** The first
+`pmcid()` asked Europe PMC for `pmcid` and required `isOpenAccess == "Y"`, and
+so missed publications 86, 91, 95 and 120 -- all four of which Europe PMC had
+already offered an "Open access" PDF location for, with the PMC id sitting in
+the URL. They were filed as publisher-blocked, the hardest bucket, when a PMC
+link opens fine. Fixing it moved 24 papers from `blocked-publisher` (27 down to
+2) into `blocked-but-open-in-pmc` (12 up to 36).
+
 **Do not bucket on the last host tried.** Doing that produced a
 `blocked-doi-resolver` list of 31 which the README then recommended as the
 largest recoverable group, on the theory that OpenAlex had offered `doi.org` as
