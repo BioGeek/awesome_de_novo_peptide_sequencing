@@ -62,7 +62,14 @@ pubs = pd.read_sql(
            (SELECT GROUP_CONCAT(a.display_name, ', ' ORDER BY pa.author_order)
               FROM publication_author pa JOIN author_display a ON a.id = pa.author_id
               WHERE pa.publication_id = p.id) AS authors,
-           (SELECT GROUP_CONCAT(alg.name, ', ')
+           -- Ordered, because the citation-flow chart labels each node with
+           -- the FIRST name in this list. Unordered it was whatever the scan
+           -- reached first, i.e. algorithm.id, so inserting an unrelated
+           -- method could silently relabel a node. Described methods lead: a
+           -- venomics paper should be labelled by the workflow it contributes,
+           -- not by the sequencer it ran.
+           (SELECT GROUP_CONCAT(alg.name, ', '
+                     ORDER BY pal.role = 'describes' DESC, alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS models,
            -- The methods this paper DESCRIBES, as opposed to every method it
@@ -71,13 +78,18 @@ pubs = pd.read_sql(
            -- graph needs the narrower one, or every venomics author becomes a
            -- PEAKS author. 47 of 409 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
-           (SELECT GROUP_CONCAT(alg.name, ', ')
+           (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id AND pal.role = 'describes')
              AS models_described,
            -- Repository URLs come from algorithm_repository (1-N rows per algo).
            -- Concatenate with whitespace so the OJS multi-link renderer keeps working.
-           (SELECT GROUP_CONCAT(ar.url, ' ')
+           -- sort_order says which of a method's repositories is canonical,
+           -- and the DESCRIBED method's repository leads, the same tie-break
+           -- `models` above uses. Publication 267 links InstaNexus (which it
+           -- describes) and InstaNovo (which it runs), both at sort_order 0.
+           (SELECT GROUP_CONCAT(ar.url, ' '
+                     ORDER BY pal.role = 'describes' DESC, ar.sort_order, ar.url)
               FROM publication_algorithm pal
               JOIN algorithm_repository ar ON ar.algorithm_id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS repo,
@@ -245,9 +257,8 @@ algorithms = pd.read_sql(
            alg.algorithm_family AS family,
            alg.short_description AS description,
            -- All repository URLs for this algorithm, ordered, space-separated.
-           (SELECT GROUP_CONCAT(ar.url, ' ')
-              FROM (SELECT url FROM algorithm_repository
-                    WHERE algorithm_id = alg.id ORDER BY sort_order) ar) AS repo,
+           (SELECT GROUP_CONCAT(url, ' ' ORDER BY sort_order, url)
+              FROM algorithm_repository WHERE algorithm_id = alg.id) AS repo,
            alg.kind AS kind,
            alg.is_deep_learning AS is_dl,
            alg.acquisition_mode AS acquisition,
@@ -292,10 +303,11 @@ author_details = pd.read_sql(
     -- published all 78 stored addresses in the page source for scrapers to
     -- harvest, for zero benefit. They stay in the DB for provenance.
     SELECT a.id AS id, a.display_name AS name,
-           (SELECT GROUP_CONCAT(DISTINCT af.name || COALESCE(' / ' || af.department, ''))
+           (SELECT GROUP_CONCAT(DISTINCT af.name || COALESCE(' / ' || af.department, '')
+                     ORDER BY af.name || COALESCE(' / ' || af.department, ''))
               FROM author_affiliation aa JOIN affiliation af ON af.id = aa.affiliation_id
               WHERE aa.author_id = a.id) AS affiliations,
-           (SELECT GROUP_CONCAT(DISTINCT c.name)
+           (SELECT GROUP_CONCAT(DISTINCT c.name ORDER BY c.name)
               FROM author_affiliation aa
               JOIN affiliation af ON af.id = aa.affiliation_id
               JOIN country c ON c.id = af.country_id
