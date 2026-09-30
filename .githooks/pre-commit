@@ -1,27 +1,34 @@
 #!/usr/bin/env bash
-# .githooks/pre-commit — keep denovo.sql in lockstep with denovo.db
+# .githooks/pre-commit — keep denovo.sql, the documented counts and slugs.lock
+# in lockstep with the repo
 #
 # When denovo.db is staged, regenerate denovo.sql from it (via `sqlite3 .dump`)
 # and add the fresh dump to the same commit. Preserves the invariant CLAUDE.md
 # calls out: 'denovo.sql is the canonical human-readable representation; treat
 # it as the source of truth when the two disagree.'
 #
-# Skip entirely when denovo.db is NOT staged — no-op cost for unrelated commits.
+# Only the dump step depends on denovo.db being staged. The count refresh and
+# the URL guard below run on EVERY commit, because both can be invalidated by a
+# commit that does not touch the database at all: adding an entity type to
+# slugs.py added 24 published URLs with the .db untouched, and the hook exited
+# before the guard ever saw them, which left slugs.lock an incomplete
+# inventory -- the exact failure it exists to prevent. Both are stdlib-only and
+# instant, so an unrelated commit pays milliseconds.
 #
 # Enable per-clone with:
 #   git config core.hooksPath .githooks
 
 set -e
 
-if ! git diff --cached --name-only --diff-filter=ACMR | grep -qx 'denovo\.db'; then
-  # denovo.db not staged — nothing to sync.
-  exit 0
-fi
-
-if ! command -v sqlite3 >/dev/null 2>&1; then
-  echo "pre-commit: denovo.db is staged but sqlite3 is not installed." >&2
-  echo "Install sqlite3 or unstage denovo.db before committing." >&2
-  exit 1
+if git diff --cached --name-only --diff-filter=ACMR | grep -qx 'denovo\.db'; then
+  if ! command -v sqlite3 >/dev/null 2>&1; then
+    echo "pre-commit: denovo.db is staged but sqlite3 is not installed." >&2
+    echo "Install sqlite3 or unstage denovo.db before committing." >&2
+    exit 1
+  fi
+  DB_STAGED=1
+else
+  DB_STAGED=
 fi
 
 # Regenerate the dump from the currently-staged .db. Note: the file on disk
@@ -30,8 +37,10 @@ fi
 # different state than the working tree). If you `git add -p denovo.db` or
 # stash mid-edit, the assumption breaks — but that would already leave the
 # .db in an ambiguous state.
-sqlite3 denovo.db .dump > denovo.sql
-git add denovo.sql
+if [ -n "$DB_STAGED" ]; then
+  sqlite3 denovo.db .dump > denovo.sql
+  git add denovo.sql
+fi
 
 # Same idea for the counts quoted in CLAUDE.md and WATCHLIST.md, which argue
 # from numbers that go stale the moment a paper is added. check_counts.py is
@@ -79,4 +88,6 @@ if [ -f slugs.py ] && command -v python3 >/dev/null 2>&1; then
 fi
 
 # Report so the user knows why an extra file joined their commit.
-echo "pre-commit: regenerated denovo.sql from staged denovo.db."
+if [ -n "$DB_STAGED" ]; then
+  echo "pre-commit: regenerated denovo.sql from staged denovo.db."
+fi

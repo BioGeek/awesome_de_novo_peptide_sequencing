@@ -527,6 +527,13 @@ _key_sql = {
     "authors":      "SELECT id, display_name FROM author_display",
     "algorithms":   "SELECT id, name FROM algorithm",
     "institutions": "SELECT MIN(id), name FROM affiliation GROUP BY name",
+    # Keyed by the family NAME, which is what every family-coloured chart
+    # carries. Only the families with two or more methods have a page, so this
+    # repeats slugs.py's HAVING clause; a family missing here is a family whose
+    # lane label falls back to its single method's page.
+    "families":     "SELECT MIN(id), algorithm_family FROM algorithm "
+                    "WHERE COALESCE(algorithm_family, '') <> '' "
+                    "GROUP BY algorithm_family HAVING COUNT(*) >= 2",
     "venues":       "SELECT MIN(id), journal FROM publication "
                     "WHERE journal IS NOT NULL AND journal <> '' GROUP BY journal",
 }
@@ -926,6 +933,22 @@ page_link = (type, key, label) => {
 // it moved more than a few pixels.
 // A repo can back two algorithms, so `model` reads "A / B"; link the first.
 algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
+
+// Where a family label should go. 24 of 49 families have a page of their own;
+// the other 25 hold exactly one method, so their page would have carried that
+// method's papers, authors and dates and nothing else. Rather than leave a
+// lane label dead, a singleton family links straight to its one method: every
+// label in the swim lane and every row of the long-view table is clickable, and
+// which of the two kinds of target it has is not something a reader needs to
+// know.
+family_sole_method = new Map(
+  d3.rollups(algorithms_t.filter(a => a.family), v => v, a => a.family)
+    .filter(([, v]) => v.length === 1)
+    .map(([f, v]) => [f, v[0].model])
+)
+
+family_href = f => page_href("families", f)
+  ?? algo_href(family_sole_method.get(f))
 
 svg_link_wrap = (selection, href_of) => {
   selection.each(function (d) {
@@ -1369,7 +1392,7 @@ Plot.plot({
 
 ## The architectures
 
-*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution.
+*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it.
 
 ```{ojs}
 //| echo: false
@@ -1549,7 +1572,9 @@ innovations_timeline = {
       }),
       // Thin separators between bands
       Plot.ruleY(bands.flatMap(b => [b.y0, b.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
-      // Left-edge family label
+      // Left-edge family label, and a link: a family with two or more methods
+      // has a page collecting them, and a one-method family sends the reader
+      // to its single method instead. See family_href.
       Plot.text(bands, {
         x: () => x_pad_min,
         y: "center",
@@ -1558,7 +1583,9 @@ innovations_timeline = {
         dx: -8,
         fontSize: 12,
         fontWeight: "bold",
-        fill: "family"
+        fill: "family",
+        href: d => family_href(d.family),
+        target: "_self"
       }),
       // Rich HTML tooltips are wired below via a scoped
       // chart.querySelectorAll('g[aria-label="dot"] circle') selector on the
@@ -1882,6 +1909,12 @@ Inputs.table(
     // index into the ORIGINAL array, not the sorted position, so ff_rows[i] is the
     // right row however the reader sorts the table.
     format: {
+      // The family name links to the family's own page where it has one, and to
+      // its single method where it does not; same rule as the swim-lane labels.
+      "Family": f => {
+        const href = family_href(f)
+        return href ? htl.html`<a href=${href}>${f}</a>` : f
+      },
       "Introduced by": (m, i) => page_link("algorithms", ff_rows[i].first_method, m),
       "Paper": (t, i) => {
         const row = ff_rows[i]

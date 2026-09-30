@@ -63,7 +63,7 @@ python3 build_candidates.py --min-links 6           # tighter, less noise
 
 # Check (or refresh) the counts quoted in CLAUDE.md and WATCHLIST.md against
 # denovo.db. Stdlib only, no network, instant. The pre-commit hook runs --fix
-# automatically whenever denovo.db is staged, and check-counts.yml runs the
+# automatically on every commit, and check-counts.yml runs the
 # bare check in CI, so you rarely need to call this by hand.
 python3 check_counts.py           # report stale counts, exit 1 if any
 python3 check_counts.py --fix     # rewrite them in place
@@ -691,6 +691,12 @@ quietly stopped being a complete inventory. Publication 352's page was live and
 in the sitemap while absent from the lock, which means a later rename of it
 would not have been caught at all.
 
+The hook used to skip both guards entirely unless `denovo.db` was staged, which
+had the same effect for a different reason: adding the `families` entity type
+put 24 new URLs on the site from a commit that touched no data, and the hook
+returned before `slugs.py` ran. The dump step is still conditional; the count
+refresh and the URL guard are not.
+
 ## Citation graph
 
 `build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or fuzzy-title match (token-set ratio ≥ 92), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI; it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
@@ -831,6 +837,48 @@ quiet between 1984 and 1994 reads as a gap.
 A new family works with no registration at all: it gets a lane, a generated
 colour and a packed height. Add it to `band_color` only if you want a specific
 colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
+
+### A family page needs two methods
+
+`build_pages.py` generates a page per architecture family, but only for the
+**24 of 49** families that hold two or more methods. The other **25** hold
+exactly one method, and a page for one of those would have carried that method's
+papers, that method's authors and that method's dates: a copy of a page that
+already exists, on a permanent indexed URL. Those cover **172** of the **197**
+methods that carry a family. Contrast the application areas, where five
+singletons still got a page each, because even a one-workflow area aggregates
+papers, authors and countries that no other page collects.
+
+The threshold is **derived, not curated**: `HAVING COUNT(*) >= 2`, written three
+times -- in `slugs.py`'s `ENTITY_QUERIES`, in `build_pages.py`'s loader and in
+`index.qmd`'s `_key_sql` -- because each of the three needs the member set for a
+different reason and importing one into the others would couple the site's
+Python chunk to the generator. So a family reaching two methods gains a page
+with no other edit, which `slugs.py --check` reports as an ADDED slug and
+passes. A family falling back to one method REMOVES a published URL: `--check`
+fails and `render_scope.py` demands a full render. Both are the intended
+loudness.
+
+Keyed by `MIN(id)` over the family's `algorithm` rows, the same value-keyed
+pattern institutions and venues use. There is deliberately no `family` table to
+key on: `algorithm_family` is free text, and a table would have to be
+hand-edited on every membership change. The cost is that deleting a family's
+earliest algorithm row moves the key and so rewrites the URL.
+
+Everything on the page comes through the `'describes'` links, for the same
+reason the algorithm pages split on role: the snake-venom papers that ran
+Casanovo are not papers about transformers.
+
+**No lane label is dead.** `family_href` sends a family with a page to that page
+and a one-method family straight to its single method, so every label in the
+architectures swim lane and every Family cell in the long-view table is
+clickable, and a reader never has to know which of the two kinds of target they
+got.
+
+These pages carry no curated prose: there is no family blurb anywhere in the
+schema, so the lead sentence is generated from the earliest method. If a family
+should ever carry a real description, that is a new table rather than a new
+column on `algorithm`.
 
 ### Plot's dx, dy and textAnchor are constants, not channels
 

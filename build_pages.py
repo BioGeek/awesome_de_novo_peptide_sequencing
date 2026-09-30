@@ -42,7 +42,7 @@ import os
 import re
 import sqlite3
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from itertools import groupby
 from statistics import median
 from datetime import datetime, timezone
@@ -66,7 +66,7 @@ SITE_URL = _site_url()
 OUT_ROOT = Path(__file__).parent / "pages"
 
 KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
-         "subdomains")
+         "subdomains", "families")
 
 # Anchors on index.qmd, verified against the rendered section ids.
 ANCHORS = {
@@ -536,9 +536,10 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         L += [md_escape(row["short_description"]), ""]
 
     L += ["| | |", "|---|---|"]
+    # Family is emitted separately, below: it is a LINK for the families that
+    # have a page, and md_escape would turn the brackets into literal text.
     for label, value in (
         ("Kind", row["kind"]),
-        ("Family", row["algorithm_family"]),
         ("Deep learning", None if row["is_deep_learning"] is None
                           else ("yes" if row["is_deep_learning"] else "no")),
         ("Acquisition", row["acquisition_mode"]),
@@ -551,6 +552,15 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     # algorithm pages carry it, and the area page is where the rest of that area
     # lives. ctx has the (id, label) pair because the slug table is keyed by the
     # subdomain's id while the algorithm row only knows its name.
+    if row["algorithm_family"]:
+        # A family page exists only where the family has two or more methods --
+        # for a one-method family the page would be a copy of this one. So the
+        # link is conditional and the bare name is the normal fallback, not a
+        # failure.
+        fam_key = ctx.get("family_key")
+        L.append("| Family | " + (
+            site.link("families", fam_key, row["algorithm_family"], from_kind=K)
+            if fam_key else md_escape(str(row["algorithm_family"]))) + " |")
     if ctx.get("subdomain"):
         L.append("| Application area | "
                  + site.link("subdomains", ctx["subdomain"][0],
@@ -809,6 +819,127 @@ def render_subdomain(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     return "\n".join(L) + "\n", date_to_mtime(earliest)
 
 
+def render_family(site: Site, fam: dict, ctx: dict) -> tuple[str, float]:
+    """One architecture family: the methods that share it, and who built them.
+
+    Only families with two or more methods get a page (the HAVING clause in
+    slugs.py). A single-method family has nothing to aggregate: its papers, its
+    authors and its dates are that one method's, so the page would be a copy of
+    the method's own. The swim lane still links every lane label, sending a
+    singleton lane straight to its method instead.
+
+    Everything here comes through the 'describes' links. A family is a claim
+    about how a method works, so the papers that merely ran it belong on the
+    method's page, not here.
+    """
+    K = "families"
+    L = []
+    methods = ctx["methods"]
+    n_m, n_p = len(methods), len(ctx["pubs"])
+    span = ctx["span"]
+    sub = f"{n_m} methods"
+    if span:
+        years = (span[0][:4], span[1][:4])
+        sub += f" · {years[0]}–{years[1]}" if years[0] != years[1] else f" · {years[0]}"
+    first = methods[0]
+    # Plain "de novo" here, not *de novo*: this string becomes a <meta
+    # name="description">, where asterisks would render literally.
+    L += front_matter(
+        fam["name"], sub,
+        clip(join_sentences([
+            f"{fam['name']}: an architecture family in the de novo peptide "
+            f"sequencing catalog, shared by {n_m} methods",
+            f"The earliest is {first['name']}"
+            + (f" ({str(first['first_pub'])[:4]})" if first["first_pub"] else "")
+            + f", and {n_p} paper{'s' if n_p != 1 else ''} describe the family's "
+              "methods."]), 250))
+
+    lead = [f"An architecture family, shared by {n_m} catalogued methods."]
+    if first.get("first_pub"):
+        lead.append(
+            f"The earliest is {site.link('algorithms', first['id'], first['name'], from_kind=K)}"
+            f" ({str(first['first_pub'])[:4]});"
+            f" {n_m - 1} more have followed." if n_m > 2 else
+            f"The earliest is {site.link('algorithms', first['id'], first['name'], from_kind=K)}"
+            f" ({str(first['first_pub'])[:4]}).")
+    L += [" ".join(lead), ""]
+
+    dl = [m for m in methods if m["dl"] == 1]
+    kinds = Counter(m["kind"] for m in methods if m["kind"])
+    modes = Counter(m["mode"] for m in methods if m["mode"])
+
+    def tally(counter: Counter) -> str:
+        return ", ".join(f"{md_escape(k)} ({v})" if v > 1 else md_escape(k)
+                         for k, v in sorted(counter.items(), key=lambda t: (-t[1], t[0])))
+
+    L += ["| | |", "|---|---|",
+          f"| Methods | {n_m} |",
+          f"| Papers describing them | {n_p} |",
+          f"| Authors | {len(ctx['authors'])} |"]
+    if span:
+        L.append(f"| Active | {span[0]} to {span[1]} |")
+    if dl:
+        L.append(f"| Deep learning | {len(dl)} of {n_m} |")
+    if kinds:
+        L.append(f"| Kinds | {tally(kinds)} |")
+    if modes:
+        L.append(f"| Acquisition | {tally(modes)} |")
+    L.append("")
+
+    L += [f"## Methods ({n_m})", "",
+          "Oldest first, by the paper that describes each one.", ""]
+    for m in methods:
+        line = "- " + site.link("algorithms", m["id"], m["name"], from_kind=K)
+        if m["first_pub"]:
+            line += f" ({str(m['first_pub'])[:4]})"
+        if m["descr"]:
+            line += f": {md_escape(m['descr'])}"
+        L.append(line)
+    L.append("")
+
+    # The family's own benchmark record, which is the one thing on this page
+    # that no method page can show: how the family's methods place against the
+    # whole field rather than one against the others.
+    scored = [(m, ctx["bench"][m["id"]]) for m in methods if m["id"] in ctx["bench"]]
+    if scored:
+        best = min(b["median_rank"] for _m, b in scored)
+        L += ["## How they score", "",
+              f"{len(scored)} of the {n_m} {'has' if len(scored) == 1 else 'have'} been run "
+              f"on [denovo_benchmarks]({site.home('benchmarks')}), which ranks "
+              f"{scored[0][1]['of']} tools over {scored[0][1]['n_datasets']} datasets. "
+              f"The family's best median rank is **{best:g}**.", ""]
+        for m, b in sorted(scored, key=lambda t: t[1]["median_rank"]):
+            L.append(f"- {site.link('algorithms', m['id'], m['name'], from_kind=K)}: "
+                     f"median peptide-level average precision **{b['median_ap']:.3f}**, "
+                     f"median rank **{b['median_rank']:g}** of {b['of']}")
+        L += ["", "Read these next to the rest of the field, not on their own: "
+              f"[what the numbers mean]({site.home('benchmarks')}).", ""]
+
+    if ctx["subdomains"]:
+        L += ["## Applied in", "",
+              ", ".join(site.link("subdomains", s_id, label, from_kind=K)
+                        for s_id, label in ctx["subdomains"]), ""]
+
+    if ctx["pubs"]:
+        L += [f"## Paper{'s' if n_p != 1 else ''} describing them ({n_p})", ""]
+        for pub_id, title, date, journal, ptype in ctx["pubs"]:
+            meta = [x for x in (str(date)[:4] if date else None, journal, ptype) if x]
+            L.append(f"- {site.link('publications', pub_id, title, from_kind=K)}"
+                     + (f" ({md_escape(', '.join(meta))})" if meta else ""))
+        L.append("")
+
+    if ctx["authors"]:
+        L += [f"## Authors ({len(ctx['authors'])})", "",
+              ", ".join(site.link("authors", a_id, name, from_kind=K)
+                        for a_id, name in ctx["authors"]), ""]
+
+    keys = ["architectures", "browse-papers"]
+    if scored:
+        keys.insert(1, "benchmarks")
+    L += site.seen_in(keys)
+    earliest = span[0] if span else None
+    return "\n".join(L) + "\n", date_to_mtime(earliest)
+
 # --------------------------------------------------------------------------
 # Data loading. One query per relation, all with total ORDER BY clauses.
 # --------------------------------------------------------------------------
@@ -994,6 +1125,69 @@ def load(conn: sqlite3.Connection) -> dict:
                "ORDER BY a.subdomain, c.name"):
         d["sub_countries"][r["sd"]].append(r["country"])
 
+    # Architecture families, and everything that hangs off each one. The page
+    # policy -- a family needs two or more methods -- lives in slugs.py's
+    # ENTITY_QUERIES and is repeated here rather than imported, because these
+    # queries aggregate over the members and the HAVING clause is what defines
+    # the member set. The two are checked against each other in main(): a family
+    # with no slug gets no page.
+    d["families"] = []
+    for r in q("SELECT MIN(id) AS k, algorithm_family AS name, COUNT(*) AS n "
+               "FROM algorithm WHERE COALESCE(algorithm_family, '') <> '' "
+               "GROUP BY algorithm_family HAVING COUNT(*) >= 2 "
+               "ORDER BY algorithm_family"):
+        d["families"].append({"key": r["k"], "name": r["name"], "n": r["n"]})
+    fam_names = {f["name"] for f in d["families"]}
+    # name -> the slug key, for the Family row on an algorithm page. Absent for
+    # the single-method families, which deliberately have no page.
+    d["family_key"] = {f["name"]: f["key"] for f in d["families"]}
+
+    # Methods oldest first, which is how a family reads as a history: the method
+    # that introduced the family leads, and the newest arrival is last.
+    d["fam_methods"] = defaultdict(list)
+    for r in q("SELECT a.algorithm_family AS fam, a.id, a.name, a.kind, "
+               "       a.is_deep_learning AS dl, a.acquisition_mode AS mode, "
+               "       a.subdomain, a.short_description AS descr, "
+               "       MIN(p.publication_date) AS first_pub "
+               "FROM algorithm a "
+               "LEFT JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "     AND pa.role = 'describes' "
+               "LEFT JOIN publication p ON p.id = pa.publication_id "
+               "WHERE COALESCE(a.algorithm_family, '') <> '' "
+               "GROUP BY a.id ORDER BY first_pub IS NULL, first_pub, a.name"):
+        if r["fam"] in fam_names:
+            d["fam_methods"][r["fam"]].append(dict(r))
+
+    # Papers, authors and application areas all come through the DESCRIBING
+    # links only. Taking them from every link would hand Transformer (AR) the
+    # snake-venom papers that merely ran Casanovo, which is the same error the
+    # role column was added to fix on the algorithm pages.
+    d["fam_pubs"] = defaultdict(list)
+    for r in q("SELECT DISTINCT a.algorithm_family AS fam, p.id, p.title, "
+               "       p.publication_date AS date, p.journal, p.publication_type AS ptype "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "     AND pa.role = 'describes' "
+               "JOIN publication p ON p.id = pa.publication_id "
+               "WHERE COALESCE(a.algorithm_family, '') <> '' "
+               "ORDER BY a.algorithm_family, p.publication_date, p.id"):
+        if r["fam"] in fam_names:
+            d["fam_pubs"][r["fam"]].append(
+                (r["id"], r["title"], r["date"], r["journal"], r["ptype"]))
+
+    d["fam_authors"] = defaultdict(list)
+    for r in q("SELECT DISTINCT a.algorithm_family AS fam, au.id, "
+               "       au.display_name AS name "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "     AND pa.role = 'describes' "
+               "JOIN publication_author pau ON pau.publication_id = pa.publication_id "
+               "JOIN author_display au ON au.id = pau.author_id "
+               "WHERE COALESCE(a.algorithm_family, '') <> '' "
+               "ORDER BY a.algorithm_family, au.display_name"):
+        if r["fam"] in fam_names:
+            d["fam_authors"][r["fam"]].append((r["id"], r["name"]))
+
     d["metric_urls"] = {r["url"] for r in
                         q("SELECT url FROM repository_metrics ORDER BY url")}
 
@@ -1153,7 +1347,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~2497 thin pages out of
+    # committed under pages/. search: false keeps ~2521 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -1309,6 +1503,7 @@ def main() -> int:
                 "bench": d["bench"].get(gid),
                 "proteobench": d["proteobench"].get(gid),
                 "subdomain": d["subdomain_by_name"].get(row["subdomain"]),
+                "family_key": d["family_key"].get(row["algorithm_family"]),
             }
             body, mtime = render_algorithm(site, row, ctx)
             emit("algorithms", site.slugs["algorithms"][gid], body, mtime)
@@ -1352,6 +1547,29 @@ def main() -> int:
             }
             body, mtime = render_subdomain(site, row, ctx)
             emit("subdomains", site.slugs["subdomains"][row["id"]], body, mtime)
+
+    if "families" in kinds:
+        for fam in d["families"]:
+            name = fam["name"]
+            methods = d["fam_methods"][name]
+            pubs = d["fam_pubs"].get(name, [])
+            dates = sorted(p[2] for p in pubs if p[2])
+            subs, seen = [], set()
+            for m in methods:
+                pair = d["subdomain_by_name"].get(m["subdomain"])
+                if pair and pair[0] not in seen:
+                    seen.add(pair[0])
+                    subs.append(pair)
+            ctx = {
+                "methods": methods,
+                "pubs": pubs,
+                "authors": d["fam_authors"].get(name, []),
+                "subdomains": subs,
+                "bench": d["bench"],
+                "span": (dates[0], dates[-1]) if dates else None,
+            }
+            body, mtime = render_family(site, fam, ctx)
+            emit("families", site.slugs["families"][fam["key"]], body, mtime)
 
     # Prune only the directories this run actually generated, so
     # `--only authors` cannot delete the publication pages.

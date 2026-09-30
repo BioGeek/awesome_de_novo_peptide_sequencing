@@ -3,7 +3,7 @@
 
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20825737-blue.svg)](https://doi.org/10.5281/zenodo.20825737)
 
-A comprehensive, curated, and interactive map of the *de novo* peptide sequencing field. Algorithms, post-processors, downstream applications and adjacent tools, covering both deep-learning and classical approaches. Includes a SQLite database of papers, models, authors, affiliations, and venues, alongside a Quarto-based interactive website with Observable JS visualisations tracking publication impact, journal metrics, and GitHub activity across the field, plus a generated page for every paper, author, method, institution, venue and application area, and a benchmark section ranking the methods on both public benchmarks.
+A comprehensive, curated, and interactive map of the *de novo* peptide sequencing field. Algorithms, post-processors, downstream applications and adjacent tools, covering both deep-learning and classical approaches. Includes a SQLite database of papers, models, authors, affiliations, and venues, alongside a Quarto-based interactive website with Observable JS visualisations tracking publication impact, journal metrics, and GitHub activity across the field, plus a generated page for every paper, author, method, institution, venue, application area and architecture family, and a benchmark section ranking the methods on both public benchmarks.
 
 🌐 **Live site:** <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>
 
@@ -20,7 +20,7 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every cata
 
 - **`denovo.db`**: SQLite database of papers, models, authors, affiliations, cities, countries, and venues. **The source of truth.**
 - **`denovo.sql`**: committed SQL dump of `denovo.db` so diffs are reviewable in git.
-- **`index.qmd` + `_quarto.yml`**: the Quarto site. `index.qmd` is the interactive overview, charts powered by Observable JS; `pages/` holds a generated detail page for every publication, author, algorithm, institution, venue and application area, written by `build_pages.py` at build time and not committed.
+- **`index.qmd` + `_quarto.yml`**: the Quarto site. `index.qmd` is the interactive overview, charts powered by Observable JS; `pages/` holds a generated detail page for every publication, author, algorithm, institution, venue, application area and multi-method architecture family, written by `build_pages.py` at build time and not committed.
 - **Offline refresh scripts**, each rebuilding one slice of the database from an external API: `build_citations.py` (citation graph), `build_publication_impact.py` (OpenAlex citation counts), `build_journal_metrics.py` (venue metrics), `build_repo_metrics.py` (GitHub activity), `build_benchmarks.py` and `build_proteobench.py` (public-benchmark results, from [bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) and [ProteoBench](https://proteobench.cubimed.rub.de/denovo_DDA_HCD)), `build_author_ids.py` (ORCID / OpenAlex ids), `build_abstracts.py` (abstracts), `build_versions.py` (preprint-to-published links). The first five also run on a cron; see `.github/workflows/`.
 - **`build_pages.py` + `slugs.py`**: generate the per-entity detail pages and their URLs.
 - **`build_candidates.py`**: looks for papers the catalog is missing, by asking OpenAlex what our publications cite and what cites them. Writes `candidates.csv` for review and never edits the database.

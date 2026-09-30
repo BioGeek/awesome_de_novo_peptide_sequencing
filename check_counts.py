@@ -227,6 +227,61 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM (SELECT name FROM subdomain "
      "EXCEPT SELECT DISTINCT subdomain FROM algorithm "
      "WHERE COALESCE(subdomain,'') <> '')"),
+    # The family-page threshold, from four angles. These are the numbers that
+    # justify not giving all 49 families a page, so a drift in any of them is a
+    # drift in the argument.
+    ("CLAUDE.md", "families with a page",
+     r"\*\*(\d+) of \d+\*\* families that hold two or more",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) >= 2)"),
+    ("CLAUDE.md", "families in all",
+     r"\*\*\d+ of (\d+)\*\* families that hold two or more",
+     "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> ''"),
+    ("CLAUDE.md", "single-method families",
+     r"The other \*\*(\d+)\*\* hold\s*\n?exactly one method",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
+    ("CLAUDE.md", "methods in a family with a page",
+     r"cover \*\*(\d+)\*\* of the \*\*\d+\*\*\s*\n?methods that carry a family",
+     "SELECT COUNT(*) FROM algorithm WHERE algorithm_family IN "
+     "(SELECT algorithm_family FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) >= 2)"),
+    ("CLAUDE.md", "methods that carry a family",
+     r"cover \*\*\d+\*\* of the \*\*(\d+)\*\*\s*\n?methods that carry a family",
+     "SELECT COUNT(*) FROM algorithm WHERE COALESCE(algorithm_family,'') <> ''"),
+    # The same threshold argued in three source comments, because each of the
+    # three files repeats the HAVING clause and each comment says why.
+    ("slugs.py", "single-method families",
+     r"(\d+) of \d+ families hold exactly one method",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
+    ("slugs.py", "families in all",
+     r"\d+ of (\d+) families hold exactly one method",
+     "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> ''"),
+    ("index.qmd", "families with a page",
+     r"(\d+) of \d+ families have a page of their own",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) >= 2)"),
+    ("index.qmd", "families in all",
+     r"\d+ of (\d+) families have a page of their own",
+     "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> ''"),
+    ("index.qmd", "single-method families",
+     r"the other (\d+) hold exactly one method",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' "
+     "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
+    ("index.qmd", "families in the swim lane",
+     r"gives all (\d+) families a lane",
+     "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> ''"),
     ("BENCHMARKS.md", "denovo_benchmarks datasets",
      r"(\d+) datasets: instruments, organisms",
      "SELECT COUNT(*) FROM benchmark_dataset"),

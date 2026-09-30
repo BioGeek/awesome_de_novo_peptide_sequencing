@@ -170,7 +170,7 @@ def assign_unique(
 
 
 # --------------------------------------------------------------------------
-# The catalog's five entity types, and how each is keyed.
+# The catalog's seven entity types, and how each is keyed.
 #
 # Institutions are keyed by NAME, not by affiliation row: 628 affiliation rows
 # collapse to 400 institutions because one institution has many departments,
@@ -206,6 +206,29 @@ ENTITY_QUERIES: dict[str, str] = {
     # rather than /subdomains/immunopeptidomics-neoantigen.html.
     "subdomains": """
         SELECT id, name FROM subdomain ORDER BY id
+    """,
+    # Architecture families, keyed by MIN(id) over the algorithms that carry the
+    # family, the same value-keyed pattern institutions and venues use. There is
+    # no `family` table to key on: `algorithm.algorithm_family` is free text, and
+    # a table would have to be edited by hand every time a family gained or lost
+    # a method.
+    #
+    # HAVING COUNT(*) >= 2 is the whole page policy, in SQL, on purpose.
+    # 25 of 49 families hold exactly one method, and a page for one of those
+    # would carry that method's papers, that method's authors and its dates:
+    # a duplicate of a page that already exists. A family earns a page when it
+    # has something to aggregate. The threshold is derived rather than curated,
+    # so a family reaching two methods gains a page with no extra step -- which
+    # shows up here as an ADDED slug, and --check passes on additions.
+    #
+    # A family dropping back to one method REMOVES a published URL and so fails
+    # --check, which is the intended loudness: it is a real 404 and wants a
+    # deliberate --write.
+    "families": """
+        SELECT MIN(id), algorithm_family FROM algorithm
+        WHERE COALESCE(algorithm_family, '') <> ''
+        GROUP BY algorithm_family HAVING COUNT(*) >= 2
+        ORDER BY MIN(id)
     """,
 }
 
