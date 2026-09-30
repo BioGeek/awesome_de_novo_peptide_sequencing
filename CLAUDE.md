@@ -183,7 +183,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**27 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**28 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -875,10 +875,24 @@ architectures swim lane and every Family cell in the long-view table is
 clickable, and a reader never has to know which of the two kinds of target they
 got.
 
-These pages carry no curated prose: there is no family blurb anywhere in the
-schema, so the lead sentence is generated from the earliest method. If a family
-should ever carry a real description, that is a new table rather than a new
-column on `algorithm`.
+**The one thing the page cannot derive is prose**, so `family_note` holds it:
+`(name, blurb)`, one line per family on what its methods share, keyed by the
+string `algorithm.algorithm_family` carries. A separate table rather than a
+column on `algorithm`, because the fact is about the family and a column would
+repeat it on all 37 Transformer (AR) rows with nothing keeping the copies equal.
+It holds nothing but prose on purpose: membership is still the HAVING clause and
+the URL is still `MIN(id)`, so a note cannot invent a family or move its page.
+
+All 24 families with a page have a note. The two ways that can rot are
+registered in `check_counts.py` as invariants that must read zero, the same
+shape as the `subdomain` pair: 0 pages without a note, 0 notes without a page.
+A missing note is otherwise invisible, because the page simply falls back to the
+generated sentence.
+
+The blurb doubles as the page's `<meta name="description">`, which is why each
+one is written to fit inside the 250-character clip with the family name
+prefixed. It is stored with a plain "de novo" and italicised at render, exactly
+like the `subdomain` blurbs, since asterisks in a meta tag render literally.
 
 ### Plot's dx, dy and textAnchor are constants, not channels
 

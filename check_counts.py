@@ -253,6 +253,23 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "methods that carry a family",
      r"cover \*\*\d+\*\* of the \*\*(\d+)\*\*\s*\n?methods that carry a family",
      "SELECT COUNT(*) FROM algorithm WHERE COALESCE(algorithm_family,'') <> ''"),
+    ("CLAUDE.md", "families with a note",
+     r"All (\d+) families with a page have a note",
+     "SELECT COUNT(*) FROM family_note"),
+    # Two invariants that must read zero, the same shape as the subdomain pair
+    # above: a family page with no note falls back silently to the generated
+    # sentence, and a note for a family with no page is prose nothing renders.
+    ("CLAUDE.md", "family pages without a note",
+     r"(\d+) pages without a note",
+     "SELECT COUNT(*) FROM (SELECT algorithm_family f FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' GROUP BY algorithm_family "
+     "HAVING COUNT(*) >= 2) x WHERE x.f NOT IN (SELECT name FROM family_note)"),
+    ("CLAUDE.md", "notes without a family page",
+     r"(\d+) notes without a page",
+     "SELECT COUNT(*) FROM family_note WHERE name NOT IN "
+     "(SELECT algorithm_family FROM algorithm "
+     "WHERE COALESCE(algorithm_family,'') <> '' GROUP BY algorithm_family "
+     "HAVING COUNT(*) >= 2)"),
     # The same threshold argued in three source comments, because each of the
     # three files repeats the HAVING clause and each comment says why.
     ("slugs.py", "single-method families",

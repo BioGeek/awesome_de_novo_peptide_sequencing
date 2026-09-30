@@ -842,27 +842,38 @@ def render_family(site: Site, fam: dict, ctx: dict) -> tuple[str, float]:
         years = (span[0][:4], span[1][:4])
         sub += f" · {years[0]}–{years[1]}" if years[0] != years[1] else f" · {years[0]}"
     first = methods[0]
+    blurb = ctx.get("blurb")
     # Plain "de novo" here, not *de novo*: this string becomes a <meta
-    # name="description">, where asterisks would render literally.
+    # name="description">, where asterisks would render literally. The blurb is
+    # written that way in the database for the same reason the subdomain blurbs
+    # are, and italicised below where it reaches the page body.
+    # The blurb IS the description where there is one: it says what the family
+    # is, which is what a search snippet should say, and appending a count to it
+    # only pushed the last clause past the 250-char clip on 16 of the 24.
     L += front_matter(
         fam["name"], sub,
-        clip(join_sentences([
+        clip(f"{fam['name']}: {blurb}" if blurb else join_sentences([
             f"{fam['name']}: an architecture family in the de novo peptide "
             f"sequencing catalog, shared by {n_m} methods",
-            f"The earliest is {first['name']}"
-            + (f" ({str(first['first_pub'])[:4]})" if first["first_pub"] else "")
-            + f", and {n_p} paper{'s' if n_p != 1 else ''} describe the family's "
-              "methods."]), 250))
+            f"{n_m} catalogued methods, described in {n_p} "
+            f"paper{'s' if n_p != 1 else ''}."]), 250))
 
-    lead = [f"An architecture family, shared by {n_m} catalogued methods."]
-    if first.get("first_pub"):
+    if blurb:
+        L += [italicise_de_novo(md_escape(blurb)), ""]
+
+    # With a blurb the reader already knows what the family is, so the generated
+    # sentence only has to place it in time; without one it also has to say what
+    # the page is.
+    lead = [] if blurb else [f"An architecture family, shared by {n_m} catalogued methods."]
+    if first["first_pub"]:
+        earliest_link = site.link("algorithms", first["id"], first["name"], from_kind=K)
         lead.append(
-            f"The earliest is {site.link('algorithms', first['id'], first['name'], from_kind=K)}"
-            f" ({str(first['first_pub'])[:4]});"
-            f" {n_m - 1} more have followed." if n_m > 2 else
-            f"The earliest is {site.link('algorithms', first['id'], first['name'], from_kind=K)}"
-            f" ({str(first['first_pub'])[:4]}).")
-    L += [" ".join(lead), ""]
+            (f"The earliest of its {n_m} methods is {earliest_link} "
+             f"({str(first['first_pub'])[:4]})" if blurb else
+             f"The earliest is {earliest_link} ({str(first['first_pub'])[:4]})")
+            + (f"; {n_m - 1} more have followed." if n_m > 2 else "."))
+    if lead:
+        L += [" ".join(lead), ""]
 
     dl = [m for m in methods if m["dl"] == 1]
     kinds = Counter(m["kind"] for m in methods if m["kind"])
@@ -1131,6 +1142,11 @@ def load(conn: sqlite3.Connection) -> dict:
     # queries aggregate over the members and the HAVING clause is what defines
     # the member set. The two are checked against each other in main(): a family
     # with no slug gets no page.
+    # The one thing these pages cannot derive: a line of curated prose saying
+    # what the family's methods have in common. Keyed by name and holding
+    # nothing else, so it cannot decide which families exist (that is the
+    # HAVING clause) or where their pages live (that is MIN(id)).
+    d["fam_blurb"] = dict(q("SELECT name, blurb FROM family_note ORDER BY name"))
     d["families"] = []
     for r in q("SELECT MIN(id) AS k, algorithm_family AS name, COUNT(*) AS n "
                "FROM algorithm WHERE COALESCE(algorithm_family, '') <> '' "
@@ -1562,6 +1578,7 @@ def main() -> int:
                     subs.append(pair)
             ctx = {
                 "methods": methods,
+                "blurb": d["fam_blurb"].get(name),
                 "pubs": pubs,
                 "authors": d["fam_authors"].get(name, []),
                 "subdomains": subs,

@@ -21832,6 +21832,34 @@ INSERT INTO subdomain VALUES(14,'pathogen-identification','Clinical pathogen ID'
 INSERT INTO subdomain VALUES(15,'forensics','Forensics','Attributing a trace to its source, from body fluids to the microbial signature of a place.');
 INSERT INTO subdomain VALUES(16,'astrobiology','Astrobiology / life detection','Peptide biosignatures, where nothing about the target sequence can be assumed in advance.');
 INSERT INTO subdomain VALUES(17,'toxin-identification','Toxin identification (biodefense)','Recognising protein toxins in an unknown sample, where a database search presumes what you are looking for.');
+CREATE TABLE family_note (
+    name  TEXT PRIMARY KEY,  -- as stored in algorithm.algorithm_family
+    blurb TEXT NOT NULL      -- one line: what this family's methods share
+);
+INSERT INTO family_note VALUES('Graph / DP','The classical formulation: peaks become nodes in a spectrum graph whose edges are residue masses, and the peptide is the best-scoring path through it, found by dynamic programming. Nearly every classical sequencer is a version of this.');
+INSERT INTO family_note VALUES('Heuristic','Hand-engineered interpretation rules rather than one global optimisation: extend a sequence peak by peak, enumerate the compositions that fit the mass, score what survives. The oldest approach here, and the closest to reading by hand.');
+INSERT INTO family_note VALUES('Sequence tag','Short, high-confidence stretches of sequence read straight off the spectrum and used as a filter or a query rather than as the final answer. A tag plus its flanking masses can identify a peptide on its own.');
+INSERT INTO family_note VALUES('Neural network','Neural networks outside the deep-learning lineage: the early sequence-determination networks, and small task-specific models that score one local decision, such as an ion-series assignment or a leucine/isoleucine call.');
+INSERT INTO family_note VALUES('Chemical labeling assisted','Isotopic or mass-coded labels introduced before the mass spectrometer, so one ion series can be told from the other by a known mass shift instead of by inference. The problem is eased in the sample, not the algorithm.');
+INSERT INTO family_note VALUES('Chemical derivatization assisted','Covalent modification of the peptide, usually at a terminus, to change how it fragments: selective cleavage, brighter low-mass ions, or a strongly directed ion series.');
+INSERT INTO family_note VALUES('Constrained search','Replace the database with the set of sequences the measurement itself allows. An accurate precursor mass, a determined composition or a known peptide family bounds the candidate set tightly enough to enumerate it outright.');
+INSERT INTO family_note VALUES('Spectra pair','Two spectra of the same peptide, from complementary fragmentation or from a paired digest, interpreted together so that one ion series fills the gaps in the other.');
+INSERT INTO family_note VALUES('Spectral assembly','Assemble the overlapping spectra into contigs BEFORE any sequence is called, so a protein is read from the assembled evidence rather than from peptides interpreted one at a time. Sequence assembly is the other way round.');
+INSERT INTO family_note VALUES('Grouped spectra','Several spectra of the same peptide, from repeated injections, charge states or labeling channels, scored as one body of evidence instead of one spectrum at a time.');
+INSERT INTO family_note VALUES('Homology search','De novo sequences, errors and all, used as the query in an error-tolerant search against known proteins, so a protein that is in no database can still be identified through its relatives.');
+INSERT INTO family_note VALUES('Hybrid search','De novo interpretation used to drive a database search: the sequence or the tag read from the spectrum becomes the query, rather than the database enumerating candidates to score.');
+INSERT INTO family_note VALUES('Hybrid de novo + database search','Two engines run side by side and reconciled, a de novo sequencer and a database search, each keeping the identifications the other cannot make.');
+INSERT INTO family_note VALUES('Fragment ion analysis','Work on the fragment ions themselves before any sequence is proposed: charge state, isotope pattern and series assignment, which is what a sequencing algorithm downstream has to assume it already has.');
+INSERT INTO family_note VALUES('Sequence assembly','Sequencing a whole protein rather than a peptide. Overlapping peptides are called first, then assembled into full-length sequence, which is how antibodies and protein therapeutics are sequenced without a reference.');
+INSERT INTO family_note VALUES('Random Forest','Tree ensembles, used to predict fragment-ion intensities and to combine several sequencers'' output under a controlled error rate, rather than to sequence a spectrum directly.');
+INSERT INTO family_note VALUES('Learning-to-rank','A ranking model over candidate peptides. The candidates come from a sequencer upstream, and the contribution is putting the right one on top, usually with a predicted spectrum to compare against.');
+INSERT INTO family_note VALUES('CNN + RNN','The first deep-learning generation: a convolutional network reads the spectrum and a recurrent decoder emits the sequence. This is what made a spectrum something to decode end to end rather than something to search.');
+INSERT INTO family_note VALUES('CNN','Convolutional networks without a recurrent decoder, reading the spectrum as a signal over the m/z axis. Used where the output is a score or a local call rather than a sequence emitted left to right.');
+INSERT INTO family_note VALUES('GNN','Graph neural networks over the spectrum graph: they learn the path-scoring function that dynamic programming had to hand-code, which is what lets a path cross a fragment that was never observed.');
+INSERT INTO family_note VALUES('Transformer (AR)','Autoregressive transformer decoders, which emit the peptide one residue at a time conditioned on the spectrum and on the residues already chosen. The dominant architecture since Casanovo, and the one most benchmarked tools share.');
+INSERT INTO family_note VALUES('Transformer (NAR)','Non-autoregressive transformers, which predict every residue position in one forward pass instead of left to right. Faster, and they need an explicit mechanism to keep the residues consistent with the precursor mass.');
+INSERT INTO family_note VALUES('Transformer (encoder-only)','Transformer spectrum encoders trained without a decoder, usually self-supervised, to produce representations of a spectrum that other tasks reuse. The output is an embedding, not a peptide.');
+INSERT INTO family_note VALUES('Diffusion','Iterative denoising: start from noise over the residue positions and refine repeatedly, so the precursor-mass constraint and the consistency of the whole sequence can be enforced at every step rather than only at the end.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
 INSERT INTO sqlite_sequence VALUES('city',295);
@@ -21839,6 +21867,12 @@ INSERT INTO sqlite_sequence VALUES('affiliation',680);
 INSERT INTO sqlite_sequence VALUES('author',1344);
 INSERT INTO sqlite_sequence VALUES('algorithm',307);
 INSERT INTO sqlite_sequence VALUES('publication',358);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -21893,12 +21927,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -21914,12 +21942,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -21934,6 +21956,12 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
 CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
 COMMIT;
