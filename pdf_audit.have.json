@@ -1,0 +1,108 @@
+{
+"35": [
+"Ananth et al. - 2024 - A learned score function improves the power of mass spectrometry database search.pdf"
+],
+"56": [
+"Behsaz et al. - 2020 - De Novo Peptide Sequencing Reveals Many Cyclopeptides in the Human Gut and Other Environments.pdf"
+],
+"76": [
+"Bittremieux et al. - 2024 - Deep learning methods for de novo peptide sequencing.pdf"
+],
+"31": [
+"Choi and Paek - 2024 - pXg Comprehensive Identification of Noncanonical MHC-I\u2013Associated Peptides From De Novo Peptide Seq.pdf"
+],
+"54": [
+"Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution dev.pdf"
+],
+"30": [
+"Ebrahimi and Guo - 2024 - Transformer-based de novo peptide sequencing for data-independent acquisition mass spectrometry.pdf"
+],
+"1": [
+"Eloff et al. - 2024 - De novo peptide sequencing with InstaNovo Accurate, database-free peptide identification for large.pdf"
+],
+"52": [
+"Ge et al. - 2022 - DePS An improved deep learning model for de novo peptide sequencing.pdf"
+],
+"38": [
+"Jin et al. - 2023 - ContraNovo A Contrastive Learning Approach to Enhance De Novo Peptide Sequencing.pdf"
+],
+"37": [
+"Klaproth-Andrade et al. - 2024 - Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo.pdf"
+],
+"33": [
+"Lee and Kim - 2024 - Bidirectional de novo peptide sequencing using a transformer model.pdf"
+],
+"51": [
+"Lee et al. - 2022 - Uncovering Hidden Members and Functions of the Soil Microbiome Using De Novo Metaproteomics.pdf"
+],
+"44": [
+"Li - DpNovo A DEEP LEARNING MODEL COMBINED WITH DYNAMIC PROGRAMMING FOR DE NOVO PEPTIDE SEQUENCING.pdf"
+],
+"40": [
+"Li et al. - 2023 - A complete mass spectrometry-based immunopeptidomics pipeline for neoantigen identification and vali.pdf"
+],
+"36": [
+"Liao et al. - 2024 - MARS an improved de novo peptide candidate selection method for non-canonical antigen target discove.pdf"
+],
+"39": [
+"Liu et al. - 2023 - Accurate de novo peptide sequencing using fully convolutional neural networks.pdf"
+],
+"41": [
+"Mao et al. - 2023 - Mitigating the missing-fragmentation problem in de novo peptide sequencing with a two-stage graph-ba.pdf"
+],
+"61": [
+"Miller et al. - 2018 - Postnovo Postprocessing Enables Accurate and FDR-Controlled de Novo Peptide Sequencing.pdf"
+],
+"28": [
+"Petrovskiy et al. - 2024 - PowerNovo de novo peptide sequencing via tandem mass spectrometry using an ensemble of transformer.pdf"
+],
+"57": [
+"Qiao - Peptide Sequencing with Deep Learning.pdf",
+"Qiao et al. - 2019 - DeepNovoV2 Better de novo peptide sequencing with deep learning.pdf"
+],
+"29": [
+"Sanders et al. - 2024 - A transformer model for de novo sequencing of data-independent acquisition mass spectrometry data.pdf"
+],
+"43": [
+"Sun et al. - 2023 - Glycopeptide database search and de novo sequencing with PEAKS GlycanFinder enable highly sensitive.pdf"
+],
+"62": [
+"Tran et al. - 2017 - De novo peptide sequencing by deep learning.pdf"
+],
+"60": [
+"Tran et al. - 2019 - Deep learning enables de novo peptide sequencing from data-independent-acquisition mass spectrometry.pdf"
+],
+"55": [
+"Tran et al. - 2020 - Personalized deep learning of individual immunopeptidomes to identify neoantigens for cancer vaccine.pdf"
+],
+"42": [
+"Wang et al. - 2023 - SeqNovo De Novo Peptide Sequencing Prediction in IoMT via Seq2Seq.pdf"
+],
+"25": [
+"Wang et al. - 2024 - Transforming de novo peptide sequencing by explainable AI.pdf"
+],
+"283": [
+"Wu et al. - 2023 - BiATNovo A Self-Attention based Bidirectional Peptide Sequencing Method.pdf"
+],
+"48": [
+"Wu et al. - 2023 - Denovo-GCN De Novo Peptide Sequencing by Graph Convolutional Neural Networks.pdf"
+],
+"32": [
+"Xia et al. - 2024 - AdaNovo Adaptive emph{De Novo} Peptide Sequencing with Conditional Mutual Information.pdf"
+],
+"46": [
+"Xu et al. - 2023 - PGPointNovo an efficient neural network-based tool for parallel de novo peptide sequencing.pdf"
+],
+"58": [
+"Yang et al. - 2019 - pNovo 3 precise de novo peptide sequencing using a learning-to-rank framework.pdf"
+],
+"34": [
+"Yang et al. - 2024 - Introducing \u03c0-HelixNovo for practical large-scale de novo peptide sequencing.pdf"
+],
+"26": [
+"Yilmaz et al. - 2024 - Sequence-to-sequence translation from mass spectra to peptides with a transformer model.pdf"
+],
+"21": [
+"Zhang et al. - 2024 - \u03c0-PrimeNovo An Accurate and Efficient Non-Autoregressive Deep Learning Model for De Novo Peptide Se.pdf"
+]
+}

@@ -187,7 +187,7 @@ true of the single-table version too.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (244), `'preprint'` (78), `'thesis'` (16), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1) and `'abstract'` (3). Use one of those eight; do not invent a ninth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (244), `'preprint'` (78), `'thesis'` (17), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1) and `'abstract'` (3). Use one of those eight; do not invent a ninth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -196,7 +196,7 @@ Authors connect to publications via `publication_author` (with `author_order`) a
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 47 of the 408 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 47 of the 409 are `'uses'`, and they are concentrated rather than
 spread: 18 of PEAKS's 21 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -426,7 +426,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 358 against 357 publications today --
+a deleted row does not give its id back -- 359 against 358 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -534,6 +534,21 @@ can reintroduce it. When a source gives only a year, prefer the publisher page,
 Europe PMC `firstPublicationDate`, or a repository's `citation_publication_date`
 before settling for `YYYY-01-01`.
 
+**The other trap is a thesis date on the journal row.** Publication 50,
+NovoRank, was dated 2022-08-01 while its DOI is `10.1021/acs.jproteome.4c00300`
+-- an ACS `4c` identifier, which means 2024. Crossref gives J Proteome Res
+24(2), 903-910, online 2024-12-31, print issue 2025-02-07. The 2022 date was
+Jangho Seo's master's thesis of the same work, which is now publication 359 in
+its own right, and the row was carrying its author's thesis date for two and a
+half years of the timeline.
+
+**The ACS DOI suffix is the tell**: `4c` is 2024, `5c` is 2025, the same way an
+arXiv `25xx` id dates a posting. When a row's date and its DOI disagree by more
+than a few months, the date is usually a different publication's. Note the
+method itself keeps its 2022 first appearance, because `first_pub` takes the
+earliest DESCRIBING paper and the thesis is now that paper -- which is the
+honest reading, and a reason to enter the thesis rather than just fix the date.
+
 Five rows legitimately keep 1 January (146, 158, 187, 286 and 310: Mass Spectrometry
 Reviews 34(1), Mol Cell Proteomics 8(1), AIChE Journal 53(1), J Biol Chem 279(1),
 Biomedical Chemistry: Research and Methods 1(1)) because each really is a
@@ -583,7 +598,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 325/357. The 32 without one are mostly theses, conference pages and
+Coverage is 326/358. The 32 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
 
 Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
