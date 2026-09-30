@@ -11,6 +11,7 @@ A curated knowledge base covering the *de novo* peptide sequencing field: algori
 - `plots.ipynb`: Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only, not published).
 - `index.qmd` + `_quarto.yml`: the Quarto site that renders interactive charts straight from `denovo.db`.
 - `WATCHLIST.md`: tools that belong in the catalog but have no citable manuscript yet, plus things deliberately left out. Check it before concluding a tool is simply missing, and add to it rather than adding a method with no publication.
+- `BENCHMARKS.md`: the field's public benchmarks, which two are charted and why the others are not, and the retrained-versus-released trap. **Read it before putting a benchmark number next to another one**: NovoBench, ProteoBench and denovo_benchmarks all say "nine-species" and only two of the three are comparable.
 
 ## Common commands
 

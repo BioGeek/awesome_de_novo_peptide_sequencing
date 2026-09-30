@@ -52,6 +52,26 @@ DB_PATH = Path(__file__).parent / "denovo.db"
 HAS_ID = ("COALESCE(orcid,'')<>'' OR COALESCE(openalex_id,'')<>'' "
           "OR COALESCE(scholar_id,'')<>'' OR COALESCE(sciprofiles_id,'')<>''")
 
+def _instanovo_median_ap(db) -> str:
+    """Median of InstaNovo's per-dataset peptide AP, to three decimals.
+
+    A real median rather than an index into the sorted list: with an even
+    number of datasets it is the mean of the two middle values, and the dataset
+    count grows.
+    """
+    aps = sorted(r[0] for r in db.execute(
+        "SELECT r.ap_peptide FROM benchmark_result r "
+        "JOIN benchmark_tool t ON t.tool = r.tool "
+        "JOIN algorithm a ON a.id = t.algorithm_id "
+        "WHERE r.is_latest = 1 AND a.name = 'InstaNovo' "
+        "  AND r.ap_peptide IS NOT NULL"))
+    if not aps:
+        return "n/a"
+    mid = len(aps) // 2
+    med = aps[mid] if len(aps) % 2 else (aps[mid - 1] + aps[mid]) / 2
+    return f"{med:.3f}"
+
+
 def _generated_pages(db) -> int:
     """One page per slug, from the module build_pages.py itself uses."""
     from slugs import all_slugs
@@ -207,6 +227,17 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM (SELECT name FROM subdomain "
      "EXCEPT SELECT DISTINCT subdomain FROM algorithm "
      "WHERE COALESCE(subdomain,'') <> '')"),
+    ("BENCHMARKS.md", "denovo_benchmarks datasets",
+     r"(\d+) datasets: instruments, organisms",
+     "SELECT COUNT(*) FROM benchmark_dataset"),
+    ("BENCHMARKS.md", "ProteoBench spectra",
+     r"nine-species benchmark, ([\d,]+) spectra",
+     lambda db: f"{db.execute('SELECT MAX(n_spectra) FROM proteobench_submission').fetchone()[0]:,}"),
+    ("BENCHMARKS.md", "InstaNovo median AP",
+     r"(0\.\d+) median AP over \d+ datasets", _instanovo_median_ap),
+    ("BENCHMARKS.md", "datasets behind that median",
+     r"0\.\d+ median AP over (\d+) datasets",
+     "SELECT COUNT(*) FROM benchmark_dataset"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),

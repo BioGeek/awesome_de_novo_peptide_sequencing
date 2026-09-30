@@ -25,6 +25,7 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every cata
 - **`build_pages.py` + `slugs.py`**: generate the per-entity detail pages and their URLs.
 - **`build_candidates.py`**: looks for papers the catalog is missing, by asking OpenAlex what our publications cite and what cites them. Writes `candidates.csv` for review and never edits the database.
 - **`check_counts.py`**: verifies that the row counts quoted in the documentation still match `denovo.db`.
+- **`BENCHMARKS.md`**: which public benchmarks of the field exist, which two the site charts and why, and the retrained-versus-released trap that makes three of them look comparable when they are not.
 - **`WATCHLIST.md`**: methods that belong in the catalog but have nothing citable yet, plus things deliberately left out and why.
 - **`plots.ipynb`**: Jupyter notebook for offline exploration / sanity checks (static matplotlib figures, not published).
 

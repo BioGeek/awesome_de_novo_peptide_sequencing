@@ -452,7 +452,13 @@ def main() -> int:
             curve = curves.get((tool, "peptide"))
             area = (sum((curve[i] + curve[i + 1]) / 2 * (GRID[i + 1] - GRID[i])
                         for i in range(len(GRID) - 1)) if curve else float("nan"))
-            med = aps[len(aps) // 2] if aps else float("nan")
+            # A real median: with an even count it is the mean of the two
+            # middle values, which is what the site's d3.median reports. The
+            # upper-middle value alone read 0.854 where the median is 0.853.
+            mid = len(aps) // 2
+            med = (float("nan") if not aps
+                   else aps[mid] if len(aps) % 2
+                   else (aps[mid - 1] + aps[mid]) / 2)
             newest = max((v for (t, _d), v in latest.items() if t == tool),
                          key=version_key, default="?")
             print(f"  {resolved[tool][0]:20s} {newest:12s}"
