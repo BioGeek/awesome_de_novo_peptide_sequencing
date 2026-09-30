@@ -413,6 +413,26 @@ upstream repository commits new runs and the refresh workflow only commits when
 they actually changed. And a week where they do costs 17 page renders, not 2485,
 because of the next section.
 
+## "Recently added" is publication.id, not a date
+
+The site's **Recently added** list, first thing under Browse all papers, answers
+"what changed since I last looked" without the catalog storing a second date per
+row. `publication.id` is handed out by SQLite in insertion order, so ordering by
+it descending IS the order papers arrived; the same id is the sortable `#`
+column in the full table, which is how to see past the ten the list shows.
+
+Two things to keep straight. The date shown beside each entry is the PAPER's
+publication date, not when it was catalogued, and the list says so, because
+several additions each month are older work that surfaced in a
+`build_candidates.py` sweep. And the highest id can exceed the row count, since
+a deleted row does not give its id back -- 358 against 357 publications today --
+so the id is an ordering, never a count.
+
+A real `added_at` column would be better and is not worth it: the value only
+exists in git, backfilling it means an `-S` search per row over the whole
+history, and every future insert would have to remember to set it. The ordering
+is free and cannot drift.
+
 ## The publish renders what changed, not everything
 
 `render_scope.py` decides, before Quarto is invoked, whether the publish needs

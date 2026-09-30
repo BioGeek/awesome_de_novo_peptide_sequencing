@@ -189,6 +189,12 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      r"precision for the (\d+) that have a submission",
      "SELECT COUNT(DISTINCT algorithm_id) FROM proteobench_submission "
      "WHERE algorithm_id IS NOT NULL"),
+    ("CLAUDE.md", "highest publication id",
+     r"-- (\d+) against \d+ publications today",
+     "SELECT MAX(id) FROM publication"),
+    ("CLAUDE.md", "publications behind that id",
+     r"-- \d+ against (\d+) publications today",
+     "SELECT COUNT(*) FROM publication"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),

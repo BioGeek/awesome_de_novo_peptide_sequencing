@@ -1163,6 +1163,12 @@ breakdown_apply = {
 
 ```{=html}
 <style>
+/* "Recently added": a compact ordered list, the id in the marker's place. */
+.recent-list { list-style: none; padding-left: 0; margin: 0.5rem 0 1.5rem; }
+.recent-list li { padding: 0.28rem 0; border-bottom: 1px solid #eaecef; line-height: 1.45; }
+.recent-num { display: inline-block; min-width: 3.1rem; color: #57606a;
+              font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+.recent-meta { color: #57606a; font-size: 0.85rem; }
 .hero-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
 .hero-stat { text-align: center; padding: 1rem; background: #f6f8fa; border-radius: 0.5rem; }
 .hero-num { font-size: 2.5rem; font-weight: 700; color: #1f6feb; line-height: 1; }
@@ -4620,11 +4626,13 @@ author_algo_network = {
   const width = 1400
   // Legend height computed dynamically after families_seen is known (below);
   // hardcoded 90 clipped anything past the first 3 rows × 5 cols = 15 items.
-  // 820, not the 650 the co-authorship chart uses: this graph holds 360 nodes
-  // against 173, and at 650 the density alone pushed 19 of them onto the top
-  // and bottom edges however the forces were tuned. 1400 x 820 gives each node
-  // about 3200 px2, which is where the layout settles inside the frame.
-  const PLOT_H = 820
+  // 1000, not the 650 the co-authorship chart uses: this graph holds 360 nodes
+  // against 173, and the layout is only as separable as the room it has. At 650
+  // the density alone pushed 19 nodes onto the top and bottom edges however the
+  // forces were tuned; at 820, once the link forces were strong enough to pull
+  // groups into knots, 29 were pinned there. 1400 x 1000 gives each node about
+  // 3900 px2 and the knots somewhere to be.
+  const PLOT_H = 1000
   const legend_cols_per_row = 5
   const legend_col_w = 260
   const legend_row_h = 22
@@ -4741,23 +4749,59 @@ author_algo_network = {
     ])
   })
 
+  // EVERY NODE GETS ITS OWN TARGET, authors included. Pulling all 180 authors
+  // toward one point, `forceX(width / 2)`, is what turned this chart into a
+  // single blob once the repulsion was capped: with nothing pushing back at
+  // range, a shared target is a shared destination, and the authors dragged
+  // their models in after them. An author's target is instead the
+  // weight-weighted centroid of the family targets of the models it links, so a
+  // group sits with its own models and an author bridging two families sits
+  // between them, which is the structure the chart exists to show.
+  const links_of = new Map(nodes.map(n => [n.id, []]))
+  for (const l of links) {
+    links_of.get(l.source).push([l.target, l.weight])
+    links_of.get(l.target).push([l.source, l.weight])
+  }
+  const author_target = new Map()
+  for (const n of nodes) {
+    if (n.kind !== "author") continue
+    let sx = 0, sy = 0, sw = 0
+    for (const [other, w] of links_of.get(n.id)) {
+      const t = family_target.get(node_by_name.get(other)?.family)
+      if (!t) continue
+      sx += t[0] * w; sy += t[1] * w; sw += w
+    }
+    author_target.set(n.id, sw ? [sx / sw, sy / sw] : [width / 2, PLOT_H / 2])
+  }
+  const target_of = d => d.kind === "algo"
+    ? family_target.get(d.family) : author_target.get(d.id)
+
   const sim = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 60 + 8 / d.weight).strength(0.35))
+    // Link distance and strength both scale with the tie: a co-published model
+    // pulls its authors in tight, a single shared paper barely pulls at all.
+    // A constant 0.35 for every edge is what made the layout uniform -- every
+    // tie equally important is no structure at all.
+    .force("link", d3.forceLink(links).id(d => d.id)
+      .distance(d => 42 + 28 / d.weight)
+      .strength(d => 0.12 + 0.48 * Math.min(1, d.weight / 2)))
     // Capped repulsion, as on the co-authorship chart. This one was worse: an
     // author node was held in the frame only by forceX/forceY of strength 0.01,
     // against 360 nodes repelling each other at any range, so 94 of them ended
-    // up within 4 px of an edge, lining the top and bottom.
+    // up within 4 px of an edge, lining the top and bottom. 260 px rather than
+    // that fix's 200: with per-node targets holding the layout together,
+    // neighbouring clusters need enough range to push each other apart.
     .force("charge", d3.forceManyBody()
-      .strength(d => d.kind === "algo" ? -350 : -90).distanceMax(200))
-    .force("collide", d3.forceCollide().radius(d => nodeR(d) + 4))
+      .strength(d => d.kind === "algo" ? -300 : -110).distanceMax(300))
+    .force("collide", d3.forceCollide().radius(d => nodeR(d) + 5))
     .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
-    // An author is placed by the models it links, which is the point of the
-    // chart, so its own pull to the centre stays weak -- but not so weak that
-    // repulsion wins.
-    .force("fam_x", d3.forceX(d => d.kind === "algo" ? family_target.get(d.family)[0] : width / 2)
-      .strength(d => d.kind === "algo" ? 0.15 : 0.06))
-    .force("fam_y", d3.forceY(d => d.kind === "algo" ? family_target.get(d.family)[1] : PLOT_H / 2)
-      .strength(d => d.kind === "algo" ? 0.15 : 0.06))
+    // The family target is now a NUDGE, not the layout: it decides roughly
+    // where a group lands so the picture is stable between renders, and the
+    // links decide the shape. Pulled hard (0.14) it fought the link forces and
+    // flattened everything into an even mesh.
+    .force("fam_x", d3.forceX(d => target_of(d)[0])
+      .strength(d => d.kind === "algo" ? 0.045 : 0.02))
+    .force("fam_y", d3.forceY(d => target_of(d)[1])
+      .strength(d => d.kind === "algo" ? 0.045 : 0.02))
 
   const svg = d3.create("svg")
     .attr("viewBox", [0, 0, width, height])
@@ -4883,13 +4927,16 @@ author_algo_network = {
   // node. Every hidden name is still one hover away.
   const label_order = nodes.slice().sort((a, b) =>
     d3.descending(a.kind === "algo", b.kind === "algo") || d3.descending(a.degree, b.degree))
+  // Plus a 3 px pad: an underestimated box is an invisible licence to overlap,
+  // and at 7.0 exactly "PEAKS DB" still landed 4 px over a neighbour's diamond.
   const label_px = d => d.kind === "algo" ? 7.0 : 5.2
+  const label_pad = 3
   const SIDES = [[1, 0], [-1, 0], [1, -11], [-1, -11], [1, 11], [-1, 11]]
   const place_labels = () => {
     const shown = []
     for (const d of label_order) {
-      const w = d.id.length * label_px(d)
-      const h = d.kind === "algo" ? 7 : 5.5
+      const w = d.id.length * label_px(d) + 2 * label_pad
+      const h = d.kind === "algo" ? 8 : 6.5
       d.label_on = false
       for (const [side, dy] of SIDES) {
         const x0 = side > 0 ? d.x + nodeR(d) + 3 : d.x - nodeR(d) - 3 - w
@@ -6064,6 +6111,53 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 
 ## Browse all papers
 
+### Recently added
+
+```{ojs}
+//| echo: false
+md`What changed since you last looked. The catalog stores no "date added"
+column, but \`publication.id\` is handed out in insertion order, so ordering by
+it descending IS the order things arrived. The ten newest are below, and that
+same id is the sortable **#** column in the full table, which is the way to see
+the next ten. The date beside each one is the paper's own publication date, not
+when it was catalogued: ${recent_pubs.filter(d => d.date && d.date > new Date(Date.now() - 200 * 864e5)).length}
+of these ten appeared in the last six months, and the rest are older work that
+turned up in a citation sweep.`
+```
+
+```{ojs}
+//| echo: false
+recent_pubs = pubs_t.slice().sort((a, b) => d3.descending(+a.id, +b.id)).slice(0, 10)
+```
+
+```{ojs}
+//| echo: false
+// pubs_t carries `date` as a Date, so String(d.date) gives "Thu Sep 24 2026
+// ..." and slicing it reads as a weekday. The catalog writes dates as
+// YYYY-MM-DD everywhere else.
+fmt_day = d => d instanceof Date && !isNaN(d) ? d3.utcFormat("%Y-%m-%d")(d) : ""
+```
+
+```{ojs}
+//| echo: false
+html`<ol class="recent-list" start="1">${recent_pubs.map(d => {
+  const href = page_href("publications", d.id)
+  const title = href ? htl.html`<a href=${href}>${d.title}</a>` : d.title
+  const doi = d.url || (d.doi ? `https://doi.org/${d.doi}` : null)
+  const models = String(d.models ?? "").split(",").map(x => x.trim()).filter(Boolean)
+  return htl.html`<li><span class="recent-num">#${d.id}</span> ${title}
+    ${doi ? htl.html` <a href=${doi} target="_blank" rel="noopener"
+        title="Publisher / DOI" style="text-decoration:none">↗</a>` : ""}
+    <span class="recent-meta">${[fmt_day(d.date), d.journal, d.type]
+      .filter(Boolean).join(" · ")}</span>
+    ${models.length ? htl.html`<span class="recent-meta"> — ${models.map((m, i) =>
+        htl.html`${i ? ", " : ""}${page_link("algorithms", m, m)}`)}</span>` : ""}
+  </li>`
+})}</ol>`
+```
+
+### Every paper
+
 ```{ojs}
 //| echo: false
 viewof search = Inputs.search(pubs_filtered, { placeholder: `Search ${pubs_filtered.length} papers (filtered)…` })
@@ -6089,8 +6183,11 @@ viewof selected_pubs = {
     citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
   }))
   const table = Inputs.table(search_with_if, {
-    columns: ["year", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
+    // `id` is the insertion order, so sorting on it descending answers "what
+    // was added last" without a second date column to keep honest.
+    columns: ["id", "year", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
     header: {
+      id: "#",
       year: "Year", models: "Method(s)", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
       title: "Title", authors: "Authors", journal: "Venue", citedness: "IF₂ᵧᵣ", type: "Type", repo: "Code"
     },
@@ -6144,7 +6241,7 @@ viewof selected_pubs = {
     sort: "year",
     reverse: true,
     rows: 25,
-    width: { year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
+    width: { id: 50, year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   // Reflect the inner Inputs.table's value/input on the fullscreen wrapper so
   // `viewof selected_pubs` exposes the rows the user has ticked, used by the
