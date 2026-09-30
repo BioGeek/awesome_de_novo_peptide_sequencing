@@ -321,7 +321,7 @@ category survives in `benchmark_dataset.category` and in the chart's tooltip.
 ### The critical-difference diagram
 
 The box plot says which method ranks better; the critical-difference diagram
-(Demšar 2006) says whether the ranking is evidence. Both are computed in OJS
+([Demšar 2006](https://www.jmlr.org/papers/volume7/demsar06a/demsar06a.pdf)) says whether the ranking is evidence. Both are computed in OJS
 from the same per-dataset ranks, and the statistics are worth knowing because
 they are easy to get subtly wrong:
 

@@ -2135,8 +2135,8 @@ bench_rank_counts = {
 //| echo: false
 md`The box plot above is a description. This is a test: a **critical-difference
 diagram**, the standard way to compare many methods over many datasets
-(Demšar 2006). Two methods are drawn connected by a bar when the evidence does
-**not** separate them.
+([Demšar 2006](https://www.jmlr.org/papers/volume7/demsar06a/demsar06a.pdf)). Two methods are drawn connected by a bar when the
+evidence does **not** separate them.
 
 Read it in three steps. **The axis is average rank**, best on the left, so
 position alone is the ranking. **The bars are the finding**: any two methods
@@ -2151,7 +2151,8 @@ by chance.`
 //| echo: false
 bench_cd = {
   // Nemenyi post-hoc test over the per-dataset ranks, following Demšar (2006),
-  // "Statistical Comparisons of Classifiers over Multiple Data Sets", JMLR 7.
+  // "Statistical Comparisons of Classifiers over Multiple Data Sets", JMLR 7:
+  // https://www.jmlr.org/papers/volume7/demsar06a/demsar06a.pdf
   //
   // CD = q_alpha * sqrt(k(k+1) / 6N), with k methods, N datasets, and q_alpha
   // the Studentized-range critical value divided by sqrt(2). Those come from a
