@@ -2141,7 +2141,9 @@ evidence does **not** separate them.
 Read it in three steps. **The axis is average rank**, best on the left, so
 position alone is the ranking. **The bars are the finding**: any two methods
 joined by one are statistically indistinguishable over these
-${bench_n_datasets} datasets, at α = 0.05. And **the width of a bar is the
+${bench_n_datasets} datasets, at the conventional 5% error rate (α = 0.05),
+meaning the test tolerates a one-in-twenty chance of calling a difference real
+when it is not. And **the width of a bar is the
 critical difference**, here ${bench_cd.cd.toFixed(2)} rank positions: two
 methods whose average ranks differ by less than that could have swapped places
 by chance.`
@@ -2324,17 +2326,32 @@ chi2_sf = (x, df) => {
 
 ```{ojs}
 //| echo: false
-md`**The omnibus test first**, because the bars above are only licensed if it
-rejects. Friedman's test over ${bench_cd.k} methods and ${bench_cd.N} datasets
-gives χ² = ${bench_cd.chi2.toFixed(0)} on ${bench_cd.df} degrees of freedom,
-p ${bench_cd.p < 2.3e-16 ? "< 2.3 × 10⁻¹⁶" : "= " + bench_cd.p.toExponential(1)}.
-The methods are not all equivalent, so asking which pairs differ is a fair
-question.
+md`**Ask whether ANY of them differ before asking which.** That first question
+is the *omnibus* test, and it is not a formality: ${bench_cd.k} methods make
+${bench_cd.k * (bench_cd.k - 1) / 2} pairs, and running that many comparisons on
+data where nothing is happening will still turn up a few that look convincing.
+Clearing the omnibus test is what licenses the bars above.
+
+**Friedman's test** is the one for this shape of data. It treats each dataset as
+a judge that ranks all ${bench_cd.k} methods, and asks whether those rankings
+agree with each other more than judges assigning ranks at random would. Working
+on ranks rather than on the AP values themselves is what makes it safe here: it
+assumes nothing about how AP is distributed, and a dataset where everything
+scores around 0.9 counts exactly as much as one where everything scores 0.3.
+
+**χ² ("chi-squared") is the number that test produces**: one summary of how far
+the ${bench_cd.k} average ranks sit from all-equal. On its own it means nothing:
+it has to be read against a reference distribution, here with
+${bench_cd.df} degrees of freedom, one fewer than the number of methods. That
+conversion is what turns χ² = ${bench_cd.chi2.toFixed(0)} into
+**p ${bench_cd.p < 2.3e-16 ? "< 2.3 × 10⁻¹⁶" : "= " + bench_cd.p.toExponential(1)}**,
+the probability of rankings this consistent if every method were equally good.
+They are not equally good, so asking which pairs differ is a fair question.
 
 **What a bar does and does not say.** A bar means the test did not find a
 difference; it does not mean the two methods are equally good. With
-${bench_cd.N} datasets there is a lot of power, so a surviving bar is a genuine
-statement about similarity, but the reverse reading, "not significantly
+${bench_cd.N} datasets the test is sensitive enough that a surviving bar is a
+genuine statement about similarity, but the reverse reading, "not significantly
 different therefore the same", is the one mistake this diagram invites. The
 other is to forget that a rank throws away the size of a difference: a method
 that loses every dataset by 0.001 AP ranks last as decisively as one that loses
