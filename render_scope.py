@@ -89,12 +89,13 @@ LEGACY_KEY = SITE / ".render-key"
 
 # Past this many changed pages, render the project instead.
 #
-# A per-file render measured 4.8s locally against ~0.4s inside a project render,
-# so break-even is somewhere near 200 files. CI is slower than this laptop and
-# by how much is not yet known, so the cap sits well below that: at 8s a file,
-# 100 files is ~13 minutes against 17 for the whole site, still a win, and a
-# change of that size is rare. The first partial run in CI will report the real
-# per-file cost in its step log, which is the number to tune this with.
+# A per-file render measured 4.8s locally against ~0.4s inside a project render.
+# MEASURED IN CI, run 36716139226: index.qmd plus 24 pages took 192s in the
+# render step, and index.qmd is ~40s of that, so a page costs about 6s -- close
+# to the laptop, not the 8s assumed here before. That puts this cap at ~10
+# minutes against 17m41s for the full render (run 36714122487), and break-even
+# nearer 160 files. The cap stays at 100: a change that size is rare, and the
+# headroom is worth more than the minutes.
 MAX_PARTIAL = 100
 
 

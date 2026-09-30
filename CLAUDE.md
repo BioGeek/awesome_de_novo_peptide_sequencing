@@ -454,8 +454,8 @@ index.qmd alone is 13.5s.
 | mode | when | what runs |
 |---|---|---|
 | `index` | no generated page changed | `quarto render index.qmd` |
-| `partial` | 1 to 60 pages changed | index.qmd, then one `quarto render` per changed page |
-| `full` | Quarto version, `_quarto.yml` or `custom.scss` changed; no usable `_site`; more than 60 pages changed; or the workflow's `full_render` input | `quarto render` |
+| `partial` | 1 to 100 pages changed | index.qmd, then one `quarto render` per changed page |
+| `full` | Quarto version, `_quarto.yml` or `custom.scss` changed; no usable `_site`; more than 100 pages changed; or the workflow's `full_render` input | `quarto render` |
 
 `index` is the common case: build_pages.py keeps volatile metrics out of the
 pages, so the daily repo-metrics commit changes zero of them. `partial` is the
@@ -475,9 +475,23 @@ hash over everything, which could only answer "did anything change".
 **One `quarto render` per file, because `quarto render a.qmd b.qmd` silently
 renders only the first input.** That is the kind of thing that ships as "the
 partial render works" while quietly publishing stale pages, so it is worth
-saying twice. The per-file cost is ~5s against ~0.4s inside a project render,
-which is what sets the 60-file cap: past that the full render is both faster and
-more predictable.
+saying twice. The per-file cost is ~6s in CI against ~0.4s inside a project
+render, which is what sets the `MAX_PARTIAL = 100` cap: past that the full
+render is both faster and more predictable.
+
+**All three modes have now run in CI**, which is where the per-file number above
+comes from:
+
+| mode | run | wall clock | what it rendered |
+|---|---|---|---|
+| `full` | 36714122487 | 17m41s | everything, 2521 pages |
+| `partial` | 36716139226 | 3m48s | index.qmd + 24 family pages, 192s in the render step |
+| `index` | 36709905609 | 1m07s | index.qmd, 2497 pages byte-identical |
+
+192s for index.qmd plus 24 pages puts a page at roughly 6s once index.qmd's own
+~40s is taken out, so the 100-file cap costs about 10 minutes against 17m41s for
+the full render. Break-even is nearer 160 files; the cap stays at 100 because a
+change that size is rare and the margin is worth more than the minutes.
 
 A **full** project render empties `_site` and repopulates it at the end, so the
 directory is bare for the whole 17 minutes; a partial render writes into
