@@ -11,13 +11,10 @@
 "31": [
 "Choi and Paek - 2024 - pXg Comprehensive Identification of Noncanonical MHC-I\u2013Associated Peptides From De Novo Peptide Seq.pdf"
 ],
-"54": [
-"Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution dev.pdf"
-],
 "30": [
 "Ebrahimi and Guo - 2024 - Transformer-based de novo peptide sequencing for data-independent acquisition mass spectrometry.pdf"
 ],
-"1": [
+"315": [
 "Eloff et al. - 2024 - De novo peptide sequencing with InstaNovo Accurate, database-free peptide identification for large.pdf"
 ],
 "52": [
@@ -57,10 +54,15 @@
 "Petrovskiy et al. - 2024 - PowerNovo de novo peptide sequencing via tandem mass spectrometry using an ensemble of transformer.pdf"
 ],
 "57": [
-"Qiao - Peptide Sequencing with Deep Learning.pdf",
+"Qiao - 2020 - Peptide Sequencing with Deep Learning.pdf"
+],
+"59": [
 "Qiao et al. - 2019 - DeepNovoV2 Better de novo peptide sequencing with deep learning.pdf"
 ],
-"29": [
+"54": [
+"Qiao et al. - 2021 - Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution dev.pdf"
+],
+"103": [
 "Sanders et al. - 2024 - A transformer model for de novo sequencing of data-independent acquisition mass spectrometry data.pdf"
 ],
 "43": [
@@ -102,7 +104,10 @@
 "26": [
 "Yilmaz et al. - 2024 - Sequence-to-sequence translation from mass spectra to peptides with a transformer model.pdf"
 ],
-"21": [
+"107": [
 "Zhang et al. - 2024 - \u03c0-PrimeNovo An Accurate and Efficient Non-Autoregressive Deep Learning Model for De Novo Peptide Se.pdf"
+],
+"359": [
+"\uc11c\uc7a5\ud638 - 2022 - NovoRank Machine Learning Based Post-processing for Performance Improvement in De Novo Peptide Sequ.pdf"
 ]
 }

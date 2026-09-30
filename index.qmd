@@ -46,10 +46,22 @@ pubs = pd.read_sql(
            p.publisher, p.journal, p.doi, p.url, p.version,
            -- author_display, not author: two different researchers share the
            -- name 'Xiang Zhang', and every chart aggregates on this string.
-           (SELECT GROUP_CONCAT(a.display_name, ', ')
+           --
+           -- ORDER BY goes INSIDE the aggregate (SQLite 3.44+; the runner has
+           -- 3.53). A trailing `ORDER BY pa.author_order` after the WHERE --
+           -- which is what this was -- orders the subquery's RESULT ROWS, of
+           -- which there is exactly one, and leaves the concatenation in scan
+           -- order. That came out as author.id order, so the byline of
+           -- publication 74 read "Kevin Eloff, Konstantinos Kalogeropoulos,
+           -- Amandla Mabona, ..." when its first author is Mabona and Eloff is
+           -- fifth: Eloff is author id 1, so he led every paper he appears on.
+           -- This column is not cosmetic. It is the Authors column of Browse
+           -- all papers AND the BibTeX export's `author` field, whose citation
+           -- key is built from the FIRST name in it, so every exported entry
+           -- was keyed on the wrong person.
+           (SELECT GROUP_CONCAT(a.display_name, ', ' ORDER BY pa.author_order)
               FROM publication_author pa JOIN author_display a ON a.id = pa.author_id
-              WHERE pa.publication_id = p.id
-              ORDER BY pa.author_order) AS authors,
+              WHERE pa.publication_id = p.id) AS authors,
            (SELECT GROUP_CONCAT(alg.name, ', ')
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS models,
