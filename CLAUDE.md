@@ -433,6 +433,16 @@ exists in git, backfilling it means an `-S` search per row over the whole
 history, and every future insert would have to remember to set it. The ordering
 is free and cannot drift.
 
+**The table itself sorts on the full DATE, descending, not on the year.**
+`Inputs.table`'s sort is stable, so sorting on a year leaves the rows within
+each year in the array's own order -- here the SQL's
+`ORDER BY p.publication_date`, oldest first. The table therefore opened on
+January 2026 and a paper added today landed sixty rows below it, in a column
+that said 2026 all the way down. The column is now the ISO date as a STRING,
+which sorts lexicographically, matches "2026-09" in the search box, and needs no
+formatter. The BibTeX export still reads `year` off the row, which is in the
+data whether or not it is a column.
+
 ## The publish renders what changed, not everything
 
 `render_scope.py` decides, before Quarto is invoked, whether the publish needs

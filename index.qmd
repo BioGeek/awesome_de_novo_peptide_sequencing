@@ -6180,19 +6180,24 @@ viewof selected_pubs = {
   const search_with_if = search.map(r => ({
     ...r,
     models: annotate_models(r.models),
+    // The full date as an ISO STRING, not the Date object and not the year. It
+    // is what the table sorts on, and a string keeps three things working at
+    // once: ISO dates sort lexicographically, the search box can match
+    // "2026-09", and the cell needs no formatter.
+    date_str: fmt_day(r.date),
     citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
   }))
   const table = Inputs.table(search_with_if, {
     // `id` is the insertion order, so sorting on it descending answers "what
-    // was added last" without a second date column to keep honest.
-    columns: ["id", "year", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
+    // was added last", which the Date column cannot: an older paper added today
+    // sorts by its own date, wherever that falls.
+    columns: ["id", "date_str", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
     header: {
       id: "#",
-      year: "Year", models: "Method(s)", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
+      date_str: "Date", models: "Method(s)", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
       title: "Title", authors: "Authors", journal: "Venue", citedness: "IF₂ᵧᵣ", type: "Type", repo: "Code"
     },
     format: {
-      year: y => y == null ? "" : String(y),
       is_dl: v => v === 1 || v === true ? "DL" : (v === 0 || v === false ? "classical" : ""),
       citedness: c => c == null ? "" : c.toFixed(1),
       // The title now goes to this catalog's own page for the paper, with the
@@ -6238,10 +6243,15 @@ viewof selected_pubs = {
         return htl.html`${urls.map(u => htl.html`<a href="${u}" target="_blank" rel="noopener" title="${u}" style="margin-right:4px">↗</a>`)}`
       }
     },
-    sort: "year",
+    // On the DATE, not the year. Sorting on a year descending leaves the rows
+    // within each year in the array's own order, which is the SQL's
+    // `ORDER BY p.publication_date` -- oldest first. So the table opened on
+    // January 2026, and a paper added today landed sixty rows below it in a
+    // column that said 2026 all the way down.
+    sort: "date_str",
     reverse: true,
     rows: 25,
-    width: { id: 50, year: 60, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
+    width: { id: 50, date_str: 96, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   // Reflect the inner Inputs.table's value/input on the fullscreen wrapper so
   // `viewof selected_pubs` exposes the rows the user has ticked, used by the
