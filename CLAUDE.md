@@ -83,6 +83,10 @@ python3 build_affiliations.py --only-new        # just the papers added since la
 uv run python build_benchmarks.py
 uv run python build_benchmarks.py --force
 
+# Refresh the ProteoBench de-novo DDA-HCD submissions (offline, ~1 min). Same
+# early exit on an unchanged upstream commit.
+uv run python build_proteobench.py
+
 # Fail if any chart on the rendered site has a colliding or clipped label.
 # Measures the real glyph boxes in headless Chrome, so it needs a rendered
 # _site and google-chrome (~1 min). Not in CI for that reason.
@@ -113,7 +117,7 @@ when its data actually changed (no quiet-day churn) and then triggers
 | `refresh-publication-impact`  | `build_publication_impact.py`| Weekly Sun 06:30 UTC             | `30 6 * * 0`     |
 | `refresh-citation-graph`      | `build_citations.py`         | Monthly 1st 07:00 UTC            | `0 7 1 * *`      |
 | `refresh-journal-metrics`     | `build_journal_metrics.py`   | Semi-annual Jan 1 + Jul 1 08:00 UTC | `0 8 1 1,7 *` |
-| `refresh-benchmarks`          | `build_benchmarks.py`        | Weekly Mon 09:00 UTC             | `0 9 * * 1`      |
+| `refresh-benchmarks`          | `build_benchmarks.py` + `build_proteobench.py` | Weekly Mon 09:00 UTC | `0 9 * * 1` |
 
 The slot-per-hour staircase is deliberate: when two workflows are scheduled
 on the same calendar day (e.g. daily + weekly on a Sunday, four of them on
@@ -148,7 +152,7 @@ sole writer of its own tables, which no other writer touches**:
 | `refresh-publication-impact` | `publication_impact`  |
 | `refresh-citation-graph`     | `publication_citation`|
 | `refresh-journal-metrics`    | `journal_impact`      |
-| `refresh-benchmarks`         | the five `benchmark_*` tables |
+| `refresh-benchmarks`         | the five `benchmark_*` and four `proteobench_*` tables |
 
 On a rejected push it dumps just those tables (`sqlite3 denovo.db ".dump
 <table>"`), hard-resets to `origin/main` to pick up whatever landed, replays its
@@ -158,7 +162,8 @@ to re-run the (slow, network-bound) builder.
 
 `table:` takes a space-separated LIST, parents first: the action dumps each
 table in turn, drops them in reverse order so a child never outlives its
-parent, and replays them in the declared order. `refresh-benchmarks` owns five.
+parent, and replays them in the declared order. `refresh-benchmarks` owns nine,
+across its two builders.
 A new refresh workflow still needs tables nobody else writes.
 
 **`.dump <table>` carries neither indexes nor triggers**, and this step drops
@@ -177,7 +182,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**22 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the five `benchmark_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**26 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -312,6 +317,102 @@ visualisation PR's name-based categoriser plus three rules that empty its
 into 8 coarse groups for the heatmap's column headers, because 17 groups over 84
 columns leaves a group two columns wide and no room for its label. The fine
 category survives in `benchmark_dataset.category` and in the chart's tooltip.
+
+### The critical-difference diagram
+
+The box plot says which method ranks better; the critical-difference diagram
+(Demšar 2006) says whether the ranking is evidence. Both are computed in OJS
+from the same per-dataset ranks, and the statistics are worth knowing because
+they are easy to get subtly wrong:
+
+- **Friedman first.** The post-hoc comparison is only licensed if the omnibus
+  test rejects "all methods are equivalent", so the section reports χ² and its
+  p-value. The p-value needs a chi-square upper tail, which `chi2_sf()`
+  computes as the regularised incomplete gamma, series below the crossover and
+  continued fraction above it. Quoting a statistic without its p-value leaves
+  the reader to look up a table.
+- **`CD = q_alpha * sqrt(k(k+1)/6N)`**, with q from Demšar's table 5(a) for
+  alpha = 0.05, which is a TABLE and not a formula. It is inlined in
+  `bench_cd`, indexed by the number of methods. 17 methods over 84 datasets
+  gives CD = 2.69 rank positions.
+- **A bar is a failure to separate, not a finding of equivalence.** That is the
+  misreading the diagram invites, and the prose says so. So does the other one:
+  a rank discards the SIZE of a difference, so losing every dataset by 0.001 AP
+  ranks exactly as badly as losing by 0.3.
+
+`fill: "family"` on a mark whose data has no `family` field renders **nothing**,
+silently: the datum is dropped rather than drawn in a fallback colour. The
+diagram's leads appeared and its dots and labels did not, which cost an hour,
+because `bench_cd.tools` was built by `d3.rollup` and carried only the name and
+the mean rank.
+
+## ProteoBench
+
+`build_proteobench.py` reads
+[Proteobench/Results_denovo_lfq_DDA_HCD](https://github.com/Proteobench/Results_denovo_lfq_DDA_HCD),
+one JSON per submitted run, and fills four tables: `proteobench_submission`
+(7 rows), `proteobench_metric` (28 = one per submission, level and match
+definition), `proteobench_curve` and `proteobench_source`.
+
+It is a different benchmark from denovo_benchmarks, not a second opinion on the
+same one: **one** dataset, the published nine-species benchmark of 779,879
+spectra, with each run's parameters recorded alongside its numbers. A submission
+is therefore evidence about a checkpoint and its settings, not about a method at
+its best.
+
+**Four metrics that are easy to confuse**, all defined in ProteoBench's
+`proteobench/datapoint/denovo_datapoint.py`:
+
+| | |
+|---|---|
+| `precision` | correct / predictions MADE, at whatever coverage the tool chose |
+| `recall` | correct / all spectra, i.e. precision at full coverage with an unanswered spectrum counted wrong |
+| `coverage` | predictions made / all spectra; can exceed 1 at amino-acid level, where the denominator is the ground truth's residue count |
+| `auc` | area under the precision-coverage curve |
+
+**Which one you pick changes the ranking**, which is the substance of
+ProteoBench's own design discussion
+([#356](https://github.com/orgs/Proteobench/discussions/356)). π-PrimeNovo has
+the best peptide-level precision of the seven runs and answers 88% of the
+spectra; by AUC it is fourth. Precision alone rewards a tool for keeping quiet,
+which is why that discussion settled on AUC as the default and argued for
+precision@coverage=1 alongside it. The site's metric toggle offers all three and
+says this.
+
+Each metric comes at two levels (peptide, amino acid) and under two match
+definitions: `mass`, where residues count as correct within 0.1 Da so I/L are
+indistinguishable, and `exact`, which requires the sequence. Mass-based is
+always the higher number.
+
+**The scatter is ProteoBench's own main plot**, reproduced: the same metric at
+peptide level against amino-acid level, on fixed `[-0.05, 1.1]` axes split at
+0.5 into the four quadrants it names (Good performance, Near-miss, Low
+performance, Alternative candidate). Not reproduced: its background gradient
+from light at the origin to dark in the top-right, because on this page the
+colour channel carries the architecture family and two colour encodings in one
+frame is one too many.
+
+**Curves are strided, not interpolated.** ProteoBench stores up to 500 points
+per curve; `subsample()` keeps at most 101 of them at an even stride, first and
+last included. The other builder interpolates onto a shared grid instead, which
+is wrong here: these curves do not all start at coverage 0 (one tool's
+amino-acid curve starts at 0.028, which the design discussion flags), and
+interpolating would invent values below a curve's first point rather than leave
+the gap visible.
+
+## Benchmark numbers on the method pages
+
+The 17 methods with benchmark results carry a `## Benchmarks` section on their
+page: median AP and median rank over the 84 datasets, plus the ProteoBench AUC
+and precision for the 7 that have a submission.
+
+These ARE baked into the pages, unlike repository stars. The rule is how often
+the number moves: stars change daily, so putting them on a page would rewrite
+the whole page set nightly for nothing, whereas benchmark results change when an
+upstream repository commits new runs and the refresh workflow only commits when
+they actually changed. The cost is that such a week triggers a full render
+instead of an index-only one, which is the trade `render_scope.py` is there to
+make visible.
 
 ## Publication dates
 

@@ -43,6 +43,8 @@ import re
 import sqlite3
 import sys
 from collections import defaultdict
+from itertools import groupby
+from statistics import median
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -73,6 +75,7 @@ ANCHORS = {
     "impact":          ("Academic impact by citation count", "academic-impact-by-citation-count"),
     "lifecycle":       ("Publication lifecycle", "publication-lifecycle"),
     "architectures":   ("The architectures", "the-architectures"),
+    "benchmarks":      ("How they score", "how-they-score"),
     "applications":    ("Application areas", "application-areas"),
     "code":            ("Code activity", "code-activity"),
     "collaboration":   ("The collaboration network", "the-collaboration-network"),
@@ -560,6 +563,35 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                   "from the GitHub API, and this link is not a public GitHub "
                   "repository.", ""]
 
+    # Where this method stands on the two public benchmarks, when it was run on
+    # them: one line each, carrying the numbers that need no context to read,
+    # and a link to the section that supplies the context.
+    if ctx["bench"] or ctx["proteobench"]:
+        L += ["## Benchmarks", ""]
+        b = ctx["bench"]
+        if b:
+            L.append(
+                "- **denovo_benchmarks**: median peptide-level average precision "
+                f"**{b['median_ap']:.3f}** over {b['n_datasets']} datasets, median "
+                f"rank **{b['median_rank']:g}** of {b['of']}"
+                + (f" (version {md_escape(str(b['version']))})" if b["version"] else "")
+                + ".")
+        pb = ctx["proteobench"]
+        if pb and "peptide" in pb:
+            prec, auc, cov = pb["peptide"]
+            bits = [f"peptide-level AUC **{auc:.3f}**",
+                    f"precision {prec:.3f} at {cov:.0%} coverage"]
+            if "aa" in pb:
+                bits.append(f"amino-acid AUC {pb['aa'][1]:.3f}")
+            detail = ", ".join(x for x in (
+                f"version {md_escape(str(pb['version']))}" if pb["version"] else None,
+                md_escape(pb["decoding"]) if pb["decoding"] else None,
+                f"submitted {pb['submitted']}" if pb["submitted"] else None) if x)
+            L.append("- **ProteoBench**: " + "; ".join(bits)
+                     + (f" ({detail})" if detail else "") + ".")
+        L += ["", "Both are mass-based matches on the tool's most recent run. "
+              f"[What these numbers mean]({site.home('benchmarks')}).", ""]
+
     # Two sections, never one: a paper that introduced this method and a paper
     # that ran it on a snake venom are not the same claim, and PEAKS's list of
     # 21 was 18 of the latter.
@@ -819,6 +851,49 @@ def load(conn: sqlite3.Connection) -> dict:
 
     d["metric_urls"] = {r["url"] for r in
                         q("SELECT url FROM repository_metrics ORDER BY url")}
+
+    # Benchmark standing per algorithm, for the one line each method page gets.
+    #
+    # Unlike repository stars, these ARE baked in. Stars move every day, so
+    # putting them on a page would rewrite 2485 pages nightly; benchmark results
+    # move when an upstream repository commits new runs, which is weeks apart,
+    # and the refresh workflow only commits when they actually changed. The cost
+    # is that such a week triggers a full render instead of an index-only one.
+    d["bench"] = {}
+    rows = list(q(
+        "SELECT t.algorithm_id AS aid, t.version, r.dataset, r.ap_peptide AS ap,"
+        "       RANK() OVER (PARTITION BY r.dataset ORDER BY r.ap_peptide DESC) AS rnk "
+        "FROM benchmark_result r "
+        "JOIN benchmark_tool t ON t.tool = r.tool "
+        "WHERE r.is_latest = 1 AND r.ap_peptide IS NOT NULL "
+        "  AND t.algorithm_id IS NOT NULL "
+        # Only the tools evaluated on every dataset are ranked against each
+        # other, which is the same filter the charts use.
+        "  AND t.n_datasets = (SELECT COUNT(*) FROM benchmark_dataset) "
+        "ORDER BY t.algorithm_id, r.dataset"))
+    n_ranked = len({r["aid"] for r in rows})
+    for aid, group in groupby(rows, key=lambda r: r["aid"]):
+        group = list(group)
+        d["bench"][aid] = {
+            "version": group[0]["version"],
+            "n_datasets": len(group),
+            "median_ap": median(r["ap"] for r in group),
+            "median_rank": median(r["rnk"] for r in group),
+            "of": n_ranked,
+        }
+
+    d["proteobench"] = {}
+    for r in q(
+            "SELECT s.algorithm_id AS aid, s.version, s.decoding, s.submitted,"
+            "       m.level, m.precision, m.auc, m.coverage "
+            "FROM proteobench_submission s "
+            "JOIN proteobench_metric m ON m.submission_id = s.id "
+            "WHERE s.algorithm_id IS NOT NULL AND m.match_type = 'mass' "
+            "ORDER BY s.algorithm_id, m.level"):
+        entry = d["proteobench"].setdefault(r["aid"], {
+            "version": r["version"], "decoding": r["decoding"],
+            "submitted": r["submitted"]})
+        entry[r["level"]] = (r["precision"], r["auc"], r["coverage"])
 
     # The co-authorship and author-algorithm charts draw only authors with 3+
     # papers (the `prolific` CTE in index.qmd), so an algorithm reaches the
@@ -1085,6 +1160,8 @@ def main() -> int:
                 "authors": authors,
                 "has_metrics": any(u in d["metric_urls"] for u in repos),
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
+                "bench": d["bench"].get(gid),
+                "proteobench": d["proteobench"].get(gid),
             }
             body, mtime = render_algorithm(site, row, ctx)
             emit("algorithms", site.slugs["algorithms"][gid], body, mtime)

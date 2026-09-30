@@ -474,6 +474,38 @@ benchmark_datasets = pd.read_sql(
 
 benchmark_source = dict(conn.execute("SELECT key, value FROM benchmark_source"))
 
+# ProteoBench: the other public benchmark, one dataset and one row per submitted
+# run, written by build_proteobench.py. Its four metrics are not
+# interchangeable, so all four come through and the chart lets the reader pick;
+# see that script's docstring for what each one means.
+proteobench = pd.read_sql(
+    """
+    SELECT s.id, s.display_name, s.software, s.version, s.decoding,
+           s.checkpoint, s.pb_version, s.submitted, s.n_spectra,
+           s.algorithm_id, alg.algorithm_family AS family,
+           m.level, m.match_type, m.precision, m.recall, m.coverage, m.auc
+    FROM proteobench_submission s
+    JOIN proteobench_metric m ON m.submission_id = s.id
+    LEFT JOIN algorithm alg   ON alg.id = s.algorithm_id
+    ORDER BY s.display_name, m.level, m.match_type
+    """,
+    conn,
+)
+
+proteobench_curves = pd.read_sql(
+    """
+    SELECT c.submission_id, s.display_name, alg.algorithm_family AS family,
+           c.level, c.match_type, c.coverage, c.precision
+    FROM proteobench_curve c
+    JOIN proteobench_submission s ON s.id = c.submission_id
+    LEFT JOIN algorithm alg       ON alg.id = s.algorithm_id
+    ORDER BY c.level, c.match_type, s.display_name, c.i
+    """,
+    conn,
+)
+
+proteobench_source = dict(conn.execute("SELECT key, value FROM proteobench_source"))
+
 # One lookup replaces threading ids through seven datasets. `key` is exactly the
 # string the charts ALREADY aggregate on -- a display name, an algorithm name,
 # an institution name, a journal -- with publications keyed by id. That matters
@@ -523,6 +555,9 @@ ojs_define(
     benchmark_curves=benchmark_curves,
     benchmark_datasets=benchmark_datasets,
     benchmark_source=benchmark_source,
+    proteobench=proteobench,
+    proteobench_curves=proteobench_curves,
+    proteobench_source=proteobench_source,
     build_date=build_date,
 )
 
@@ -1852,12 +1887,20 @@ Inputs.table(
 
 ## How they score
 
-Everything above is what the methods ARE. This is how they do, on the one
-apples-to-apples comparison the field has: the
-[denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) project
-runs every tool in its own container over the same public datasets, against the
-same ground-truth PSMs and the same metric code, and commits the resulting
-curves. Nobody there is marking their own homework.
+Everything above is what the methods ARE. This is how they do, on the field's two
+public benchmarks. Neither is a leaderboard someone can game by reporting their
+own numbers: both run the tools themselves and publish the results as data.
+
+[**denovo_benchmarks**](https://github.com/bittremieuxlab/denovo_benchmarks) runs
+every tool in its own container over 84 datasets, against the same ground-truth
+PSMs and the same metric code, and asks how a method holds up across
+instruments, organisms, digests and modifications. That is the first four charts
+here.
+
+[**ProteoBench**](https://proteobench.cubimed.rub.de/denovo_DDA_HCD) takes one
+dataset, the published nine-species benchmark, and accepts submitted runs with
+their parameters recorded. That is the last two. It answers a different
+question: with these settings, on this data, where does the tool land.
 
 ```{ojs}
 //| echo: false
@@ -2046,6 +2089,230 @@ bench_order = {
     ">⛶ Fullscreen</button>
     <div class="chart-scroll">${bench_linkify(chart)}</div>
   </div>`
+}
+```
+
+### Which of those differences are real
+
+```{ojs}
+//| echo: false
+md`The box plot above is a description. This is a test: a **critical-difference
+diagram**, the standard way to compare many methods over many datasets
+(Demšar 2006). Two methods are drawn connected by a bar when the evidence does
+**not** separate them.
+
+Read it in three steps. **The axis is average rank**, best on the left, so
+position alone is the ranking. **The bars are the finding**: any two methods
+joined by one are statistically indistinguishable over these
+${bench_n_datasets} datasets, at α = 0.05. And **the width of a bar is the
+critical difference**, here ${bench_cd.cd.toFixed(2)} rank positions: two
+methods whose average ranks differ by less than that could have swapped places
+by chance.`
+```
+
+```{ojs}
+//| echo: false
+bench_cd = {
+  // Nemenyi post-hoc test over the per-dataset ranks, following Demšar (2006),
+  // "Statistical Comparisons of Classifiers over Multiple Data Sets", JMLR 7.
+  //
+  // CD = q_alpha * sqrt(k(k+1) / 6N), with k methods, N datasets, and q_alpha
+  // the Studentized-range critical value divided by sqrt(2). Those come from a
+  // table, not a formula; these are Demšar's table 5(a) for alpha = 0.05,
+  // indexed by k.
+  const Q05 = [NaN, NaN, 1.960, 2.343, 2.569, 2.728, 2.850, 2.949, 3.031,
+               3.102, 3.164, 3.219, 3.268, 3.313, 3.354, 3.391, 3.426, 3.458,
+               3.489, 3.517, 3.544]
+  // The family comes along because the marks colour by it. Leaving it out cost
+  // an hour: `fill: "family"` with an undefined value silently drops the datum,
+  // so the leads rendered and the dots and labels did not.
+  const tools = Array.from(d3.group(bench_ranked, d => d.display_name),
+    ([name, v]) => ({ name, avg: d3.mean(v, d => d.rank),
+                      family: v[0].family ?? "Unknown" }))
+    .sort((a, b) => d3.ascending(a.avg, b.avg))
+  const k = tools.length
+  const N = new Set(bench_ranked.map(d => d.dataset)).size
+  const q = Q05[k] ?? Q05[Q05.length - 1]
+  const cd = q * Math.sqrt(k * (k + 1) / (6 * N))
+
+  // Friedman test first: the post-hoc comparison is only licensed if the
+  // omnibus test rejects "all methods are equivalent". chi2_F is Demšar's
+  // equation (3).
+  const sum_sq = d3.sum(tools, d => d.avg ** 2)
+  const chi2 = 12 * N / (k * (k + 1)) * (sum_sq - k * (k + 1) ** 2 / 4)
+  const df = k - 1
+
+  // Maximal cliques of methods that the test cannot separate. Walking the
+  // rank-sorted list, each clique is the longest run starting at i whose span
+  // is within CD; a run contained in the previous one adds nothing.
+  const cliques = []
+  for (let i = 0; i < k; i++) {
+    let j = i
+    while (j + 1 < k && tools[j + 1].avg - tools[i].avg <= cd) j++
+    if (j > i && !(cliques.length && cliques.at(-1)[1] >= j)) cliques.push([i, j])
+  }
+  return { tools, k, N, q, cd, chi2, df, cliques,
+           p: chi2_sf(chi2, df) }
+}
+```
+
+```{ojs}
+//| echo: false
+// Upper tail of the chi-square distribution, as the regularised incomplete
+// gamma Q(df/2, x/2), by series below the crossover and continued fraction
+// above it (Numerical Recipes). Needed because the Friedman statistic is the
+// licence for the post-hoc test, and quoting a statistic without its p-value
+// leaves the reader to look up a table.
+chi2_sf = (x, df) => {
+  if (!(x > 0)) return 1
+  const a = df / 2, xx = x / 2
+  const ln_gamma = z => {
+    // Lanczos approximation; plenty for the two decimal places this is used at.
+    const g = [676.5203681218851, -1259.1392167224028, 771.32342877765313,
+               -176.61502916214059, 12.507343278686905, -0.13857109526572012,
+               9.9843695780195716e-6, 1.5056327351493116e-7]
+    if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - ln_gamma(1 - z)
+    z -= 1
+    let s = 0.99999999999980993
+    for (let i = 0; i < g.length; i++) s += g[i] / (z + i + 1)
+    const t = z + g.length - 0.5
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(s)
+  }
+  const lead = -xx + a * Math.log(xx) - ln_gamma(a)
+  if (xx < a + 1) {                       // series for P, then Q = 1 - P
+    let sum = 1 / a, term = sum
+    for (let n = 1; n < 500; n++) {
+      term *= xx / (a + n)
+      sum += term
+      if (Math.abs(term) < Math.abs(sum) * 1e-15) break
+    }
+    return 1 - Math.exp(lead + Math.log(sum))
+  }
+  let b = xx + 1 - a, c = 1e300, d = 1 / b, h = d   // continued fraction for Q
+  for (let i = 1; i < 500; i++) {
+    const an = -i * (i - a)
+    b += 2
+    d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300
+    c = b + an / c;  if (Math.abs(c) < 1e-300) c = 1e-300
+    d = 1 / d
+    const del = d * c
+    h *= del
+    if (Math.abs(del - 1) < 1e-15) break
+  }
+  return Math.exp(lead) * h
+}
+```
+
+```{ojs}
+//| echo: false
+{
+  // Demšar's layout: a rank axis along the top, each method's average rank
+  // marked and led out to a label on the nearer side, and one bar per clique of
+  // methods the test cannot separate.
+  //
+  // y is in "label rows" hanging BELOW the axis, so 0 is the axis and the rows
+  // run negative: the axis is the baseline of this diagram, not a separate
+  // strip at the top. A linear y scale with the axis switched off, because the
+  // rows are layout and not data.
+  const { tools, k, cd, cliques } = bench_cd
+  const half = Math.ceil(k / 2)
+  const rows = tools.map((d, i) => ({
+    ...d, i,
+    left: i < half,
+    row: -(i < half ? i + 1 : k - i)
+  }))
+  const deepest = d3.min(rows, d => d.row)
+  const bottom = deepest - cliques.length - 1
+  const x_pad = 0.6
+  const href = d => page_href("algorithms", d.name)
+  const chart = Plot.plot({
+    width: 1100,
+    height: 70 + (1 - bottom) * 26,
+    marginLeft: 155,
+    marginRight: 155,
+    marginTop: 52,
+    marginBottom: 16,
+    x: { domain: [1 - x_pad, k + x_pad], axis: "top", ticks: k, grid: true,
+         label: "Average rank across the datasets (1 = best) →",
+         labelAnchor: "center", labelOffset: 38 },
+    y: { domain: [bottom - 0.5, 0.5], axis: null },
+    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    marks: [
+      Plot.ruleY([0], { stroke: "#57606a" }),
+      // Vertical lead from the axis down to the method's row, then out to the
+      // label. Two link marks rather than one path: a link is a straight line.
+      Plot.link(rows, { x1: "avg", x2: "avg", y1: 0, y2: "row",
+                        stroke: "#8c959f", strokeWidth: 1 }),
+      Plot.link(rows.filter(d => d.left), {
+        x1: "avg", x2: () => 1 - x_pad, y1: "row", y2: "row",
+        stroke: "#8c959f", strokeWidth: 1 }),
+      Plot.link(rows.filter(d => !d.left), {
+        x1: "avg", x2: () => k + x_pad, y1: "row", y2: "row",
+        stroke: "#8c959f", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "avg", y: "row", fill: "family", r: 4,
+                       stroke: "white", strokeWidth: 1, href, target: "_self" }),
+      Plot.text(rows.filter(d => d.left), {
+        x: () => 1 - x_pad, y: "row", text: d => `${d.name}  ${d.avg.toFixed(2)}`,
+        textAnchor: "end", dx: -6, fontSize: 11, fontWeight: "bold",
+        fill: "family", href, target: "_self" }),
+      Plot.text(rows.filter(d => !d.left), {
+        x: () => k + x_pad, y: "row", text: d => `${d.avg.toFixed(2)}  ${d.name}`,
+        textAnchor: "start", dx: 6, fontSize: 11, fontWeight: "bold",
+        fill: "family", href, target: "_self" }),
+      // One bar per clique: a thick line spanning the average ranks of the
+      // methods the test cannot tell apart, stacked below the leads.
+      Plot.link(cliques.map(([a, b], n) => ({ a, b, n })), {
+        x1: d => tools[d.a].avg, x2: d => tools[d.b].avg,
+        y1: d => deepest - 1 - d.n, y2: d => deepest - 1 - d.n,
+        stroke: "#24292f", strokeWidth: 5, strokeLinecap: "round" }),
+      Plot.text(cliques.map(([a, b], n) => ({ a, b, n })), {
+        x: d => tools[d.b].avg, y: d => deepest - 1 - d.n,
+        text: d => `${d.b - d.a + 1} methods, ranks ${tools[d.a].avg.toFixed(2)}-${tools[d.b].avg.toFixed(2)}`,
+        dx: 8, textAnchor: "start", fontSize: 10, fill: "#57606a" }),
+      // The critical difference itself, drawn to scale just under the axis.
+      Plot.link([0], { x1: () => 1, x2: () => 1 + cd, y1: -0.45, y2: -0.45,
+                       stroke: "#cf222e", strokeWidth: 3,
+                       strokeLinecap: "round" }),
+      Plot.text([0], { x: () => 1 + cd / 2, y: -0.45, dy: -9, fontSize: 11,
+                       fill: "#cf222e", fontWeight: "bold",
+                       text: () => `critical difference = ${cd.toFixed(2)}` })
+    ]
+  })
+  return html`<div class="chart-wrap">
+    <div class="chart-scroll">${chart}</div>
+  </div>`
+}
+```
+
+```{ojs}
+//| echo: false
+md`**The omnibus test first**, because the bars above are only licensed if it
+rejects. Friedman's test over ${bench_cd.k} methods and ${bench_cd.N} datasets
+gives χ² = ${bench_cd.chi2.toFixed(0)} on ${bench_cd.df} degrees of freedom,
+p ${bench_cd.p < 2.3e-16 ? "< 2.3 × 10⁻¹⁶" : "= " + bench_cd.p.toExponential(1)}.
+The methods are not all equivalent, so asking which pairs differ is a fair
+question.
+
+**What a bar does and does not say.** A bar means the test did not find a
+difference; it does not mean the two methods are equally good. With
+${bench_cd.N} datasets there is a lot of power, so a surviving bar is a genuine
+statement about similarity, but the reverse reading, "not significantly
+different therefore the same", is the one mistake this diagram invites. The
+other is to forget that a rank throws away the size of a difference: a method
+that loses every dataset by 0.001 AP ranks last as decisively as one that loses
+by 0.3.
+
+And the test sees only the ${bench_cd.N} datasets it was given. They are not a
+random sample of proteomics experiments; ${bench_group_share}% of them come from
+the single largest group in the heatmap below.`
+```
+
+```{ojs}
+//| echo: false
+bench_group_share = {
+  const counts = d3.rollups(transpose(benchmark_datasets), v => v.length,
+                            d => d.cat_group).sort((a, b) => d3.descending(a[1], b[1]))
+  return Math.round(100 * counts[0][1] / bench_n_datasets)
 }
 ```
 
@@ -2340,6 +2607,375 @@ that most tools do not support at all. Their amino-acid scores on the same
 spectra are not zero, which is the tell. The benchmark deliberately keeps those
 runs in, because the aggregate is meant to be practical performance over the
 whole benchmark rather than performance on each method's own supported domain.`
+```
+
+### The other benchmark: ProteoBench
+
+```{ojs}
+//| echo: false
+md`[ProteoBench](${pb_src.module_url}) asks a narrower question than the 84-dataset
+sweep above, and answers it in more detail. One dataset, the published
+nine-species benchmark of ${(+pb_t[0].n_spectra).toLocaleString("en-US")} spectra;
+one point per **submitted run**, with the parameters that produced it recorded
+alongside the numbers. ${pb_subs.length} runs so far, all
+${pb_subs.filter(d => d.algorithm_id != null).length} of them methods in this
+catalog. Results as committed to
+[\`${pb_src.repo}\`](https://github.com/${pb_src.repo}) at
+[\`${pb_src.commit.slice(0, 7)}\`](https://github.com/${pb_src.repo}/commit/${pb_src.commit})
+(${pb_src.commit_date.slice(0, 10)}).`
+```
+
+```{ojs}
+//| echo: false
+pb_t = transpose(proteobench)
+```
+
+```{ojs}
+//| echo: false
+pb_curves_t = transpose(proteobench_curves)
+```
+
+```{ojs}
+//| echo: false
+pb_src = proteobench_source
+```
+
+```{ojs}
+//| echo: false
+// One row per submission, carrying the four metrics of the selected level and
+// stringency. The peptide and amino-acid rows are the two axes of the scatter.
+pb_subs = {
+  const by = d3.group(pb_t.filter(d => d.match_type === pb_match), d => d.id)
+  const out = []
+  for (const [id, rows] of by) {
+    const pep = rows.find(d => d.level === "peptide")
+    const aa = rows.find(d => d.level === "aa")
+    if (!pep || !aa) continue
+    out.push({
+      ...pep, id,
+      x: pep[pb_metric], y: aa[pb_metric],
+      pep_precision: pep.precision, pep_recall: pep.recall,
+      pep_auc: pep.auc, pep_coverage: pep.coverage,
+      aa_precision: aa.precision, aa_recall: aa.recall,
+      aa_auc: aa.auc, aa_coverage: aa.coverage
+    })
+  }
+  return out.sort((a, b) => d3.descending(a.x, b.x))
+}
+```
+
+```{ojs}
+//| echo: false
+viewof pb_metric = Inputs.radio(
+  new Map([["Precision", "precision"],
+           ["Precision at full coverage", "recall"],
+           ["AUC", "auc"]]),
+  { label: "Metric", value: "auc" }
+)
+```
+
+```{ojs}
+//| echo: false
+viewof pb_match = Inputs.radio(
+  new Map([["Mass-based", "mass"], ["Exact sequence", "exact"]]),
+  { label: "A prediction counts as correct when", value: "mass" }
+)
+```
+
+```{ojs}
+//| echo: false
+pb_metric_label = ({ precision: "precision", recall: "precision at full coverage",
+                     auc: "AUC" })[pb_metric]
+```
+
+```{ojs}
+//| echo: false
+{
+  // ProteoBench's own main plot: the same metric at peptide level against
+  // amino-acid level, on fixed [-0.05, 1.1] axes split into four named
+  // quadrants at 0.5. The names and their meanings are ProteoBench's.
+  //
+  // Not reproduced: the background gradient from light at the origin to dark in
+  // the top-right corner. Here the colour channel carries the architecture
+  // family, as it does in every other chart on this page, and two colour
+  // encodings in one frame is one too many.
+  const R = [-0.05, 1.1], MID = 0.5
+  const quadrants = [
+    { x: (MID + R[1]) / 2, y: R[1] - 0.04, label: "Good performance",
+      note: "high at both levels" },
+    { x: (R[0] + MID) / 2, y: R[1] - 0.04, label: "Near-miss",
+      note: "often wrong, but only by a residue or two" },
+    { x: (R[0] + MID) / 2, y: R[0] + 0.05, label: "Low performance", note: "" },
+    { x: (MID + R[1]) / 2, y: R[0] + 0.05, label: "Alternative candidate",
+      note: "when wrong, wrong about the whole peptide" }
+  ]
+  const chart = Plot.plot({
+    width: 760,
+    height: 620,
+    marginLeft: 60,
+    marginBottom: 48,
+    x: { domain: R, grid: true, label: `Peptide-level ${pb_metric_label} →`,
+         labelOffset: 40 },
+    y: { domain: R, grid: true, label: `↑ Amino-acid-level ${pb_metric_label}` },
+    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    marks: [
+      Plot.ruleX([MID], { stroke: "#8c959f", strokeDasharray: "4 3" }),
+      Plot.ruleY([MID], { stroke: "#8c959f", strokeDasharray: "4 3" }),
+      Plot.text(quadrants, {
+        x: "x", y: "y", text: d => d.note ? `${d.label}\n${d.note}` : d.label,
+        fill: "#8c959f", fontSize: 11, fontWeight: "bold", lineWidth: 16,
+        textAnchor: "middle"
+      }),
+      Plot.dot(pb_subs, {
+        x: "x", y: "y", fill: "family", r: 7, stroke: "white", strokeWidth: 1.5,
+        href: d => page_href("algorithms", d.display_name), target: "_self",
+        tip: { format: { x: false, y: false, fill: false } },
+        channels: {
+          "Method": "display_name", "Version": d => d.version ?? "—",
+          "Peptide": d => d.x.toFixed(3), "Amino acid": d => d.y.toFixed(3),
+          "Peptide coverage": d => d.pep_coverage.toFixed(3),
+          "Decoding": d => d.decoding ?? "—",
+          "Submitted": d => d.submitted ?? "—"
+        }
+      }),
+      // Labels above or below the dot, on one of two rows. FOUR marks, because
+      // `dy` and `lineAnchor` are constants and not channels: passing a
+      // function applies neither, silently. pb_placed decides which.
+      ...[[true, 0, -11, "bottom"], [false, 0, 11, "top"],
+          [true, 1, -28, "bottom"], [false, 1, 28, "top"]].map(
+        ([above, row, dy, lineAnchor]) => Plot.text(
+          pb_placed.filter(d => d.above === above && d.row === row), {
+            x: "x", y: "y", text: "display_name", dy, lineAnchor,
+            fontSize: 11, fontWeight: "bold", fill: "family"
+          }))
+    ],
+    tip: plot_tip_style
+  })
+  return html`<div class="chart-wrap"><div class="chart-scroll">${chart}</div></div>`
+}
+```
+
+```{ojs}
+//| echo: false
+pb_placed = {
+  // Seven labels, so a greedy pass is enough: take them in metric order and put
+  // each above its dot when that box is free, below it otherwise. Obstacles are
+  // the labels already placed AND every dot, because two of these submissions
+  // sit a pixel apart (ContraNovo and π-PrimeNovo) and a label clear of its own
+  // dot can still land on its neighbour's.
+  //
+  // Boxes are in DATA units, and x and y need their own conversion: the frame
+  // is 680 px wide and 552 px tall over the same 1.15-unit domain.
+  const R = [-0.05, 1.1], span = R[1] - R[0]
+  const px_x = 680 / span, px_y = 552 / span
+  // 7.2 px per character at 11 px bold, plus a 3 px pad: the first cut used 6.4
+  // and no pad, and ContraNovo against π-PrimeNovo still overlapped by 4 px --
+  // an underestimated box is an invisible licence to overlap.
+  const LINE_PX = 15, CHAR_PX = 7.2, PAD_PX = 3, DOT_PX = 9
+  // Four candidate positions: above or below the dot, on the near row or a
+  // second row further out. Two rows are needed, not one: ContraNovo and
+  // π-PrimeNovo sit a pixel apart vertically, and AdaNovo's dot blocks the near
+  // row above both of them, so with two positions they both ended up below and
+  // overlapped each other.
+  const SLOTS = [[true, 0, 11], [false, 0, 11], [true, 1, 28], [false, 1, 28]]
+  const dots = pb_subs.map(d => ({
+    id: d.id,
+    x0: d.x - DOT_PX / px_x, x1: d.x + DOT_PX / px_x,
+    y0: d.y - DOT_PX / py(), y1: d.y + DOT_PX / py()
+  }))
+  function py() { return px_y }
+  const hits = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0
+  const placed = []
+  const out = []
+  for (const d of pb_subs) {
+    const w = (d.display_name.length * CHAR_PX + 2 * PAD_PX) / px_x
+    const h = LINE_PX / px_y
+    for (const [i, [above, row, gap_px]] of SLOTS.entries()) {
+      const gap = gap_px / px_y
+      const y0 = above ? d.y + gap : d.y - gap - h
+      const box = { x0: d.x - w / 2, x1: d.x + w / 2, y0, y1: y0 + h }
+      const clash = placed.some(o => hits(box, o))
+                 || dots.some(o => o.id !== d.id && hits(box, o))
+      // The last slot is taken whether it clashes or not: a label that is not
+      // drawn at all is worse than one that is 4 px from its neighbour, and the
+      // chart audit will say if that ever happens.
+      if (!clash || i === SLOTS.length - 1) {
+        placed.push(box)
+        out.push({ ...d, above, row })
+        break
+      }
+    }
+  }
+  return out
+}
+```
+
+```{ojs}
+//| echo: false
+md`**Which metric you pick changes the answer**, which is the whole argument in
+ProteoBench's own design discussion. ${pb_flip.top_precision} has the highest
+peptide-level precision of the ${pb_subs.length} runs, but it answers only
+${(pb_flip.coverage * 100).toFixed(0)}% of the spectra; rank the same runs by AUC
+and it comes ${pb_flip.rank_by_auc}, behind ${pb_flip.top_auc}. Precision alone
+rewards a tool for keeping quiet:
+
+- **Precision** is correct predictions over predictions *made*, at whatever
+  coverage the tool chose. A tool that answers only the easy spectra scores well.
+- **Precision at full coverage** counts an unanswered spectrum as wrong. It is
+  the same number as recall, and it is what the discussion asked for on the
+  grounds that some tools skip more than 10% of spectra.
+- **AUC** is the area under the precision-coverage curve, swept over every score
+  threshold, which is where that discussion landed as the default. It is the
+  metric the 84-dataset charts above use as well, so the two benchmarks can be
+  read against each other.
+
+*Mass-based* matching accepts a prediction whose residue masses line up within
+tolerance, so it cannot tell I from L or deamidated Q/N from E/D; *exact*
+requires the sequence. Mass-based is therefore always the higher number, and the
+gap is not small: ${pb_gap.median_pct}% of the peptide-level score on median
+across these runs.`
+```
+
+```{ojs}
+//| echo: false
+pb_flip = {
+  const rank = (key) => pb_t.filter(d => d.match_type === pb_match && d.level === "peptide")
+    .slice().sort((a, b) => d3.descending(a[key], b[key]))
+  const by_prec = rank("precision"), by_auc = rank("auc")
+  const top = by_prec[0]
+  const pos = by_auc.findIndex(d => d.id === top.id) + 1
+  const ordinal = ["", "first", "second", "third", "fourth", "fifth", "sixth",
+                   "seventh", "eighth", "ninth", "tenth"][pos] ?? `${pos}th`
+  return { top_precision: top.display_name, coverage: top.coverage,
+           rank_by_auc: ordinal, top_auc: by_auc[0].display_name }
+}
+```
+
+```{ojs}
+//| echo: false
+pb_gap = {
+  // How much of the peptide-level score is mass-based matching worth, as a
+  // percentage of the mass-based number, on median across submissions.
+  const mass = new Map(pb_t.filter(d => d.level === "peptide" && d.match_type === "mass")
+    .map(d => [d.id, d[pb_metric]]))
+  const gaps = pb_t.filter(d => d.level === "peptide" && d.match_type === "exact")
+    .map(d => (mass.get(d.id) - d[pb_metric]) / mass.get(d.id) * 100)
+    .filter(v => isFinite(v))
+  return { median_pct: (d3.median(gaps) ?? 0).toFixed(0) }
+}
+```
+
+```{ojs}
+//| echo: false
+md`#### The curves behind the AUC
+
+Each run's own precision-coverage curve, at the level and stringency selected
+above. This is what a single precision number summarises, and what the
+84-dataset chart averages: a curve that holds high precision and only gives way
+near full coverage is a better tool than one that drops immediately and stays
+flat, and the two can report the same precision.`
+```
+
+```{ojs}
+//| echo: false
+{
+  const rows = pb_curves_t.filter(d => d.level === pb_curve_level
+                                       && d.match_type === pb_match)
+  const chart = Plot.plot({
+    width: 760,
+    height: 420,
+    marginLeft: 60,
+    marginBottom: 48,
+    x: { domain: [0, 1.03], grid: true, labelOffset: 40,
+         label: `${pb_curve_level === "peptide" ? "Peptide" : "Amino acid"} coverage →` },
+    y: { domain: [0, 1], grid: true,
+         label: `↑ ${pb_curve_level === "peptide" ? "Peptide" : "Amino acid"} precision` },
+    color: { domain: pb_curve_domain, range: pb_curve_range, legend: true,
+             columns: "33%" },
+    marks: [
+      Plot.line(rows, {
+        x: "coverage", y: "precision", z: "display_name",
+        stroke: "display_name", strokeWidth: 1.8,
+        tip: { format: { z: false } },
+        channels: { "Method": "display_name" }
+      }),
+      Plot.ruleY([0]), Plot.ruleX([0])
+    ],
+    tip: plot_tip_style
+  })
+  return html`<div class="chart-wrap"><div class="chart-scroll">${chart}</div></div>`
+}
+```
+
+```{ojs}
+//| echo: false
+viewof pb_curve_level = Inputs.radio(
+  new Map([["Peptide", "peptide"], ["Amino acid", "aa"]]),
+  { label: "Curve level", value: "peptide" }
+)
+```
+
+```{ojs}
+//| echo: false
+// Seven curves need seven distinguishable colours, which the family palette
+// cannot give: five of these seven runs are Transformer (AR) and would be the
+// same orange. Ordered by AUC so the legend doubles as a ranking.
+pb_curve_domain = pb_t
+  .filter(d => d.level === pb_curve_level && d.match_type === pb_match)
+  .slice().sort((a, b) => d3.descending(a.auc, b.auc)).map(d => d.display_name)
+```
+
+```{ojs}
+//| echo: false
+pb_curve_range = pb_curve_domain.map((_, i) => d3.schemeTableau10[i % 10])
+```
+
+```{ojs}
+//| echo: false
+md`Two caveats specific to this benchmark. A submission records **one
+configuration**, so a run is evidence about a checkpoint and its parameters
+rather than about a method at its best: the table's decoding column is part of
+the result. And amino-acid coverage can exceed 1, because the denominator is the
+ground truth's residue count and a prediction may be longer than the peptide it
+is predicting.`
+```
+
+```{ojs}
+//| echo: false
+pb_table = pb_subs.map(d => ({
+  Method: d.display_name,
+  Version: d.version ?? "",
+  Family: d.family ?? "",
+  Decoding: d.decoding ?? "",
+  "Peptide precision": d.pep_precision,
+  "Peptide @cov 1": d.pep_recall,
+  "Peptide AUC": d.pep_auc,
+  "Peptide coverage": d.pep_coverage,
+  "AA precision": d.aa_precision,
+  "AA AUC": d.aa_auc,
+  Submitted: d.submitted ?? "",
+  "ProteoBench": d.pb_version ?? ""
+}))
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(pb_table, {
+  rows: 12,
+  sort: "Peptide AUC",
+  reverse: true,
+  layout: "auto",
+  format: {
+    Method: (m, i) => page_link("algorithms", pb_table[i].Method, m),
+    "Peptide precision": v => v.toFixed(3),
+    "Peptide @cov 1": v => v.toFixed(3),
+    "Peptide AUC": v => v.toFixed(3),
+    "Peptide coverage": v => v.toFixed(3),
+    "AA precision": v => v.toFixed(3),
+    "AA AUC": v => v.toFixed(3)
+  },
+  width: { Method: 130, Version: 80, Family: 130, Decoding: 150 }
+})
 ```
 
 ## Application areas

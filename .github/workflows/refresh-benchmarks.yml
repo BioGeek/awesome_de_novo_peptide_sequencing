@@ -35,23 +35,28 @@ jobs:
       - name: Sync Python environment
         run: uv sync --frozen
 
-      # The builder exits early when bittremieuxlab/denovo_benchmarks is at the
-      # commit already recorded in benchmark_source, so a quiet week costs one
-      # API call rather than 168 file downloads.
+      # Both builders exit early when their upstream repository is at the commit
+      # already recorded, so a quiet week costs two API calls rather than 175
+      # file downloads.
       - name: Refresh benchmark results
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           uv run python build_benchmarks.py ${{ inputs.force && '--force' || '' }}
+          uv run python build_proteobench.py ${{ inputs.force && '--force' || '' }}
           sqlite3 denovo.db .dump > denovo.sql
 
       - name: Commit if the benchmark results changed
         id: commit
         uses: ./.github/actions/commit-refreshed-db
         with:
-          # Five tables, parents first: benchmark_result and benchmark_curve
-          # carry foreign keys into the first two.
-          table: benchmark_dataset benchmark_tool benchmark_result benchmark_curve benchmark_source
+          # Nine tables, parents first: benchmark_result, benchmark_curve,
+          # proteobench_metric and proteobench_curve carry foreign keys into the
+          # tables listed before them.
+          table: >-
+            benchmark_dataset benchmark_tool benchmark_result benchmark_curve
+            benchmark_source proteobench_submission proteobench_metric
+            proteobench_curve proteobench_source
           message: Refresh public benchmark results
           workflow-file: refresh-benchmarks.yml
           no-changes-message: Upstream benchmarks unchanged this week, nothing to commit.

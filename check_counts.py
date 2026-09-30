@@ -169,6 +169,26 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "benchmark rows on the latest version",
      r"disagree on \d+ of (\d+) \(tool, dataset\) pairs",
      "SELECT COUNT(*) FROM benchmark_result WHERE is_latest = 1"),
+    ("CLAUDE.md", "proteobench submissions",
+     r"`proteobench_submission`\n\((\d+) rows\)",
+     "SELECT COUNT(*) FROM proteobench_submission"),
+    ("CLAUDE.md", "proteobench metric rows",
+     r"`proteobench_metric` \((\d+) = one per submission",
+     "SELECT COUNT(*) FROM proteobench_metric"),
+    ("CLAUDE.md", "proteobench runs (prose)",
+     r"peptide-level precision of the (\w+) runs",
+     lambda db: ("one two three four five six seven eight nine ten".split()
+                 [db.execute("SELECT COUNT(*) FROM proteobench_submission")
+                    .fetchone()[0] - 1])),
+    ("CLAUDE.md", "methods with a benchmark section",
+     r"The (\d+) methods with benchmark results carry",
+     "SELECT COUNT(DISTINCT algorithm_id) FROM benchmark_tool "
+     "WHERE algorithm_id IS NOT NULL AND n_datasets = "
+     "(SELECT COUNT(*) FROM benchmark_dataset)"),
+    ("CLAUDE.md", "methods with a proteobench submission",
+     r"precision for the (\d+) that have a submission",
+     "SELECT COUNT(DISTINCT algorithm_id) FROM proteobench_submission "
+     "WHERE algorithm_id IS NOT NULL"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),

@@ -314,15 +314,20 @@ def fetch_level(sha: str, datasets: list[str], filename: str) -> dict:
     return out
 
 
-def resolve_tools(db: sqlite3.Connection, tools: list[str]) -> dict[str, tuple]:
+def resolve_tools(db: sqlite3.Connection, tools: list[str],
+                  aliases: dict[str, str] | None = None) -> dict[str, tuple]:
     """tool -> (display_name, algorithm_id or None).
 
-    Matching is by normalised name or alias, with TOOL_ALIASES for the folder
-    names that are not the method's name. An unmatched tool is kept with a NULL
-    algorithm_id rather than dropped: the benchmark is worth showing even for a
-    tool this catalog has not catalogued, and NULL is visible in the audit line
-    below, where a wrong guess would not be.
+    Matching is by normalised name or alias, with `aliases` (TOOL_ALIASES by
+    default) for the names that are not the method's name. An unmatched tool is
+    kept with a NULL algorithm_id rather than dropped: the benchmark is worth
+    showing even for a tool this catalog has not catalogued, and NULL is visible
+    in the audit line the callers print, where a wrong guess would not be.
+
+    build_proteobench.py imports this: both benchmarks name the same methods and
+    neither should resolve them its own way.
     """
+    aliases = TOOL_ALIASES if aliases is None else aliases
     def norm(s: str) -> str:
         return re.sub(r"[^a-z0-9]", "", s.lower().replace("π", "pi"))
 
@@ -334,7 +339,7 @@ def resolve_tools(db: sqlite3.Connection, tools: list[str]) -> dict[str, tuple]:
 
     resolved = {}
     for tool in tools:
-        target = TOOL_ALIASES.get(tool, tool)
+        target = aliases.get(tool, tool)
         hit = index.get(norm(target))
         resolved[tool] = (hit[1] if hit else tool, hit[0] if hit else None)
     return resolved
