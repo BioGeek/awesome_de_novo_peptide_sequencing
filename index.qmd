@@ -474,6 +474,12 @@ benchmark_datasets = pd.read_sql(
 
 benchmark_source = dict(conn.execute("SELECT key, value FROM benchmark_source"))
 
+# The application areas. The label and the one-line blurb are data, shared with
+# build_pages.py, which generates a page per area; the lane order and the
+# colours stay in the OJS cells below, because those are presentation.
+subdomains = pd.read_sql(
+    "SELECT id, name, label, blurb FROM subdomain ORDER BY id", conn)
+
 # ProteoBench: the other public benchmark, one dataset and one row per submitted
 # run, written by build_proteobench.py. Its four metrics are not
 # interchangeable, so all four come through and the chart lets the reader pick;
@@ -516,6 +522,8 @@ _slug_tables.pop("__fallbacks__", None)
 
 _key_sql = {
     "publications": "SELECT id, CAST(id AS TEXT) FROM publication",
+    # Keyed by the subdomain NAME, which is what the charts carry.
+    "subdomains":   "SELECT id, name FROM subdomain",
     "authors":      "SELECT id, display_name FROM author_display",
     "algorithms":   "SELECT id, name FROM algorithm",
     "institutions": "SELECT MIN(id), name FROM affiliation GROUP BY name",
@@ -555,6 +563,7 @@ ojs_define(
     benchmark_curves=benchmark_curves,
     benchmark_datasets=benchmark_datasets,
     benchmark_source=benchmark_source,
+    subdomains=subdomains,
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
@@ -3096,25 +3105,7 @@ subdomain_order = [
   "food-authentication", "pathogen-identification", "forensics", "palaeoproteomics",
   "astrobiology", "toxin-identification"
 ]
-subdomain_label = ({
-  "general-proteomics":       "General proteomics",
-  "glycoproteomics":          "Glycoproteomics",
-  "plant-pathogen":           "Plant-pathogen effectors",
-  "metaproteomics":           "Metaproteomics",
-  "wastewater-metaproteomics":"Wastewater metaproteomics",
-  "immunopeptidomics":        "Immunopeptidomics / neoantigen",
-  "antibodyomics":            "Antibodyomics",
-  "venomics":                 "Venomics",
-  "neuropeptidomics":         "Neuropeptidomics",
-  "bioactive-peptides":       "Bioactive peptides",
-  "wildlife-proteomics":      "Wildlife proteomics",
-  "food-authentication":      "Food authentication",
-  "pathogen-identification":  "Clinical pathogen ID",
-  "forensics":                "Forensics",
-  "palaeoproteomics":         "Palaeoproteomics",
-  "astrobiology":             "Astrobiology / life detection",
-  "toxin-identification":     "Toxin identification (biodefense)"
-})
+subdomain_label = new Map(transpose(subdomains).map(d => [d.name, d.label]))
 // Lane colours must stay apart in CIE Lab, and ADJACENCY IN subdomain_order IS
 // WHAT MATTERS: two similar colours far apart in the stack are tolerable, two
 // similar colours in neighbouring lanes are not. Every adjacent pair here is now
@@ -3306,10 +3297,13 @@ application_timeline = {
       Plot.ruleY(lanes.flatMap(l => [l.y0, l.y1]), { stroke: "#ddd", strokeWidth: 0.5 }),
       Plot.text(lanes, {
         x: () => x_pad_min, y: "center",
-        text: d => lane_label[d.subdomain] ?? d.subdomain,
+        text: d => lane_label.get(d.subdomain) ?? d.subdomain,
         textAnchor: "end", dx: -8,
         fontSize: 12, fontWeight: "bold",
-        fill: "subdomain"
+        fill: "subdomain",
+        // Each lane label is now a link to that area's own page, which is the
+        // destination this axis never had.
+        href: d => page_href("subdomains", d.subdomain), target: "_self"
       }),
       Plot.dot(items, {
         x: "first_pub", y: "y",
@@ -3347,14 +3341,14 @@ application_timeline = {
     const d = items[i]
     if (!d) return
     circle.style.cursor = "pointer"
-    circle.setAttribute("aria-label", `${d.model}. ${lane_label[d.subdomain] ?? d.subdomain}. First publication ${d.first_pub.toISOString().slice(0,10)}.`)
+    circle.setAttribute("aria-label", `${d.model}. ${lane_label.get(d.subdomain) ?? d.subdomain}. First publication ${d.first_pub.toISOString().slice(0,10)}.`)
     circle.addEventListener("mouseenter", ev => {
       app_tooltip.replaceChildren(html`<div>
         <div class="map-tooltip-title">${d.model}</div>
         <div class="map-tooltip-meta">${d.first_pub.toISOString().slice(0,10)}</div>
         <div class="map-tooltip-row">
           <span class="map-tooltip-swatch" style=${`background:${lane_color[d.subdomain] ?? "#999"}`}></span>
-          <span>${lane_label[d.subdomain] ?? d.subdomain}</span>
+          <span>${lane_label.get(d.subdomain) ?? d.subdomain}</span>
         </div>
         ${d.description ? html`<div class="map-tooltip-meta" style="margin-top:6px; max-width:280px; white-space:normal;">${d.description}</div>` : ""}
       </div>`)
@@ -3597,14 +3591,14 @@ application_sankey = {
     .attr("fill-opacity", 0.55)
     .attr("stroke", "none")
     .attr("cursor", "pointer")
-    .attr("aria-label", d => `${subdomain_label[d.subdomain] ?? d.subdomain} to ${d.sequencer}. ${d.count} paper${d.count === 1 ? "" : "s"}.`)
+    .attr("aria-label", d => `${subdomain_label.get(d.subdomain) ?? d.subdomain} to ${d.sequencer}. ${d.count} paper${d.count === 1 ? "" : "s"}.`)
     .on("mouseenter", (ev, d) => {
       sankey_tooltip.replaceChildren(html`<div>
-        <div class="map-tooltip-title">${subdomain_label[d.subdomain] ?? d.subdomain} → ${d.sequencer}</div>
+        <div class="map-tooltip-title">${subdomain_label.get(d.subdomain) ?? d.subdomain} → ${d.sequencer}</div>
         <div class="map-tooltip-meta">${d.count} paper${d.count === 1 ? "" : "s"}</div>
         <div class="map-tooltip-row">
           <span class="map-tooltip-swatch" style=${`background:${d.color}`}></span>
-          <span>${subdomain_label[d.subdomain] ?? d.subdomain}</span>
+          <span>${subdomain_label.get(d.subdomain) ?? d.subdomain}</span>
         </div>
       </div>`)
       sankey_tooltip.classList.add("visible")
@@ -3618,14 +3612,14 @@ application_sankey = {
     })
 
   // Left node bars + labels.
-  g.append("g")
+  const left_rects = g.append("g")
     .selectAll("rect")
     .data(left_nodes)
     .join("rect")
     .attr("x", -8).attr("y", d => d.y0)
     .attr("width", 8).attr("height", d => d.y1 - d.y0)
     .attr("fill", d => subdomain_color[d.id] ?? "#888")
-  g.append("g")
+  const left_labels = g.append("g")
     .selectAll("text")
     .data(left_nodes)
     .join("text")
@@ -3633,7 +3627,7 @@ application_sankey = {
     .attr("text-anchor", "end")
     .attr("font-weight", "bold")
     .attr("fill", d => subdomain_color[d.id] ?? "#333")
-    .text(d => `${subdomain_label[d.id] ?? d.id}  (${d.total})`)
+    .text(d => `${subdomain_label.get(d.id) ?? d.id}  (${d.total})`)
 
   // Right node bars + labels.
   const right_rects = g.append("g")
@@ -3652,11 +3646,13 @@ application_sankey = {
     .attr("fill", "#1d2330")
     .text(d => `${d.id}  (${d.total})`)
 
-  // Right-hand nodes are sequencers, so both the bar and its label link to the
-  // algorithm page. The left-hand nodes are application subdomains, which have
-  // no page of their own, so they stay unlinked.
+  // Both ends link now. The right-hand nodes are sequencers and go to their
+  // algorithm page; the left-hand nodes are application areas and go to theirs,
+  // which they did not have when this chart was written.
   svg_link_wrap(right_rects, d => algo_href(d.id))
   svg_link_wrap(right_labels, d => algo_href(d.id))
+  svg_link_wrap(left_rects, d => page_href("subdomains", d.id))
+  svg_link_wrap(left_labels, d => page_href("subdomains", d.id))
 
   return html`<div class="chart-wrap">
     <button class="fs-btn" onclick="

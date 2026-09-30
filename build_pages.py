@@ -65,7 +65,8 @@ def _site_url() -> str:
 SITE_URL = _site_url()
 OUT_ROOT = Path(__file__).parent / "pages"
 
-KINDS = ("publications", "authors", "algorithms", "institutions", "venues")
+KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
+         "subdomains")
 
 # Anchors on index.qmd, verified against the rendered section ids.
 ANCHORS = {
@@ -541,11 +542,21 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         ("Deep learning", None if row["is_deep_learning"] is None
                           else ("yes" if row["is_deep_learning"] else "no")),
         ("Acquisition", row["acquisition_mode"]),
-        ("Application area", row["subdomain"]),
         ("Also known as", row["aliases"]),
     ):
         if value:
             L.append(f"| {label} | {md_escape(str(value))} |")
+    # Outside the loop above, which escapes its values: this row's value is a
+    # markdown LINK, and md_escape would turn it into literal brackets. 55
+    # algorithm pages carry it, and the area page is where the rest of that area
+    # lives. ctx has the (id, label) pair because the slug table is keyed by the
+    # subdomain's id while the algorithm row only knows its name.
+    if ctx.get("subdomain"):
+        L.append("| Application area | "
+                 + site.link("subdomains", ctx["subdomain"][0],
+                             ctx["subdomain"][1], from_kind=K) + " |")
+    elif row["subdomain"]:
+        L.append(f"| Application area | {md_escape(str(row['subdomain']))} |")
     L.append("")
 
     # Repository URLs are stable, but stars / open issues / last-push refresh
@@ -726,6 +737,78 @@ def render_venue(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     return "\n".join(L) + "\n", date_to_mtime(latest)
 
 
+def render_subdomain(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
+    """One application area: what de novo sequencing is used for here.
+
+    The only generated page whose subject is not a row someone can cite. It
+    exists because the Application-areas swim lane and the Sankey both aggregate
+    on this axis and had nowhere to send a reader, and because the question
+    "what has de novo sequencing actually been used for in venomics" is answered
+    by a list this page can assemble and no other page can.
+    """
+    K = "subdomains"
+    L = []
+    n_m, n_p = len(ctx["methods"]), len(ctx["pubs"])
+    span = ctx["span"]
+    sub = f"{n_m} workflow{'s' if n_m != 1 else ''}"
+    if span:
+        sub += f" · {span[0][:4]}–{span[1][:4]}" if span[0][:4] != span[1][:4] else f" · {span[0][:4]}"
+    L += front_matter(row["label"], sub,
+                      clip(join_sentences([
+                          f"{row['label']}: {row['blurb']}" if row["blurb"] else row["label"],
+                          f"{n_m} catalogued workflow{'s' if n_m != 1 else ''} "
+                          f"and {n_p} paper{'s' if n_p != 1 else ''}."]), 250))
+    if row["blurb"]:
+        L += [italicise_de_novo(md_escape(row["blurb"])), ""]
+
+    L += ["| | |", "|---|---|",
+          f"| Workflows | {n_m} |",
+          f"| Papers | {n_p} |",
+          f"| Authors | {len(ctx['authors'])} |"]
+    if span:
+        L.append(f"| Active | {span[0]} to {span[1]} |")
+    L.append("")
+
+    L += [f"## Workflow{'s' if n_m != 1 else ''} ({n_m})", ""]
+    for alg_id, name, descr, date in ctx["methods"]:
+        line = "- " + site.link("algorithms", alg_id, name, from_kind=K)
+        if date:
+            line += f" ({str(date)[:4]})"
+        if descr:
+            line += f": {md_escape(descr)}"
+        L.append(line)
+    L.append("")
+
+    if ctx["pubs"]:
+        L += [f"## Paper{'s' if n_p != 1 else ''} ({n_p})", ""]
+        for pub_id, title, date, journal, ptype in ctx["pubs"]:
+            meta = [m for m in (str(date)[:4] if date else None, journal, ptype) if m]
+            L.append(f"- {site.link('publications', pub_id, title, from_kind=K)}"
+                     + (f" ({md_escape(', '.join(meta))})" if meta else ""))
+        L.append("")
+
+    if ctx["tools"]:
+        L += ["## Sequencing tools these papers used", "",
+              # The tools are the 'uses' side of publication_algorithm, which is
+              # exactly what this page is for: the workflows above are what the
+              # papers contribute, the tools below are what they ran.
+              ", ".join(site.link("algorithms", a_id, name, from_kind=K)
+                        for a_id, name in ctx["tools"]), ""]
+
+    if ctx["authors"]:
+        L += [f"## Authors ({len(ctx['authors'])})", "",
+              ", ".join(site.link("authors", a_id, name, from_kind=K)
+                        for a_id, name in ctx["authors"]), ""]
+
+    if ctx["countries"]:
+        L += ["## Where the work happened", "",
+              ", ".join(md_escape(c) for c in ctx["countries"]), ""]
+
+    L += site.seen_in(["applications", "browse-papers"])
+    earliest = span[0] if span else None
+    return "\n".join(L) + "\n", date_to_mtime(earliest)
+
+
 # --------------------------------------------------------------------------
 # Data loading. One query per relation, all with total ORDER BY clauses.
 # --------------------------------------------------------------------------
@@ -848,6 +931,68 @@ def load(conn: sqlite3.Connection) -> dict:
             (r["publication_id"], r["title"], r["publication_date"], r["student_name"]))
         d["supervisor_for_student"][r["student_id"]].append(
             (r["author_id"], r["sup_name"], r["publication_id"], r["title"]))
+
+    # Application areas: the rows, and everything that hangs off each one.
+    # `subdomain` gives the label and the blurb; the rest is assembled from the
+    # workflows tagged with it. Papers come through the workflow rows, so a
+    # paper that used de novo sequencing for venomics reaches this page whether
+    # or not the paper itself says "venomics" anywhere.
+    d["subdomains"] = [dict(r) for r in
+                       q("SELECT id, name, label, blurb FROM subdomain ORDER BY id")]
+    d["subdomain_by_name"] = {r["name"]: (r["id"], r["label"]) for r in d["subdomains"]}
+    d["sub_methods"] = defaultdict(list)
+    for r in q("SELECT a.subdomain AS sd, a.id, a.name, a.short_description AS descr,"
+               "       MIN(p.publication_date) AS first_pub "
+               "FROM algorithm a "
+               "LEFT JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "LEFT JOIN publication p ON p.id = pa.publication_id "
+               "WHERE COALESCE(a.subdomain, '') <> '' "
+               "GROUP BY a.id ORDER BY first_pub, a.name"):
+        d["sub_methods"][r["sd"]].append((r["id"], r["name"], r["descr"], r["first_pub"]))
+
+    d["sub_pubs"] = defaultdict(list)
+    d["sub_authors"] = defaultdict(list)
+    d["sub_tools"] = defaultdict(list)
+    d["sub_countries"] = defaultdict(list)
+    for r in q("SELECT DISTINCT a.subdomain AS sd, p.id, p.title, p.publication_date,"
+               "       p.journal, p.publication_type "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "JOIN publication p ON p.id = pa.publication_id "
+               "WHERE COALESCE(a.subdomain, '') <> '' "
+               "ORDER BY a.subdomain, p.publication_date, p.id"):
+        d["sub_pubs"][r["sd"]].append((r["id"], r["title"], r["publication_date"],
+                                       r["journal"], r["publication_type"]))
+    for r in q("SELECT DISTINCT a.subdomain AS sd, au.id, au.display_name AS name "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "JOIN publication_author pau ON pau.publication_id = pa.publication_id "
+               "JOIN author_display au ON au.id = pau.author_id "
+               "WHERE COALESCE(a.subdomain, '') <> '' "
+               "ORDER BY a.subdomain, au.display_name"):
+        d["sub_authors"][r["sd"]].append((r["id"], r["name"]))
+    # The 'uses' side: the sequencers these papers ran, as opposed to the
+    # workflows they contributed.
+    for r in q("SELECT DISTINCT a.subdomain AS sd, tool.id, tool.name "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "JOIN publication_algorithm used ON used.publication_id = pa.publication_id "
+               "     AND used.role = 'uses' "
+               "JOIN algorithm tool ON tool.id = used.algorithm_id "
+               "WHERE COALESCE(a.subdomain, '') <> '' "
+               "ORDER BY a.subdomain, tool.name"):
+        d["sub_tools"][r["sd"]].append((r["id"], r["name"]))
+    for r in q("SELECT DISTINCT a.subdomain AS sd, c.name AS country "
+               "FROM algorithm a "
+               "JOIN publication_algorithm pa ON pa.algorithm_id = a.id "
+               "JOIN publication_author pau ON pau.publication_id = pa.publication_id "
+               "JOIN author_affiliation aa ON aa.author_id = pau.author_id "
+               "JOIN affiliation af ON af.id = aa.affiliation_id "
+               "JOIN city ci ON ci.id = af.city_id "
+               "JOIN country c ON c.id = ci.country_id "
+               "WHERE COALESCE(a.subdomain, '') <> '' "
+               "ORDER BY a.subdomain, c.name"):
+        d["sub_countries"][r["sd"]].append(r["country"])
 
     d["metric_urls"] = {r["url"] for r in
                         q("SELECT url FROM repository_metrics ORDER BY url")}
@@ -1008,7 +1153,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~2480 thin pages out of
+    # committed under pages/. search: false keeps ~2497 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -1163,6 +1308,7 @@ def main() -> int:
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
                 "bench": d["bench"].get(gid),
                 "proteobench": d["proteobench"].get(gid),
+                "subdomain": d["subdomain_by_name"].get(row["subdomain"]),
             }
             body, mtime = render_algorithm(site, row, ctx)
             emit("algorithms", site.slugs["algorithms"][gid], body, mtime)
@@ -1190,6 +1336,22 @@ def main() -> int:
                    "impact": d["journal_impact"].get(name)}
             body, mtime = render_venue(site, name, ctx)
             emit("venues", site.slugs["venues"][key], body, mtime)
+
+    if "subdomains" in kinds:
+        for row in d["subdomains"]:
+            name = row["name"]
+            pubs = d["sub_pubs"].get(name, [])
+            dates = sorted(p[2] for p in pubs if p[2])
+            ctx = {
+                "methods": d["sub_methods"].get(name, []),
+                "pubs": pubs,
+                "authors": d["sub_authors"].get(name, []),
+                "tools": d["sub_tools"].get(name, []),
+                "countries": d["sub_countries"].get(name, []),
+                "span": (dates[0], dates[-1]) if dates else None,
+            }
+            body, mtime = render_subdomain(site, row, ctx)
+            emit("subdomains", site.slugs["subdomains"][row["id"]], body, mtime)
 
     # Prune only the directories this run actually generated, so
     # `--only authors` cannot delete the publication pages.

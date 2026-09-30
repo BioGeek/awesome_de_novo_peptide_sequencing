@@ -21809,6 +21809,29 @@ INSERT INTO proteobench_source VALUES('commit_date','2026-08-10T11:59:51Z');
 INSERT INTO proteobench_source VALUES('module_url','https://proteobench.cubimed.rub.de/denovo_DDA_HCD');
 INSERT INTO proteobench_source VALUES('fetched','2026-09-30');
 INSERT INTO proteobench_source VALUES('n_submissions','7');
+CREATE TABLE subdomain (
+    id    INTEGER PRIMARY KEY,
+    name  TEXT NOT NULL UNIQUE,  -- as stored in algorithm.subdomain, and the page's slug
+    label TEXT NOT NULL,         -- display name, shared by the site and the generator
+    blurb TEXT                   -- one line: what de novo sequencing is for here
+);
+INSERT INTO subdomain VALUES(1,'general-proteomics','General proteomics','Ordinary discovery proteomics, where de novo sequencing fills in what the database search could not explain.');
+INSERT INTO subdomain VALUES(2,'venomics','Venomics','Venom from snakes, spiders, scorpions, ants and cone snails, where the species has no sequenced genome and the toxins are heavily modified.');
+INSERT INTO subdomain VALUES(3,'immunopeptidomics','Immunopeptidomics / neoantigen','HLA-presented peptides, where non-specific processing makes the search space too large for a database and the interesting peptides are the ones not in it.');
+INSERT INTO subdomain VALUES(4,'antibodyomics','Antibodyomics','Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome.');
+INSERT INTO subdomain VALUES(5,'palaeoproteomics','Palaeoproteomics','Ancient enamel, bone and eggshell, where the proteins are damaged and the species may be extinct.');
+INSERT INTO subdomain VALUES(6,'bioactive-peptides','Bioactive peptides','Peptides with a function worth finding, from food hydrolysates to amphibian skin secretions.');
+INSERT INTO subdomain VALUES(7,'glycoproteomics','Glycoproteomics','Glycopeptides, where the glycan has to be accounted for before the peptide backbone can be read.');
+INSERT INTO subdomain VALUES(8,'metaproteomics','Metaproteomics','Mixed microbial communities, where which organisms are present is part of the question.');
+INSERT INTO subdomain VALUES(9,'wastewater-metaproteomics','Wastewater metaproteomics','Wastewater as a population-level sample, carrying both microbial and human peptides.');
+INSERT INTO subdomain VALUES(10,'plant-pathogen','Plant-pathogen effectors','Effector proteins secreted by plant pathogens, often from organisms with no usable reference.');
+INSERT INTO subdomain VALUES(11,'neuropeptidomics','Neuropeptidomics','Neuropeptides and hormones, which are short, modified and easy to miss in a database search.');
+INSERT INTO subdomain VALUES(12,'wildlife-proteomics','Wildlife proteomics','Milk, pouch and secretion proteomes of non-model animals, where reference proteomes are sparse or absent.');
+INSERT INTO subdomain VALUES(13,'food-authentication','Food authentication','Telling species and processing apart in food, using peptide markers that survive cooking.');
+INSERT INTO subdomain VALUES(14,'pathogen-identification','Clinical pathogen ID','Identifying the organism behind an infection directly from the sample.');
+INSERT INTO subdomain VALUES(15,'forensics','Forensics','Attributing a trace to its source, from body fluids to the microbial signature of a place.');
+INSERT INTO subdomain VALUES(16,'astrobiology','Astrobiology / life detection','Peptide biosignatures, where nothing about the target sequence can be assumed in advance.');
+INSERT INTO subdomain VALUES(17,'toxin-identification','Toxin identification (biodefense)','Recognising protein toxins in an unknown sample, where a database search presumes what you are looking for.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
 INSERT INTO sqlite_sequence VALUES('city',295);

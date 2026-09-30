@@ -87,10 +87,15 @@ MANIFEST = SITE / ".render-manifest"
 FILES = SITE / ".render-files"
 LEGACY_KEY = SITE / ".render-key"
 
-# Past this many changed pages, render the project instead: 60 files is about
-# five minutes of per-file renders against seventeen for the whole site, and
-# the ratio gets worse from there.
-MAX_PARTIAL = 60
+# Past this many changed pages, render the project instead.
+#
+# A per-file render measured 4.8s locally against ~0.4s inside a project render,
+# so break-even is somewhere near 200 files. CI is slower than this laptop and
+# by how much is not yet known, so the cap sits well below that: at 8s a file,
+# 100 files is ~13 minutes against 17 for the whole site, still a win, and a
+# change of that size is rare. The first partial run in CI will report the real
+# per-file cost in its step log, which is the number to tune this with.
+MAX_PARTIAL = 100
 
 
 def quarto_version() -> str:
@@ -102,15 +107,39 @@ def quarto_version() -> str:
         return "unknown"
 
 
+def strip_line_comments(text: str) -> str:
+    """Drop whole-line # and // comments.
+
+    Because a comment cannot change a rendered page, and one of these files
+    carries a comment that changes on its own: check_counts.py keeps the
+    generated-page total honest in a _quarto.yml comment, so adding a page
+    rewrote that line and the hash below then demanded a full render to
+    reproduce output that could not have differed.
+
+    Whole-line comments only. A trailing `# ...` would mean deciding whether the
+    `#` is inside a quoted value, which needs a YAML parser, and render_scope.py
+    is deliberately stdlib-only. A count written inline would still force a full
+    render, which is the safe direction to be wrong in.
+    """
+    keep = [ln for ln in text.splitlines()
+            if not ln.lstrip().startswith(("#", "//"))]
+    return "\n".join(keep)
+
+
 def global_key() -> str:
     """Everything that changes EVERY page's bytes at once."""
     h = hashlib.sha256()
-    h.update(b"v2\n")
+    # v3: the two config files are hashed without their whole-line comments.
+    # Bumping the version is what makes the change explicit -- every existing
+    # manifest carries a v2 key, so the next run after this lands sees a
+    # mismatch and renders everything once.
+    h.update(b"v3\n")
     h.update(quarto_version().encode() + b"\n")
     for name in ("_quarto.yml", "custom.scss"):
         p = HERE / name
         h.update(name.encode() + b"\n")
-        h.update(p.read_bytes() if p.exists() else b"<missing>")
+        h.update(strip_line_comments(p.read_text(encoding="utf-8")).encode()
+                 if p.exists() else b"<missing>")
         h.update(b"\n")
     return h.hexdigest()
 

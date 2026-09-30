@@ -81,10 +81,6 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "abstracts missing",
      r"The (\d+) without one are mostly theses",
      "SELECT COUNT(*) FROM publication WHERE COALESCE(abstract,'')=''"),
-    ("CLAUDE.md", "subdomain values in use",
-     r"rows \((\d+) values in use",
-     "SELECT COUNT(DISTINCT subdomain) FROM algorithm "
-     "WHERE COALESCE(subdomain,'')<>''"),
     ("CLAUDE.md", "rows dated day 01",
      r"(\d+) rows use day",
      "SELECT COUNT(*) FROM publication WHERE publication_date LIKE '%-01'"),
@@ -195,6 +191,22 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "publications behind that id",
      r"-- \d+ against (\d+) publications today",
      "SELECT COUNT(*) FROM publication"),
+    ("CLAUDE.md", "application areas",
+     r"table \((\d+) of them\)",
+     "SELECT COUNT(*) FROM subdomain"),
+    # An invariant written as the number it should always be. Both of these
+    # read 0, and a claim that can only ever read 0 is exactly the point: the
+    # hook fails the commit the moment a method claims an unregistered area or
+    # a registered area stops being used.
+    ("CLAUDE.md", "unregistered application areas",
+     r"(\d+) areas unregistered",
+     "SELECT COUNT(*) FROM (SELECT DISTINCT subdomain FROM algorithm "
+     "WHERE COALESCE(subdomain,'') <> '' EXCEPT SELECT name FROM subdomain)"),
+    ("CLAUDE.md", "registered but unused application areas",
+     r"(\d+) registered but unused",
+     "SELECT COUNT(*) FROM (SELECT name FROM subdomain "
+     "EXCEPT SELECT DISTINCT subdomain FROM algorithm "
+     "WHERE COALESCE(subdomain,'') <> '')"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),

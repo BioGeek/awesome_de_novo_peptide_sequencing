@@ -182,7 +182,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**26 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**27 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1163 of 1311 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -956,14 +956,26 @@ Every `algorithm` row carries three classifier columns:
 
 When adding a new entry, fill all three. The site's filters (and the hero counters) depend on them.
 
-`algorithm.subdomain` is a free-text slug used only by `kind='downstream-application'`
-rows (17 values in use: `venomics`, `palaeoproteomics`, `immunopeptidomics`,
-`antibodyomics`, `glycoproteomics`, `astrobiology` and others). **A new subdomain
-must also be registered in the three `subdomain_*` OJS cells in `index.qmd`**
-(`subdomain_order`, `subdomain_label`, `subdomain_color`), which feed both the
-Application-areas swim lanes and the Sankey diagram. All three must carry the
-same key set. There used to be a fourth, `subdomain_lane_height`; lane heights
-now come from the row packing, so there is nothing to keep in sync.
+`algorithm.subdomain` names an application area, and is used only by
+`kind='downstream-application'` rows. The areas are rows in the **`subdomain`**
+table (17 of them): `name`, which is what `algorithm.subdomain` holds and what
+the page's URL is, `label` for display, and `blurb`, one line on what de novo
+sequencing is for in that area.
+
+**Adding an area means a `subdomain` row plus two OJS registrations** in
+`index.qmd`: `subdomain_order` and `subdomain_color`, which are presentation and
+stay in the chart. `subdomain_label` used to be a third; it is now read from the
+table, because `build_pages.py` generates a page per area and needed the same
+labels, which would have made the OJS cell a fourth copy of the same 17 strings.
+There was also a `subdomain_lane_height`; lane heights come from the row packing
+now.
+
+There is deliberately **no foreign key** from `algorithm.subdomain` to
+`subdomain.name`: adding one means rebuilding a 13-column core table.
+`check_counts.py` asserts the two sets agree instead, in both directions.
+Both numbers are checked in the pre-commit hook and in CI, and both should
+always read zero: 0 areas unregistered, 0 registered but unused. An unregistered area would otherwise
+reach the site as a grey lane with a raw slug for a label and no page.
 
 Forgetting used to be fatal: an unregistered subdomain made the timeline
 dereference a missing lane and throw `TypeError: Cannot read properties of

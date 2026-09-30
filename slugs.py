@@ -201,6 +201,12 @@ ENTITY_QUERIES: dict[str, str] = {
         WHERE journal IS NOT NULL AND journal <> ''
         GROUP BY journal ORDER BY MIN(id)
     """,
+    # The slug comes from `name`, not `label`: the name is already a slug and
+    # the shorter URL is the better one. /subdomains/immunopeptidomics.html
+    # rather than /subdomains/immunopeptidomics-neoantigen.html.
+    "subdomains": """
+        SELECT id, name FROM subdomain ORDER BY id
+    """,
 }
 
 
