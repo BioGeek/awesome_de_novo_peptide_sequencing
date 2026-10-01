@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import collections
 import csv
+import json
 import pathlib
 import re
 import sqlite3
@@ -59,6 +60,58 @@ PATTERNS = {
     "figshare":      re.compile(r"10\.6084/m9\.figshare\.\d+", re.I),
     "Hugging Face":  re.compile(r"huggingface\.co/datasets/([\w.-]+/[\w.-]+)", re.I),
 }
+
+# A Zenodo or figshare DOI in a methods section is as likely to be a software
+# release or a supplementary-file bundle as a deposit of spectra, and those are
+# not datasets. The first run surfaced three in the top of the candidate list:
+# PyTorch Lightning 0.7.6, and supplementary files for two de novo papers. They
+# would come back on every run, so they are filtered on the repository's own
+# title and the exclusion is COUNTED in the report rather than done silently.
+#
+# Only DOI-shaped accessions are checked. An accession is never excluded on its
+# own shape: a figshare DOI is a perfectly good home for spectra.
+NOT_DATA = [
+    (re.compile(r"\bsupplementar|supporting information|^supplementary data\b", re.I),
+     "supplementary material, not a deposit of spectra"),
+    (re.compile(r":\s*v?\d+[\d.]*\s*(release)?$|^[\w.-]+/[\w.-]+:\s", re.I),
+     "software release (a repository snapshot, not data)"),
+    (re.compile(r"\b(source code|scripts?|notebooks?|docker image)\b", re.I),
+     "code rather than data"),
+]
+DOI_LIKE = re.compile(r"^10\.\d{4,9}/")
+
+
+def datacite_title(doi: str, cache: pathlib.Path) -> str:
+    """Zenodo and figshare DOIs are DataCite, not Crossref; Crossref answers 404."""
+    cache.mkdir(parents=True, exist_ok=True)
+    key = cache / (re.sub(r"[^\w.-]", "_", doi) + ".json")
+    if key.exists():
+        payload = json.loads(key.read_text())
+    else:
+        out = subprocess.run(
+            ["curl", "-s", "-A", "awesome-de-novo (mailto:j.vangoey@instadeep.com)",
+             f"https://api.datacite.org/dois/{doi}"],
+            capture_output=True, text=True, timeout=60).stdout
+        try:
+            payload = json.loads(out)
+        except ValueError:
+            payload = {}
+        key.write_text(json.dumps(payload))
+    try:
+        return payload["data"]["attributes"]["titles"][0]["title"]
+    except (KeyError, IndexError, TypeError):
+        return ""
+
+
+def not_data(doi: str, cache: pathlib.Path) -> tuple[str, str] | None:
+    """Return (title, reason) when this DOI is demonstrably not a data deposit."""
+    title = datacite_title(doi, cache)
+    if not title:
+        return None          # unknown is not the same as excluded
+    for rx, reason in NOT_DATA:
+        if rx.search(re.sub(r"\s+", " ", title)):
+            return title, reason
+    return None
 
 
 def pdf_text(path: pathlib.Path) -> str:
@@ -202,6 +255,21 @@ def main() -> int:
     if args.write:
         con.commit()
 
+    # Drop the DOIs a repository's own title shows are software or supplementary
+    # material. Done here rather than during the scan so it costs one lookup per
+    # unknown DOI instead of one per mention, and only for DOI-shaped ids.
+    cache = pathlib.Path(__file__).with_name(".cache") / "datacite"
+    excluded: list[tuple[int, str, str, str]] = []
+    surviving = []
+    for papers, repo, acc, example in unknown:
+        verdict = not_data(acc, cache) if DOI_LIKE.match(acc) else None
+        if verdict:
+            title, reason = verdict
+            excluded.append((papers, acc, title[:60], reason))
+        else:
+            surviving.append((papers, repo, acc, example))
+    unknown = surviving
+
     unknown.sort(reverse=True)
     kept = [u for u in unknown if u[0] >= args.min_papers]
     with CANDIDATES.open("w", newline="") as fh:
@@ -216,6 +284,10 @@ def main() -> int:
           f" ({skipped} already present)")
     print(f"  unknown accessions       {len(unknown)}, "
           f"{len(kept)} cited by >= {args.min_papers} papers -> {CANDIDATES.name}")
+    print(f"  excluded as not data     {len(excluded)}")
+    for papers, acc, title, reason in sorted(excluded, reverse=True):
+        print(f"      {papers:2} papers  {acc:28} {reason}")
+        print(f"                   {title!r}")
     if not args.write:
         print("\nReport only. Re-run with --write to create the links.")
     print("Datasets are never created automatically: review the CSV by hand.")

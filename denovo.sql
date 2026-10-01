@@ -23533,6 +23533,38 @@ INSERT INTO dataset VALUES(7,'InstaNovo-P FGFR2 phosphoproteomics','T47D cell ph
 INSERT INTO dataset VALUES(8,'Anti-FLAG-M2 antibody sequencing','MS-based sequencing of the anti-FLAG-M2 antibody, deposited as a study result and reused as an antibody test case.','deposit','DDA','Mus musculus',NULL);
 INSERT INTO dataset VALUES(9,'CompOmics PRIDE','Eighteen public PRIDE projects reprocessed into one labelled corpus and split for training. Every row keeps its source accession in a PXD_identifier column, so the provenance survives inside the data rather than only in the paper.','training','DDA','mixed','https://huggingface.co/datasets/InstaDeepAI/CompOmics_PRIDE');
 INSERT INTO dataset VALUES(10,'InstaNovo-FM training corpus','Tandem mass spectra with PSM labels, uniformly reprocessed from public PRIDE submissions to pretrain and evaluate InstaNovo-FM. The largest labelled corpus published in this field.','training','DDA','mixed','https://huggingface.co/datasets/InstaDeepAI/InstaNovo');
+INSERT INTO dataset VALUES(11,'Proteomic analysis of six different tissues from the Atlantic bottlenose dolphin (Tursiops truncatus)','Proteomic analysis of six different tissues from the Atlantic bottlenose dolphin (Tursiops truncatus)','deposit','DDA','Tursiops truncatus (atlantic bottle-nosed dolphin) (delphinus truncatus)',NULL);
+INSERT INTO dataset VALUES(12,'High-resolution spatially-resolved proteome mapping using automated, sacrificial liquid-mediated sample transfer from la','High-resolution spatially-resolved proteome mapping using automated, sacrificial liquid-mediated sample transfer from laser microdissection to nanodroplet sample preparation','deposit','DDA','Mus musculus (mouse)',NULL);
+INSERT INTO dataset VALUES(13,'Low-density lipoprotein receptor-related protein 1 (LRP1)-derived peptides protect against aggregation of LDL and choles','Low-density lipoprotein receptor-related protein 1 (LRP1)-derived peptides protect against aggregation of LDL and cholesterol loading of vascular cells. Molecular and Cellular basis for antiatherosclerotic efficacy','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(14,'BALF proteomics - In-depth proteomic analysis of human bronchoalveolar lavage fluid towards the biomarker discovery for ','BALF proteomics - In-depth proteomic analysis of human bronchoalveolar lavage fluid towards the biomarker discovery for lung cancers','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(15,'Diabetes causes marked inhibition of mitochondrial metabolism in pancreatic β-cells','Diabetes causes marked inhibition of mitochondrial metabolism in pancreatic β-cells','deposit','DDA','Mus musculus (mouse)',NULL);
+INSERT INTO dataset VALUES(16,'Proteome of the rodent malaria parasite Plasmodium berghei liver stage merosomes','Proteome of the rodent malaria parasite Plasmodium berghei liver stage merosomes','deposit','DDA','Anopheles stephensi (asian malaria mosquito), Plasmodium berghei anka, Homo sapiens (human), Bos taurus (bovine)',NULL);
+INSERT INTO dataset VALUES(17,'De novo sequencing of DIA data','De novo sequencing of DIA data','benchmark','DIA',NULL,NULL);
+INSERT INTO dataset VALUES(18,'The Proteome Landscape of the Kingdoms of Life','A cross-kingdom proteomics survey, deposited as two accessions and reused as a generalisation test across species.','benchmark','DDA','Arabidopsis thaliana (mouse-ear cress), Bos taurus (bovine), Caenorhabditis elegans, Danio rerio (zebrafish) (brachydanio rerio), Dictyostelium discoideum (slime mold), Drosophila melanogaster (fruit fly), Escherichia coli, Gallus gallus (chicken), Homo sapiens (human), Mus musculus (mouse), Rattus norvegicus (rat), Saccharomyces cerevisiae (baker''s yeast), Sus scrofa domesticus (domestic pig), Triticum aestivum (wheat), Vitis vinifera (grape)',NULL);
+INSERT INTO dataset VALUES(19,'High-throughput MS-based immunopeptidomics','High-throughput MS-based immunopeptidomics','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(20,'A deep proteome and transcriptome abundance atlas of 29 healthy human tissues','A deep proteome and transcriptome abundance atlas of 29 healthy human tissues','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(21,'HeLa proteome of 12,250 protein-coding genes','HeLa proteome of 12,250 protein-coding genes','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(22,'A comprehensive LFQ benchmark dataset to validate data analysis pipelines on modern day acquisition strategies in proteo','A comprehensive LFQ benchmark dataset to validate data analysis pipelines on modern day acquisition strategies in proteomics','benchmark','DDA','Candida albicans (yeast), Escherichia coli, Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(23,'Multienzyme deep learning models improve peptide de novo sequencing by mass spectrometry proteomics','Multienzyme deep learning models improve peptide de novo sequencing by mass spectrometry proteomics','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(24,'Casanovo digestion enzyme bias data','Data supporting "Accounting for digestion enzyme bias in Casanovo".','deposit','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(25,'GraphNovo dataset and checkpoint','GraphNovo''s training data published in the same DOI as its model weights, so the address is not data alone.','deposit','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(26,'High-throughput proteomics of the 26 medically most important elapids and vipers from sub-Saharan Africa','High-throughput proteomics of the 26 medically most important elapids and vipers from sub-Saharan Africa','deposit','DDA','Bitis gabonica, Naja nivea, Naja annulifera, Naja anchietae, Naja katiensis, Dendroaspis polylepis, Echis pyramidum, Bitis arietans, Naja nigricincta, Cerastes cerastes, Bitis rhinoceros, Naja pallida, Dendroaspis angusticeps (eastern green mamba) (naja angusticeps), Naja ashei, Echis leucogaster, Echis ocellatus, Dendroaspis viridis, Naja senegalensis, Bitis nasicornis, Dendroaspis jamesoni, Naja nubiae, Hemachatus haemachatus, Naja mossambica, Naja haje, Naja nigricollis, Naja melanoleuca',NULL);
+INSERT INTO dataset VALUES(27,'Ultra-fast label-free quantification and comprehensive proteome coverage with narrow-window data-independent acquisition','Ultra-fast label-free quantification and comprehensive proteome coverage with narrow-window data-independent acquisition. DDA vs DIA comparison','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(28,'Mining waste streams of food production for bioactive plant polysaccharides that affect the fitness and expressed activi','Mining waste streams of food production for bioactive plant polysaccharides that affect the fitness and expressed activities of targeted human gut microbes','deposit','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(29,'PeptideShaker - PeptideShaker is a user friendly tool for shotgun proteomic data interpretation and reprocessing.','PeptideShaker - PeptideShaker is a user friendly tool for shotgun proteomic data interpretation and reprocessing.','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(30,'A mass-tolerant database search identifies a large proportion of unassigned spectra in shotgun proteomics as modified pe','A mass-tolerant database search identifies a large proportion of unassigned spectra in shotgun proteomics as modified peptides','deposit','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(31,'Deep Human Proteome Sequencing Enables Global Detection of Mutations and Alternative Splicing','Deep Human Proteome Sequencing Enables Global Detection of Mutations and Alternative Splicing','deposit','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(32,'Effect of POR knockdown on the proteome of HepaRG cells','Agilent Q-TOF HepaRG benchmark run: human HepaRG cells on an Agilent 6550 iFunnel Q-TOF, one of the few non-Thermo, non-Bruker instruments in the benchmark.','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(33,'Files for: Improved Protein Inference from Multiple Protease Bottom-Up Mass Spectrometry Data','Fractionated human Jurkat cells digested with six different proteases, which is what makes it the multi-protease and PTM arm of the benchmark.','benchmark','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(34,'Critical Assessment of Metaproteome Investigation (CAMPI): a Multi-Lab Comparison of Established Workflows','CAMPI metaproteomics: a simplified human gut microbiome model (SIHUMIx) plus faecal samples, where the database a search would need is the thing de novo does without.','benchmark','DDA','Escherichia coli, Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(35,'ABRF iPRG2020 Metaproteomics Study Data','iPRG2020 metaproteomics: a bacteriophage infection model over Salmonella, Bacillus and E. coli.','benchmark','DDA','Escherichia phage t4, Salmonella enterica, Escherichia coli, Bacteria, Bacillus subtilis',NULL);
+INSERT INTO dataset VALUES(36,'non-canonical HLA peptides in cancer','HLA class I and II peptides from tumour-affected and healthy tissue, the immunopeptidomics arm.','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(37,'Fully automated sample processing and analysis workflow for low-input proteome profiling','Single-cell HeLa samples prepared by autoPOTS on an Orbitrap Exploris 480: the low-input extreme of the benchmark.','benchmark','DDA','Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(38,'Rewiring of B cell receptor signaling by Epstein-Barr virus LMP2A','Quantitative SILAC phosphoproteomics of Epstein-Barr-virus-infected B cells.','benchmark','DDA','Homo sapiens (human), Mus musculus (mouse)',NULL);
+INSERT INTO dataset VALUES(39,'Benchmarking DIA data analysis workflows','UPS2 proteomic standard, 48 human proteins at known concentrations, where the ground truth is the standard itself.','benchmark','DIA','Saccharomyces cerevisiae (baker''s yeast)',NULL);
+INSERT INTO dataset VALUES(40,'IPRG2015','iPRG2015: Saccharomyces cerevisiae spiked at differing concentrations.','benchmark','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(41,'De novo peptide sequencing tools benchmark','The benchmark''s own ProteomeXchange deposit, which is where its public evaluation data lives as one citable object.','benchmark','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(42,'Living-proteomics benchmark private holdouts','Evaluation data held back so that no published model can have trained on it. Results are reported against these, and none of them can be downloaded, so the numbers are not independently reproducible. Recorded for exactly that reason.','benchmark',NULL,'various',NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -23553,7 +23585,7 @@ INSERT INTO dataset_version VALUES(4,1,'ProteoBench selection','The selection Pr
 INSERT INTO dataset_version VALUES(5,2,'Parts I-III','The three PRIDE submissions as deposited.',NULL,NULL,NULL,NULL,'2017-02-09',NULL);
 INSERT INTO dataset_version VALUES(6,2,'high-confidence (InstaNovo)','The all-confidence search results reduced to best PSMs and published as a split parquet dataset with its own DOI.',2655403,2132847,257187,265369,'2024-12-01',NULL);
 INSERT INTO dataset_version VALUES(7,2,'21-PTM subset','Synthetic peptides carrying 21 distinct post-translational modifications, the usual source for evaluating modified-peptide sequencing.',41158,NULL,NULL,NULL,'2018-04-10',NULL);
-INSERT INTO dataset_version VALUES(8,3,'v1','The version Casanovo''s original training set was drawn from.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(8,3,'v1','The version Casanovo''s original training set was drawn from. MassIVE titles MSV000081142 "MassIVE-KB Knowledge Base spectral library of Human HCD spectra" and names no version itself, so attaching it here rests on it being the original human HCD library rather than on the record saying so.',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(9,3,'v2','The later, larger release; papers that say only "MassIVE-KB" are ambiguous between the two.',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(10,4,'as published','General model training and evaluation sets, plus HeLa QC and C. elegans.',NULL,NULL,NULL,NULL,'2025-09-29',74);
 INSERT INTO dataset_version VALUES(11,5,'as deposited','IgG1-Human and WIgG1-Mouse Herceptin runs.',NULL,NULL,NULL,NULL,NULL,NULL);
@@ -23564,7 +23596,53 @@ INSERT INTO dataset_version VALUES(15,9,'as published','Part of InstaNovo''s tra
 INSERT INTO dataset_version VALUES(16,10,'LCFM (low confidence)','The broadest and least stringently filtered labelled tier, from which the stricter ones are derived. "Low" is relative to the other tiers, not absolute: every labelled tier is high-confidence PSMs.',NULL,NULL,NULL,NULL,'2026-09-03',2);
 INSERT INTO dataset_version VALUES(17,10,'MCFM (medium confidence)','A stricter PSM filter than LCFM, and a superset of HCFM.',NULL,NULL,NULL,NULL,'2026-09-03',2);
 INSERT INTO dataset_version VALUES(18,10,'HCFM (high confidence)','The most stringently filtered tier, a subset of both others.',NULL,NULL,NULL,NULL,'2026-09-03',2);
-INSERT INTO dataset_version VALUES(19,10,'ACFM (all confidence)','The unlabelled superset the three labelled tiers are filtered out of. Named in the corpus layout and deliberately NOT published, so a paper that reports training on ACFM is reporting on data nobody else can obtain.',NULL,NULL,NULL,NULL,'2026-09-03',2);
+INSERT INTO dataset_version VALUES(19,10,'ACFM (all confidence)','The unlabelled all-confidence superset the three labelled tiers are filtered out of. Not published as a processed tier, but reproducible: the InstaNovo-FM paper lists the raw accessions it was built from, so rebuilding it means reprocessing those rather than downloading it.',NULL,NULL,NULL,NULL,'2026-09-03',2);
+INSERT INTO dataset_version VALUES(20,11,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-01-30',NULL);
+INSERT INTO dataset_version VALUES(21,12,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-02-03',NULL);
+INSERT INTO dataset_version VALUES(22,13,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-10-02',NULL);
+INSERT INTO dataset_version VALUES(23,14,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-02-08',NULL);
+INSERT INTO dataset_version VALUES(24,15,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-03-05',NULL);
+INSERT INTO dataset_version VALUES(25,16,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-07-25',NULL);
+INSERT INTO dataset_version VALUES(26,17,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(27,18,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-08-01',NULL);
+INSERT INTO dataset_version VALUES(28,19,'as deposited',NULL,NULL,NULL,NULL,NULL,'2017-09-11',NULL);
+INSERT INTO dataset_version VALUES(29,20,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-07-10',NULL);
+INSERT INTO dataset_version VALUES(30,21,'as deposited',NULL,NULL,NULL,NULL,NULL,'2016-06-28',NULL);
+INSERT INTO dataset_version VALUES(31,22,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-09-24',NULL);
+INSERT INTO dataset_version VALUES(32,23,'as deposited',NULL,NULL,NULL,NULL,NULL,'2022-10-28',NULL);
+INSERT INTO dataset_version VALUES(33,24,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-06-28',NULL);
+INSERT INTO dataset_version VALUES(34,25,'as deposited',NULL,NULL,NULL,NULL,NULL,'2023-06-07',NULL);
+INSERT INTO dataset_version VALUES(35,26,'as deposited',NULL,NULL,NULL,NULL,NULL,'2022-08-19',NULL);
+INSERT INTO dataset_version VALUES(36,27,'as deposited',NULL,NULL,NULL,NULL,NULL,'2023-10-27',NULL);
+INSERT INTO dataset_version VALUES(37,28,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(38,29,'as deposited',NULL,NULL,NULL,NULL,NULL,'2014-01-23',NULL);
+INSERT INTO dataset_version VALUES(39,30,'as deposited',NULL,NULL,NULL,NULL,NULL,'2014-11-06',NULL);
+INSERT INTO dataset_version VALUES(40,31,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(41,32,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(42,33,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(43,34,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(44,35,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(45,36,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(46,37,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(47,38,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(48,39,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(49,40,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(50,41,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(51,2,'Bruker timsTOF','The same peptide pools re-run on a Bruker timsTOF Pro, so a model trained on the Orbitrap runs can be tested for instrument transfer rather than only for sequence.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(52,2,'non-tryptic (Bruker)','HLA class I and II ligands plus Asp-N and Lys-N peptides on the Bruker instrument, the non-tryptic counterpart of Part III.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(53,2,'TMT 6-plex','Tryptic and non-tryptic sequences carrying TMT 6-plex labels, where the label itself changes the fragment ladder a de novo model has to read.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(54,42,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(55,42,'private mammal 1',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(56,42,'private mammal 2',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(57,42,'private invertebrate',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(58,42,'private fungus',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(59,42,'private plant',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(60,42,'private multi-protease','The holdout counterpart of the Jurkat multi-protease arm.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(61,42,'private immunopeptidomics (human)',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(62,42,'private immunopeptidomics (mouse)',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(63,42,'private single-cell HeLa 2','Prepared by the nanoPOTS workflow.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(64,42,'private PTM and phosphoproteomics',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(65,42,'private ProteomeTools non-natural peptides','Synthetic peptides whose sequences do not occur in any proteome, so a database search cannot find them even in principle.',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -23631,6 +23709,43 @@ INSERT INTO dataset_address VALUES(53,15,'PRIDE','PXD027772','https://www.ebi.ac
 INSERT INTO dataset_address VALUES(54,16,'Hugging Face','InstaDeepAI/InstaNovo#lcfm','https://huggingface.co/datasets/InstaDeepAI/InstaNovo','splits/lcfm and by_project/lcfm',0);
 INSERT INTO dataset_address VALUES(55,17,'Hugging Face','InstaDeepAI/InstaNovo#mcfm','https://huggingface.co/datasets/InstaDeepAI/InstaNovo','splits/mcfm and by_project/mcfm',0);
 INSERT INTO dataset_address VALUES(56,18,'Hugging Face','InstaDeepAI/InstaNovo#hcfm','https://huggingface.co/datasets/InstaDeepAI/InstaNovo','splits/hcfm and by_project/hcfm',0);
+INSERT INTO dataset_address VALUES(57,20,'PRIDE','PXD008808','https://www.ebi.ac.uk/pride/archive/projects/PXD008808',NULL,0);
+INSERT INTO dataset_address VALUES(58,21,'PRIDE','PXD008844','https://www.ebi.ac.uk/pride/archive/projects/PXD008844',NULL,0);
+INSERT INTO dataset_address VALUES(59,22,'PRIDE','PXD011246','https://www.ebi.ac.uk/pride/archive/projects/PXD011246',NULL,0);
+INSERT INTO dataset_address VALUES(60,23,'PRIDE','PXD012645','https://www.ebi.ac.uk/pride/archive/projects/PXD012645',NULL,0);
+INSERT INTO dataset_address VALUES(61,24,'PRIDE','PXD012979','https://www.ebi.ac.uk/pride/archive/projects/PXD012979',NULL,0);
+INSERT INTO dataset_address VALUES(62,25,'PRIDE','PXD010559','https://www.ebi.ac.uk/pride/archive/projects/PXD010559',NULL,0);
+INSERT INTO dataset_address VALUES(63,26,'MassIVE','MSV000082368','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000082368',NULL,0);
+INSERT INTO dataset_address VALUES(64,27,'PRIDE','PXD014877','https://www.ebi.ac.uk/pride/archive/projects/PXD014877',NULL,0);
+INSERT INTO dataset_address VALUES(65,27,'PRIDE','PXD019483','https://www.ebi.ac.uk/pride/archive/projects/PXD019483',NULL,0);
+INSERT INTO dataset_address VALUES(66,28,'PRIDE','PXD006939','https://www.ebi.ac.uk/pride/archive/projects/PXD006939',NULL,0);
+INSERT INTO dataset_address VALUES(67,29,'PRIDE','PXD010154','https://www.ebi.ac.uk/pride/archive/projects/PXD010154',NULL,0);
+INSERT INTO dataset_address VALUES(68,30,'PRIDE','PXD004452','https://www.ebi.ac.uk/pride/archive/projects/PXD004452',NULL,0);
+INSERT INTO dataset_address VALUES(69,31,'PRIDE','PXD028735','https://www.ebi.ac.uk/pride/archive/projects/PXD028735',NULL,0);
+INSERT INTO dataset_address VALUES(70,32,'PRIDE','PXD037803','https://www.ebi.ac.uk/pride/archive/projects/PXD037803',NULL,0);
+INSERT INTO dataset_address VALUES(71,33,'DOI','10.5281/zenodo.12587317','https://doi.org/10.5281/zenodo.12587317',NULL,0);
+INSERT INTO dataset_address VALUES(72,34,'DOI','10.5281/zenodo.8000316','https://doi.org/10.5281/zenodo.8000316',NULL,0);
+INSERT INTO dataset_address VALUES(73,35,'PRIDE','PXD036161','https://www.ebi.ac.uk/pride/archive/projects/PXD036161',NULL,0);
+INSERT INTO dataset_address VALUES(74,36,'PRIDE','PXD046453','https://www.ebi.ac.uk/pride/archive/projects/PXD046453',NULL,0);
+INSERT INTO dataset_address VALUES(75,37,'MassIVE','MSV000082287','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000082287',NULL,0);
+INSERT INTO dataset_address VALUES(76,38,'PRIDE','PXD000674','https://www.ebi.ac.uk/pride/archive/projects/PXD000674',NULL,0);
+INSERT INTO dataset_address VALUES(77,39,'PRIDE','PXD001468','https://www.ebi.ac.uk/pride/archive/projects/PXD001468',NULL,0);
+INSERT INTO dataset_address VALUES(78,40,'PRIDE','PXD024364','https://www.ebi.ac.uk/pride/archive/projects/PXD024364',NULL,0);
+INSERT INTO dataset_address VALUES(79,8,'MassIVE','MSV000081142','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000081142',NULL,0);
+INSERT INTO dataset_address VALUES(80,41,'PRIDE','PXD028577','https://www.ebi.ac.uk/pride/archive/projects/PXD028577',NULL,0);
+INSERT INTO dataset_address VALUES(81,42,'PRIDE','PXD012272','https://www.ebi.ac.uk/pride/archive/projects/PXD012272',NULL,0);
+INSERT INTO dataset_address VALUES(82,43,'PRIDE','PXD023217','https://www.ebi.ac.uk/pride/archive/projects/PXD023217',NULL,0);
+INSERT INTO dataset_address VALUES(83,44,'PRIDE','PXD034795','https://www.ebi.ac.uk/pride/archive/projects/PXD034795',NULL,0);
+INSERT INTO dataset_address VALUES(84,45,'PRIDE','PXD013649','https://www.ebi.ac.uk/pride/archive/projects/PXD013649',NULL,0);
+INSERT INTO dataset_address VALUES(85,46,'PRIDE','PXD021882','https://www.ebi.ac.uk/pride/archive/projects/PXD021882',NULL,0);
+INSERT INTO dataset_address VALUES(86,47,'PRIDE','PXD018566','https://www.ebi.ac.uk/pride/archive/projects/PXD018566',NULL,0);
+INSERT INTO dataset_address VALUES(87,48,'PRIDE','PXD044981','https://www.ebi.ac.uk/pride/archive/projects/PXD044981',NULL,0);
+INSERT INTO dataset_address VALUES(88,49,'MassIVE','MSV000079843','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000079843',NULL,0);
+INSERT INTO dataset_address VALUES(89,50,'MassIVE','MSV000096182','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000096182',NULL,0);
+INSERT INTO dataset_address VALUES(90,51,'PRIDE','PXD019086','https://www.ebi.ac.uk/pride/archive/projects/PXD019086',NULL,0);
+INSERT INTO dataset_address VALUES(91,52,'PRIDE','PXD043844','https://www.ebi.ac.uk/pride/archive/projects/PXD043844',NULL,0);
+INSERT INTO dataset_address VALUES(92,53,'PRIDE','PXD023119','https://www.ebi.ac.uk/pride/archive/projects/PXD023119',NULL,0);
+INSERT INTO dataset_address VALUES(93,53,'PRIDE','PXD023120','https://www.ebi.ac.uk/pride/archive/projects/PXD023120',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -23724,6 +23839,105 @@ INSERT INTO publication_dataset VALUES(83,2,1,3,'uses');
 INSERT INTO publication_dataset VALUES(84,315,1,3,'uses');
 INSERT INTO publication_dataset VALUES(85,2,2,6,'uses');
 INSERT INTO publication_dataset VALUES(86,273,6,12,'uses');
+INSERT INTO publication_dataset VALUES(87,39,18,27,'uses');
+INSERT INTO publication_dataset VALUES(88,74,18,27,'uses');
+INSERT INTO publication_dataset VALUES(89,110,18,27,'uses');
+INSERT INTO publication_dataset VALUES(90,115,18,27,'uses');
+INSERT INTO publication_dataset VALUES(91,127,18,27,'uses');
+INSERT INTO publication_dataset VALUES(92,273,18,27,'uses');
+INSERT INTO publication_dataset VALUES(93,13,17,26,'uses');
+INSERT INTO publication_dataset VALUES(94,29,17,26,'uses');
+INSERT INTO publication_dataset VALUES(95,30,17,26,'uses');
+INSERT INTO publication_dataset VALUES(96,60,17,26,'uses');
+INSERT INTO publication_dataset VALUES(97,103,17,26,'uses');
+INSERT INTO publication_dataset VALUES(98,120,17,26,'uses');
+INSERT INTO publication_dataset VALUES(99,18,16,25,'uses');
+INSERT INTO publication_dataset VALUES(100,34,16,25,'uses');
+INSERT INTO publication_dataset VALUES(101,46,16,25,'uses');
+INSERT INTO publication_dataset VALUES(102,54,16,25,'uses');
+INSERT INTO publication_dataset VALUES(103,57,16,25,'uses');
+INSERT INTO publication_dataset VALUES(104,114,16,25,'uses');
+INSERT INTO publication_dataset VALUES(105,11,27,36,'uses');
+INSERT INTO publication_dataset VALUES(106,15,27,36,'uses');
+INSERT INTO publication_dataset VALUES(107,23,27,36,'uses');
+INSERT INTO publication_dataset VALUES(108,221,27,36,'uses');
+INSERT INTO publication_dataset VALUES(109,273,27,36,'uses');
+INSERT INTO publication_dataset VALUES(110,1,19,28,'uses');
+INSERT INTO publication_dataset VALUES(111,2,19,28,'uses');
+INSERT INTO publication_dataset VALUES(112,74,19,28,'uses');
+INSERT INTO publication_dataset VALUES(113,273,19,28,'uses');
+INSERT INTO publication_dataset VALUES(114,315,19,28,'uses');
+INSERT INTO publication_dataset VALUES(115,1,26,35,'uses');
+INSERT INTO publication_dataset VALUES(116,2,26,35,'uses');
+INSERT INTO publication_dataset VALUES(117,74,26,35,'uses');
+INSERT INTO publication_dataset VALUES(118,273,26,35,'uses');
+INSERT INTO publication_dataset VALUES(119,315,26,35,'uses');
+INSERT INTO publication_dataset VALUES(120,37,20,29,'uses');
+INSERT INTO publication_dataset VALUES(121,80,20,29,'uses');
+INSERT INTO publication_dataset VALUES(122,108,20,29,'uses');
+INSERT INTO publication_dataset VALUES(123,273,20,29,'uses');
+INSERT INTO publication_dataset VALUES(124,348,20,29,'uses');
+INSERT INTO publication_dataset VALUES(125,107,18,27,'uses');
+INSERT INTO publication_dataset VALUES(126,18,12,21,'uses');
+INSERT INTO publication_dataset VALUES(127,34,12,21,'uses');
+INSERT INTO publication_dataset VALUES(128,54,12,21,'uses');
+INSERT INTO publication_dataset VALUES(129,57,12,21,'uses');
+INSERT INTO publication_dataset VALUES(130,114,12,21,'uses');
+INSERT INTO publication_dataset VALUES(131,18,11,20,'uses');
+INSERT INTO publication_dataset VALUES(132,34,11,20,'uses');
+INSERT INTO publication_dataset VALUES(133,54,11,20,'uses');
+INSERT INTO publication_dataset VALUES(134,57,11,20,'uses');
+INSERT INTO publication_dataset VALUES(135,114,11,20,'uses');
+INSERT INTO publication_dataset VALUES(136,18,13,22,'uses');
+INSERT INTO publication_dataset VALUES(137,34,13,22,'uses');
+INSERT INTO publication_dataset VALUES(138,54,13,22,'uses');
+INSERT INTO publication_dataset VALUES(139,57,13,22,'uses');
+INSERT INTO publication_dataset VALUES(140,114,13,22,'uses');
+INSERT INTO publication_dataset VALUES(141,18,14,23,'uses');
+INSERT INTO publication_dataset VALUES(142,34,14,23,'uses');
+INSERT INTO publication_dataset VALUES(143,54,14,23,'uses');
+INSERT INTO publication_dataset VALUES(144,57,14,23,'uses');
+INSERT INTO publication_dataset VALUES(145,114,14,23,'uses');
+INSERT INTO publication_dataset VALUES(146,18,15,24,'uses');
+INSERT INTO publication_dataset VALUES(147,34,15,24,'uses');
+INSERT INTO publication_dataset VALUES(148,54,15,24,'uses');
+INSERT INTO publication_dataset VALUES(149,57,15,24,'uses');
+INSERT INTO publication_dataset VALUES(150,114,15,24,'uses');
+INSERT INTO publication_dataset VALUES(151,34,21,30,'uses');
+INSERT INTO publication_dataset VALUES(152,54,21,30,'uses');
+INSERT INTO publication_dataset VALUES(153,127,21,30,'uses');
+INSERT INTO publication_dataset VALUES(154,273,21,30,'uses');
+INSERT INTO publication_dataset VALUES(155,21,28,37,'uses');
+INSERT INTO publication_dataset VALUES(156,34,28,37,'uses');
+INSERT INTO publication_dataset VALUES(157,107,28,37,'uses');
+INSERT INTO publication_dataset VALUES(158,114,28,37,'uses');
+INSERT INTO publication_dataset VALUES(159,35,22,31,'uses');
+INSERT INTO publication_dataset VALUES(160,249,22,31,'uses');
+INSERT INTO publication_dataset VALUES(161,435,22,31,'uses');
+INSERT INTO publication_dataset VALUES(162,127,23,32,'uses');
+INSERT INTO publication_dataset VALUES(163,193,23,32,'uses');
+INSERT INTO publication_dataset VALUES(164,325,23,32,'uses');
+INSERT INTO publication_dataset VALUES(165,3,29,38,'uses');
+INSERT INTO publication_dataset VALUES(166,251,29,38,'uses');
+INSERT INTO publication_dataset VALUES(167,317,29,38,'uses');
+INSERT INTO publication_dataset VALUES(168,93,24,33,'uses');
+INSERT INTO publication_dataset VALUES(169,220,24,33,'uses');
+INSERT INTO publication_dataset VALUES(170,434,24,33,'uses');
+INSERT INTO publication_dataset VALUES(171,25,31,40,'uses');
+INSERT INTO publication_dataset VALUES(172,221,31,40,'uses');
+INSERT INTO publication_dataset VALUES(173,273,31,40,'uses');
+INSERT INTO publication_dataset VALUES(174,25,25,34,'uses');
+INSERT INTO publication_dataset VALUES(175,41,25,34,'uses');
+INSERT INTO publication_dataset VALUES(176,221,25,34,'uses');
+INSERT INTO publication_dataset VALUES(177,28,3,8,'uses');
+INSERT INTO publication_dataset VALUES(178,34,3,8,'uses');
+INSERT INTO publication_dataset VALUES(179,114,3,8,'uses');
+INSERT INTO publication_dataset VALUES(180,50,30,39,'uses');
+INSERT INTO publication_dataset VALUES(181,127,30,39,'uses');
+INSERT INTO publication_dataset VALUES(182,435,30,39,'uses');
+INSERT INTO publication_dataset VALUES(183,36,36,45,'uses');
+INSERT INTO publication_dataset VALUES(184,112,36,45,'uses');
+INSERT INTO publication_dataset VALUES(185,249,34,43,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -23799,6 +24013,12 @@ INSERT INTO sqlite_sequence VALUES('affiliation',721);
 INSERT INTO sqlite_sequence VALUES('author',1803);
 INSERT INTO sqlite_sequence VALUES('algorithm',383);
 INSERT INTO sqlite_sequence VALUES('publication',435);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -23853,12 +24073,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -23874,12 +24088,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -23894,6 +24102,12 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
 CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
 CREATE UNIQUE INDEX idx_publication_dataset_unique

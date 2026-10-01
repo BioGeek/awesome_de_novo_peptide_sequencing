@@ -119,6 +119,17 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "publications with a dataset",
      r"publication links over (\d+) papers",
      "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset"),
+    ("CLAUDE.md", "versions with no address",
+     r"one\.\*\* (\d+) of \d+ versions have none",
+     "SELECT COUNT(*) FROM dataset_version v WHERE NOT EXISTS"
+     "(SELECT 1 FROM dataset_address WHERE dataset_version_id=v.id)"),
+    ("CLAUDE.md", "versions total (no-address context)",
+     r"one\.\*\* \d+ of (\d+) versions have none", "SELECT COUNT(*) FROM dataset_version"),
+    ("CLAUDE.md", "ProteomeTools versions",
+     r"\*\*ProteomeTools has (\w+) versions",
+     lambda db: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight"}.get(
+         db.execute("SELECT COUNT(*) FROM dataset_version WHERE dataset_id="
+                    "(SELECT id FROM dataset WHERE name='ProteomeTools')").fetchone()[0])),
     ("CLAUDE.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
      "SELECT COUNT(*) FROM publication_dataset WHERE dataset_id="

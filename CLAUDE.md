@@ -994,7 +994,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**10 datasets, 19 versions, 56 addresses, 86 publication links over 54 papers.**
+**42 datasets, 65 versions, 93 addresses, 185 publication links over 78 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1037,9 +1037,29 @@ row each; `kind` records where a dataset came from, and the links record how
 often anyone reused it.
 
 **Tiers are versions.** The InstaNovo-FM corpus publishes three nested labelled
-tiers, HCFM within MCFM within LCFM, plus **ACFM, which is deliberately not
-published**. A paper reporting training on ACFM is reporting on data nobody
-else can obtain, which is worth being able to see.
+tiers, HCFM within MCFM within LCFM, plus **ACFM, the unlabelled superset,
+which is not published as a tier**. ACFM is still reproducible: the
+InstaNovo-FM paper lists the raw accessions it was built from, so rebuilding it
+means reprocessing those rather than downloading them. Recording it as a
+version with no address says exactly that, and is the reason the version table
+allows a version with no `dataset_address` row at all.
+
+**A version may have NO address, and that is a recorded fact rather than a
+missing one.** 14 of 65 versions have none. Two shapes: ACFM, the InstaNovo-FM
+tier that is not published but is reproducible from the raw accessions its paper
+lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
+five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
+PTM/phospho, and non-natural peptides). Results are reported against the
+holdouts and none can be downloaded, so those numbers are not independently
+reproducible. A dataset nobody can fetch still belongs in the catalog, because a
+reader comparing numbers needs to know which side of that line each one is on.
+
+**ProteomeTools has six versions, and they are not re-releases.** Parts I-III,
+the high-confidence InstaNovo split, the 21-PTM subset, the same peptide pools
+re-run on a **Bruker timsTOF**, their **non-tryptic** counterpart on that
+instrument, and a **TMT 6-plex** form. Instrument and label change the fragment
+ladder a model has to read, so "trained on ProteomeTools" is as
+under-determined as "evaluated on nine-species", for a different reason.
 
 ### build_dataset_accessions.py
 
@@ -1064,6 +1084,18 @@ Two traps, both hit while writing it:
   243 files present plus 82 that no longer existed, silently halving the scan:
   100 accessions found instead of 402. Call `build_pdf_library.coverage()`
   instead, which is the audited matcher.
+- **A Zenodo or figshare DOI is as often software as data.** The first run put
+  PyTorch Lightning 0.7.6 and two supplementary-file bundles near the top of the
+  candidate list, and they would return on every run. DOI-shaped accessions are
+  now checked against DataCite (cached) and dropped when the repository's own
+  title says software release, supplementary material or code, with the count
+  and the reason PRINTED rather than filtered away silently, since that count comes
+  from the lookups and not from the database. An unknown title is never an
+  exclusion. One verdict is worth knowing about:
+  `Noble-Lab/multi-species-benchmark: Revised benchmark` is excluded as a repo
+  snapshot, correctly, even though that repository is how the revised
+  nine-species benchmark was built. It is code, so it is not an address of the
+  data.
 - **Count links, not hits.** Several accessions resolve to the same link, since
   a paper listing all nine provenance submissions is one row and nine hits.
   Without deduplication the report claimed 187 rows where `--write` created 86,
