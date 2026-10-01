@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Fragment ion analysis</h1>
-<p class="subtitle lead">3 methods · 2007–2026</p>
+<p class="subtitle lead">4 methods · 2007–2026</p>
 </div>
 
 <div>
@@ -164,20 +164,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Work on the fragment ions themselves before any sequence is proposed: charge state, isotope pattern and series assignment, which is what a sequencing algorithm downstream has to assume it already has.</p>
-<p>The earliest of its 3 methods is <a href="../algorithms/pfia.html">PFIA</a> (2007); 2 more have followed.</p>
+<p>The earliest of its 4 methods is <a href="../algorithms/pfia.html">PFIA</a> (2007); 3 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>3</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>3</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>10</td>
+<td>14</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -185,34 +185,36 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (2), adjacent</td>
+<td>algorithm (3), adjacent</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (3)</td>
+<td>DDA (4)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-3" class="level2">
-<h2 class="anchored" data-anchor-id="methods-3">Methods (3)</h2>
+<section id="methods-4" class="level2">
+<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/pfia.html">PFIA</a> (2007): Peptide Fragment Ion Analyser for interpreting tandem MS data and de novo peptide sequencing.</li>
 <li><a href="../algorithms/ms3-w-ion-leu-ile-discrimination.html">MS3 w-ion Leu/Ile discrimination</a> (2014): Separates the isomeric residues leucine and isoleucine during de novo sequencing by instrument rather than by inference: multistage ETD isolates the primary odd-electron z-dot ions and HCD then drives radical-site fragmentation into w-ions, whose masses differ between the two isomers and which come out as the most intense peaks in the spectrum. Demonstrated on six natural non-tryptic peptides of 15 to 37 residues from Rana ridibunda frog skin secretion, resolving all 22 Leu/Ile positions.</li>
+<li><a href="../algorithms/hydrogen-atom-attachment-phosphopeptide-sequencing.html">Hydrogen atom attachment phosphopeptide sequencing</a> (2018): Radical fragmentation by hydrogen atom attachment on a MALDI instrument, which keeps the labile phosphate in place while cleaving the backbone, so tryptic phosphopeptides can be sequenced de novo and their phosphosites located.</li>
 <li><a href="../algorithms/log-transformed-mass-domain-de-novo-sequencing.html">Log-transformed mass domain de novo sequencing</a> (2026): Bypasses averagine-based deconvolution by working directly in natural log-transformed m/z space, where charge-state spacing is mass-invariant and therefore supplies an intrinsic internal-calibration reference on both FT-ICR and Orbitrap. Isotopologue pairing in that domain then supports de novo sequencing of intact proteins.</li>
 </ul>
 </section>
-<section id="papers-describing-them-3" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-3">Papers describing them (3)</h2>
+<section id="papers-describing-them-4" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-4">Papers describing them (4)</h2>
 <ul>
 <li><a href="../publications/peptide-fragment-ion-analyser-pfia-a-simple-and-versatile-tool-for-the.html">Peptide Fragment Ion Analyser (PFIA): a simple and versatile tool for the interpretation of tandem mass spectrometric data and de novo sequencing of peptides</a> (2007, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/discrimination-of-leucine-and-isoleucine-in-peptides-sequencing-with-orbitrap.html">Discrimination of Leucine and Isoleucine in Peptides Sequencing with Orbitrap Fusion Mass Spectrometer</a> (2014, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/de-novo-sequencing-of-tryptic-phosphopeptides-using-matrix-assisted-laser.html">De Novo Sequencing of Tryptic Phosphopeptides Using Matrix-Assisted Laser Desorption/Ionization Based Tandem Mass Spectrometry with Hydrogen Atom Attachment</a> (2018, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/mass-invariant-natural-log-transformed-mass-spectra-enable-internal-calibration.html">Mass-Invariant Natural Log-Transformed Mass Spectra Enable Internal Calibration and De Novo Sequencing of Intact Proteins</a> (2026, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-10" class="level2">
-<h2 class="anchored" data-anchor-id="authors-10">Authors (10)</h2>
-<p><a href="../authors/albert-t-lebedev.html">Albert T. Lebedev</a>, <a href="../authors/alexander-makarov.html">Alexander Makarov</a>, <a href="../authors/eugen-damoc.html">Eugen Damoc</a>, <a href="../authors/jagannath-swaminathan.html">Jagannath Swaminathan</a>, <a href="../authors/krishna-saketh-kamadana.html">Krishna Saketh Kamadana</a>, <a href="../authors/lissa-c-anderson.html">Lissa C. Anderson</a>, <a href="../authors/nathan-k-kaiser.html">Nathan K. Kaiser</a>, <a href="../authors/tatiana-yu-samgina.html">Tatiana Yu. Samgina</a>, <a href="../authors/varatharajan-sabareesh.html">Varatharajan Sabareesh</a>, <a href="../authors/xian-mallory.html">Xian Mallory</a></p>
+<section id="authors-14" class="level2">
+<h2 class="anchored" data-anchor-id="authors-14">Authors (14)</h2>
+<p><a href="../authors/albert-t-lebedev.html">Albert T. Lebedev</a>, <a href="../authors/alexander-makarov.html">Alexander Makarov</a>, <a href="../authors/daiki-asakawa.html">Daiki Asakawa</a>, <a href="../authors/eugen-damoc.html">Eugen Damoc</a>, <a href="../authors/hidenori-takahashi.html">Hidenori Takahashi</a>, <a href="../authors/jagannath-swaminathan.html">Jagannath Swaminathan</a>, <a href="../authors/koichi-tanaka.html">Koichi Tanaka</a>, <a href="../authors/krishna-saketh-kamadana.html">Krishna Saketh Kamadana</a>, <a href="../authors/lissa-c-anderson.html">Lissa C. Anderson</a>, <a href="../authors/nathan-k-kaiser.html">Nathan K. Kaiser</a>, <a href="../authors/shinichi-iwamoto.html">Shinichi Iwamoto</a>, <a href="../authors/tatiana-yu-samgina.html">Tatiana Yu. Samgina</a>, <a href="../authors/varatharajan-sabareesh.html">Varatharajan Sabareesh</a>, <a href="../authors/xian-mallory.html">Xian Mallory</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

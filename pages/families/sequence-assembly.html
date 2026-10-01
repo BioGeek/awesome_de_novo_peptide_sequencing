@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Sequence assembly</h1>
-<p class="subtitle lead">5 methods · 2016–2026</p>
+<p class="subtitle lead">6 methods · 2016–2026</p>
 </div>
 
 <div>
@@ -164,20 +164,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Sequencing a whole protein rather than a peptide. Overlapping peptides are called first, then assembled into full-length sequence, which is how antibodies and protein therapeutics are sequenced without a reference.</p>
-<p>The earliest of its 5 methods is <a href="../algorithms/alps.html">ALPS</a> (2016); 4 more have followed.</p>
+<p>The earliest of its 6 methods is <a href="../algorithms/alps.html">ALPS</a> (2016); 5 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>5</td>
+<td>6</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>6</td>
+<td>7</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>36</td>
+<td>45</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -185,29 +185,31 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>post-processor (5)</td>
+<td>post-processor (5), algorithm</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (4)</td>
+<td>DDA (5)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-5" class="level2">
-<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
+<section id="methods-6" class="level2">
+<h2 class="anchored" data-anchor-id="methods-6">Methods (6)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/alps.html">ALPS</a> (2016): Assembles de novo sequenced peptides and their per-residue confidence scores into a de Bruijn graph to reconstruct complete monoclonal antibody heavy and light chains without a template.</li>
+<li><a href="../algorithms/top-down-protein-analysis-from-de-novo-strings.html">Top-down protein analysis from de novo strings</a> (2016): Takes a set of de novo amino acid strings derived from top-down tandem mass spectra and analyses the protein sample from them, rather than matching spectra to a database.</li>
 <li><a href="../algorithms/stitch.html">Stitch</a> (2024): Assembles de novo peptides from Casanovo, PEAKS, pNovo and MaxNovo into full antibody sequences, and corrects the two error classes that assembly alone cannot: mass coincidences, where a different residue combination matches the same mass, and I/L ambiguity.</li>
 <li><a href="../algorithms/instanexus.html">InstaNexus</a> (2025): End-to-end workflow for reference-free sequencing of full-length protein therapeutics. Multi-protease digestion yields overlapping peptides, InstaNovo sequences them de novo and Winnow rescores, then greedy overlap or de Bruijn graph assembly (default k=7, min overlap 3) reconstructs contigs ranked by a composite score over coverage, N50, scaffold count and identity. Validated on nanobodies, monoclonal antibodies and de novo mini-binders.</li>
 <li><a href="../algorithms/sequenceassembler.html">SequenceAssembler</a> (2025): Post-identification tool that assembles full-length protein sequences by unifying peptide-spectrum matching (PSM) and de novo sequencing outputs from Novor Cloud, PEAKS Studio, and PatternLab for Proteomics; one-click GUI and comparable in performance to Stitch.</li>
 <li><a href="../algorithms/borgonovo.html">borgonovo</a> (2026): Reference-free protein sequencer: multi-protease digestion tiles a protein with overlapping peptides, and the redundant de novo reads are assembled into a per-residue consensus by substitution-tolerant alignment and per-column voting. Re-decoding each spectrum under a prior from its consensus position raises amino-acid accuracy. Wraps Casanovo by default but is backend-agnostic.</li>
 </ul>
 </section>
-<section id="papers-describing-them-6" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
+<section id="papers-describing-them-7" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-7">Papers describing them (7)</h2>
 <ul>
 <li><a href="../publications/complete-de-novo-assembly-of-monoclonal-antibody-sequences.html">Complete De Novo Assembly of Monoclonal Antibody Sequences</a> (2016, Scientific Reports, peer-reviewed)</li>
+<li><a href="../publications/top-down-analysis-of-protein-samples-by-i-de-novo-i-sequencing-techniques.html">Top-down analysis of protein samples by &lt;i&gt;de novo&lt;/i&gt; sequencing techniques</a> (2016, Bioinformatics, peer-reviewed)</li>
 <li><a href="../publications/a-handle-on-mass-coincidence-errors-in-de-novo-sequencing-of-antibodies-by.html">A Handle on Mass Coincidence Errors in De Novo Sequencing of Antibodies by Bottom-up Proteomics</a> (2024, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/generalizable-direct-protein-sequencing-with-instanexus-preprint.html">Generalizable direct protein sequencing with InstaNexus</a> (2025, bioRxiv, preprint)</li>
 <li><a href="../publications/sequenceassembler-a-tool-for-protein-sequence-assembly-from-mass-spectrometry.html">SequenceAssembler: A tool for protein sequence assembly from mass spectrometry data</a> (2025, Journal of Proteomics, peer-reviewed)</li>
@@ -215,9 +217,9 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/reference-free-protein-sequencing-by-consensus-assembly-of-redundant-de-novo.html">Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads</a> (2026, bioRxiv, preprint)</li>
 </ul>
 </section>
-<section id="authors-36" class="level2">
-<h2 class="anchored" data-anchor-id="authors-36">Authors (36)</h2>
-<p><a href="../authors/alberto-santos.html">Alberto Santos</a>, <a href="../authors/alfred-nilsson.html">Alfred Nilsson</a>, <a href="../authors/ana-gisele-da-costa-neves-ferreira.html">Ana Gisele da Costa Neves-Ferreira</a>, <a href="../authors/andreas-hougaard-laustsen.html">Andreas Hougaard Laustsen</a>, <a href="../authors/anne-ljungars.html">Anne Ljungars</a>, <a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/celso-vitor-a-q-calomeno.html">Celso Vitor A. Q. Calomeno</a>, <a href="../authors/darian-stephan-wolff.html">Darian Stephan Wolff</a>, <a href="../authors/douwe-schulte.html">Douwe Schulte</a>, <a href="../authors/elpida-lytra.html">Elpida Lytra</a>, <a href="../authors/emil-sporre.html">Emil Sporre</a>, <a href="../authors/erwin-m-schoof.html">Erwin M. Schoof</a>, <a href="../authors/fredrik-edfors.html">Fredrik Edfors</a>, <a href="../authors/hulyana-brum.html">Hulyana Brum</a>, <a href="../authors/jemma-daniel.html">Jemma Daniel</a>, <a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a>, <a href="../authors/joost-snijder.html">Joost Snijder</a>, <a href="../authors/konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/lin-he.html">Lin He</a>, <a href="../authors/luis-miguel-munoz-gomez.html">Luis Miguel Muñoz-Gómez</a>, <a href="../authors/lukas-kall.html">Lukas Käll</a>, <a href="../authors/m-ziaur-rahman.html">M. Ziaur Rahman</a>, <a href="../authors/maike-wennekers-nielsen.html">Maike Wennekers Nielsen</a>, <a href="../authors/marco-reverenna.html">Marco Reverenna</a>, <a href="../authors/marie-v-lukassen.html">Marie V. Lukassen</a>, <a href="../authors/marlon-d-m-santos.html">Marlon D. M. Santos</a>, <a href="../authors/michel-batista.html">Michel Batista</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ngoc-hieu-tran.html">Ngoc Hieu Tran</a>, <a href="../authors/pasquale-d-colaianni.html">Pasquale D. Colaianni</a>, <a href="../authors/paulo-c-carvalho.html">Paulo C. Carvalho</a>, <a href="../authors/richard-hemmi-valente.html">Richard Hemmi Valente</a>, <a href="../authors/rodrigo-s-c-brant.html">Rodrigo S. C. Brant</a>, <a href="../authors/suthimon-thumtecho.html">Suthimon Thumtecho</a>, <a href="../authors/timothy-p-jenkins.html">Timothy P. Jenkins</a></p>
+<section id="authors-45" class="level2">
+<h2 class="anchored" data-anchor-id="authors-45">Authors (45)</h2>
+<p><a href="../authors/alberto-santos.html">Alberto Santos</a>, <a href="../authors/alfred-nilsson.html">Alfred Nilsson</a>, <a href="../authors/ana-gisele-da-costa-neves-ferreira.html">Ana Gisele da Costa Neves-Ferreira</a>, <a href="../authors/andreas-hougaard-laustsen.html">Andreas Hougaard Laustsen</a>, <a href="../authors/anne-ljungars.html">Anne Ljungars</a>, <a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/celso-vitor-a-q-calomeno.html">Celso Vitor A. Q. Calomeno</a>, <a href="../authors/darian-stephan-wolff.html">Darian Stephan Wolff</a>, <a href="../authors/douwe-schulte.html">Douwe Schulte</a>, <a href="../authors/elpida-lytra.html">Elpida Lytra</a>, <a href="../authors/emil-sporre.html">Emil Sporre</a>, <a href="../authors/erwin-m-schoof.html">Erwin M. Schoof</a>, <a href="../authors/fredrik-edfors.html">Fredrik Edfors</a>, <a href="../authors/hulyana-brum.html">Hulyana Brum</a>, <a href="../authors/jemma-daniel.html">Jemma Daniel</a>, <a href="../authors/jeroen-van-goey.html">Jeroen Van Goey</a>, <a href="../authors/joost-snijder.html">Joost Snijder</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/lennard-j-m-dekker.html">Lennard J. M. Dekker</a>, <a href="../authors/lin-he.html">Lin He</a>, <a href="../authors/ljiljana-pasa-tolic.html">Ljiljana Paša-Tolić</a>, <a href="../authors/luis-miguel-munoz-gomez.html">Luis Miguel Muñoz-Gómez</a>, <a href="../authors/lukas-kall.html">Lukas Käll</a>, <a href="../authors/m-ziaur-rahman.html">M. Ziaur Rahman</a>, <a href="../authors/maike-wennekers-nielsen.html">Maike Wennekers Nielsen</a>, <a href="../authors/marco-reverenna.html">Marco Reverenna</a>, <a href="../authors/marie-v-lukassen.html">Marie V. Lukassen</a>, <a href="../authors/marlon-d-m-santos.html">Marlon D. M. Santos</a>, <a href="../authors/martijn-m-vanduijn.html">Martijn M. VanDuijn</a>, <a href="../authors/michel-batista.html">Michel Batista</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ngoc-hieu-tran.html">Ngoc Hieu Tran</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pasquale-d-colaianni.html">Pasquale D. Colaianni</a>, <a href="../authors/paulo-c-carvalho.html">Paulo C. Carvalho</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/richard-hemmi-valente.html">Richard Hemmi Valente</a>, <a href="../authors/rodrigo-s-c-brant.html">Rodrigo S. C. Brant</a>, <a href="../authors/si-wu.html">Si Wu</a>, <a href="../authors/suthimon-thumtecho.html">Suthimon Thumtecho</a>, <a href="../authors/theo-m-luider.html">Theo M. Luider</a>, <a href="../authors/timothy-p-jenkins.html">Timothy P. Jenkins</a>, <a href="../authors/xiaowen-liu.html">Xiaowen Liu</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

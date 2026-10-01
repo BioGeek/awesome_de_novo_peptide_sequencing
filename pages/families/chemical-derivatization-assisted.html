@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Chemical derivatization assisted</h1>
-<p class="subtitle lead">5 methods · 1999–2026</p>
+<p class="subtitle lead">17 methods · 1999–2026</p>
 </div>
 
 <div>
@@ -164,20 +164,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Covalent modification of the peptide, usually at a terminus, to change how it fragments: selective cleavage, brighter low-mass ions, or a strongly directed ion series.</p>
-<p>The earliest of its 5 methods is <a href="../algorithms/psd-maldi-high-sensitivity-de-novo-sequencing.html">PSD MALDI high-sensitivity de novo sequencing</a> (1999); 4 more have followed.</p>
+<p>The earliest of its 17 methods is <a href="../algorithms/psd-maldi-high-sensitivity-de-novo-sequencing.html">PSD MALDI high-sensitivity de novo sequencing</a> (1999); 16 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>5</td>
+<td>17</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>6</td>
+<td>18</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>33</td>
+<td>90</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -185,39 +185,63 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (5)</td>
+<td>algorithm (12), adjacent (5)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (4)</td>
+<td>DDA (16)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-5" class="level2">
-<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
+<section id="methods-17" class="level2">
+<h2 class="anchored" data-anchor-id="methods-17">Methods (17)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/psd-maldi-high-sensitivity-de-novo-sequencing.html">PSD MALDI high-sensitivity de novo sequencing</a> (1999): High-sensitivity postsource decay MALDI method for de novo peptide sequencing with N-terminal sulfonation.</li>
+<li><a href="../algorithms/charge-derivatization-maldi-psd-de-novo-sequencing.html">Charge derivatization MALDI-PSD de novo sequencing</a> (1999): Charge-derivatizes a proteolytic digest before MALDI post-source decay so the fragment series reads cleanly, evaluated on a phosphoenolpyruvate carboxykinase of known structure and then used to sequence an unknown variant from Anaerobiospirillum succiniciproducens.</li>
 <li><a href="../algorithms/lysine-derivatization-psd-de-novo-sequencing.html">Lysine derivatization PSD de novo sequencing</a> (2000): Derivatization workflow for lysine-terminated tryptic peptides to facilitate PSD MALDI de novo sequencing.</li>
+<li><a href="../algorithms/n-sulfonated-peptide-maldi-tof-tof-de-novo-sequencing.html">N-sulfonated peptide MALDI TOF/TOF de novo sequencing</a> (2004): N-sulfonation before MALDI TOF/TOF directs fragmentation into a single dominant series, so a peptide mass fingerprint that does not identify a protein on its own can be followed by a readable de novo spectrum.</li>
+<li><a href="../algorithms/irmpd-of-n-terminal-sulfonated-peptides.html">IRMPD of N-terminal sulfonated peptides</a> (2006): Infrared multiphoton dissociation of N-terminal sulfonated peptides in a quadrupole ion trap, which both dissociates them efficiently and carries the y-ion series all the way down to y1, so the C-terminal residue is not lost.</li>
+<li><a href="../algorithms/charged-tag-with-c-terminal-digestion.html">Charged tag with C-terminal digestion</a> (2007): Couples a fixed-charge N-terminal derivatization with a C-terminal digestion of the derivatized peptide, so MALDI spectra carry one interpretable series and the ladder can be read directly.</li>
+<li><a href="../algorithms/n-terminal-fragment-isolation-de-novo-sequencing.html">N-terminal fragment isolation de novo sequencing</a> (2007): Isolates protein N-terminal peptides specifically, through reduction, S-alkylation, guanidination and a cleavable biotin coupling, so several proteins can be N-terminally sequenced in parallel at low picomole level.</li>
+<li><a href="../algorithms/lys-tag.html">Lys Tag</a> (2008): A single robust lysine modification before MALDI TOF/TOF that improves de novo readability without a multi-step workup, aimed at identifying proteins confidently from biological samples.</li>
+<li><a href="../algorithms/tmpp-arginine-peptide-de-novo-sequencing.html">TMPP arginine-peptide de novo sequencing</a> (2008): Extends TMPP-Ac-OSu tagging to arginine-containing peptides, whose fragmentation the basic side chain otherwise complicates, simplifying the pattern enough to read a sequence.</li>
+<li><a href="../algorithms/tmpp-n-terminal-peptide-de-novo-sequencing.html">TMPP N-terminal peptide de novo sequencing</a> (2008): Tags peptide N-termini with TMPP-Ac-OSu after metalloendopeptidase digestion and isolates them, giving MALDI spectra of N-terminal peptides clean enough to sequence de novo.</li>
+<li><a href="../algorithms/oxazolone-c-terminal-derivatization.html">Oxazolone C-terminal derivatization</a> (2011): Selective C-terminal derivatization, which is hard because C-terminal and side-chain carboxyls behave alike, improved in efficiency and given a bromine signature so the C-terminal fragment can be picked out and sequenced.</li>
+<li><a href="../algorithms/br-signature-n-terminal-derivatization.html">Br-signature N-terminal derivatization</a> (2012): A MALDI signal-enhancing N-terminal derivatization carrying a bromine isotope signature, so the tagged N-terminal peptide is unmistakable in the spectrum. Used to read N-terminal processing such as methionine or signal-peptide removal, and to annotate uncharacterized proteins.</li>
+<li><a href="../algorithms/193-nm-uvpd-of-imidazolinylated-lys-n-peptides.html">193 nm UVPD of imidazolinylated Lys-N peptides</a> (2012): Imidazolinylation of Lys-N peptides followed by 193 nm ultraviolet photodissociation, which yields a SINGLE product ion series instead of the overlapping series that defeat most de novo strategies.</li>
 <li><a href="../algorithms/351-nm-uvpd-de-novo-sequencing.html">351 nm UVPD de novo sequencing</a> (2013): N-terminal chromophore derivatisation makes a peptide absorb at 351 nm, so selective UV photodissociation cleaves it into a simplified y-ion series instead of the mixed ladders CID gives, deliberately to make the spectra amenable to de novo sequencing.</li>
+<li><a href="../algorithms/tetrazine-cyclized-peptide-uv-ring-opening.html">Tetrazine-cyclized peptide UV ring-opening</a> (2023): Designs cyclic peptides on solid phase around a tetrazine so that UV light opens the ring and releases them, turning a cyclic sequence – which tandem MS deconvolutes badly, and which most approved peptide drugs are – into a linear one that sequences de novo.</li>
 <li><a href="../algorithms/psmtags.html">PSMtags</a> (2025): Small-molecule peptide conjugates found by systematic screening that sharply increase b-ion fragment coverage, raising sequence-identification confidence and improving de novo sequencing. Also supports 9-plex stable-isotope multiplexing at ~240 samples/day, boosting protein data points roughly 6.5x over the unlabelled baseline in sensitive (low-input) proteomics.</li>
 <li><a href="../algorithms/me-cou-n-terminal-derivatization-de-novo-sequencing.html">Me-Cou N-terminal derivatization de novo sequencing</a> (2026): N-terminal derivatization with N-succinimidyl 7-methoxycoumarin-3-carboxylate (Me-Cou), which boosts low-mass b-ion yield so de novo sequencing can read the N-terminal residues, applied to untargeted peptidomics on LC-TIMS-qTOF/MS.</li>
 </ul>
 </section>
-<section id="papers-describing-them-6" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
+<section id="papers-describing-them-18" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-18">Papers describing them (18)</h2>
 <ul>
 <li><a href="../publications/a-method-for-high-sensitivity-peptide-sequencing-using-postsource-decay-matrix.html">A method for high-sensitivity peptide sequencing using postsource decay matrix-assisted laser desorption ionization mass spectrometry</a> (1999, Proceedings of the National Academy of Sciences, peer-reviewed)</li>
+<li><a href="../publications/evaluation-of-charge-derivatization-of-a-proteolytic-protein-digest-for.html">Evaluation of charge derivatization of a proteolytic protein digest for improved mass spectrometric analysis:de novo sequencing by matrix-assisted laser desorption/ionization post-source decay mass spectrometry</a> (1999, Journal of Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/derivatization-procedures-to-facilitate-de-novo-sequencing-of-lysine-terminated.html">Derivatization procedures to facilitate de novo sequencing of lysine-terminated tryptic peptides using postsource decay matrix-assisted laser desorption/ionization mass spectrometry</a> (2000, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/a-case-study-of-de-novo-sequence-analysis-of-n-sulfonated-peptides-by-maldi-tof.html">A case study of de novo sequence analysis of N-sulfonated peptides by MALDI TOF/TOF mass spectrometry</a> (2004, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/infrared-multiphoton-dissociation-for-enhanced-de-novo-sequence-interpretation.html">Infrared Multiphoton Dissociation for Enhanced de Novo Sequence Interpretation of N-Terminal Sulfonated Peptides in a Quadrupole Ion Trap</a> (2006, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/improving-de-novo-sequencing-of-peptides-using-a-charged-tag-and-c-terminal.html">Improving de Novo Sequencing of Peptides Using a Charged Tag and C-Terminal Digestion</a> (2007, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/specific-isolation-of-n-terminal-fragments-from-proteins-and-their-high.html">Specific isolation of N‐terminal fragments from proteins and their high‐fidelity &lt;i&gt;de novo&lt;/i&gt; sequencing</a> (2007, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/lys-tag-an-easy-and-robust-chemical-modification-for-improved-i-de-novo-i.html">Lys Tag: an easy and robust chemical modification for improved &lt;i&gt;de novo&lt;/i&gt; sequencing with a matrix‐assisted laser desorption/ionization tandem time‐of‐flight mass spectrometer</a> (2008, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup.html">An improved method for &lt;i&gt;de novo&lt;/i&gt; sequencing of arginine‐containing, N &lt;sup&gt;α&lt;/sup&gt; ‐tris(2,4,6‐trimethoxyphenyl)phosphonium‐acetylated peptides</a> (2008, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/a-method-for-n-terminal-de-novo-sequence-analysis-of-proteins-by-matrix.html">A method for N-terminal de novo sequence analysis of proteins by matrix-assisted laser desorption/ionization mass spectrometry</a> (2008, Analytical Biochemistry, peer-reviewed)</li>
+<li><a href="../publications/c-terminal-de-novo-sequencing-of-peptides-using-oxazolone-based-derivatization.html">C-terminal de novo sequencing of peptides using oxazolone-based derivatization with bromine signature</a> (2011, Analytical Biochemistry, peer-reviewed)</li>
+<li><a href="../publications/de-novo-analysis-of-protein-n-terminal-sequence-utilizing-maldi-signal.html">De novo analysis of protein N-terminal sequence utilizing MALDI signal enhancing derivatization with Br signature</a> (2012, Analytical and Bioanalytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i.html">193 nm Ultraviolet Photodissociation of Imidazolinylated Lys-N Peptides for &lt;i&gt;De Novo&lt;/i&gt; Sequencing</a> (2012, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-peptides-using-selective-351-nm-ultraviolet.html">De Novo Sequencing of Peptides Using Selective 351 nm Ultraviolet Photodissociation Mass Spectrometry</a> (2013, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/facile-de-novo-sequencing-of-tetrazine-cyclized-peptides-through-uv-induced.html">Facile de Novo Sequencing of Tetrazine‐Cyclized Peptides through UV‐Induced Ring‐Opening and Cleavage from the Solid Phase</a> (2023, ChemBioChem, peer-reviewed)</li>
 <li><a href="../publications/psmtags-improve-peptide-sequencing-and-throughput-in-sensitive-proteomics.html">PSMtags improve peptide sequencing and throughput in sensitive proteomics</a> (2025, bioRxiv, preprint)</li>
 <li><a href="../publications/n-terminal-coumarin-derivatization-aided-de-novo-peptide-sequencing-preprint.html">N-terminal Coumarin Derivatization-aided De Novo Peptide Sequencing and its Application to Peptidomics using LC-trapped Ion Mobility Spectrometry-qTOF/MS</a> (2026, ChemRxiv, preprint)</li>
 <li><a href="../publications/n-terminal-coumarin-derivatization-aided-de-novo-peptide-sequencing-and-its.html">N-Terminal Coumarin Derivatization-Aided De Novo Peptide Sequencing and Its Application to Peptidomics Using LC-Trapped Ion Mobility Spectrometry-qTOF/MS</a> (2026, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-33" class="level2">
-<h2 class="anchored" data-anchor-id="authors-33">Authors (33)</h2>
-<p><a href="../authors/ahmet-yesilcimen.html">Ahmet Yesilcimen</a>, <a href="../authors/andrew-ellington.html">Andrew Ellington</a>, <a href="../authors/bradley-l-pentelute.html">Bradley L. Pentelute</a>, <a href="../authors/christien-kluwe.html">Christien Kluwe</a>, <a href="../authors/corinna-friedrich.html">Corinna Friedrich</a>, <a href="../authors/david-barnes-seeman.html">David Barnes-Seeman</a>, <a href="../authors/fumiya-honda.html">Fumiya Honda</a>, <a href="../authors/harrison-specht.html">Harrison Specht</a>, <a href="../authors/hui-luan.html">Hui Luan</a>, <a href="../authors/jennifer-s-brodbelt.html">Jennifer S. Brodbelt</a>, <a href="../authors/joe-r-cannon.html">Joe R. Cannon</a>, <a href="../authors/kasa-shiva-raju.html">Kasa Shiva Raju</a>, <a href="../authors/kevin-mcdonnell.html">Kevin McDonnell</a>, <a href="../authors/maddy-yeh.html">Maddy Yeh</a>, <a href="../authors/mark-adamo.html">Mark Adamo</a>, <a href="../authors/martin-p-lacey.html">Martin P. Lacey</a>, <a href="../authors/michael-alan-lee.html">Michael Alan Lee</a>, <a href="../authors/michael-p-agius.html">Michael P. Agius</a>, <a href="../authors/mitsuru-tanaka.html">Mitsuru Tanaka</a>, <a href="../authors/nikolai-slavov.html">Nikolai Slavov</a>, <a href="../authors/r-s-youngquist.html">R. S. Youngquist</a>, <a href="../authors/risa-katagihara.html">Risa Katagihara</a>, <a href="../authors/ryotaro-asai.html">Ryotaro Asai</a>, <a href="../authors/sarah-sipe.html">Sarah Sipe</a>, <a href="../authors/saya-nakamura.html">Saya Nakamura</a>, <a href="../authors/scott-a-robotham.html">Scott A. Robotham</a>, <a href="../authors/t-keough.html">T. Keough</a>, <a href="../authors/toshiro-matsui.html">Toshiro Matsui</a>, <a href="../authors/wai-kit-pang.html">Wai Kit Pang</a>, <a href="../authors/wayne-vuong.html">Wayne Vuong</a>, <a href="../authors/yanchang-huang.html">Yanchang Huang</a>, <a href="../authors/yizhi-xiao.html">Yizhi Xiao</a>, <a href="../authors/yumiko-toyama.html">Yumiko Toyama</a></p>
+<section id="authors-90" class="level2">
+<h2 class="anchored" data-anchor-id="authors-90">Authors (90)</h2>
+<p><a href="../authors/ahmet-yesilcimen.html">Ahmet Yesilcimen</a>, <a href="../authors/andrew-ellington.html">Andrew Ellington</a>, <a href="../authors/ariane-borges.html">Ariane Borges</a>, <a href="../authors/arundhati-nag.html">Arundhati Nag</a>, <a href="../authors/bart-devreese.html">Bart Devreese</a>, <a href="../authors/bart-samyn.html">Bart Samyn</a>, <a href="../authors/bella-dichiara.html">Bella DiChiara</a>, <a href="../authors/bradley-l-pentelute.html">Bradley L. Pentelute</a>, <a href="../authors/caroline-wang.html">Caroline Wang</a>, <a href="../authors/chi-nguyen.html">Chi Nguyen</a>, <a href="../authors/christien-kluwe.html">Christien Kluwe</a>, <a href="../authors/corinna-friedrich.html">Corinna Friedrich</a>, <a href="../authors/daisuke-nakayama.html">Daisuke Nakayama</a>, <a href="../authors/david-barnes-seeman.html">David Barnes-Seeman</a>, <a href="../authors/dhaval-nanavati.html">Dhaval Nanavati</a>, <a href="../authors/douglas-a-gage.html">Douglas A. Gage</a>, <a href="../authors/eiji-ando.html">Eiji Ando</a>, <a href="../authors/emily-atkinson.html">Emily Atkinson</a>, <a href="../authors/fumiya-honda.html">Fumiya Honda</a>, <a href="../authors/griet-debyser.html">Griet Debyser</a>, <a href="../authors/harrison-specht.html">Harrison Specht</a>, <a href="../authors/henna-patel.html">Henna Patel</a>, <a href="../authors/henry-shion.html">Henry Shion</a>, <a href="../authors/hie-joon-kim.html">Hie-Joon Kim</a>, <a href="../authors/hiroki-kuyama.html">Hiroki Kuyama</a>, <a href="../authors/hui-luan.html">Hui Luan</a>, <a href="../authors/iryna-onasenko.html">Iryna Onasenko</a>, <a href="../authors/j-gregory-zeikus.html">J. Gregory Zeikus</a>, <a href="../authors/james-a-madsen.html">James A. Madsen</a>, <a href="../authors/jeffrey-j-wilson.html">Jeffrey J. Wilson</a>, <a href="../authors/jennifer-s-brodbelt.html">Jennifer S. Brodbelt</a>, <a href="../authors/jin-su-song.html">Jin-Su Song</a>, <a href="../authors/joe-r-cannon.html">Joe R. Cannon</a>, <a href="../authors/john-allison.html">John Allison</a>, <a href="../authors/john-c-gebler.html">John C. Gebler</a>, <a href="../authors/jong-seo-kim.html">Jong-Seo Kim</a>, <a href="../authors/jozef-van-beeumen.html">Jozef Van Beeumen</a>, <a href="../authors/jue-chen.html">Jue Chen</a>, <a href="../authors/kasa-shiva-raju.html">Kasa Shiva Raju</a>, <a href="../authors/kazuhiro-sonomura.html">Kazuhiro Sonomura</a>, <a href="../authors/keisuke-shima.html">Keisuke Shima</a>, <a href="../authors/kevin-mcdonnell.html">Kevin McDonnell</a>, <a href="../authors/kjell-sergeant.html">Kjell Sergeant</a>, <a href="../authors/maddy-yeh.html">Maddy Yeh</a>, <a href="../authors/madison-letendre.html">Madison Letendre</a>, <a href="../authors/mansup-shin.html">Mansup Shin</a>, <a href="../authors/maris-laivenieks.html">Maris Laivenieks</a>, <a href="../authors/mark-adamo.html">Mark Adamo</a>, <a href="../authors/martin-p-lacey.html">Martin P. Lacey</a>, <a href="../authors/michael-alan-lee.html">Michael Alan Lee</a>, <a href="../authors/michael-p-agius.html">Michael P. Agius</a>, <a href="../authors/michelle-r-robinson.html">Michelle R. Robinson</a>, <a href="../authors/minoru-yamaguchi.html">Minoru Yamaguchi</a>, <a href="../authors/mitsuru-tanaka.html">Mitsuru Tanaka</a>, <a href="../authors/ngoc-k-nguyen.html">Ngoc K. Nguyen</a>, <a href="../authors/nicholas-ellor.html">Nicholas Ellor</a>, <a href="../authors/nikolai-slavov.html">Nikolai Slavov</a>, <a href="../authors/noa-petler.html">Noa Petler</a>, <a href="../authors/norikazu-ueyama.html">Norikazu Ueyama</a>, <a href="../authors/osamu-nishimura.html">Osamu Nishimura</a>, <a href="../authors/paolo-conrotto.html">Paolo Conrotto</a>, <a href="../authors/peter-j-lee.html">Peter J. Lee</a>, <a href="../authors/r-s-youngquist.html">R. S. Youngquist</a>, <a href="../authors/rene-kandler.html">Rene Kandler</a>, <a href="../authors/risa-katagihara.html">Risa Katagihara</a>, <a href="../authors/ryotaro-asai.html">Ryotaro Asai</a>, <a href="../authors/samir-das.html">Samir Das</a>, <a href="../authors/sarah-sipe.html">Sarah Sipe</a>, <a href="../authors/saya-nakamura.html">Saya Nakamura</a>, <a href="../authors/scott-a-robotham.html">Scott A. Robotham</a>, <a href="../authors/seung-bum-park.html">Seung Bum Park</a>, <a href="../authors/shigemi-norioka.html">Shigemi Norioka</a>, <a href="../authors/songhie-an.html">Songhie An</a>, <a href="../authors/susumu-tsunasawa.html">Susumu Tsunasawa</a>, <a href="../authors/t-keough.html">T. Keough</a>, <a href="../authors/takashi-nakazawa.html">Takashi Nakazawa</a>, <a href="../authors/takashi-obama.html">Takashi Obama</a>, <a href="../authors/taka-aki-okamura.html">Taka‐aki Okamura</a>, <a href="../authors/tamara-allakhverdova.html">Tamara Allakhverdova</a>, <a href="../authors/toshiro-matsui.html">Toshiro Matsui</a>, <a href="../authors/tun-li-shen.html">Tun-Li Shen</a>, <a href="../authors/ulf-hellman.html">Ulf Hellman</a>, <a href="../authors/wai-kit-pang.html">Wai Kit Pang</a>, <a href="../authors/wayne-vuong.html">Wayne Vuong</a>, <a href="../authors/weibin-chen.html">Weibin Chen</a>, <a href="../authors/yanchang-huang.html">Yanchang Huang</a>, <a href="../authors/yizhi-xiao.html">Yizhi Xiao</a>, <a href="../authors/yongju-kim.html">Yongju Kim</a>, <a href="../authors/yumiko-toyama.html">Yumiko Toyama</a>, <a href="../authors/zhi-heng-huang.html">Zhi-Heng Huang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

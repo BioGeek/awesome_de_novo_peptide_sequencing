@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Hybrid de novo + database search</h1>
-<p class="subtitle lead">3 methods · 2024–2026</p>
+<p class="subtitle lead">4 methods · 2014–2026</p>
 </div>
 
 <div>
@@ -164,43 +164,44 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Two engines run side by side and reconciled, a <em>de novo</em> sequencer and a database search, each keeping the identifications the other cannot make.</p>
-<p>The earliest of its 3 methods is <a href="../algorithms/orthrus.html">Orthrus</a> (2024); 2 more have followed.</p>
+<p>The earliest of its 4 methods is <a href="../algorithms/de-novo-assisted-search-for-nonspecific-phosphopeptides.html">De novo assisted search for nonspecific phosphopeptides</a> (2014); 3 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>3</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>3</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>10</td>
+<td>18</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2024-11-15 to 2026-06-29</td>
+<td>2014-11-01 to 2026-06-29</td>
 </tr>
 <tr class="odd">
 <td>Deep learning</td>
-<td>2 of 3</td>
+<td>2 of 4</td>
 </tr>
 <tr class="even">
 <td>Kinds</td>
-<td>downstream-application (2), adjacent</td>
+<td>downstream-application (2), adjacent, algorithm</td>
 </tr>
 <tr class="odd">
 <td>Acquisition</td>
-<td>DDA (3)</td>
+<td>DDA (4)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-3" class="level2">
-<h2 class="anchored" data-anchor-id="methods-3">Methods (3)</h2>
+<section id="methods-4" class="level2">
+<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/de-novo-assisted-search-for-nonspecific-phosphopeptides.html">De novo assisted search for nonspecific phosphopeptides</a> (2014): Makes broad-specificity proteases usable in phosphoproteomics: a conventional database search cannot identify phosphopeptides without enzyme specificity, so de novo sequencing proposes the sequence and the search confirms it.</li>
 <li><a href="../algorithms/orthrus.html">Orthrus</a> (2024): Open-source metaproteomics pipeline combining Casanovo transformer-based de novo sequencing with Sage database search and Mokapot rescoring.</li>
 <li><a href="../algorithms/hdps.html">HDPS</a> (2025): Heuristic two-round sequence assembly strategy combining multi-enzyme and microwave-assisted acid hydrolysis, pNovo de novo peptide sequencing, and pFind homology database search with k-mer graph assembly and majority-vote error correction; achieved 100% sequence coverage and &gt;98% amino-acid accuracy on full-length Ricin toxin A and B chains without a reference sequence, outperforming ALPS.</li>
 <li><a href="../algorithms/insearch.html">INSearch</a> (2026): Prototype AI-native database search that replaces the combinatorial scan with retrieval. A dual encoder projects experimental spectra and theoretical peptide sequences into one shared latent space under a contrastive objective with variance regularisation to prevent feature collapse, and an alternative alignment-and-uniformity loss; approximate nearest-neighbour search then returns the top-k candidates, cutting retrieval from the O(S × ρP) of a conventional engine to O(S(log P + K)). Because retrieval is approximate, candidates are re-ranked by InstaNovo’s decoder run in teacher-forcing mode as a scoring function, aggregating residue log-probabilities by geometric mean. On the nine-species benchmark the held-out yeast split reaches Recall@1/5/100 of 60.0/78.9/91.9%, with neural re-scoring lifting Recall@1 to 82.9%; the harder S. brodae proteome reaches only 55.5% Recall@100, pointing to a need for larger-scale training.</li>
@@ -210,17 +211,18 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="applied-in">Applied in</h2>
 <p><a href="../subdomains/metaproteomics.html">Metaproteomics</a>, <a href="../subdomains/toxin-identification.html">Toxin identification (biodefense)</a></p>
 </section>
-<section id="papers-describing-them-3" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-3">Papers describing them (3)</h2>
+<section id="papers-describing-them-4" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-4">Papers describing them (4)</h2>
 <ul>
+<li><a href="../publications/identification-of-phosphopeptides-with-unknown-cleavage-specificity-by-a-de.html">Identification of phosphopeptides with unknown cleavage specificity by a de novo sequencing assisted database search strategy</a> (2014, PROTEOMICS, peer-reviewed)</li>
 <li><a href="../publications/orthrus-an-ai-powered-cloud-ready-and-open-source-hybrid-approach-for.html">Orthrus: an AI-powered, cloud-ready, and open-source hybrid approach for metaproteomics</a> (2024, bioRxiv, preprint)</li>
 <li><a href="../publications/identification-of-unknown-biological-toxin-proteins-using-mass-spectrometry-a.html">Identification of Unknown Biological Toxin Proteins Using Mass Spectrometry: A Case Study on De Novo Sequencing of Ricin</a> (2025, Toxins, peer-reviewed)</li>
 <li><a href="../publications/insearch-ai-native-framework-for-large-scale-proteomic-database-search-via.html">INSearch: AI-native framework for large scale proteomic database search via contrastive joint embeddings and transformer-based scoring function</a> (2026, thesis)</li>
 </ul>
 </section>
-<section id="authors-10" class="level2">
-<h2 class="anchored" data-anchor-id="authors-10">Authors (10)</h2>
-<p><a href="../authors/fuli-wang.html">Fuli Wang</a>, <a href="../authors/hao-wang.html">Hao Wang</a>, <a href="../authors/jiale-xu.html">Jiale Xu</a>, <a href="../authors/junjie-wen.html">Junjie Wen</a>, <a href="../authors/matthew-james-collins.html">Matthew James Collins</a>, <a href="../authors/siyu-zhu.html">Siyu Zhu</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a>, <a href="../authors/yongqian-zhang.html">Yongqian Zhang</a>, <a href="../authors/yubo-song.html">Yubo Song</a>, <a href="../authors/yun-chiang.html">Yun Chiang</a></p>
+<section id="authors-18" class="level2">
+<h2 class="anchored" data-anchor-id="authors-18">Authors (18)</h2>
+<p><a href="../authors/fuli-wang.html">Fuli Wang</a>, <a href="../authors/hanfa-zou.html">Hanfa Zou</a>, <a href="../authors/hao-wang.html">Hao Wang</a>, <a href="../authors/hongqiang-qin.html">Hongqiang Qin</a>, <a href="../authors/jiale-xu.html">Jiale Xu</a>, <a href="../authors/jing-dong.html">Jing Dong</a>, <a href="../authors/jun-zhu.html">Jun Zhu</a>, <a href="../authors/junjie-wen.html">Junjie Wen</a>, <a href="../authors/kai-cheng.html">Kai Cheng</a>, <a href="../authors/matthew-james-collins.html">Matthew James Collins</a>, <a href="../authors/mingliang-ye.html">Mingliang Ye</a>, <a href="../authors/mingming-dong.html">Mingming Dong</a>, <a href="../authors/siyu-zhu.html">Siyu Zhu</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a>, <a href="../authors/yangyang-bian.html">Yangyang Bian</a>, <a href="../authors/yongqian-zhang.html">Yongqian Zhang</a>, <a href="../authors/yubo-song.html">Yubo Song</a>, <a href="../authors/yun-chiang.html">Yun Chiang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
