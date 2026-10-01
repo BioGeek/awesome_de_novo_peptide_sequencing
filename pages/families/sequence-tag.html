@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Sequence tag</h1>
-<p class="subtitle lead">6 methods · 1994–2008</p>
+<p class="subtitle lead">7 methods · 1994–2021</p>
 </div>
 
 <div>
@@ -164,37 +164,37 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Short, high-confidence stretches of sequence read straight off the spectrum and used as a filter or a query rather than as the final answer. A tag plus its flanking masses can identify a peptide on its own.</p>
-<p>The earliest of its 6 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 5 more have followed.</p>
+<p>The earliest of its 7 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 6 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>6</td>
+<td>7</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>6</td>
+<td>7</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>28</td>
+<td>29</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>1994-12-15 to 2008-10-15</td>
+<td>1994-12-15 to 2021-12-29</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (5), algorithm</td>
+<td>adjacent (5), algorithm, post-processor</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (6)</td>
+<td>DDA (7)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-6" class="level2">
-<h2 class="anchored" data-anchor-id="methods-6">Methods (6)</h2>
+<section id="methods-7" class="level2">
+<h2 class="anchored" data-anchor-id="methods-7">Methods (7)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994): Error-tolerant peptide identification using short de novo sequence tags and flanking masses.</li>
@@ -203,10 +203,11 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/inspect.html">InsPecT</a> (2005): Uses peptide sequence tags derived from the spectrum as a database filter, discarding the vast majority of candidate peptides before scoring, which makes blind searches for post-translational modifications tractable.</li>
 <li><a href="../algorithms/directag.html">DirecTag</a> (2008): Open-source statistical scoring algorithm for accurate sequence tags from peptide MS/MS spectra.</li>
 <li><a href="../algorithms/unique-sequence-tags-for-ptm-discovery.html">Unique sequence tags for PTM discovery</a> (2008): Reads short, uniquely assignable sequence tags de novo and uses them to find post-translational modifications, trading the full-length sequence for the reliability that made early de novo output hard to trust in routine proteomics.</li>
+<li><a href="../algorithms/bottom-up-tag-convolution.html">Bottom-up tag convolution</a> (2021): Tells a correct spectrum interpretation from its plausible alternatives by convolving the set of length-k sequence tags a candidate implies, attacking the step de novo sequencing is weakest at: not producing a sequence but choosing between the ones it produced.</li>
 </ul>
 </section>
-<section id="papers-describing-them-6" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
+<section id="papers-describing-them-7" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-7">Papers describing them (7)</h2>
 <ul>
 <li><a href="../publications/error-tolerant-identification-of-peptides-in-sequence-databases-by-peptide.html">Error-Tolerant Identification of Peptides in Sequence Databases by Peptide Sequence Tags</a> (1994, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/multitag-multiple-error-tolerant-sequence-tag-search-for-the-sequence.html">MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry</a> (2003, Analytical Chemistry, peer-reviewed)</li>
@@ -214,11 +215,12 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/inspect-identification-of-posttranslationally-modified-peptides-from-tandem.html">InsPecT: Identification of Posttranslationally Modified Peptides from Tandem Mass Spectra</a> (2005, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/directag-accurate-sequence-tags-from-peptide-ms-ms-through-statistical-scoring.html">DirecTag: Accurate Sequence Tags from Peptide MS/MS through Statistical Scoring</a> (2008, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-unique-sequence-tags-for-discovery-of-post-translational.html">De Novo Sequencing of Unique Sequence Tags for Discovery of Post-Translational Modifications of Proteins</a> (2008, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/validation-of-de-novo-peptide-sequences-with-bottom-up-tag-convolution.html">Validation of De Novo Peptide Sequences with Bottom-Up Tag Convolution</a> (2021, Proteomes, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-28" class="level2">
-<h2 class="anchored" data-anchor-id="authors-28">Authors (28)</h2>
-<p><a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a></p>
+<section id="authors-29" class="level2">
+<h2 class="anchored" data-anchor-id="authors-29">Authors (29)</h2>
+<p><a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
