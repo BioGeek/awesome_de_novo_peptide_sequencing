@@ -735,6 +735,35 @@ failure. The two lists to read it in are `blocked-but-open-in-pmc.txt`, meaning
 a free copy exists and only a browser can take it, and `paywalled.txt`, meaning
 no source reports one at all.
 
+**Filenames carry the FULL title**, in the catalog's own casing, with nothing
+cut. The old `[:95]` came from what Zotero happens to export and cost
+information on 154 of 359 papers; the longest full name this catalog can
+produce is 223 bytes, well inside the 255-byte `NAME_MAX`, so the length guard
+in `zotero_name()` is for a hypothetical future title and fires on nothing
+here. Renaming the library to full titles touched 103 of 231 files.
+
+**Two tie-breaks, and the first one was wrong.** Where two rows differ only in
+a title's capitalisation or punctuation -- publication 108's "NovoBoard: a
+comprehensive framework" against 80's "A Comprehensive Framework", 29's
+"data-independent" against 103's "data independent" -- `title_score`
+normalises the difference away and the pick is arbitrary. The first fix
+preferred "whichever candidate the current filename already matches", which
+tied the answer to the name: dropping the truncation changed every name, and
+four files started matching the other row of their pair, so `rename` proposed
+lateral moves it could never apply because the target was taken. It now breaks
+the tie on the EXACT characters of the title against the filename's title text,
+then on the lower id -- a rule that reads only the title and so converges
+wherever it starts. Verified: `rename` reports 0 on the second pass.
+
+**`dedupe` checks the publication as well as the hash.** Byte equality is too
+strict for the same paper twice: bioRxiv served one preprint to two fetches 26
+bytes apart, a timestamp inside the PDF, so two copies each of Sanders 2024 and
+pi-PrimeNovo 2024 sat in the library with different hashes while `rename` could
+only report a rename it could never apply. Files are now also grouped by the
+publication they resolve to, and that group is REPORTED rather than deleted: a
+preprint and its version of record legitimately give one paper two files under
+two rows, and choosing between two copies of one row is a human's call.
+
 **The library is ONE flat folder.** There used to be a `retrieved/`
 subdirectory separating downloads from the owner's own Zotero exports. Once the
 same generator named every file and `pdf_status.csv` recorded the provenance,

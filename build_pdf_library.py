@@ -213,8 +213,24 @@ def load_publications(conn: sqlite3.Connection) -> list[dict]:
     return rows
 
 
+NAME_MAX = 255          # bytes, on ext4 and every filesystem this will meet
+
+
 def zotero_name(p: dict) -> str:
-    """"Surname et al. - 2024 - Title.pdf", the convention the folder already uses."""
+    """"Surname et al. - 2024 - Full Title.pdf".
+
+    The FULL title, in the catalog's own casing, with no length cut. Only the
+    characters a filename cannot hold are touched: path separators, and
+    punctuation outside the kept set, each collapsed to a space.
+
+    There used to be a `[:95]` on the title, inherited from what Zotero happens
+    to export. It cost information on 154 of 359 papers -- "Delineating the
+    venom toxin arsenal of Malabar pit viper..." stopped mid-sentence -- for no
+    reason that survives inspection: the longest full name this catalog can
+    produce is 223 bytes, comfortably inside NAME_MAX. The guard below is
+    therefore for a hypothetical future title, not for anything here, and it
+    cuts on a word boundary so a trimmed name still reads as one.
+    """
     first = (p["first_author"] or "Unknown").split()[-1]
     n = p["n_authors"] or 1
     if n > 2:
@@ -224,8 +240,13 @@ def zotero_name(p: dict) -> str:
     else:
         tag = first
     title = re.sub(r"[^\w áàâäéèêëíìîïóòôöúùûüçñšžπ'()+-]", " ", p["title"])
-    title = re.sub(r"\s+", " ", title).strip()[:95]
-    return f"{tag} - {str(p['publication_date'])[:4]} - {title}.pdf".replace("/", "-")
+    title = re.sub(r"\s+", " ", title).strip()
+    stem = f"{tag} - {str(p['publication_date'])[:4]} - "
+    budget = NAME_MAX - len((stem + ".pdf").encode())
+    while len(title.encode()) > budget:
+        title = title[:title.rstrip().rfind(" ")].rstrip() if " " in title.strip() \
+            else title[:-1]
+    return f"{stem}{title}.pdf".replace("/", "-")
 
 
 def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, str]:
@@ -256,16 +277,27 @@ def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, 
         top = [(s, p) for s, p in top
                if str(p["publication_date"])[:4] == year] or top
     if len(top) > 1:
-        # Still tied, which happens when the two rows differ ONLY in the
-        # title's capitalisation and carry the same year: publication 108's
-        # "NovoBoard: a comprehensive framework" against publication 80's
-        # "A Comprehensive Framework", or 14 against 122. Normalising for the
-        # comparison erases exactly the difference, so the pick was arbitrary
-        # and `rename` then wanted to recase a file it had just accepted,
-        # every run, forever. A file already named for one of the candidates
-        # IS that candidate: prefer it, which makes rename idempotent.
-        named = [(s, p) for s, p in top if zotero_name(p) == stem + ".pdf"]
-        top = named or top
+        # Still tied, which happens when two rows differ ONLY in the title's
+        # capitalisation or punctuation and carry the same year: publication
+        # 108's "NovoBoard: a comprehensive framework" against publication 80's
+        # "A Comprehensive Framework", 29's "data-independent" against 103's
+        # "data independent". title_score normalises both away, so the pick was
+        # arbitrary and `rename` wanted to recase a file it had just accepted.
+        #
+        # Break it on the EXACT characters, which is the one piece of evidence
+        # the filename still carries, then on the lower id. Deliberately not
+        # "whichever candidate the current filename already matches": that was
+        # the first fix, and it tied the answer to the name, so changing the
+        # naming rule -- dropping the title truncation -- made four files start
+        # matching the other row of their pair. A rule that reads only the
+        # title text converges wherever it starts.
+        raw = m.group(3) if m else stem
+        def exactness(p):
+            t = re.sub(r"\s+", " ",
+                       re.sub(r"[^\w áàâäéèêëíìîïóòôöúùûüçñšžπ'()+-]", " ",
+                              p["title"])).strip()
+            return fuzz.ratio(t[:len(raw)], raw[:len(t)])
+        top = sorted(top, key=lambda sp: (-exactness(sp[1]), sp[1]["id"]))
     return (top[0][1], f"title {top[0][0]:.0f}") if top else (None, "")
 
 
@@ -593,8 +625,29 @@ def cmd_dedupe(args, conn, pubs, root):
                 p.unlink()
         else:
             seen[d] = p
-    print(f"\n{n} duplicate(s), {freed/1e6:.0f} MB"
+    print(f"\n{n} byte-identical duplicate(s), {freed/1e6:.0f} MB"
           + ("" if args.apply else "   (dry run; pass --apply)"))
+
+    # Byte equality is too strict for "the same paper twice". bioRxiv served the
+    # same preprint to two fetches 26 bytes apart -- a timestamp inside the PDF
+    # -- so two copies of Sanders 2024 and two of pi-PrimeNovo 2024 sat in the
+    # library with different hashes, and `rename` could only report them as a
+    # rename it could never apply, because each pair's other name was taken.
+    # Grouping by the publication each file resolves to catches that. NOT
+    # auto-deleted: a preprint and its version of record legitimately give one
+    # paper two files under two rows, and deciding which of two copies of ONE
+    # row to keep is a judgement a human should make.
+    same_pub = collections.defaultdict(list)
+    for pid, files in coverage(pubs, root).items():
+        if len(files) > 1:
+            same_pub[pid] = files
+    if same_pub:
+        print(f"\n{len(same_pub)} publication(s) with more than one file, "
+              "same paper rather than same bytes:")
+        for pid, files in sorted(same_pub.items()):
+            print(f"  publication {pid}")
+            for f in files:
+                print(f"    {f.stat().st_size/1e6:7.2f} MB  {f.name[:88]}")
 
 
 REPORT_BUCKETS = """\
