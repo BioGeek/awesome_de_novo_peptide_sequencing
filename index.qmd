@@ -1156,7 +1156,7 @@ acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filt
     <div class="hero-stat"><div class="hero-num">${n}</div><div class="hero-lbl">${label}</div></div>
   </a>`
   return html`<div class="hero-grid">
-    ${stat(n_papers,    "papers",    "#browse-all-papers",      "Browse all papers")}
+    ${stat(n_papers,    "papers",    "#every-paper",            "Browse all papers")}
     ${stat(n_models,    "methods",   "#the-architectures",      "See every method on the architectures timeline")}
     ${stat(n_authors,   "authors",   "#browse-all-authors",     "Browse all authors")}
     ${stat(n_countries, "countries", "#where-the-work-happens", "See the geographic map")}
@@ -1219,7 +1219,7 @@ breakdown_apply = {
   // different questions; the filter is what they share.
   const row = (n, label, colour, dim, val, hint) => html`<a
       class="breakdown-row breakdown-row-link"
-      href="#browse-all-papers"
+      href="#every-paper"
       title="${hint}"
       data-dim="${dim}" data-val="${val}">
     <span class="bk-num">${n}</span>
@@ -6735,17 +6735,24 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 //| echo: false
 md`What changed since you last looked. The catalog stores no "date added"
 column, but \`publication.id\` is handed out in insertion order, so ordering by
-it descending IS the order things arrived. The ten newest are below, and that
-same id is the sortable **#** column in the full table, which is the way to see
-the next ten. The date beside each one is the paper's own publication date, not
-when it was catalogued: ${recent_pubs.filter(d => d.date && d.date > new Date(Date.now() - 200 * 864e5)).length}
-of these ten appeared in the last six months, and the rest are older work that
-turned up in a citation sweep.`
+it descending IS the order things arrived. The
+${recent_pubs.length} newest are below, and that same id is the sortable **#**
+column in [the full table](#every-paper), which is the way to see further back.
+The date beside each one is the paper's own publication date, not when it was
+catalogued: ${recent_pubs.filter(d => d.date && d.date > new Date(Date.now() - 200 * 864e5)).length}
+of these ${recent_pubs.length} appeared in the last six months, and the rest are
+older work that turned up in a citation sweep.`
 ```
 
 ```{ojs}
 //| echo: false
-recent_pubs = pubs_t.slice().sort((a, b) => d3.descending(+a.id, +b.id)).slice(0, 10)
+// Three, not ten. This list sits directly under the 'Browse all papers'
+// heading, so a reader following a link to the papers section used to land on a
+// screenful of the newest arrivals rather than on the table they asked for.
+// Every link that means "the table" now points at #every-paper, and this list
+// is short enough not to be in the way. The count is read back out of this
+// array by the prose above, so changing the 3 cannot leave the text lying.
+recent_pubs = pubs_t.slice().sort((a, b) => d3.descending(+a.id, +b.id)).slice(0, 3)
 ```
 
 ```{ojs}

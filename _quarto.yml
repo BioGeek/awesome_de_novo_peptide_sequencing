@@ -21,8 +21,11 @@ website:
     left:
       - text: "The map"
         href: index.html
+      # #every-paper, not #browse-all-papers: the section opens with the short
+      # 'Recently added' list, so the heading anchor landed a reader on recent
+      # arrivals rather than on the table this link promises.
       - text: "Papers"
-        href: index.html#browse-all-papers
+        href: index.html#every-paper
       - text: "Authors"
         href: index.html#browse-all-authors
     right:

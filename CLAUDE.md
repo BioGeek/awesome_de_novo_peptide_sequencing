@@ -449,7 +449,21 @@ The site's **Recently added** list, first thing under Browse all papers, answers
 "what changed since I last looked" without the catalog storing a second date per
 row. `publication.id` is handed out by SQLite in insertion order, so ordering by
 it descending IS the order papers arrived; the same id is the sortable `#`
-column in the full table, which is how to see past the ten the list shows.
+column in the full table, which is how to see past the three the list shows.
+
+**It shows three, and every link that means "the papers" skips it.** The list
+sits directly under the `Browse all papers` heading, so `#browse-all-papers`
+landed a reader on recent arrivals rather than on the table the link promised.
+The navbar's `Papers` entry, the hero `papers` counter, the kind-breakdown rows
+and `ANCHORS["browse-papers"]` in `build_pages.py` -- which every generated
+page's footer uses -- now all point at **`#every-paper`**, the table's own
+heading. Three places still point at `#browse-all-papers` and should: the
+section's heading anchor and its TOC entry, which are navigation TO the section,
+and nothing else. The `Browse all authors` link needs no equivalent, because
+that section opens on its table.
+
+The prose above the list reads its count back out of the array, so shortening it
+again cannot leave the text claiming ten.
 
 Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because

@@ -70,7 +70,11 @@ KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
 
 # Anchors on index.qmd, verified against the rendered section ids.
 ANCHORS = {
-    "browse-papers":   ("Browse all papers", "browse-all-papers"),
+    # Points at the TABLE, not at the section heading. The section opens with
+    # the 'Recently added' list, so landing on #browse-all-papers put a reader
+    # who followed "Browse all papers" from a method or author page on a list
+    # of the newest arrivals instead of on the table they were after.
+    "browse-papers":   ("Browse all papers", "every-paper"),
     "browse-authors":  ("Browse all authors", "browse-all-authors"),
     "citations":       ("How the field cites itself", "how-the-field-cites-itself"),
     "impact":          ("Academic impact by citation count", "academic-impact-by-citation-count"),
