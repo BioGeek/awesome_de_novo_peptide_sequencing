@@ -1658,6 +1658,8 @@ INSERT INTO city VALUES(297,'Puncak Alam',46,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(298,'Shah Alam',46,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(299,'Volgograd',12,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(300,'Athens',8,NULL,NULL,NULL,NULL);
+INSERT INTO city VALUES(301,'Chiang Mai',18,NULL,NULL,NULL,NULL);
+INSERT INTO city VALUES(302,'Gothenburg',6,NULL,NULL,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2308,6 +2310,13 @@ INSERT INTO affiliation VALUES(685,'University of Texas at Austin','Center for B
 INSERT INTO affiliation VALUES(686,'University of Texas at Austin','Department of Molecular Biosciences',8,65,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(687,'University of Georgia','Center for Vaccines and Immunology',8,300,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(688,'Lomonosov Moscow State University','Chemistry Department',12,32,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(689,'Chulalongkorn University','Doctor of Philosophy Program in Medical Sciences, Faculty of Medicine',18,61,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(690,'Chulalongkorn University','Division of Urology, Department of Surgery, Faculty of Medicine and King Chulalongkorn Memorial Hospital',18,61,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(691,'Chulalongkorn University','Department of Pathology, Faculty of Medicine',18,61,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(692,'Chulalongkorn University','Center of Excellence in Immunology and Immune-Mediated Diseases, Department of Microbiology, Faculty of Medicine',18,61,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(693,'Chiang Mai University','Office of Research Administration',18,301,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(694,'Chiang Mai University','Center of Multidisciplinary Technology for Advanced Medicine (CMUTEAM), Faculty of Medicine',18,301,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(695,'University of Gothenburg','Department of Infectious Diseases, Institute of Biomedicine, Sahlgrenska Academy',6,302,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -4152,6 +4161,20 @@ INSERT INTO author_affiliation VALUES(1355,687);
 INSERT INTO author_affiliation VALUES(1358,688);
 INSERT INTO author_affiliation VALUES(1360,688);
 INSERT INTO author_affiliation VALUES(1359,533);
+INSERT INTO author_affiliation VALUES(1309,474);
+INSERT INTO author_affiliation VALUES(1307,474);
+INSERT INTO author_affiliation VALUES(1308,510);
+INSERT INTO author_affiliation VALUES(1310,689);
+INSERT INTO author_affiliation VALUES(1312,690);
+INSERT INTO author_affiliation VALUES(1311,690);
+INSERT INTO author_affiliation VALUES(1313,691);
+INSERT INTO author_affiliation VALUES(1314,692);
+INSERT INTO author_affiliation VALUES(1315,693);
+INSERT INTO author_affiliation VALUES(1316,693);
+INSERT INTO author_affiliation VALUES(1317,694);
+INSERT INTO author_affiliation VALUES(1315,694);
+INSERT INTO author_affiliation VALUES(1316,694);
+INSERT INTO author_affiliation VALUES(1306,695);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -21938,8 +21961,8 @@ INSERT INTO family_note VALUES('Transformer (encoder-only)','Transformer spectru
 INSERT INTO family_note VALUES('Diffusion','Iterative denoising: start from noise over the residue positions and refine repeatedly, so the precursor-mass constraint and the consistency of the whole sequence can be enforced at every step rather than only at the end.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
-INSERT INTO sqlite_sequence VALUES('city',300);
-INSERT INTO sqlite_sequence VALUES('affiliation',688);
+INSERT INTO sqlite_sequence VALUES('city',302);
+INSERT INTO sqlite_sequence VALUES('affiliation',695);
 INSERT INTO sqlite_sequence VALUES('author',1360);
 INSERT INTO sqlite_sequence VALUES('algorithm',310);
 INSERT INTO sqlite_sequence VALUES('publication',362);
