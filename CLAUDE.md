@@ -946,6 +946,17 @@ catalogued, leaving 10 new. Versioned DOIs are collapsed (`10.17044/x.v1` onto
 same paper arrives under an arXiv DOI in one source and a conference DOI in
 another.
 
+**Pin gradio, and pin it forward.** The Space's `requirements.txt` asked for
+`gradio>=4.44` and let pip resolve `huggingface_hub` freely, which is the one
+combination that cannot work: gradio 4.x's `oauth.py` does `from
+huggingface_hub import HfFolder`, and `huggingface_hub` 1.0 removed `HfFolder`,
+so the Space died at `import gradio` before reaching a line of its own code.
+It is pinned to `gradio>=6.29,<7` on python 3.12 rather than to an old
+`huggingface_hub`, because 6.x does not import `HfFolder` at all and so stays
+installable as the hub moves. `sdk_version` in the README frontmatter has to
+agree: it is what the builder installs, and `requirements.txt` cannot override
+it downwards.
+
 **No code from the upstream Space is used.** It publishes no licence, so it is
 all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
 independent implementation, MIT licensed, crediting the original as the idea.
