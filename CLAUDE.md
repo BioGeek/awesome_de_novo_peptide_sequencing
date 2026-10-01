@@ -626,8 +626,32 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 336/361. The 25 without one are mostly theses, conference pages and
-records with no DOI, where no API has anything to give.
+Coverage is 336/361, of which 5 came from the PDFs themselves via
+`build_pdf_abstracts.py` (`abstract_source = 'pdf'`). The 25 without one are
+mostly theses, conference pages and records with no DOI, where neither an API
+nor the PDF yields a clean abstract.
+
+**`build_pdf_abstracts.py` rejects more than it accepts, 13 of 18, and the
+rejections are the point.** Lifting an abstract out of a PDF fails in ways that
+look like success:
+
+- publication 254's two-column layout puts "Abstract" and "1. Introduction" on
+  the SAME physical line, so a heading search lands in the wrong column and
+  returns the introduction, which reads perfectly and carries five citations;
+- publication 20 ran past the abstract into Chinese margin annotations;
+- 55 stopped mid-word at "backed by high-", 258 carried on into the
+  introduction, 318 finished on a page number ("a special de ii");
+- `-layout` leaves a hyphen plus a SPACE where it joins two columns, giving
+  "Data-Independent Acquisi- tion" and "the pep- tides", and ICLR margin line
+  numbers survive inside the line as zero-padded triples.
+
+The first guards -- starts with a capital, 200 to 4000 characters -- passed all
+four of those. What catches them is checking the END: a real abstract finishes
+on a sentence terminator. With that, plus no CJK, fewer than three inline
+citations, no Introduction heading and no surviving line numbers, 11 apparent
+successes came down to 5 correct ones. Loosening any of them puts a
+plausible-looking fragment in the database, which the rule above already says
+is worse than no abstract at all.
 
 Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
 inverted index that, for Nature-family journals, has the journal's separate
