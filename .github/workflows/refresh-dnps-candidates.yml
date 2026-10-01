@@ -1,0 +1,85 @@
+# Mine the DNPS-DR daily report for papers the catalog is missing.
+#
+# https://huggingface.co/spaces/yangtingpeng/DNPS-DR is a Hugging Face Space
+# posting a daily de novo peptide sequencing literature briefing; it is itself
+# publication 272. build_dnps_candidates.py reads its data/summaries.json and
+# reports which of those papers are not in the catalog.
+#
+# Same shape and same rules as refresh-candidates.yml, for the same reasons:
+# it commits NOTHING, needs only read permission, touches denovo.db not at
+# all, and must never use .github/actions/commit-refreshed-db, which recovers
+# from a push race by replaying the one table a workflow owns -- this one owns
+# none. dnps_candidates.csv is gitignored like the other builder CSVs, so the
+# shortlist goes into the job summary and the full file is an artifact.
+#
+# It adds nothing to the database on purpose. Two senses of "de novo" run
+# through that feed -- sequencing and DESIGN -- and telling them apart is most
+# of what the script does, but the final call against the WATCHLIST.md bar is a
+# judgement a human makes.
+#
+# Monthly on the 3rd at 09:00 UTC: the day after refresh-candidates on the 2nd,
+# so the two never race for main, and three hours after the daily
+# refresh-repo-metrics. Monthly rather than daily because the Space's scheduler
+# writes inside its running container: new days reach the git repo only when the
+# author commits, and the builder exits early on an unchanged lastModified, so a
+# quiet month costs one API call.
+name: refresh-dnps-candidates
+
+on:
+  schedule:
+    - cron: '0 9 3 * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Rebuild even if the Space has not changed'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-dnps-candidates
+  cancel-in-progress: false
+
+jobs:
+  refresh-dnps-candidates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      # rapidfuzz is the one non-stdlib import, for title matching against the
+      # catalog, so unlike build_candidates.py this needs the environment.
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      - name: Harvest candidates from the DNPS-DR feed
+        run: |
+          uv run python build_dnps_candidates.py \
+            ${{ inputs.force && '--force' || '' }} \
+            --summary dnps_summary.md
+
+      - name: Write the shortlist into the job summary
+        if: always()
+        run: |
+          if [ -s dnps_summary.md ]; then
+            cat dnps_summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## DNPS-DR candidates" >> "$GITHUB_STEP_SUMMARY"
+            echo >> "$GITHUB_STEP_SUMMARY"
+            echo "The Space was unchanged, so nothing was rebuilt." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload the full list
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dnps-candidates
+          path: dnps_candidates.csv
+          if-no-files-found: ignore
+          retention-days: 30

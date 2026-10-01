@@ -23,3 +23,7 @@ affiliation_audit.csv
 # render list (a scratch probe, say). One such directory, 885 KB of bundled
 # Bootstrap and JS, was committed by a `git add -A` after exactly that.
 /*_files/
+
+# DNPS-DR feed shortlist, same treatment as candidates.csv
+dnps_candidates.csv
+dnps_summary.md

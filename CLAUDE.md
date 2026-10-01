@@ -113,6 +113,13 @@ python3 build_pdf_library.py dedupe --apply      # drop byte-identical copies
 uv run --with pypdf python3 build_pdf_library.py ingest manual/ --apply \
     --map 978-3-031-94039-2.pdf=13:106-114
 
+# Mine the DNPS-DR daily report (publication 272, a Hugging Face Space) for
+# papers the catalog is missing. Writes dnps_candidates.csv and NEVER touches
+# denovo.db, exactly like build_candidates.py. Exits early when the Space has
+# not changed. See 'Mining the DNPS-DR feed' below.
+uv run python build_dnps_candidates.py
+uv run python build_dnps_candidates.py --force --summary dnps_summary.md
+
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
@@ -964,6 +971,47 @@ of the result.
 
 Already-rejected papers do not come back: the script excludes every DOI in
 `WATCHLIST.md` as well as everything already in the catalog.
+
+## Mining the DNPS-DR feed
+
+`build_dnps_candidates.py` reads the daily literature briefing at
+<https://huggingface.co/spaces/yangtingpeng/DNPS-DR>, which is itself
+publication 272, and reports which of its papers are not in the catalog. Same
+contract as `build_candidates.py`: writes `dnps_candidates.csv`, inserts
+nothing, touches no table. `refresh-dnps-candidates.yml` runs it monthly on the
+3rd, the day after `refresh-candidates`.
+
+The Space's repo carries `data/summaries.json`, a `{date: [{title, link, date,
+summary}]}` dict of 1167 entries over 1030 dates, each `link` a PubMed URL. The
+`summary` field is **ignored**: it holds the raw chain-of-thought of whatever
+model wrote it, `<think>` blocks and all, in Chinese.
+
+**TWO SENSES OF "DE NOVO", which is most of what the script is for.** The
+feed's query is far broader than this catalog's scope. Of 1167 entries, 207 are
+already catalogued -- reassuring, the feed does cover the field -- and of the
+rest that say "de novo", most mean **de novo DESIGN**: RFdiffusion antibodies,
+GLP-1 agonists, taste peptides, generative anything. A different field sharing
+a Latin phrase. Others sequence a different analyte: glycans,
+oligonucleotides, siRNA, DNA, transcriptomes. So a title must name sequencing
+AND a peptide-ish analyte, and must miss both the design and wrong-analyte
+vocabularies. **70 survive**, and every rejection is counted in the report
+rather than dropped silently, because a filter nobody can see is a filter
+nobody can correct.
+
+**THE FEED IS STALE and a repo crawl cannot fix it.** Newest entry 2026-08-24,
+file last committed 2026-08-27. The Space's own scheduler writes inside its
+running container, so new days reach the git repo only when the author commits.
+The script therefore surfaces the BACKLOG, which is large and worth having, and
+will show nothing new until upstream commits again -- which is also why the
+workflow is monthly rather than daily, and why an unchanged `lastModified`
+costs one API call.
+
+Two traps met while writing it. Europe PMC's `journalTitle` is **None** on
+every `resultType=core` record; the venue lives at
+`journalInfo.journal.title`, and reading the flat field wrote an empty column
+for all 70. And resolving every entry's PMID to a DOI would be 1167 lookups,
+so only the survivors are resolved -- but a DOI check against the catalog
+afterwards still caught 4 papers the title match had missed.
 
 `refresh-candidates.yml` runs it monthly on the 2nd, a day after
 `refresh-citation-graph`. It commits nothing and needs only read permission:
