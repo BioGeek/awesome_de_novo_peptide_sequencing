@@ -1371,6 +1371,16 @@ objects repeatedly. It is a flaky path through the TLS gateway, NOT a size
 limit: the first diagnosis was that 2 GB objects were too large, and a plain
 retry put both of them up. Push in a loop with `lfs.concurrenttransfers 1`.
 
+**But not every failed push is that, and the two look identical in a log tail.**
+Eight consecutive retries then failed on a `pre-receive hook declined`, which no
+amount of retrying can fix: the Hub rejects anything over **10 MiB** that
+bypasses LFS, and **a TensorFlow shard is named
+`translate.ckpt-31800.data-00000-of-00001`, which does NOT match `*.ckpt`.**
+The `.ckpt` sits in the MIDDLE of the name, so the pattern missed it, the 184 MB
+file went in as a plain blob and the whole push was refused. `*.data-*` and
+`*.index` are tracked now. Both failures end in `error: failed to push some
+refs`; only the `remote:` lines above it say which one you have.
+
 ### The mirror, and why it is not on jeroen.vangoey.be
 
 Backups of the checkpoints whose only home is a link with no DOI live in
