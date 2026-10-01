@@ -626,7 +626,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 331/361. The 30 without one are mostly theses, conference pages and
+Coverage is 336/361. The 25 without one are mostly theses, conference pages and
 records with no DOI, where no API has anything to give.
 
 Europe PMC is asked before OpenAlex on purpose. OpenAlex reassembles an
