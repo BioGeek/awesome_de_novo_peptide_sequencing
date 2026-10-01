@@ -109,8 +109,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">The map</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html#browse-all-papers"> 
+    <a class="nav-link" href="../../index.html#every-paper"> 
 <span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#the-architectures"> 
+<span class="menu-text">Methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#the-data-underneath"> 
+<span class="menu-text">Datasets</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../index.html#browse-all-authors"> 
@@ -141,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Heuristic</h1>
-<p class="subtitle lead">16 methods · 1984–2021</p>
+<p class="subtitle lead">18 methods · 1981–2021</p>
 </div>
 
 <div>
@@ -164,40 +172,42 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Hand-engineered interpretation rules rather than one global optimisation: extend a sequence peak by peak, enumerate the compositions that fit the mass, score what survives. The oldest approach here, and the closest to reading by hand.</p>
-<p>The earliest of its 16 methods is <a href="../algorithms/paas-3.html">PAAS 3</a> (1984); 15 more have followed.</p>
+<p>The earliest of its 18 methods is <a href="../algorithms/paas.html">PAAS</a> (1981); 17 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>16</td>
+<td>18</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>18</td>
+<td>20</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>61</td>
+<td>62</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>1984-08-01 to 2021-11-23</td>
+<td>1981-04-01 to 2021-11-23</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (16)</td>
+<td>algorithm (18)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (16)</td>
+<td>DDA (18)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-16" class="level2">
-<h2 class="anchored" data-anchor-id="methods-16">Methods (16)</h2>
+<section id="methods-18" class="level2">
+<h2 class="anchored" data-anchor-id="methods-18">Methods (18)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
-<li><a href="../algorithms/paas-3.html">PAAS 3</a> (1984): 1984 FORTRAN program that determines the probable amino acid sequence of a peptide from the sequence ion peaks of its mass spectrum, without a database. One of the earliest de novo peptide sequencing programs.</li>
+<li><a href="../algorithms/paas.html">PAAS</a> (1981): The 1981 original, and the earliest de novo peptide sequencing program in this catalog: a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.</li>
+<li><a href="../algorithms/improved-paas.html">Improved PAAS</a> (1983): The 1983 revision of PAAS, by the same Osaka group with Wollnik added. Sits between the 1981 original and PAAS 3, so the lineage spans three papers in four years.</li>
+<li><a href="../algorithms/paas-3.html">PAAS 3</a> (1984): 1984 FORTRAN program that determines the probable amino acid sequence of a peptide from the sequence ion peaks of its mass spectrum, without a database. The third of the Osaka group’s lineage, after PAAS (1981) and Improved PAAS (1983), and the most cited of the three.</li>
 <li><a href="../algorithms/seqpep.html">SEQPEP</a> (1989): Computer program for interpreting high-energy collision tandem mass spectra of peptides.</li>
 <li><a href="../algorithms/lutefisk.html">Lutefisk</a> (1997): First widely-used heuristic de novo tool</li>
 <li><a href="../algorithms/seqms.html">SeqMS</a> (2000): Software aid for automated interpretation of low-energy CID spectra for de novo sequencing by tandem MS.</li>
@@ -215,9 +225,11 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/robust-fl-sequencing.html">Robust FL-Sequencing</a> (2021): Full-length protein sequencing</li>
 </ul>
 </section>
-<section id="papers-describing-them-18" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-18">Papers describing them (18)</h2>
+<section id="papers-describing-them-20" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-20">Papers describing them (20)</h2>
 <ul>
+<li><a href="../publications/computer-program-paas-for-the-estimation-of-possible-amino-acid-sequence-of.html">Computer program PAAS for the estimation of possible amino acid sequence of peptides</a> (1981, Biological Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/improved-paas-a-computer-program-to-determine-possible-amino-acid-sequences-of.html">Improved PAAS, a computer program to determine possible amino acid sequences of peptides</a> (1983, Biological Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/paas-3-a-computer-program-to-determine-probable-sequence-of-peptides-from-mass.html">PAAS 3: A computer program to determine probable sequence of peptides from mass spectrometric data</a> (1984, Biological Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/computer-program-seqpep-to-aid-in-the-interpretation-of-high-energy-collision.html">Computer program (SEQPEP) to aid in the interpretation of high-energy collision tandem mass spectra of peptides</a> (1989, Biological Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/sequence-database-searches-via-de-novo-peptide-sequencing-by-tandem-mass.html">Sequence database searches via de novo peptide sequencing by tandem mass spectrometry</a> (1997, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
@@ -238,15 +250,15 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/highly-robust-de-novo-full-length-protein-sequencing.html">Highly Robust de Novo Full-Length Protein Sequencing</a> (2021, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-61" class="level2">
-<h2 class="anchored" data-anchor-id="authors-61">Authors (61)</h2>
-<p><a href="../authors/alfred-l-yergey.html">Alfred L. Yergey</a>, <a href="../authors/andrew-n-krutchinsky.html">Andrew N. Krutchinsky</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/christian-rolando.html">Christian Rolando</a>, <a href="../authors/dacheng-he.html">Dacheng He</a>, <a href="../authors/el-ghazali-talbi.html">El-Ghazali Talbi</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gabriel-padron.html">Gabriel Padrón</a>, <a href="../authors/glen-a-humphrey.html">Glen A. Humphrey</a>, <a href="../authors/gong-zhang.html">Gong Zhang</a>, <a href="../authors/h-matsuda.html">H. Matsuda</a>, <a href="../authors/hong-yan-shen.html">Hong-Yan Shen</a>, <a href="../authors/hongying-zhong.html">Hongying Zhong</a>, <a href="../authors/i-katakuse.html">I. Katakuse</a>, <a href="../authors/j-alex-taylor.html">J. Alex Taylor</a>, <a href="../authors/james-p-reilly.html">James P. Reilly</a>, <a href="../authors/james-s-mcelvain.html">James S. McElvain</a>, <a href="../authors/jean-charles-boisson.html">Jean-Charles Boisson</a>, <a href="../authors/jennifer-m-campbell.html">Jennifer M. Campbell</a>, <a href="../authors/jens-r-coorssen.html">Jens R. Coorssen</a>, <a href="../authors/jianguo-ji.html">Jianguo Ji</a>, <a href="../authors/jing-wu.html">Jing Wu</a>, <a href="../authors/jonathan-a-epstein.html">Jonathan A. Epstein</a>, <a href="../authors/jorge-fernandez-de-cossio.html">Jorge Fernández-de-Cossío</a>, <a href="../authors/joshua-zimmerberg.html">Joshua Zimmerberg</a>, <a href="../authors/klaus-biemann.html">Klaus Biemann</a>, <a href="../authors/laetitia-jourdan.html">Laetitia Jourdan</a>, <a href="../authors/li-ming-xu.html">Li-Ming Xu</a>, <a href="../authors/liang-li.html">Liang Li</a>, <a href="../authors/liangyi-zhang.html">Liangyi Zhang</a>, <a href="../authors/luis-javier-gonzalez.html">Luis Javier González</a>, <a href="../authors/lazaro-betancourt.html">Lázaro Betancourt</a>, <a href="../authors/marvin-l-vestal.html">Marvin L. Vestal</a>, <a href="../authors/matthew-t-olson.html">Matthew T. Olson</a>, <a href="../authors/michael-l-nielsen.html">Michael L. Nielsen</a>, <a href="../authors/micromass-uk-ltd.html">Micromass UK Ltd</a>, <a href="../authors/mikhail-m-savitski.html">Mikhail M. Savitski</a>, <a href="../authors/mingrui-an.html">Mingrui An</a>, <a href="../authors/nobuaki-okumura.html">Nobuaki Okumura</a>, <a href="../authors/paul-s-blank.html">Paul S. Blank</a>, <a href="../authors/peter-s-backlund.html">Peter S. Backlund</a>, <a href="../authors/peter-walden.html">Peter Walden</a>, <a href="../authors/qing-yu-he.html">Qing-Yu He</a>, <a href="../authors/qingsong-wang.html">Qingsong Wang</a>, <a href="../authors/richard-s-johnson.html">Richard S. Johnson</a>, <a href="../authors/rodion-demine.html">Rodion Demine</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/t-matsuo.html">T. Matsuo</a>, <a href="../authors/t-sakurai.html">T. Sakurai</a>, <a href="../authors/takaki-shima.html">Takaki Shima</a>, <a href="../authors/toshifumi-takao.html">Toshifumi Takao</a>, <a href="../authors/vladimir-besada.html">Vladimir Besada</a>, <a href="../authors/wenzhu-zhang.html">Wenzhu Zhang</a>, <a href="../authors/xiao-zou.html">Xiao Zou</a>, <a href="../authors/xueyuan-xiao.html">Xueyuan Xiao</a>, <a href="../authors/xuyang-zhao.html">Xuyang Zhao</a>, <a href="../authors/yasutsugu-shimonishi.html">Yasutsugu Shimonishi</a>, <a href="../authors/yoshinori-satomi.html">Yoshinori Satomi</a>, <a href="../authors/zhi-biao-mai.html">Zhi-Biao Mai</a>, <a href="../authors/zhong-hua-zhou.html">Zhong-Hua Zhou</a>, <a href="../authors/zhongqi-zhang.html">Zhongqi Zhang</a></p>
+<section id="authors-62" class="level2">
+<h2 class="anchored" data-anchor-id="authors-62">Authors (62)</h2>
+<p><a href="../authors/alfred-l-yergey.html">Alfred L. Yergey</a>, <a href="../authors/andrew-n-krutchinsky.html">Andrew N. Krutchinsky</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/christian-rolando.html">Christian Rolando</a>, <a href="../authors/dacheng-he.html">Dacheng He</a>, <a href="../authors/el-ghazali-talbi.html">El-Ghazali Talbi</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gabriel-padron.html">Gabriel Padrón</a>, <a href="../authors/glen-a-humphrey.html">Glen A. Humphrey</a>, <a href="../authors/gong-zhang.html">Gong Zhang</a>, <a href="../authors/h-matsuda.html">H. Matsuda</a>, <a href="../authors/h-wollnik.html">H. Wollnik</a>, <a href="../authors/hong-yan-shen.html">Hong-Yan Shen</a>, <a href="../authors/hongying-zhong.html">Hongying Zhong</a>, <a href="../authors/i-katakuse.html">I. Katakuse</a>, <a href="../authors/j-alex-taylor.html">J. Alex Taylor</a>, <a href="../authors/james-p-reilly.html">James P. Reilly</a>, <a href="../authors/james-s-mcelvain.html">James S. McElvain</a>, <a href="../authors/jean-charles-boisson.html">Jean-Charles Boisson</a>, <a href="../authors/jennifer-m-campbell.html">Jennifer M. Campbell</a>, <a href="../authors/jens-r-coorssen.html">Jens R. Coorssen</a>, <a href="../authors/jianguo-ji.html">Jianguo Ji</a>, <a href="../authors/jing-wu.html">Jing Wu</a>, <a href="../authors/jonathan-a-epstein.html">Jonathan A. Epstein</a>, <a href="../authors/jorge-fernandez-de-cossio.html">Jorge Fernández-de-Cossío</a>, <a href="../authors/joshua-zimmerberg.html">Joshua Zimmerberg</a>, <a href="../authors/klaus-biemann.html">Klaus Biemann</a>, <a href="../authors/laetitia-jourdan.html">Laetitia Jourdan</a>, <a href="../authors/li-ming-xu.html">Li-Ming Xu</a>, <a href="../authors/liang-li.html">Liang Li</a>, <a href="../authors/liangyi-zhang.html">Liangyi Zhang</a>, <a href="../authors/luis-javier-gonzalez.html">Luis Javier González</a>, <a href="../authors/lazaro-betancourt.html">Lázaro Betancourt</a>, <a href="../authors/marvin-l-vestal.html">Marvin L. Vestal</a>, <a href="../authors/matthew-t-olson.html">Matthew T. Olson</a>, <a href="../authors/michael-l-nielsen.html">Michael L. Nielsen</a>, <a href="../authors/micromass-uk-ltd.html">Micromass UK Ltd</a>, <a href="../authors/mikhail-m-savitski.html">Mikhail M. Savitski</a>, <a href="../authors/mingrui-an.html">Mingrui An</a>, <a href="../authors/nobuaki-okumura.html">Nobuaki Okumura</a>, <a href="../authors/paul-s-blank.html">Paul S. Blank</a>, <a href="../authors/peter-s-backlund.html">Peter S. Backlund</a>, <a href="../authors/peter-walden.html">Peter Walden</a>, <a href="../authors/qing-yu-he.html">Qing-Yu He</a>, <a href="../authors/qingsong-wang.html">Qingsong Wang</a>, <a href="../authors/richard-s-johnson.html">Richard S. Johnson</a>, <a href="../authors/rodion-demine.html">Rodion Demine</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/t-matsuo.html">T. Matsuo</a>, <a href="../authors/t-sakurai.html">T. Sakurai</a>, <a href="../authors/takaki-shima.html">Takaki Shima</a>, <a href="../authors/toshifumi-takao.html">Toshifumi Takao</a>, <a href="../authors/vladimir-besada.html">Vladimir Besada</a>, <a href="../authors/wenzhu-zhang.html">Wenzhu Zhang</a>, <a href="../authors/xiao-zou.html">Xiao Zou</a>, <a href="../authors/xueyuan-xiao.html">Xueyuan Xiao</a>, <a href="../authors/xuyang-zhao.html">Xuyang Zhao</a>, <a href="../authors/yasutsugu-shimonishi.html">Yasutsugu Shimonishi</a>, <a href="../authors/yoshinori-satomi.html">Yoshinori Satomi</a>, <a href="../authors/zhi-biao-mai.html">Zhi-Biao Mai</a>, <a href="../authors/zhong-hua-zhou.html">Zhong-Hua Zhou</a>, <a href="../authors/zhongqi-zhang.html">Zhongqi Zhang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
 <li><a href="../../index.html#the-architectures">The architectures</a></li>
-<li><a href="../../index.html#browse-all-papers">Browse all papers</a></li>
+<li><a href="../../index.html#every-paper">Browse all papers</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
