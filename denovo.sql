@@ -1322,6 +1322,16 @@ INSERT INTO author VALUES(1347,'Anna Krasilnikova',NULL,NULL,NULL,NULL,NULL,NULL
 INSERT INTO author VALUES(1348,'Shariza Sahudin',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1349,'Noraziah Sahlan',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1350,'Chong Chin Heo',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1351,'Michelle V. Gadush',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1352,'Giuseppe A. Sautto',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1353,'Hamssika Chandrasekaran',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1354,'Alena Bensussan',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1355,'Ted M. Ross',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1356,'Gregory C. Ippolito',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1357,'Maria D. Person',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1358,'Albert T. Lebedev',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1359,'Eugen Damoc',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1360,'Tatiana Yu. Samgina',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -1647,6 +1657,7 @@ INSERT INTO city VALUES(296,'Sungai Buloh',46,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(297,'Puncak Alam',46,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(298,'Shah Alam',46,NULL,NULL,NULL,NULL);
 INSERT INTO city VALUES(299,'Volgograd',12,NULL,NULL,NULL,NULL);
+INSERT INTO city VALUES(300,'Athens',8,NULL,NULL,NULL,NULL);
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -2293,6 +2304,10 @@ INSERT INTO affiliation VALUES(681,'Universiti Teknologi MARA','Department of Me
 INSERT INTO affiliation VALUES(682,'Universiti Teknologi MARA','Atta Ur Rahman Institute for Natural Product Discovery',46,297,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(683,'Universiti Teknologi MARA','Cardiovascular Advancement and Research Excellence Institute (CARE Institute)',46,298,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(684,'Volgograd State Medical University','Department of Clinical Pharmacology and Intensive Care',12,299,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(685,'University of Texas at Austin','Center for Biomedical Research Support, Biological Mass Spectrometry Facility',8,65,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(686,'University of Texas at Austin','Department of Molecular Biosciences',8,65,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(687,'University of Georgia','Center for Vaccines and Immunology',8,300,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(688,'Lomonosov Moscow State University','Chemistry Department',12,32,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -4127,6 +4142,16 @@ INSERT INTO author_affiliation VALUES(1345,681);
 INSERT INTO author_affiliation VALUES(1348,682);
 INSERT INTO author_affiliation VALUES(1350,683);
 INSERT INTO author_affiliation VALUES(1347,684);
+INSERT INTO author_affiliation VALUES(1353,685);
+INSERT INTO author_affiliation VALUES(1357,685);
+INSERT INTO author_affiliation VALUES(1351,685);
+INSERT INTO author_affiliation VALUES(1354,143);
+INSERT INTO author_affiliation VALUES(1356,686);
+INSERT INTO author_affiliation VALUES(1352,687);
+INSERT INTO author_affiliation VALUES(1355,687);
+INSERT INTO author_affiliation VALUES(1358,688);
+INSERT INTO author_affiliation VALUES(1360,688);
+INSERT INTO author_affiliation VALUES(1359,533);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -4438,6 +4463,8 @@ INSERT INTO algorithm VALUES(305,'Red-legged salamander skin AMPs','','',NULL,'L
 INSERT INTO algorithm VALUES(306,'Hellbender skin AMPs','','',NULL,'Bioprospects the skin secretions of Cryptobranchus alleganiensis, the hellbender salamander, for antimicrobial peptide candidates. Solid-phase extraction enrichment and Orbitrap Fusion acquisition, PEAKS de novo sequencing of the secretion peptides, then antimicrobial prediction over the de novo sequences. The third GMU host-defence peptide record in the catalog, alongside the red-legged salamander and hemp seed abstracts from the same lab.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(307,'Transformer architectures in LC-MS/MS proteomics (scoping review)','','',NULL,'Scoping review of Transformer and Transformer-hybrid models across de novo peptide sequencing and peptide property prediction. Searched PubMed/MEDLINE, Scopus and Web of Science for January 2017 to June 2026: 439 records, 207 after deduplication, 49 full texts assessed, 27 studies included, of which 13 were primarily de novo sequencing, 12 property prediction and 2 both. Finds encoder-decoder models dominant for spectrum-to-sequence generation and encoder-style or hybrid architectures common for fragment intensity, retention time, collision cross section and ion mobility. Its main argument is that reported gains are hard to compare at all, because benchmarks are heterogeneous, sequence-overlap auditing is incomplete, calibrated uncertainty is scarce and reporting is inconsistent.','review',NULL,NULL,'','');
 INSERT INTO algorithm VALUES(308,'Blowfly larval hemolymph AMPs',NULL,NULL,NULL,'Bioprospects the hemolymph of Chrysomya megacephala blowfly larvae, which develop in decaying matter, for antimicrobial peptides: larvae are challenged with MRSA, the hemolymph is fractionated by RP-HPLC, active fractions go to QTOF-LCMS, and the spectra are read by de novo sequencing rather than searched, since no database covers this species. The resulting sequence is screened against the APD3, DBAASP, dbAMP and CAMPR4 repositories.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(309,'Multi-enzyme template-assisted mAb sequencing',NULL,NULL,NULL,'Complete monoclonal-antibody sequencing from multiple enzyme digests read by HCD and EThcD, with the de novo calls made template-assisted in Supernovo. Refined on an antibody of known sequence, then applied to 25 anti-haemagglutinin influenza antibodies of unknown sequence, recovering high-confidence sequence for over 99% of the CDRs; the resulting heavy and light chains were cloned and expressed, and the recombinant antibodies reproduced the original binding curves. Distinguishes Ile from Leu correctly on the known-sequence controls.','downstream-application',0,'DDA',NULL,'antibodyomics');
+INSERT INTO algorithm VALUES(310,'MS3 w-ion Leu/Ile discrimination',NULL,NULL,'Fragment ion analysis','Separates the isomeric residues leucine and isoleucine during de novo sequencing by instrument rather than by inference: multistage ETD isolates the primary odd-electron z-dot ions and HCD then drives radical-site fragmentation into w-ions, whose masses differ between the two isomers and which come out as the most intense peaks in the spectrum. Demonstrated on six natural non-tryptic peptides of 15 to 37 residues from Rana ridibunda frog skin secretion, resolving all 22 Leu/Ile positions.','adjacent',0,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -4808,6 +4835,8 @@ INSERT INTO publication VALUES(357,'Abstract 4402 De Novo Peptidomics and Biopro
 INSERT INTO publication VALUES(358,'Transformer Architectures for De Novo Peptide Sequencing and Peptide Property Prediction in LC–MS/MS Proteomics','2026-09-01','10.1016/j.ailsci.2026.100184','Elsevier BV','Transformer architectures are increasingly used to interpret peptide-centred liquid chromatography-tandem mass spectrometry (LC-MS/MS) data, yet reported gains remain difficult to compare because studies differ in tasks, training corpora, peptide-overlap controls, acquisition settings, metrics and deployment criteria. This scoping review mapped Transformer and Transformer-hybrid applications in de novo peptide sequencing and peptide property prediction, with attention to architecture, evaluation validity, determinants of performance, reproducibility and research-workflow readiness. PubMed/MEDLINE, Scopus and Web of Science Core Collection were searched for English-language studies published from January 2017 through June 2026. Of 439 records identified, 207 remained after deduplication, 49 full texts were assessed and 27 studies were included. Thirteen studies primarily addressed de novo sequencing, 12 addressed property prediction and two covered both. Encoder-decoder models predominated in spectrum-to-sequence generation, whereas encoder-style and hybrid architectures were common for fragment intensity, retention time, collision cross section and ion-mobility prediction. Performance depended on architecture, but also on training-data quality, acquisition context, peptide length, fragment completeness, post-translational-modification representation, domain adaptation, physicochemical constraints and decoding strategy. Cross-study comparison was limited by heterogeneous benchmarks, incomplete sequence-overlap auditing, scarce calibrated uncertainty and inconsistent reporting of compute and reproducibility. Property prediction offered the clearest route to reusable workflow integration, while de novo sequencing remained a confidence-sensitive complement to established identification methods. Future evaluations require versioned benchmarks, auditable data independence, broader distribution-shift testing and standardised reporting of uncertainty and efficiency.','https://www.sciencedirect.com/science/article/pii/S2667318526000322','Artificial Intelligence in the Life Sciences','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(359,'NovoRank: Machine Learning Based Post-processing for Performance Improvement in De Novo Peptide Sequencing','2022-08-01',NULL,'MSc thesis','To identify peptides in mass spectrometry-based proteomics, tandem mass (MS/MS) spectra are analyzed using database search or de novo sequencing tools. In contrast to database search approaches, de novo sequencing directly deduces peptide sequences from MS/MS spectra without any reference to sequence databases. De novo sequencing method often generates incorrect peptide identifications due to its practically unlimited search space and its peptide identification performance does not reach that of database search methods. Instead, de novo sequencing has the advantage of finding novel peptides that are not a part of the sequence database, thus is an essential method for discovering peptides of as yet unknown, biologically important functions. Here, we propose a machine learning based post-processer for de novo sequencing tools, named NovoRank, that can improve the performance of de novo sequencing and is applicable with any de novo peptide sequencing tools. NovoRank uses DBSCAN, a well-known density-based clustering algorithm, and adopts deep learning techniques so that candidate peptide reordering can give a better top-ranked sequence. Given a large-scale synthetic peptide dataset (ProteomeTools), NovoRank increased the peptide recall by 8.63~12.66% when applied with de novo sequencing results from three different software tools.','https://repository.hanyang.ac.kr/handle/20.500.11754/174145','','thesis',NULL,NULL);
 INSERT INTO publication VALUES(360,'From decay to discovery: A new antimicrobial peptide from Chrysomya megacephala (Diptera: Calliphoridae) larvae','2026-08-10','10.1007/s42770-026-02047-y','Springer Science and Business Media LLC','The larvae of Chrysomya megacephala (Diptera: Calliphoridae) thrive in environments rich in decaying organic matter and dead animals, which are often colonized by bacteria. This adaptation suggests the larvae possess antimicrobial substances that provide them with a defense against bacterial infection. The hemolymph from around 200 C. megacephala larvae previously exposed to methicillin-resistant Staphylococcus aureus (MRSA) (clinical isolate) was collected, purified, and isolated utilizing Reverse Phase High Performance Liquid Chromatography (RP-HPLC). Fractions exhibiting antimicrobial properties underwent further analysis using Quadrupole Time-of-Flight Liquid Chromatography Mass Spectrometry (QTOF-LCMS). The resulting mass spectra were translated into amino acid sequences through de novo algorithms. Antimicrobial prediction tools from repositories such as APD3, Database of Antimicrobial Activity and Structure of Peptides (DBSAAP), Database of Antimicrobial Peptide (DBAMP), and Collection of Antimicrobial Peptide Version 4 (CAMPR4) were employed to validate the peptide sequences. We found the peptide (HGCGRLSKWFRQPGLLLSVKR) exhibited partial similarity with C. megacephala''s heat shock protein 70 (hsp70). The peptide demonstrated activity against Staphylococcus aureus, including MRSA, Micrococcus luteus, Staphylococcus epidermidis, and Bacillus subtilis with a minimum inhibitory concentration (MIC) of 0.06 mg/ml and an inhibition zone ranging from 8 to 11 mm at a concentration of 1 mg/ml. The cytotoxicity test of the peptide on immortalized keratinocyte cells (HaCat) and human corneal epithelial cells (HCEC) revealed an average cell viability > 80% at concentration of 0.06 mg/ml. In conclusion, the novel peptide (HGCGRLSKWFRQPGLLLSVKR) exhibits a broad spectrum of activity against Gram-positive bacteria while demonstrating minimal toxicity towards human cells.','https://link.springer.com/article/10.1007/s42770-026-02047-y','Brazilian Journal of Microbiology','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(361,'Template-Assisted De Novo Sequencing of SARS-CoV-2 and Influenza Monoclonal Antibodies by Mass Spectrometry','2022-07-01','10.1021/acs.jproteome.1c00913','American Chemical Society (ACS)','In this study, we used multiple enzyme digestions, coupled with higher-energy collisional dissociation (HCD) and electron-transfer/higher-energy collision dissociation (EThcD) fragmentation to develop a mass-spectrometric (MS) method for determining the complete protein sequence of monoclonal antibodies (mAbs). The method was refined on an mAb of a known sequence, a SARS-CoV-1 antireceptor binding domain (RBD) spike monoclonal antibody. The data were searched using Supernovo to generate a complete template-assisted de novo sequence for this and two SARS-CoV-2 mAbs of known sequences resulting in correct sequences for the variable regions and correct distinction of Ile and Leu residues. We then used the method on a set of 25 antihemagglutinin (HA) influenza antibodies of unknown sequences and determined high confidence sequences for >99% of the complementarity determining regions (CDRs). The heavy-chain and light-chain genes were cloned and transfected into cells for recombinant expression followed by affinity purification. The recombinant mAbs displayed binding curves matching the original mAbs with specificity to the HA influenza antigen. Our findings indicate that this methodology results in almost complete antibody sequence coverage with high confidence results for CDR regions on diverse mAb sequences.','https://pubs.acs.org/doi/10.1021/acs.jproteome.1c00913','Journal of Proteome Research','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(362,'Discrimination of Leucine and Isoleucine in Peptides Sequencing with Orbitrap Fusion Mass Spectrometer','2014-07-15','10.1021/ac501200h','American Chemical Society (ACS)','An efficient approach to easy and reliable differentiation between isomeric leucine and isoleucine in peptide sequencing utilizes multistage electron transfer dissociation and higher energy collision activated dissociation in the Orbitrap Fusion mass spectrometer. The MS(3) method involves production and isolation of primary odd-electron z(•) ions, followed by radical site initiation of their fragmentation with formation of w-ions, characteristic of the isomeric amino acid residues. Six natural nontryptic peptides isolated from the secretion of frog Rana ridibunda were studied. Their lengths were in the range between 15 and 37 amino acids and the number of targeted isomeric (Leu/Ile) residues varied between 1 and 7. The experiments were successful in all 22 cases of Leu/Ile residues, leaving no doubts in identification. The method is extremely selective as the targeted w-ions appear to be the most intense in the spectra. The proposed approach may be incorporated into shotgun proteomics algorithms and allows for the development of an exclusively mass spectrometric method for automated complete de novo sequencing of various peptides and proteins.','https://pubs.acs.org/doi/10.1021/ac501200h','Analytical Chemistry','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -7184,6 +7213,17 @@ INSERT INTO publication_author VALUES(360,1347,3);
 INSERT INTO publication_author VALUES(360,1348,4);
 INSERT INTO publication_author VALUES(360,1349,5);
 INSERT INTO publication_author VALUES(360,1350,6);
+INSERT INTO publication_author VALUES(361,1351,1);
+INSERT INTO publication_author VALUES(361,1352,2);
+INSERT INTO publication_author VALUES(361,1353,3);
+INSERT INTO publication_author VALUES(361,1354,4);
+INSERT INTO publication_author VALUES(361,1355,5);
+INSERT INTO publication_author VALUES(361,1356,6);
+INSERT INTO publication_author VALUES(361,1357,7);
+INSERT INTO publication_author VALUES(362,1358,1);
+INSERT INTO publication_author VALUES(362,1359,2);
+INSERT INTO publication_author VALUES(362,1087,3);
+INSERT INTO publication_author VALUES(362,1360,4);
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -13457,6 +13497,9 @@ INSERT INTO publication_algorithm VALUES(357,306,'describes');
 INSERT INTO publication_algorithm VALUES(358,307,'describes');
 INSERT INTO publication_algorithm VALUES(359,47,'describes');
 INSERT INTO publication_algorithm VALUES(360,308,'describes');
+INSERT INTO publication_algorithm VALUES(361,309,'describes');
+INSERT INTO publication_algorithm VALUES(361,259,'uses');
+INSERT INTO publication_algorithm VALUES(362,310,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -21895,11 +21938,11 @@ INSERT INTO family_note VALUES('Transformer (encoder-only)','Transformer spectru
 INSERT INTO family_note VALUES('Diffusion','Iterative denoising: start from noise over the residue positions and refine repeatedly, so the precursor-mass constraint and the consistency of the whole sequence can be enforced at every step rather than only at the end.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
-INSERT INTO sqlite_sequence VALUES('city',299);
-INSERT INTO sqlite_sequence VALUES('affiliation',684);
-INSERT INTO sqlite_sequence VALUES('author',1350);
-INSERT INTO sqlite_sequence VALUES('algorithm',308);
-INSERT INTO sqlite_sequence VALUES('publication',360);
+INSERT INTO sqlite_sequence VALUES('city',300);
+INSERT INTO sqlite_sequence VALUES('affiliation',688);
+INSERT INTO sqlite_sequence VALUES('author',1360);
+INSERT INTO sqlite_sequence VALUES('algorithm',310);
+INSERT INTO sqlite_sequence VALUES('publication',362);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

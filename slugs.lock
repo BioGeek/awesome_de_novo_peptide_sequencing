@@ -307,6 +307,8 @@ algorithms	305	red-legged-salamander-skin-amps
 algorithms	306	hellbender-skin-amps
 algorithms	307	transformer-architectures-in-lc-ms-ms-proteomics-scoping-review
 algorithms	308	blowfly-larval-hemolymph-amps
+algorithms	309	multi-enzyme-template-assisted-mab-sequencing
+algorithms	310	ms3-w-ion-leu-ile-discrimination
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -1624,6 +1626,16 @@ authors	1347	anna-krasilnikova
 authors	1348	shariza-sahudin
 authors	1349	noraziah-sahlan
 authors	1350	chong-chin-heo
+authors	1351	michelle-v-gadush
+authors	1352	giuseppe-a-sautto
+authors	1353	hamssika-chandrasekaran
+authors	1354	alena-bensussan
+authors	1355	ted-m-ross
+authors	1356	gregory-c-ippolito
+authors	1357	maria-d-person
+authors	1358	albert-t-lebedev
+authors	1359	eugen-damoc
+authors	1360	tatiana-yu-samgina
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -2050,6 +2062,7 @@ institutions	678	george-mason-university
 institutions	679	covenant-university
 institutions	681	universiti-teknologi-mara
 institutions	684	volgograd-state-medical-university
+institutions	687	university-of-georgia
 publications	1	de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide
 publications	2	instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale
 publications	3	instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics-preprint
@@ -2409,6 +2422,8 @@ publications	357	abstract-4402-de-novo-peptidomics-and-bioprospecting-reveal-ant
 publications	358	transformer-architectures-for-de-novo-peptide-sequencing-and-peptide-property
 publications	359	novorank-machine-learning-based-post-processing-for-performance-improvement-in
 publications	360	from-decay-to-discovery-a-new-antimicrobial-peptide-from-chrysomya-megacephala
+publications	361	template-assisted-de-novo-sequencing-of-sars-cov-2-and-influenza-monoclonal
+publications	362	discrimination-of-leucine-and-isoleucine-in-peptides-sequencing-with-orbitrap
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
