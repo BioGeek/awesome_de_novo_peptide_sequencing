@@ -143,7 +143,7 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      r"\d+ of the (\d+) are `'uses'`",
      "SELECT COUNT(*) FROM publication_algorithm"),
     ("CLAUDE.md", "PEAKS papers that only use it",
-     r"(\d+) of PEAKS's 21 papers",
+     r"(\d+) of PEAKS's \d+ papers",
      "SELECT COUNT(*) FROM publication_algorithm WHERE role='uses' "
      "AND algorithm_id=(SELECT id FROM algorithm WHERE name='PEAKS')"),
     ("CLAUDE.md", "PEAKS papers in total",
