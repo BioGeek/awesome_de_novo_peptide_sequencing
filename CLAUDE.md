@@ -120,6 +120,14 @@ uv run --with pypdf python3 build_pdf_library.py ingest manual/ --apply \
 uv run python build_dnps_candidates.py
 uv run python build_dnps_candidates.py --force --summary dnps_summary.md
 
+# Mine the LOCAL PDF library for repository accessions (PXD / MSV / iProX /
+# Zenodo / figshare / Hugging Face) and link them to datasets. Never in CI: it
+# needs the PDF library. Creates no dataset rows, only publication_dataset
+# links, and only for accessions already recorded. See 'Datasets' below.
+uv run python build_dataset_accessions.py                 # report only
+uv run python build_dataset_accessions.py --write         # link known accessions
+uv run python build_dataset_accessions.py --min-papers 3  # tighter candidate list
+
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
@@ -204,7 +212,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**28 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1721 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**32 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1721 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -973,6 +981,93 @@ it downwards.
 **No code from the upstream Space is used.** It publishes no licence, so it is
 all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
 independent implementation, MIT licensed, crediting the original as the idea.
+
+## Datasets, at three grains
+
+"Trained on nine-species" identifies almost nothing, and the catalog now says
+so with structure rather than prose. Four tables:
+
+| table | the thing it holds | example |
+|---|---|---|
+| `dataset` | what people NAME | Nine-species benchmark |
+| `dataset_version` | what models RUN ON | `revised`, `InstaNovo split` |
+| `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
+| `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
+
+**10 datasets, 19 versions, 56 addresses, 86 publication links over 54 papers.**
+
+**The nine-species benchmark alone has four versions**, and they are
+distinguishable by number, which is the only reliable way:
+
+- **original** (`MSV000081382`, DeepNovo 2017) is what a paper means unless it
+  says otherwise. Its MassIVE title is "De novo peptide sequencing by deep
+  learning", i.e. the deposit is the DeepNovo paper's, not a dataset release.
+- **revised** (`MSV000090982`, "De novo nine-species benchmark") re-curated to
+  remove peptide redundancy between species, which leaked test peptides into
+  training in the original. 2,844,842 spectra. Note that record carries DATED
+  UPDATE FOLDERS (one paper cites `updates/2024-05-14_woutb_71950b89`), so even
+  this accession is not a single fixed object.
+- **InstaNovo split** is parquet with a fixed 499,402 / 28,572 / 111,312
+  train/validation/test split and its own DOI (`10.57967/hf/3821`), which makes
+  it the only version reproducible by citation alone. Its 499,402 training
+  spectra are the same count `BENCHMARKS.md` records NovoBench retraining every
+  architecture on.
+- **ProteoBench selection**, the 779,879 spectra that benchmark scores against.
+
+**Provenance is an address, not a different dataset.** The benchmark is nine
+unrelated third-party PRIDE submissions re-curated into one MassIVE deposit, so
+those nine carry `is_provenance = 1` and name their species in `part`. They are
+real datasets about honeybees and tomatoes that happen to be where these
+spectra came from, and treating them as nine catalog datasets would be wrong
+twice: it would invent nine rows and lose the fact that they are one benchmark.
+
+**A NULL `dataset_version_id` is the finding, not a gap.** 41 papers use the
+nine-species benchmark; 16 name the original, 8 the revised, 3 the InstaNovo
+split, and **14 print only a per-species provenance accession**, which does not
+determine which curated version they ran on. Inventing a version for those
+would hide exactly the ambiguity the table exists to expose.
+
+**`dataset.kind` separates the two populations, and they are empirically
+distinct.** Accession reuse across the PDF library is bimodal: a couple of dozen
+accessions are cited by five or more papers, and a tail of several hundred by
+exactly one, the paper that deposited them. So `'benchmark'` and `'training'`
+are shared resources models are evaluated or trained on, and `'deposit'` is data
+a paper produced as its own result. The tail is correctly NOT worth a `dataset`
+row each; `kind` records where a dataset came from, and the links record how
+often anyone reused it.
+
+**Tiers are versions.** The InstaNovo-FM corpus publishes three nested labelled
+tiers, HCFM within MCFM within LCFM, plus **ACFM, which is deliberately not
+published**. A paper reporting training on ACFM is reporting on data nobody
+else can obtain, which is worth being able to see.
+
+### build_dataset_accessions.py
+
+Mines the LOCAL PDF library for accessions and links them. It **never** creates
+a `dataset`, `dataset_version` or `dataset_address` row: deciding that a pile of
+spectra is a named dataset, and which version, is the judgement call the three
+tables exist to record. Unknown accessions go to `dataset_candidates.csv`,
+ranked by how many papers cite them. `--write` creates only
+`publication_dataset` rows, and only for accessions already in
+`dataset_address`, because that half is mechanical: a paper printing
+`MSV000081382` used the nine-species benchmark.
+
+**It must never run in CI**, same reason as `build_pdf_library.py`: there is no
+library on a runner. It imports that module for `rapidfuzz`, so run it under
+`uv run python`, not bare `python3`.
+
+Two traps, both hit while writing it:
+
+- **Do not map filenames to publications through `pdf_status.csv`'s `file`
+  column.** That column is written by `fetch` for files it downloads, so it
+  covers neither hand-filed PDFs nor the full-title rename. It named 130 of the
+  243 files present plus 82 that no longer existed, silently halving the scan:
+  100 accessions found instead of 402. Call `build_pdf_library.coverage()`
+  instead, which is the audited matcher.
+- **Count links, not hits.** Several accessions resolve to the same link, since
+  a paper listing all nine provenance submissions is one row and nine hits.
+  Without deduplication the report claimed 187 rows where `--write` created 86,
+  and the report was the wrong number.
 
 ## URLs are a lock file
 
