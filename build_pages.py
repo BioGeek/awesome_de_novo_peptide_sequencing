@@ -631,8 +631,14 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     # a link that may rot.
     if ctx.get("checkpoints"):
         L += ["## Checkpoints", ""]
-        L.append("| Version | Trained on | Host | Licence | Size | Checked |")
-        L.append("|---|---|---|---|---|---|")
+        has_mirror = any(cp["mirror_url"] for cp in ctx["checkpoints"])
+        head = "| Version | Trained on | Host | Licence | Size | Checked |"
+        rule = "|---|---|---|---|---|---|"
+        if has_mirror:
+            head = head[:-1] + " Backup |"
+            rule = rule[:-1] + "---|"
+        L.append(head)
+        L.append(rule)
         for cp in ctx["checkpoints"]:
             ver = cp["tool_version"] or cp["label"] or "—"
             size = (f"{cp['size_bytes'] / 1e9:.1f} GB" if cp["size_bytes"] and cp["size_bytes"] >= 1e9
@@ -645,13 +651,24 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                 state = f"**{state}**"
             if cp["last_checked"]:
                 state += f" <small>{cp['last_checked']}</small>"
-            L.append(f"| {md_escape(ver)} | {md_escape(cp['trained_on'] or '—')} | {host} "
-                     f"| {md_escape(cp['licence'] or 'not stated')} | {size} | {state} |")
+            row = (f"| {md_escape(ver)} | {md_escape(cp['trained_on'] or '—')} | {host} "
+                   f"| {md_escape(cp['licence'] or 'not stated')} | {size} | {state} |")
+            if has_mirror:
+                # The ORIGINAL stays the primary link: a mirror is a fallback,
+                # and sending readers to a copy by default would hide the fact
+                # that the authors published it somewhere.
+                row += (f" [copy]({cp['mirror_url']}) |" if cp["mirror_url"] else " — |")
+            L.append(row)
         L.append("")
         if any(not cp["archival"] for cp in ctx["checkpoints"]):
-            L += ["A host marked *archival* has a DOI and keeps what it is given. "
-                  "The others can move or disappear, which is why they are checked "
-                  "rather than merely listed.", ""]
+            note = ("A host marked *archival* has a DOI and keeps what it is given. "
+                    "The others can move or disappear, which is why they are checked "
+                    "rather than merely listed.")
+            if has_mirror:
+                note += (" Where a *copy* is linked, it is a backup of someone "
+                         "else's weights kept in case the original link goes stale; "
+                         "the original is the link to cite and to prefer.")
+            L += [note, ""]
 
     # Where this method stands on the two public benchmarks, when it was run on
     # them: one line each, carrying the numbers that need no context to read,
@@ -1114,7 +1131,8 @@ def load(conn: sqlite3.Connection) -> dict:
     # data are shown, not just a link.
     d["checkpoints"] = defaultdict(list)
     for r in q("SELECT algorithm_id, label, tool_version, trained_on, host, url, "
-               "       accession, licence, size_bytes, archival, status, last_checked "
+               "       accession, licence, size_bytes, archival, status, last_checked, "
+               "       filename, mirror_url "
                "  FROM checkpoint "
                " ORDER BY archival DESC, tool_version, host, id"):
         d["checkpoints"][r["algorithm_id"]].append(r)

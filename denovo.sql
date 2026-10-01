@@ -22246,25 +22246,35 @@ CREATE TABLE checkpoint (
     http_code    INTEGER,
     last_checked DATE,
     mirror_url   TEXT,             -- our copy, made ONLY for a non-archival host
-    notes        TEXT, tool_version TEXT, trained_on TEXT,
+    notes        TEXT, tool_version TEXT, trained_on TEXT, local_backup TEXT, sha256 TEXT, filename TEXT,
     UNIQUE(algorithm_id, url)
 );
-INSERT INTO checkpoint VALUES(1,13,'pretrained models','Zenodo','https://doi.org/10.5281/zenodo.14611534','10.5281/zenodo.14611534','Apache-2.0',456000000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(2,224,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.20687570','10.5281/zenodo.20687570','CC-BY-4.0',1657100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(3,32,'project archive v2','Zenodo','https://doi.org/10.5281/zenodo.16735542','10.5281/zenodo.16735542','CC-BY-4.0',1558600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(4,32,'project archive','Zenodo','https://doi.org/10.5281/zenodo.10405582','10.5281/zenodo.10405582','CC-BY-4.0',22623100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(5,12,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.10694984','10.5281/zenodo.10694984','CC-BY-4.0',5117100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(6,12,'data set and weights','Zenodo','https://doi.org/10.5281/zenodo.6791263','10.5281/zenodo.6791263','Apache-2.0',3915300000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(7,39,'dataset and checkpoint','Zenodo','https://doi.org/10.5281/zenodo.8000316','10.5281/zenodo.8000316','CC-BY-4.0',2424500000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(8,39,'original checkpoint','Zenodo','https://doi.org/10.5281/zenodo.7996942','10.5281/zenodo.7996942','CC-BY-4.0',2424600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(9,58,'pretrained model','Google Drive','https://drive.google.com/open?id=0By9IxqHK5MdWalJLSGliWW1RY2c',NULL,NULL,NULL,0,'unverifiable',200,'2026-10-01',NULL,'Drive answers 200 with HTML either way',NULL,NULL);
-INSERT INTO checkpoint VALUES(10,12,'MassIVE-KB splits','institutional','https://noble.gs.washington.edu/~melih/mskb_casanovo_splits.zip',NULL,NULL,NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL);
-INSERT INTO checkpoint VALUES(11,12,'4.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.0.0','MassIVE-KB v1');
-INSERT INTO checkpoint VALUES(12,238,'releases','GitHub release','https://github.com/instadeepai/InstaNovo-FM/releases',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL);
-INSERT INTO checkpoint VALUES(13,69,'HeLa QC model','Hugging Face','https://huggingface.co/InstaDeepAI/winnow-helaqc-model','InstaDeepAI/winnow-helaqc-model','CC-BY-NC-SA-4.0',NULL,0,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
-INSERT INTO checkpoint VALUES(14,12,'4.2.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.2.0','~2M PSMs from MassIVE-KB v1 + v2.0.15');
-INSERT INTO checkpoint VALUES(15,12,'5.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.0.0',NULL);
-INSERT INTO checkpoint VALUES(16,12,'5.2.0-Orbitrap','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.2.0','the default --model orbitrap selector from v5.2.0 onward');
+INSERT INTO checkpoint VALUES(1,13,'pretrained models','Zenodo','https://doi.org/10.5281/zenodo.14611534','10.5281/zenodo.14611534','Apache-2.0',456000000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(2,224,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.20687570','10.5281/zenodo.20687570','CC-BY-4.0',1657100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(3,32,'project archive v2','Zenodo','https://doi.org/10.5281/zenodo.16735542','10.5281/zenodo.16735542','CC-BY-4.0',1558600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(4,32,'project archive','Zenodo','https://doi.org/10.5281/zenodo.10405582','10.5281/zenodo.10405582','CC-BY-4.0',22623100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(5,12,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.10694984','10.5281/zenodo.10694984','CC-BY-4.0',5117100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(6,12,'data set and weights','Zenodo','https://doi.org/10.5281/zenodo.6791263','10.5281/zenodo.6791263','Apache-2.0',3915300000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(7,39,'dataset and checkpoint','Zenodo','https://doi.org/10.5281/zenodo.8000316','10.5281/zenodo.8000316','CC-BY-4.0',2424500000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(8,39,'original checkpoint','Zenodo','https://doi.org/10.5281/zenodo.7996942','10.5281/zenodo.7996942','CC-BY-4.0',2424600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(9,58,'pretrained model','Google Drive','https://drive.google.com/open?id=0By9IxqHK5MdWalJLSGliWW1RY2c',NULL,NULL,NULL,0,'unverifiable',200,'2026-10-01',NULL,'Drive answers 200 with HTML either way',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(10,12,'MassIVE-KB splits','institutional','https://noble.gs.washington.edu/~melih/mskb_casanovo_splits.zip',NULL,NULL,NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(11,12,'4.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.0.0','MassIVE-KB v1',NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(12,238,'releases','GitHub release','https://github.com/instadeepai/InstaNovo-FM/releases',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(13,69,'HeLa QC model','Hugging Face','https://huggingface.co/InstaDeepAI/winnow-helaqc-model','InstaDeepAI/winnow-helaqc-model','CC-BY-NC-SA-4.0',NULL,0,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(14,12,'4.2.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.2.0','~2M PSMs from MassIVE-KB v1 + v2.0.15',NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(15,12,'5.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.0.0',NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(16,12,'5.2.0-Orbitrap','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.2.0','the default --model orbitrap selector from v5.2.0 onward',NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(17,36,'AAAI release','Google Drive','https://drive.google.com/file/d/1knNUqSwPf98j388Ds2E6bG8tAXx8voWR/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'listed in BEAM-Labs/denovo',NULL,NULL,NULL,NULL,'ControNovo.ckpt');
+INSERT INTO checkpoint VALUES(18,20,'MassIVE','Google Drive','https://drive.google.com/file/d/12IZgeGP3ae3KksI5_82yuSTbk_M9sKNY/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'listed in BEAM-Labs/denovo as PrimeNovo',NULL,NULL,NULL,NULL,'model_massive.ckpt');
+INSERT INTO checkpoint VALUES(19,20,'phosphorylation','Google Drive','https://drive.google.com/file/d/1YcF9VNE1gFF8T0EfwcFb7v1tiKw25-ai/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'named in ProteoBench discussion 356',NULL,'fine-tuned from model_massive.ckpt on 2020-Cell-LUAD, adds a +79.97 Da token',NULL,NULL,'PTM_Phosphorylation.ckpt');
+INSERT INTO checkpoint VALUES(20,16,'RefineNovo-30M','Google Drive','https://drive.google.com/file/d/1NtEIdrm1lccZRWOeO20-2c3Ekop-BhCJ/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'listed in BEAM-Labs/denovo',NULL,NULL,NULL,NULL,'model_massivekb.ckpt');
+INSERT INTO checkpoint VALUES(21,23,'shared with CrossNovo','Google Drive','https://drive.google.com/file/d/1Zfzpu5JHUvMXfvNPA-QVGzXMyF499vFL/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'BEAM-Labs/denovo lists this same id for RankNovo and CrossNovo',NULL,NULL,NULL,NULL,'model_0.660.ckpt');
+INSERT INTO checkpoint VALUES(22,9,'shared with RankNovo','Google Drive','https://drive.google.com/file/d/1Zfzpu5JHUvMXfvNPA-QVGzXMyF499vFL/view',NULL,'MIT',NULL,0,'unchecked',NULL,NULL,NULL,'BEAM-Labs/denovo lists this same id for RankNovo and CrossNovo',NULL,NULL,NULL,NULL,'model_0.660.ckpt');
+INSERT INTO checkpoint VALUES(23,56,'pretrained model','Google Drive','https://drive.google.com/file/d/1T07-YHvJdmSE1emx8U8YmYrtq0Z1mEbN/view',NULL,NULL,NULL,0,'unchecked',NULL,NULL,NULL,'nh2tran/DeepNovo-DIA reports NOASSERTION, so no licence can be relied on',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(24,22,'GNova-Astral_pretrain','git-LFS','https://github.com/hearthewind/dianovo/raw/main/main_model/save/ckpt/GNova-Astral_pretrain.pt',NULL,'Apache-2.0',493000000,0,'unchecked',NULL,NULL,NULL,'tracked in git-LFS in the repo; its Dropbox folder is a 24 GB archive of sample data',NULL,NULL,NULL,NULL,'GNova-Astral_pretrain.pt');
+INSERT INTO checkpoint VALUES(25,22,'RGNova-Astral_op','git-LFS','https://github.com/hearthewind/dianovo/raw/main/main_model/save/ckpt/RGNova-Astral_op.pt',NULL,'Apache-2.0',2000000000,0,'unchecked',NULL,NULL,NULL,'tracked in git-LFS in the repo; its Dropbox folder is a 24 GB archive of sample data',NULL,NULL,NULL,NULL,'RGNova-Astral_op.pt');
+INSERT INTO checkpoint VALUES(26,22,'RGNova-Astral_sg','git-LFS','https://github.com/hearthewind/dianovo/raw/main/main_model/save/ckpt/RGNova-Astral_sg.pt',NULL,'Apache-2.0',2000000000,0,'unchecked',NULL,NULL,NULL,'tracked in git-LFS in the repo; its Dropbox folder is a 24 GB archive of sample data',NULL,NULL,NULL,NULL,'RGNova-Astral_sg.pt');
 CREATE TABLE publication_citation (
     citing_id INTEGER NOT NULL,
     cited_id  INTEGER NOT NULL,
@@ -26008,6 +26018,12 @@ INSERT INTO sqlite_sequence VALUES('affiliation',721);
 INSERT INTO sqlite_sequence VALUES('author',1804);
 INSERT INTO sqlite_sequence VALUES('algorithm',385);
 INSERT INTO sqlite_sequence VALUES('publication',437);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -26034,11 +26050,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -26054,12 +26065,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -26074,15 +26079,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -26111,5 +26107,19 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 COMMIT;
