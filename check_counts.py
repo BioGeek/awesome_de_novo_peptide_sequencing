@@ -130,6 +130,13 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      lambda db: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight"}.get(
          db.execute("SELECT COUNT(*) FROM dataset_version WHERE dataset_id="
                     "(SELECT id FROM dataset WHERE name='ProteomeTools')").fetchone()[0])),
+    ("CLAUDE.md", "nine-species naming the original",
+     r"benchmark; (\d+) name the original", "SELECT COUNT(*) FROM publication_dataset pd "
+     "JOIN dataset_version v ON v.id=pd.dataset_version_id "
+     "WHERE v.version='original (DeepNovo, 2017)'"),
+    ("CLAUDE.md", "nine-species naming the revised",
+     r"name the original, (\d+) the revised", "SELECT COUNT(*) FROM publication_dataset pd "
+     "JOIN dataset_version v ON v.id=pd.dataset_version_id WHERE v.version LIKE 'revised%'"),
     ("CLAUDE.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
      "SELECT COUNT(*) FROM publication_dataset WHERE dataset_id="

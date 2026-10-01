@@ -377,6 +377,41 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             L.append(line)
         L.append("")
 
+    # Data, split the way the role column splits it: what this paper put into
+    # the world, and what it consumed. 'introduces' is the deposit; everything
+    # else is use. Dataset names are plain text, not links: there are no dataset
+    # pages yet, and inventing a URL here would commit one.
+    for heading, roles in (("Data deposited", ("introduces",)),
+                           ("Data used", ("uses", "trains-on", "evaluates-on"))):
+        rows = [r for r in ctx.get("datasets", []) if r[4] in roles]
+        if not rows:
+            continue
+        L += [f"## {heading}", ""]
+        for name, kind, version, addrs, _role in rows:
+            line = f"- **{md_escape(name)}**"
+            if version:
+                line += f" — {md_escape(version)}"
+            else:
+                # The honest state for a paper that names a dataset without
+                # saying which version it ran on.
+                line += " <small>(version not stated)</small>"
+            if addrs:
+                shown = ", ".join(
+                    f"[{md_escape(acc)}]({url})" + (" <small>(provenance)</small>" if prov else "")
+                    for _repo, acc, url, prov in addrs[:12])
+                line += f" · {shown}"
+                if len(addrs) > 12:
+                    line += f" <small>and {len(addrs) - 12} more</small>"
+            elif version:
+                # Only claim this when a version IS named. Addresses hang off
+                # the version, so an unknown version means unknown addresses,
+                # not absent ones: saying "no public address" under a paper that
+                # merely failed to say which nine-species it used would be a
+                # statement about the benchmark, and a false one.
+                line += " <small>· no public address</small>"
+            L.append(line)
+        L.append("")
+
     for heading, edges in (("Cites", ctx["cites"]), ("Cited by", ctx["cited_by"])):
         if not edges:
             continue
@@ -1054,6 +1089,29 @@ def load(conn: sqlite3.Connection) -> dict:
     # inflate their publication count and forge a co-authorship edge. This is
     # also the only thing that connects several thesis students to the field at
     # all: 4 of the catalog's 6 authors with zero co-authors are thesis students.
+    # Datasets per publication. Grouped in Python rather than by a GROUP_CONCAT
+    # because each row carries three independently-nullable things (version,
+    # address list, role) and the byline note under 'The Quarto site' is the
+    # standing warning about what a trailing ORDER BY does to GROUP_CONCAT.
+    #
+    # Addresses are fetched per VERSION, not per dataset, so a paper that names
+    # the revised benchmark does not get the original's accession printed under
+    # it. A version with no address is normal: see 'Datasets, at three grains'.
+    addr_of_version = defaultdict(list)
+    for r in q("SELECT dataset_version_id, repository, accession, url, is_provenance "
+               "FROM dataset_address ORDER BY is_provenance, repository, accession"):
+        addr_of_version[r["dataset_version_id"]].append(
+            (r["repository"], r["accession"], r["url"], r["is_provenance"]))
+    d["pub_datasets"] = defaultdict(list)       # publication id -> [(name, kind, version, addrs, role)]
+    for r in q("SELECT pd.publication_id, pd.role, pd.dataset_version_id, "
+               "       ds.name AS ds_name, ds.kind, dv.version "
+               "  FROM publication_dataset pd "
+               "  JOIN dataset ds ON ds.id = pd.dataset_id "
+               "  LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id "
+               " ORDER BY ds.name, dv.version"):
+        d["pub_datasets"][r["publication_id"]].append(
+            (r["ds_name"], r["kind"], r["version"],
+             addr_of_version.get(r["dataset_version_id"], []), r["role"]))
     d["supervisors_of"] = defaultdict(list)     # publication id -> [(aid, name)]
     d["supervised_by"] = defaultdict(list)      # supervisor id -> [(pub, title, date, student)]
     d["supervisor_for_student"] = defaultdict(list)  # student id -> [(aid, name, pub, title)]
@@ -1443,6 +1501,7 @@ def main() -> int:
                 "venue_ids": d["venue_key"],
                 "counterpart": counterpart,
                 "supervisors": d["supervisors_of"].get(pid, []),
+                "datasets": d["pub_datasets"].get(pid, []),
             }
             body, mtime = render_publication(site, row, ctx)
             emit("publications", site.slugs["publications"][pid], body, mtime)

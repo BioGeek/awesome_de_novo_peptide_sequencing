@@ -279,7 +279,10 @@ def main() -> int:
 
     print()
     print(f"  accessions seen          {len(hits)}")
-    print(f"  of those already known   {len(hits) - len(unknown)}")
+    # Subtract BOTH: an excluded DOI is neither known nor unknown, and leaving
+    # it out of this arithmetic reported "402 of 402 known" while 17 were in
+    # fact excluded.
+    print(f"  of those already known   {len(hits) - len(unknown) - len(excluded)}")
     print(f"  publication_dataset rows {'written' if args.write else 'proposed'}: {linked}"
           f" ({skipped} already present)")
     print(f"  unknown accessions       {len(unknown)}, "

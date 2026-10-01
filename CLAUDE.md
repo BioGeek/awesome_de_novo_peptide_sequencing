@@ -994,7 +994,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**42 datasets, 65 versions, 93 addresses, 185 publication links over 78 papers.**
+**377 datasets, 401 versions, 433 addresses, 577 publication links over 121 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1002,11 +1002,26 @@ distinguishable by number, which is the only reliable way:
 - **original** (`MSV000081382`, DeepNovo 2017) is what a paper means unless it
   says otherwise. Its MassIVE title is "De novo peptide sequencing by deep
   learning", i.e. the deposit is the DeepNovo paper's, not a dataset release.
-- **revised** (`MSV000090982`, "De novo nine-species benchmark") re-curated to
-  remove peptide redundancy between species, which leaked test peptides into
-  training in the original. 2,844,842 spectra. Note that record carries DATED
-  UPDATE FOLDERS (one paper cites `updates/2024-05-14_woutb_71950b89`), so even
-  this accession is not a single fixed object.
+- **revised**, introduced by "A multi-species benchmark for training and
+  validating mass spectrometry proteomics machine learning models"
+  (publications 98 and 113), re-curated to remove peptide redundancy between
+  species, which leaked test peptides into training in the original.
+  2,844,842 spectra. It is **itself two variants**, `main` and `balanced`, the
+  balanced one randomly thinned so the species are more evenly represented;
+  both ship in one Zenodo record, so "the revised benchmark" is still two
+  things. Addresses: `MSV000090982`, whose record carries DATED UPDATE FOLDERS
+  (one paper cites `updates/2024-05-14_woutb_71950b89`) so even that accession
+  is not a single fixed object; `10.5281/zenodo.13685813` for the data; and
+  `10.5281/zenodo.12926326` plus `Noble-Lab/multi-species-benchmark` for the
+  construction code, marked as such in `part` because code is not an address of
+  the spectra.
+
+  **Beware the neighbouring DOI.** `10.5281/zenodo.10358625` and `...626` look
+  like they belong here and do not: they are `ismaRP/PPbenchmark`, released with
+  "Benchmarking the identification of a single degraded protein to explore
+  optimal search strategies for ancient proteins" (publications 341 and 342).
+  They were briefly attached to the revised benchmark by misreading a two-line
+  report where the title prints under the NEXT accession.
 - **InstaNovo split** is parquet with a fixed 499,402 / 28,572 / 111,312
   train/validation/test split and its own DOI (`10.57967/hf/3821`), which makes
   it the only version reproducible by citation alone. Its 499,402 training
@@ -1021,8 +1036,8 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 41 papers use the
-nine-species benchmark; 16 name the original, 8 the revised, 3 the InstaNovo
+**A NULL `dataset_version_id` is the finding, not a gap.** 44 papers use the
+nine-species benchmark; 16 name the original, 11 the revised, 3 the InstaNovo
 split, and **14 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
@@ -1032,9 +1047,30 @@ distinct.** Accession reuse across the PDF library is bimodal: a couple of dozen
 accessions are cited by five or more papers, and a tail of several hundred by
 exactly one, the paper that deposited them. So `'benchmark'` and `'training'`
 are shared resources models are evaluated or trained on, and `'deposit'` is data
-a paper produced as its own result. The tail is correctly NOT worth a `dataset`
-row each; `kind` records where a dataset came from, and the links record how
-often anyone reused it.
+a paper produced as its own result. `kind` records where a dataset came from,
+and the links record how often anyone reused it.
+
+**The tail is in, all of it.** Every accession the library yields now has a
+`dataset` row, titled by its own repository, which is what makes "what data has
+this field actually used" answerable at all. 30 are named by their accession
+because no repository returned a title, and 13 carry an accession suffix because
+repository titles collide -- two accessions of one study, or a generic title --
+and merging two deposits that share a name would be wrong. `acquisition_mode` is
+left NULL for all of them rather than guessed: a repository title does not say
+DDA or DIA, and a wrong value would feed the site's filters.
+
+**`role = 'introduces'` is inferred from TITLE, never from citation count.** The
+tempting rule, "a deposit cited by exactly one paper was deposited by it", is
+wrong: a single-citation accession is very often third-party data that one
+method paper evaluated on. What distinguishes a depositor is that repositories
+title a submission after the study that made it. Matching is prefix-against-
+prefix cut to the shorter string, with `token_set_ratio` allowed only above 40
+normalised characters, and with the repository's prefix shapes stripped and
+retried (`Files for: X`, `data from "X"`, `Yeast mirror LC-MS/MS - X`). The
+length guard is not optional: `token_set_ratio` ignores unmatched tokens, so a
+deposit called `Casanovo` scored **100** against "Improvements to CasaNovo, a
+deep learning de novo peptide sequencing...", exactly the failure the PDF
+matcher hit. 29 links were promoted; both short-name cases now score 0.
 
 **Tiers are versions.** The InstaNovo-FM corpus publishes three nested labelled
 tiers, HCFM within MCFM within LCFM, plus **ACFM, the unlabelled superset,
@@ -1045,7 +1081,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 14 of 65 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 14 of 401 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
