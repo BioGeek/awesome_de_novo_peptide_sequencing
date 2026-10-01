@@ -382,6 +382,8 @@ algorithms	380	lipnovo-plus
 algorithms	381	rt-gctnovo
 algorithms	382	plmnovo
 algorithms	383	de-novo-fdr-control-procedure
+algorithms	384	paas
+algorithms	385	improved-paas
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -2103,6 +2105,7 @@ authors	1800	christian-dallago
 authors	1801	erik-j-soderblom
 authors	1802	scott-h-soderling
 authors	1803	uri-keich
+authors	1804	h-wollnik
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -2979,6 +2982,8 @@ publications	432	lipnovo-plus-self-reflective-latent-imputation-for-robust-de-no
 publications	433	rt-gctnovo-a-peptide-de-novo-sequencing-model-incorporating-gated-multi-scale
 publications	434	protein-language-model-aligned-spectra-embeddings-for-de-novo-peptide-sequencing
 publications	435	a-procedure-for-controlling-the-false-discovery-rate-of-de-novo-peptide
+publications	436	computer-program-paas-for-the-estimation-of-possible-amino-acid-sequence-of
+publications	437	improved-paas-a-computer-program-to-determine-possible-amino-acid-sequences-of
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

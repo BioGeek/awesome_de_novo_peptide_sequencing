@@ -61,7 +61,11 @@ jobs:
           OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
         run: |
           cd space
-          python3 harvest.py --catalog ../denovo.db ${{ inputs.since && format('--since {0}', inputs.since) || '' }} \
+          # Both files, because the self-cleaning works in both directions:
+          # --catalog marks what has been added, --watchlist drops what has been
+          # rejected so the Space stops re-proposing it.
+          python3 harvest.py --catalog ../denovo.db --watchlist ../WATCHLIST.md \
+            ${{ inputs.since && format('--since {0}', inputs.since) || '' }} \
             | tee ../harvest.out
 
       # Only commit when the paper list actually changed. `generated` carries

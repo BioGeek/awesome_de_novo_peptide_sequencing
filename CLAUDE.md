@@ -212,11 +212,11 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**32 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1721 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**32 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (316), `'preprint'` (81), `'thesis'` (17), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1) and `'abstract'` (4). Use one of those eight; do not invent a ninth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (318), `'preprint'` (81), `'thesis'` (17), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1) and `'abstract'` (4). Use one of those eight; do not invent a ninth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -225,7 +225,7 @@ Authors connect to publications via `publication_author` (with `author_order`) a
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 53 of the 492 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 53 of the 494 are `'uses'`, and they are concentrated rather than
 spread: 20 of PEAKS's 23 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -469,7 +469,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 435 against 434 publications today --
+a deleted row does not give its id back -- 437 against 436 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -576,8 +576,8 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 147 rows use day
-  `01` and 136 of those are in non-January months, so a first-of-the-month date is
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 149 rows use day
+  `01` and 138 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
 **The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
@@ -668,7 +668,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 408/434, of which 5 came from the PDFs themselves via
+Coverage is 410/436, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`).
 The 26 without one are mostly theses, conference pages and records with no DOI,
 where neither an API nor the PDF yields a clean abstract.
@@ -991,6 +991,28 @@ It is pinned to `gradio>=6.29,<7` on python 3.12 rather than to an old
 installable as the hub moves. `sdk_version` in the README frontmatter has to
 agree: it is what the builder installs, and `requirements.txt` cannot override
 it downwards.
+
+**The list is a FEEDBACK LOOP, and closing it needed both files.** The Space
+was re-proposing work already argued about: a paper added to the catalog stops
+being new by itself, because `harvest.py` matches the catalog by DOI and
+normalised title, but a paper REJECTED has no catalog DOI and came back every
+week. `refresh-denovo-radar.yml` now passes `--watchlist ../WATCHLIST.md` as
+well as `--catalog ../denovo.db`, and rejections are dropped by DOI, the same
+contract `build_candidates.py` has. **Matching is DOI-only on purpose**: a
+watch-list entry argues about a paper in a sentence, and fuzzy-matching those
+sentences against titles would drop papers nobody rejected. An entry with no DOI
+is not enforceable there, which is a reason to record one when rejecting
+something.
+
+**Fixing that exposed a worse bug: the harvest REPLACED the list.** Two runs a
+week apart fetched 682 and 435 records over the same window, because neither
+Europe PMC nor OpenAlex returns a stable set, so an overwrite would have
+silently dropped twenty papers from the Space. The list is now cumulative:
+earlier entries are carried forward and re-filtered, so it shrinks only when a
+paper is catalogued or rejected, and `counts.carried_over_from_last_run` says
+how many are not from this week. Verified end to end against the real catalog
+and watch list: 45 in, 44 out, 1 dropped as already rejected, 20 carried over,
+44 of 44 catalogued, 0 new.
 
 **No code from the upstream Space is used.** It publishes no licence, so it is
 all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
@@ -1497,8 +1519,18 @@ filtering to one family renders one lane at the 240 px floor (verified for
 
 **"The long view"** is still the right chart for the field's history, and is not
 made redundant by this. It places one row per family at the first publication of
-its earliest method, with an x-domain pinned to whole years, so the decade of
-quiet between 1984 and 1994 reads as a gap.
+its earliest method, with an x-domain pinned to whole years, so the **nine years
+of quiet between 1981 and 1990** read as a gap: `Heuristic` arrives with PAAS in
+April 1981 and the second family, `Graph / DP`, not until Bartels in June 1990.
+
+That gap used to be written here as 1984 to 1994, and it moved because the
+catalog gained PAAS (1981) and Improved PAAS (1983). **PAAS 3 was the earliest
+row in the catalog and was never the earliest program**: its own name says it is
+the third, and the Osaka group published PAAS in 1981 and Improved PAAS in 1983,
+neither of which was here. Its `short_description` said "one of the earliest",
+which was the accurate hedge; promoting it to "the earliest" would have been
+wrong twice over. The three are three `algorithm` rows rather than one versioned
+row, which keeps PAAS 3's published URL and costs two near-identical pages.
 
 A new family works with no registration at all: it gets a lane, a generated
 colour and a packed height. Add it to `band_color` only if you want a specific
@@ -1510,7 +1542,7 @@ colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
 **26 of 52** families that hold two or more methods. The other **26** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **199** of the **225**
+already exists, on a permanent indexed URL. Those cover **201** of the **227**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
