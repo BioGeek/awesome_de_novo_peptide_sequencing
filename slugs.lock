@@ -306,6 +306,7 @@ algorithms	304	hemp-seed-antimicrobial-peptides
 algorithms	305	red-legged-salamander-skin-amps
 algorithms	306	hellbender-skin-amps
 algorithms	307	transformer-architectures-in-lc-ms-ms-proteomics-scoping-review
+algorithms	308	blowfly-larval-hemolymph-amps
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -1617,6 +1618,12 @@ authors	1341	syeda-raika-shahid
 authors	1342	jonathan-oluranti
 authors	1343	osalodion-e-uwidia
 authors	1344	hassana-jonathan
+authors	1345	nurul-azmiera
+authors	1346	hassanain-al-talib
+authors	1347	anna-krasilnikova
+authors	1348	shariza-sahudin
+authors	1349	noraziah-sahlan
+authors	1350	chong-chin-heo
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -2041,6 +2048,8 @@ institutions	675	central-china-institute-of-artificial-intelligence
 institutions	676	dalian-minzu-university
 institutions	678	george-mason-university
 institutions	679	covenant-university
+institutions	681	universiti-teknologi-mara
+institutions	684	volgograd-state-medical-university
 publications	1	de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide
 publications	2	instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale
 publications	3	instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics-preprint
@@ -2399,6 +2408,7 @@ publications	356	discovering-antimicrobial-peptides-in-red-legged-salamander-ski
 publications	357	abstract-4402-de-novo-peptidomics-and-bioprospecting-reveal-antimicrobial
 publications	358	transformer-architectures-for-de-novo-peptide-sequencing-and-peptide-property
 publications	359	novorank-machine-learning-based-post-processing-for-performance-improvement-in
+publications	360	from-decay-to-discovery-a-new-antimicrobial-peptide-from-chrysomya-megacephala
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -2524,3 +2534,4 @@ venues	343	algorithms-for-molecular-biology
 venues	345	international-journal-of-biological-sciences
 venues	355	journal-of-student-scientists-research
 venues	358	artificial-intelligence-in-the-life-sciences
+venues	360	brazilian-journal-of-microbiology
