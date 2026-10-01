@@ -1121,6 +1121,9 @@ n_papers = pubs_t.length
 n_models = algorithms_t.length
 n_authors = new Set(pubs_t.flatMap(p => (p.authors ?? "").split(", ").filter(Boolean))).size
 n_countries = geo_t.length
+// Datasets replaced countries in the hero. n_countries stays defined because
+// the geography section's own prose still reads it.
+n_datasets = all_dataset_rows.length
 years_with_pubs = pubs_t.map(p => p.year).filter(y => Number.isFinite(y))
 first_year = Math.min(...years_with_pubs)
 last_year  = Math.max(...years_with_pubs)
@@ -1159,7 +1162,7 @@ acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filt
     ${stat(n_papers,    "papers",    "#every-paper",            "Browse all papers")}
     ${stat(n_models,    "methods",   "#the-architectures",      "See every method on the architectures timeline")}
     ${stat(n_authors,   "authors",   "#browse-all-authors",     "Browse all authors")}
-    ${stat(n_countries, "countries", "#where-the-work-happens", "See the geographic map")}
+    ${stat(n_datasets,  "datasets",  "#the-data-underneath",    "See what the field runs on")}
   </div>`
 }
 ```
@@ -3283,7 +3286,12 @@ Plot.plot({
   marginLeft: 250,
   marginRight: 90,
   marginBottom: 48,
-  x: { label: "Papers naming this dataset", grid: true, nice: true, labelOffset: 40 },
+  // "Uses", not "papers": a paper that names two versions of one dataset
+  // contributes two rows here, so the bar total is link count and exceeds the
+  // distinct paper count (nine-species: 44 uses across 34 papers). The table
+  // below counts distinct papers, and the two disagreeing was a labelling bug.
+  x: { label: "Uses, counted once per version named", grid: true, nice: true,
+       labelOffset: 40 },
   y: { label: null },
   color: {
     domain: ["version stated", "version not stated"],
@@ -3678,6 +3686,299 @@ similarity, which is what makes it a claim worth printing: these deposits are
 not used by overlapping sets of papers, they are used by the same set. The
 lighter shade is a deposit matching that signature plus one extra paper.
 :::
+
+### The dataset network
+
+```{ojs}
+//| echo: false
+md`A dataset is in this graph once **two or more** papers link to it: a deposit
+cited only by the study that made it says nothing about reuse, and there are
+${dataset_versions_t.length - 0 > 0 ? (all_dataset_rows.filter(d => d.papers < 2).length) : 0}
+of those. Diamonds are datasets, sized by how many papers use them and coloured
+by kind; circles are papers, sized by how many of these datasets they draw on.`
+```
+
+```{ojs}
+//| echo: false
+dataset_paper_network = {
+  // 1250, not the 1400 the other two force charts use. This graph has 176 nodes
+  // against their 173 and 360, but its links are dense enough that it settles
+  // into a tighter ball: at 1400 the nodes filled 69% of the frame width with
+  // nothing within 179 px of the right edge. Narrowing the frame to the content
+  // beats pushing the content at the frame, which is how nodes end up parked on
+  // the border.
+  const width = 1250
+  // 800, between the co-authorship chart's 650 for 173 nodes and the
+  // bipartite's 1000 for 360. This holds 176, and the density that pinned
+  // nodes to the frame in those two scales with node count, not with ambition.
+  const PLOT_H = 800
+  const TITLE_PX = 34
+  const LEGEND_H = 56
+
+  // Edges are unweighted on purpose: a paper either used a dataset or it did
+  // not, and there is no spectrum count to scale by. "Weighted by reuse" is
+  // therefore carried by NODE SIZE (degree), not by edge width.
+  const papers_of = d3.group(dataset_usage_t, u => u.dataset)
+  const ds_nodes = []
+  for (const [name, rows] of papers_of) {
+    const pubs = Array.from(new Set(rows.map(r => r.pub_id)))
+    if (pubs.length < 2) continue
+    ds_nodes.push({ id: `ds:${name}`, type: "dataset", name,
+                    kind: rows[0].kind, pubs, degree: pubs.length })
+  }
+  const kept = new Set(ds_nodes.flatMap(d => d.pubs))
+  const pub_by_id = new Map(pubs_t.map(p => [p.id, p]))
+  const paper_nodes = Array.from(kept).map(id => {
+    const p = pub_by_id.get(id)
+    const model = (p?.models_described ?? "").split(",")[0].trim()
+    const raw = model || (p?.title ?? `publication ${id}`)
+    return { id: `p:${id}`, type: "paper", pub_id: id,
+             name: raw.length > 32 ? raw.slice(0, 31) + "…" : raw,
+             full: p?.title ?? "", degree: 0 }
+  })
+  const paper_by_key = new Map(paper_nodes.map(n => [n.id, n]))
+  const links = []
+  for (const d of ds_nodes) for (const pid of d.pubs) {
+    const t = paper_by_key.get(`p:${pid}`)
+    if (!t) continue
+    links.push({ source: d.id, target: t.id })
+    t.degree += 1
+  }
+  const nodes = [...ds_nodes, ...paper_nodes]
+  const max_deg = d3.max(nodes, d => d.degree) ?? 1
+  const NODE_R = d => d.type === "dataset"
+    ? 5 + 11 * Math.sqrt(d.degree / max_deg)
+    : 3.5 + 7 * Math.sqrt(d.degree / max_deg)
+
+  const KIND_COLOUR = { benchmark: "#0f766e", training: "#b45309", deposit: "#64748b" }
+  const colour = d => d.type === "paper" ? "#cbd5e1" : (KIND_COLOUR[d.kind] ?? "#94a3b8")
+
+  // Cluster targets on a phyllotaxis disc, by kind for a dataset and by its
+  // most-used dataset's kind for a paper, so every node has a target. A RING of
+  // targets is what emptied the middle of the two older force charts; this is
+  // area-uniform instead. Strength is low (0.06) because the point is to
+  // separate the three populations loosely, not to draw three blobs.
+  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
+  const kinds = Array.from(new Set(ds_nodes.map(d => d.kind))).sort()
+  // Recentred on their own centroid. A phyllotaxis walk of only three points
+  // is not symmetric about the origin, so the three targets drifted the whole
+  // network off-centre: measured, nodes spanned 36-902 px of a 1099 px frame,
+  // leaving 197 px empty on the right against 36 on the left. Subtracting the
+  // centroid costs nothing and keeps the disc's area-uniform spacing.
+  const raw_centers = kinds.map((k, i) => {
+    const r = Math.sqrt((i + 0.5) / kinds.length)
+    const a = i * GOLDEN_ANGLE
+    return [Math.cos(a) * r * width * 0.34, Math.sin(a) * r * PLOT_H * 0.26]
+  })
+  // kind_of FIRST: the weighted centroid below reads it, and `const` is not
+  // hoisted, so computing the centroid above this threw a ReferenceError.
+  const kind_of = new Map()
+  for (const d of ds_nodes) kind_of.set(d.id, d.kind)
+  for (const p of paper_nodes) {
+    const ks = ds_nodes.filter(d => d.pubs.includes(p.pub_id)).map(d => d.kind)
+    kind_of.set(p.id, d3.mode(ks) ?? kinds[0])
+  }
+  // WEIGHTED by group size, not a plain mean. The unweighted centroid moved the
+  // targets but not the network: 72 of the 83 datasets are deposits, so the
+  // layout's centre of mass sits at THAT group's target wherever the three
+  // targets happen to be, and the right-hand gap stayed at 191 px of 1099.
+  // Weighting puts the heaviest group near the middle, which is what centring
+  // a lopsided graph actually means.
+  const kind_weight = new Map(kinds.map(k =>
+    [k, nodes.filter(n => kind_of.get(n.id) === k).length || 1]))
+  const w_total = d3.sum(kinds, k => kind_weight.get(k))
+  const cx0 = d3.sum(kinds, (k, i) => raw_centers[i][0] * kind_weight.get(k)) / w_total
+  const cy0 = d3.sum(kinds, (k, i) => raw_centers[i][1] * kind_weight.get(k)) / w_total
+  const centers = new Map()
+  kinds.forEach((k, i) => {
+    centers.set(k, [width / 2 + raw_centers[i][0] - cx0,
+                    (TITLE_PX + PLOT_H) / 2 + raw_centers[i][1] - cy0])
+  })
+  const target = d => centers.get(kind_of.get(d.id)) ?? [width / 2, PLOT_H / 2]
+
+  const sim = d3.forceSimulation(nodes)
+    // distance 78 and charge -240, not 58 and -170. At the tighter settings the
+    // layout CONVERGED but did not fill: 176 nodes occupied 663 px of a 1099 px
+    // frame, because the deposit cluster holds about 150 of them and a charge
+    // capped at 190 px cannot separate a ball that dense. Measured node spread
+    // is the number to tune against here, exactly as wall_probe.js was for the
+    // other two -- the label audit passes happily on a compact knot.
+    .force("link", d3.forceLink(links).id(d => d.id).distance(78).strength(0.2))
+    // Still capped, for the reason recorded on the two charts below: an
+    // unbounded forceManyBody grows its outward pressure with the square of the
+    // node count and the layout never converges inside the frame.
+    .force("charge", d3.forceManyBody().strength(-240).distanceMax(210))
+    .force("collide", d3.forceCollide().radius(d => NODE_R(d) + 3))
+    .force("center", d3.forceCenter(width / 2, (TITLE_PX + PLOT_H) / 2))
+    .force("kx", d3.forceX(d => target(d)[0]).strength(0.06))
+    .force("ky", d3.forceY(d => target(d)[1]).strength(0.06))
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, PLOT_H + LEGEND_H])
+    .attr("style", "max-width:100%; height:auto; font:11px sans-serif; cursor:grab;")
+  svg.append("text").attr("x", width / 2).attr("y", 22).attr("text-anchor", "middle")
+    .attr("font-size", 16).attr("font-weight", "bold").attr("fill", "#24292f")
+    .text(`Datasets and the papers reusing them · ${ds_nodes.length} datasets, `
+          + `${paper_nodes.length} papers, ${links.length} links`)
+
+  const g = svg.append("g")
+  svg.call(d3.zoom().on("zoom", ev => g.attr("transform", ev.transform)))
+  const link = g.append("g").attr("stroke", "#94a3b8").attr("stroke-opacity", 0.3)
+    .selectAll("line").data(links).join("line").attr("stroke-width", 1)
+
+  const node_g = g.append("g").selectAll("g").data(nodes).join("g")
+    .call(d3.drag()
+      .on("start", (ev, d) => { if (!ev.active) sim.alphaTarget(0.25).restart(); d.fx = d.x; d.fy = d.y })
+      .on("drag",  (ev, d) => { d.fx = ev.x; d.fy = ev.y })
+      .on("end",   (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null }))
+  node_g.filter(d => d.type === "dataset").append("rect")
+    .attr("width", d => NODE_R(d) * 1.7).attr("height", d => NODE_R(d) * 1.7)
+    .attr("x", d => -NODE_R(d) * 0.85).attr("y", d => -NODE_R(d) * 0.85)
+    .attr("transform", "rotate(45)")
+    .attr("fill", colour).attr("stroke", "white").attr("stroke-width", 1)
+  node_g.filter(d => d.type === "paper").append("circle")
+    .attr("r", NODE_R).attr("fill", colour).attr("stroke", "white").attr("stroke-width", 1)
+  node_g.append("title").text(d => d.type === "dataset"
+    ? `${d.name}\n${d.kind} · ${d.degree} papers`
+    : `${d.full || d.name}\n${d.degree} of these datasets`)
+
+  const label = g.append("g").selectAll("text").data(nodes).join("text")
+    .attr("font-size", 10)
+    .attr("font-weight", d => d.type === "dataset" ? 600 : 400)
+    .attr("fill", d => d.type === "dataset" ? "#24292f" : "#475569")
+    .attr("paint-order", "stroke").attr("stroke", "white").attr("stroke-width", 2.5)
+    .text(d => d.name)
+
+  // Same greedy pass as the other two force charts: six positions per name in
+  // descending degree, hidden if none is free. Every node still answers a
+  // hover, so the hidden ones are the least connected rather than lost.
+  const LABEL_CHAR_PX = 5.8
+  const SIDES = [[1, 0], [-1, 0], [1, -11], [-1, -11], [1, 11], [-1, 11]]
+  const label_order = nodes.slice().sort((a, b) => d3.descending(a.degree, b.degree))
+  const place_labels = () => {
+    const shown = []
+    for (const d of label_order) {
+      const w = d.name.length * LABEL_CHAR_PX
+      d.label_on = false
+      for (const [side, dy] of SIDES) {
+        const x0 = side > 0 ? d.x + NODE_R(d) + 3 : d.x - NODE_R(d) - 3 - w
+        const y = d.y + dy
+        const box = { x0, x1: x0 + w, y0: y - 6, y1: y + 6 }
+        if (box.x0 < 0 || box.x1 > width || box.y0 < TITLE_PX || box.y1 > PLOT_H) continue
+        const clash =
+          shown.some(o => box.x0 < o.x1 + 2 && box.x1 + 2 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0) ||
+          nodes.some(n => box.x0 < n.x + NODE_R(n) && box.x1 > n.x - NODE_R(n)
+                       && box.y0 < n.y + NODE_R(n) && box.y1 > n.y - NODE_R(n))
+        if (!clash) { d.label_on = true; d.label_side = side; d.label_dy = dy; shown.push(box); break }
+      }
+    }
+  }
+  let tick_n = 0
+  sim.on("tick", () => {
+    for (const d of nodes) {
+      const r = NODE_R(d) + 2
+      d.x = Math.max(r, Math.min(width - r, d.x))
+      d.y = Math.max(TITLE_PX + r, Math.min(PLOT_H - r, d.y))
+    }
+    link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
+    node_g.attr("transform", d => `translate(${d.x},${d.y})`)
+    if ((tick_n++ & 3) === 0) place_labels()
+    label.attr("x", d => d.x).attr("y", d => d.y + (d.label_dy ?? 0))
+      .attr("display", d => d.label_on ? null : "none")
+      .attr("dx", d => (d.label_side ?? 1) > 0 ? NODE_R(d) + 3 : -(NODE_R(d) + 3))
+      .attr("text-anchor", d => (d.label_side ?? 1) > 0 ? "start" : "end")
+  })
+
+  const lg = svg.append("g").attr("transform", `translate(40,${PLOT_H + 20})`)
+  let lx = 0
+  for (const k of kinds) {
+    lg.append("rect").attr("x", lx).attr("y", -6).attr("width", 11).attr("height", 11)
+      .attr("transform", `rotate(45,${lx + 5.5},-0.5)`).attr("fill", KIND_COLOUR[k] ?? "#94a3b8")
+    lg.append("text").attr("x", lx + 16).attr("y", 3).attr("fill", "#24292f").text(k)
+    lx += 20 + k.length * 7
+  }
+  lg.append("circle").attr("cx", lx + 6).attr("cy", -1).attr("r", 5).attr("fill", "#cbd5e1")
+  lg.append("text").attr("x", lx + 16).attr("y", 3).attr("fill", "#24292f").text("paper")
+  return svg.node()
+}
+```
+
+### Every dataset
+
+```{ojs}
+//| echo: false
+all_dataset_rows = {
+  const papers_of = d3.group(dataset_usage_t, u => u.dataset)
+  const versions_of = d3.group(dataset_versions_t, v => v.dataset)
+  const addrs_of = d3.group(dataset_addresses_t, a => a.dataset)
+  const rows = []
+  for (const v of versions_of.keys()) {
+    const vs = versions_of.get(v) ?? []
+    const us = papers_of.get(v) ?? []
+    const ad = addrs_of.get(v) ?? []
+    rows.push({
+      Dataset: v,
+      Kind: vs[0]?.kind ?? "",
+      Versions: vs.length,
+      papers: new Set(us.map(u => u.pub_id)).size,
+      Deposited: us.filter(u => u.role === "introduces").length > 0 ? "yes" : "",
+      Spectra: d3.max(vs, x => x.n_spectra) ?? null,
+      // Every accession, so the search box reaches the long tail: typing
+      // PXD004424 or "zenodo" finds its dataset, which is the whole reason
+      // this table exists alongside the charts.
+      Accessions: ad.map(a => a.accession).join(" "),
+      Repositories: Array.from(new Set(ad.map(a => a.repository))).sort().join(", "),
+      url: ad.find(a => a.url)?.url ?? null
+    })
+  }
+  return rows.sort((a, b) => b.papers - a.papers || d3.ascending(a.Dataset, b.Dataset))
+}
+```
+
+```{ojs}
+//| echo: false
+viewof dataset_search = Inputs.search(all_dataset_rows, {
+  placeholder: "Search every dataset: accession, name, repository, kind…",
+  // Columns searched explicitly, so a numeric column cannot swallow a query.
+  columns: ["Dataset", "Kind", "Accessions", "Repositories"],
+  width: 520
+})
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(dataset_search, {
+  columns: ["Dataset", "Kind", "Versions", "papers", "Deposited", "Spectra",
+            "Repositories", "Accessions"],
+  header: { papers: "Papers", Accessions: "Accession(s)" },
+  sort: "papers", reverse: true,
+  rows: 18,
+  format: {
+    Dataset: (d, i, rows) => {
+      const row = (rows ?? [])[i]
+      const u = row?.url
+      return u ? html`<a href="${u}" target="_blank" title="${d}">${
+        d.length > 60 ? d.slice(0, 59) + "…" : d}</a>`
+        : (d.length > 60 ? d.slice(0, 59) + "…" : d)
+    },
+    Spectra: d => d == null ? "" : d3.format(",")(d),
+    Deposited: d => d ? "✓" : ""
+  },
+  width: { Dataset: 330, Kind: 80, Versions: 70, papers: 62, Deposited: 80,
+           Spectra: 100, Repositories: 120 }
+})
+```
+
+```{ojs}
+//| echo: false
+html`<p style="color:#57606a; margin-top:0.4rem;">
+<b>${all_dataset_rows.length}</b> datasets,
+<b>${d3.sum(all_dataset_rows, d => d.Versions)}</b> versions and
+<b>${all_dataset_rows.filter(d => d.papers >= 2).length}</b> reused by two or
+more papers. A tick under <i>Deposited</i> means a catalogued paper produced
+this data rather than merely running on it.</p>`
+```
 
 ## Application areas
 

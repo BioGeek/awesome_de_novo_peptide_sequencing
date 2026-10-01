@@ -1174,6 +1174,74 @@ VENUES chart, which this work never touched, had a 3 px overlap between its
 `marginBottom`); the previous "0 across 20 charts" note had gone stale as the
 page grew to 39.
 
+### The dataset network and the dataset table
+
+**The network holds a dataset once two or more papers link to it**: 83 datasets,
+93 papers, 279 links, 176 nodes. A deposit cited only by the study that made it
+says nothing about reuse, and several hundred are in that state. Edges are
+UNWEIGHTED, because a paper either used a dataset or did not and there is no
+spectrum count to scale by, so "weighted by reuse" is carried by node radius.
+
+Three force settings were measured rather than guessed, and the number to tune
+against is **node spread**, not the label audit, which passes happily on a
+compact knot:
+
+- **1250 px wide, not the 1400 the other two force charts use.** At 1400 the
+  nodes filled 69% of the frame with nothing within 179 px of the right edge.
+  Narrowing the frame to the content beats pushing the content at the frame.
+- **Link distance 78 and charge -240**, up from 58 and -170. The layout
+  converged at the tighter values but did not fill: the deposit cluster holds
+  about 150 of the 176 nodes and a charge capped at 190 px cannot separate a
+  ball that dense.
+- **The cluster centroid is WEIGHTED by group size.** A phyllotaxis walk of
+  three points is not symmetric about the origin, and subtracting a plain mean
+  moved the targets without moving the network, because 72 of 83 datasets are
+  deposits and the centre of mass sits at that group's target. Weighting puts
+  the heaviest group near the middle, which is what centring a lopsided graph
+  means.
+
+Final measurement: 176 nodes, **0 within 4 px of the frame**, 75% of the width
+filled (against 76% and 79% for the other two), 101 labels shown, 0 overlaps.
+
+**Count node marks, not every rect and circle.** The first spread measurement
+read 36 px as the leftmost node and sent me tuning a centroid for two rounds;
+36 px is the LEGEND swatch, drawn outside the zoom group. Filter to marks whose
+parent group carries a `<title>`, and the real span was 257 px.
+
+**"Every dataset" is a searchable table over all of them**, which is how the
+long tail is reachable at all: `Inputs.search` is given the accession column
+explicitly, so typing `PXD004424` or `zenodo` finds a dataset that no chart has
+room to show. A tick under *Deposited* means a catalogued paper produced the
+data rather than merely running on it.
+
+**The bars count USES, not papers.** A paper naming two versions of one dataset
+contributes two rows, so the bar total is a link count: nine-species reads 44
+uses across 34 distinct papers. The axis said "Papers naming this dataset" and
+the table beside it said 34, and the two disagreeing was a labelling bug, caught
+by reading both at once.
+
+### The navbar and the hero badges
+
+The navbar is **The map, Papers, Methods, Datasets, Authors**. Papers points at
+`#every-paper` and Datasets at the SECTION `#the-data-underneath`, and the
+difference is deliberate: the papers section opens with a short list of recent
+arrivals standing in front of the table, while the datasets section opens with
+the charts a reader actually wants. Methods points at the architectures swim
+lane, the only view showing every method, which is the target the hero badge
+already used.
+
+The fourth hero badge is **datasets**, replacing countries. `n_countries` stays
+defined, because the geography section's own prose and the summary sentence both
+still read it.
+
+**The breakdown rows already filter, and the anchor was the bug.** Clicking
+`Benchmarks` under *By kind* sets `kind_filter` and jumps to the table; it had
+always done the first half, but it jumped to `#browse-all-papers`, which landed
+the reader on the recently-added list where nothing visibly happened. Verified
+after the anchor change by clicking in headless Chrome: the table goes 50 rows
+to 18, every row reads `benchmark`, one of seven kind checkboxes is checked, and
+the filter panel opens so the change is reversible.
+
 ### build_dataset_accessions.py
 
 Mines the LOCAL PDF library for accessions and links them. It **never** creates
