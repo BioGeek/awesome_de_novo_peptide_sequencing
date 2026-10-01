@@ -46,15 +46,34 @@ fi
 # from numbers that go stale the moment a paper is added. check_counts.py is
 # stdlib-only on purpose so the hook needs no uv and no virtualenv.
 if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
-  python3 check_counts.py --fix --quiet || true
+  # The exit status is KEPT, not discarded. --fix rewrites a stale number and
+  # returns 0, but it cannot repair a claim whose PATTERN no longer matches the
+  # prose, and for that it returns 1. That case was invisible here: the hook
+  # said `|| true`, so rewording a sentence in CLAUDE.md -- which is an
+  # ordinary thing to do, and which check_counts.py --fix does itself -- could
+  # silently unmatch the pattern that reads a number out of it. The registry
+  # entry then checks nothing, and the first anyone hears of it is CI going
+  # red. Two commits went out that way.
+  counts_rc=0
+  python3 check_counts.py --fix --quiet || counts_rc=$?
   # Claims live in config and source comments too, not just the two docs, so
   # re-stage every file the registry can touch rather than a hardcoded pair.
+  # Done BEFORE the failure below, so a refused commit still keeps the numbers
+  # --fix just corrected.
   for doc in $(python3 check_counts.py --list-files); do
     if ! git diff --quiet -- "$doc" 2>/dev/null; then
       git add "$doc"
       echo "pre-commit: refreshed documented counts in $doc."
     fi
   done
+  if [ "$counts_rc" -ne 0 ]; then
+    echo "pre-commit: refusing this commit, a documented count no longer matches." >&2
+    echo "  An UNMATCHED claim means its regex found nothing: the prose was" >&2
+    echo "  reworded and that registry entry now checks nothing at all." >&2
+    echo "  Fix the wording, or fix the pattern in check_counts.py, then:" >&2
+    echo "    python3 check_counts.py" >&2
+    exit 1
+  fi
 fi
 
 # URL guard. A slug is derived from mutable data -- a paper's title, an author's

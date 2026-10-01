@@ -903,6 +903,16 @@ A **changed or removed** URL is never auto-fixed: it fails the commit, because
 rewriting the baseline for those is the very failure being guarded against.
 When a rename is intended, run `--write` and let the lock diff record it.
 
+**An UNMATCHED count also fails the commit**, and for the same reason a
+changed slug does. `check_counts.py --fix` repairs a stale NUMBER and exits 0,
+but it cannot repair a claim whose PATTERN no longer matches the prose, and for
+that it exits 1. The hook used to discard that status with `|| true`, so
+rewording a sentence in CLAUDE.md -- an ordinary thing to do, and something
+`--fix` does itself -- could silently unmatch the regex that reads a number out
+of it. The registry entry then checks nothing and nobody hears about it until
+CI goes red; two commits went out that way. The auto-fix and the re-staging
+still run first, so a refused commit keeps the numbers `--fix` just corrected.
+
 A **new** URL is recorded automatically by the hook, right after `--check`
 passes. That is safe precisely because the dangerous cases already failed by
 then, and the alternative is worse: `--check` passes on additions, so the lock
