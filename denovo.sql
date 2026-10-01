@@ -25428,6 +25428,40 @@ INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,3,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-26T10:21:53','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/snijderlab/stitch',32,3,22,238,0,2,'2024-10-15T11:26:17Z','2026-10-01T11:53:44','v1.5.0');
+CREATE TABLE checkpoint (
+    id           INTEGER PRIMARY KEY,
+    algorithm_id INTEGER NOT NULL REFERENCES algorithm(id),
+    label        TEXT,             -- 'nine-species', 'v4.0.0', 'MassIVE-KB'
+    host         TEXT NOT NULL,    -- Zenodo|figshare|Hugging Face|GitHub release|Google Drive|institutional
+    url          TEXT NOT NULL,
+    accession    TEXT,             -- DOI or repo id, where the host gives one
+    licence      TEXT,             -- as the host states it; NULL means unstated, which blocks mirroring
+    size_bytes   INTEGER,
+    archival     INTEGER NOT NULL DEFAULT 0,   -- 1 = DOI'd and preserved by the host
+    -- Filled by build_checkpoints.py, which is this table's only writer.
+    status       TEXT NOT NULL DEFAULT 'unchecked',  -- live|moved|dead|unchecked|unverifiable
+    http_code    INTEGER,
+    last_checked DATE,
+    mirror_url   TEXT,             -- our copy, made ONLY for a non-archival host
+    notes        TEXT, tool_version TEXT, trained_on TEXT,
+    UNIQUE(algorithm_id, url)
+);
+INSERT INTO checkpoint VALUES(1,13,'pretrained models','Zenodo','https://doi.org/10.5281/zenodo.14611534','10.5281/zenodo.14611534','Apache-2.0',456000000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(2,224,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.20687570','10.5281/zenodo.20687570','CC-BY-4.0',1657100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(3,32,'project archive v2','Zenodo','https://doi.org/10.5281/zenodo.16735542','10.5281/zenodo.16735542','CC-BY-4.0',1558600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(4,32,'project archive','Zenodo','https://doi.org/10.5281/zenodo.10405582','10.5281/zenodo.10405582','CC-BY-4.0',22623100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(5,12,'nine-species','Zenodo','https://doi.org/10.5281/zenodo.10694984','10.5281/zenodo.10694984','CC-BY-4.0',5117100000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(6,12,'data set and weights','Zenodo','https://doi.org/10.5281/zenodo.6791263','10.5281/zenodo.6791263','Apache-2.0',3915300000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(7,39,'dataset and checkpoint','Zenodo','https://doi.org/10.5281/zenodo.8000316','10.5281/zenodo.8000316','CC-BY-4.0',2424500000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(8,39,'original checkpoint','Zenodo','https://doi.org/10.5281/zenodo.7996942','10.5281/zenodo.7996942','CC-BY-4.0',2424600000,1,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(9,58,'pretrained model','Google Drive','https://drive.google.com/open?id=0By9IxqHK5MdWalJLSGliWW1RY2c',NULL,NULL,NULL,0,'unverifiable',200,'2026-10-01',NULL,'Drive answers 200 with HTML either way',NULL,NULL);
+INSERT INTO checkpoint VALUES(10,12,'MassIVE-KB splits','institutional','https://noble.gs.washington.edu/~melih/mskb_casanovo_splits.zip',NULL,NULL,NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(11,12,'4.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.0.0','MassIVE-KB v1');
+INSERT INTO checkpoint VALUES(12,238,'releases','GitHub release','https://github.com/instadeepai/InstaNovo-FM/releases',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,NULL,NULL);
+INSERT INTO checkpoint VALUES(13,69,'HeLa QC model','Hugging Face','https://huggingface.co/InstaDeepAI/winnow-helaqc-model','InstaDeepAI/winnow-helaqc-model','CC-BY-NC-SA-4.0',NULL,0,'live',200,'2026-10-01',NULL,'landing page, not the file itself',NULL,NULL);
+INSERT INTO checkpoint VALUES(14,12,'4.2.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v4.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v4.2.0','~2M PSMs from MassIVE-KB v1 + v2.0.15');
+INSERT INTO checkpoint VALUES(15,12,'5.0.0','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.0.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.0.0',NULL);
+INSERT INTO checkpoint VALUES(16,12,'5.2.0-Orbitrap','GitHub release','https://github.com/Noble-Lab/casanovo/releases/tag/v5.2.0',NULL,'Apache-2.0',NULL,0,'live',200,'2026-10-01',NULL,NULL,'v5.2.0','the default --model orbitrap selector from v5.2.0 onward');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
 INSERT INTO sqlite_sequence VALUES('city',309);
@@ -25537,4 +25571,6 @@ CREATE UNIQUE INDEX idx_publication_dataset_unique
 CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
 CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
 CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 COMMIT;

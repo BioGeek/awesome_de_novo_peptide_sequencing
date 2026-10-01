@@ -212,7 +212,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**32 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**33 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -1316,6 +1316,60 @@ Two traps, both hit while writing it:
   a paper listing all nine provenance submissions is one row and nine hits.
   Without deduplication the report claimed 187 rows where `--write` created 86,
   and the report was the wrong number.
+
+## Checkpoints
+
+A benchmark number is only reproducible if the weights behind it can still be
+downloaded, and this field keeps them in places with very different durability.
+The `checkpoint` table records where they are and whether that is still true:
+`(algorithm_id, label, tool_version, trained_on, host, url, accession, licence,
+size_bytes, archival, status, http_code, last_checked, mirror_url, notes)`.
+The 8 methods with a recorded checkpoint carry a **## Checkpoints** table on
+their page, listing version, training data, host, licence, size and when the
+link was last checked.
+
+**One method name covers several models**, which is why `tool_version` and
+`trained_on` are columns rather than prose. ProteoBench submits Casanovo
+4.0.0, 4.2.0, 5.0.0 and 5.2.0-Orbitrap as separate datapoints
+([discussion 356](https://github.com/orgs/Proteobench/discussions/356)), because
+4.2.0 was trained on ~2M PSMs from MassIVE-KB v1 + v2.0.15 while 5.2.0 ships a
+different default selector. Comparing a number against "Casanovo" without a
+version is the same error as comparing one against "nine-species".
+
+**`archival` is the durability class, not a label.** A DOI'd Zenodo or figshare
+record is dated and preserved by its host; a Google Drive link, a personal
+academic URL or a GitHub release tag is mutable, undated and can vanish leaving
+nothing to cite. That distinction is the only reason to mirror anything.
+
+### build_checkpoints.py
+
+This table's **only** writer, which is what would let it run under
+`.github/actions/commit-refreshed-db`. It does not decide which checkpoints
+exist: resolving a paper's data-availability sentence to a method is a judgement
+call, so rows are added by hand and the script fills in `status`, `http_code`
+and `last_checked`.
+
+**A HEAD request is not enough on its own, and Google Drive is why.** Drive
+answers **200 with an HTML interstitial** whether or not the file is still
+shared, so a 200 there proves nothing. A 200 whose content type is HTML where a
+binary was expected is recorded as `unverifiable` rather than `live`: the honest
+answer is that the link resolves and what it resolves to cannot be confirmed
+from a header. Measured over the 16 recorded checkpoints: 15 live, 1
+unverifiable, and the unverifiable one is DeepNovo's Drive checkpoint.
+
+**Mirroring is blocked by licence more often than by size, which inverts the
+reason for doing it.** Of the non-archival checkpoints, the five Casanovo and
+InstaNovo-FM GitHub releases are Apache-2.0 and redistributable; Winnow's HeLa
+QC model is **CC-BY-NC-SA-4.0**, so copying it is permitted but conditional
+(non-commercial, share-alike, attributed); and the two most at-risk of all have
+**no licence that can be relied on** -- `nh2tran/DeepNovo` reports NOASSERTION,
+and the `noble.gs.washington.edu/~melih` zip states nothing. So the single item
+most likely to rot is the one that may not be copied. Silence is not permission.
+
+Mirroring is therefore a deliberate manual step and **never part of a scheduled
+refresh**: it copies someone else's bytes, publishes them, and commits this
+project to keeping them alive, which a cron job should not decide. `--mirror`
+reports the candidates and what blocks each one.
 
 ## URLs are a lock file
 

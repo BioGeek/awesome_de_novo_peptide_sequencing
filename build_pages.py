@@ -623,6 +623,36 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                   "from the GitHub API, and this link is not a public GitHub "
                   "repository.", ""]
 
+    # WHERE THE WEIGHTS ARE. A benchmark number is only reproducible if the
+    # checkpoint behind it can still be downloaded, and one method name covers
+    # several models: the version and the training data are part of the
+    # identity, not decoration. `archival` says whether the host has a DOI and
+    # a preservation commitment, which is the difference between a citation and
+    # a link that may rot.
+    if ctx.get("checkpoints"):
+        L += ["## Checkpoints", ""]
+        L.append("| Version | Trained on | Host | Licence | Size | Checked |")
+        L.append("|---|---|---|---|---|---|")
+        for cp in ctx["checkpoints"]:
+            ver = cp["tool_version"] or cp["label"] or "—"
+            size = (f"{cp['size_bytes'] / 1e9:.1f} GB" if cp["size_bytes"] and cp["size_bytes"] >= 1e9
+                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] else "—")
+            host = f"[{md_escape(cp['host'])}]({cp['url']})"
+            if cp["archival"]:
+                host += " <small>archival</small>"
+            state = cp["status"] or "unchecked"
+            if state != "live":
+                state = f"**{state}**"
+            if cp["last_checked"]:
+                state += f" <small>{cp['last_checked']}</small>"
+            L.append(f"| {md_escape(ver)} | {md_escape(cp['trained_on'] or '—')} | {host} "
+                     f"| {md_escape(cp['licence'] or 'not stated')} | {size} | {state} |")
+        L.append("")
+        if any(not cp["archival"] for cp in ctx["checkpoints"]):
+            L += ["A host marked *archival* has a DOI and keeps what it is given. "
+                  "The others can move or disappear, which is why they are checked "
+                  "rather than merely listed.", ""]
+
     # Where this method stands on the two public benchmarks, when it was run on
     # them: one line each, carrying the numbers that need no context to read,
     # and a link to the section that supplies the context.
@@ -1077,6 +1107,17 @@ def load(conn: sqlite3.Connection) -> dict:
             (r["publication_id"], r["title"], r["publication_date"],
              r["journal"], r["publication_type"], r["role"]))
 
+    # Checkpoints per algorithm, in the order a reader wants them: archival
+    # first, then by tool version. One method name covers several models --
+    # Casanovo 4.2.0 was trained on ~2M PSMs from MassIVE-KB v1 + v2.0.15 and
+    # 5.2.0-Orbitrap is a different selector -- so the version and the training
+    # data are shown, not just a link.
+    d["checkpoints"] = defaultdict(list)
+    for r in q("SELECT algorithm_id, label, tool_version, trained_on, host, url, "
+               "       accession, licence, size_bytes, archival, status, last_checked "
+               "  FROM checkpoint "
+               " ORDER BY archival DESC, tool_version, host, id"):
+        d["checkpoints"][r["algorithm_id"]].append(r)
     d["repos"] = defaultdict(list)
     for r in q("SELECT algorithm_id, url FROM algorithm_repository "
                "ORDER BY algorithm_id, sort_order, url"):
@@ -1576,6 +1617,7 @@ def main() -> int:
                 "described": described,
                 "used": used,
                 "repos": repos,
+                "checkpoints": d["checkpoints"].get(gid, []),
                 "authors": authors,
                 "has_metrics": any(u in d["metric_urls"] for u in repos),
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
