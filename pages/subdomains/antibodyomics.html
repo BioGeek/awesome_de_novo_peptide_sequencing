@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 6 catalogued workflows and 7 papers.">
+<meta name="description" content="Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 7 catalogued workflows and 8 papers.">
 
 <title>Antibodyomics – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="Antibodyomics – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 6 catalogued workflows and 7 papers.">
+<meta property="og:description" content="Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 7 catalogued workflows and 8 papers.">
 <style>#title-block-header .description { display: none; }</style>
 <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/subdomains/antibodyomics.html">
 
@@ -141,12 +141,12 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Antibodyomics</h1>
-<p class="subtitle lead">6 workflows · 2008–2024</p>
+<p class="subtitle lead">7 workflows · 2008–2024</p>
 </div>
 
 <div>
   <div class="description">
-    Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 6 catalogued workflows and 7 papers.
+    Antibodyomics: Antibody and antibody-repertoire sequencing, where the variable regions are by definition absent from any reference proteome. 7 catalogued workflows and 8 papers.
   </div>
 </div>
 
@@ -168,15 +168,15 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td>Workflows</td>
-<td>6</td>
+<td>7</td>
 </tr>
 <tr class="even">
 <td>Papers</td>
-<td>7</td>
+<td>8</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>53</td>
+<td>60</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -184,24 +184,26 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<section id="workflows-6" class="level2">
-<h2 class="anchored" data-anchor-id="workflows-6">Workflows (6)</h2>
+<section id="workflows-7" class="level2">
+<h2 class="anchored" data-anchor-id="workflows-7">Workflows (7)</h2>
 <ul>
 <li><a href="../algorithms/automated-mab-de-novo-bandeira-sps.html">Automated mAb de novo (Bandeira SPS)</a> (2008): Landmark Nat Biotech 2008 paper by Bandeira, Pham, Pevzner, Arnott &amp; Lill: applies Shotgun Protein Sequencing (SPS), that is MS/MS spectral assembly, end-to-end to a monoclonal antibody, recovering both chains without any prior sequence.</li>
 <li><a href="../algorithms/immunoglobulin-peptide-biomarker-profiling.html">Immunoglobulin peptide biomarker profiling</a> (2010): Immunoglobulin peptides themselves used as biomarkers of an immune response, rather than the antigens they bind. Rats were immunised with one of two purified antigens and immunoglobulins from pre- and post-immune sera were profiled by nano-LC on an LTQ-Orbitrap with top-5 data-dependent fragmentation, giving 684 peptides differentially present between the treatment groups and cluster separation of the two. Sequences were obtained for 44% of spectral features by combining Mascot database search with de novo sequencing in PEAKS Studio 5.1, merged in Progenesis, which keeps the best-scoring sequence per feature. The authors state the de novo half was essential, because immunoglobulins are poorly represented in sequence databases. The shared peptides found across animals indicate that repertoire development is not fully random but under selection pressure favouring the best-binding sequences.</li>
 <li><a href="../algorithms/native-antibody-de-novo-ms-ms.html">Native antibody de novo MS/MS</a> (2017): De novo MS/MS sequencing workflow for native human antibodies.</li>
 <li><a href="../algorithms/human-plasma-igg1-repertoire-profiling.html">Human plasma IgG1 repertoire profiling</a> (2021): De novo MS workflow (LC-MS coupled with Stitch / native MS) for profiling the circulating human plasma IgG1 antibody repertoire, demonstrating individual-specific dynamics: landmark application of de novo to clinical antibodyomics.</li>
+<li><a href="../algorithms/multi-enzyme-template-assisted-mab-sequencing.html">Multi-enzyme template-assisted mAb sequencing</a> (2022): Complete monoclonal-antibody sequencing from multiple enzyme digests read by HCD and EThcD, with the de novo calls made template-assisted in Supernovo. Refined on an antibody of known sequence, then applied to 25 anti-haemagglutinin influenza antibodies of unknown sequence, recovering high-confidence sequence for over 99% of the CDRs; the resulting heavy and light chains were cloned and expressed, and the recombinant antibodies reproduced the original binding curves. Distinguishes Ile from Leu correctly on the known-sequence controls.</li>
 <li><a href="../algorithms/streptolysin-o-epitope-de-novo-workflow.html">Streptolysin O epitope de novo workflow</a> (2023): Multi-modal MS workflow combining three deep-learning de novo sequencers (PointNovo, Casanovo, InstaNovo) with antibody profiling to identify a conserved protective epitope in Streptococcus pyogenes Streptolysin O.</li>
 <li><a href="../algorithms/polyclonal-igg-neutralizing-antibody-discovery.html">Polyclonal IgG neutralizing antibody discovery</a> (2024): Sequencing the circulating antibody repertoire itself rather than the B cells that make it. Human plasma-derived polyclonal IgG is sequenced by combining mass spectrometry with B-cell sequencing, applied to the IgG response to the Moderna Spikevax COVID-19 vaccine. Twelve recombinant antibodies were generated from the natural polyclonal response; six of them, including four derived by de novo protein sequencing, bound at least as well as the original polyclonal antibody, and all six neutralised the target antigen. The argument for the approach is that sequencing peripheral B cells may not represent the complete receptor repertoire, so the circulating IgG pool has to be examined directly. Notable as antibody discovery carried out end to end by a commercial de novo sequencing service.</li>
 </ul>
 </section>
-<section id="papers-7" class="level2">
-<h2 class="anchored" data-anchor-id="papers-7">Papers (7)</h2>
+<section id="papers-8" class="level2">
+<h2 class="anchored" data-anchor-id="papers-8">Papers (8)</h2>
 <ul>
 <li><a href="../publications/automated-de-novo-protein-sequencing-of-monoclonal-antibodies.html">Automated de novo protein sequencing of monoclonal antibodies</a> (2008, Nature Biotechnology, peer-reviewed)</li>
 <li><a href="../publications/immune-responses-are-characterized-by-specific-shared-immunoglobulin-peptides.html">Immune Responses Are Characterized by Specific Shared Immunoglobulin Peptides That Can Be Detected by Proteomic Techniques</a> (2010, Journal of Biological Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-ms-ms-sequencing-of-native-human-antibodies.html">De Novo MS/MS Sequencing of Native Human Antibodies</a> (2017, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/human-plasma-igg1-repertoires-are-simple-unique-and-dynamic.html">Human plasma IgG1 repertoires are simple, unique, and dynamic</a> (2021, Cell Systems, peer-reviewed)</li>
+<li><a href="../publications/template-assisted-de-novo-sequencing-of-sars-cov-2-and-influenza-monoclonal.html">Template-Assisted De Novo Sequencing of SARS-CoV-2 and Influenza Monoclonal Antibodies by Mass Spectrometry</a> (2022, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/multi-modal-mass-spectrometry-identifies-a-conserved-protective-epitope-in-s.html">Multi-Modal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O</a> (2023, bioRxiv, preprint)</li>
 <li><a href="../publications/multimodal-mass-spectrometry-identifies-a-conserved-protective-epitope-in-s.html">Multimodal Mass Spectrometry Identifies a Conserved Protective Epitope in S. pyogenes Streptolysin O</a> (2024, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-protein-sequencing-of-antibodies-for-identification-of-neutralizing.html">De novo protein sequencing of antibodies for identification of neutralizing antibodies in human plasma post SARS-CoV-2 vaccination</a> (2024, Nature Communications, peer-reviewed)</li>
@@ -209,11 +211,11 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sequencing-tools-these-papers-used" class="level2">
 <h2 class="anchored" data-anchor-id="sequencing-tools-these-papers-used">Sequencing tools these papers used</h2>
-<p><a href="../algorithms/peaks.html">PEAKS</a>, <a href="../algorithms/shotgun-protein-sequencing.html">Shotgun Protein Sequencing</a></p>
+<p><a href="../algorithms/peaks.html">PEAKS</a>, <a href="../algorithms/shotgun-protein-sequencing.html">Shotgun Protein Sequencing</a>, <a href="../algorithms/supernovo.html">Supernovo</a></p>
 </section>
-<section id="authors-53" class="level2">
-<h2 class="anchored" data-anchor-id="authors-53">Authors (53)</h2>
-<p><a href="../authors/adrian-guthals.html">Adrian Guthals</a>, <a href="../authors/albert-bondt.html">Albert Bondt</a>, <a href="../authors/albert-j-r-heck.html">Albert J. R. Heck</a>, <a href="../authors/amber-l-couzens.html">Amber L. Couzens</a>, <a href="../authors/bastiaan-de-graaf.html">Bastiaan de Graaf</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carlos-gueto-tettay.html">Carlos Gueto-Tettay</a>, <a href="../authors/chelsea-reitzel.html">Chelsea Reitzel</a>, <a href="../authors/danique-m-h-van-rijswijck.html">Danique M.H. van Rijswijck</a>, <a href="../authors/david-arnott.html">David Arnott</a>, <a href="../authors/di-tang.html">Di Tang</a>, <a href="../authors/douwe-schulte.html">Douwe Schulte</a>, <a href="../authors/elisabeth-hjortswang.html">Elisabeth Hjortswang</a>, <a href="../authors/emma-beadle.html">Emma Beadle</a>, <a href="../authors/gerald-nakamura.html">Gerald Nakamura</a>, <a href="../authors/jean-francois-greisch.html">Jean-François Greisch</a>, <a href="../authors/jennie-r-lill.html">Jennie R. Lill</a>, <a href="../authors/jeremy-stinson.html">Jeremy Stinson</a>, <a href="../authors/jin-duan.html">Jin Duan</a>, <a href="../authors/joel-strobaek.html">Joel Ströbaek</a>, <a href="../authors/johan-malmstrom.html">Johan Malmström</a>, <a href="../authors/joost-snijder.html">Joost Snijder</a>, <a href="../authors/l-zeneyedpour.html">L. Zeneyedpour</a>, <a href="../authors/lars-malmstrom.html">Lars Malmström</a>, <a href="../authors/laura-murray.html">Laura Murray</a>, <a href="../authors/lennard-j-m-dekker.html">Lennard J. M. Dekker</a>, <a href="../authors/lin-wu.html">Lin Wu</a>, <a href="../authors/lotta-happonen.html">Lotta Happonen</a>, <a href="../authors/marc-j-m-bonten.html">Marc J.M. Bonten</a>, <a href="../authors/marko-jovic.html">Marko Jovic</a>, <a href="../authors/martijn-m-vanduijn.html">Martijn M. VanDuijn</a>, <a href="../authors/maurits-a-den-boer.html">Maurits A. den Boer</a>, <a href="../authors/max-hoek.html">Max Hoek</a>, <a href="../authors/meri-r-j-varkila.html">Meri R.J. Varkila</a>, <a href="../authors/minyoung-park.html">Minyoung Park</a>, <a href="../authors/nuno-bandeira.html">Nuno Bandeira</a>, <a href="../authors/olaf-l-cremer.html">Olaf L. Cremer</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/peter-a-e-sillevis-smitt.html">Peter A. E. Sillevis Smitt</a>, <a href="../authors/qixin-liu.html">Qixin Liu</a>, <a href="../authors/rosalin-m-dubois.html">Rosalin M. Dubois</a>, <a href="../authors/sem-tamara.html">Sem Tamara</a>, <a href="../authors/simon-ekstrom.html">Simon Ekström</a>, <a href="../authors/teresa-nunez-de-villavicencio-diaz.html">Teresa Nunez de Villavicencio Diaz</a>, <a href="../authors/theo-m-luider.html">Theo M. Luider</a>, <a href="../authors/thierry-le-bihan.html">Thierry Le Bihan</a>, <a href="../authors/victoria-lange.html">Victoria Lange</a>, <a href="../authors/vineet-pham.html">Vineet Pham</a>, <a href="../authors/weiwei-peng.html">Weiwei Peng</a>, <a href="../authors/wendy-sandoval.html">Wendy Sandoval</a>, <a href="../authors/xiaobing-han.html">Xiaobing Han</a>, <a href="../authors/yongmei-chen.html">Yongmei Chen</a>, <a href="../authors/yutian-gan.html">Yutian Gan</a></p>
+<section id="authors-60" class="level2">
+<h2 class="anchored" data-anchor-id="authors-60">Authors (60)</h2>
+<p><a href="../authors/adrian-guthals.html">Adrian Guthals</a>, <a href="../authors/albert-bondt.html">Albert Bondt</a>, <a href="../authors/albert-j-r-heck.html">Albert J. R. Heck</a>, <a href="../authors/alena-bensussan.html">Alena Bensussan</a>, <a href="../authors/amber-l-couzens.html">Amber L. Couzens</a>, <a href="../authors/bastiaan-de-graaf.html">Bastiaan de Graaf</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carlos-gueto-tettay.html">Carlos Gueto-Tettay</a>, <a href="../authors/chelsea-reitzel.html">Chelsea Reitzel</a>, <a href="../authors/danique-m-h-van-rijswijck.html">Danique M.H. van Rijswijck</a>, <a href="../authors/david-arnott.html">David Arnott</a>, <a href="../authors/di-tang.html">Di Tang</a>, <a href="../authors/douwe-schulte.html">Douwe Schulte</a>, <a href="../authors/elisabeth-hjortswang.html">Elisabeth Hjortswang</a>, <a href="../authors/emma-beadle.html">Emma Beadle</a>, <a href="../authors/gerald-nakamura.html">Gerald Nakamura</a>, <a href="../authors/giuseppe-a-sautto.html">Giuseppe A. Sautto</a>, <a href="../authors/gregory-c-ippolito.html">Gregory C. Ippolito</a>, <a href="../authors/hamssika-chandrasekaran.html">Hamssika Chandrasekaran</a>, <a href="../authors/jean-francois-greisch.html">Jean-François Greisch</a>, <a href="../authors/jennie-r-lill.html">Jennie R. Lill</a>, <a href="../authors/jeremy-stinson.html">Jeremy Stinson</a>, <a href="../authors/jin-duan.html">Jin Duan</a>, <a href="../authors/joel-strobaek.html">Joel Ströbaek</a>, <a href="../authors/johan-malmstrom.html">Johan Malmström</a>, <a href="../authors/joost-snijder.html">Joost Snijder</a>, <a href="../authors/l-zeneyedpour.html">L. Zeneyedpour</a>, <a href="../authors/lars-malmstrom.html">Lars Malmström</a>, <a href="../authors/laura-murray.html">Laura Murray</a>, <a href="../authors/lennard-j-m-dekker.html">Lennard J. M. Dekker</a>, <a href="../authors/lin-wu.html">Lin Wu</a>, <a href="../authors/lotta-happonen.html">Lotta Happonen</a>, <a href="../authors/marc-j-m-bonten.html">Marc J.M. Bonten</a>, <a href="../authors/maria-d-person.html">Maria D. Person</a>, <a href="../authors/marko-jovic.html">Marko Jovic</a>, <a href="../authors/martijn-m-vanduijn.html">Martijn M. VanDuijn</a>, <a href="../authors/maurits-a-den-boer.html">Maurits A. den Boer</a>, <a href="../authors/max-hoek.html">Max Hoek</a>, <a href="../authors/meri-r-j-varkila.html">Meri R.J. Varkila</a>, <a href="../authors/michelle-v-gadush.html">Michelle V. Gadush</a>, <a href="../authors/minyoung-park.html">Minyoung Park</a>, <a href="../authors/nuno-bandeira.html">Nuno Bandeira</a>, <a href="../authors/olaf-l-cremer.html">Olaf L. Cremer</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/peter-a-e-sillevis-smitt.html">Peter A. E. Sillevis Smitt</a>, <a href="../authors/qixin-liu.html">Qixin Liu</a>, <a href="../authors/rosalin-m-dubois.html">Rosalin M. Dubois</a>, <a href="../authors/sem-tamara.html">Sem Tamara</a>, <a href="../authors/simon-ekstrom.html">Simon Ekström</a>, <a href="../authors/ted-m-ross.html">Ted M. Ross</a>, <a href="../authors/teresa-nunez-de-villavicencio-diaz.html">Teresa Nunez de Villavicencio Diaz</a>, <a href="../authors/theo-m-luider.html">Theo M. Luider</a>, <a href="../authors/thierry-le-bihan.html">Thierry Le Bihan</a>, <a href="../authors/victoria-lange.html">Victoria Lange</a>, <a href="../authors/vineet-pham.html">Vineet Pham</a>, <a href="../authors/weiwei-peng.html">Weiwei Peng</a>, <a href="../authors/wendy-sandoval.html">Wendy Sandoval</a>, <a href="../authors/xiaobing-han.html">Xiaobing Han</a>, <a href="../authors/yongmei-chen.html">Yongmei Chen</a>, <a href="../authors/yutian-gan.html">Yutian Gan</a></p>
 </section>
 <section id="where-the-work-happened" class="level2">
 <h2 class="anchored" data-anchor-id="where-the-work-happened">Where the work happened</h2>
