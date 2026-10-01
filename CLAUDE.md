@@ -1097,6 +1097,41 @@ instrument, and a **TMT 6-plex** form. Instrument and label change the fragment
 ladder a model has to read, so "trained on ProteomeTools" is as
 under-determined as "evaluated on nine-species", for a different reason.
 
+### The two dataset charts
+
+**"The data underneath"** holds the version-ambiguity bars and the nine-species
+provenance flow, between the benchmark sections and the application areas, which
+is where a reader has just finished comparing numbers and should learn what the
+numbers were computed over.
+
+**Only three datasets qualify for the bar chart, and that is the finding.** A
+dataset earns a row when naming it is ambiguous: more than one version in use,
+or at least one paper that named none. Measured, exactly three clear that bar at
+any floor from 2 to 4 papers, so the threshold is a constant and **not** a
+slider: a control would imply a longer list than exists. The rest of the 400-odd
+versions are cited once, have one version, or are always pinned.
+
+**`fill` with a function returning a hex string renders the wrong colours,
+silently.** Plot treats the returned string as a CHANNEL VALUE and maps it
+through the default categorical colour scale, so `fill: d => "#d97706"` produces
+scheme colours and the hex appears nowhere in the DOM. That is how the first
+version of this chart shipped looking plausible and wrong. Use a named category
+plus an explicit `color.range`, which is what the chart does now and which earns
+a legend for free. This is the same class of trap as `dx`/`textAnchor` being
+constants rather than channels, in the opposite direction.
+
+**The provenance flow draws its two halves differently on purpose.** The nine
+source submissions fan into one curated deposit with PALE, EQUAL-height ribbons,
+because the catalog stores no per-species spectrum count and sizing them would
+have invented one; the deposit then fans out to the versions with ribbons
+weighted by the papers naming each. A version nobody has cited still gets a
+visible box at a 16 px floor, because it exists whether or not anyone cited it:
+that is how `ProteoBench selection` and `revised (balanced)` appear at 0 papers.
+Hand-rolled SVG rather than d3-sankey, following `application_sankey` above it.
+
+Both were audited in headless Chrome after rendering: 0 text-text overlaps and 0
+labels outside the frame, on 22 and 293 text nodes.
+
 ### build_dataset_accessions.py
 
 Mines the LOCAL PDF library for accessions and links them. It **never** creates

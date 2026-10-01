@@ -504,6 +504,45 @@ benchmark_source = dict(conn.execute("SELECT key, value FROM benchmark_source"))
 subdomains = pd.read_sql(
     "SELECT id, name, label, blurb FROM subdomain ORDER BY id", conn)
 
+# Datasets, for the version-ambiguity chart and the nine-species provenance
+# flow. Three queries rather than one join, because the grains differ: one row
+# per (paper, dataset, version) link, one per version, one per address. Joining
+# them would multiply the link rows by the address count and inflate every
+# paper count on the chart.
+#
+# dataset_usage keeps the version NULL where the paper did not determine one.
+# That NULL is the whole point of the first chart, so it must survive into OJS
+# rather than being coalesced to a label here: a Python-side fillna would make
+# "not stated" indistinguishable from a version actually called that.
+dataset_usage = pd.read_sql("""
+    SELECT pd.publication_id   AS pub_id,
+           d.name              AS dataset,
+           d.kind              AS kind,
+           dv.version          AS version,
+           pd.role             AS role
+      FROM publication_dataset pd
+      JOIN dataset d            ON d.id  = pd.dataset_id
+      LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id
+     ORDER BY d.name, dv.version
+""", conn)
+
+dataset_versions = pd.read_sql("""
+    SELECT d.name AS dataset, d.kind, dv.id AS version_id, dv.version,
+           dv.n_spectra, dv.n_train, dv.n_validation, dv.n_test,
+           dv.released, dv.introduced_by
+      FROM dataset d JOIN dataset_version dv ON dv.dataset_id = d.id
+     ORDER BY d.name, dv.id
+""", conn)
+
+dataset_addresses = pd.read_sql("""
+    SELECT dv.id AS version_id, d.name AS dataset, dv.version,
+           a.repository, a.accession, a.url, a.part, a.is_provenance
+      FROM dataset_address a
+      JOIN dataset_version dv ON dv.id = a.dataset_version_id
+      JOIN dataset d          ON d.id  = dv.dataset_id
+     ORDER BY a.is_provenance, d.name, dv.id, a.repository, a.accession
+""", conn)
+
 # ProteoBench: the other public benchmark, one dataset and one row per submitted
 # run, written by build_proteobench.py. Its four metrics are not
 # interchangeable, so all four come through and the chart lets the reader pick;
@@ -595,6 +634,9 @@ ojs_define(
     benchmark_datasets=benchmark_datasets,
     benchmark_source=benchmark_source,
     subdomains=subdomains,
+    dataset_usage=dataset_usage,
+    dataset_versions=dataset_versions,
+    dataset_addresses=dataset_addresses,
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
@@ -3136,6 +3178,312 @@ Inputs.table(pb_table, {
   width: { Method: 130, Version: 80, Family: 130, Decoding: 150 }
 })
 ```
+
+## The data underneath
+
+Every number on this page was produced by running software over spectra, and the
+spectra have versions. "Trained on nine-species" names four different objects,
+and a third of the papers that say it do not say which. These two charts are
+about that.
+
+```{ojs}
+//| echo: false
+dataset_usage_t = transpose(dataset_usage)
+dataset_versions_t = transpose(dataset_versions)
+dataset_addresses_t = transpose(dataset_addresses)
+```
+
+```{ojs}
+//| echo: false
+// One row per (dataset, version-or-null) with its paper count. The null is
+// preserved as null all the way from SQL so that "not stated" cannot be
+// confused with a version that happens to be called that.
+dataset_version_use = {
+  const rows = new Map()
+  for (const u of dataset_usage_t) {
+    const key = `${u.dataset}|${u.version ?? ""}`
+    const r = rows.get(key) ?? { dataset: u.dataset, kind: u.kind,
+                                 version: u.version ?? null, papers: 0 }
+    r.papers += 1
+    rows.set(key, r)
+  }
+  return Array.from(rows.values())
+}
+```
+
+```{ojs}
+//| echo: false
+// A dataset earns a row only if naming it is actually ambiguous: it has more
+// than one version in use, or at least one paper that named no version. A
+// single-version deposit cited once is not evidence about anything and there
+// are several hundred of them.
+version_ambiguity_rows = {
+  const by_dataset = d3.group(dataset_version_use, d => d.dataset)
+  const keep = []
+  for (const [name, rows] of by_dataset) {
+    const total = d3.sum(rows, d => d.papers)
+    const unstated = d3.sum(rows.filter(d => d.version === null), d => d.papers)
+    const versions = new Set(rows.filter(d => d.version !== null).map(d => d.version))
+    // Two papers is the floor for "is naming this ambiguous": one paper cannot
+    // disagree with anything. The threshold is NOT a slider, because it would
+    // be inert -- measured, exactly three datasets in the catalog qualify at
+    // any floor from 2 to 4, so a control would imply a longer list than
+    // exists.
+    if (total < 2) continue
+    if (versions.size < 2 && unstated === 0) continue
+    for (const r of rows) keep.push({ ...r, total, unstated })
+  }
+  return keep.sort((a, b) => b.total - a.total || a.dataset.localeCompare(b.dataset)
+                   || (a.version ?? "").localeCompare(b.version ?? ""))
+}
+```
+
+```{ojs}
+//| echo: false
+version_unstated_share = {
+  const total = d3.sum(version_ambiguity_rows, d => d.papers)
+  const unstated = d3.sum(version_ambiguity_rows.filter(d => d.version === null), d => d.papers)
+  return { total, unstated, pct: total ? Math.round(100 * unstated / total) : 0 }
+}
+```
+
+```{ojs}
+//| echo: false
+html`<p style="margin:0.4rem 0 0.9rem; color:#57606a;">
+Of the <b>${dataset_versions_t.length}</b> dataset versions the catalog records,
+naming is genuinely ambiguous for only
+<b>${d3.group(version_ambiguity_rows, d => d.dataset).size}</b> datasets: the
+rest are cited by one paper, or have one version, or are always pinned. Those
+three carry <b>${version_unstated_share.total}</b> uses, of which
+<b>${version_unstated_share.unstated}</b> (<b>${version_unstated_share.pct}%</b>)
+name no version. The amber segment is that: a citation that does not identify
+which curated object was run.</p>`
+```
+
+```{ojs}
+//| echo: false
+// Colour carries "did the paper pin a version", not which version, because
+// version names are not comparable between datasets: 'revised (main)' and
+// 'Bruker timsTOF' share nothing. The version itself is on the segment label
+// and in the tooltip, where it does not need a shared scale.
+//
+// This is a CATEGORY, not a colour. Handing Plot `fill: d => "#d97706"` makes
+// the hex string a channel value, which Plot then maps through the default
+// categorical colour scale: the chart renders in scheme colours and the hex is
+// never used. Measured -- the amber appeared nowhere in the DOM. A named
+// category plus an explicit range is the fix, and it earns a legend.
+version_status = d => d.version === null ? "version not stated" : "version stated"
+```
+
+```{ojs}
+//| echo: false
+Plot.plot({
+  width: 1100,
+  height: Math.max(220, 46 * d3.group(version_ambiguity_rows, d => d.dataset).size + 80),
+  marginLeft: 250,
+  marginRight: 90,
+  marginBottom: 48,
+  x: { label: "Papers naming this dataset", grid: true, nice: true, labelOffset: 40 },
+  y: { label: null },
+  color: {
+    domain: ["version stated", "version not stated"],
+    range: ["#0f766e", "#d97706"],
+    legend: true
+  },
+  marks: [
+    // Unstated sorts last, so the amber block always ends every bar and can be
+    // compared across rows without reading a single label.
+    Plot.barX(version_ambiguity_rows, Plot.stackX({
+      order: d => d.version === null ? 1 : 0,
+      y: "dataset",
+      x: "papers",
+      fill: version_status,
+      stroke: "white",
+      strokeWidth: 1,
+      channels: { "Dataset": "dataset", "Version": d => d.version ?? "not stated",
+                  "Papers": "papers" },
+      tip: { ...plot_tip_style, format: { x: false, y: false, fill: false } }
+    })),
+    // The version name on the segment, but only where it fits. 6.4 px per
+    // character at 10 px, the same basis as the other charts here; anything
+    // narrower stays unlabelled rather than overlapping its neighbour. The
+    // x-per-paper factor is derived from the widest bar, not assumed.
+    Plot.text(version_ambiguity_rows, Plot.stackX({
+      order: d => d.version === null ? 1 : 0,
+      y: "dataset",
+      x: "papers",
+      text: d => d.version ?? "not stated",
+      fill: "white",
+      fontSize: 10,
+      fontWeight: 600,
+      filter: d => d.papers * (760 / d3.max(version_ambiguity_rows, r => r.total))
+                   > ((d.version ?? "not stated").length * 6.4 + 10)
+    })),
+    Plot.text(d3.rollups(version_ambiguity_rows, v => d3.sum(v, d => d.papers), d => d.dataset)
+                .map(([dataset, papers]) => ({ dataset, papers })), {
+      y: "dataset", x: "papers", text: d => d.papers, dx: 14,
+      textAnchor: "start", fontSize: 11, fill: "#57606a"
+    }),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+::: {.callout-note appearance="simple"}
+**An amber segment is not sloppiness, usually.** A paper that cites the nine
+per-species PRIDE submissions has told you exactly where its spectra came from.
+What it has not told you is which curated re-release it ran, and since the
+revised benchmark removed cross-species peptide redundancy that the original
+leaked, the two are not interchangeable for measuring generalisation. The
+catalog records this as a null version rather than guessing.
+:::
+
+### Where the nine-species benchmark comes from
+
+```{ojs}
+//| echo: false
+nine_species_flow = {
+  const DATASET = "Nine-species benchmark"
+  const versions = dataset_versions_t.filter(d => d.dataset === DATASET)
+  const addrs = dataset_addresses_t.filter(d => d.dataset === DATASET)
+  const provenance = addrs.filter(a => a.is_provenance)
+  const use = dataset_version_use.filter(d => d.dataset === DATASET)
+  const papers_of = new Map(use.map(d => [d.version ?? "__none__", d.papers]))
+
+  const width = 1100
+  const PAD = 10
+  const row_px = 34
+  const n_rows = Math.max(provenance.length, versions.length + 1)
+  const height = Math.max(430, 60 + n_rows * row_px)
+  const margin = { top: 44, right: 210, bottom: 34, left: 232 }
+  const inner_w = width - margin.left - margin.right
+  const inner_h = height - margin.top - margin.bottom
+
+  // Three columns: the nine source submissions, the curated deposit, then the
+  // versions. Column x positions are fixed; only the version column carries a
+  // weight, which is why the two halves are drawn differently (see below).
+  const col_x = [0, inner_w * 0.46, inner_w * 0.82]
+  const NODE_W = 13
+
+  // LEFT: nine equal boxes. Provenance has no spectra count in the catalog and
+  // inventing one would make the ribbons lie, so these are equal height and
+  // their ribbons are drawn thin and dashed to say "this is lineage, not flow".
+  const left_h = (inner_h - PAD * (provenance.length - 1)) / provenance.length
+  const left = provenance.map((a, i) => ({
+    id: a.accession, label: a.part ?? a.accession, url: a.url,
+    y0: i * (left_h + PAD), y1: i * (left_h + PAD) + left_h
+  }))
+
+  // MIDDLE: the single curated deposit.
+  const mid = { id: "MSV000081382", label: "MSV000081382",
+                sub: "DeepNovo's curated deposit",
+                y0: inner_h * 0.18, y1: inner_h * 0.82 }
+
+  // RIGHT: one box per version plus the unstated bucket, heights proportional
+  // to the papers that name them. A version nobody named gets a floor so it is
+  // still visible and still labelled -- it exists whether or not it is cited.
+  const right_items = versions.map(v => ({
+    id: v.version, label: v.version,
+    papers: papers_of.get(v.version) ?? 0,
+    n_spectra: v.n_spectra
+  }))
+  if ((papers_of.get("__none__") ?? 0) > 0) {
+    right_items.push({ id: "__none__", label: "version not stated",
+                       papers: papers_of.get("__none__"), unstated: true })
+  }
+  const FLOOR = 16
+  const weighted = d3.sum(right_items, d => d.papers)
+  const avail = inner_h - PAD * (right_items.length - 1)
+  const floor_total = right_items.filter(d => d.papers === 0).length * FLOOR
+  let cursor = 0
+  for (const r of right_items) {
+    r.h = r.papers === 0 ? FLOOR
+        : ((r.papers / weighted) * (avail - floor_total))
+    r.y0 = cursor; r.y1 = cursor + r.h; cursor += r.h + PAD
+  }
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width:100%; height:auto; background:#fbfbfd; font:11px sans-serif;")
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
+
+  const ribbon = (x0, y0a, y0b, x1, y1a, y1b) => {
+    const xm = (x0 + x1) / 2
+    return `M${x0},${y0a}C${xm},${y0a} ${xm},${y1a} ${x1},${y1a}`
+         + `L${x1},${y1b}C${xm},${y1b} ${xm},${y0b} ${x0},${y0b}Z`
+  }
+
+  // provenance ribbons: thin, dashed, uncounted
+  for (const l of left) {
+    const mid_y = mid.y0 + (mid.y1 - mid.y0) * ((l.y0 + l.y1) / 2) / inner_h
+    g.append("path")
+      .attr("d", ribbon(col_x[0] + NODE_W, l.y0 + 1, l.y1 - 1,
+                        col_x[1], mid_y - 3, mid_y + 3))
+      .attr("fill", "#94a3b8").attr("opacity", 0.26)
+  }
+  // version ribbons: weighted by papers
+  let mid_off = 0
+  const mid_h = mid.y1 - mid.y0
+  for (const r of right_items) {
+    const share = weighted ? (r.papers / weighted) : 0
+    const h = Math.max(2, share * mid_h)
+    g.append("path")
+      .attr("d", ribbon(col_x[1] + NODE_W, mid.y0 + mid_off, mid.y0 + mid_off + h,
+                        col_x[2], r.y0, r.y1))
+      .attr("fill", r.unstated ? "#d97706" : "#0f766e")
+      .attr("opacity", r.unstated ? 0.42 : 0.3)
+    mid_off += h
+  }
+
+  const box = (x, y0, y1, fill) => g.append("rect")
+    .attr("x", x).attr("y", y0).attr("width", NODE_W)
+    .attr("height", Math.max(2, y1 - y0)).attr("fill", fill).attr("rx", 2)
+
+  for (const l of left) {
+    box(col_x[0], l.y0, l.y1, "#94a3b8")
+    g.append("a").attr("href", l.url).attr("target", "_blank")
+      .append("text").attr("x", col_x[0] - 8).attr("y", (l.y0 + l.y1) / 2 + 3)
+      .attr("text-anchor", "end").attr("fill", "#24292f")
+      .text(`${l.label} · ${l.id}`)
+  }
+  box(col_x[1], mid.y0, mid.y1, "#475569")
+  g.append("text").attr("x", col_x[1] + NODE_W / 2).attr("y", mid.y0 - 10)
+    .attr("text-anchor", "middle").attr("font-weight", 600).attr("fill", "#24292f")
+    .text(mid.label)
+  g.append("text").attr("x", col_x[1] + NODE_W / 2).attr("y", mid.y1 + 16)
+    .attr("text-anchor", "middle").attr("fill", "#57606a").text(mid.sub)
+
+  for (const r of right_items) {
+    box(col_x[2], r.y0, r.y1, r.unstated ? "#d97706" : "#0f766e")
+    const t = g.append("text").attr("x", col_x[2] + NODE_W + 8)
+      .attr("y", (r.y0 + r.y1) / 2 - (r.n_spectra ? 3 : 0) + 3)
+      .attr("fill", "#24292f").attr("font-weight", r.unstated ? 600 : 500)
+    t.text(`${r.label} · ${r.papers} paper${r.papers === 1 ? "" : "s"}`)
+    if (r.n_spectra)
+      g.append("text").attr("x", col_x[2] + NODE_W + 8)
+        .attr("y", (r.y0 + r.y1) / 2 + 12).attr("fill", "#57606a")
+        .text(`${d3.format(",")(r.n_spectra)} spectra`)
+  }
+
+  for (const [x, label] of [[col_x[0], "nine third-party submissions"],
+                            [col_x[1], "one curated deposit"],
+                            [col_x[2], "five versions in use"]]) {
+    g.append("text").attr("x", x).attr("y", -26).attr("fill", "#57606a")
+      .attr("font-weight", 600).text(label)
+  }
+  return svg.node()
+}
+```
+
+::: {.callout-note appearance="simple"}
+**The left-hand ribbons carry no count, and are drawn pale for that reason.**
+The nine source submissions are unrelated proteomics studies, of honeybees and
+tomatoes and bottlenose dolphins, whose spectra were re-curated into one
+deposit; the catalog stores no per-species spectrum count, and sizing those
+ribbons would have invented one. The right-hand ribbons are weighted by papers.
+A version with no papers still gets a visible box, because it exists whether or
+not anyone cited it.
+:::
 
 ## Application areas
 
