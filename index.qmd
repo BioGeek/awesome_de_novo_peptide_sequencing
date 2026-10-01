@@ -3355,7 +3355,10 @@ nine_species_flow = {
   const row_px = 34
   const n_rows = Math.max(provenance.length, versions.length + 1)
   const height = Math.max(430, 60 + n_rows * row_px)
-  const margin = { top: 44, right: 210, bottom: 34, left: 232 }
+  // left 300: 'Candidatus Thiodiazotropha endoloripes . PXD004536' is the
+  // longest provenance label and was clipped by 42 px at 232, measured by
+  // check_chart_overlap.py. Widening beats truncating a species name.
+  const margin = { top: 44, right: 210, bottom: 34, left: 300 }
   const inner_w = width - margin.left - margin.right
   const inner_h = height - margin.top - margin.bottom
 
@@ -3483,6 +3486,197 @@ deposit; the catalog stores no per-species spectrum count, and sizing those
 ribbons would have invented one. The right-hand ribbons are weighted by papers.
 A version with no papers still gets a visible box, because it exists whether or
 not anyone cited it.
+:::
+
+### Deposits that travel together
+
+Six of these have no shared provenance at all. They are unrelated studies, of
+dolphin tissue and bronchoalveolar lavage fluid and diabetic beta-cells, that
+nobody ever merged into one object. What they share is that the same papers keep
+reaching for all of them at once, which makes them a benchmark suite in practice
+and nothing in name. The catalog keeps them as six deposits for that reason, and
+this chart is where the convention becomes visible.
+
+```{ojs}
+//| echo: false
+// Deposits reused by several papers, and the papers reusing them. Derived, not
+// a hand-listed set of accessions: a deposit qualifies on its reuse count, so a
+// block that forms later appears here without an edit.
+couse_min_papers = 4
+```
+
+```{ojs}
+//| echo: false
+couse_graph = {
+  const by_dataset = d3.group(dataset_usage_t.filter(u => u.kind === "deposit"),
+                              u => u.dataset)
+  const deposits = []
+  for (const [name, rows] of by_dataset) {
+    const papers = Array.from(new Set(rows.map(r => r.pub_id))).sort(d3.ascending)
+    if (papers.length >= couse_min_papers) deposits.push({ name, papers })
+  }
+  // A SIGNATURE is the exact set of papers that cite a deposit. Deposits with
+  // an identical signature are used by exactly the same work, which is the
+  // evidence that they form a suite; the largest such group is highlighted.
+  // Grouping on the signature rather than on pairwise overlap keeps the claim
+  // falsifiable: these are not "similar", they are identical.
+  for (const d of deposits) d.sig = d.papers.join(",")
+  const sig_groups = d3.rollups(deposits, v => v.length, d => d.sig)
+    .sort((a, b) => b[1] - a[1])
+  const block_sig = sig_groups.length && sig_groups[0][1] > 1 ? sig_groups[0][0] : null
+  // A deposit one paper short of the block is still part of the practice, so
+  // near-members are marked too: the same signature plus any one extra paper.
+  const block_papers = block_sig ? new Set(block_sig.split(",")) : new Set()
+  for (const d of deposits) {
+    d.in_block = d.sig === block_sig
+    d.near_block = !d.in_block && block_sig
+      && block_papers.size > 0
+      && [...block_papers].every(p => d.papers.map(String).includes(p))
+  }
+  const acc_of = new Map()
+  for (const a of dataset_addresses_t) if (!acc_of.has(a.dataset)) acc_of.set(a.dataset, a.accession)
+  const title_of = new Map(pubs_t.map(p => [p.id, p]))
+  const paper_deg = new Map()
+  for (const d of deposits) for (const p of d.papers) paper_deg.set(p, (paper_deg.get(p) ?? 0) + 1)
+  const papers = Array.from(paper_deg.entries())
+    .map(([id, deg]) => {
+      const p = title_of.get(id)
+      const first_model = (p?.models_described ?? "").split(",")[0].trim()
+      const raw = first_model || (p?.title ?? `publication ${id}`)
+      return { id, deg, title: p?.title ?? "", year: p?.year,
+               // 40 characters keeps the longest label inside the right margin
+               // at 11 px; measured, three ran past the frame at no limit.
+               label: raw.length > 40 ? raw.slice(0, 39) + "\u2026" : raw }
+    })
+    .sort((a, b) => b.deg - a.deg || d3.ascending(a.label, b.label))
+  // Two papers can share a leading method name -- a paper describing both
+  // PandaNovo and pi-HelixNovo leads with the same string as the pi-HelixNovo
+  // paper -- and two identical labels in one column are unreadable. Add the
+  // year only where it is needed to tell them apart.
+  {
+    const seen = d3.rollup(papers, v => v.length, d => d.label)
+    for (const p of papers) {
+      if (seen.get(p.label) > 1 && p.year) p.label = `${p.label} (${p.year})`
+    }
+  }
+  deposits.sort((a, b) =>
+       (b.in_block | 0) - (a.in_block | 0)
+    || (b.near_block | 0) - (a.near_block | 0)
+    || b.papers.length - a.papers.length
+    || d3.ascending(a.name, b.name))
+  return { deposits, papers, acc_of, block_size: deposits.filter(d => d.in_block).length }
+}
+```
+
+```{ojs}
+//| echo: false
+html`<p style="margin:0.4rem 0 0.9rem; color:#57606a;">
+<b>${couse_graph.deposits.length}</b> deposits are reused by
+${couse_min_papers} or more papers. <b>${couse_graph.block_size}</b> of them are
+cited by the <i>identical</i> set of
+<b>${couse_graph.deposits.find(d => d.in_block)?.papers.length ?? 0}</b> papers,
+drawn in teal below, with near-members in a lighter shade: not merely similar
+usage, the same set exactly.</p>`
+```
+
+```{ojs}
+//| echo: false
+couse_flow = {
+  const { deposits, papers, acc_of } = couse_graph
+  const width = 1100
+  const PAD = 7
+  const NODE_W = 13
+  const height = Math.max(520, 56 + papers.length * 25)
+  // right 330: the longest paper label, truncated to 40 characters plus its
+  // degree suffix, ran 3 labels past the frame at 250.
+  const margin = { top: 42, right: 330, bottom: 26, left: 300 }
+  const inner_w = width - margin.left - margin.right
+  const inner_h = height - margin.top - margin.bottom
+
+  // Both columns are weighted by edge count, and every edge weighs 1: a paper
+  // either used a deposit or did not, and there is no spectrum count here to
+  // scale by. So node height is degree, which is the honest encoding.
+  const total_edges = d3.sum(deposits, d => d.papers.length)
+  const lay = (nodes, degree) => {
+    const avail = inner_h - PAD * (nodes.length - 1)
+    let y = 0
+    for (const n of nodes) {
+      n.h = (degree(n) / total_edges) * avail
+      n.y0 = y; n.y1 = y + n.h; y += n.h + PAD
+    }
+  }
+  lay(deposits, d => d.papers.length)
+  lay(papers, p => p.deg)
+
+  const COL = { block: "#0f766e", near: "#5eada6", other: "#94a3b8" }
+  const colour = d => d.in_block ? COL.block : d.near_block ? COL.near : COL.other
+  const paper_by_id = new Map(papers.map(p => [p.id, p]))
+  const l_off = new Map(), r_off = new Map()
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width:100%; height:auto; background:#fbfbfd; font:11px sans-serif;")
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
+  const ribbon = (x0, y0a, y0b, x1, y1a, y1b) => {
+    const xm = (x0 + x1) / 2
+    return `M${x0},${y0a}C${xm},${y0a} ${xm},${y1a} ${x1},${y1a}`
+         + `L${x1},${y1b}C${xm},${y1b} ${xm},${y0b} ${x0},${y0b}Z`
+  }
+  for (const d of deposits) {
+    for (const pid of d.papers) {
+      const p = paper_by_id.get(pid)
+      if (!p) continue
+      const lh = d.h / d.papers.length
+      const rh = p.h / p.deg
+      const lo = l_off.get(d.name) ?? 0
+      const ro = r_off.get(p.id) ?? 0
+      g.append("path")
+        .attr("d", ribbon(NODE_W, d.y0 + lo, d.y0 + lo + lh,
+                          inner_w, p.y0 + ro, p.y0 + ro + rh))
+        .attr("fill", colour(d))
+        .attr("opacity", d.in_block ? 0.34 : 0.17)
+      l_off.set(d.name, lo + lh)
+      r_off.set(p.id, ro + rh)
+    }
+  }
+  for (const d of deposits) {
+    g.append("rect").attr("x", 0).attr("y", d.y0).attr("width", NODE_W)
+      .attr("height", Math.max(2, d.h)).attr("fill", colour(d)).attr("rx", 2)
+    const acc = acc_of.get(d.name) ?? ""
+    const t = g.append("text").attr("x", -8).attr("y", (d.y0 + d.y1) / 2 - 2)
+      .attr("text-anchor", "end").attr("fill", "#24292f")
+      .attr("font-weight", d.in_block ? 600 : 400)
+    t.text(acc)
+    g.append("text").attr("x", -8).attr("y", (d.y0 + d.y1) / 2 + 11)
+      .attr("text-anchor", "end").attr("fill", "#57606a")
+      // 44 characters keeps the longest repository title inside the 300 px
+      // left margin at 11 px; the full name is on the paper pages.
+      .text(d.name.length > 44 ? d.name.slice(0, 43) + "…" : d.name)
+  }
+  for (const p of papers) {
+    g.append("rect").attr("x", inner_w).attr("y", p.y0).attr("width", NODE_W)
+      .attr("height", Math.max(2, p.h)).attr("fill", "#475569").attr("rx", 2)
+    g.append("text").attr("x", inner_w + NODE_W + 8).attr("y", (p.y0 + p.y1) / 2 + 3)
+      .attr("fill", "#24292f").attr("font-weight", p.deg >= 5 ? 600 : 400)
+      .text(`${p.label}${p.deg > 1 ? ` · ${p.deg}` : ""}`)
+  }
+  for (const [x, anchor, label] of [[0, "start", "deposit"],
+                                    [inner_w + NODE_W, "end", "papers reusing it"]]) {
+    g.append("text").attr("x", x).attr("y", -24).attr("text-anchor", anchor)
+      .attr("fill", "#57606a").attr("font-weight", 600).text(label)
+  }
+  return svg.node()
+}
+```
+
+::: {.callout-note appearance="simple"}
+**Every ribbon here weighs the same, deliberately.** A paper either used a
+deposit or it did not, and unlike the nine-species flow above there is no
+spectrum count to scale by, so node height is simply degree. The teal block is
+computed from an *identical* citing-paper signature rather than from pairwise
+similarity, which is what makes it a claim worth printing: these deposits are
+not used by overlapping sets of papers, they are used by the same set. The
+lighter shade is a deposit matching that signature plus one extra paper.
 :::
 
 ## Application areas
@@ -6237,7 +6431,12 @@ viewof venue_type = Inputs.radio(
   const chart = Plot.plot({
     marginLeft: 270,   // measured 85 px of venue-name overflow
     height: Math.max(260, grouped.length * 24),
-    x: { label: "Papers", grid: true },
+    // labelOffset + marginBottom give the axis label its own line. Without
+    // them Plot puts it level with the tick labels, where it overlapped the
+    // '40' tick by 3 px -- remedy 3 under 'No chart on the page has an
+    // overlapping label', applied here after check_chart_overlap.py caught it.
+    x: { label: "Papers", grid: true, labelOffset: 40 },
+    marginBottom: 48,
     y: { label: null },
     marks: [
       Plot.barX(grouped, {

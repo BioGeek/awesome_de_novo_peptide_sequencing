@@ -1129,8 +1129,36 @@ visible box at a 16 px floor, because it exists whether or not anyone cited it:
 that is how `ProteoBench selection` and `revised (balanced)` appear at 0 papers.
 Hand-rolled SVG rather than d3-sankey, following `application_sankey` above it.
 
-Both were audited in headless Chrome after rendering: 0 text-text overlaps and 0
-labels outside the frame, on 22 and 293 text nodes.
+**A third chart, "Deposits that travel together", answers a different question
+with the same data.** Six of the reused deposits have NO shared provenance: they
+are unrelated studies, of dolphin tissue and bronchoalveolar lavage fluid and
+diabetic beta-cells, that nobody merged into anything. What they share is that
+the same papers reach for all of them at once, which makes them a benchmark
+suite in practice and nothing in name. So this one is a usage flow, deposit to
+paper, where the nine-species chart is a provenance flow.
+
+**The block is computed from an identical citing-paper SIGNATURE, not from
+pairwise similarity**, which is what makes it worth printing: five deposits are
+cited by exactly the same five papers, and a sixth by those five plus one. The
+set is DERIVED from a reuse count, so a block that forms later appears without
+an edit; nothing hardcodes an accession. Every ribbon weighs 1, because a paper
+either used a deposit or did not and there is no spectrum count to scale by, so
+node height is degree.
+
+Two measured fixes it needed. Paper labels are truncated at 40 characters, after
+three ran past the frame; and where two papers share a leading method name --
+a paper describing both PandaNovo and pi-HelixNovo leads with the same string as
+the pi-HelixNovo paper -- the YEAR is appended, but only to the labels that
+actually collide.
+
+All three were audited with `check_chart_overlap.py`: **39 chart SVGs, 0 OJS
+errors, 0 collisions**. It caught two things eyeballing had missed. The
+nine-species provenance labels were clipped by 42 px at a 232 px left margin
+("Candidatus Thiodiazotropha endoloripes" is the longest), now 300. And the
+VENUES chart, which this work never touched, had a 3 px overlap between its
+'40' tick and its axis label, fixed by remedy 3 above (`labelOffset` plus
+`marginBottom`); the previous "0 across 20 charts" note had gone stale as the
+page grew to 39.
 
 ### build_dataset_accessions.py
 
