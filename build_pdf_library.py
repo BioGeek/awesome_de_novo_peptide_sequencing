@@ -269,10 +269,22 @@ def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, 
     return (top[0][1], f"title {top[0][0]:.0f}") if top else (None, "")
 
 
+def pdfs(root: Path) -> list[Path]:
+    """Every PDF in the library.
+
+    The library is ONE flat folder. `retrieved/` is still read so an older
+    layout keeps working, but nothing is written there any more: it existed to
+    keep downloads away from the owner's curated filenames, and once the same
+    generator named every file it only served to hide half the library from
+    `rename` and `dedupe`, which looked in one folder each.
+    """
+    return sorted(list(root.glob("*.pdf")) + list((root / "retrieved").glob("*.pdf")))
+
+
 def coverage(pubs: list[dict], root: Path) -> dict[int, list[Path]]:
     """publication id -> the local files that are it. The FOLDER is the truth."""
     out: dict[int, list[Path]] = collections.defaultdict(list)
-    for f in sorted(list(root.glob("*.pdf")) + list((root / "retrieved").glob("*.pdf"))):
+    for f in pdfs(root):
         pub, _how = identify(pubs, f.stem)
         if pub:
             out[pub["id"]].append(f)
@@ -333,7 +345,13 @@ def candidates(cache: Path, pub: dict) -> tuple[list[tuple[str, str]], bool]:
                        + subprocess.list2cmdline([q]).strip('"').replace(" ", "%20"))
         hits = res.get("results") or []
         oa = hits[0] if hits else {}
-    if oa.get("is_oa"):
+    # OpenAlex puts this under open_access, NOT at the top level. Reading
+    # `oa["is_oa"]` returned None for every work, so the `free` flag -- which is
+    # the whole difference between "paywalled" and "blocked" in the report -- was
+    # only ever set by the arXiv, bioRxiv and Europe PMC paths. Publication 360
+    # is the case that exposed it: oa_status "green", a PMC copy, and it came out
+    # of candidates() flagged not-free.
+    if (oa.get("open_access") or {}).get("is_oa") or oa.get("is_oa"):
         free = True
     best = oa.get("best_oa_location") or {}
     if best.get("pdf_url"):
@@ -406,8 +424,7 @@ def pdf_from_landing(url: str) -> str | None:
 
 def cmd_fetch(args, conn, pubs, root):
     cache = HERE / ".cache" / "pdfs"
-    out = root / "retrieved"
-    out.mkdir(parents=True, exist_ok=True)
+    out = root
     have = coverage(pubs, root)
     todo = [p for p in pubs if p["id"] not in have]
     if args.ids:
@@ -483,7 +500,7 @@ def merge_status(root: Path, rows: list[dict]) -> list[dict]:
 
 def cmd_rename(args, conn, pubs, root):
     n = same = 0
-    for f in sorted((root / "retrieved").glob("*.pdf")):
+    for f in pdfs(root):
         pub, _how = identify(pubs, f.stem)
         if not pub:
             print(f"  UNMATCHED {f.name}")
@@ -517,8 +534,7 @@ def cmd_ingest(args, conn, pubs, root):
         if pages:
             a, _, b = pages.partition("-")
             slices[name] = (int(a), int(b))
-    filed = {f.name for f in (root / "retrieved").glob("*.pdf")} \
-        | {f.name for f in root.glob("*.pdf")}
+    filed = {f.name for f in pdfs(root)}
     n = 0
     for f in sorted(src.glob("*.pdf")):
         pub = next((p for p in pubs if p["id"] == by_hand.get(f.name)), None)
@@ -539,7 +555,7 @@ def cmd_ingest(args, conn, pubs, root):
               + (f" pages {rng[0]}-{rng[1]}" if rng else ""))
         n += 1
         if args.apply:
-            dest = root / "retrieved" / want
+            dest = root / want
             if rng:
                 # pypdf, not pdfseparate+pdfunite: the latter copies the
                 # volume's shared fonts onto every page and turned a 9-page
@@ -564,13 +580,11 @@ def cmd_ingest(args, conn, pubs, root):
 def cmd_dedupe(args, conn, pubs, root):
     def h(p):
         return hashlib.sha256(p.read_bytes()).hexdigest()
-    upstairs = {h(p) for p in root.glob("*.pdf")}
     seen: dict[str, Path] = {}
     freed = n = 0
-    for p in sorted((root / "retrieved").glob("*.pdf")):
+    for p in pdfs(root):
         d = h(p)
-        why = ("identical to " + seen[d].name) if d in seen else \
-              ("already in the parent folder" if d in upstairs else None)
+        why = ("identical to " + seen[d].name) if d in seen else None
         if why:
             print(f"  {p.name[:60]}  ({why[:44]})")
             n += 1

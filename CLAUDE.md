@@ -724,6 +724,24 @@ filename from the catalog and `dedupe` drops byte-identical copies. It writes
 `pdf_status.csv` and `missing/*.txt` into the LIBRARY, never into the repo, and
 touches no table.
 
+**ADDING A PAPER INCLUDES FETCHING ITS PDF.** After the insert, run
+
+    python3 build_pdf_library.py fetch --ids <the new publication id>
+
+which writes the file straight into the library root, Zotero-named. When
+nothing free can be fetched, run `report`: the paper lands in whichever
+`missing/*.txt` describes why, and THAT is the expected outcome rather than a
+failure. The two lists to read it in are `blocked-but-open-in-pmc.txt`, meaning
+a free copy exists and only a browser can take it, and `paywalled.txt`, meaning
+no source reports one at all.
+
+**The library is ONE flat folder.** There used to be a `retrieved/`
+subdirectory separating downloads from the owner's own Zotero exports. Once the
+same generator named every file and `pdf_status.csv` recorded the provenance,
+the split only hid half the library from `rename` and `dedupe`, each of which
+looked in one folder and not the other. `pdfs()` still reads `retrieved/` if it
+exists, so an older layout keeps working, but nothing is written there.
+
 **It must never run in CI.** There is no library on a runner, and a full
 `fetch` is a few hundred HTTP requests. `pypdf`, needed only for slicing, is
 deliberately not a project dependency for the same reason; the command line
@@ -771,6 +789,15 @@ and it gets past bot detection rather than any paywall. Run over the 27
 publisher-blocked papers it recovered **0**: ACS, Europe PMC's `?pdf=render`
 and IEEE answered 403, 403 and 202 exactly as before, so the block is not the
 agent. What that run did expose is the next entry.
+
+**OpenAlex puts `is_oa` under `open_access`, not at the top level.** Reading
+`work["is_oa"]` returns None for every work, so the `free` flag -- the whole
+difference between `paywalled` and `blocked` in the report -- was set only by
+the arXiv, bioRxiv and Europe PMC paths for a long time. Publication 360 is the
+case that exposed it: `oa_status` green, a PMC copy, and `candidates()` called
+it not-free. Correcting the read reclassified **23** rows, taking `paywalled`
+from 111 to 90: 21 papers listed as behind a paywall are open access somewhere
+a browser can reach.
 
 **Read the PMC id out of the raw cached JSON, not from one field.** The first
 `pmcid()` asked Europe PMC for `pmcid` and required `isOpenAccess == "Y"`, and
@@ -821,6 +848,11 @@ refresh and the URL guard are not.
 `build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or fuzzy-title match (token-set ratio ≥ 92), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI; it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
 
 When adding rows by hand, always check whether the entity already exists before inserting: author names and affiliation `(name, department)` pairs are the natural keys, not the surrogate IDs. A typical insert path for a new paper is: `country` → `city` → `affiliation` → `author` → `author_affiliation` → `algorithm` → `publication` → `publication_author` (with `author_order` set per author) → `publication_algorithm`. See any of the previously committed paper insertions (e.g. the `CausalNovo` commit) for the standard `INSERT … SELECT id FROM …` pattern.
+
+Then finish the job outside the database: `build_abstracts.py` for the abstract,
+so `abstract_source` records where the text came from rather than claiming it
+was curated, and `build_pdf_library.py fetch --ids <id>` for the PDF. See **The
+local PDF library**.
 
 ## Finding papers the catalog is missing
 
