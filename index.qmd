@@ -1441,7 +1441,7 @@ Plot.plot({
   // where it touched the 2005 tick by 3 px.
   x: { label: "Year", tickFormat: "d", interval: 1, labelOffset: 40 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
-  color: { legend: true, scheme: "blues", domain: ["preprint", "postprint", "peer-reviewed", "ML conference", "thesis", "commentary", "abstract"] },
+  color: { legend: true, scheme: "blues", domain: ["preprint", "postprint", "peer-reviewed", "ML conference", "thesis", "commentary", "abstract", "presentation"] },
   marks: [
     Plot.barY(
       // Drop kind='meta' rows: the catalog's self-entry (no
@@ -7211,7 +7211,11 @@ viewof selected_pubs = {
     "commentary":    "misc",
     // A published meeting or showcase abstract is not an article: no full text
     // exists behind it, so @misc plus an explicit note is the honest form.
-    "abstract":      "misc"
+    "abstract":      "misc",
+    // A talk, poster or recording. Same reasoning as 'abstract': there is no
+    // article, and @misc with a note says what the thing is instead of dressing
+    // a conference poster up as a journal paper.
+    "presentation":  "misc"
   })[t] ?? "article"
   const to_bibtex = p => {
     const author_list = (p.authors ?? "").split(",").map(s => s.trim()).filter(Boolean)
@@ -7225,7 +7229,8 @@ viewof selected_pubs = {
     if (p.journal) fields.push(`  journal = {${escape(p.journal)}}`)
     if (p.doi)     fields.push(`  doi     = {${escape(p.doi)}}`)
     if (p.url)     fields.push(`  url     = {${escape(p.url)}}`)
-    if (p.type === "preprint" || p.type === "postprint" || p.type === "abstract")
+    if (p.type === "preprint" || p.type === "postprint" || p.type === "abstract"
+        || p.type === "presentation")
       fields.push(`  note    = {${p.type}}`)
     return `@${entry_type_of(p.type)}{${key},\n${fields.join(",\n")}\n}`
   }
