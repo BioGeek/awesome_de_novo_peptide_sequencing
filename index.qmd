@@ -76,7 +76,7 @@ pubs = pd.read_sql(
            -- names. `models` above stays the full list, because the table and
            -- the BibTeX are about what a paper involved; the author-to-model
            -- graph needs the narrower one, or every venomics author becomes a
-           -- PEAKS author. 50 of 479 publication_algorithm links are 'uses',
+           -- PEAKS author. 53 of 492 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
            (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
@@ -397,7 +397,7 @@ repo_metrics = pd.read_sql(
 # FIRST APPEARANCE OF EACH METHODOLOGICAL FAMILY.
 # The only dataset that covers the field's whole 42-year span. The wave chart
 # squashes the sparse early years against a linear count axis, and the
-# architectures swim lane now gives all 49 families a lane, but it is 6069 px of
+# architectures swim lane now gives all 52 families a lane, but it is 6069 px of
 # scroll and spends 20 of its 91 height units on Transformer (AR) alone, so the
 # classical era is still a thin band at the top of a very tall chart. Ten of the
 # families outside the 13 hand-tuned bands first appeared before 2005.
@@ -958,8 +958,8 @@ page_link = (type, key, label) => {
 // A repo can back two algorithms, so `model` reads "A / B"; link the first.
 algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
 
-// Where a family label should go. 25 of 49 families have a page of their own;
-// the other 24 hold exactly one method, so their page would have carried that
+// Where a family label should go. 26 of 52 families have a page of their own;
+// the other 26 hold exactly one method, so their page would have carried that
 // method's papers, authors and dates and nothing else. Rather than leave a
 // lane label dead, a singleton family links straight to its one method: every
 // label in the swim lane and every row of the long-view table is clickable, and

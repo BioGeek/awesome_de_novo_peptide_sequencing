@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 371 `algorithm` rows has at least one linked publication, because
+Every one of the 380 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -243,6 +243,36 @@ the PR describe the same model.
   reports `published: "NA"` for `10.1101/2023.08.30.555055` to this day. The
   bioRxiv record carries no relation at all, so bioRxiv's matcher has nothing to
   work from. It is not a bioRxiv bug.
+
+- **"A Universal-Binder, De Novo Peptide Sequencing Platform with a Fluorescence
+  Lifetime Fingerprint"** (`10.26434/chemrxiv-2025-zvkqs`, ChemRxiv 2025-10-24,
+  Schilling et al., Oregon Health & Science University). Surfaced by
+  `denovo-radar`, and the paper the catalog's **measurement-modality boundary**
+  was drawn on, so the reasoning is recorded rather than the verdict alone.
+
+  It genuinely sequences peptides *de novo*: single peptides are bound to a glass
+  surface by the C-terminus and read with a universal-binder approach and an
+  optical readout, the fluorescence lifetime of each binding event acting as the
+  residue fingerprint. Nothing about the scope rule for *de novo* excludes it. It
+  is not mass spectrometry.
+
+  **The catalog holds no non-MS primary sequencing platform, measured rather than
+  assumed.** Edman degradation appears in exactly three rows (209, 339 and 352)
+  and in every one of them only as a cross-check on a sequence that MS/MS
+  produced. So admitting this would not extend an existing precedent, it would
+  set the first one, and it would set it for a whole adjacent field:
+  fluorosequencing, nanopore peptide reads and the Quantum-Si platform all have
+  the same claim on entry the moment this one is in. `acquisition_mode`, which
+  every `algorithm` row carries and the site filters on, has no meaning for any
+  of them, which is the schema noticing the same thing.
+
+  Out for now on that basis, and **the boundary, not the paper, is what to
+  revisit**. The question to answer first is whether this catalog is about
+  reading peptide sequence without a database (in which case next-generation
+  protein sequencing belongs, as a `kind` of its own with a NULL
+  `acquisition_mode`) or about reading it off fragment spectra (in which case it
+  stays out and so does the rest of that field). Deciding per paper is how a
+  catalog ends up with one arbitrary member of a field it does not cover.
 
 ## Published elsewhere, already handled
 
