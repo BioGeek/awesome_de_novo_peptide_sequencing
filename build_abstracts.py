@@ -44,6 +44,8 @@ from pathlib import Path
 
 import requests
 
+import openalex_key
+
 DB_PATH = Path(__file__).parent / "denovo.db"
 
 USER_AGENT = (
@@ -212,7 +214,8 @@ def scrub_contacts(text: str) -> str:
 def get_json(url: str, params: dict | None = None) -> dict | None:
     try:
         r = requests.get(
-            url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30
+            url, params=openalex_key.with_key(url, params),
+            headers={"User-Agent": USER_AGENT}, timeout=30
         )
         if r.status_code != 200:
             return None

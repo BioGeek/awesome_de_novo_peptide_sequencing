@@ -27,3 +27,11 @@ affiliation_audit.csv
 # DNPS-DR feed shortlist, same treatment as candidates.csv
 dnps_candidates.csv
 dnps_summary.md
+
+# Never commit: holds OPENALEX_API_KEY
+.env
+
+# SQLite rollback journal, present only while a builder is mid-write
+denovo.db-journal
+denovo.db-wal
+denovo.db-shm

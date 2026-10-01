@@ -898,6 +898,58 @@ linkinghub answer 200 with no such tag. The bucket now keys on whether an
 open-access copy is known to exist, which is a fact about the paper rather than
 an artefact of the attempt order.
 
+## The OpenAlex key, and the Space that watches the literature
+
+`openalex_key.py` reads `OPENALEX_API_KEY` from the environment or from a
+gitignored `.env`, and `with_key(url, params)` adds it **only** when the
+request is going to `api.openalex.org`, so a builder that also calls Crossref,
+Europe PMC or ORCID through the same helper cannot leak it to them. Wired into
+`build_publication_impact.py`, `build_abstracts.py` and
+`build_affiliations.py`. Absent, nothing raises: every builder worked without a
+key before and still does, so an unkeyed clone is slower, not broken.
+
+The key exists because OpenAlex's anonymous pool is a daily budget shared
+across every caller from one IP, and a heavy day exhausts it.
+`build_publication_impact.py` hit that mid-run after a bulk paper import: it
+aborted on ten consecutive empty lookups, which is the right behaviour -- it
+preserved the ids it had rather than writing nothing over them -- but the new
+papers were left with no `openalex_id`, and **`build_affiliations.py` silently
+skips any publication without one**. That ordering is the thing to remember:
+impact first, then affiliations.
+
+### BioGeek/denovo-radar
+
+<https://huggingface.co/spaces/BioGeek/denovo-radar> is a Gradio Space showing
+recent de novo peptide sequencing papers with each one marked against this
+catalog, so the gaps are visible. `refresh-denovo-radar.yml` runs its
+`harvest.py` weekly, commits `data/papers.json` into the Space, and commits
+nothing here.
+
+**The harvest runs in CI, not in the Space, and that is the design.** A Space
+that schedules its own work writes into container storage: the results never
+reach its git repo and do not survive a restart. The feed that inspired this
+one does exactly that, which is why its published data stopped moving while the
+Space itself kept running.
+
+Two secrets are needed and this repo cannot create them: `HF_TOKEN` with write
+access to BioGeek, and optionally `OPENALEX_API_KEY`. The workflow fails with
+an explicit error rather than a confusing one when `HF_TOKEN` is absent.
+
+**The filtering is the point, not the fetching.** A keyword feed for "de novo"
+is mostly a different field: of 682 records fetched on the first run, 551 were
+not de novo sequencing of a peptide at all, 14 were Zenodo or MassIVE deposits
+of model weights and datasets (which match the topic perfectly and are not
+papers, and one of which was this catalog's own Zenodo record), 5 sequenced
+another analyte and 1 was de novo design. 45 survived, 35 of them already
+catalogued, leaving 10 new. Versioned DOIs are collapsed (`10.17044/x.v1` onto
+`10.17044/x`) and the catalog is matched on title as well as DOI, since the
+same paper arrives under an arXiv DOI in one source and a conference DOI in
+another.
+
+**No code from the upstream Space is used.** It publishes no licence, so it is
+all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
+independent implementation, MIT licensed, crediting the original as the idea.
+
 ## URLs are a lock file
 
 `slugs.lock` records the published URL of every generated page. A slug is

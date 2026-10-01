@@ -1,0 +1,114 @@
+# Harvest recent de novo peptide sequencing papers and publish them to the
+# Hugging Face Space BioGeek/denovo-radar.
+#
+# WHY THE HARVEST IS HERE AND NOT IN THE SPACE. A Space that schedules its own
+# work writes into container storage: the results never reach its git repo and
+# do not survive a restart. The feed that inspired the Space does exactly that,
+# and its published data stopped moving while the Space kept running. Running
+# the harvest here means every result is a commit with a date on it.
+#
+# It commits NOTHING to this repository -- the data belongs to the Space -- so
+# it needs only read permission here, and it must never use
+# .github/actions/commit-refreshed-db, which recovers from a push race by
+# replaying the one table a workflow owns. This one owns none.
+#
+# Needs two secrets, neither of which this repo can create for you:
+#   HF_TOKEN            a Hugging Face token with WRITE access to BioGeek
+#   OPENALEX_API_KEY    optional; Europe PMC alone works without it, but the
+#                       OpenAlex half is rate-limited to the shared free budget
+# Add them with:  gh secret set HF_TOKEN
+name: refresh-denovo-radar
+
+on:
+  schedule:
+    # Weekly, Monday 10:00 UTC. One hour after refresh-benchmarks so the two
+    # never overlap, and weekly rather than daily because this is a literature
+    # feed: a day's worth of new de novo sequencing papers is usually zero.
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'Earliest publication date (default: 400 days ago)'
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-denovo-radar
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the catalog (for denovo.db)
+        uses: actions/checkout@v4
+
+      - name: Check out the Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "::error::HF_TOKEN is not set; add it with 'gh secret set HF_TOKEN'"
+            exit 1
+          fi
+          git clone --depth 1 \
+            "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/BioGeek/denovo-radar" space
+
+      - name: Harvest
+        env:
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+        run: |
+          cd space
+          python3 harvest.py --catalog ../denovo.db ${{ inputs.since && format('--since {0}', inputs.since) || '' }} \
+            | tee ../harvest.out
+
+      # Only commit when the paper list actually changed. `generated` carries
+      # today's date and would otherwise produce a commit every single week
+      # saying nothing, which is the churn the other refresh workflows avoid.
+      - name: Publish to the Space when the papers changed
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd space
+          if git diff --quiet -- data/papers.json; then
+            echo "No change to data/papers.json."; exit 0
+          fi
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          old = json.loads(subprocess.run(
+              ["git", "show", "HEAD:data/papers.json"],
+              capture_output=True, text=True).stdout or "{}")
+          new = json.loads(pathlib.Path("data/papers.json").read_text())
+          def key(b): return {(p.get("doi") or p.get("title")) for p in b.get("papers", [])}
+          if key(old) == key(new):
+              print("Only the generated date moved; not committing.")
+              raise SystemExit(7)
+          added = key(new) - key(old)
+          pathlib.Path("../added.txt").write_text("\n".join(sorted(map(str, added))))
+          print(f"{len(added)} paper(s) new since the last run")
+          PY
+          rc=$?
+          [ $rc -eq 7 ] && exit 0
+          [ $rc -ne 0 ] && exit $rc
+          git -c user.name="denovo-radar bot" \
+              -c user.email="j.vangoey@instadeep.com" \
+              commit -q -am "Refresh the paper list" 
+          git push "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/BioGeek/denovo-radar" HEAD:main
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## De Novo Peptide Sequencing Radar"
+            echo
+            sed 's/^/    /' harvest.out 2>/dev/null || echo "Harvest produced no output."
+            echo
+            if [ -s added.txt ]; then
+              echo "### New since the last run"
+              sed 's/^/- /' added.txt
+            fi
+            echo
+            echo "Space: https://huggingface.co/spaces/BioGeek/denovo-radar"
+          } >> "$GITHUB_STEP_SUMMARY"

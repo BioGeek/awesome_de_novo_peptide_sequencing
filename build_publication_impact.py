@@ -21,6 +21,8 @@ from pathlib import Path
 import requests
 from rapidfuzz import fuzz
 
+import openalex_key
+
 DB_PATH = Path(__file__).parent / "denovo.db"
 OPENALEX_BASE = "https://api.openalex.org/works"
 USER_AGENT = (
@@ -55,7 +57,7 @@ def get_json(url: str, params: dict | None = None) -> dict | None:
     try:
         r = requests.get(
             url,
-            params=params,
+            params=openalex_key.with_key(url, params),
             headers={"User-Agent": USER_AGENT},
             timeout=25,
         )

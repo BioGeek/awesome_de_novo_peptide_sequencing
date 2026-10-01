@@ -96,6 +96,8 @@ import requests
 
 from build_author_ids import same_person, tokens  # noqa: F401  (tokens re-exported)
 
+import openalex_key
+
 DB_PATH = Path(__file__).parent / "denovo.db"
 AUDIT_PATH = Path(__file__).parent / "affiliation_audit.csv"
 CACHE_DIR = Path(__file__).parent / ".cache" / "openalex"
@@ -253,7 +255,8 @@ def cached_get(url: str, key: str) -> dict | None:
         except ValueError:
             pass
     try:
-        r = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+        r = requests.get(url, params=openalex_key.with_key(url, None),
+                         headers={"User-Agent": USER_AGENT}, timeout=30)
         data = r.json() if r.status_code == 200 else None
     except (requests.RequestException, ValueError):
         data = None
