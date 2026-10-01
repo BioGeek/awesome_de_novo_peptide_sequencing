@@ -635,8 +635,11 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         head = "| Version | Trained on | Host | Licence | Size | Checked |"
         rule = "|---|---|---|---|---|---|"
         if has_mirror:
-            head = head[:-1] + " Backup |"
-            rule = rule[:-1] + "---|"
+            # Append a column, do not strip the closing pipe first: head[:-1]
+            # removed it and produced "| ... | Checked  Backup |" with a missing
+            # separator, which markdown renders as one merged cell.
+            head += " Backup |"
+            rule += "---|"
         L.append(head)
         L.append(rule)
         for cp in ctx["checkpoints"]:
@@ -651,14 +654,17 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                 state = f"**{state}**"
             if cp["last_checked"]:
                 state += f" <small>{cp['last_checked']}</small>"
-            row = (f"| {md_escape(ver)} | {md_escape(cp['trained_on'] or '—')} | {host} "
-                   f"| {md_escape(cp['licence'] or 'not stated')} | {size} | {state} |")
+            # `line`, NOT `row`: `row` is render_algorithm's own parameter, and
+            # shadowing it with a string here broke every later use of it with
+            # "string indices must be integers".
+            line = (f"| {md_escape(ver)} | {md_escape(cp['trained_on'] or '—')} | {host} "
+                    f"| {md_escape(cp['licence'] or 'not stated')} | {size} | {state} |")
             if has_mirror:
                 # The ORIGINAL stays the primary link: a mirror is a fallback,
                 # and sending readers to a copy by default would hide the fact
                 # that the authors published it somewhere.
-                row += (f" [copy]({cp['mirror_url']}) |" if cp["mirror_url"] else " — |")
-            L.append(row)
+                line += (f" [copy]({cp['mirror_url']}) |" if cp["mirror_url"] else " — |")
+            L.append(line)
         L.append("")
         if any(not cp["archival"] for cp in ctx["checkpoints"]):
             note = ("A host marked *archival* has a DOI and keeps what it is given. "

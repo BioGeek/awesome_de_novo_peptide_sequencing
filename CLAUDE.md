@@ -1341,6 +1341,36 @@ record is dated and preserved by its host; a Google Drive link, a personal
 academic URL or a GitHub release tag is mutable, undated and can vanish leaving
 nothing to cite. That distinction is the only reason to mirror anything.
 
+### What the download actually found
+
+The point of mirroring was link rot, and the survey found it in progress.
+
+**Of nine Google Drive links, two were not files at all.** DeepNovo-DIA's is a
+FOLDER holding `oc`, `plasma`, `uti`, a Windows installer, a code zip and
+`train.urine_pain.ioncnn.lstm`, which is where its weights are: a TensorFlow
+triple, `translate.ckpt-31800.data-00000-of-00001` plus its `.index` and a
+`checkpoint` meta file, 184 MB. A file fetch against a folder id fails with a
+permissions error, which reads like rot and is not.
+
+**DeepNovo's is gated**, as above, and it is the one checkpoint here that cannot
+be retrieved at all without a Google account. Both NOASSERTION entries turned
+out to be the awkward ones, which is the same inversion recorded above: the
+least durably published weights are the ones hardest to rescue.
+
+**The scan that preceded this was a lower bound and badly wrong.** Looking for
+host names near checkpoint language in local PDFs found ONE Drive link. There
+are nine, because the links live in repository READMEs rather than in papers:
+`BEAM-Labs/denovo` publishes five in one table, and the ProteoBench discussion a
+sixth. A paper's data-availability sentence is not where this field puts its
+weights.
+
+**Uploads fail partway and succeed on retry.** Three pushes to the mirror failed
+after uploading 1 of 3, 3 of 3 and 3 of 4 objects, with `X-Cache: Error from
+cloudfront` and 39 GB transferred for 4.4 GB of files, so git-lfs was re-sending
+objects repeatedly. It is a flaky path through the TLS gateway, NOT a size
+limit: the first diagnosis was that 2 GB objects were too large, and a plain
+retry put both of them up. Push in a loop with `lfs.concurrenttransfers 1`.
+
 ### The mirror, and why it is not on jeroen.vangoey.be
 
 Backups of the checkpoints whose only home is a link with no DOI live in
@@ -1393,8 +1423,22 @@ answers **200 with an HTML interstitial** whether or not the file is still
 shared, so a 200 there proves nothing. A 200 whose content type is HTML where a
 binary was expected is recorded as `unverifiable` rather than `live`: the honest
 answer is that the link resolves and what it resolves to cannot be confirmed
-from a header. Measured over the 26 recorded checkpoints: 15 live, 1
-unverifiable, and the unverifiable one is DeepNovo's Drive checkpoint.
+from a header.
+
+Measured over the 26 recorded checkpoints: 15 live, 7 unverifiable, 3 moved, 1 gated.
+
+**`gated` is a status of its own, and DeepNovo earned it.** The pretrained model
+for DeepNovo, the original deep-learning de novo method, now answers *"We can't
+access this content right now. Try signing in to your Google Account"*. The
+Kaiko paper cites that link as publicly available; it is no longer anonymously
+downloadable, so the weights behind DeepNovo's published numbers cannot be
+fetched without somebody's Google session. That is not `dead` and not merely
+`unverifiable`, and a reader comparing against DeepNovo should see it.
+
+**Detecting it depends on the URL FORM**, which cost a wrong verdict first time.
+Drive's legacy `open?id=<id>` form returns a 944 KB application shell with no
+gate text even when the file is gated; the canonical `/file/d/<id>/view` page
+says so plainly. So `body_says_gated` extracts the id and tries both.
 
 **Mirroring is blocked by licence more often than by size, which inverts the
 reason for doing it.** Of the non-archival checkpoints, the five Casanovo and

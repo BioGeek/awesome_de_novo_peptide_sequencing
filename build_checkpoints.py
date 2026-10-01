@@ -52,6 +52,32 @@ UA = "awesome-de-novo (mailto:j.vangoey@instadeep.com)"
 BINARY_EXPECTED = ("Zenodo", "figshare", "Hugging Face")
 
 
+# Drive's wording when a file is no longer served to anonymous callers. This is
+# the state DeepNovo's pretrained model is in: the link resolves, the page loads,
+# and the bytes are behind a Google account. A header probe cannot see that, so
+# for these hosts the body has to be read.
+GATED = re.compile(r"can't access this content|Try signing in to your Google Account"
+                   r"|You need access|request access", re.I)
+
+
+def body_says_gated(url: str) -> bool:
+    """Fetch the page and look for a sign-in wall. Only used for Drive-like hosts.
+
+    The URL FORM matters, which cost a wrong verdict. Drive's legacy
+    `open?id=<id>` form answers with a 944 KB application shell that contains no
+    gate text even when the file is gated; the canonical `/file/d/<id>/view`
+    page says so plainly. So the id is extracted and both forms are tried.
+    """
+    ids = re.findall(r"(?:/file/d/|[?&]id=)([\w-]{20,})", url)
+    candidates = [url] + [f"https://drive.google.com/file/d/{i}/view" for i in ids]
+    for u in dict.fromkeys(candidates):
+        out = subprocess.run(["curl", "-sL", "--max-time", "45", "-A", UA, u],
+                             capture_output=True, text=True, timeout=120).stdout
+        if GATED.search(out or ""):
+            return True
+    return False
+
+
 def probe(url: str) -> tuple[int | None, str, str]:
     """Return (http_code, content_type, final_url) after following redirects."""
     out = subprocess.run(
@@ -81,8 +107,16 @@ def verdict(row: sqlite3.Row, code: int | None, ctype: str, final: str) -> tuple
         # landing page, which is fine, so this is not a failure on its own.
         return "live", "landing page, not the file itself"
     if is_html and row["host"] == "Google Drive":
-        # The case this guard exists for: Drive answers 200 with an
-        # interstitial whether or not the file is still shared.
+        # Read the body before giving up. A sign-in wall is a DIFFERENT state
+        # from "cannot tell": it means the weights behind a published, still
+        # resolving link are no longer available to anyone without a Google
+        # account, which is what a reader needs to know before trusting a
+        # number produced with them.
+        if body_says_gated(row["url"]):
+            return "gated", "Drive requires a signed-in Google account"
+        # Otherwise Drive answers 200 with an interstitial whether or not the
+        # file is still shared, so the honest answer is that a response cannot
+        # tell us.
         return "unverifiable", "Drive answers 200 with HTML either way"
     if re.sub(r"[?#].*$", "", final) != re.sub(r"[?#].*$", "", row["url"]):
         return "moved", f"redirected to {final[:90]}"
