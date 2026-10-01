@@ -819,14 +819,34 @@ publisher-blocked papers it recovered **0**: ACS, Europe PMC's `?pdf=render`
 and IEEE answered 403, 403 and 202 exactly as before, so the block is not the
 agent. What that run did expose is the next entry.
 
-**OpenAlex puts `is_oa` under `open_access`, not at the top level.** Reading
-`work["is_oa"]` returns None for every work, so the `free` flag -- the whole
-difference between `paywalled` and `blocked` in the report -- was set only by
-the arXiv, bioRxiv and Europe PMC paths for a long time. Publication 360 is the
-case that exposed it: `oa_status` green, a PMC copy, and `candidates()` called
-it not-free. Correcting the read reclassified **23** rows, taking `paywalled`
-from 111 to 90: 21 papers listed as behind a paywall are open access somewhere
-a browser can reach.
+**Europe PMC reports availability; OpenAlex reports that a deposit exists.**
+Where they disagree, Europe PMC wins, and publication 360 is why. OpenAlex says
+`is_oa` true, `oa_status` green, `oa_url` PMC13457817 -- and that PMC record is
+**embargoed until 2027-08-10**, which OpenAlex's green status does not
+distinguish from readable. Europe PMC says `isOpenAccess` N, `inPMC` N, `hasPDF`
+N, no `pmcid`, "Subscription required": correct on every count. Of 27 papers
+the report called "open access but blocked", **22** were that shape, free on
+OpenAlex's word alone. So `epmc_verdict` overrides, and OpenAlex only speaks
+where Europe PMC has no record.
+
+Two incidental traps in the same place. OpenAlex puts `is_oa` under
+`open_access`, not at the top level, so `work["is_oa"]` reads None for every
+work. And a PMC id is NOT a readable copy: `pmcid()` used to grep `PMC\d{4,}`
+out of the raw cached JSON, which put 360's embargoed deposit on the
+"open in PMC" list a year before it opens, so it now requires Europe PMC to say
+the text is actually there.
+
+**The Europe PMC query must be URL-encoded**, and this is the worst bug this
+script has had. The query needs literal double quotes around the DOI, and an
+unencoded `"` makes Europe PMC answer **HTTP 400**. The first version passed
+params through `requests`, which encoded them; switching the transport to
+`curl` moved the URL into an f-string and broke every Europe PMC lookup from
+then on. Silently: a failure is not cached, so it retried and failed again, and
+an HTTP 400 was indistinguishable from "this paper has no record" -- the script
+carried on deciding access from OpenAlex alone. The answers already on disk
+predate the switch, which is why it surfaced only on a newly added paper.
+`get_json` now PRINTS a failed lookup rather than returning something that
+reads like an empty result.
 
 **Read the PMC id out of the raw cached JSON, not from one field.** The first
 `pmcid()` asked Europe PMC for `pmcid` and required `isOpenAccess == "Y"`, and

@@ -79,6 +79,7 @@ import tempfile
 import time
 import unicodedata
 from pathlib import Path
+from urllib.parse import quote
 
 from rapidfuzz import fuzz
 
@@ -166,9 +167,16 @@ def cached(cache: Path, key: str, fn):
 
 
 def get_json(cache: Path, key: str, url: str):
+    """Cached JSON. A transport failure is reported, never silently cached.
+
+    It prints, because the alternative is what happened with Europe PMC: an
+    HTTP 400 from a malformed URL looked exactly like "this paper has no
+    record", and the script carried on deciding access from OpenAlex alone.
+    """
     def go():
         ok, body = fetch(url, want_json=True)
         if not ok:
+            print(f"    ! lookup failed ({body}) {url[:72]}", flush=True)
             return {"_fail": body}
         try:
             return json.loads(body)
@@ -355,35 +363,53 @@ def candidates(cache: Path, pub: dict) -> tuple[list[tuple[str, str]], bool]:
         free = True
 
     oa: dict = {}
+    # Europe PMC's verdict, when it has one, OVERRIDES OpenAlex below. It
+    # reports whether the full text is available; OpenAlex reports whether a
+    # deposit exists, which is not the same thing and is wrong in a way that
+    # matters. Publication 360 is the worked example: OpenAlex says is_oa true,
+    # oa_status green, oa_url PMC13457817, while that PMC record is EMBARGOED
+    # until 2027-08-10 and Europe PMC says isOpenAccess N, inPMC N, hasPDF N,
+    # no pmcid, "Subscription required". Of 27 papers this script called "open
+    # access but blocked", 22 were that shape -- free on OpenAlex's word alone.
+    epmc_verdict: bool | None = None
     if doi:
+        # quote(), because the query needs literal double quotes around the DOI
+        # and an unencoded `"` makes Europe PMC answer HTTP 400. The first
+        # version of this script passed params through requests, which encoded
+        # them; switching the transport to curl moved the URL into an f-string
+        # and broke every Europe PMC lookup from then on -- silently, since a
+        # failure is not cached, so it simply retried and failed again. The
+        # answers already on disk predate the switch, which is why the breakage
+        # only showed up on a newly added paper.
         ep = get_json(cache, f"epmc_{doi}",
-                      "https://www.ebi.ac.uk/europepmc/webservices/rest/search?"
-                      f'query=DOI:"{doi}"&format=json&resultType=core')
+                      "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+                      "?format=json&resultType=core&query="
+                      + quote(f'DOI:"{doi}"', safe=""))
         for res in (ep.get("resultList", {}) or {}).get("result", [])[:1]:
-            if res.get("isOpenAccess") == "Y":
-                free = True
+            oa_pdf = False
             for loc in (res.get("fullTextUrlList", {}) or {}).get("fullTextUrl", []):
                 if loc.get("availability") in ("Open access", "Free") \
                         and loc.get("documentStyle") == "pdf":
                     add("europepmc", loc.get("url"))
-                    free = True
+                    oa_pdf = True
+            epmc_verdict = bool(
+                res.get("isOpenAccess") == "Y" or res.get("inPMC") == "Y"
+                or res.get("inEPMC") == "Y" or oa_pdf)
+            if epmc_verdict:
+                free = True
         oa = get_json(cache, f"oa_{doi}",
                       f"https://api.openalex.org/works/doi:{doi}?mailto={MAILTO}")
     else:
         q = re.sub(r"[^A-Za-z0-9 ]+", " ", pub["title"])[:180].strip()
         res = get_json(cache, f"oatitle_{norm(pub['title'])[:120]}",
                        "https://api.openalex.org/works?per-page=1&mailto="
-                       + MAILTO + "&filter=title.search:"
-                       + subprocess.list2cmdline([q]).strip('"').replace(" ", "%20"))
+                       + MAILTO + "&filter=title.search:" + quote(q, safe=""))
         hits = res.get("results") or []
         oa = hits[0] if hits else {}
-    # OpenAlex puts this under open_access, NOT at the top level. Reading
-    # `oa["is_oa"]` returned None for every work, so the `free` flag -- which is
-    # the whole difference between "paywalled" and "blocked" in the report -- was
-    # only ever set by the arXiv, bioRxiv and Europe PMC paths. Publication 360
-    # is the case that exposed it: oa_status "green", a PMC copy, and it came out
-    # of candidates() flagged not-free.
-    if (oa.get("open_access") or {}).get("is_oa") or oa.get("is_oa"):
+    # Note the key: OpenAlex puts is_oa under open_access, not at the top level,
+    # so `oa["is_oa"]` reads None for every work. But it only gets a say where
+    # Europe PMC had no opinion -- see epmc_verdict above.
+    if epmc_verdict is None and (oa.get("open_access") or {}).get("is_oa"):
         free = True
     best = oa.get("best_oa_location") or {}
     if best.get("pdf_url"):
@@ -715,10 +741,26 @@ def cmd_report(args, conn, pubs, root):
             f = cache / (re.sub(r"[^A-Za-z0-9._-]", "_", key)[:180] + ".json")
             if f.exists():
                 blobs.append(f.read_text())
+        # A PMC id is not a readable copy. Publication 360's embargoed deposit
+        # has one, and grepping the raw JSON for it put the paper on the
+        # "open in PMC" list a year before it opens. Require Europe PMC to say
+        # the full text is actually there.
         for blob in blobs:
-            m = re.search(r"PMC\d{4,}", blob)
-            if m:
-                return m.group(0)
+            try:
+                d = json.loads(blob)
+            except ValueError:
+                continue
+            for res in (d.get("resultList", {}) or {}).get("result", [])[:1]:
+                if res.get("pmcid") and (res.get("inPMC") == "Y"
+                                         or res.get("inEPMC") == "Y"
+                                         or res.get("isOpenAccess") == "Y"):
+                    return res["pmcid"]
+                for loc in (res.get("fullTextUrlList", {}) or {}).get("fullTextUrl", []):
+                    if loc.get("availability") in ("Open access", "Free") \
+                            and loc.get("documentStyle") == "pdf":
+                        hit = re.search(r"PMC\d{4,}", loc.get("url") or "")
+                        if hit:
+                            return hit.group(0)
         return None
 
     def pmc_url(p):
