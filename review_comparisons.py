@@ -488,6 +488,18 @@ table.grid td.second{text-decoration:underline;background:#f7f7ef}
 .nope{color:var(--dim);font-style:italic}
 </style></head><body>
 <script>
+// Open a PDF in a NEW TAB. target="_blank" alone is not enough: a browser
+// handing a file:// PDF to its built-in viewer may ignore it and navigate the
+// current tab, losing the reviewer's place on a long page. window.open is
+// explicit about it, and the default link is left to do the work if the call
+// is blocked, so the link never stops working.
+document.addEventListener('click', function (e) {
+  var a = e.target.closest ? e.target.closest('a.pdf') : null;
+  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
+  var w = window.open(a.href, '_blank', 'noopener');
+  if (w) { e.preventDefault(); try { w.opener = null; } catch (err) {} }
+});
+
 // Copy on click where the browser allows it. A file:// page is not always a
 // secure context, so navigator.clipboard can be absent or refuse; the
 // execCommand path and, failing both, the CSS selection, cover that.
@@ -563,7 +575,8 @@ def item_html(it: dict) -> str:
          f"<span class='lbl'>{html.escape(it.get('table_label') or '?')}</span>"
          f"<span class='meta'>page {it['pdf_page']}</span>"
          + (f"<a class='pdf' href=\"{it['pdf_url']}#page={it['pdf_page']}\""
-            f" target='_blank' title='{html.escape(it['pdf_name'])}'>"
+            f" target='_blank' rel='noopener noreferrer'"
+            f" title='{html.escape(it['pdf_name'])}'>"
             f"open the PDF &#8599;</a>" if it.get("pdf_url") else "")]
     if v in ("accepted", "approved"):
         H.append(f"<span class='meta'>{html.escape(it.get('dataset') or '?')}"

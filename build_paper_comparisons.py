@@ -485,6 +485,44 @@ def column_edges(rows: list[list[dict]], lo: int, hi: int) -> list[tuple[float, 
     return [(bounds[i], bounds[i + 1]) for i in range(len(mids))]
 
 
+def column_groups(edges: list[tuple[float, float]]) -> list[list[int]]:
+    """Split a block's columns where a GUTTER separates two tables.
+
+    Rows are detected across the whole page, so two tables printed side by
+    side in a two-column layout come out as ONE block: LIPNovo's page 7 gave a
+    single ten-column block spanning x 132 to 544, which is both of its tables
+    at once, with one caption for the pair and a crop showing the neighbour.
+    Merging two different tables is not a cosmetic problem -- their columns
+    mean different things.
+
+    The gutter is found as a gap far wider than this block's own typical
+    inter-column gap. A table's columns are evenly spaced by construction, so
+    a gap several times the usual one is a page gutter and not a column.
+    """
+    if len(edges) < 4:
+        return [list(range(len(edges)))]
+    # MEASURED ON THE COLUMN CENTRES. column_edges() returns intervals that
+    # TILE the row, meeting at the midpoints between numeric centres, so the
+    # gap between consecutive intervals is zero by construction and no gutter
+    # could ever be seen in them.
+    cen = [(a + b) / 2 for a, b in edges]
+    gaps = [cen[i + 1] - cen[i] for i in range(len(cen) - 1)]
+    typical = sorted(gaps)[len(gaps) // 2]
+    out, cur = [], [0]
+    for i, g in enumerate(gaps):
+        # 2.5x the typical pitch with a 55 pt floor. Measured: LIPNovo's merged
+        # block has centre gaps [27, 27, 26, 26, 63, 99, 65, 28, 25], so the
+        # gutter is the 99 against a typical 28, while ContraNovo's and
+        # CrossNovo's single tables are uniform at 33 to 40 and must not split.
+        if g > max(55.0, 2.5 * max(typical, 1.0)):
+            out.append(cur)
+            cur = [i + 1]
+        else:
+            cur.append(i + 1)
+    out.append(cur)
+    return [g for g in out if len(g) >= 2] or [list(range(len(edges)))]
+
+
 def phrases(row: list[dict], gap: float = 6.0) -> list[dict]:
     """Group a row's words into phrases, so a multi-word header stays one unit.
 
@@ -900,12 +938,85 @@ def level_of(text: str) -> str | None:
     return None
 
 
-LABEL_ROW = re.compile(r"(?i)^\s*Tab(?:le|\.)\s*(S?\d{1,2}|[IVX]{1,4})\b")
+# A caption label is followed by a period, a colon, a pipe or a dash. A COMMA
+# means a cross-reference inside a sentence -- 'Table2,LIPNovooutperforms
+# AdaNovoby+8.7%' is prose, and read as a label it took the caption of the
+# table below it.
+LABEL_ROW = re.compile(
+    r"(?i)^\s*Tab(?:le|\.)\s*(S?\d{1,2}|[IVX]{1,4})\s*(?=$|[.:|\u2013\u2014]|\s)")
 
 
 def label_rows(rows: list[list[dict]]) -> list[int]:
     return [i for i, r in enumerate(rows)
             if LABEL_ROW.match(" ".join(w["text"] for w in r))]
+
+
+def label_runs(rows: list[list[dict]]) -> list[tuple[int, float, float]]:
+    """Every caption label on the page, as (row, x0, x1).
+
+    A row can hold TWO labels, one per page column: LIPNovo's page 7 has
+    'Table3. Leave-one-out cross validation compared to baseline on' beside
+    'Table5. Component ablation'. Taking one label per row attributed the
+    right-hand table's caption to the left-hand one.
+    """
+    out = []
+    for i, r in enumerate(rows):
+        words = sorted(r, key=lambda w: w["x0"])
+        runs: list[list[dict]] = []
+        for w in words:
+            if runs and w["x0"] - runs[-1][-1]["x1"] <= 25.0:
+                runs[-1].append(w)
+            else:
+                runs.append([w])
+        for run in runs:
+            if LABEL_ROW.match(" ".join(w["text"] for w in run)):
+                out.append((i, min(w["x0"] for w in run),
+                            max(w["x1"] for w in run)))
+    return out
+
+
+def pair_parts(rows: list[list[dict]],
+               parts: list[tuple[int, int, float, float]]) -> dict:
+    """Pair each (block, column span) with its caption label.
+
+    COLUMN FIRST, THEN ORDER. Two tables printed side by side have captions on
+    the same rows, so distance alone cannot say which belongs to which; but
+    within one page column, captions and tables both run down the page in
+    order, whichever side of its table a house style puts the caption on.
+    Using distance alone paired LIPNovo's first table with the caption of the
+    SECOND, which sat two rows below it while its own was five rows above.
+    """
+    runs = [r for r in label_runs(rows)
+            if not any(lo <= r[0] <= hi for lo, hi, _a, _b in parts)]
+    # Cluster the parts into page columns by x overlap.
+    cols: list[dict] = []
+    for part in sorted(parts, key=lambda t: t[2]):
+        _lo, _hi, x0, x1 = part
+        for c in cols:
+            if min(c["x1"], x1) - max(c["x0"], x0) > 0:
+                c["parts"].append(part)
+                c["x0"], c["x1"] = min(c["x0"], x0), max(c["x1"], x1)
+                break
+        else:
+            cols.append({"x0": x0, "x1": x1, "parts": [part]})
+
+    out: dict = {}
+    for c in cols:
+        cand = [r for r in runs
+                if min(r[2], c["x1"]) - max(r[1], c["x0"]) > 0
+                or c["x0"] - 30 <= r[1] <= c["x1"] + 30]
+        cand.sort(key=lambda r: r[0])
+        mine = sorted(c["parts"], key=lambda t: t[0])
+        if len(cand) == len(mine) and cand:
+            for part, run in zip(mine, cand):
+                out[(part[0], part[1], part[2])] = run[0]
+            continue
+        for part in mine:
+            lo, hi = part[0], part[1]
+            best = min(cand, key=lambda r: min(abs(r[0] - lo), abs(r[0] - hi)),
+                       default=None)
+            out[(part[0], part[1], part[2])] = best[0] if best else None
+    return out
 
 
 def pair_captions(rows: list[list[dict]], blocks: list[tuple[int, int]]) -> dict:
@@ -939,14 +1050,31 @@ def pair_captions(rows: list[list[dict]], blocks: list[tuple[int, int]]) -> dict
 
 
 def caption_text(rows: list[list[dict]], li: int | None,
-                 blocks: list[tuple[int, int]]) -> tuple[str, str, int]:
+                 blocks: list[tuple[int, int]],
+                 fine: list[dict] | None = None,
+                 page_width: float = 612.0) -> tuple[str, str, int]:
     """The label, the caption prose at row `li`, and the caption's LAST row.
 
-    The last row matters to the header walk. A caption runs over two or three
-    lines, and stopping the walk after the caption's FIRST line let its
-    continuation be read as a column spanner: every column of CrossNovo's
-    Table 2 came back with the spanner
-    'set. Theboldfontindicatesthebestperformance.'
+    Two things make a caption harder to read than it looks.
+
+    ITS WORDS COME FROM A FINER EXTRACTION. At the default word tolerance a
+    caption arrives with its spaces gone -- 'Thecomparisonofdenovopeptide' --
+    because these producers leave an inter-word gap narrower than 3 pt. At
+    x_tolerance=2 the same line reads 'The comparison of de novo peptide'.
+    The PARSING geometry still uses the default, since a tighter tolerance
+    would split 'M.mazei' into two words and change which column a cell lands
+    in; only the caption's text is re-read.
+
+    IT MUST BE CLIPPED TO ITS OWN COLUMN. On a two-column page the other
+    column's lines sit at the same heights, so joining rows wholesale
+    interleaved them: publication 4's caption came out as 'Performance after
+    training the models on the thenine-speciesV2dataset; theresultsshownin
+    Table3. MassIVE-KBset. Herewetested...' -- the right words in the wrong
+    order, mixed with a neighbouring paragraph. The label row gives the
+    column: a caption that spans most of the page is single-column, otherwise
+    its own first line bounds it.
+
+    The last row matters to the header walk, which must not read the caption.
     """
     if li is None:
         return "", "", -1
@@ -956,24 +1084,58 @@ def caption_text(rows: list[list[dict]], li: int | None,
     # RESERVE THE ROW DIRECTLY ABOVE EACH DATA BLOCK for the header. Without
     # that, a caption's continuation lines ran on into the header row and
     # swallowed it, which moved the header walk's floor past the only header
-    # there was and rejected the table for having none. A caption line sitting
-    # immediately above a table with no header in between would mean the table
-    # has no header, which is a rejection either way.
+    # there was and rejected the table for having none.
     stop = len(rows)
     for lo, _ in blocks:
         if lo > li:
             stop = min(stop, lo - 1)
-    parts = [text]
+    last = li
     for j in range(li + 1, min(li + 4, stop)):
         nxt = rows[j]
         if sum(1 for w in nxt if numeric(w["text"])) >= 2:
             break
         if LABEL_ROW.match(" ".join(w["text"] for w in nxt)):
             break
-        parts.append(" ".join(w["text"] for w in nxt))
-    last = li + len(parts) - 1
-    cap = re.sub(r"\s+", " ", " ".join(parts)).strip()
-    cap = re.sub(r"(?i)^" + re.escape(label) + r"\s*[.:|\u2013\u2014]?\s*", "", cap) if label else cap
+        last = j
+
+    # THE COLUMN COMES FROM THE GUTTER BESIDE THE LABEL WORD, not from the
+    # width of the label's row. On a two-column page that row already holds
+    # BOTH columns, so its width said "single column" and nothing was clipped:
+    # DiffuNovo's Table 3 caption came out as 'ablated models on the HC-PT
+    # dataset. All other settings Table 3. Empirical comparison of PTM
+    # identification. We were k...'. The label row's words are grouped into
+    # runs separated by a gutter, and the run holding 'Table N' is the caption's
+    # own column.
+    lab_row = sorted(rows[li], key=lambda w: w["x0"])
+    runs: list[list[dict]] = [[lab_row[0]]]
+    for w in lab_row[1:]:
+        if w["x0"] - runs[-1][-1]["x1"] > 25.0:
+            runs.append([w])
+        else:
+            runs[-1].append(w)
+    own_run = next((r for r in runs
+                    if LABEL_ROW.match(" ".join(x["text"] for x in r))), runs[0])
+    lx0 = min(w["x0"] for w in own_run)
+    lx1 = max(w["x1"] for w in own_run)
+    right = lx1 + 6
+    top = min(w["top"] for w in rows[li]) - 1
+    bottom = max(w["bottom"] for w in rows[last]) + 1
+
+    words = fine if fine else [w for i in range(li, last + 1) for w in rows[i]]
+    band = [w for w in words
+            if top <= w["top"] <= bottom and lx0 - 6 <= w["x0"] <= right]
+    # LINES ARE BUCKETED, not sorted on the exact top. A label word's baseline
+    # sits a fraction off its own line's -- bold, or a different size -- and
+    # sorting on the exact value interleaved it with the line below, so
+    # publication 4's caption read 'Performance after training the models on
+    # the Table 3. MassIVE-KB set.' A 2 pt bucket keeps a line together.
+    band.sort(key=lambda w: (round(w["top"] / 2.0), w["x0"]))
+    cap = re.sub(r"\s+", " ", " ".join(w["text"] for w in band)).strip()
+    # The finer extraction spaces the label differently from the coarse one
+    # ('Table 2:' against 'Table2'), so it is stripped by pattern rather than
+    # by the exact string.
+    cap = LABEL_ROW.sub("", cap, count=1)
+    cap = re.sub(r"^\s*[.:|\u2013\u2014]\s*", "", cap).strip()
     return label, cap, last
 
 
@@ -996,14 +1158,29 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     if not words:
         return [], [], 0
     rows = word_rows(words)
+    # A second, finer pass used ONLY for caption text. See caption_text().
+    try:
+        fine = strip_line_numbers(page.extract_words(
+            use_text_flow=False, keep_blank_chars=False, x_tolerance=2))
+    except Exception:
+        fine = None
     rules = page_rules(page)
     out, vetoed, uncaptioned = [], [], 0
     blocks = [b for b in data_blocks(rows) if len(column_edges(rows, *b)) >= 2]
-    paired = pair_captions(rows, blocks)
+    # EACH COLUMN GROUP IS ITS OWN TABLE. Rows span the page, so two tables
+    # printed side by side arrive as one block; column_groups() finds the
+    # gutter and each group is extracted separately, with its own caption.
+    parts: list[tuple[int, int, list[tuple[float, float]]]] = []
     for lo, hi in blocks:
-        edges = column_edges(rows, lo, hi)
+        full = column_edges(rows, lo, hi)
+        for grp in column_groups(full):
+            parts.append((lo, hi, [full[k] for k in grp]))
+    paired = pair_parts(rows, [(lo, hi, e[0][0], e[-1][1]) for lo, hi, e in parts])
+    span_of = {(lo, hi, e[0][0]): (lo, hi) for lo, hi, e in parts}
+    for lo, hi, edges in parts:
         table_label, caption, cap_end = caption_text(
-            rows, paired.get((lo, hi)), blocks)
+            rows, paired.get((lo, hi, edges[0][0])), blocks, fine,
+            float(page.width))
         if not table_label:
             uncaptioned += 1
             continue
@@ -1013,9 +1190,9 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         crop_lb = min([w["x0"] for r in rows[lo:hi + 1] for w in r
                        if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
                       or [edges[0][0] - 150])
+        _li = paired.get((lo, hi, edges[0][0]))
         bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb,
-                          cap_start=(paired.get((lo, hi)) if paired.get((lo, hi))
-                                     is not None else -1))
+                          cap_start=(_li if _li is not None else -1))
         try:
             caption_verdict(caption)
         except Reject as exc:
@@ -1161,7 +1338,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             [w["x0"] for r in rows[lo:hi + 1] for w in r
              if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
             or [edges[0][0] - 150]) - 4
-        li = paired.get((lo, hi))
+        li = paired.get((lo, hi, edges[0][0]))
         own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
             floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules,
@@ -1460,7 +1637,8 @@ VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
 
 
 def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
-                    pub_id: int, hint: str | None = None
+                    pub_id: int, hint: str | None = None,
+                    header: str = ""
                     ) -> tuple[int | None, str | None, int | None, str | None]:
     """(dataset_id, dataset_name, dataset_version_id, printed) or raise Reject.
 
@@ -1494,13 +1672,22 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
         # Table 1 says '9-species-v1' and came back as v2. Each scope is
         # resolved to exhaustion before the next is consulted, exactly as in
         # the caption path below.
-        for scope in (caption, near):
+        # THE TABLE'S OWN HEADER IS CONSULTED FIRST, then the caption, then the
+        # prose. Pairwise Attention spans 'NINE-SPECIES V2' over its columns
+        # and its caption names no version at all, so once the caption stopped
+        # being contaminated with the header the version fell through to three
+        # pages of surrounding text, which name two of them.
+        for scope in (header, caption, near):
+            if not scope:
+                continue
             hits = [(m.group(0), v) for rx, v in VERSION_LEXICON.get(name, [])
                     if (m := rx.search(scope))]
             versions = {v for _, v in hits}
             if len(versions) > 1:
-                raise Reject(f"D3 {'caption' if scope is caption else 'prose'} "
-                             f"names several versions of {name}: {sorted(versions)}")
+                where = ("the table header" if scope is header
+                         else "caption" if scope is caption else "prose")
+                raise Reject(f"D3 {where} names several versions of "
+                             f"{name}: {sorted(versions)}")
             if versions:
                 printed, version = hits[0]
                 got = con.execute(
@@ -2478,9 +2665,13 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     base.update({"value_min": f"{lo:g}", "value_max": f"{hi:g}", "unit": unit,
                  "n_cells": len(vals)})
 
+    header_text = " ".join(
+        [tb.get("stub") or ""]
+        + [t for k in range(len(edges)) for t in (tb["span"].get(k) or [])]
+        + [t for k in range(len(edges)) for t in (tb["own"].get(k) or [])])
     did, dname, vid, dprinted = resolve_dataset(
         con, tb["caption"], near, base["publication_id"],
-        tb.get("dataset_hint") or table_dataset_label(tb))
+        tb.get("dataset_hint") or table_dataset_label(tb), header_text)
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
