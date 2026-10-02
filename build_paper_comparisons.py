@@ -2810,6 +2810,21 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # none of the three benchmarks the page discusses.
     (17, "Table4"): ("GraphNovo dataset and checkpoint",
                      "the dataset collected in GraphNovo"),
+    # Transformer-DIA (the arXiv postprint of DiaTrans), TABLE I. Already
+    # resolved to MSV000082368 through the paper's own catalog link; what this
+    # adds is the SPLIT, in the paper's words: "three distinct DIA datasets of
+    # Homo sapiens: urinary tract infection (UTI), ovarian cysts (OC), and
+    # plasma ... 206,477 spectra, 203,780 spectra, and 1,097,400 spectra ...
+    # randomly partitioned into separate training, validation, and testing
+    # sets with ratios of 0.9, 0.05, and 0.05 ... no shared peptide sequences".
+    # That is DeepNovo-DIA's own protocol, which states the same 90/5/5 and
+    # "did not share common peptides". Whether it is the same DRAW is not
+    # stated -- "randomly" suggests a fresh one -- so no version is asserted.
+    (30, "TABLE I"): ("De novo sequencing of DIA data",
+                      "MSV000082368: UTI, OC and plasma (206,477 / 203,780 / "
+                      "1,097,400 spectra), each split randomly 0.9 / 0.05 / 0.05 "
+                      "with no peptide shared between sets -- DeepNovo-DIA's "
+                      "protocol; whether the same draw is not stated"),
 }
 
 
