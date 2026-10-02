@@ -1125,7 +1125,16 @@ def item_html(it: dict) -> str:
         # against the picture needs to know which, or a legitimate difference
         # of convention reads as a wrong number.
         _m, wrong = emphasis(it)
-        H.append("<h3>What the miner read</h3>" + grid_html(it))
+        # THE UNIT IS SAID, NOT CONVERTED. The grid shows numbers exactly as
+        # printed, because its job is to be checked against the picture beside
+        # it, and 0.646 beside a crop reading '64.6%' would be slower to check
+        # and easier to misread. What is STORED is on one scale for every
+        # table -- value = printed / 100 here -- and this line says so.
+        unit_note = ("<div class='cap' style='margin-bottom:6px'>printed as "
+                     "percentages; stored on the 0&ndash;1 scale (&divide; 100) "
+                     "like every other table</div>"
+                     if it.get("unit") == "0-100" else "")
+        H.append("<h3>What the miner read</h3>" + unit_note + grid_html(it))
         if it.get("footnote"):
             H.append("<div class='cap' style='margin-top:8px'>footnote &mdash; "
                      + html.escape(it["footnote"]) + "</div>")
