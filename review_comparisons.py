@@ -216,61 +216,99 @@ def ranking(rec: dict) -> dict:
     return out
 
 
-def emphasis_clash(rec: dict) -> list[str]:
-    """Measurements where the paper's own marks disagree with its own numbers.
-
-    The disagreement is worth printing because it has two very different
-    causes and a reader has to tell them apart.
-
-    A DIFFERENT CONVENTION. DiffuNovo's Table 2 underlines pi-HelixNovo, the
-    best COMPETITOR, rather than the second-highest value, which is its own
-    other variant. Nothing is wrong.
-
-    A MISTAKE IN THE PAPER. CrossNovo's Table 1 marks TWO cells bold in one
-    measurement -- peptide recall on Tomato, pi-PrimeNovo at 0.697 and
-    InstaNovo at 0.732 -- and underlines 'Ours' at 0.695, which no reading of
-    'best and second best' produces. (0.732 is genuinely printed: it
-    reproduces that row's stated average of 0.530 exactly.)
-
-    So the page shows the marks AS PRINTED and says where they do not follow
-    the numbers. Deciding which of the two it is remains a human's job.
-    """
-    pr, rk = printed_emphasis(rec), ranking(rec)
-    if not pr:
-        return []
-    notes, maxis = [], rec["metric_axis"]
-
-    def measurement(i, k):
-        j = k if maxis == "columns" else i
-        return (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
-                (rec["subsets"].get(k) if rec["axis"] == "rows"
-                 else rec["body"][i]["label"]) or "")
-
+def _measurements(rec: dict) -> dict:
+    """(metric, level, subset) -> [(row, col), ...]: the cells one ranking spans."""
+    maxis = rec["metric_axis"]
     groups: dict = {}
     for i, r in enumerate(rec["body"]):
         for k in r["cells"]:
-            groups.setdefault(measurement(i, k), []).append((i, k))
-    for key, cells in sorted(groups.items()):
+            j = k if maxis == "columns" else i
+            key = (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
+                   (rec["subsets"].get(k) if rec["axis"] == "rows"
+                    else rec["body"][i]["label"]) or "")
+            groups.setdefault(key, []).append((i, k))
+    return groups
+
+
+def _value(rec: dict, c) -> float | None:
+    try:
+        v = rec["body"][c[0]]["cells"][c[1]]
+        return float(re.sub(r"[^0-9.\-]", "", v.split("/")[0]) or "nan")
+    except (KeyError, ValueError):
+        return None
+
+
+def _who(rec: dict, c) -> str:
+    """The cell's method as the paper prints it, for a footnote."""
+    i, k = c
+    j = i if rec["axis"] == "rows" else k
+    m = rec["methods"].get(j) or rec["methods"].get(str(j))
+    if not m:
+        return "?"
+    printed = m[2] if len(m) > 2 else ""
+    return unsquash_name(printed) or m[0]
+
+
+def emphasis(rec: dict) -> tuple[dict, str, list[str], list[str]]:
+    """The marks to draw, where they came from, footnotes, and clashes.
+
+    The paper's own bold and underline are drawn wherever they are coherent,
+    because they are what the picture beside the table shows. Two cases are
+    told apart, because they look the same and are not:
+
+    A DIFFERENT CONVENTION is left alone and only noted. DiffuNovo's Table 2
+    underlines pi-HelixNovo, the best COMPETITOR, rather than the second-highest
+    value, which is its own other variant. Nothing is wrong.
+
+    A CONTRADICTION IS OVERRIDDEN, and a footnote says what was overridden.
+    Two cells bold in one measurement with DIFFERENT values cannot both be the
+    best, so that measurement is ranked by value instead. CrossNovo's Table 1
+    bolds both pi-PrimeNovo at 0.697 and InstaNovo at 0.732 for peptide recall
+    on Tomato and underlines its own 0.695 -- no reading of "best and second
+    best" produces that. (0.732 is genuinely printed: it reproduces that row's
+    stated average of 0.530.) Equal values in two bold cells are a TIE and stay
+    as printed. Only that measurement is touched; the rest of the table keeps
+    the paper's marks.
+    """
+    pr, rk = printed_emphasis(rec), ranking(rec)
+    if pr is None:
+        return rk, "computed", [], []
+    marks, notes, clashes = dict(pr), [], []
+    for key, cells in sorted(_measurements(rec).items()):
+        name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
         bolds = [c for c in cells if pr.get(c) == "best"]
+        unders = [c for c in cells if pr.get(c) == "second"]
+        vals = {_value(rec, c) for c in bolds}
+        if len(bolds) > 1 and len(vals) > 1:
+            said = " and ".join(f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
+                                for c in bolds)
+            if unders:
+                said += " and underlines " + ", ".join(
+                    f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
+                    for c in unders)
+            notes.append(f"{name}: the paper bolds {said}. Two different values "
+                         f"cannot both be the best, so this measurement is "
+                         f"shown ranked by value.")
+            for c in cells:
+                marks.pop(c, None)
+                if rk.get(c):
+                    marks[c] = rk[c]
+            continue
         best = [c for c in cells if rk.get(c) == "best"]
-        name = " / ".join(x for x in key if x)
-        if len(bolds) > 1:
-            notes.append(f"{name}: {len(bolds)} cells bold")
-        elif bolds and best and bolds[0] != best[0]:
-            notes.append(f"{name}: bold is not the highest value")
-    return notes
+        if bolds and best and bolds[0] not in best:
+            clashes.append(f"{name}: bold is not the highest value")
+    return marks, "printed", notes, clashes
 
 
 def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
-    printed = printed_emphasis(rec)
-    rank = printed if printed is not None else ranking(rec)
+    rank, source, _notes, _clash = emphasis(rec)
     # Where the printed marks are in use, the value ranking is still computed,
     # so a cell the VALUES call best can be pointed at even when the paper
     # marks another one.
-    byvalue = ranking(rec) if printed is not None else {}
+    byvalue = ranking(rec) if source == "printed" else {}
     out = ["<table class='grid'>"]
 
     def is_delta(i) -> bool:
@@ -767,12 +805,12 @@ def item_html(it: dict) -> str:
         # different things depending on the table, and a reader comparing
         # against the picture needs to know which, or a legitimate difference
         # of convention reads as a wrong number.
-        marked = printed_emphasis(it) is not None
+        _m, source, overridden, clash = emphasis(it)
+        marked = source == "printed"
         src = ("as printed in the paper; a dotted box is the highest VALUE "
                "where the paper marks another cell" if marked
                else "computed here: best and runner-up per measurement, "
                     "because this table marks nothing")
-        clash = emphasis_clash(it) if marked else []
         H.append("<h3>What the miner read</h3>"
                  f"<div class='cap' style='margin-bottom:6px'>"
                  f"<b>bold</b> / <u>underline</u> &mdash; {src}</div>"
@@ -780,6 +818,9 @@ def item_html(it: dict) -> str:
         if it.get("footnote"):
             H.append("<div class='cap' style='margin-top:8px'>footnote &mdash; "
                      + html.escape(it["footnote"]) + "</div>")
+        for n in overridden:
+            H.append("<div class='cap' style='margin-top:6px'>"
+                     "<b>emphasis overridden</b> &mdash; " + html.escape(n) + "</div>")
         if clash:
             H.append("<div class='cap' style='margin-top:8px'>"
                      "the paper's marks do not follow its own numbers here "
