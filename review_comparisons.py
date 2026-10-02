@@ -192,18 +192,69 @@ def ranking(rec: dict) -> dict:
     return out
 
 
+def emphasis_clash(rec: dict) -> list[str]:
+    """Measurements where the paper's own marks disagree with its own numbers.
+
+    The disagreement is worth printing because it has two very different
+    causes and a reader has to tell them apart.
+
+    A DIFFERENT CONVENTION. DiffuNovo's Table 2 underlines pi-HelixNovo, the
+    best COMPETITOR, rather than the second-highest value, which is its own
+    other variant. Nothing is wrong.
+
+    A MISTAKE IN THE PAPER. CrossNovo's Table 1 marks TWO cells bold in one
+    measurement -- peptide recall on Tomato, pi-PrimeNovo at 0.697 and
+    InstaNovo at 0.732 -- and underlines 'Ours' at 0.695, which no reading of
+    'best and second best' produces. (0.732 is genuinely printed: it
+    reproduces that row's stated average of 0.530 exactly.)
+
+    So the page shows the marks AS PRINTED and says where they do not follow
+    the numbers. Deciding which of the two it is remains a human's job.
+    """
+    pr, rk = printed_emphasis(rec), ranking(rec)
+    if not pr:
+        return []
+    notes, maxis = [], rec["metric_axis"]
+
+    def measurement(i, k):
+        j = k if maxis == "columns" else i
+        return (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
+                (rec["subsets"].get(k) if rec["axis"] == "rows"
+                 else rec["body"][i]["label"]) or "")
+
+    groups: dict = {}
+    for i, r in enumerate(rec["body"]):
+        for k in r["cells"]:
+            groups.setdefault(measurement(i, k), []).append((i, k))
+    for key, cells in sorted(groups.items()):
+        bolds = [c for c in cells if pr.get(c) == "best"]
+        best = [c for c in cells if rk.get(c) == "best"]
+        name = " / ".join(x for x in key if x)
+        if len(bolds) > 1:
+            notes.append(f"{name}: {len(bolds)} cells bold")
+        elif bolds and best and bolds[0] != best[0]:
+            notes.append(f"{name}: bold is not the highest value")
+    return notes
+
+
 def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
     printed = printed_emphasis(rec)
     rank = printed if printed is not None else ranking(rec)
+    # Where the printed marks are in use, the value ranking is still computed,
+    # so a cell the VALUES call best can be pointed at even when the paper
+    # marks another one.
+    byvalue = ranking(rec) if printed is not None else {}
     out = ["<table class='grid'>"]
 
     def cell(i, k):
         v = rec["body"][i]["cells"].get(k, "")
-        cls = rank.get((i, k))
-        return (f"<td class='{cls}'>{html.escape(v)}</td>" if cls
+        cls = [c for c in (rank.get((i, k)),) if c]
+        if byvalue.get((i, k)) == "best" and rank.get((i, k)) != "best":
+            cls.append("topvalue")
+        return (f"<td class='{' '.join(cls)}'>{html.escape(v)}</td>" if cls
                 else f"<td>{html.escape(v)}</td>")
 
     def mcell(j):
@@ -509,6 +560,7 @@ table.grid th{background:#f4f4f0;text-align:left;font-weight:600}
 table.grid .dim{color:var(--dim);font-weight:400;background:#fafaf7}
 table.grid td.best{font-weight:700;background:#eef7ee}
 table.grid td.second{text-decoration:underline;background:#f7f7ef}
+table.grid td.topvalue{outline:1px dotted #b45309;outline-offset:-2px}
 .why{color:var(--no);font:12.5px/1.5 ui-monospace,monospace;white-space:pre-wrap}
 .nope{color:var(--dim);font-style:italic}
 </style></head><body>
@@ -625,13 +677,22 @@ def item_html(it: dict) -> str:
         # different things depending on the table, and a reader comparing
         # against the picture needs to know which, or a legitimate difference
         # of convention reads as a wrong number.
-        src = ("as printed in the paper" if printed_emphasis(it) is not None
+        marked = printed_emphasis(it) is not None
+        src = ("as printed in the paper; a dotted box is the highest VALUE "
+               "where the paper marks another cell" if marked
                else "computed here: best and runner-up per measurement, "
                     "because this table marks nothing")
+        clash = emphasis_clash(it) if marked else []
         H.append("<h3>What the miner read</h3>"
                  f"<div class='cap' style='margin-bottom:6px'>"
                  f"<b>bold</b> / <u>underline</u> &mdash; {src}</div>"
                  + grid_html(it))
+        if clash:
+            H.append("<div class='cap' style='margin-top:8px'>"
+                     "the paper's marks do not follow its own numbers here "
+                     "&mdash; either it counts its variants as one method, or "
+                     "it is an error in the paper: "
+                     + html.escape("; ".join(clash)) + "</div>")
         if it.get("basis"):
             b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
                           for k, x in it["basis"].items())
