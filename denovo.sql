@@ -26011,6 +26011,20 @@ INSERT INTO publication_citation VALUES(435,201,'crossref');
 INSERT INTO publication_citation VALUES(435,203,'semanticscholar');
 INSERT INTO publication_citation VALUES(435,243,'both');
 INSERT INTO publication_citation VALUES(437,436,'crossref');
+CREATE TABLE checkpoint_dataset (
+    checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
+    dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
+    dataset_version_id INTEGER REFERENCES dataset_version(id),
+    evidence           TEXT NOT NULL
+);
+INSERT INTO checkpoint_dataset VALUES(14,3,8,'trained_on: ''~2M PSMs from MassIVE-KB v1 + v2.0.15''');
+INSERT INTO checkpoint_dataset VALUES(14,3,9,'trained_on: ''~2M PSMs from MassIVE-KB v1 + v2.0.15''');
+INSERT INTO checkpoint_dataset VALUES(5,1,NULL,'the Zenodo record is titled ''Casanovo model weights on nine-species benchmark''; it does not say WHICH version of the benchmark, so none is asserted');
+INSERT INTO checkpoint_dataset VALUES(2,1,NULL,'the Zenodo record is titled ''PhysNovo Model Weights Trained on the Nine-Species Benchmark Dataset''; it does not say which version');
+INSERT INTO checkpoint_dataset VALUES(18,3,NULL,'trained_on: ''MassIVE-KB'', with no version given');
+INSERT INTO checkpoint_dataset VALUES(19,3,NULL,'INHERITED, not direct: fine-tuned from model_massive.ckpt, which was trained on MassIVE-KB. Its own fine-tuning set, 2020-Cell-LUAD, is not in this catalog');
+INSERT INTO checkpoint_dataset VALUES(20,3,NULL,'the FILENAME, model_massivekb.ckpt; BEAM-Labs/denovo states no training set for it');
+INSERT INTO checkpoint_dataset VALUES(11,3,8,'trained_on: ''MassIVE-KB v1'', from ProteoBench discussion 356');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',79);
 INSERT INTO sqlite_sequence VALUES('city',309);
@@ -26122,4 +26136,7 @@ CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id
 CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
 CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
+CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
+    ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
+CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 COMMIT;

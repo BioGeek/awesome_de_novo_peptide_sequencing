@@ -212,7 +212,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**33 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**34 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -1770,6 +1770,31 @@ row, which keeps PAAS 3's published URL and costs two near-identical pages.
 A new family works with no registration at all: it gets a lane, a generated
 colour and a packed height. Add it to `band_color` only if you want a specific
 colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
+
+### Which dataset a checkpoint was trained on
+
+`checkpoint_dataset` links the two, and it is **curated rather than derived**,
+with an `evidence` column saying why each row exists. `checkpoint.trained_on` is
+prose and cannot be joined on: its values include `~2M PSMs from MassIVE-KB v1 +
+v2.0.15`, `the default --model orbitrap selector from v5.2.0 onward` and
+`fine-tuned from model_massive.ckpt on the 2020-Cell-LUAD dataset`. A text match
+would link a selector flag to nothing and miss the checkpoints whose only
+evidence is a FILENAME.
+
+8 links over 2 datasets, and the evidence differs per row, which is the reason
+the column exists: a paper's own words for Casanovo 4.0.0 and 4.2.0, a Zenodo
+record title for the two nine-species ones, the filename `model_massivekb.ckpt`
+for RefineNovo-30M, and for π-PrimeNovo's phosphorylation model an **inherited**
+link, since it was fine-tuned from `model_massive.ckpt` and its own fine-tuning
+set, 2020-Cell-LUAD, is not in this catalog.
+
+**Six of the eight assert no VERSION**, because the sources name the dataset and
+not which of its versions, which is the same ambiguity the version list on the
+page exists to expose. The page prints *not stated* rather than picking one.
+
+The dataset pages show the table and then every evidence string beneath it. A
+reader who disagrees with a link can see exactly what it rests on, which is the
+point of not deriving them.
 
 ### A dataset page per dataset
 

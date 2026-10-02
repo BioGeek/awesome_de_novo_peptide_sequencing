@@ -965,6 +965,36 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             L.append(line)
         L.append("")
 
+    # Weights trained on this data. The reason a reader is on this page at all
+    # is usually to find out what a number was computed over; the other half of
+    # that question is which model produced it.
+    if ctx.get("checkpoints"):
+        L += [f"## Checkpoints trained on this ({len(ctx['checkpoints'])})", ""]
+        L.append("| Method | Checkpoint | Version of this dataset | Size | Get it |")
+        L.append("|---|---|---|---|---|")
+        for cp in ctx["checkpoints"]:
+            ver = cp["tool_version"] or cp["label"] or "—"
+            size = (f"{cp['size_bytes'] / 1e9:.1f} GB" if cp["size_bytes"] and cp["size_bytes"] >= 1e9
+                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] else "—")
+            # "not stated" is the honest cell: these records name the dataset
+            # and not which of its versions, which is the same ambiguity the
+            # Versions list above exists to expose.
+            dsver = md_escape(cp["version"]) if cp["version"] else "<small>not stated</small>"
+            get = f"[{md_escape(cp['host'])}]({cp['url']})"
+            if cp["mirror_url"]:
+                get += f" · [copy]({cp['mirror_url']})"
+            if cp["status"] == "gated":
+                get += " <small>**gated**</small>"
+            L.append(f"| {site.link('algorithms', cp['alg_id'], cp['method'], from_kind=K)} "
+                     f"| {md_escape(ver)} | {dsver} | {size} | {get} |")
+        L.append("")
+        L += ["Each link rests on stated evidence rather than a text match:", ""]
+        for cp in ctx["checkpoints"]:
+            L.append(f"- **{md_escape(cp['method'])}** "
+                     f"{md_escape(cp['tool_version'] or cp['label'] or '')}: "
+                     f"{md_escape(cp['evidence'])}")
+        L.append("")
+
     if ctx["methods"]:
         L += [f"## Methods on these papers ({len(ctx['methods'])})", ""]
         for m in ctx["methods"]:
@@ -1337,6 +1367,20 @@ def load(conn: sqlite3.Connection) -> dict:
     # Methods reached through those papers, via the DESCRIBING links only: a
     # venomics paper that ran PEAKS on a deposit does not make PEAKS a method
     # of that deposit, the same reasoning as the author->model graph.
+    # Checkpoints trained on each dataset. From the CURATED checkpoint_dataset
+    # table, never from `trained_on`, which is prose; the evidence column comes
+    # along so the page can say why each link exists.
+    d["ds_checkpoints"] = defaultdict(list)
+    for r in q("SELECT cd.dataset_id, cd.dataset_version_id, cd.evidence, "
+               "       a.id AS alg_id, a.name AS method, "
+               "       c.label, c.tool_version, c.host, c.url, c.mirror_url, "
+               "       c.size_bytes, c.status, dv.version "
+               "  FROM checkpoint_dataset cd "
+               "  JOIN checkpoint c ON c.id = cd.checkpoint_id "
+               "  JOIN algorithm a  ON a.id = c.algorithm_id "
+               "  LEFT JOIN dataset_version dv ON dv.id = cd.dataset_version_id "
+               " ORDER BY cd.dataset_id, a.name, c.tool_version"):
+        d["ds_checkpoints"][r["dataset_id"]].append(r)
     d["ds_methods"] = defaultdict(list)
     for r in q("SELECT DISTINCT pd.dataset_id, a.id AS alg_id, a.name, a.kind "
                "  FROM publication_dataset pd "
@@ -1860,6 +1904,7 @@ def main() -> int:
                 "addrs": d["ds_addrs"],
                 "pubs": d["ds_pubs"].get(did, []),
                 "methods": d["ds_methods"].get(did, []),
+                "checkpoints": d["ds_checkpoints"].get(did, []),
                 "pub_titles": pub_titles,
             }
             body, mtime = render_dataset(site, row, ctx)
