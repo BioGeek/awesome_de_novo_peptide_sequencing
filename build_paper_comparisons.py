@@ -1022,7 +1022,8 @@ VERSION_TAIL = re.compile(
 
 
 def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
-                   index: dict[str, list[tuple[int, str]]]) -> tuple[int, str, str | None]:
+                   index: dict[str, list[tuple[int, str]]],
+                   pub_id: int | None = None) -> tuple[int, str, str | None]:
     """Resolve a printed column header to (algorithm_id, name, printed version).
 
     Raises Reject on a miss. A wrong guess here would be invisible in the data;
@@ -1031,6 +1032,12 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
     raw = printed.strip().strip("|,")
     if not raw:
         raise Reject("N1 empty header")
+    # A curated per-paper label wins over every general rule.
+    pa = PAPER_LABEL_ALIASES.get((pub_id, norm(raw))) if pub_id else None
+    if pa:
+        got = plus_match(pa[0], index.get(norm(pa[0]), []))
+        if got:
+            return got[0], got[1], pa[1]
     # 5. the hand-written residue, consulted first because its entries exist
     #    precisely because the general rules get them wrong.
     hit = COMPARISON_ALIASES.get(norm(raw))
@@ -1471,7 +1478,7 @@ def main() -> int:
     return 0
 
 
-def resolve_in_label(label: str, vocab, index, subject):
+def resolve_in_label(label: str, vocab, index, subject, pub_id=None):
     """Find the method inside a row label, and return the words left over.
 
     A row label is not just a method name. ACL-style tables put the metric and
@@ -1494,7 +1501,7 @@ def resolve_in_label(label: str, vocab, index, subject):
                     return (subject["id"], subject["name"], None), \
                            toks[:start] + toks[start + width:]
                 continue
-            hit = try_resolve(cand, vocab, index)
+            hit = try_resolve(cand, vocab, index, pub_id)
             if hit:
                 return hit, toks[:start] + toks[start + width:]
     return None, toks
@@ -1528,15 +1535,42 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
 }
 
 
-def try_resolve(label, vocab, index):
+# WHAT A PAPER CALLS A METHOD IN ITS OWN TABLE, where no general rule can get
+# there. Keyed by (publication, normalised printed label) so an entry cannot
+# leak into another paper: 'BASE' means something different in every paper that
+# prints it. Read off the paper, like SPANNER_OVERRIDE.
+PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
+    # Pairwise Attention, Table 3. Confirmed by the author of this catalog
+    # against the paper: BASE is the base model and PA is the full pairwise
+    # attention model, so both are the paper's own method and BASE is a variant
+    # of it rather than a third-party baseline.
+    (4, "base"): ("Pairwise", "base"),
+    (4, "pa"): ("Pairwise", None),
+}
+
+
+# A TABLE THAT STATES ITS METRIC ONLY IN THE BODY PROSE. Curated, because
+# guessing a metric from nearby prose is the same error as guessing a dataset
+# version from it: a results page names several metrics and picking one is a
+# coin toss. The quote that licenses each entry is beside it.
+TABLE_METRIC: dict[tuple[int, str], tuple[str, str]] = {
+    # Pairwise Attention, Table 3. Its caption says only "Performance after
+    # training the models on the nine-species V2 dataset"; the paragraph above
+    # it says "we tested on each of the species in the nine-species dataset and
+    # report PEPTIDE PRECISION AT 100% COVERAGE".
+    (4, "Table3"): ("precision@cov1", "peptide"),
+}
+
+
+def try_resolve(label, vocab, index, pub_id=None):
     """resolve_method() as an Optional, for deciding orientation."""
     try:
-        return resolve_method(label, vocab, index)
+        return resolve_method(label, vocab, index, pub_id)
     except Reject:
         return None
 
 
-def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict]:
+def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict, dict]:
     """Decide whether the METHODS are the columns or the rows.
 
     This is not cosmetic and it was the single largest source of loss. The
@@ -1564,8 +1598,8 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
             if norm(printed) in SELF_WORDS and subject:
                 got[k] = (subject["id"], subject["name"], None)
             else:
-                got[k] = resolve_method(printed, vocab, index)
-        return "columns", got, {}
+                got[k] = resolve_method(printed, vocab, index, pub_id)
+        return "columns", got, {}, {k: v for k, v in enumerate(over)}
 
     # THE METHOD NAMES MAY BE THE SPANNER. ContraNovo's Table 1 has the methods
     # as column headers with the metric spanning them; Casanovo's Table 2 is
@@ -1576,6 +1610,7 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
     # no methods at all and rejected the most-compared-against paper in the
     # field. The column's own header is tried first, so a table of the
     # ContraNovo shape is unaffected.
+    printed_of: dict = {}            # column/row -> the label as printed
     cols, method_source = {}, "own"
     amb = tb.get("span_ambiguous") or set()
     span_blocked = False
@@ -1591,10 +1626,11 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         got = {}
         for k in range(n):
             head = " ".join(tb[source].get(k, [])).strip()
+            printed_of[k] = head
             if norm(head) in SELF_WORDS and subject:
                 got[k] = (subject["id"], subject["name"], None)
             else:
-                got[k] = try_resolve(head, vocab, index)
+                got[k] = try_resolve(head, vocab, index, pub_id)
         if len({(v[0], v[2] or "") for v in got.values() if v}) >= 2:
             cols, method_source = got, source
             break
@@ -1602,7 +1638,8 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
             cols = got
     rows, leftovers = {}, {}
     for i, r in enumerate(tb["body"]):
-        hit, rest = resolve_in_label(r["label"], vocab, index, subject)
+        printed_of[i] = r["label"]
+        hit, rest = resolve_in_label(r["label"], vocab, index, subject, pub_id)
         rows[i] = hit
         # Words from an interstitial label row count as this row's leftovers:
         # they are the group label, just set on a line of their own.
@@ -1610,9 +1647,9 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
     n_col = len({(v[0], v[2] or "") for v in cols.values() if v})
     n_row = len({(v[0], v[2] or "") for v in rows.values() if v})
     if n_col >= 2 and n_col >= n_row:
-        return "columns", cols, {}
+        return "columns", cols, {}, printed_of
     if n_row >= 2:
-        return "rows", rows, leftovers
+        return "rows", rows, leftovers, printed_of
     if span_blocked:
         raise Reject(f"N1 the method names are in a spanner whose grouping no "
                      f"rule states, so columns {sorted(amb)} are undecidable; "
@@ -1651,6 +1688,26 @@ def split_by_dataset(tb) -> dict[str, list[int]] | None:
     if None in groups or len(groups) < 2:
         return None
     return {k: v for k, v in groups.items() if k}
+
+
+def table_dataset_label(tb) -> str | None:
+    """The one dataset the table's OWN header names, if it names exactly one.
+
+    The spanner and the column headers are inside the table and so are more
+    specific than the caption or the prose around it. Pairwise Attention's
+    Table 3 spans 'NINE-SPECIES V2' over its three method columns while the
+    paragraph above it mentions the MassIVE-KB set the models were TRAINED on,
+    and reading both scopes together made that a multi-dataset table. The
+    table says which data it scores on; the prose was talking about something
+    else.
+    """
+    labels = set()
+    for k in range(len(tb["edges"])):
+        ctx = " ".join(tb["span"].get(k, [])) + " " + " ".join(tb["own"].get(k, []))
+        labels |= {nm for rx, nm in DATASET_CUES if rx.search(ctx)}
+    stub_labels = {nm for rx, nm in DATASET_CUES if rx.search(tb.get("stub") or "")}
+    labels |= stub_labels
+    return labels.pop() if len(labels) == 1 else None
 
 
 def subtable(tb, cols: list[int], name: str) -> dict:
@@ -1704,7 +1761,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                         "page": part.get("page")})
             return ok
     edges, own, span = tb["edges"], tb["own"], tb["span"]
-    axis, resolved_axis, leftovers = orientation(
+    axis, resolved_axis, leftovers, printed_of = orientation(
         tb, vocab, index, subject, base.get("publication_id"))
     col_head = [" ".join(own.get(k, [])).strip() or "?" for k in range(len(edges))]
 
@@ -1759,6 +1816,19 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             out[k] = (metric, level)
         return out
 
+    def row_ctx(i: int) -> str:
+        """The text that might name row i's metric.
+
+        When the methods are the ROWS this is what was left over after the
+        method name was taken out of the label; when the methods are the
+        COLUMNS the whole row label is a candidate, because a table can put
+        methods across the top and metrics down the side. Publication 4 does
+        exactly that: BASE | PA | CASANOVO across, one metric per row.
+        """
+        if axis == "rows":
+            return " ".join(leftovers.get(i, []))
+        return tb["body"][i]["label"] or ""
+
     def row_groups():
         """Cluster the row-group label words, which arrive scattered.
 
@@ -1766,8 +1836,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         'Precision' over eleven rows) or on interstitial lines of its own.
         """
         groups: list[dict] = []
-        for i in sorted(leftovers):
-            text = " ".join(leftovers[i])
+        for i in range(len(tb["body"])):
+            text = row_ctx(i)
             if not (metric_of(text) or level_of(text)):
                 continue
             if groups and i - groups[-1]["last"] <= 2:
@@ -1804,7 +1874,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                          if len(segments) == len(groups) else None)
         out = {}
         for i in range(len(tb["body"])):
-            ctx = " ".join(leftovers.get(i, []))
+            ctx = row_ctx(i)
             if paired_groups is not None:
                 ctx += " " + paired_groups[seg_of[i]]["text"]
             elif groups:
@@ -1820,9 +1890,17 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
 
     found = along_columns()
     metric_axis = "columns"
-    if found is None and axis == "rows":
+    if found is None:
+        # The metric may run down the rows whichever axis carries the methods.
         found = along_rows()
         metric_axis = "rows"
+    if found is None:
+        # A curated entry, where the table states its metric only in prose.
+        pinned = TABLE_METRIC.get((base.get("publication_id"),
+                                   (tb["table_label"] or "").strip()))
+        if pinned:
+            found = {k: pinned for k in range(len(edges))}
+            metric_axis = "columns"
     if found is None:
         # Last resort: the caption names ONE METRIC for the whole table, while
         # the LEVEL may still vary by column. Publication 30 is the example:
@@ -1877,7 +1955,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         """(method, metric, level, subset) for one cell, whichever the layout."""
         m = methods.get(k if axis == "columns" else ri)
         j = k if metric_axis == "columns" else ri
-        sub = tb["body"][ri]["label"] if axis == "columns" else subsets[k]
+        # When the methods are columns the row label is normally the subset --
+        # a species, an enzyme. But if the row label is what NAMES THE METRIC,
+        # it is not also a subset, or every cell would claim a subset of
+        # 'Peptide precision'.
+        sub = ("" if (axis == "columns" and metric_axis == "rows")
+               else tb["body"][ri]["label"] if axis == "columns" else subsets[k])
         return m, metrics[j], levels[j], sub
 
     seen = set()
@@ -1906,7 +1989,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                  "n_cells": len(vals)})
 
     did, dname, vid, dprinted = resolve_dataset(
-        con, tb["caption"], near, base["publication_id"], tb.get("dataset_hint"))
+        con, tb["caption"], near, base["publication_id"],
+        tb.get("dataset_hint") or table_dataset_label(tb))
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
@@ -1941,7 +2025,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             "dataset": dname, "dataset_version_id": vid,
             "dataset_printed": dprinted, "unit": unit,
             "col_head": list(col_head),
-            "methods": {k: (v[1], v[2]) for k, v in methods.items()},
+            # The PRINTED label as well as the resolved name, so the review
+            # page can show 'DiffuNovo (Logits)' as the paper wrote it rather
+            # than a reconstructed 'DiffuNovo vLogits'.
+            "methods": {k: (v[1], v[2], printed_of.get(k) or "")
+                        for k, v in methods.items()},
             "metrics": dict(metrics), "levels": dict(levels),
             "subsets": dict(subsets),
             "body": [{"label": r["label"],

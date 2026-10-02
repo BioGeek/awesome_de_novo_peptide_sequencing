@@ -33,12 +33,21 @@ import html
 import pathlib
 import subprocess
 import sys
+import json
+import urllib.parse
 
 import build_pdf_library as bpl
 import build_paper_comparisons as B
 
 OUT = bpl.DEFAULT_DIR / "comparison-review"
 CACHE = OUT / ".pages"
+# Which tables a person has read and signed off. Lives beside the crops,
+# outside the repository, because it is this reader's review state and not
+# catalog data. Each entry keeps a FINGERPRINT as well as the id, because an id
+# encodes the block's order on its page and that order can shift when the
+# miner improves; a stale approval is then reported rather than silently
+# carried over.
+APPROVED = OUT / "approved.json"
 DPI = 150
 
 
@@ -92,12 +101,29 @@ def grid_html(rec: dict) -> str:
     def mcell(j):
         return f"{html.escape(rec['metrics'][j])}<br><small>{html.escape(rec['levels'][j])}</small>"
 
+    def mname(j):
+        """The label AS PRINTED, with the resolved catalog name beneath it.
+
+        Reconstructing it from name plus version produced 'DiffuNovo vLogits'
+        where the paper writes 'DiffuNovo (Logits)'. The printed form is what a
+        reviewer compares against the picture, so it leads; the resolved name
+        is what the row would be filed under, so it is shown too when the two
+        differ.
+        """
+        m = rec["methods"].get(j)
+        if not m:
+            return "&mdash;"
+        name, ver, printed = (m + ("",))[:3] if len(m) < 3 else m
+        shown = printed or (f"{name} {ver}" if ver else name)
+        out = html.escape(shown)
+        if html.escape(name) != out:
+            out += f"<br><small class='dim'>{html.escape(name)}"
+            out += f" &middot; {html.escape(ver)}</small>" if ver else "</small>"
+        return out
+
     if axis == "columns":
         out.append("<tr><th></th>" + "".join(
-            f"<th>{html.escape(rec['methods'][k][0])}"
-            + (f"<br><small>v{html.escape(rec['methods'][k][1])}</small>"
-               if rec["methods"].get(k) and rec["methods"][k][1] else "")
-            + "</th>" for k in range(ncol)) + "</tr>")
+            f"<th>{mname(k)}</th>" for k in range(ncol)) + "</tr>")
         out.append("<tr><th class='dim'>metric</th>" + "".join(
             f"<td class='dim'>{mcell(k if maxis == 'columns' else 0)}</td>"
             for k in range(ncol)) + "</tr>")
@@ -113,9 +139,8 @@ def grid_html(rec: dict) -> str:
                                 if maxis == "columns" else "")
                              + "</th>" for k in range(ncol)) + "</tr>")
         for i, r in enumerate(rec["body"]):
-            m = rec["methods"].get(i)
-            name = (f"{m[0]}" + (f" v{m[1]}" if m[1] else "")) if m else (r["label"] or "-")
-            out.append(f"<tr><th>{html.escape(name)}</th>"
+            label = mname(i) if rec["methods"].get(i) else html.escape(r["label"] or "-")
+            out.append(f"<tr><th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(f"<td>{html.escape(r['cells'].get(k, ''))}</td>"
                                  for k in range(ncol)) + "</tr>")
@@ -129,6 +154,10 @@ def main() -> int:
     ap.add_argument("--ids", help="comma-separated publication ids")
     ap.add_argument("--rejected-only", action="store_true")
     ap.add_argument("--accepted-only", action="store_true")
+    ap.add_argument("--approve", help="comma-separated table ids to mark approved")
+    ap.add_argument("--unapprove", help="comma-separated table ids to un-mark")
+    ap.add_argument("--keep-crops", action="store_true",
+                    help="reuse the PNGs already rendered, for an HTML-only change")
     args = ap.parse_args()
 
     import logging
@@ -151,8 +180,20 @@ def main() -> int:
 
     OUT.mkdir(parents=True, exist_ok=True)
     CACHE.mkdir(exist_ok=True)
-    for old in OUT.glob("*.png"):
-        old.unlink()
+    approved: dict = {}
+    if APPROVED.exists():
+        try:
+            approved = json.loads(APPROVED.read_text())
+        except Exception:
+            print(f"  could not read {APPROVED.name}; starting empty")
+    for tid in (args.approve or "").replace(" ", "").split(","):
+        if tid:
+            approved.setdefault(tid, {})["on"] = __import__("datetime").date.today().isoformat()
+    for tid in (args.unapprove or "").replace(" ", "").split(","):
+        approved.pop(tid, None)
+    if not args.keep_crops:
+        for old in OUT.glob("*.png"):
+            old.unlink()
 
     rows = con.execute("""
         SELECT DISTINCT p.id, p.title, p.publication_date FROM publication p
@@ -211,13 +252,29 @@ def main() -> int:
                         continue
                     if args.accepted_only and rec["verdict"] != "accepted":
                         continue
-                    name = f"p{pub['id']}-pg{pno + 1}-{n}.png"
-                    ok = render(path, rec.get("page") or (pno + 1),
-                                rec.get("bbox"), OUT / name)
-                    rec.update({"pub": pub["id"], "title": pub["title"],
+                    # A STABLE IDENTIFIER PER TABLE, so a person can say which
+                    # one they mean. It is the crop's own stem, which already
+                    # encodes publication, page and the block's order on that
+                    # page, and it is reproduced as the HTML anchor so the chip
+                    # links to itself and the URL can be copied.
+                    tid = f"p{pub['id']}-pg{pno + 1}-{n}"
+                    name = f"{tid}.png"
+                    dest = OUT / name
+                    ok = (dest.exists() if args.keep_crops and dest.exists()
+                          else render(path, rec.get("page") or (pno + 1),
+                                      rec.get("bbox"), dest))
+                    # A link straight to the PDF this crop came from, at the
+                    # page it came from. Browsers' built-in viewers honour
+                    # '#page=N', and the path needs quoting because the library
+                    # folder has spaces in its name.
+                    rec.update({"pdf_url": "file://" + urllib.parse.quote(str(path)),
+                                "pdf_name": path.name,
+                                "tid": tid, "pub": pub["id"], "title": pub["title"],
                                 "year": str(pub["publication_date"] or "")[:4],
                                 "img": name if ok else None,
                                 "pdf_page": rec.get("page") or (pno + 1)})
+                    if tid in approved and rec["verdict"] == "accepted":
+                        rec["verdict"] = "approved"
                     items.append(rec)
                     tally[rec["verdict"]] += 1
         print(f"  p{pub['id']:<4} {len([i for i in items if i['pub']==pub['id']]):>3} "
@@ -225,13 +282,27 @@ def main() -> int:
 
     for f in CACHE.glob("*.png"):
         f.unlink()
-    write_html(items, tally)
-    print(f"\n  {tally['accepted']} accepted, {tally['rejected']} rejected")
+    # Record the fingerprint of everything approved, so a later run can tell
+    # whether the id still points at the same table.
+    for it in items:
+        if it["tid"] in approved:
+            approved[it["tid"]].update(
+                {"label": it.get("table_label") or "", "pub": it["pub"],
+                 "cells": it.get("n_cells") or len(it.get("body") or [])})
+    APPROVED.write_text(json.dumps(approved, indent=1, sort_keys=True))
+    write_html(items, tally, approved)
+    print(f"\n  {tally['accepted']} accepted, {tally['approved']} approved, "
+          f"{tally['rejected']} rejected")
+    stale = [t for t in approved if t not in {i['tid'] for i in items}]
+    if stale:
+        print(f"  {len(stale)} approved id(s) no longer present: {', '.join(sorted(stale))}")
+        print("  the block order on a page can shift as the miner changes; "
+              "re-approve under the new id")
     print(f"  {OUT / 'index.html'}")
     return 0
 
 
-def write_html(items: list[dict], tally) -> None:
+def write_html(items: list[dict], tally, approved: dict | None = None) -> None:
     by_pub: dict = {}
     for it in items:
         by_pub.setdefault((it["pub"], it["title"], it["year"]), []).append(it)
@@ -252,6 +323,23 @@ h2 small{color:var(--dim);font-weight:400}
 .hd{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
 .tag{font:600 11px/1.6 ui-monospace,monospace;padding:1px 7px;border-radius:9px;color:#fff}
 .tag.accepted{background:var(--ok)} .tag.rejected{background:var(--no)}
+.tag.approved{background:#1d4ed8}
+details.appr{border:1px dashed #bcd0a8;background:#f4f9f0;border-radius:6px;
+ padding:8px 12px;margin:14px 0}
+details.appr>summary{cursor:pointer;font-size:13px;color:#3f6b2c}
+.tid{font:600 11.5px/1.6 ui-monospace,monospace;color:#2a4d8f;background:#eaf0fb;
+ border:1px solid #cfdcf2;padding:1px 7px;border-radius:9px;cursor:copy;
+ -webkit-user-select:all;user-select:all}
+.tid:hover{background:#dde8fa}
+.tid.copied{background:#d8f0dd;border-color:#9fd3ad;color:#14612f}
+.anch{color:#9db4da;text-decoration:none;font:600 12px/1 ui-monospace,monospace}
+.anch:hover{color:#2a4d8f}
+.pdf{font-size:12px;color:#2a4d8f;text-decoration:none;border-bottom:1px dotted #9db4da}
+.pdf:hover{border-bottom-style:solid}
+.item:target{outline:3px solid #f0c000;outline-offset:6px;border-radius:4px}
+.toc{columns:3;font:12.5px/1.8 ui-monospace,monospace;margin:10px 0 0}
+.toc a{color:#2a4d8f;text-decoration:none} .toc a:hover{text-decoration:underline}
+.toc .r{color:var(--no)} .toc .a{color:var(--ok)} .toc .ok{color:#1d4ed8;font-weight:700}
 .lbl{font-weight:600}
 .meta{color:var(--dim);font-size:12.5px}
 .cap{color:var(--dim);font-size:12.5px;margin:2px 0 8px;max-width:150ch}
@@ -266,44 +354,106 @@ table.grid th{background:#f4f4f0;text-align:left;font-weight:600}
 table.grid .dim{color:var(--dim);font-weight:400;background:#fafaf7}
 .why{color:var(--no);font:12.5px/1.5 ui-monospace,monospace;white-space:pre-wrap}
 .nope{color:var(--dim);font-style:italic}
-</style></head><body>"""]
+</style></head><body>
+<script>
+// Copy on click where the browser allows it. A file:// page is not always a
+// secure context, so navigator.clipboard can be absent or refuse; the
+// execCommand path and, failing both, the CSS selection, cover that.
+document.addEventListener('click', function (e) {
+  var el = e.target.closest ? e.target.closest('.tid') : null;
+  if (!el) return;
+  var id = el.dataset.id || el.textContent;
+  var done = function () {
+    el.classList.add('copied');
+    setTimeout(function () { el.classList.remove('copied'); }, 900);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(id).then(done, function () { legacy(); });
+  } else { legacy(); }
+  function legacy() {
+    try {
+      var t = document.createElement('textarea');
+      t.value = id; t.setAttribute('readonly', '');
+      t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      document.execCommand('copy'); document.body.removeChild(t); done();
+    } catch (err) { /* the CSS selection is the fallback */ }
+  }
+});
+</script>"""]
     H.append(f"<header><h1>Comparison-table review</h1><div class='sub'>"
              f"{tally['accepted']} accepted and {tally['rejected']} refused, each beside the "
              f"printed table it came from. Local file, not published.</div></header><main>")
+    H.append("<details class='panel' style='margin-bottom:18px'>"
+             "<summary><strong>Index of every table id</strong> "
+             "&mdash; green accepted, red refused</summary><div class='toc'>")
+    for it in sorted(items, key=lambda i: (i["pub"], i["pdf_page"], i["tid"])):
+        cls = {"accepted": "a", "approved": "ok"}.get(it["verdict"], "r")
+        H.append(f"<a class='{cls}' href='#{it['tid']}'>{it['tid']}</a> "
+                 f"<span class='meta'>{html.escape((it.get('table_label') or '?')[:12])}</span><br>")
+    H.append("</div></details>")
     for (pid, title, year), group in sorted(by_pub.items()):
         H.append(f"<h2>p{pid} &middot; {html.escape(title)} <small>({year})</small></h2>")
         group.sort(key=lambda i: (i["pdf_page"], i["verdict"] != "accepted"))
+        # APPROVED TABLES COLLAPSE. They have been read and signed off, so they
+        # are kept for reference and folded away rather than occupying the page
+        # a reviewer is working down.
+        done = [i for i in group if i["verdict"] == "approved"]
+        group = [i for i in group if i["verdict"] != "approved"]
+        if done:
+            H.append(f"<details class='appr'><summary>{len(done)} approved "
+                     f"table(s) on this paper &mdash; click to show</summary>")
+            for it in done:
+                H.append(item_html(it))
+            H.append("</details>")
         for it in group:
-            v = it["verdict"]
-            H.append("<div class='item'><div class='hd'>"
-                     f"<span class='tag {v}'>{v}</span>"
-                     f"<span class='lbl'>{html.escape(it.get('table_label') or '?')}</span>"
-                     f"<span class='meta'>page {it['pdf_page']}</span>")
-            if v == "accepted":
-                H.append(f"<span class='meta'>{html.escape(it.get('dataset') or '?')}"
-                         + (f" &middot; version {it['dataset_version_id']}"
-                            if it.get("dataset_version_id") else " &middot; version not stated")
-                         + f" &middot; methods in {it['axis']}, metric in {it['metric_axis']}"
-                         + f" &middot; unit {it.get('unit')}</span>")
-            H.append("</div>")
-            if it.get("caption"):
-                H.append(f"<div class='cap'>{html.escape(it['caption'][:400])}</div>")
-            H.append("<div class='pair'><div class='panel'><h3>Printed in the paper</h3>")
-            H.append(f"<img src='{it['img']}' alt='table crop'>" if it.get("img")
-                     else "<div class='nope'>no crop could be rendered</div>")
-            H.append("</div><div class='panel'>")
-            if v == "accepted":
-                H.append("<h3>What the miner read</h3>" + grid_html(it))
-                if it.get("basis"):
-                    b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
-                                  for k, x in it["basis"].items())
-                    H.append(f"<div class='cap' style='margin-top:8px'>basis &mdash; {b}</div>")
-            else:
-                H.append("<h3>Why it was refused</h3>"
-                         f"<div class='why'>{html.escape(it.get('reason') or '')}</div>")
-            H.append("</div></div></div>")
+            H.append(item_html(it))
     H.append("</main></body></html>")
     (OUT / "index.html").write_text("".join(H), encoding="utf-8")
+
+
+def item_html(it: dict) -> str:
+    """One table: its id, its badge, the crop, and the parse or the reason."""
+    v = it["verdict"]
+    H = [f"<div class='item' id='{it['tid']}'><div class='hd'>"
+         # `user-select:all` means ONE CLICK selects the whole id, so Ctrl+C
+         # works with no scripting at all. The click handler also puts it on
+         # the clipboard where the browser allows it, which a file:// page
+         # sometimes does not, hence the selection as the real mechanism and
+         # the copy as a convenience.
+         f"<span class='tid' data-id='{it['tid']}' "
+         f"title='click to copy'>{it['tid']}</span>"
+         f"<a class='anch' href='#{it['tid']}' title='link to this table'>#</a>"
+         f"<span class='tag {v}'>{v}</span>"
+         f"<span class='lbl'>{html.escape(it.get('table_label') or '?')}</span>"
+         f"<span class='meta'>page {it['pdf_page']}</span>"
+         + (f"<a class='pdf' href=\"{it['pdf_url']}#page={it['pdf_page']}\""
+            f" target='_blank' title='{html.escape(it['pdf_name'])}'>"
+            f"open the PDF &#8599;</a>" if it.get("pdf_url") else "")]
+    if v in ("accepted", "approved"):
+        H.append(f"<span class='meta'>{html.escape(it.get('dataset') or '?')}"
+                 + (f" &middot; version {it['dataset_version_id']}"
+                    if it.get("dataset_version_id") else " &middot; version not stated")
+                 + f" &middot; methods in {it['axis']}, metric in {it['metric_axis']}"
+                 + f" &middot; unit {it.get('unit')}</span>")
+    H.append("</div>")
+    if it.get("caption"):
+        H.append(f"<div class='cap'>{html.escape(it['caption'][:400])}</div>")
+    H.append("<div class='pair'><div class='panel'><h3>Printed in the paper</h3>")
+    H.append(f"<img src='{it['img']}' alt='table crop'>" if it.get("img")
+             else "<div class='nope'>no crop could be rendered</div>")
+    H.append("</div><div class='panel'>")
+    if v in ("accepted", "approved"):
+        H.append("<h3>What the miner read</h3>" + grid_html(it))
+        if it.get("basis"):
+            b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
+                          for k, x in it["basis"].items())
+            H.append(f"<div class='cap' style='margin-top:8px'>basis &mdash; {b}</div>")
+    else:
+        H.append("<h3>Why it was refused</h3>"
+                 f"<div class='why'>{html.escape(it.get('reason') or '')}</div>")
+    H.append("</div></div></div>")
+    return "".join(H)
 
 
 if __name__ == "__main__":

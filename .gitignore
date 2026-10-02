@@ -40,3 +40,9 @@ dataset_candidates.csv
 # Comparison-table worksheet from build_paper_comparisons.py, same treatment
 # as the other builder audit CSVs: it is a review artifact, not data.
 paper_comparison_audit.csv
+
+# Proposals from build_table_structure.py and build_table_vlm.py, reviewed by
+# hand before anything is pasted into a registry. Same treatment as the other
+# builder audit CSVs.
+table_structure_candidates.csv
+table_vlm_candidates.csv
