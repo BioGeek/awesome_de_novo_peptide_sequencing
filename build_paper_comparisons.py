@@ -674,8 +674,36 @@ def header_model(rows: list[list[dict]], lo: int,
                                       # and it covers no column so it is not
                                       # header-like itself
 
+    # THE HEADER SITS TIGHT AGAINST ITS BODY, so a large vertical gap ends the
+    # walk however header-like the row above looks. Without this the walk
+    # reached the RUNNING PAGE HEADER of PLMNovo's page -- 'PLM-Aligned Spectra
+    # Embeddings for De Novo Peptide Sequencing 7' -- whose words are spread
+    # right across the table's width and so covered enough distinct columns to
+    # pass as a row of column headers. They were scattered into ten column
+    # headers, and the two that ended up carrying a metric word lost their
+    # subset and collided.
+    tops = [r[0]["top"] for r in rows if r]
+    gaps = sorted(b - a for a, b in zip(tops, tops[1:]) if b > a)
+    pitch = gaps[len(gaps) // 2] if gaps else 12.0
+
     taken = 0
     for i in range(lo - 1, floor - 1, -1):
+        # Measured against the LOCAL pitch, the spacing right at the table,
+        # not the page median: the header rows here are 4 to 8 pt apart while
+        # the page median is 12, so a 26 pt jump to the running page header
+        # cleared a page-median threshold and was taken as a header row.
+        # ONLY ONCE SOMETHING HAS BEEN COLLECTED. A page whose other column
+        # interleaves prose with the table gives irregular gaps on the way to
+        # the header, and breaking on the first of those cost two tables their
+        # headers entirely. By the time the running page header is reached the
+        # real header rows are already in hand, so the test is applied from
+        # there on.
+        if (own or span) and rows[i] and rows[i + 1]:
+            gap = rows[i + 1][0]["top"] - rows[i][0]["top"]
+            local = (rows[i + 2][0]["top"] - rows[i + 1][0]["top"]
+                     if i + 2 < len(rows) and rows[i + 2] else pitch)
+            if gap > 2.6 * max(local, 3.0):
+                break
         r = clipped(rows[i])
         if not r:
             taken += 1
@@ -736,6 +764,26 @@ def header_model(rows: list[list[dict]], lo: int,
             for k, q in enumerate(sorted(inside, key=lambda q: q["x0"])):
                 span[k].insert(0, q["text"])
         else:
+            # A PHRASE THAT FITS INSIDE ONE COLUMN IS THAT COLUMN'S HEADER, not
+            # a spanner over everything. PLMNovo's Table 2 puts 'Average' on
+            # the row that also carries the stub labels, alone, and a lone
+            # phrase was distributed to all ten columns by proximity -- which
+            # put 'Average' in the subset of every cell and left two columns
+            # with no header of their own, so they collided. A real spanner is
+            # WIDER than a column by construction.
+            own_wide = []
+            for q in list(inside):
+                k = assign(q, edges)
+                if k is not None and edges[k][0] - 1 <= q["x0"] and q["x1"] <= edges[k][1] + 1:
+                    own[k].insert(0, q["text"])
+                else:
+                    own_wide.append(q)
+            inside = own_wide
+            if not inside:
+                taken += 1
+                if taken >= max_rows:
+                    break
+                continue
             # Fewer phrases than columns, so each governs a GROUP. Prefer the
             # rules: a partial rule just below this row states its extent.
             band = [(t, x0, x1) for t, x0, x1 in (rules or [])
@@ -2308,7 +2356,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                           or level_of(head) else unsquash_label(head))
         else:
             head = col_head[k]
-            sp = " ".join(span.get(k, [])).strip()
+            # A SPAN SHARED BY EVERY COLUMN DISTINGUISHES NOTHING, so it is no
+            # part of a subset: 'Species' sits over all nine species columns
+            # and says only what the row of headers beneath it already says.
+            shared = {t for t in span.get(0, [])
+                      if all(t in (span.get(j) or []) for j in range(len(edges)))}
+            sp = " ".join(t for t in span.get(k, []) if t not in shared).strip()
             parts = [x for x in (sp, head)
                      if x and x != "?" and not metric_of(x) and not level_of(x)
                      and not any(rx.search(x) for rx, _ in DATASET_CUES)]
