@@ -389,18 +389,18 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         unders = {c for c in cells if pr.get(c) == "second"}
         if not bolds and not unders:
             continue                                   # unmarked: not an error
-        # ONE VALUE IS NOTHING TO RANK, so bolding it cannot be wrong. LIPNovo's
-        # Table 3 'Mean' group has its baseline row cut off at the block's edge
-        # and its Table 4 has no GraphNovo AUC ('-'), and both drew a footnote
-        # saying the paper "bolded LIPNovo" -- true, and correct.
+        # ONE VALUE IS NOTHING TO RANK, so bolding it cannot be wrong. (This
+        # was first introduced on a misreading: LIPNovo's Table 3 seemed to
+        # have a 'Mean' group of one value, but its species labels are centred
+        # on their pairs and the group was mis-assembled; read correctly, every
+        # group there has two values. The rule stands on its own.)
         if sum(1 for c in cells if _value(rec, c) is not None) < 2:
             # BUT A LONE VALUE THE PAPER BOLDED IS WORTH SAYING, where the
             # others are EXPLICITLY not run: LIPNovo's Table 4 bolds its own
             # AUC (0.707) and prints '-' for GraphNovo's. That is a lone value
-            # on the page, not one the parse lost -- which is the case the rule
-            # above exists for, and why the not-run marker is required: the
-            # Mean group of its Table 3 is one value only because the block
-            # ends before its baseline row.
+            # on the page, not one the parse lost -- and the not-run marker is
+            # required because a lone value can also mean the parse lost the
+            # rest, in which case a footnote about the paper would be false.
             if bolds and _absent_peers(rec, key):
                 notes.append(f"{' / '.join(x for x in (key[2], key[0], key[1]) if x and x != '?')}"
                              f": the original table bolded "

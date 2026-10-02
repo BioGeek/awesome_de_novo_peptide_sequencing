@@ -1692,6 +1692,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         body, dropped, ragged = [], 0, False
         multi = None
         pending: list[str] = []          # interstitial group-label words
+        pending_top: float | None = None   # where that label sits
         # WHERE THE DATA REALLY BEGINS, not where the first column's interval
         # is extrapolated to begin. `column_edges` tiles the intervals by
         # mirroring each column's right half-width, so the leftmost interval
@@ -1706,7 +1707,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         data_x0 = [w["x0"] for r in rows[lo:hi + 1] for w in r
                    if numeric(w["text"]) and assign(w, edges) == 0]
         label_right = max(edges[0][0], min(data_x0) - 1.0) if data_x0 else edges[0][0]
-        for r in rows[lo:hi + 1]:
+        for ri_abs, r in enumerate(rows[lo:hi + 1], start=lo):
             r = heal_fragments(r)
             cells: dict[int, dict] = {}
             for w in r:
@@ -1757,6 +1758,16 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 if k is not None and k in cells:
                     cells[k]["wrapped"] = True
             label = row_label(r, label_right)
+            # A LABEL SPLIT ONTO ITS OWN LINE. A row's label and its values can
+            # sit a few points apart and so arrive as two rows: LIPNovo's
+            # Table 3 has 'Baseline-dagger' 3.2 pt above its values, the line
+            # above the block, so the row came through bare and was dropped.
+            # An empty label takes a label-only line immediately above it.
+            if cells and not label.strip() and ri_abs > 0:
+                above = rows[ri_abs - 1]
+                if above and not any(numeric(w["text"]) for w in above) and \
+                        min(w["top"] for w in r) - min(w["top"] for w in above) <= 4.5:
+                    label = row_label(above, label_right)
             if cells and COUNT_ROW.search(label):
                 dropped += 1
                 continue
@@ -1799,6 +1810,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                          and w["x1"] >= edges[0][0] - 220]
                 if mine_ and row_kind(mine_) == "interstice":
                     pending.extend(w["text"] for w in mine_)
+                    pending_top = min(w["top"] for w in mine_)
                 continue
             if len(cells) != len(edges):
                 if missing and len(cells) + len(missing) >= len(edges):
@@ -1813,8 +1825,9 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 else:
                     ragged = True
             body.append({"label": label, "cells": cells, "extra": pending,
-                         "absent": absent})
-            pending = []
+                         "absent": absent, "top": min(w["top"] for w in r),
+                         "extra_top": pending_top})
+            pending, pending_top = [], None
         if multi:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": f"G4 multi-valued cell {multi!r}",
@@ -3066,7 +3079,8 @@ def subtable(tb, cols: list[int], name: str) -> dict:
         gone = {idx[k]: t for k, t in (r.get("absent") or {}).items() if k in idx}
         if cells or gone:
             body.append({"label": r["label"], "cells": cells, "absent": gone,
-                         "extra": list(r.get("extra") or [])})
+                         "extra": list(r.get("extra") or []),
+                         "top": r.get("top"), "extra_top": r.get("extra_top")})
     return {"edges": [tb["edges"][k] for k in cols],
             "own": {idx[k]: tb["own"][k] for k in cols if k in tb["own"]},
             "span": {idx[k]: tb["span"][k] for k in cols if k in tb["span"]},
@@ -3145,12 +3159,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # AN ABSENT LABEL IS NOT AN UNRESOLVED NAME. A row with no label at all is
     # a different failure from a row naming a method we cannot identify: the
     # first loses one measurement, the second would change which baselines the
-    # paper chose, which is what this guard protects. LIPNovo's Table 3 has
-    # one row whose label sits on a line of its own ABOVE the block, so it
-    # arrives bare while the other 17 rows read correctly, and the eight
-    # baseline rows that remain average to exactly the +5.3% its prose claims.
-    # So a bare row is dropped and COUNTED, and a named one still refuses the
-    # table.
+    # paper chose, which is what this guard protects. So a bare row is dropped
+    # and COUNTED, and a named one still refuses the table. (Its first case,
+    # LIPNovo's Table 3, turned out to have a label 3.2 pt above its values,
+    # which the body builder now recovers; the rule remains for a label that
+    # is genuinely absent.)
     if axis == "rows":
         bare = [i for i, v in resolved_axis.items()
                 if not v and not (tb["body"][i]["label"] or "").strip()]
@@ -3511,16 +3524,44 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # A ROW-GROUP LABEL THAT NAMES NO METRIC IS THE SUBSET, and it carries
     # DOWN the group. When the methods are the rows and the metrics are the
     # columns, the only thing left for a row-group label to be is the subset --
-    # a species, an enzyme. LIPNovo's Table 3 puts the species above each
-    # LIPNovo/Baseline pair, so without this its nine LIPNovo rows all claimed
-    # one measurement and G6 refused the table, correctly but for the wrong
-    # reason. The label applies until the next one, which is what "above its
-    # pair" means; a group label that DOES name a metric is the metric axis's
+    # a species, an enzyme. Without this LIPNovo's Table 3, which sets one
+    # species over each Baseline-dagger/LIPNovo pair, had all nine LIPNovo rows
+    # claim one measurement and G6 refused it. A label CENTRED between two rows
+    # belongs to both (see below); otherwise a label applies to the rows under
+    # it until the next one. A group label that DOES name a metric is the
+    # metric axis's
     # business and is left to it.
     row_subset: dict[int, str] = {}
     if axis == "rows" and metric_axis == "columns":
+        # A LABEL CENTRED BETWEEN TWO ROWS BELONGS TO BOTH. A multirow label
+        # is set vertically in the middle of its group, so in the text layer it
+        # lands BETWEEN the group's rows, and attaching it to the row below
+        # paired every species with the wrong rows: LIPNovo's Table 3 prints
+        # each species over a Baseline-dagger row and a LIPNovo row, and the
+        # label-above reading gave each species the previous species'
+        # baseline. Measured, a centred label sits within a quarter of the gap
+        # of the midpoint of the rows either side. The prose confirms the
+        # pairing exactly: the Mean group then reads 0.751 against 0.804, the
+        # +5.3% the paper states, and +4.5% and +2.3% on the other two.
+        centred: dict[int, str] = {}
+        body_ = tb["body"]
+        for ri in range(1, len(body_)):
+            lt, tn, tp = (body_[ri].get("extra_top"), body_[ri].get("top"),
+                          body_[ri - 1].get("top"))
+            if lt is None or tn is None or tp is None or tn <= tp:
+                continue
+            if abs(lt - (tp + tn) / 2.0) <= 0.25 * (tn - tp):
+                words = [w for w in (body_[ri].get("extra") or [])
+                         if isinstance(w, str) and sum(c.isalpha() for c in w) >= 2
+                         and not prosey(w)]
+                txt = unsquash_label(" ".join(words)).strip()
+                if txt and not metric_of(txt) and not level_of(txt):
+                    centred[ri - 1] = centred[ri] = txt
         cur = ""
         for ri in range(len(tb["body"])):
+            if centred:
+                row_subset[ri] = centred.get(ri, "")
+                continue
             # ONLY THE INTERSTITIAL LABEL, and only its words. Taking every
             # leftover set the subset from two things that are not group
             # labels at all: the residue of resolving 'Baseline†' (the word

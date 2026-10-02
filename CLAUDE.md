@@ -1749,9 +1749,10 @@ the plain row's underline, at y 205.0, is in the NEXT column, under its
 amino-acid recall.
 
 Three things are not differences: an unmarked measurement, a measurement
-holding a single value (nothing to rank -- LIPNovo's Table 3 'Mean' group,
-whose baseline row falls outside the block, drew six false footnotes before
-this), and missing underlines in a table that never underlines. Measured over
+holding a single value (nothing to rank), and missing underlines in a table
+that never underlines. A lone value the paper bolded is footnoted only where
+the others are explicitly not run, as in LIPNovo's Table 4, where GraphNovo's
+AUC is '-'. Measured over
 the whole library: 11 footnotes -- six on DiffuNovo's best-competitor
 underlines, one on the Tomato cell, and four on ties marked in part.
 
@@ -1779,9 +1780,21 @@ all nine species; a relative reading matches none.
 
 **Ranking happens within a measurement, and the subset can be a ROW GROUP.**
 With methods down the side, a species can head the column (CrossNovo) or a
-group of rows (LIPNovo's leave-one-out Table 3, one species above each
-LIPNovo/Baseline pair). Grouping on the column alone ranked LIPNovo's nine
-species against each other as if they were one measurement.
+group of rows (LIPNovo's leave-one-out Table 3). Grouping on the column alone
+ranked LIPNovo's nine species against each other as if they were one
+measurement.
+
+**A row-group label is often CENTRED on its group**, and in the text layer it
+then lands between the group's rows. Attaching it to the row below, as a label
+set above its group would be, paired every LIPNovo species with the previous
+species' baseline -- and the parse still "verified": each LIPNovo row was
+right, one baseline row looked missing, and an average of the rest happened to
+match the prose's +5.3%. It did not match the other two figures the prose
+gives (+4.5%, +2.3%), and that mismatch was the tell that should have been
+taken. A label within a quarter of the gap of the midpoint between two rows
+now belongs to both; read that way every species has its pair, the printed
+Mean row is 0.751 against 0.804, and all three prose figures match exactly.
+**Check a parse against every number the prose gives, not the first one.**
 
 ## Finding papers the catalog is missing
 
