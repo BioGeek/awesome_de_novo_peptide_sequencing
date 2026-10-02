@@ -668,8 +668,41 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     # caption and both of its upper header rows, leaving a crop that began
     # mid-table.
     start = cap_start if 0 <= cap_start < lo else cap_end
-    first = (start if 0 <= start < lo and lo - start <= max_header + 3
-             else max(0, lo - 3))
+    # A LONG CAPTION ABOVE THE TABLE IS STILL ITS CAPTION. The row limit on the
+    # label exists for a caption far above its table with body prose between;
+    # it also refused publication 168's TABLE I, whose ten-line caption ends
+    # four rows above the data. What matters is where the caption ENDS.
+    cap_close = 0 <= cap_end < lo and lo - cap_end <= max_header + 1
+    if 0 <= start < lo and (lo - start <= max_header + 3 or cap_close):
+        first = start
+    else:
+        # A CAPTION BELOW ITS TABLE gives no upper bound, and a fixed three
+        # rows above the data reached into the body text over the header:
+        # CrossNovo's Table 2 crop opened on two lines of prose. Walk up from
+        # the data instead while the rows stay at the table's own spacing; a
+        # paragraph break above the header is the edge. Measured there: header
+        # to data 12.5 pt, prose to header 25.9 pt.
+        #
+        # MEASURED ON THE TABLE'S OWN WIDTH. On a two-column page the other
+        # column's lines interleave with the header rows, and the gaps between
+        # whole rows are mostly theirs: publication 139's table sits in the
+        # right column and the walk stopped on a left-column gap, cutting off
+        # its 'Unprocessed / Purified / Deconvoluted (%)' header. Rows with no
+        # text inside the table's x-range are stepped over.
+        tx0, tx1 = left_bound - 12, min(edges[-1][1] + 14, right_limit)
+        def own(i):
+            return [w for w in rows[i] if w["x1"] >= tx0 and w["x0"] <= tx1]
+        first, below = lo, min(w["top"] for w in own(lo) or rows[lo])
+        pitch = None
+        for i in range(lo - 1, max(-1, lo - max_header - 3), -1):
+            mine = own(i)
+            if not mine:
+                continue
+            gap = below - min(w["top"] for w in mine)
+            pitch = pitch or max(gap, 6.0)
+            if gap > max(1.7 * pitch, pitch + 7.0):
+                break
+            first, below = i, min(w["top"] for w in mine)
     last = max(hi, cap_end if cap_end > hi else hi)
     # MEASURE THE HEIGHT FROM WORDS INSIDE THE CROP, not from every word on
     # those rows. A journal's rotated margin watermark is one tall "word":
