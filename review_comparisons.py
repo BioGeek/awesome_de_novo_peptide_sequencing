@@ -137,6 +137,27 @@ def _norm(t: str) -> str:
     return re.sub(r"[^a-z0-9]", "", (t or "").lower()).replace("\u03c0", "pi")
 
 
+def _near_known(stems: list[str]) -> bool:
+    """A glued name within a typo of a catalog name counts as that name.
+
+    Papers misspell methods: TSARseqNovo's table prints 'pi-HelexiNovo' for
+    pi-HelixNovo, which no exact lookup knows, so it was split into
+    'Helexi Novo'. Measured over all 136 distinct printed labels on the page:
+    that misspelling scores 84 against 'helixnovo', and the one glued name
+    that SHOULD split, 'PeaksNovo', scores 75 against its nearest
+    ('pepnovo'); every species name scores 60 or below. 80 sits in that gap.
+    """
+    try:
+        from rapidfuzz import fuzz
+    except ImportError:
+        return False
+    for x in stems:
+        core = _norm(x)
+        if len(core) >= 6 and any(fuzz.ratio(core, k) >= 80 for k in KNOWN_NAMES):
+            return True
+    return False
+
+
 def unsquash_name(text: str) -> str:
     """A printed method label, with the spaces a PDF dropped put back.
 
@@ -153,21 +174,38 @@ def unsquash_name(text: str) -> str:
     # 'DeepNovo' and 'AdaNovo' are names in it and stay whole, 'PeaksNovo' is
     # not one and becomes 'Peaks Novo'.
     head = t.split(" (")[0]
+    # A LEADING 'vs' COMES OFF TOO, and goes back on with its space. A
+    # difference row prints 'vsCasaNovo', and with the prefix glued on the
+    # name looked unknown and came out 'vs Casa Novo'.
+    lead = ""
+    mv = re.match(r"(?i)^(vs\.?|versus)\s*(?=\S)", head)
+    if mv:
+        lead, head = mv.group(1) + " ", head[mv.end():]
+        t = t[mv.end():]
     # A FOOTNOTE MARKER AND A VARIANT SUFFIX COME OFF FIRST. 'PrimeNovo-CV*'
     # is not a catalog name as printed and split into 'Prime Novo-CV*', while
     # 'PrimeNovo' is one; the same for 'Casanovo-pretrained'.
     stems = [head]
     bare = re.sub(r"[*\u2217+\u2020\u2021]+$", "", head)
+    # A trailing CITATION and VERSION too: PLMNovo's table prints
+    # 'PointNovo[43]' and 'Casanovov4.2[33]', which looked unknown with the
+    # bracket on and came out 'Point Novo[43]'.
+    bare = re.sub(r"\s*\[\d+(?:\s*[,\u2013-]\s*\d+)*\]\s*$", "", bare)
     stems.append(bare)
+    stems.append(re.sub(r"\s*v?\d+(?:\.\d+)*$", "", bare))
     stems.append(re.sub(r"[-_][A-Za-z0-9]{1,12}$", "", bare))
-    if head and not any(_norm(x) in KNOWN_NAMES for x in stems if x):
+    # With no catalog loaded the split is OFF, which is the safe direction:
+    # the condition below is a negation, so an empty set would otherwise make
+    # every glued name look unknown and split 'DiffuNovo' into 'Diffu Novo'.
+    if head and KNOWN_NAMES and not any(_norm(x) in KNOWN_NAMES for x in stems if x) \
+            and not _near_known(stems):
         split = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", head)
         if _norm(split.replace(" ", "")) == _norm(head):
             t = split + t[len(head):]
     t = re.sub(r"(?i)(?<=[a-z])et\s*al\s*\.?", " et al.", t)  # 'Maetal.' -> 'Ma et al.'
     t = re.sub(r",(?=\S)", ", ", t)                           # space after a comma
     t = re.sub(r";(?=\S)", "; ", t)
-    return re.sub(r"\s+", " ", t).strip()
+    return re.sub(r"\s+", " ", lead + t).strip()
 
 
 def unsquash(text: str) -> str:
