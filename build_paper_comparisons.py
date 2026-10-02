@@ -166,7 +166,10 @@ URLISH = re.compile(r"(?i)^(?:https?://|www\.|doi:|10\.\d{4,}/)\S*$")
 # sits under seven percentages, and its 62,089 against their 64.6 tripped the
 # one-unit guard. Matched on the LABEL, and deliberately not on 'Total' alone,
 # which is a legitimate aggregate label elsewhere.
-COUNT_ROW = re.compile(r"(?i)^\s*#|\b(psms?|spectra|counts?|size|num\.?)\b")
+# ...and 'number' glued onto the end of a label: BiATNovo's 'Peptide recall
+# number' arrives as 'Peptiderecallnumber' and holds 31153, a count of
+# peptides, between rows of percentages.
+COUNT_ROW = re.compile(r"(?i)^\s*#|\b(psms?|spectra|counts?|size|num\.?)\b|number\b")
 NOT_RUN = {"-", "–", "—", "n/a", "na", "--", "nan", "none", "x"}
 
 CAPTION = re.compile(r"(?i)\b(Tab(?:le|\.)\s*(?:S?\d{1,2}|[IVX]{1,4}))\s*(?:[.:]|\||–|—)?\s*(.{0,300})", re.S)
@@ -239,7 +242,10 @@ METRIC_WORDS = [
 LEVEL_WORDS = [
     (re.compile(r"(?i)amino[- ]?acid|\bamino\b|\bAA\b|residue[- ]level"), "amino acid"),
     (re.compile(r"(?i)peptide|\bpep\b|\bpept\.|full[- ]sequence"), "peptide"),
-    (re.compile(r"(?i)\bPTM\b|modification"), "ptm"),
+    # 'PTMs' and the glued 'PTMsprecision' too: AdaNovo heads its PTM table
+    # 'PTMs precision', which the old '\bPTM\b' missed, leaving only the
+    # caption's "amino acids" to supply a level -- the wrong one.
+    (re.compile(r"(?i)(?<![a-z])PTMs?(?![a-rt-z])|modification"), "ptm"),
     (re.compile(r"(?i)spectr(?:um|a)[- ]level"), "spectrum"),
 ]
 
@@ -1606,7 +1612,7 @@ def footnote_text(rows: list[list[dict]], hi: int, fine: list[dict] | None,
     return assemble_lines(band)
 
 
-def extract(page) -> tuple[list[dict], list[dict], int]:
+def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], int]:
     """Parse every table on a page.
 
     Returns (tables, vetoed, uncaptioned). Each is per BLOCK, because a page
@@ -1679,7 +1685,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                           cap_start=(_pair[0] if _pair else -1),
                           right_limit=lim_hi)
         try:
-            caption_verdict(caption)
+            if (pub_id, (table_label or "").strip()) not in CAPTION_VETO_OVERRIDE:
+                caption_verdict(caption)
         except Reject as exc:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": str(exc), "bbox": bbox, "page": page.page_number})
@@ -2399,6 +2406,18 @@ def find_basis(text: str, method: str) -> tuple[str, str | None, bool]:
     return "unclear", None, False
 
 
+# A CAPTION VETO OVERRULED FOR ONE TABLE, where the reviewer has read it and
+# the caption's wording misleads. Keyed on (publication, printed label); every
+# entry says why. The structural ablation test still applies downstream.
+CAPTION_VETO_OVERRIDE: dict[tuple[int, str], str] = {
+    # AdaNovo, Table 3, captioned "Ablations on amino acid-level and
+    # peptide-level adaptive training strategies". Its rows are Casanovo and
+    # AdaNovo variants, so it compares AdaNovo against Casanovo on the Human
+    # test set as well as ablating; the reviewer asked for it to be included.
+    (32, "Table3"): "compares against Casanovo as well as ablating",
+}
+
+
 def caption_verdict(caption: str) -> None:
     """Apply the two caption VETOES. There is deliberately no positive test.
 
@@ -2549,7 +2568,7 @@ def main() -> int:
                     "paper_vocabulary": "|".join(
                         sorted(n for vs in vocab.values() for _, n in vs)),
                 })
-                tables, vetoed, uncap = extract(page)
+                tables, vetoed, uncap = extract(page, pub["id"])
                 tally["block: uncaptioned, treated as a figure"] += uncap
                 for v in vetoed:
                     tally[f"rejected: {v['reason'].split('(')[0].strip()}"] += 1
@@ -2652,6 +2671,12 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     # DiffNovo, Tables 1 and 2. The header rows are shredded: 'Cascadia' sits a
     # row above its group and 'DeepNovo-DIAPepNet' arrives as one token, so no
     # reading of the page recovers which column is which.
+    # BiATNovo, Table 2. Its whole method header is ONE glued token,
+    # 'DeepNovo-DIABiATNovoDeepNovo-DIABiATNovoDeepNovo-DIAPepNetBiATNovo',
+    # under 'OC Dataset | UTI Dataset | Plasma Dataset'; PepNet is run on
+    # plasma only.
+    (45, "Table 2"): ["DeepNovo-DIA", "BiATNovo", "DeepNovo-DIA", "BiATNovo",
+                      "DeepNovo-DIA", "PepNet", "BiATNovo"],
     (13, "Table 1"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia",
                       "DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
     (13, "Table 2"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
@@ -2680,6 +2705,11 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # (Yilmaz et al., 2024), which the reviewer confirmed against the paper.
     (17, "peaks"): ("PEAKS", None),
     (17, "baseline"): ("Casanovo", None),
+    # AdaNovo, Table 5. '+Re-weight' and '+Focal loss' are alternative
+    # training methods APPLIED TO CASANOVO, which the prose states: "both
+    # AdaNovo and the first alternative can help improve Casanovo's ability".
+    (32, "reweight"): ("Casanovo", "re-weight"),
+    (32, "focalloss"): ("Casanovo", "focal loss"),
     # TSARseqNovo. Its table misspells pi-HelixNovo as 'pi-HelexiNovo'.
     (18, "pihelexinovo"): ("\u03c0-HelixNovo", None),
 }
@@ -2766,6 +2796,10 @@ def apply_difference_table(tb: dict, pub_id) -> None:
 #
 # Without this the two AspN columns are one measurement, which G6 catches.
 COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
+    # BiATNovo, Table 2: the datasets over its columns (see SPANNER_OVERRIDE).
+    (45, "Table 2"): ["OC", "OC", "UTI", "UTI", "Plasma", "Plasma", "Plasma"],
+    # AdaNovo, Table 3: every number is on the Human test set, per its caption.
+    (32, "Table3"): ["Human", "Human", "Human"],
     # CrossNovo, Table 6, WIgG1-Mouse: HC over AspN/Chymotrypsin/Trypsin,
     # LC over AspN, then Average.
     (9, "Table6"): ["HC AspN", "HC Chymotrypsin", "HC Trypsin",
@@ -2833,6 +2867,10 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # That is DeepNovo-DIA's own protocol, which states the same 90/5/5 and
     # "did not share common peptides". Whether it is the same DRAW is not
     # stated -- "randomly" suggests a fresh one -- so no version is asserted.
+    # BiATNovo, Table 2: OC, UTI and plasma are the three DIA datasets of
+    # MSV000082368, the DeepNovo-DIA deposit.
+    (45, "Table 2"): ("De novo sequencing of DIA data",
+                      "MSV000082368: OC, UTI and plasma"),
     (30, "TABLE I"): ("De novo sequencing of DIA data",
                       "MSV000082368: UTI, OC and plasma (206,477 / 203,780 / "
                       "1,097,400 spectra), each split randomly 0.9 / 0.05 / 0.05 "
@@ -3235,6 +3273,20 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # table had been getting its metric only because the caption used to run
     # on into the header. Clean captions removed the accident.
     ctx_extra = " ".join([tb.get("header_raw") or "", tb["caption"], tb["stub"]])
+    # ...AND EACH SCOPE IS ASKED ON ITS OWN, header first. Joining them made the
+    # answer depend on the ORDER OF THE PATTERNS rather than on which text
+    # said it: AdaNovo's Table 2 heads its columns 'PTMs precision' and
+    # captions itself "...identifying amino acids with PTMs", and since the
+    # amino-acid pattern is tried before the PTM one, the caption won and the
+    # table was recorded as amino-acid precision.
+    _scopes = [tb.get("header_raw") or "", tb["caption"], tb["stub"]]
+
+    def scoped(fn):
+        for sc in _scopes:
+            v = fn(sc) if sc else None
+            if v:
+                return v
+        return None
     subsets = {}
 
     def along_columns():
@@ -3242,7 +3294,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         for k in range(len(edges)):
             ctx = " ".join(span.get(k, [])) + " " + col_head[k]
             metric = metric_of(ctx)
-            level = level_of(ctx) or level_of(ctx_extra)
+            level = level_of(ctx) or scoped(level_of)
             if not metric or not level:
                 return None
             out[k] = (metric, level)
@@ -3314,13 +3366,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             return None
         for si, seg in enumerate(segs):
             ctx = texts[si]
-            if not (metric_of(ctx) or level_of(ctx)):
-                # A segment with no label of its own: the table states one
-                # metric for all of them, so fall back to the caption.
-                ctx = ctx + " " + ctx_extra
+            # A segment with no label of its own: the table states one metric
+            # for all of them, which comes from the scopes in order.
             for i in seg:
-                metric = metric_of(ctx) or metric_of(ctx_extra)
-                level = level_of(ctx) or level_of(ctx_extra)
+                metric = metric_of(ctx) or scoped(metric_of)
+                level = level_of(ctx) or scoped(level_of)
                 if not metric or not level:
                     return None
                 out[i] = (metric, level)
@@ -3367,14 +3417,14 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         # the caption gave every column the level that happened to match
         # first, which collapsed the two halves into one measurement and
         # tripped G6. The metric is global here; the level is not.
-        metric = metric_of(ctx_extra)
+        metric = scoped(metric_of)
         if not metric:
             raise Reject(f"M1 no metric on either axis or in the caption; "
                          f"headers {col_head}")
         found = {}
         for k in range(len(edges)):
             ctx = " ".join(span.get(k, [])) + " " + col_head[k]
-            level = level_of(ctx) or level_of(ctx_extra)
+            level = level_of(ctx) or scoped(level_of)
             if not level:
                 # Distinguished from M1 on purpose: the metric was found and
                 # only the level is missing, a different thing to go and fix.

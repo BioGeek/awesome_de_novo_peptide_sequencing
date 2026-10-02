@@ -216,6 +216,9 @@ def unsquash(text: str) -> str:
     bacteria', cannot be recovered and is shown as the page has it.
     """
     text = text or ""
+    # 'M.mazei' -> 'M. mazei': an abbreviated genus keeps its space. The miner
+    # already does this for subsets; row labels came through raw.
+    text = re.sub(r"\b([A-Z])\.(?=[a-z])", r"\1. ", text)
     text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
     return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
 
@@ -740,7 +743,7 @@ def main() -> int:
             for pno in cands:
                 page = pdf.pages[pno]
                 near = "\n".join(pages_text[max(0, pno - 1):pno + 2])
-                tables, vetoed, _ = B.extract(page)
+                tables, vetoed, _ = B.extract(page, pub["id"])
                 found: list[dict] = []
                 for v in vetoed:
                     found.append({**v, "verdict": "rejected"})
