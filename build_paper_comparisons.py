@@ -680,6 +680,22 @@ def header_model(rows: list[list[dict]], lo: int,
     return own, span, " ".join(stub).strip(), ambiguous - grouped
 
 
+def unsquash_label(text: str) -> str:
+    """Put the spaces back into a row or column LABEL for display and storage.
+
+    A PDF producer that drops spaces turns 'Apis Mellifera' into
+    'ApisMellifera', and a subset is read straight off the page, so the squash
+    survives into the data. desquash() recovers it at the camelCase boundary.
+
+    Applied ONLY to subset labels, never to a method name: 'pNovo' would become
+    'p Novo'. And a label squashed with no case change, such as the printed
+    'Clambacteria' for 'Clam bacteria', cannot be recovered this way and is
+    left as the page has it.
+    """
+    out = desquash(text)
+    return re.sub(r"\s+", " ", out).strip()
+
+
 def desquash(text: str) -> str:
     """Re-insert the spaces a PDF producer dropped, at camelCase boundaries.
 
@@ -1197,14 +1213,27 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
                 raise Reject(f"D1 {hint!r} maps to version {pinned!r} of "
                              f"{name!r}, which is absent")
             return did, name, got[0], hint
-        for rx, version in VERSION_LEXICON.get(name, []):
-            for scope in (caption, near):
-                m = rx.search(scope)
-                if m:
-                    got = con.execute(
-                        "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
-                        (did, version)).fetchone()
-                    return did, name, (got[0] if got else None), m.group(0)
+        # THE CAPTION OUTRANKS THE PROSE HERE TOO, and getting the loop order
+        # wrong was a silent misattribution: iterating the lexicon outer and
+        # the scopes inner let the NEXT table's caption, which is in `near` on
+        # the same page, match the revised-benchmark pattern before this
+        # table's own caption was tried against the original one. CrossNovo's
+        # Table 1 says '9-species-v1' and came back as v2. Each scope is
+        # resolved to exhaustion before the next is consulted, exactly as in
+        # the caption path below.
+        for scope in (caption, near):
+            hits = [(m.group(0), v) for rx, v in VERSION_LEXICON.get(name, [])
+                    if (m := rx.search(scope))]
+            versions = {v for _, v in hits}
+            if len(versions) > 1:
+                raise Reject(f"D3 {'caption' if scope is caption else 'prose'} "
+                             f"names several versions of {name}: {sorted(versions)}")
+            if versions:
+                printed, version = hits[0]
+                got = con.execute(
+                    "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
+                    (did, version)).fetchone()
+                return did, name, (got[0] if got else None), printed
         return did, name, None, None
     found: list[tuple[re.Pattern, str]] = []
     for scope in (caption, near):
@@ -1492,19 +1521,24 @@ def resolve_in_label(label: str, vocab, index, subject, pub_id=None):
     """
     toks = [t for t in re.split(r"\s+", label.strip()) if t]
     if not toks:
-        return None, []
+        return None, [], ""
     for width in range(len(toks), 0, -1):
         for start in range(len(toks) - width, -1, -1):
             cand = " ".join(toks[start:start + width])
             if norm(cand) in SELF_WORDS:
                 if subject:
                     return (subject["id"], subject["name"], None), \
-                           toks[:start] + toks[start + width:]
+                           toks[:start] + toks[start + width:], cand
                 continue
             hit = try_resolve(cand, vocab, index, pub_id)
             if hit:
-                return hit, toks[:start] + toks[start + width:]
-    return None, toks
+                # The MATCHED SUBSTRING is returned too, so a display can show
+                # what the paper calls the method rather than the whole row
+                # label. CrossNovo's tables carry an 'Architect' column of
+                # DB / NAT / AT values, and the label reads 'DB Peaks' while
+                # the method is 'Peaks'.
+                return hit, toks[:start] + toks[start + width:], cand
+    return None, toks, ""
 
 
 # WHERE THE PAGE CANNOT SAY WHICH COLUMN BELONGS TO WHICH METHOD, A PERSON
@@ -1546,6 +1580,28 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # of it rather than a third-party baseline.
     (4, "base"): ("Pairwise", "base"),
     (4, "pa"): ("Pairwise", None),
+}
+
+
+# WHAT EACH COLUMN IS SCORED ON, where a two-level column header cannot be
+# read off the page. CrossNovo's antibody appendix puts the chain on one row
+# ('HC  LC'), the enzyme on the next ('AspN Chymotrypsin Trypsin AspN') and an
+# 'Average' column header a row above that, so two columns are both headed
+# 'AspN' and are distinguished only by which chain group they fall in. The
+# chain row is too sparse to assign by position and its page has no cmidrule
+# stating the extents, so the grouping is read off the paper by a person.
+#
+# Without this the two AspN columns are one measurement, which G6 catches.
+COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
+    # CrossNovo, Table 6, WIgG1-Mouse: HC over AspN/Chymotrypsin/Trypsin,
+    # LC over AspN, then Average.
+    (9, "Table6"): ["HC AspN", "HC Chymotrypsin", "HC Trypsin",
+                    "LC AspN", "Average"],
+    # CrossNovo, Table 7, IgG1-Human: HC over six enzymes, LC over two,
+    # then Average.
+    (9, "Table7"): ["HC AspN", "HC Chymo.", "HC GluC", "HC LysC",
+                    "HC Proteinase", "HC Trypsin",
+                    "LC AspN", "LC LysC", "Average"],
 }
 
 
@@ -1610,7 +1666,13 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
     # no methods at all and rejected the most-compared-against paper in the
     # field. The column's own header is tried first, so a table of the
     # ContraNovo shape is unaffected.
-    printed_of: dict = {}            # column/row -> the label as printed
+    # ONE DICT PER AXIS. A single dict keyed by index was written by both the
+    # column loop and the row loop, and since the row loop runs second its
+    # labels overwrote the columns'. Publication 4 has BASE | PA | CASANOVO
+    # across the top and species down the side, and the review page showed its
+    # methods as 'ApisMellifera, BacillusSubtilis, CandidatusEndoloripes'.
+    printed_cols: dict = {}
+    printed_rows: dict = {}
     cols, method_source = {}, "own"
     amb = tb.get("span_ambiguous") or set()
     span_blocked = False
@@ -1626,7 +1688,7 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         got = {}
         for k in range(n):
             head = " ".join(tb[source].get(k, [])).strip()
-            printed_of[k] = head
+            printed_cols[k] = head
             if norm(head) in SELF_WORDS and subject:
                 got[k] = (subject["id"], subject["name"], None)
             else:
@@ -1638,18 +1700,19 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
             cols = got
     rows, leftovers = {}, {}
     for i, r in enumerate(tb["body"]):
-        printed_of[i] = r["label"]
-        hit, rest = resolve_in_label(r["label"], vocab, index, subject, pub_id)
+        hit, rest, matched = resolve_in_label(
+            r["label"], vocab, index, subject, pub_id)
         rows[i] = hit
+        printed_rows[i] = matched or r["label"]
         # Words from an interstitial label row count as this row's leftovers:
         # they are the group label, just set on a line of their own.
         leftovers[i] = rest + list(r.get("extra") or [])
     n_col = len({(v[0], v[2] or "") for v in cols.values() if v})
     n_row = len({(v[0], v[2] or "") for v in rows.values() if v})
     if n_col >= 2 and n_col >= n_row:
-        return "columns", cols, {}, printed_of
+        return "columns", cols, {}, printed_cols
     if n_row >= 2:
-        return "rows", rows, leftovers, printed_of
+        return "rows", rows, leftovers, printed_rows
     if span_blocked:
         raise Reject(f"N1 the method names are in a spanner whose grouping no "
                      f"rule states, so columns {sorted(amb)} are undecidable; "
@@ -1829,63 +1892,55 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             return " ".join(leftovers.get(i, []))
         return tb["body"][i]["label"] or ""
 
-    def row_groups():
-        """Cluster the row-group label words, which arrive scattered.
+    def segments() -> list[list[int]]:
+        """Split the rows where the method list restarts.
 
-        A group label is set across several row labels ('Amino' / 'Acid' /
-        'Precision' over eleven rows) or on interstitial lines of its own.
+        A stacked table lists the same methods once per metric, so a repeat is
+        an unambiguous boundary and needs no typography. Nearest-centre is
+        wrong here: the group label is set near the TOP of its run rather than
+        at its centre.
         """
-        groups: list[dict] = []
-        for i in range(len(tb["body"])):
-            text = row_ctx(i)
-            if not (metric_of(text) or level_of(text)):
-                continue
-            if groups and i - groups[-1]["last"] <= 2:
-                groups[-1]["text"] += " " + text
-                groups[-1]["rows"].append(i)
-                groups[-1]["last"] = i
-            else:
-                groups.append({"text": text, "rows": [i], "last": i})
-        return groups
-
-    def along_rows():
-        groups = row_groups()
-        # SEGMENT BY WHERE THE METHOD LIST RESTARTS, and pair the segments with
-        # the group labels in order. Nearest-centre, which is right for a
-        # column spanner, is wrong here: a stacked table lists the same ten
-        # methods twice and sets each group label near the TOP of its run, so
-        # the midpoint fell inside the first group and the last two of its rows
-        # were read as the second metric. A repeat of a method is an
-        # unambiguous boundary and needs no typography at all.
-        segments: list[list[int]] = []
+        out: list[list[int]] = []
         current: set = set()
         for i in range(len(tb["body"])):
             key = (methods[i][0], methods[i][2] or "") if i in methods else None
             if key and key in current:
-                segments.append([])
+                out.append([])
                 current = set()
-            if not segments:
-                segments.append([])
-            segments[-1].append(i)
+            if not out:
+                out.append([])
+            out[-1].append(i)
             if key:
                 current.add(key)
-        seg_of = {i: si for si, seg in enumerate(segments) for i in seg}
-        paired_groups = (dict(enumerate(groups))
-                         if len(segments) == len(groups) else None)
+        return out
+
+    def along_rows():
+        """One metric per SEGMENT, from the label words its rows carry.
+
+        The group label arrives scattered: 'Amino' / 'Acid' / 'Precision' down
+        three row labels, or on interstitial lines of its own between data
+        rows. Collecting it PER SEGMENT rather than by clustering adjacent
+        marker rows is what makes it correct: CrossNovo's appendix puts
+        'AminoAcid' and 'Precision' on rows 1 and 2 and 'Peptide' and 'Recall'
+        on rows 4 and 5, and a cluster that tolerates a two-row gap bridges
+        row 3 and swallows all four words into one group, which made every row
+        of the table claim amino-acid precision and tripped G6.
+        """
+        segs = segments()
         out = {}
-        for i in range(len(tb["body"])):
-            ctx = row_ctx(i)
-            if paired_groups is not None:
-                ctx += " " + paired_groups[seg_of[i]]["text"]
-            elif groups:
-                near_g = min(groups, key=lambda g: abs(
-                    sum(g["rows"]) / len(g["rows"]) - i))
-                ctx += " " + near_g["text"]
-            metric = metric_of(ctx)
-            level = level_of(ctx) or level_of(ctx_extra)
-            if not metric or not level:
-                return None
-            out[i] = (metric, level)
+        texts = [" ".join(row_ctx(i) for i in seg).strip() for seg in segs]
+        for si, seg in enumerate(segs):
+            ctx = texts[si]
+            if not (metric_of(ctx) or level_of(ctx)):
+                # A segment with no label of its own: the table states one
+                # metric for all of them, so fall back to the caption.
+                ctx = ctx + " " + ctx_extra
+            for i in seg:
+                metric = metric_of(ctx) or metric_of(ctx_extra)
+                level = level_of(ctx) or level_of(ctx_extra)
+                if not metric or not level:
+                    return None
+                out[i] = (metric, level)
         return out
 
     found = along_columns()
@@ -1933,15 +1988,22 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # as the header: CrossNovo's antibody tables print 'AspN' twice, once per
     # chain, distinguished only by the spanner above it, and keying on the
     # header alone made the two columns one measurement.
+    sub_over = COLUMN_SUBSET_OVERRIDE.get(
+        (base.get("publication_id"), (tb["table_label"] or "").strip()))
+    if sub_over and len(sub_over) != len(edges):
+        raise Reject(f"D3 COLUMN_SUBSET_OVERRIDE lists {len(sub_over)} columns, "
+                     f"the table has {len(edges)}")
     for k in range(len(edges)):
-        if axis == "columns":
+        if sub_over:
+            subsets[k] = sub_over[k]
+        elif axis == "columns":
             subsets[k] = ""
         else:
             head = col_head[k]
             sp = " ".join(span.get(k, [])).strip()
             parts = [x for x in (sp, head)
                      if x and x != "?" and not metric_of(x) and not level_of(x)]
-            subsets[k] = " ".join(parts)
+            subsets[k] = unsquash_label(" ".join(parts))
     base.update({"metrics_resolved": "|".join(metrics[j] for j in sorted(metrics)),
                  "levels": "|".join(levels[j] for j in sorted(levels)),
                  "reason": f"axis={axis} metric_axis={metric_axis}"})
@@ -1959,8 +2021,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         # a species, an enzyme. But if the row label is what NAMES THE METRIC,
         # it is not also a subset, or every cell would claim a subset of
         # 'Peptide precision'.
-        sub = ("" if (axis == "columns" and metric_axis == "rows")
-               else tb["body"][ri]["label"] if axis == "columns" else subsets[k])
+        sub = (subsets[k] if sub_over
+               else "" if (axis == "columns" and metric_axis == "rows")
+               else unsquash_label(tb["body"][ri]["label"]) if axis == "columns"
+               else subsets[k])
         return m, metrics[j], levels[j], sub
 
     seen = set()
@@ -2052,7 +2116,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             tag = (f"{metrics[ri][:4]}/{levels[ri][:3]} {methods[ri][1]}"
                    if metric_axis == "rows" and ri in methods
                    else (methods[ri][1] if axis == "rows" and ri in methods
-                         else r["label"]))[:21]
+                         else unsquash_label(r["label"])))[:21]
             print(f"    {tag:22}" + "".join(
                 f"{r['cells'][k]['printed'][:10]:>11}" if k in r["cells"] else f"{'':>11}"
                 for k in range(len(edges))))

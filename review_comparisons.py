@@ -34,6 +34,7 @@ import pathlib
 import subprocess
 import sys
 import json
+import re
 import urllib.parse
 
 import build_pdf_library as bpl
@@ -47,6 +48,10 @@ CACHE = OUT / ".pages"
 # encodes the block's order on its page and that order can shift when the
 # miner improves; a stale approval is then reported rather than silently
 # carried over.
+# Two states, both meaning "a person has read this and is done with it":
+# APPROVED for a parse confirmed correct, DISMISSED for a refusal confirmed to
+# be the right refusal. Both collapse, because the page is a worklist and the
+# point is to shrink it.
 APPROVED = OUT / "approved.json"
 DPI = 150
 
@@ -92,6 +97,18 @@ def render(pdf_path: pathlib.Path, page_no: int, bbox, dest: pathlib.Path) -> bo
     return True
 
 
+def unsquash(text: str) -> str:
+    """'ApisMellifera' -> 'Apis Mellifera', for display.
+
+    The same camelCase split the miner applies to a subset before storing it.
+    A label squashed with no case change, such as 'Clambacteria' for 'Clam
+    bacteria', cannot be recovered and is shown as the page has it.
+    """
+    text = text or ""
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
+
+
 def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
@@ -128,7 +145,8 @@ def grid_html(rec: dict) -> str:
             f"<td class='dim'>{mcell(k if maxis == 'columns' else 0)}</td>"
             for k in range(ncol)) + "</tr>")
         for r in rec["body"]:
-            out.append(f"<tr><th>{html.escape(r['label'] or '-')}</th>" + "".join(
+            out.append(f"<tr><th>{html.escape(unsquash(r['label']) or '-')}</th>"
+                       + "".join(
                 f"<td>{html.escape(r['cells'].get(k, ''))}</td>" for k in range(ncol))
                 + "</tr>")
     else:
@@ -139,7 +157,8 @@ def grid_html(rec: dict) -> str:
                                 if maxis == "columns" else "")
                              + "</th>" for k in range(ncol)) + "</tr>")
         for i, r in enumerate(rec["body"]):
-            label = mname(i) if rec["methods"].get(i) else html.escape(r["label"] or "-")
+            label = (mname(i) if rec["methods"].get(i)
+                     else html.escape(unsquash(r["label"]) or "-"))
             out.append(f"<tr><th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(f"<td>{html.escape(r['cells'].get(k, ''))}</td>"
@@ -154,8 +173,9 @@ def main() -> int:
     ap.add_argument("--ids", help="comma-separated publication ids")
     ap.add_argument("--rejected-only", action="store_true")
     ap.add_argument("--accepted-only", action="store_true")
-    ap.add_argument("--approve", help="comma-separated table ids to mark approved")
-    ap.add_argument("--unapprove", help="comma-separated table ids to un-mark")
+    ap.add_argument("--approve", help="comma-separated ids: the parse is correct")
+    ap.add_argument("--dismiss", help="comma-separated ids: the REFUSAL is correct")
+    ap.add_argument("--unapprove", help="comma-separated ids to un-mark either way")
     ap.add_argument("--keep-crops", action="store_true",
                     help="reuse the PNGs already rendered, for an HTML-only change")
     args = ap.parse_args()
@@ -186,9 +206,13 @@ def main() -> int:
             approved = json.loads(APPROVED.read_text())
         except Exception:
             print(f"  could not read {APPROVED.name}; starting empty")
+    today = __import__("datetime").date.today().isoformat()
     for tid in (args.approve or "").replace(" ", "").split(","):
         if tid:
-            approved.setdefault(tid, {})["on"] = __import__("datetime").date.today().isoformat()
+            approved.setdefault(tid, {}).update({"state": "approved", "on": today})
+    for tid in (args.dismiss or "").replace(" ", "").split(","):
+        if tid:
+            approved.setdefault(tid, {}).update({"state": "dismissed", "on": today})
     for tid in (args.unapprove or "").replace(" ", "").split(","):
         approved.pop(tid, None)
     if not args.keep_crops:
@@ -273,8 +297,18 @@ def main() -> int:
                                 "year": str(pub["publication_date"] or "")[:4],
                                 "img": name if ok else None,
                                 "pdf_page": rec.get("page") or (pno + 1)})
-                    if tid in approved and rec["verdict"] == "accepted":
-                        rec["verdict"] = "approved"
+                    seen_before = approved.get(tid)
+                    if seen_before:
+                        # An entry with no state predates the dismissed state
+                        # and meant approved.
+                        # NOT named `want`: that is the publication-id filter
+                        # in this same function, and shadowing it made every
+                        # paper fail an `int in str` test.
+                        state = seen_before.get("state", "approved")
+                        if state == "approved" and rec["verdict"] == "accepted":
+                            rec["verdict"] = "approved"
+                        elif state == "dismissed" and rec["verdict"] == "rejected":
+                            rec["verdict"] = "dismissed"
                     items.append(rec)
                     tally[rec["verdict"]] += 1
         print(f"  p{pub['id']:<4} {len([i for i in items if i['pub']==pub['id']]):>3} "
@@ -292,7 +326,7 @@ def main() -> int:
     APPROVED.write_text(json.dumps(approved, indent=1, sort_keys=True))
     write_html(items, tally, approved)
     print(f"\n  {tally['accepted']} accepted, {tally['approved']} approved, "
-          f"{tally['rejected']} rejected")
+          f"{tally['rejected']} rejected, {tally['dismissed']} dismissed")
     stale = [t for t in approved if t not in {i['tid'] for i in items}]
     if stale:
         print(f"  {len(stale)} approved id(s) no longer present: {', '.join(sorted(stale))}")
@@ -323,7 +357,9 @@ h2 small{color:var(--dim);font-weight:400}
 .hd{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
 .tag{font:600 11px/1.6 ui-monospace,monospace;padding:1px 7px;border-radius:9px;color:#fff}
 .tag.accepted{background:var(--ok)} .tag.rejected{background:var(--no)}
-.tag.approved{background:#1d4ed8}
+.tag.approved{background:#1d4ed8} .tag.dismissed{background:#6b6b63}
+details.appr.dismissed{border-color:#cfcfc6;background:#f6f6f3}
+details.appr.dismissed>summary{color:#5d5d55}
 details.appr{border:1px dashed #bcd0a8;background:#f4f9f0;border-radius:6px;
  padding:8px 12px;margin:14px 0}
 details.appr>summary{cursor:pointer;font-size:13px;color:#3f6b2c}
@@ -339,7 +375,7 @@ details.appr>summary{cursor:pointer;font-size:13px;color:#3f6b2c}
 .item:target{outline:3px solid #f0c000;outline-offset:6px;border-radius:4px}
 .toc{columns:3;font:12.5px/1.8 ui-monospace,monospace;margin:10px 0 0}
 .toc a{color:#2a4d8f;text-decoration:none} .toc a:hover{text-decoration:underline}
-.toc .r{color:var(--no)} .toc .a{color:var(--ok)} .toc .ok{color:#1d4ed8;font-weight:700}
+.toc .r{color:var(--no)} .toc .a{color:var(--ok)} .toc .ok{color:#1d4ed8;font-weight:700} .toc .dm{color:#8a8a80}
 .lbl{font-weight:600}
 .meta{color:var(--dim);font-size:12.5px}
 .cap{color:var(--dim);font-size:12.5px;margin:2px 0 8px;max-width:150ch}
@@ -388,7 +424,8 @@ document.addEventListener('click', function (e) {
              "<summary><strong>Index of every table id</strong> "
              "&mdash; green accepted, red refused</summary><div class='toc'>")
     for it in sorted(items, key=lambda i: (i["pub"], i["pdf_page"], i["tid"])):
-        cls = {"accepted": "a", "approved": "ok"}.get(it["verdict"], "r")
+        cls = {"accepted": "a", "approved": "ok", "dismissed": "dm"}.get(
+            it["verdict"], "r")
         H.append(f"<a class='{cls}' href='#{it['tid']}'>{it['tid']}</a> "
                  f"<span class='meta'>{html.escape((it.get('table_label') or '?')[:12])}</span><br>")
     H.append("</div></details>")
@@ -398,14 +435,16 @@ document.addEventListener('click', function (e) {
         # APPROVED TABLES COLLAPSE. They have been read and signed off, so they
         # are kept for reference and folded away rather than occupying the page
         # a reviewer is working down.
-        done = [i for i in group if i["verdict"] == "approved"]
-        group = [i for i in group if i["verdict"] != "approved"]
-        if done:
-            H.append(f"<details class='appr'><summary>{len(done)} approved "
-                     f"table(s) on this paper &mdash; click to show</summary>")
-            for it in done:
-                H.append(item_html(it))
-            H.append("</details>")
+        for state, word in (("approved", "approved"),
+                            ("dismissed", "confirmed as correctly refused")):
+            done = [i for i in group if i["verdict"] == state]
+            group = [i for i in group if i["verdict"] != state]
+            if done:
+                H.append(f"<details class='appr {state}'><summary>{len(done)} "
+                         f"{word} on this paper &mdash; click to show</summary>")
+                for it in done:
+                    H.append(item_html(it))
+                H.append("</details>")
         for it in group:
             H.append(item_html(it))
     H.append("</main></body></html>")
