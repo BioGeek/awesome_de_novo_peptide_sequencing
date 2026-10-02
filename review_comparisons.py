@@ -321,6 +321,8 @@ def main() -> int:
     ap.add_argument("--ids", help="comma-separated publication ids")
     ap.add_argument("--rejected-only", action="store_true")
     ap.add_argument("--accepted-only", action="store_true")
+    ap.add_argument("--recrop", action="store_true",
+                    help="re-render every crop, ignoring the cache")
     ap.add_argument("--approve", help="comma-separated ids: the parse is correct")
     ap.add_argument("--dismiss", help="comma-separated ids: the REFUSAL is correct")
     ap.add_argument("--unapprove", help="comma-separated ids to un-mark either way")
@@ -379,6 +381,21 @@ def main() -> int:
           JOIN publication_algorithm pa ON pa.publication_id = p.id AND pa.role='describes'
           JOIN algorithm a ON a.id = pa.algorithm_id
          WHERE a.kind = 'algorithm' ORDER BY p.id""").fetchall()
+
+    # A CROP IS RE-RENDERED ONLY IF IT MOVED. Every pass used to run pdftoppm
+    # over every page of every paper, which is almost all of the several
+    # minutes a re-render costs, and almost all of it is wasted: a change to
+    # one caption or one guard leaves every other table's picture identical.
+    # Each crop is keyed by the source file, its mtime, the page and the bbox,
+    # the key is recorded in the manifest, and a crop whose key is unchanged
+    # and whose file is still on disk is left alone.
+    prev_crops: dict = {}
+    if MANIFEST.exists():
+        try:
+            prev_crops = json.loads(MANIFEST.read_text())
+        except Exception:
+            prev_crops = {}
+    reused = rendered = 0
 
     items: list[dict] = []
     tally: collections.Counter = collections.Counter()
@@ -439,9 +456,27 @@ def main() -> int:
                     tid = f"p{pub['id']}-pg{pno + 1}-{n}"
                     name = f"{tid}.png"
                     dest = OUT / name
-                    ok = (True if args.keep_crops and dest.exists()
-                          else render(path, rec.get("page") or (pno + 1),
-                                      rec.get("bbox"), dest) or dest.exists())
+                    bb = rec.get("bbox") or []
+                    crop_key = "|".join([path.name, str(rec.get("page") or (pno + 1)),
+                                         f"{path.stat().st_mtime_ns}",
+                                         ",".join(f"{x:.1f}" for x in bb)])
+                    was = prev_crops.get(tid) or {}
+                    # A manifest written before this cache existed has no key.
+                    # Its crops were made by the run that wrote it, so they are
+                    # current and are trusted once; from then on the key
+                    # decides. --recrop overrides either way.
+                    fresh = dest.exists() and not args.recrop and (
+                        was.get("crop_key") == crop_key
+                        or ("crop_key" not in was and tid in prev_crops))
+                    if fresh:
+                        ok, reused = True, reused + 1
+                    elif args.keep_crops and dest.exists():
+                        ok, reused = True, reused + 1
+                    else:
+                        ok = render(path, rec.get("page") or (pno + 1),
+                                    rec.get("bbox"), dest) or dest.exists()
+                        rendered += 1
+                    rec["crop_key"] = crop_key
                     # A link straight to the PDF this crop came from, at the
                     # page it came from. Browsers' built-in viewers honour
                     # '#page=N', and the path needs quoting because the library
@@ -488,11 +523,13 @@ def main() -> int:
         {it["tid"]: {"publication_id": it["pub"], "pdf_page": it["pdf_page"],
                      "table_label": it.get("table_label") or "",
                      "verdict": it["verdict"],
+                     "crop_key": it.get("crop_key") or "",
                      "values": [c for r in (it.get("body") or [])
                                 for c in r["cells"].values()]}
          for it in items}, indent=1, sort_keys=True))
     write_html(items, tally, approved)
-    print(f"\n  {tally['accepted']} accepted, {tally['approved']} approved, "
+    print(f"\n  crops: {reused} reused, {rendered} rendered")
+    print(f"  {tally['accepted']} accepted, {tally['approved']} approved, "
           f"{tally['rejected']} rejected, {tally['dismissed']} dismissed")
     stale = [t for t in approved if t not in {i['tid'] for i in items}]
     if stale:

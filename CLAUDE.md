@@ -1700,6 +1700,36 @@ audit row rather than reimplementing the layout logic. `block_bbox()` is used
 only for the crop and never for parsing, and it is computed BEFORE the caption
 vetoes, because a refused table is exactly the case a human most needs to see.
 
+**A crop is re-rendered only if it MOVED.** Almost all of the several minutes a
+re-render costs is `pdftoppm`, and almost all of that is wasted: a change to
+one caption or one guard leaves every other table's picture identical. Each
+crop is keyed by the source file, its mtime, the page and the bbox; the key
+goes into `crops.json` and a crop whose key is unchanged and whose file is
+still on disk is left alone. The run prints `crops: N reused, M rendered`.
+`--recrop` forces the lot, and `--ids 9` is still the way to work on one paper.
+
+**Bold and underline are read off the PDF, not computed.** A comparison table's
+own emphasis says which result the authors call best, and deriving it from the
+values instead disagrees with the page whenever a paper counts its own variants
+as one method: DiffuNovo's Table 2 bolds DiffuNovo (MBR) per column and
+underlines π-HelixNovo, the best COMPETITOR, where a ranking underlines
+DiffuNovo (Logits). The underline is exact -- a thin rect spanning x
+355.0-377.4 under a word spanning 355.0-377.4 -- and bold is the face that is
+not the page's commonest numeric face, because LaTeX with Times renders
+`\textbf` as `NimbusRomNo9L-Medi`, which no `bold|black|heavy` pattern catches.
+The fonts come from a separate extraction pass: `extract_words` splits a word
+wherever an extra attribute changes, so asking for `fontname` in the parsing
+pass could move a cell into another column.
+
+**Where the printed marks disagree with the printed numbers, the page says so**
+rather than choosing. The two causes look identical and only a reader can tell
+them apart: a different convention (above), or an error in the paper.
+CrossNovo's Table 1 marks TWO cells bold in one measurement, peptide recall on
+Tomato, and underlines its own 0.695 below both -- and the odd-looking 0.732 is
+genuinely printed, since it reproduces that row's stated average of 0.530.
+Only bold is checked, because an underline convention varies legitimately and a
+second bold in one measurement does not.
+
 ## Finding papers the catalog is missing
 
 `build_candidates.py` answers "what should be in here that isn't", which the
