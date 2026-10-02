@@ -200,6 +200,40 @@ def numeric(tok: str) -> tuple[float, float | None] | None:
     return None
 
 
+LINE_NO = re.compile(r"^\d{1,4}$")
+
+
+def strip_line_numbers(words: list[dict]) -> list[dict]:
+    """Drop ICLR-style margin line numbers before anything else reads the page.
+
+    A conference preprint prints a line number every fifth line in the margin.
+    They are INTEGERS, so they parse as cells: one lands in its own row and
+    splits a table in two, and the next is prefixed onto a row label, giving
+    '327 Amino Deep.' and a row with one cell too many. On CrossNovo's ICLR
+    submission that made a correct 11-column table ragged, while the identical
+    table in the camera-ready version parsed cleanly.
+
+    Detection is per page and needs a RUN, not a single token: integers in a
+    narrow vertical band whose values increase down the page. Five or more is
+    line numbering; fewer is a column of small integers, which a real table may
+    legitimately have (charge states, spectrum counts).
+    """
+    bands: dict[int, list[dict]] = collections.defaultdict(list)
+    for w in words:
+        if LINE_NO.match(w["text"]):
+            bands[int(w["x0"] // 6)].append(w)
+    drop: set[int] = set()
+    for band in bands.values():
+        if len(band) < 5:
+            continue
+        seq = sorted(band, key=lambda w: w["top"])
+        vals = [int(w["text"]) for w in seq]
+        rising = sum(1 for a, b in zip(vals, vals[1:]) if b > a)
+        if rising >= len(vals) - 2:
+            drop.update(id(w) for w in seq)
+    return [w for w in words if id(w) not in drop] if drop else words
+
+
 def word_rows(words: list[dict], tol: float = 2.5) -> list[list[dict]]:
     """Cluster words into visual rows on `top`.
 
@@ -216,30 +250,57 @@ def word_rows(words: list[dict], tol: float = 2.5) -> list[list[dict]]:
     return [sorted(r, key=lambda w: w["x0"]) for r in rows]
 
 
-def data_blocks(rows: list[list[dict]], min_nums: int = 2) -> list[tuple[int, int]]:
-    """Find runs of consecutive rows that look like table data.
+def row_kind(row: list[dict]) -> str:
+    """'data', 'interstice' or 'other'.
 
-    A data row carries at least `min_nums` numeric tokens. One non-data row is
-    tolerated inside a block, because a table often has a rule or a continued
-    row label in the middle; two consecutive non-data rows end it.
+    An INTERSTICE is a short row with no numbers, which is what a row-group
+    label looks like when it is set on its own line between data rows:
+    CrossNovo's appendix tables put 'AminoAcid', 'Precision', 'Peptide' and
+    'Recall' on four such rows. Treated as a block boundary they cut one
+    8-row table into fragments, and the fragment below the header then had no
+    header at all, which is where 29 of the rejections came from.
     """
-    flags = [sum(1 for w in r if numeric(w["text"])) >= min_nums for r in rows]
-    blocks, i = [], 0
-    while i < len(flags):
-        if not flags[i]:
+    nums = sum(1 for w in row if numeric(w["text"]))
+    if nums >= 2:
+        return "data"
+    if nums == 0 and len(row) <= 3:
+        return "interstice"
+    return "other"
+
+
+def data_blocks(rows: list[list[dict]], min_rows: int = 2) -> list[tuple[int, int]]:
+    """Runs of rows that look like table data.
+
+    A block must hold at least `min_rows` data rows. One is almost always
+    prose: 'Plasma -- are summarized in Tables 1 and 2' yields two numeric
+    tokens on one line and was being offered as a two-column table, which then
+    collected a real caption by the pairing rule and was rejected as ragged.
+    Two consecutive numeric rows is a much rarer accident in running text.
+    """
+    kind = [row_kind(r) for r in rows]
+    blocks, i, n = [], 0, len(rows)
+    while i < n:
+        if kind[i] != "data":
             i += 1
             continue
-        j, gap = i, 0
-        while j + 1 < len(flags):
-            if flags[j + 1]:
-                j += 1
-                gap = 0
-            elif gap == 0 and j + 2 < len(flags) and flags[j + 2]:
-                j += 2
-                gap = 1
+        j = i
+        while True:
+            nxt = None
+            for k in range(j + 1, min(n, j + 4)):
+                if kind[k] == "data":
+                    nxt = k
+                    break
+            if nxt is None:
+                break
+            between = kind[j + 1:nxt]
+            # Any number of interstices may be skipped; at most one 'other',
+            # which covers a rule, a continued label or a stray prose line.
+            if all(b == "interstice" for b in between) or len(between) == 1:
+                j = nxt
             else:
                 break
-        blocks.append((i, j))
+        if sum(1 for k in kind[i:j + 1] if k == "data") >= min_rows:
+            blocks.append((i, j))
         i = j + 1
     return blocks
 
@@ -357,7 +418,8 @@ def row_label(toks: list[dict], first_edge: float) -> str:
 
 
 def header_model(rows: list[list[dict]], lo: int,
-                 edges: list[tuple[float, float]], max_rows: int = 4):
+                 edges: list[tuple[float, float]], max_rows: int = 4,
+                 left_bound: float | None = None, floor: int = 0):
     """Read the header rows above a data block.
 
     A header row carrying about as many phrases as there are columns is a row
@@ -373,14 +435,50 @@ def header_model(rows: list[list[dict]], lo: int,
     span = collections.defaultdict(list)
     stub: list[str] = []
     col_c = [(a + b) / 2 for a, b in edges]
+    # CLIP EVERY ROW TO THE TABLE'S OWN WIDTH before judging it. On a
+    # two-column page the other column's prose sits at the same `top` as the
+    # table, so a header row read whole looks like prose and ended the walk:
+    # DiffuNovo's Table 3 has its header one row above its data with a line of
+    # right-column text between, and the header was never seen. Clipped, that
+    # line is empty inside the table and is simply skipped.
+    lo_x = edges[0][0] - 150 if left_bound is None else left_bound
+    hi_x = edges[-1][1] + 10
+
+    def clipped(r):
+        return [w for w in r if w["x1"] > lo_x and w["x0"] < hi_x]
+
+    # NEVER WALK PAST THE CAPTION. Clipping the rows to the table's width made
+    # the caption reachable, and a caption line holds few phrases, so it was
+    # classified as a spanner and distributed across the columns: the subset of
+    # every column became 'Theboldfontindicatesthebestperformance. HC Methods
+    # AspN'. `floor` is the row after the caption, which the pairing step has
+    # already identified, so this needs no heuristic.
     taken = 0
-    for i in range(lo - 1, -1, -1):
-        r = rows[i]
+    for i in range(lo - 1, floor - 1, -1):
+        r = clipped(rows[i])
+        if not r:
+            taken += 1
+            if taken >= max_rows:
+                break
+            continue
         if sum(1 for w in r if numeric(w["text"])) >= 2:
             break                      # another data block, not a header
         if len(r) > max(8, 3 * len(edges)):
             break                      # prose, not a header row
         ph = phrases(r)
+        # A HEADER PHRASE IS SHORT. The word-count test above cannot see prose
+        # in a PDF whose producer drops spaces: a line of discussion arrives as
+        # ONE 86-character token, so it passes "few words" and, being fewer
+        # phrases than there are columns, was distributed across them as a
+        # spanner. That is how every column of CrossNovo's Table 2 came back
+        # claiming the metric 'precision', from the sentence
+        # 'significantlyoutperformsthebaselinemodelsinbothprecisionandrecall...'
+        # sitting above it -- which then collapsed its two stacked metric
+        # groups into one and tripped G6. The longest real header here is
+        # 'Amino acid precision' at 20 characters.
+        if any(len(q["text"]) > 34 for q in ph):
+            break
+
         inside = [q for q in ph if q["x1"] > edges[0][0]]
         for q in [q for q in ph if q["x1"] <= edges[0][0]]:
             stub.insert(0, q["text"])
@@ -404,18 +502,38 @@ def header_model(rows: list[list[dict]], lo: int,
     return own, span, " ".join(stub).strip()
 
 
+def desquash(text: str) -> str:
+    """Re-insert the spaces a PDF producer dropped, at camelCase boundaries.
+
+    Header text arrives collapsed often enough to matter, and a collapsed run
+    defeats every `\b` anchor in the lexicons: 'PeptideAUC' does not match
+    `\bAUC\b`, because the boundary it needs is between 'e' and 'A' and both
+    are word characters. That is the same failure that hid PointNovo from
+    CrossNovo's vocabulary, in a different place.
+
+    'PeptideAUC' -> 'Peptide AUC', 'AminoAcidPrecision' -> 'Amino Acid
+    Precision', 'PTMPrecision' -> 'PTM Precision'.
+    """
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    return re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)
+
+
+def _forms(text: str) -> tuple[str, str, str]:
+    return text, re.sub(r"\s+", "", text), desquash(text)
+
+
 def metric_of(text: str) -> str | None:
+    forms = _forms(text)
     for rx, m in METRIC_WORDS:
-        if rx.search(text):
+        if any(rx.search(f) for f in forms):
             return m
     return None
 
 
 def level_of(text: str) -> str | None:
-    # Spaces are routinely lost in a spanner, so try the de-spaced form too.
-    squashed = re.sub(r"\s+", "", text)
+    forms = _forms(text)
     for rx, lv in LEVEL_WORDS:
-        if rx.search(text) or rx.search(squashed):
+        if any(rx.search(f) for f in forms):
             return lv
     return None
 
@@ -459,17 +577,30 @@ def pair_captions(rows: list[list[dict]], blocks: list[tuple[int, int]]) -> dict
 
 
 def caption_text(rows: list[list[dict]], li: int | None,
-                 blocks: list[tuple[int, int]]) -> tuple[str, str]:
-    """The label and the caption prose at row `li`, continued over its lines."""
+                 blocks: list[tuple[int, int]]) -> tuple[str, str, int]:
+    """The label, the caption prose at row `li`, and the caption's LAST row.
+
+    The last row matters to the header walk. A caption runs over two or three
+    lines, and stopping the walk after the caption's FIRST line let its
+    continuation be read as a column spanner: every column of CrossNovo's
+    Table 2 came back with the spanner
+    'set. Theboldfontindicatesthebestperformance.'
+    """
     if li is None:
-        return "", ""
+        return "", "", -1
     text = " ".join(w["text"] for w in rows[li])
     m = LABEL_ROW.match(text)
     label = m.group(0).strip() if m else ""
+    # RESERVE THE ROW DIRECTLY ABOVE EACH DATA BLOCK for the header. Without
+    # that, a caption's continuation lines ran on into the header row and
+    # swallowed it, which moved the header walk's floor past the only header
+    # there was and rejected the table for having none. A caption line sitting
+    # immediately above a table with no header in between would mean the table
+    # has no header, which is a rejection either way.
     stop = len(rows)
     for lo, _ in blocks:
         if lo > li:
-            stop = min(stop, lo)
+            stop = min(stop, lo - 1)
     parts = [text]
     for j in range(li + 1, min(li + 4, stop)):
         nxt = rows[j]
@@ -478,9 +609,10 @@ def caption_text(rows: list[list[dict]], li: int | None,
         if LABEL_ROW.match(" ".join(w["text"] for w in nxt)):
             break
         parts.append(" ".join(w["text"] for w in nxt))
+    last = li + len(parts) - 1
     cap = re.sub(r"\s+", " ", " ".join(parts)).strip()
     cap = re.sub(r"(?i)^" + re.escape(label) + r"\s*[.:|\u2013\u2014]?\s*", "", cap) if label else cap
-    return label, cap
+    return label, cap, last
 
 
 def extract(page) -> tuple[list[dict], list[dict], int]:
@@ -497,7 +629,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     does. Measured over this library, 621 of 710 numeric blocks are of that
     kind, so listing them would bury the 89 real tables in the worksheet.
     """
-    words = page.extract_words(use_text_flow=False, keep_blank_chars=False)
+    words = strip_line_numbers(
+        page.extract_words(use_text_flow=False, keep_blank_chars=False))
     if not words:
         return [], [], 0
     rows = word_rows(words)
@@ -506,7 +639,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     paired = pair_captions(rows, blocks)
     for lo, hi in blocks:
         edges = column_edges(rows, lo, hi)
-        table_label, caption = caption_text(rows, paired.get((lo, hi)), blocks)
+        table_label, caption, cap_end = caption_text(
+            rows, paired.get((lo, hi)), blocks)
         if not table_label:
             uncaptioned += 1
             continue
@@ -516,13 +650,14 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": str(exc)})
             continue
-        own, span, stub = header_model(rows, lo, edges)
-        if not own and not span:
-            vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": "G3 no header above the block"})
-            continue
+
+        # THE BODY IS READ BEFORE THE HEADER, so the header walk can be clipped
+        # to the width the body actually occupies. Reading the header first
+        # meant guessing that width from the columns alone, which on a
+        # two-column page let the neighbouring column's prose end the walk.
         body, dropped, ragged = [], 0, False
         multi = None
+        pending: list[str] = []          # interstitial group-label words
         for r in rows[lo:hi + 1]:
             cells: dict[int, dict] = {}
             for w in r:
@@ -545,13 +680,21 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             missing = [w["text"].strip().lower() for w in r
                        if w["text"].strip().lower() in NOT_RUN]
             if len(cells) == 0:
+                # A row with no cells inside the table is either an
+                # interstitial group label or a rule. Its words are carried to
+                # the next data row rather than discarded, because that is
+                # where 'AminoAcid' / 'Precision' live when a stacked table
+                # sets its metric on its own line.
+                if row_kind(r) == "interstice":
+                    pending.extend(w["text"] for w in r)
                 continue
             if len(cells) != len(edges):
                 if missing and len(cells) + len(missing) >= len(edges):
                     dropped += 1
                     continue
                 ragged = True
-            body.append({"label": label, "cells": cells})
+            body.append({"label": label, "cells": cells, "extra": pending})
+            pending = []
         if multi:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": f"G4 multi-valued cell {multi!r}"})
@@ -563,6 +706,23 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         if not body:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": "G3 no data rows survived"})
+            continue
+        # Trailing interstitial words belong to the last group, not to nothing:
+        # a stacked table whose final label line sits BELOW its last data row
+        # would otherwise lose it.
+        if pending and body:
+            body[-1]["extra"] = body[-1]["extra"] + pending
+
+        left_bound = min(
+            [w["x0"] for r in rows[lo:hi + 1] for w in r
+             if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
+            or [edges[0][0] - 150]) - 4
+        own, span, stub = header_model(
+            rows, lo, edges, left_bound=left_bound,
+            floor=(cap_end + 1 if 0 <= cap_end < lo else 0))
+        if not own and not span:
+            vetoed.append({"table_label": table_label, "caption": caption,
+                           "reason": "G3 no header above the block"})
             continue
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
@@ -650,7 +810,11 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
     return vocab
 
 
-VERSION_TAIL = re.compile(r"(?i)[\s._-]*(v\s?\d(?:\.\d+)?|\d\.\d+|[+]|-?DIA|-?DDA)$")
+# A trailing version token, INCLUDING a bare integer: a paper comparing two of
+# its own configurations prints 'DiffuNovo 1' and 'DiffuNovo 2', which resolved
+# to nothing and took DiffuNovo's whole Table 2 down with it.
+VERSION_TAIL = re.compile(
+    r"(?i)[\s._-]*(v\s?\d(?:\.\d+)?|\d\.\d+|\d|[+]|-?DIA|-?DDA)$")
 
 
 def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
@@ -671,13 +835,35 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
         got = plus_match(name, index.get(norm(name), []))
         if got:
             return got[0], got[1], ver
-    # 4. split a trailing version token off, and keep it.
+    # 4a. A TRAILING PARENTHETICAL IS A VARIANT QUALIFIER, not part of the
+    #     name. Papers label their own configurations this way --
+    #     'DiffuNovo(Logits)', 'DiffuNovo(MBR)', 'RefineNovo(ours)' -- and
+    #     norm() cannot help, because it just glues the words together into
+    #     'diffunovologits'. Three such labels took DiffuNovo's Table 2 down
+    #     entirely, and with it 84 reported values across three benchmarks.
+    #     '(ours)' is not a version, it is the paper pointing at itself, so it
+    #     is dropped rather than recorded.
+    paren_stem = paren_ver = None
+    m = re.match(r"^(.*?)\s*\(([^)]{1,24})\)$", raw)
+    if m and len(m.group(1)) >= 3:
+        paren_stem = m.group(1).strip()
+        inner = m.group(2).strip()
+        paren_ver = None if norm(inner) in SELF_WORDS else inner
+
+    # 4b. split a trailing version token off, and keep it.
     version = None
     stem = raw
     m = VERSION_TAIL.search(raw)
     if m and len(raw) - len(m.group(0)) >= 3:
         stem, version = raw[:m.start()], m.group(1)
-    for cand, ver in ((stem, version), (raw, None)):
+    # THE EXACT NAME IS TRIED BEFORE THE STRIPPED STEM. The other order breaks
+    # every catalog name that legitimately ends in a number: 'PAAS 3' would
+    # have its '3' stripped and match PAAS, a different program by the same
+    # group, which is exactly the kind of wrong-but-plausible attribution a
+    # rejection is preferable to.
+    for cand, ver in ((raw, None), (paren_stem, paren_ver), (stem, version)):
+        if cand is None:
+            continue
         n = norm(cand)
         if not n:
             continue
@@ -717,6 +903,22 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
 ]
 
+# Dataset names that comparison tables print and the catalog has NO row for.
+# Registered so a multi-dataset table can still be SPLIT: the parts naming a
+# known dataset are read, and the parts naming these are rejected loudly by
+# name. Without them one unattributable column blocks the split and the whole
+# table is lost, which hides the gap instead of reporting it.
+#
+# Both of these are real holes in the catalog, found by this builder. DiffuNovo
+# and ReNovo both report on all three benchmarks side by side.
+UNCATALOGUED_DATASETS: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"(?i)\bHC-?PT\b"), "HC-PT"),
+    (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
+]
+
+ALL_DATASET_CUES = DATASET_CUES + UNCATALOGUED_DATASETS
+
+
 # "v2" is not globally meaningful, so the lexicon is PER DATASET and
 # hand-written, with the spelling each paper uses mapped onto the catalog's
 # own `dataset_version.version`. An unlisted phrase leaves the version NULL
@@ -735,12 +937,29 @@ VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
 
 
 def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
-                    pub_id: int) -> tuple[int | None, str | None, int | None, str | None]:
+                    pub_id: int, hint: str | None = None
+                    ) -> tuple[int | None, str | None, int | None, str | None]:
     """(dataset_id, dataset_name, dataset_version_id, printed) or raise Reject.
 
     Three sources in order: the caption, then the surrounding prose, then the
     paper's own publication_dataset links as a last resort.
     """
+    if hint:
+        # A per-column spanner naming the dataset is MORE specific than the
+        # caption, which on a split table names all of them at once.
+        row = con.execute("SELECT id FROM dataset WHERE name = ?", (hint,)).fetchone()
+        if not row:
+            raise Reject(f"D1 spanner names {hint!r}, absent from the dataset table")
+        did = row[0]
+        for rx, version in VERSION_LEXICON.get(hint, []):
+            for scope in (caption, near):
+                m = rx.search(scope)
+                if m:
+                    got = con.execute(
+                        "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
+                        (did, version)).fetchone()
+                    return did, hint, (got[0] if got else None), m.group(0)
+        return did, hint, None, None
     found: list[tuple[re.Pattern, str]] = []
     for scope in (caption, near):
         found = [(rx, nm) for rx, nm in DATASET_CUES if rx.search(scope)]
@@ -978,9 +1197,9 @@ def main() -> int:
                     row = {**base, "table_label": tb["table_label"],
                            "caption": tb["caption"][:260]}
                     try:
-                        emit(con, row, tb, vocab, index, subject, near, whole,
-                             audit, tally, args.show)
-                        accepted_tables += 1
+                        accepted_tables += emit(
+                            con, row, tb, vocab, index, subject, near, whole,
+                            audit, tally, args.show)
                     except Reject as exc:
                         reason = str(exc)
                         tally[f"rejected: {reason.split('(')[0].strip()}"] += 1
@@ -1071,7 +1290,10 @@ def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
     rows, leftovers = {}, {}
     for i, r in enumerate(tb["body"]):
         hit, rest = resolve_in_label(r["label"], vocab, index, subject)
-        rows[i], leftovers[i] = hit, rest
+        rows[i] = hit
+        # Words from an interstitial label row count as this row's leftovers:
+        # they are the group label, just set on a line of their own.
+        leftovers[i] = rest + list(r.get("extra") or [])
     n_col = len({(v[0], v[2] or "") for v in cols.values() if v})
     n_row = len({(v[0], v[2] or "") for v in rows.values() if v})
     if n_col >= 2 and n_col >= n_row:
@@ -1083,8 +1305,77 @@ def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
                  f"headers {[' '.join(tb['own'].get(k, [])) or '?' for k in range(n)]}")
 
 
-def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) -> None:
-    """Resolve one parsed table and append its audit row. Raises Reject."""
+def split_by_dataset(tb) -> dict[str, list[int]] | None:
+    """Group a table's columns by the dataset each column's SPANNER names.
+
+    One printed table often reports several datasets side by side: DiffuNovo's
+    Table 2 is precision and AUC under each of 'Seven-species Dataset',
+    'Nine-species Dataset' and 'HC-PT Dataset'. Held as one table it has one
+    `dataset_id`, which would be a lie, and every method then claims the same
+    measurement three times over -- which G6 caught, correctly but with a
+    verdict that read like a parsing bug rather than the structure it is.
+
+    Split, each part is an honest single-dataset comparison, so these tables
+    yield three rows of evidence instead of a rejection. Every column must name
+    a dataset for the split to be taken: one unattributed column would land in
+    no part and be silently dropped.
+    """
+    groups: dict[str | None, list[int]] = {}
+    for k in range(len(tb["edges"])):
+        # The spanner AND the column's own header. A dataset is named in either
+        # place: DiffuNovo's Table 2 puts the three benchmarks in the spanner
+        # over metric columns, while its Table 3 makes them the column headers
+        # themselves. Reading only the spanner accepted Table 3 whole and filed
+        # its HC-PT and Seven-species numbers under the nine-species benchmark,
+        # which is a wrong attribution rather than a missing one.
+        sp = " ".join(tb["span"].get(k, [])) + " " + " ".join(tb["own"].get(k, []))
+        hits = {nm for rx, nm in ALL_DATASET_CUES if rx.search(sp)}
+        groups.setdefault(hits.pop() if len(hits) == 1 else None, []).append(k)
+    if None in groups or len(groups) < 2:
+        return None
+    return {k: v for k, v in groups.items() if k}
+
+
+def subtable(tb, cols: list[int], name: str) -> dict:
+    """`tb` restricted to `cols`, renumbered, tagged with its dataset."""
+    idx = {old: new for new, old in enumerate(cols)}
+    body = []
+    for r in tb["body"]:
+        cells = {idx[k]: c for k, c in r["cells"].items() if k in idx}
+        if cells:
+            body.append({"label": r["label"], "cells": cells,
+                         "extra": list(r.get("extra") or [])})
+    return {"edges": [tb["edges"][k] for k in cols],
+            "own": {idx[k]: tb["own"][k] for k in cols if k in tb["own"]},
+            "span": {idx[k]: tb["span"][k] for k in cols if k in tb["span"]},
+            "stub": tb["stub"], "body": body,
+            "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
+            "table_label": f"{tb['table_label']} [{name}]",
+            "dataset_hint": name}
+
+
+def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
+         split=True) -> int:
+    """Resolve one parsed table, append its audit row, return parts accepted.
+
+    Raises Reject. A split table returns the count of its parts that survived,
+    so the summary counts TABLES RECORDED rather than blocks attempted.
+    """
+    if split:
+        parts = split_by_dataset(tb)
+        if parts:
+            ok = 0
+            for name, cols in parts.items():
+                part = subtable(tb, cols, name)
+                row = {**base, "table_label": part["table_label"],
+                       "caption": part["caption"][:260]}
+                try:
+                    ok += emit(con, row, part, vocab, index, subject, near,
+                               whole, audit, tally, show, split=False)
+                except Reject as exc:
+                    tally[f"rejected: {str(exc).split('(')[0].strip()}"] += 1
+                    audit.append({**row, "verdict": "rejected", "reason": str(exc)})
+            return ok
     edges, own, span = tb["edges"], tb["own"], tb["span"]
     axis, resolved_axis, leftovers = orientation(tb, vocab, index, subject)
     col_head = [" ".join(own.get(k, [])).strip() or "?" for k in range(len(edges))]
@@ -1109,36 +1400,43 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
     if subject and not any(v[0] == subject["id"] for v in methods.values()):
         raise Reject("N2 no self column")
 
-    # M1/M2: where the metric and the level come from depends on the layout.
+    # M1/M2. THE METRIC AXIS IS INDEPENDENT OF THE METHOD AXIS, and assuming
+    # otherwise cost a whole class of tables. Three layouts are all in use:
     #
-    # Methods in COLUMNS: the metric is a property of the column, read from its
-    # spanner and its own header. The row label is then the subset.
+    #   ContraNovo Table 1   methods in columns, metric in the column spanner
+    #   DiffuNovo  Table 2   methods in ROWS,   metric in the column headers
+    #   CrossNovo  Table 1   methods in ROWS,   metric in a ROW-GROUP label
     #
-    # Methods in ROWS: the metric is a property of a RUN of rows, and its words
-    # are typeset centred on that run and spread down the leftmost column, so
-    # they arrive scattered across several row labels: 'Amino Deep.', 'Acid
-    # Point.', 'Precision Casa.' is one group label over eleven rows. They are
-    # clustered and assigned by nearest centre, the same way a column spanner
-    # is, because they are the same typographic device turned ninety degrees.
-    # The column header is then the subset.
+    # So the metric is looked for along the columns first and along the rows
+    # second, whichever axis carries the methods.
+    #
+    # The order matters and is not arbitrary. The column pass is STRICT: the
+    # metric must come from the columns' own spanner or headers, never from the
+    # caption. Allowing the caption in would be actively wrong on a stacked
+    # table, where a caption mentioning precision would stamp 'precision' on
+    # every column and silently relabel the recall half of the table. The level
+    # may come from the caption, because it does not vary down a stacked
+    # table's groups without the metric varying too.
     ctx_extra = " ".join([tb["caption"], tb["stub"]])
-    metrics, levels, subsets = {}, {}, {}
+    subsets = {}
 
-    def measured(ctx: str, what: str):
-        metric = metric_of(ctx) or metric_of(ctx_extra)
-        level = level_of(ctx) or level_of(ctx_extra)
-        if not metric:
-            raise Reject(f"M1 unmapped metric for {what}")
-        if not level:
-            raise Reject(f"M2 level undetermined for {what}")
-        return metric, level
-
-    if axis == "columns":
+    def along_columns():
+        out = {}
         for k in range(len(edges)):
             ctx = " ".join(span.get(k, [])) + " " + col_head[k]
-            metrics[k], levels[k] = measured(ctx, f"column {col_head[k]!r}")
-            subsets[k] = ""
-    else:
+            metric = metric_of(ctx)
+            level = level_of(ctx) or level_of(ctx_extra)
+            if not metric or not level:
+                return None
+            out[k] = (metric, level)
+        return out
+
+    def row_groups():
+        """Cluster the row-group label words, which arrive scattered.
+
+        A group label is set across several row labels ('Amino' / 'Acid' /
+        'Precision' over eleven rows) or on interstitial lines of its own.
+        """
         groups: list[dict] = []
         for i in sorted(leftovers):
             text = " ".join(leftovers[i])
@@ -1150,21 +1448,17 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
                 groups[-1]["last"] = i
             else:
                 groups.append({"text": text, "rows": [i], "last": i})
-        # SEGMENT THE ROWS BY WHERE THE METHOD LIST RESTARTS, and pair the
-        # segments with the group labels in order.
-        #
-        # Nearest-centre, which is right for a column spanner, is wrong here:
-        # a stacked table lists the same ten methods twice, once per metric,
-        # and its group label is set near the top of each run rather than at
-        # its centre. CrossNovo's Table 1 put the 'Amino Acid Precision' words
-        # on rows 2 to 4 of rows 0 to 9, so the midpoint fell at row 8 and the
-        # last two rows of the first group were read as the second metric.
-        # That produced two 'CrossNovo recall/peptide/Mouse' cells, which G6
-        # caught, and would otherwise have silently recorded a precision as a
-        # recall.
-        #
-        # A repeat of a method is an unambiguous boundary, and needs no
-        # typography at all.
+        return groups
+
+    def along_rows():
+        groups = row_groups()
+        # SEGMENT BY WHERE THE METHOD LIST RESTARTS, and pair the segments with
+        # the group labels in order. Nearest-centre, which is right for a
+        # column spanner, is wrong here: a stacked table lists the same ten
+        # methods twice and sets each group label near the TOP of its run, so
+        # the midpoint fell inside the first group and the last two of its rows
+        # were read as the second metric. A repeat of a method is an
+        # unambiguous boundary and needs no typography at all.
         segments: list[list[int]] = []
         current: set = set()
         for i in range(len(tb["body"])):
@@ -1180,10 +1474,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
         seg_of = {i: si for si, seg in enumerate(segments) for i in seg}
         paired_groups = (dict(enumerate(groups))
                          if len(segments) == len(groups) else None)
+        out = {}
         for i in range(len(tb["body"])):
-            # The row's OWN leftovers plus its group's label. A row can carry
-            # half the label ('Amino Casa.V2') and needs the other half from
-            # the group; the group alone is not enough either.
             ctx = " ".join(leftovers.get(i, []))
             if paired_groups is not None:
                 ctx += " " + paired_groups[seg_of[i]]["text"]
@@ -1191,14 +1483,52 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
                 near_g = min(groups, key=lambda g: abs(
                     sum(g["rows"]) / len(g["rows"]) - i))
                 ctx += " " + near_g["text"]
-            metrics[i], levels[i] = measured(
-                ctx, f"row {tb['body'][i]['label']!r}")
-        for k in range(len(edges)):
+            metric = metric_of(ctx)
+            level = level_of(ctx) or level_of(ctx_extra)
+            if not metric or not level:
+                return None
+            out[i] = (metric, level)
+        return out
+
+    found = along_columns()
+    metric_axis = "columns"
+    if found is None and axis == "rows":
+        found = along_rows()
+        metric_axis = "rows"
+    if found is None:
+        # Last resort: the caption names one metric for the whole table.
+        metric = metric_of(ctx_extra)
+        level = level_of(ctx_extra)
+        if not metric:
+            raise Reject(f"M1 no metric on either axis or in the caption; "
+                         f"headers {col_head}")
+        if not level:
+            # Distinguished from M1 on purpose: the metric was found and only
+            # the level is missing, which is a different thing to go and fix.
+            raise Reject(f"M2 metric {metric!r} found but no level; "
+                         f"headers {col_head}")
+        found = {k: (metric, level) for k in range(len(edges))}
+        metric_axis = "columns"
+    metrics = {j: v[0] for j, v in found.items()}
+    levels = {j: v[1] for j, v in found.items()}
+
+    # The SUBSET is whatever the non-method, non-metric axis names. When the
+    # methods are rows it is the column, and it must carry the SPANNER as well
+    # as the header: CrossNovo's antibody tables print 'AspN' twice, once per
+    # chain, distinguished only by the spanner above it, and keying on the
+    # header alone made the two columns one measurement.
+    for k in range(len(edges)):
+        if axis == "columns":
+            subsets[k] = ""
+        else:
             head = col_head[k]
-            subsets[k] = "" if (head == "?" or metric_of(head)) else head
-    base.update({"metrics_resolved": "|".join(
-                     metrics[j] for j in sorted(metrics)),
-                 "levels": "|".join(levels[j] for j in sorted(levels))})
+            sp = " ".join(span.get(k, [])).strip()
+            parts = [x for x in (sp, head)
+                     if x and x != "?" and not metric_of(x) and not level_of(x)]
+            subsets[k] = " ".join(parts)
+    base.update({"metrics_resolved": "|".join(metrics[j] for j in sorted(metrics)),
+                 "levels": "|".join(levels[j] for j in sorted(levels)),
+                 "reason": f"axis={axis} metric_axis={metric_axis}"})
 
     # G6: no two cells may claim the same measurement. The key carries the
     # metric, the level and the subset, matching paper_comparison_result's own
@@ -1207,12 +1537,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
     # and peptide precision, so 'Peaks.' is columns 1 and 7.
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
-        j = k if axis == "columns" else ri
-        m = methods.get(j)
-        if axis == "columns":
-            sub = tb["body"][ri]["label"]
-        else:
-            sub = subsets[k]
+        m = methods.get(k if axis == "columns" else ri)
+        j = k if metric_axis == "columns" else ri
+        sub = tb["body"][ri]["label"] if axis == "columns" else subsets[k]
         return m, metrics[j], levels[j], sub
 
     seen = set()
@@ -1240,8 +1567,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
     base.update({"value_min": f"{lo:g}", "value_max": f"{hi:g}", "unit": unit,
                  "n_cells": len(vals)})
 
-    did, dname, vid, dprinted = resolve_dataset(con, tb["caption"], near,
-                                                base["publication_id"])
+    did, dname, vid, dprinted = resolve_dataset(
+        con, tb["caption"], near, base["publication_id"], tb.get("dataset_hint"))
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
@@ -1272,16 +1599,19 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show) 
               f"[{dname or 'dataset?'}{' v' + str(vid) if vid else ''}]  unit {unit}")
         print(f"    {tb['caption'][:140]}")
         print(f"    {'':22}" + "".join(f"{col_head[k][:10]:>11}" for k in range(len(edges))))
-        if axis == "columns":
+        if metric_axis == "columns":
             print(f"    {'':22}" + "".join(
                 f"{metrics[k][:4] + '/' + levels[k][:3]:>11}"
                 for k in range(len(edges))))
         for ri, r in enumerate(tb["body"][:16]):
             tag = (f"{metrics[ri][:4]}/{levels[ri][:3]} {methods[ri][1]}"
-                   if axis == "rows" and ri in methods else r["label"])[:21]
+                   if metric_axis == "rows" and ri in methods
+                   else (methods[ri][1] if axis == "rows" and ri in methods
+                         else r["label"]))[:21]
             print(f"    {tag:22}" + "".join(
                 f"{r['cells'][k]['printed'][:10]:>11}" if k in r["cells"] else f"{'':>11}"
                 for k in range(len(edges))))
+    return 1
 
 
 if __name__ == "__main__":
