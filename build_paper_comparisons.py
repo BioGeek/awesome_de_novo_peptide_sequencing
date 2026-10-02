@@ -308,6 +308,10 @@ def data_blocks(rows: list[list[dict]], min_rows: int = 2) -> list[tuple[int, in
     Two consecutive numeric rows is a much rarer accident in running text.
     """
     kind = [row_kind(r) for r in rows]
+    # The page's typical line pitch, used as the scale for "a large gap".
+    tops = [r[0]["top"] for r in rows if r]
+    gaps = sorted(b - a for a, b in zip(tops, tops[1:]) if b > a)
+    line_gap = gaps[len(gaps) // 2] if gaps else 12.0
     blocks, i, n = [], 0, len(rows)
     while i < n:
         if kind[i] != "data":
@@ -323,6 +327,16 @@ def data_blocks(rows: list[list[dict]], min_rows: int = 2) -> list[tuple[int, in
             if nxt is None:
                 break
             between = kind[j + 1:nxt]
+            # A BLOCK CANNOT JUMP A LARGE VERTICAL GAP, however few rows sit in
+            # it. Counting rows alone merged a table with the FIGURE beneath
+            # it: AdaNovo's Table 1 ends on 'Clam bacteria' and the next
+            # numeric row is a panel's axis ticks, 1.0 / 0.9 / 0.8, an inch
+            # down the page. Two numeric rows and nothing textual between them
+            # looked contiguous, and the resulting grid was ragged, which is
+            # where a large share of the ragged rejections came from.
+            gap = rows[nxt][0]["top"] - rows[j][0]["top"]
+            if gap > 3.2 * line_gap:
+                break
             # Any number of interstices may be skipped; at most one 'other',
             # which covers a rule, a continued label or a stray prose line.
             if all(b == "interstice" for b in between) or len(between) == 1:
@@ -534,8 +548,19 @@ def header_model(rows: list[list[dict]], lo: int,
             break                      # another data block, not a header
         if len(r) > max(8, 3 * len(edges)):
             break                      # prose, not a header row
+        # THE OWN-VERSUS-SPANNER DECISION USES DISTINCT COLUMN COVERAGE, not a
+        # phrase count. Merging adjacent words on a 6 pt gap glued all eight of
+        # AdaNovo's column headers into one 71-character phrase, because a
+        # tightly-set header row leaves the same gap between two labels as
+        # between two words of one label. That phrase then tripped the
+        # long-phrase prose guard below and ended the walk, so a textbook
+        # 1:1 table came back with no header at all.
+        covered = {assign(w, edges) for w in r} - {None}
         ph = phrases(r)
-        # A HEADER PHRASE IS SHORT. The word-count test above cannot see prose
+        # A HEADER WORD IS SHORT, and the guard is applied to WORDS rather than
+        # to merged phrases for the same reason: a merged phrase is long by
+        # construction. Squashed prose arrives as a single 70-plus character
+        # token, which is what this is for.
         # in a PDF whose producer drops spaces: a line of discussion arrives as
         # ONE 86-character token, so it passes "few words" and, being fewer
         # phrases than there are columns, was distributed across them as a
@@ -545,7 +570,7 @@ def header_model(rows: list[list[dict]], lo: int,
         # sitting above it -- which then collapsed its two stacked metric
         # groups into one and tripped G6. The longest real header here is
         # 'Amino acid precision' at 20 characters.
-        if any(len(q["text"]) > 34 for q in ph):
+        if any(len(w["text"]) > 34 for w in r):
             break
 
         inside = [q for q in ph if q["x1"] > edges[0][0]]
@@ -556,11 +581,13 @@ def header_model(rows: list[list[dict]], lo: int,
             if taken >= max_rows:
                 break
             continue
-        if len(inside) >= max(2, int(0.8 * len(edges))):
-            for q in inside:
-                k = assign(q, edges)
+        if len(covered) >= max(2, int(0.8 * len(edges))):
+            # A row of column headers: assign the individual WORDS, so two
+            # labels that a merge would have joined stay in their own columns.
+            for w in r:
+                k = assign(w, edges)
                 if k is not None:
-                    own[k].insert(0, q["text"])
+                    own[k].insert(0, w["text"])
         elif len(inside) == len(edges):
             # One phrase per column: unambiguous whatever the widths.
             for k, q in enumerate(sorted(inside, key=lambda q: q["x0"])):
