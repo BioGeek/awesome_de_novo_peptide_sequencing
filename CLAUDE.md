@@ -935,6 +935,23 @@ the URL. They were filed as publisher-blocked, the hardest bucket, when a PMC
 link opens fine. Fixing it moved 24 papers from `blocked-publisher` (27 down to
 2) into `blocked-but-open-in-pmc` (12 up to 36).
 
+**An EMBARGOED paper is neither paywalled nor blocked, and saying so stops it
+being chased.** `EMBARGOED` in the builder maps a publication id to a release
+date and the publisher's own wording; `fetch` skips those ids and `report`
+files them in `embargoed.txt` before any stored verdict is read, since an
+earlier run will have recorded "paywalled", which is the wrong word when the
+text is not for sale either. Recording the DATE rather than a flag means the
+entry expires by itself: once it passes, the paper rejoins the normal buckets.
+
+One entry so far, publication 119, the DiffNovo-DIA thesis. UNT's record says
+"The contents of this dissertation are unavailable for full viewing on this
+site ... It will be made available on this site on June 1, 2030", and the DOI
+it offers as an alternative resolves back to the same embargoed record, so
+there is no second route. This is the same shape as publication 360's
+PMC deposit, embargoed to 2027-08-10, which the Europe-PMC-wins rule above
+already handles because Europe PMC reports it; a repository embargo has no
+such API to ask, so it is recorded here by hand.
+
 **Do not bucket on the last host tried.** Doing that produced a
 `blocked-doi-resolver` list of 31 which the README then recommended as the
 largest recoverable group, on the theory that OpenAlex had offered `doi.org` as

@@ -68,6 +68,7 @@ from __future__ import annotations
 import argparse
 import collections
 import csv
+import datetime
 import hashlib
 import json
 import re
@@ -104,6 +105,35 @@ UA = ("awesome_de_novo_peptide_sequencing/1.0 "
 # alternative to trying it was guessing, but do not expect it to help.
 BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36")
+# Papers whose full text is UNDER EMBARGO: a date is published, the date is in
+# the future, and no amount of retrying or re-routing changes that. These are
+# not paywalled (nobody can buy them) and not blocked (nothing is refusing the
+# request); they do not exist publicly yet. `fetch` skips them and `report`
+# files them in their own bucket, so a known-unavailable paper stops being
+# re-proposed every run -- the same feedback-loop fix the denovo-radar harvest
+# needed for rejected papers.
+#
+# Recording the DATE rather than a flag means the entry expires by itself: once
+# it passes, the paper returns to the normal buckets and gets fetched like any
+# other.
+EMBARGOED: dict[int, tuple[str, str]] = {
+    # UNT's own record says so: "The contents of this dissertation are
+    # unavailable for full viewing on this site. ... It will be made available
+    # on this site on June 1, 2030." The DOI it points to instead resolves back
+    # to the same embargoed record, so there is no second route.
+    119: ("2030-06-01", "UNT Digital Library embargo, DiffNovo-DIA thesis"),
+}
+
+
+def embargoed(pub_id: int, today: str | None = None) -> tuple[str, str] | None:
+    """The embargo still in force for this publication, or None."""
+    entry = EMBARGOED.get(pub_id)
+    if not entry:
+        return None
+    now = today or datetime.date.today().isoformat()
+    return entry if entry[0] > now else None
+
+
 MIN_GAP = 1.5                                # seconds between hits on one host
 _last: dict[str, float] = collections.defaultdict(float)
 _ua = UA                                     # swapped by --browser-ua
@@ -488,6 +518,12 @@ def cmd_fetch(args, conn, pubs, root):
     if args.ids:
         want = {int(i) for i in args.ids.split(",")}
         todo = [p for p in pubs if p["id"] in want]
+    held = [p for p in todo if embargoed(p["id"])]
+    if held:
+        todo = [p for p in todo if not embargoed(p["id"])]
+        for p in held:
+            until, why = EMBARGOED[p["id"]]
+            print(f"  skipping {p['id']}: embargoed until {until} ({why})")
     if args.limit:
         todo = todo[:args.limit]
     print(f"{len(have)} of {len(pubs)} already local, {len(todo)} to try", flush=True)
@@ -696,6 +732,11 @@ blocked-openreview.txt
 no-doi-and-not-indexed.txt
     No DOI and no index entry. Mostly records that are not papers at all.
 
+embargoed.txt
+    NOT retrievable yet, by the publisher's own statement, with a release date
+    in the future. Neither paywalled nor blocked: the full text is not public.
+    `fetch` skips these, and the entry expires on its date by itself.
+
 covered-by-other-version.txt
     NOT missing. One half of a preprint / version-of-record pair whose single
     PDF is filed under the other half.
@@ -774,7 +815,12 @@ def cmd_report(args, conn, pubs, root):
         r = status.get(p["id"])
         host = re.match(r"https?://([^/]+)", (r or {}).get("detail") or "")
         host = host.group(1) if host else "-"
-        if r is None or r["verdict"] == "have" or versions.get(p["id"]) in have:
+        if embargoed(p["id"]):
+            # Checked BEFORE the stored verdict, because a previous run
+            # recorded this as paywalled, which is the wrong word: the text is
+            # not for sale either.
+            key = "embargoed"
+        elif r is None or r["verdict"] == "have" or versions.get(p["id"]) in have:
             key = "covered-by-other-version"
         elif "openreview" in host:
             key = "blocked-openreview"
