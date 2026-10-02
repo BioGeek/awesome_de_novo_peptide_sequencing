@@ -1070,7 +1070,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**377 datasets, 401 versions, 433 addresses, 579 publication links over 121 papers.**
+**378 datasets, 404 versions, 433 addresses, 604 publication links over 130 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1157,7 +1157,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 14 of 401 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 404 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1166,7 +1166,39 @@ holdouts and none can be downloaded, so those numbers are not independently
 reproducible. A dataset nobody can fetch still belongs in the catalog, because a
 reader comparing numbers needs to know which side of that line each one is on.
 
-**ProteomeTools has six versions, and they are not re-releases.** Parts I-III,
+**"Seven-species" is a DIFFERENT DATASET, not a version of nine-species.**
+Tran et al. 2017 built two evaluation sets, and papers name them side by side:
+a **low**-resolution set of seven species, assembled from seven earlier
+publications and scored leave-one-out, and the high-resolution nine-species
+set. Different instruments, different species, different spectra, so one is not
+a curation of the other. It gets its own `dataset` row with two versions,
+DeepNovo's original and NovoBench's fixed split (317,009 / 17,740 / 17,094,
+yeast held out).
+
+**"HC-PT" is a version of PROTEOMETOOLS, and the arithmetic is the proof.**
+NovoBench describes HC-PT as the set "detailed in the InstaNovo paper":
+synthetic tryptic peptides spanning the canonical human proteome, alternative
+proteases and HLA peptides, labelled from high-confidence MaxQuant results.
+ProteomeTools already carried that corpus as `high-confidence (InstaNovo)`, and
+HC-PT is almost exactly a **tenth** of it on all three counts, 213,284 against
+2,132,847 train, 25,718 against 257,187, 26,536 against 265,369. So it is a 10%
+subsample, recorded as a version; a second `dataset` row would have split one
+resource across two pages each claiming the same spectra. A paper reporting "on
+HC-PT" is reporting on a tenth of that corpus under NovoBench's split.
+
+Both NovoBench splits have **no address**, which is the point rather than a
+gap: NovoBench publishes code and not data, so its retrained numbers, the ones
+`BENCHMARKS.md` warns against reading beside released-checkpoint numbers,
+cannot be reproduced without splits nobody can download.
+
+**A version label is unique only WITHIN its dataset**, which the seven-species
+row proved by accident: its earliest version is also called
+`original (DeepNovo, 2017)`, and two `check_counts.py` queries matched on the
+label alone. The nine-species count silently moved from 16 to 17 and `--fix`
+rewrote the prose to agree. Both queries now name the dataset too. Any new
+registry query over `dataset_version.version` must do the same.
+
+**ProteomeTools has seven versions, and they are not re-releases.** Parts I-III,
 the high-confidence InstaNovo split, the 21-PTM subset, the same peptide pools
 re-run on a **Bruker timsTOF**, their **non-tryptic** counterpart on that
 instrument, and a **TMT 6-plex** form. Instrument and label change the fragment

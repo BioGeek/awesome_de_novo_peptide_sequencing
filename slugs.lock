@@ -2483,6 +2483,7 @@ datasets	375	gnps-streptomyces-on-a1-ms-and-r5-agar
 datasets	376	upload-for-cid-hcd-etd-metasps-paper-jpr-2013
 datasets	377	gagneurlab-modanovo-development-dataset
 datasets	378	ppbenchmark-palaeoproteomics-releases
+datasets	379	seven-species-benchmark
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar

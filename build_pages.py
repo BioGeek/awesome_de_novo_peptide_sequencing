@@ -950,13 +950,24 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             continue
         L += [f"## {heading} ({len({r['pub_id'] for r in rows})})", ""]
         if heading == "Deposited by" and len({r["pub_id"] for r in rows}) > 1:
-            # A deposit happens once, so two depositing PAPERS means one work
-            # published twice: a preprint and its version of record both
-            # introduce it, the same convention publication_algorithm.role uses
-            # for 'describes'. Saying so stops the pair reading as a conflict.
-            L += ["More than one paper here means one piece of work published "
-                  "twice, a preprint and its version of record; a deposit "
-                  "itself happens once.", ""]
+            # TWO DEPOSITORS HAVE TWO LEGITIMATE SHAPES and the note has to say
+            # which one this is. Either one work was published twice, a
+            # preprint and its version of record both introducing the same
+            # version, or two different works each introduced a DIFFERENT
+            # version of the dataset. The seven-species benchmark is the second
+            # kind: DeepNovo introduced the original and NovoBench its fixed
+            # split, seven years apart. Printing the preprint sentence there
+            # was a false statement on a published page.
+            by_version: dict = {}
+            for r in rows:
+                by_version.setdefault(r["version"], set()).add(r["pub_id"])
+            if any(len(v) > 1 for v in by_version.values()):
+                L += ["More than one paper here means one piece of work "
+                      "published twice, a preprint and its version of record; "
+                      "a deposit itself happens once.", ""]
+            else:
+                L += ["Each of these introduced a DIFFERENT version, listed "
+                      "beside it; a deposit itself happens once.", ""]
         seen = set()
         for r in rows:
             if r["pub_id"] in seen:
@@ -1721,7 +1732,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~3508 thin pages out of
+    # committed under pages/. search: false keeps ~3509 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.

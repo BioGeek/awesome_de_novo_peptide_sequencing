@@ -130,13 +130,23 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      lambda db: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight"}.get(
          db.execute("SELECT COUNT(*) FROM dataset_version WHERE dataset_id="
                     "(SELECT id FROM dataset WHERE name='ProteomeTools')").fetchone()[0])),
+    # BOTH OF THESE MUST NAME THE DATASET, not just the version label. A
+    # version label is unique only within its dataset, and two datasets
+    # legitimately share one here: the seven-species benchmark's earliest
+    # version is also called 'original (DeepNovo, 2017)', because DeepNovo
+    # introduced both. Unscoped, adding it silently moved this count from 16 to
+    # 17 and --fix rewrote the prose to match, which is the registry asserting
+    # something untrue about the nine-species benchmark.
     ("CLAUDE.md", "nine-species naming the original",
      r"benchmark; (\d+) name the original", "SELECT COUNT(*) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
-     "WHERE v.version='original (DeepNovo, 2017)'"),
+     "JOIN dataset d ON d.id=v.dataset_id "
+     "WHERE d.name='Nine-species benchmark' AND v.version='original (DeepNovo, 2017)'"),
     ("CLAUDE.md", "nine-species naming the revised",
      r"name the original, (\d+) the revised", "SELECT COUNT(*) FROM publication_dataset pd "
-     "JOIN dataset_version v ON v.id=pd.dataset_version_id WHERE v.version LIKE 'revised%'"),
+     "JOIN dataset_version v ON v.id=pd.dataset_version_id "
+     "JOIN dataset d ON d.id=v.dataset_id "
+     "WHERE d.name='Nine-species benchmark' AND v.version LIKE 'revised%'"),
     ("CLAUDE.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
      "SELECT COUNT(*) FROM publication_dataset WHERE dataset_id="

@@ -20722,6 +20722,7 @@ INSERT INTO dataset VALUES(375,'GNPS - Streptomyces on A1, MS and R5 agar','GNPS
 INSERT INTO dataset VALUES(376,'Upload for CID/HCD/ETD MetaSPS paper (JPR, 2013)','Upload for CID/HCD/ETD MetaSPS paper (JPR, 2013)','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(377,'gagneurlab/Modanovo-development-dataset','gagneurlab/Modanovo-development-dataset','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(378,'PPbenchmark palaeoproteomics releases','Code and figures released alongside "Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins". Code rather than spectra, which is why the addresses say so.','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(379,'Seven-species benchmark','DeepNovo''s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both come from Tran et al. 2017 and papers name them side by side.','benchmark','DDA',NULL,NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -21136,6 +21137,9 @@ INSERT INTO dataset_version VALUES(399,376,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(400,377,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-09-09',NULL);
 INSERT INTO dataset_version VALUES(401,378,'as released',NULL,NULL,NULL,NULL,NULL,'2023-12-15',342);
 INSERT INTO dataset_version VALUES(402,1,'revised (balanced)','The same re-curation, then randomly thinned so the species are more evenly represented: smaller and balanced rather than larger and skewed. Shipped in the same Zenodo record as the main variant, so "the revised benchmark" is still two different things.',NULL,NULL,NULL,NULL,'2024-11-08',98);
+INSERT INTO dataset_version VALUES(403,379,'original (DeepNovo, 2017)','The low-resolution seven-species set as DeepNovo defined and used it, scored leave-one-out over the seven species. No single accession is published for it: the seven constituent datasets come from seven separate prior publications.',NULL,NULL,NULL,NULL,NULL,62);
+INSERT INTO dataset_version VALUES(404,379,'NovoBench split','NovoBench''s fixed split: yeast held out as the test species and the other six used for training, 3 PTMs, mean peptide length 15.79. This is the split NovoBench retrains every architecture on, so a number reported "on seven-species" by a NovoBench-derived paper means this and not DeepNovo''s own leave-one-out.',NULL,317009,17740,17094,NULL,78);
+INSERT INTO dataset_version VALUES(405,2,'HC-PT (NovoBench)','NovoBench''s ~10% subsample of the high-confidence InstaNovo split, 1 PTM, mean peptide length 12.53. Papers call it "the HC-PT dataset" and cite the InstaNovo paper for it, so a number reported on HC-PT is a number on a tenth of that corpus under NovoBench''s split.',NULL,213284,25718,26536,NULL,78);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -22165,6 +22169,31 @@ INSERT INTO publication_dataset VALUES(579,127,98,121,'uses');
 INSERT INTO publication_dataset VALUES(580,220,1,2,'uses');
 INSERT INTO publication_dataset VALUES(581,80,151,174,'introduces');
 INSERT INTO publication_dataset VALUES(582,108,151,174,'introduces');
+INSERT INTO publication_dataset VALUES(583,62,379,403,'introduces');
+INSERT INTO publication_dataset VALUES(584,78,379,404,'introduces');
+INSERT INTO publication_dataset VALUES(585,78,2,405,'introduces');
+INSERT INTO publication_dataset VALUES(586,7,379,404,'uses');
+INSERT INTO publication_dataset VALUES(587,16,379,404,'uses');
+INSERT INTO publication_dataset VALUES(588,17,379,404,'uses');
+INSERT INTO publication_dataset VALUES(589,22,379,404,'uses');
+INSERT INTO publication_dataset VALUES(590,64,379,404,'uses');
+INSERT INTO publication_dataset VALUES(591,79,379,404,'uses');
+INSERT INTO publication_dataset VALUES(592,109,379,404,'uses');
+INSERT INTO publication_dataset VALUES(593,254,379,404,'uses');
+INSERT INTO publication_dataset VALUES(594,280,379,404,'uses');
+INSERT INTO publication_dataset VALUES(595,353,379,404,'uses');
+INSERT INTO publication_dataset VALUES(596,354,379,404,'uses');
+INSERT INTO publication_dataset VALUES(597,432,379,404,'uses');
+INSERT INTO publication_dataset VALUES(598,7,2,405,'uses');
+INSERT INTO publication_dataset VALUES(599,16,2,405,'uses');
+INSERT INTO publication_dataset VALUES(600,17,2,405,'uses');
+INSERT INTO publication_dataset VALUES(601,22,2,405,'uses');
+INSERT INTO publication_dataset VALUES(602,64,2,405,'uses');
+INSERT INTO publication_dataset VALUES(603,79,2,405,'uses');
+INSERT INTO publication_dataset VALUES(604,109,2,405,'uses');
+INSERT INTO publication_dataset VALUES(605,254,2,405,'uses');
+INSERT INTO publication_dataset VALUES(606,354,2,405,'uses');
+INSERT INTO publication_dataset VALUES(607,432,2,405,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
