@@ -108,6 +108,20 @@ def compound(tok: str) -> list[tuple[float, str]] | None:
     return out
 
 
+# A MARKER ON A METHOD'S OWN LABEL, from the paper's legend. Where CELL_MARKERS
+# says what a footnote on a NUMBER means, this says what a footnote on a METHOD
+# means, which is most often that its scores were not run by this paper at all.
+METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
+    # RefineNovo, Table 6. Its legend: "Scores for models marked with * are
+    # quoted from the NovoBench paper or original publications." So every
+    # starred row is somebody else's measurement, which is precisely what the
+    # 'quoted' basis records -- and what BENCHMARKS.md warns against reading
+    # beside a number this paper ran itself. Cross-checks: its Casanovo* reads
+    # 0.48 and BENCHMARKS.md records NovoBench's retrained Casanovo at 0.481.
+    (16, "Table6"): {"*": {"basis": "quoted"}},
+}
+
+
 # WHAT EACH FOOTNOTE MARKER MEANS, per table, from the paper's own legend.
 # Keyed by (publication, table label). The empty marker is the plain number and
 # inherits the column's metric; a marked one may override the metric, the level
@@ -756,6 +770,10 @@ def unsquash_label(text: str) -> str:
     left as the page has it.
     """
     out = desquash(text)
+    # An abbreviated genus loses the space after its initial too:
+    # 'C.bacteria' -> 'C. bacteria', 'M.mazei' -> 'M. mazei'. Only after a
+    # SINGLE capital, so 'Chymo.' and 'Prec.' are untouched.
+    out = re.sub(r"(?<![A-Za-z])([A-Z])\.(?=[A-Za-z])", r"\1. ", out)
     return re.sub(r"\s+", " ", out).strip()
 
 
@@ -1061,6 +1079,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                     "body": body, "dropped_rows": dropped,
                     "caption": caption, "table_label": table_label,
                     "span_ambiguous": span_ambiguous,
+                    "registry_label": table_label,
                     "bbox": bbox, "page": page.page_number})
     return out, vetoed, uncaptioned
 
@@ -1171,6 +1190,17 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
     # anything else looks at the string, so the version logic sees
     # 'Casanovov4.2' and not a bracket.
     raw = re.sub(r"\s*\[[\d,\s\u2013-]+\]\s*$", "", raw).strip()
+    # AN AUTHOR-YEAR PARENTHETICAL IS A CITATION, not a variant, and it is
+    # removed HERE rather than with the version logic further down: every later
+    # rule, including the curated per-paper aliases, matches on the normalised
+    # string, and 'peaksnovomaetal2003' matches nothing. A parenthetical with
+    # no year and no 'et al' is left alone, because '(Logits)' and '(ours)'
+    # really are variants.
+    raw = re.sub(r"\s*\((?=[^)]*(?:\b(?:19|20)\d{2}[a-z]?\b|et\s*al))[^)]*\)\s*$",
+                 "", raw).strip()
+    # A dagger or asterisk on the label is a footnote marker, not a name; what
+    # it MEANS is recorded per table in METHOD_MARKERS.
+    raw = re.sub(r"[*+\u2020\u2021\u00a7\u00b6]+\s*$", "", raw).strip()
     if not raw:
         raise Reject("N1 empty header")
     # A curated per-paper label wins over every general rule.
@@ -1255,7 +1285,11 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     # HC-PT before ProteomeTools: it is the more specific name for the same
     # corpus, and a table naming it does not say "ProteomeTools".
     (re.compile(r"(?i)\bHC-?PT\b"), "HC-PT"),
-    (re.compile(r"(?i)nine[- ]species|9[- ]species|\bnine species\b"), "Nine-species"),
+    # The separator is optional: a column header reads '9Species (yeast)'
+    # with nothing between the digit and the word, which a required hyphen or
+    # space missed, so the table looked like it named three datasets when one
+    # of them was simply unrecognised.
+    (re.compile(r"(?i)nine[- ]?species|9[- ]?species"), "Nine-species"),
     (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
     (re.compile(r"(?i)ProteomeTools"), "ProteomeTools"),
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
@@ -1711,6 +1745,17 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # of it rather than a third-party baseline.
     (4, "base"): ("Pairwise", "base"),
     (4, "pa"): ("Pairwise", None),
+    # RefineNovo. Its tables write PEAKS as 'PeaksNovo', which no general rule
+    # reaches, and name two checkpoints of pi-PrimeNovo and Casanovo by a
+    # suffix rather than a version token. Confirmed against the paper.
+    (16, "peaksnovo"): ("PEAKS", None),
+    (16, "primenovocv"): ("\u03c0-PrimeNovo", "CV"),
+    (16, "casanovopretrained"): ("Casanovo", "pretrained"),
+    # LIPNovo. Its table writes PEAKS with a citation and calls Casanovo
+    # 'Baseline', identifiable only from the reference it carries
+    # (Yilmaz et al., 2024), which the reviewer confirmed against the paper.
+    (17, "peaks"): ("PEAKS", None),
+    (17, "baseline"): ("Casanovo", None),
 }
 
 
@@ -1761,6 +1806,12 @@ TABLE_METRIC: dict[tuple[int, str], tuple[str, str] | list[tuple[str, str]]] = {
     # (0.665) against the next best (0.566), and its UTI precision (0.675)
     # against the next best (0.612).
     (13, "Table 1"): [("recall", "amino acid")] * 4 + [("precision", "amino acid")] * 4,
+    # RefineNovo, Table 6. Its caption says only "Performance comparison on
+    # the NovoBench benchmark (yeast test species)". The metric is NovoBench's
+    # peptide-level precision, which the numbers themselves confirm: its
+    # Casanovo* reads 0.48 and BENCHMARKS.md records NovoBench's retrained
+    # Casanovo at 0.481 on nine-species.
+    (16, "Table6"): ("precision", "peptide"),
 }
 
 
@@ -1790,7 +1841,7 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
     """
     n = len(tb["edges"])
     # A CURATED COLUMN-TO-METHOD MAPPING WINS over any reading of the page.
-    over = SPANNER_OVERRIDE.get((pub_id, (tb["table_label"] or "").strip()))
+    over = SPANNER_OVERRIDE.get((pub_id, (tb.get("registry_label") or tb["table_label"] or "").strip()))
     if over:
         if len(over) != n:
             raise Reject(f"N1 SPANNER_OVERRIDE lists {len(over)} columns, "
@@ -1934,6 +1985,12 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             "stub": tb["stub"], "body": body,
             "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
             "table_label": f"{tb['table_label']} [{name}]",
+            # THE REGISTRIES ARE KEYED ON THE PRINTED LABEL, and a split part
+            # renames itself to say which dataset it holds. Without the parent
+            # label every curated entry stopped applying the moment a table
+            # was split, which is how RefineNovo's Table 6 lost the metric it
+            # had been given.
+            "registry_label": tb.get("registry_label") or tb["table_label"],
             "dataset_hint": name,
             "bbox": tb.get("bbox"), "page": tb.get("page"),
             "span_ambiguous": {idx[k] for k in cols
@@ -2109,7 +2166,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # shredded header rows, which was enough for the column pass to succeed
     # with the groups in the wrong place.
     pinned = TABLE_METRIC.get((base.get("publication_id"),
-                               (tb["table_label"] or "").strip()))
+                               (tb.get("registry_label") or tb["table_label"] or "").strip()))
     found, metric_axis = None, "columns"
     if pinned:
         if isinstance(pinned, list):
@@ -2158,7 +2215,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # chain, distinguished only by the spanner above it, and keying on the
     # header alone made the two columns one measurement.
     sub_over = COLUMN_SUBSET_OVERRIDE.get(
-        (base.get("publication_id"), (tb["table_label"] or "").strip()))
+        (base.get("publication_id"), (tb.get("registry_label") or tb["table_label"] or "").strip()))
     if sub_over and len(sub_over) != len(edges):
         raise Reject(f"D3 COLUMN_SUBSET_OVERRIDE lists {len(sub_over)} columns, "
                      f"the table has {len(edges)}")
@@ -2183,7 +2240,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # one table: ContraNovo's Table 1 is six methods crossed with amino-acid
     # and peptide precision, so 'Peaks.' is columns 1 and 7.
     legend = CELL_MARKERS.get((base.get("publication_id"),
-                               (tb["table_label"] or "").strip()), {})
+                               (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
     compound_cells = [c for r in tb["body"] for c in r["cells"].values()
                       if len(c.get("parts") or []) > 1]
     if compound_cells and not legend:
@@ -2258,6 +2315,18 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                  "dataset_version_resolved": vid or ""})
 
     bases = {k: find_basis(whole, v[1]) for k, v in methods.items()}
+    # A legend on the method label OUTRANKS the prose search: the paper has
+    # said in so many words where those numbers came from.
+    mk_legend = METHOD_MARKERS.get((base.get("publication_id"),
+                                    (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
+    if mk_legend:
+        for k in list(bases):
+            printed = (printed_of.get(k) or "").strip()
+            m = re.search(r"([*+\u2020\u2021])\s*$", printed)
+            over = mk_legend.get(m.group(1)) if m else None
+            if over and over.get("basis"):
+                bases[k] = (over["basis"],
+                            f"the table's legend marks {printed!r}", False)
     modal = collections.Counter(b for b, _, _ in bases.values()).most_common(1)[0][0]
     base.update({"basis_assigned": "|".join(
                      f"{methods[k][1]}={bases[k][0]}" for k in sorted(bases)),
