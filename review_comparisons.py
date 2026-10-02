@@ -256,7 +256,15 @@ def _subset(rec: dict, i: int, k) -> str:
     LIPNovo's nine species against each other as if they were one measurement.
     """
     if rec["axis"] != "rows":
-        return rec["body"][i]["label"] or ""
+        # Methods across the top. If the METRIC runs down the rows, the row
+        # label names the metric and is not a subset; the column carries it.
+        # BiATNovo's Table 2 has OC / UTI / Plasma over its columns and
+        # metrics down the side, and taking the row label ranked DeepNovo-DIA
+        # on OC against BiATNovo on plasma as one measurement.
+        col = rec["subsets"].get(k) or ""
+        if rec.get("metric_axis") == "rows":
+            return col
+        return " ".join(x for x in (col, rec["body"][i]["label"] or "") if x)
     rs = rec.get("row_subsets") or {}
     return (rs.get(i) or rs.get(str(i)) or rec["subsets"].get(k) or "")
 
@@ -525,6 +533,22 @@ def grid_html(rec: dict) -> str:
         return out
 
     if axis == "columns":
+        # A DATASET SPANNER over the methods, where the columns carry one, as
+        # the paper prints it: BiATNovo's 'OC Dataset | UTI Dataset | Plasma
+        # Dataset' over DeepNovo-DIA / BiATNovo pairs. Without it the grid
+        # showed seven method columns and no way to tell which dataset each
+        # number was on.
+        subs = [rec["subsets"].get(k) or "" for k in range(ncol)]
+        if any(subs):
+            cells_, k = [], 0
+            while k < ncol:
+                j = k
+                while j + 1 < ncol and subs[j + 1] == subs[k]:
+                    j += 1
+                cells_.append(f"<th colspan='{j - k + 1}' style='text-align:center'>"
+                              f"{html.escape(subs[k])}</th>")
+                k = j + 1
+            out.append("<tr><th></th>" + "".join(cells_) + "</tr>")
         out.append("<tr><th></th>" + "".join(
             f"<th>{mname(k)}</th>" for k in range(ncol)) + "</tr>")
         if maxis == "columns":
