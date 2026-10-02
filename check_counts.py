@@ -347,6 +347,19 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("BENCHMARKS.md", "datasets behind that median",
      r"0\.\d+ median AP over (\d+) datasets",
      "SELECT COUNT(*) FROM benchmark_dataset"),
+    # A deposit happens once. Two DEPOSITING PAPERS is fine when they are a
+    # preprint and its version of record; more than one WORK is a role error,
+    # and this read 1 after a duplicate-dataset fold-in silently promoted every
+    # citing paper to 'introduces'. Must stay 0.
+    ("CLAUDE.md", "versions with several introducing works",
+     r"must read zero, and\s+does: \*\*(\d+)\*\* dataset versions",
+     """WITH canon AS (
+          SELECT pd.dataset_version_id AS vid,
+                 COALESCE((SELECT pv.published_id FROM publication_version pv
+                            WHERE pv.preprint_id = pd.publication_id), pd.publication_id) AS work
+            FROM publication_dataset pd
+           WHERE pd.role='introduces' AND pd.dataset_version_id IS NOT NULL)
+        SELECT COUNT(*) FROM (SELECT vid FROM canon GROUP BY vid HAVING COUNT(DISTINCT work) > 1)"""),
     ("CLAUDE.md", "methods with a checkpoint",
      r"The (\d+) methods with a recorded checkpoint",
      "SELECT COUNT(DISTINCT algorithm_id) FROM checkpoint"),

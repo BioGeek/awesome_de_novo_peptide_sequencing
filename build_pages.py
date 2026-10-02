@@ -949,6 +949,14 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         if not rows:
             continue
         L += [f"## {heading} ({len({r['pub_id'] for r in rows})})", ""]
+        if heading == "Deposited by" and len({r["pub_id"] for r in rows}) > 1:
+            # A deposit happens once, so two depositing PAPERS means one work
+            # published twice: a preprint and its version of record both
+            # introduce it, the same convention publication_algorithm.role uses
+            # for 'describes'. Saying so stops the pair reading as a conflict.
+            L += ["More than one paper here means one piece of work published "
+                  "twice, a preprint and its version of record; a deposit "
+                  "itself happens once.", ""]
         seen = set()
         for r in rows:
             if r["pub_id"] in seen:
@@ -957,6 +965,11 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             line = "- " + site.link("publications", r["pub_id"], r["title"], from_kind=K)
             if r["publication_date"]:
                 line += f" ({str(r['publication_date'])[:4]})"
+            # The TYPE, because a preprint and its version of record share a
+            # title and a year: without it the pair renders as two identical
+            # lines and reads like duplicated data.
+            if r["publication_type"]:
+                line += f" <small>{md_escape(r['publication_type'])}</small>"
             vers = sorted({x["version"] for x in rows if x["pub_id"] == r["pub_id"] and x["version"]})
             # A paper that named no version is the finding the catalog exists to
             # record, so say so rather than leaving the line bare.
@@ -1358,7 +1371,7 @@ def load(conn: sqlite3.Connection) -> dict:
     # algorithm pages make on publication_algorithm.role.
     d["ds_pubs"] = defaultdict(list)
     for r in q("SELECT pd.dataset_id, pd.role, pd.dataset_version_id, p.id AS pub_id, "
-               "       p.title, p.publication_date, dv.version "
+               "       p.title, p.publication_date, p.publication_type, dv.version "
                "  FROM publication_dataset pd "
                "  JOIN publication p ON p.id = pd.publication_id "
                "  LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id "

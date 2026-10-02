@@ -22162,7 +22162,7 @@ INSERT INTO publication_dataset VALUES(576,127,278,301,'uses');
 INSERT INTO publication_dataset VALUES(577,127,239,262,'uses');
 INSERT INTO publication_dataset VALUES(578,127,221,244,'uses');
 INSERT INTO publication_dataset VALUES(579,127,98,121,'uses');
-INSERT INTO publication_dataset VALUES(580,220,1,2,'introduces');
+INSERT INTO publication_dataset VALUES(580,220,1,2,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

@@ -1771,6 +1771,31 @@ A new family works with no registration at all: it gets a lane, a generated
 colour and a packed height. Add it to `band_color` only if you want a specific
 colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
 
+### A deposit happens once
+
+`role = 'introduces'` on `publication_dataset` says a paper produced the data.
+Two depositing papers for one dataset version is legitimate in exactly one
+shape: **a preprint and its version of record**, which both introduce it, the
+same convention `publication_algorithm.role` uses for `'describes'`. The
+nine-species revised benchmark has that shape, publications 113 and 98, and
+they are linked in `publication_version`.
+
+More than one introducing WORK is a role error, and there was one. Folding a
+duplicate dataset row into nine-species moved its publication links across with
+`role = 'introduces'` for ALL of them rather than preserving each role, which
+promoted publication 220 -- a benchmarking paper that merely cites the Zenodo
+deposit -- to being a depositor of the benchmark. It was invisible on the page
+because the entry sat beside a genuine pair.
+
+So the invariant is registered in `check_counts.py` and must read zero, and
+does: **0** dataset versions have more than one introducing work once
+preprint/version-of-record pairs are collapsed.
+
+The page also prints each paper's `publication_type`, because a preprint and
+its version of record share a title and a year, and without it the legitimate
+pair renders as two identical lines and reads like duplicated data. Where there
+is more than one depositing paper, the section says in one line why.
+
 ### Which dataset a checkpoint was trained on
 
 `checkpoint_dataset` links the two, and it is **curated rather than derived**,
