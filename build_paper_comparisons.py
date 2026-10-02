@@ -106,10 +106,24 @@ C2_VETO = re.compile(r"(?i)ablation|impact of (?:the )?(?:component|module|each|
 # comparison dressed as an accuracy one is worse than nothing.
 C3_VETO = re.compile(r"(?i)inference time|running time|runtime|throughput|GPU[- ]hours?|"
                      r"\bFLOPs?\b|memory (?:usage|footprint)|model size|#?\s?parameters\b|"
-                     r"number of parameters|speed[- ]?up|wall[- ]clock")
+                     r"number of parameters|speed[- ]?up|wall[- ]clock|"
+                     # A protein-assembly table is a comparison, and not of the
+                     # quantity this catalog records. PowerNovo's Table 2 scores
+                     # three tools on mapped contigs, longest contig and
+                     # sequence coverage of an antibody chain, with cells like
+                     # '42 (19.44%)'. Those are assembly statistics, not
+                     # peptide or amino-acid precision or recall, so the table
+                     # is refused for what it is rather than for its geometry.
+                     r"contigs?\b|protein sequence coverage|sequence coverage of")
 
 # M1: metric headers, mapped to the closed vocabulary. Longest first.
 METRIC_WORDS = [
+    # Longest and most specific first. 'Prec. at Cov.=1' must be tested before
+    # plain precision, or it reads as precision and the two become one
+    # measurement; the pair are different numbers and ProteoBench's design
+    # discussion turns on exactly that difference.
+    (re.compile(r"(?i)prec\.?\s*(?:at|@)\s*cov\.?\s*=?\s*1|precision\s*(?:at|@)\s*"
+                r"(?:full\s+)?cov(?:erage)?\.?\s*=?\s*1?"), "precision@cov1"),
     (re.compile(r"(?i)ptm[- ]?prec"), "ptm-precision"),
     (re.compile(r"(?i)ptm[- ]?rec"), "ptm-recall"),
     (re.compile(r"(?i)\bAUC\b|area under"), "auc"),
@@ -118,6 +132,9 @@ METRIC_WORDS = [
     (re.compile(r"(?i)precision|\bprec\b|\bprec\."), "precision"),
     (re.compile(r"(?i)recall|\brec\b|\brec\."), "recall"),
     (re.compile(r"(?i)accuracy|\bacc\b|\bacc\."), "accuracy"),
+    # After precision and recall, so 'Prec.' does not land here, and after
+    # precision@cov1, whose text also contains 'cov'.
+    (re.compile(r"(?i)coverage|\bcov\b|\bcov\."), "coverage"),
 ]
 # A bare 'Amino' or 'Peptide' counts, because a row-group label is set
 # vertically and arrives one word per row: 'Amino' / 'Acid' / 'Precision'
@@ -1008,6 +1025,25 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
     (re.compile(r"(?i)ProteomeTools"), "ProteomeTools"),
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
+    # pNovo 3's two HeLa runs, which share one PRIDE submission and differ only
+    # in how much of it was used, so the label pins the version.
+    (re.compile(r"(?i)\bQE_?HF_?X1\b"), "QE_HF_X1"),
+    (re.compile(r"(?i)\bQE_?HF_?X2\b"), "QE_HF_X2"),
+    # A PER-SPECIES PROVENANCE SUBMISSION IS THE BENCHMARK, AT NO KNOWN
+    # VERSION. pNovo 3 scores five columns on V. mungo, M. musculus, M. mazei,
+    # S. cerevisiae and A. mellifera, which are five of the nine-species
+    # benchmark's own provenance accessions (PXD005025, PXD004948, PXD004325,
+    # PXD003868, PXD004467, all already in dataset_address). Going to those
+    # submissions directly does not say which curated version was used, so
+    # these resolve the dataset and leave the version NULL, which is the same
+    # finding CLAUDE.md records for the other papers that cite provenance
+    # accessions. They map to the SAME label as the nine-species cue, so they
+    # add no ambiguity to the caption path.
+    (re.compile(r"(?i)\bV\.?\s?mungo\b|Vigna mungo"), "Nine-species"),
+    (re.compile(r"(?i)\bM\.?\s?musculus\b|Mus musculus"), "Nine-species"),
+    (re.compile(r"(?i)\bM\.?\s?mazei\b|Methanosarcina mazei"), "Nine-species"),
+    (re.compile(r"(?i)\bS\.?\s?cerevisiae\b|Saccharomyces cerevisiae"), "Nine-species"),
+    (re.compile(r"(?i)\bA\.?\s?mellifera\b|Apis mellifera"), "Nine-species"),
 ]
 
 # HC-PT is NovoBench's 10% subsample of the high-confidence InstaNovo split of
@@ -1019,6 +1055,8 @@ DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
     "Seven-species": ("Seven-species benchmark", None),
     "ProteomeTools": ("ProteomeTools", None),
     "MassIVE-KB": ("MassIVE-KB", None),
+    "QE_HF_X1": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X1"),
+    "QE_HF_X2": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X2"),
 }
 
 
@@ -1376,6 +1414,34 @@ def resolve_in_label(label: str, vocab, index, subject):
     return None, toks
 
 
+# WHERE THE PAGE CANNOT SAY WHICH COLUMN BELONGS TO WHICH METHOD, A PERSON
+# SAYS. One printed method name per column, in column order, read off the
+# paper by eye. Same idiom as TOOL_ALIASES in build_benchmarks.py: curated
+# data with the reasoning beside it, not a heuristic.
+#
+# An entry is only legitimate where the geometry is genuinely undecidable.
+# Both candidate rules were measured on publication 49 and both are wrong:
+# 'Casanovo' spans three columns in the peptide block and two in the
+# amino-acid block, because the paper reports three metrics for itself and one
+# per baseline, and its page carries no \cmidrule to say so. Nearest-centre
+# puts column 2 under PointNovo; midpoints between the labels' edges put
+# column 2 under PointNovo and column 4 under the next DeepNovo, because
+# column 2's centre falls 3 points from one boundary and column 4's lands
+# exactly on another.
+#
+# The names are resolved through the normal resolver, so a typo here is a
+# rejection and not a wrong attribution.
+SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
+    # Casanovo, Table 2. Columns, left to right:
+    #   peptide-level:    DeepNovo Prec. | PointNovo Prec. |
+    #                     Casanovo Prec. | Casanovo Cov. | Casanovo Prec.@Cov=1
+    #   amino-acid-level: DeepNovo Prec. | PointNovo Prec. |
+    #                     Casanovo Prec. | Casanovo Prec.@Cov=1
+    (49, "Table2"): ["DeepNovo", "PointNovo", "Casanovo", "Casanovo", "Casanovo",
+                     "DeepNovo", "PointNovo", "Casanovo", "Casanovo"],
+}
+
+
 def try_resolve(label, vocab, index):
     """resolve_method() as an Optional, for deciding orientation."""
     try:
@@ -1384,7 +1450,7 @@ def try_resolve(label, vocab, index):
         return None
 
 
-def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
+def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict]:
     """Decide whether the METHODS are the columns or the rows.
 
     This is not cosmetic and it was the single largest source of loss. The
@@ -1401,6 +1467,20 @@ def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
     carries at least two distinct methods wins.
     """
     n = len(tb["edges"])
+    # A CURATED COLUMN-TO-METHOD MAPPING WINS over any reading of the page.
+    over = SPANNER_OVERRIDE.get((pub_id, (tb["table_label"] or "").strip()))
+    if over:
+        if len(over) != n:
+            raise Reject(f"N1 SPANNER_OVERRIDE lists {len(over)} columns, "
+                         f"the table has {n}")
+        got = {}
+        for k, printed in enumerate(over):
+            if norm(printed) in SELF_WORDS and subject:
+                got[k] = (subject["id"], subject["name"], None)
+            else:
+                got[k] = resolve_method(printed, vocab, index)
+        return "columns", got, {}
+
     # THE METHOD NAMES MAY BE THE SPANNER. ContraNovo's Table 1 has the methods
     # as column headers with the metric spanning them; Casanovo's Table 2 is
     # the other way round -- 'DeepNovo PointNovo Casanovo' spans, and each
@@ -1538,7 +1618,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                         "page": part.get("page")})
             return ok
     edges, own, span = tb["edges"], tb["own"], tb["span"]
-    axis, resolved_axis, leftovers = orientation(tb, vocab, index, subject)
+    axis, resolved_axis, leftovers = orientation(
+        tb, vocab, index, subject, base.get("publication_id"))
     col_head = [" ".join(own.get(k, [])).strip() or "?" for k in range(len(edges))]
 
     methods = {k: v for k, v in resolved_axis.items() if v}

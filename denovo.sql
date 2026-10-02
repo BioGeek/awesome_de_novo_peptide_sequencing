@@ -20723,6 +20723,7 @@ INSERT INTO dataset VALUES(376,'Upload for CID/HCD/ETD MetaSPS paper (JPR, 2013)
 INSERT INTO dataset VALUES(377,'gagneurlab/Modanovo-development-dataset','gagneurlab/Modanovo-development-dataset','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(378,'PPbenchmark palaeoproteomics releases','Code and figures released alongside "Benchmarking the identification of a single degraded protein to explore optimal search strategies for ancient proteins". Code rather than spectra, which is why the addresses say so.','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(379,'Seven-species benchmark','DeepNovo''s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both come from Tran et al. 2017 and papers name them side by side.','benchmark','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(380,'HeLa Q Exactive HF runs (pNovo 3)','Two HeLa cell runs on a Q Exactive HF, used by pNovo 3 as its high-resolution human evaluation data and named QE_HF_X1 and QE_HF_X2 in its tables. One PRIDE submission, two subsets.','deposit','DDA','Homo sapiens','https://www.ebi.ac.uk/pride/archive/projects/PXD006932');
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -21140,6 +21141,8 @@ INSERT INTO dataset_version VALUES(402,1,'revised (balanced)','The same re-curat
 INSERT INTO dataset_version VALUES(403,379,'original (DeepNovo, 2017)','The low-resolution seven-species set as DeepNovo defined and used it, scored leave-one-out over the seven species. No single accession is published for it: the seven constituent datasets come from seven separate prior publications.',NULL,NULL,NULL,NULL,NULL,62);
 INSERT INTO dataset_version VALUES(404,379,'NovoBench split','NovoBench''s fixed split: yeast held out as the test species and the other six used for training, 3 PTMs, mean peptide length 15.79. This is the split NovoBench retrains every architecture on, so a number reported "on seven-species" by a NovoBench-derived paper means this and not DeepNovo''s own leave-one-out.',NULL,317009,17740,17094,NULL,78);
 INSERT INTO dataset_version VALUES(405,2,'HC-PT (NovoBench)','NovoBench''s ~10% subsample of the high-confidence InstaNovo split, 1 PTM, mean peptide length 12.53. Papers call it "the HC-PT dataset" and cite the InstaNovo paper for it, so a number reported on HC-PT is a number on a tenth of that corpus under NovoBench''s split.',NULL,213284,25718,26536,NULL,78);
+INSERT INTO dataset_version VALUES(406,380,'QE_HF_X1','3 raw files, 219,698 MS/MS spectra, 196,759 PSMs.',219698,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(407,380,'QE_HF_X2','3 raw files, 314,608 MS/MS spectra, 201,301 PSMs.',314608,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -21583,6 +21586,8 @@ INSERT INTO dataset_address VALUES(432,401,'DOI','10.5281/zenodo.10358625','http
 INSERT INTO dataset_address VALUES(433,401,'DOI','10.5281/zenodo.10358626','https://doi.org/10.5281/zenodo.10358626','release for the palaeoproteomics benchmarking paper',0);
 INSERT INTO dataset_address VALUES(434,2,'Zenodo','10.5281/zenodo.13685813','https://doi.org/10.5281/zenodo.13685813','main variant, plus annotated spectra in mzSpecLib',0);
 INSERT INTO dataset_address VALUES(435,402,'Zenodo','10.5281/zenodo.13685813','https://doi.org/10.5281/zenodo.13685813','balanced variant',0);
+INSERT INTO dataset_address VALUES(436,406,'PRIDE','PXD006932','https://www.ebi.ac.uk/pride/archive/projects/PXD006932','QE_HF_X1',0);
+INSERT INTO dataset_address VALUES(437,407,'PRIDE','PXD006932','https://www.ebi.ac.uk/pride/archive/projects/PXD006932','QE_HF_X2',0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -22194,6 +22199,9 @@ INSERT INTO publication_dataset VALUES(604,109,2,405,'uses');
 INSERT INTO publication_dataset VALUES(605,254,2,405,'uses');
 INSERT INTO publication_dataset VALUES(606,354,2,405,'uses');
 INSERT INTO publication_dataset VALUES(607,432,2,405,'uses');
+INSERT INTO publication_dataset VALUES(608,58,1,NULL,'uses');
+INSERT INTO publication_dataset VALUES(609,58,380,406,'uses');
+INSERT INTO publication_dataset VALUES(610,58,380,407,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

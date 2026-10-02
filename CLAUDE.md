@@ -1070,7 +1070,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**378 datasets, 404 versions, 433 addresses, 604 publication links over 130 papers.**
+**379 datasets, 406 versions, 435 addresses, 607 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1112,9 +1112,9 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 44 papers use the
+**A NULL `dataset_version_id` is the finding, not a gap.** 45 papers use the
 nine-species benchmark; 16 name the original, 11 the revised, 3 the InstaNovo
-split, and **14 print only a per-species provenance accession**, which does not
+split, and **15 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
 
@@ -1157,7 +1157,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 404 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 406 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1165,6 +1165,23 @@ PTM/phospho, and non-natural peptides). Results are reported against the
 holdouts and none can be downloaded, so those numbers are not independently
 reproducible. A dataset nobody can fetch still belongs in the catalog, because a
 reader comparing numbers needs to know which side of that line each one is on.
+
+**A PER-SPECIES PROVENANCE ACCESSION IS THE BENCHMARK AT NO KNOWN VERSION,
+and pNovo 3 is the worked example.** Its Table 2 scores four tools over seven
+columns, and its supplementary Table S1 gives the accession behind each:
+PXD005025, PXD004948, PXD004325, PXD003868 and PXD004467 are five of the
+nine-species benchmark's OWN provenance submissions, already in
+`dataset_address`. Going to those submissions directly does not say which
+curated version was used, so those columns resolve the dataset and leave the
+version NULL. That is why the count of papers naming no version is 15 rather
+than 14.
+
+The other two columns, QE_HF_X1 and QE_HF_X2, are two HeLa runs on a Q Exactive
+HF that share ONE PRIDE submission, PXD006932, and differ only in how much of
+it was used (219,698 against 314,608 MS/MS spectra). So they are two versions
+of one deposit rather than two deposits. The mapping is confirmed by
+arithmetic rather than by name: Table S1's `#PSMs` column reproduces the
+`#Total PSMs` row of Table 2 exactly, for all seven.
 
 **"Seven-species" is a DIFFERENT DATASET, not a version of nine-species.**
 Tran et al. 2017 built two evaluation sets, and papers name them side by side:
