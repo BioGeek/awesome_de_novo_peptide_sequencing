@@ -1017,6 +1017,16 @@ sentences against titles would drop papers nobody rejected. An entry with no DOI
 is not enforceable there, which is a reason to record one when rejecting
 something.
 
+**Name the repository that PUBLISHES a checkpoint, not where you found it.**
+Both π-PrimeNovo checkpoints were first credited to the ProteoBench discussion
+that led me to them; they are published by `PHOENIXcenter/pi-PrimeNovo`, the
+MassIVE model in its top-level README and the phosphorylation model in
+`pi-PrimeNovo-PTM/`, both MIT. The repository also described the model better
+than the thread did: fine-tuned from `model_massive.ckpt` on 2020-Cell-LUAD,
+predicting one extra token `B` for Phosphorylation (+79.97). A provenance table
+that cites a discussion thread is recording my search history, not the
+provenance.
+
 **Fixing that exposed a worse bug: the harvest REPLACED the list.** Two runs a
 week apart fetched 682 and 435 records over the same window, because neither
 Europe PMC nor OpenAlex returns a stable set, so an overwrite would have
@@ -1436,6 +1446,19 @@ answer is that the link resolves and what it resolves to cannot be confirmed
 from a header.
 
 Measured over the 26 recorded checkpoints: 15 live, 7 unverifiable, 3 moved, 1 gated.
+
+**A gated checkpoint can still be backed up, and DeepNovo now is.** Its weights
+were retrieved from a signed-in session and mirrored, so the backup is the only
+anonymous route to them. The status stays `gated`, because that describes the
+ORIGINAL link, which is still unreachable without an account; what changed is
+that a copy exists. Status and `mirror_url` answer different questions and the
+pair is the useful reading.
+
+The Drive folder held more than weights, which is the normal case: a yeast
+FASTA, the `yeast.low.coon_2013` test spectra, training logs and decode output.
+Only `translate.ckpt-48600`, its `.index` and meta went to the mirror, plus
+`knapsack.npy.zip` -- not weights, but DeepNovo cannot run without it, so a
+checkpoint alone would be unusable.
 
 **`gated` is a status of its own, and DeepNovo earned it.** The pretrained model
 for DeepNovo, the original deep-learning de novo method, now answers *"We can't
