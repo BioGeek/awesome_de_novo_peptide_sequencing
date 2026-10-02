@@ -342,7 +342,15 @@ def grid_html(rec: dict) -> str:
                 else f"<td>{html.escape(v)}</td>")
 
     def mcell(j):
-        return f"{html.escape(rec['metrics'][j])}<br><small>{html.escape(rec['levels'][j])}</small>"
+        # A row with no metric is a difference row ('vs CasaNovo'), which
+        # records nothing and so has no metric to show. Indexing it crashed the
+        # page write AFTER every paper had been parsed, which left the page
+        # stuck on its progress banner.
+        m = rec["metrics"].get(j) if isinstance(rec["metrics"], dict) else None
+        lv = rec["levels"].get(j) if isinstance(rec["levels"], dict) else None
+        if m is None:
+            return ""
+        return f"{html.escape(m)}<br><small>{html.escape(lv or '')}</small>"
 
     def mname(j):
         """The label AS PRINTED, with the resolved catalog name beneath it.
@@ -608,7 +616,12 @@ def main() -> int:
 
     for f in CACHE.glob("*.png"):
         f.unlink()
-    if not args.keep_crops:
+    # A RESTRICTED RUN TOUCHES ONLY ITS OWN PAPERS. `--ids 18` used to delete
+    # every crop it had not just made and rewrite the manifest with its own
+    # entries alone, so a quick look at one paper threw away the pictures and
+    # the cache keys of all the others, and the next full run had to redraw
+    # the lot. Unreferenced crops are pruned only by a run over everything.
+    if not args.keep_crops and not want:
         keep = {it["img"] for it in items if it.get("img")}
         for old in OUT.glob("*.png"):
             if old.name not in keep:
@@ -621,14 +634,19 @@ def main() -> int:
                 {"label": it.get("table_label") or "", "pub": it["pub"],
                  "cells": it.get("n_cells") or len(it.get("body") or [])})
     APPROVED.write_text(json.dumps(approved, indent=1, sort_keys=True))
-    MANIFEST.write_text(json.dumps(
-        {it["tid"]: {"publication_id": it["pub"], "pdf_page": it["pdf_page"],
-                     "table_label": it.get("table_label") or "",
-                     "verdict": it["verdict"],
-                     "crop_key": it.get("crop_key") or "",
-                     "values": [c for r in (it.get("body") or [])
-                                for c in r["cells"].values()]}
-         for it in items}, indent=1, sort_keys=True))
+    fresh = {it["tid"]: {"publication_id": it["pub"], "pdf_page": it["pdf_page"],
+                         "table_label": it.get("table_label") or "",
+                         "verdict": it["verdict"],
+                         "crop_key": it.get("crop_key") or "",
+                         "values": [c for r in (it.get("body") or [])
+                                    for c in r["cells"].values()]}
+             for it in items}
+    if want:
+        # Merge: keep every other paper's entry exactly as it was.
+        kept = {t: v for t, v in prev_crops.items()
+                if v.get("publication_id") not in want}
+        fresh = {**kept, **fresh}
+    MANIFEST.write_text(json.dumps(fresh, indent=1, sort_keys=True))
     write_html(items, tally, approved)
     print(f"\n  crops: {reused} reused, {rendered} rendered")
     print(f"  {tally['accepted']} accepted, {tally['approved']} approved, "
