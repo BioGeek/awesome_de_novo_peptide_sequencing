@@ -534,6 +534,19 @@ dataset_versions = pd.read_sql("""
      ORDER BY d.name, dv.id
 """, conn)
 
+# Checkpoints, for the cross-method table. This is the ONLY place the whole set
+# is visible at once: the algorithm pages each show their own, and the Hugging
+# Face mirror README covers only the files that were copied. Generated here, in
+# the project that owns the table, so it cannot drift -- an earlier version of
+# this lived as a hand-regenerated page in the personal-site repo, which is
+# exactly the duplicated-list pattern this file warns about elsewhere.
+checkpoints = pd.read_sql("""
+    SELECT a.name AS method, c.label, c.tool_version, c.trained_on, c.host, c.url,
+           c.licence, c.size_bytes, c.archival, c.status, c.last_checked, c.mirror_url
+      FROM checkpoint c JOIN algorithm a ON a.id = c.algorithm_id
+     ORDER BY a.name, c.archival DESC, c.tool_version, c.id
+""", conn)
+
 dataset_addresses = pd.read_sql("""
     SELECT dv.id AS version_id, d.name AS dataset, dv.version,
            a.repository, a.accession, a.url, a.part, a.is_provenance
@@ -637,6 +650,7 @@ ojs_define(
     dataset_usage=dataset_usage,
     dataset_versions=dataset_versions,
     dataset_addresses=dataset_addresses,
+    checkpoints=checkpoints,
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
@@ -3687,6 +3701,94 @@ not used by overlapping sets of papers, they are used by the same set. The
 lighter shade is a deposit matching that signature plus one extra paper.
 :::
 
+### The weights behind the numbers
+
+```{ojs}
+//| echo: false
+checkpoints_t = transpose(checkpoints)
+```
+
+```{ojs}
+//| echo: false
+ck_stats = {
+  const n = checkpoints_t.length
+  const backed = checkpoints_t.filter(c => c.mirror_url).length
+  const archival = checkpoints_t.filter(c => c.archival).length
+  const gated = checkpoints_t.filter(c => c.status === "gated").length
+  return { n, backed, archival, gated,
+           methods: new Set(checkpoints_t.map(c => c.method)).size }
+}
+```
+
+```{ojs}
+//| echo: false
+md`A benchmark number is only reproducible if the weights behind it can still be
+downloaded, and this field keeps them in places with very different durability.
+**${ck_stats.n}** checkpoints across **${ck_stats.methods}** methods are
+recorded here: **${ck_stats.archival}** sit in a DOI'd archive that is dated and
+preserved, and the rest are Google Drive files, personal URLs and release tags
+that can move or vanish leaving nothing to cite.
+
+**${ck_stats.gated}** is already gone: DeepNovo's pretrained model, the original
+deep-learning *de novo* checkpoint, now demands a signed-in Google account on a
+link its citing papers call publicly available. **${ck_stats.backed}** have a
+backup copy, which is the answer to that.
+
+One method name also covers several models. Casanovo 4.0.0, 4.2.0, 5.0.0 and
+5.2.0-Orbitrap are four different sets of weights, and comparing a number
+against "Casanovo" with no version is the same error as comparing one against
+"nine-species".`
+```
+
+```{ojs}
+//| echo: false
+viewof checkpoint_search = Inputs.search(checkpoints_t, {
+  placeholder: "Search method, host, licence, training data…",
+  columns: ["method", "label", "tool_version", "trained_on", "host", "licence", "status"],
+  width: 520
+})
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(checkpoint_search, {
+  columns: ["method", "tool_version", "trained_on", "host", "licence", "size_bytes",
+            "status", "mirror_url"],
+  header: { method: "Method", tool_version: "Version", trained_on: "Trained on",
+            host: "Host", licence: "Licence", size_bytes: "Size", status: "Link",
+            mirror_url: "Backup" },
+  sort: "method", rows: 16,
+  format: {
+    // The ORIGINAL is the primary link and the backup is secondary, deliberately:
+    // sending a reader to a copy first would hide that the authors published it.
+    host: (h, i, rows) => {
+      const r = (rows ?? [])[i]
+      return r?.url ? html`<a href="${r.url}" target="_blank">${h}</a>${
+        r.archival ? html` <small>archival</small>` : ""}` : h
+    },
+    size_bytes: n => n == null ? "" : n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB`
+                                               : `${Math.round(n / 1e6)} MB`,
+    status: s => s === "live" ? "live"
+      : html`<b style="color:${s === "gated" ? "#b45309" : "#57606a"}">${s ?? "unchecked"}</b>`,
+    mirror_url: u => u ? html`<a href="${u}" target="_blank">copy</a>` : "—",
+    tool_version: v => v ?? "",
+    trained_on: v => v ?? "",
+    licence: v => v ?? "not stated"
+  },
+  width: { method: 130, tool_version: 85, host: 110, licence: 150, size_bytes: 72,
+           status: 90, mirror_url: 70 }
+})
+```
+
+::: {.callout-note appearance="simple"}
+**A backup is a fallback, not a source.** The copies live in a
+[Hugging Face mirror](https://huggingface.co/BioGeek/denovo-checkpoints) whose
+README records, per file, where it came from and what its source repository's
+licence says. Cite the paper and prefer the original link; the copy exists for
+the day the original stops answering. Only weights are mirrored, never training
+data, and only where a licence permits it.
+:::
+
 ### The dataset network
 
 ```{ojs}
@@ -4094,7 +4196,7 @@ application_timeline = {
   const DOT_IN_ROW_PX = 35    // dot centre from the row top, label in the 24 above
   const CHAR_PX = 5.7         // mean advance of 10 px bold Source Sans Pro
   const LABEL_GAP_PX = 8      // clear air between two labels sharing a row
-  const PLOT_WIDTH_PX = 925   // width 1200 minus marginLeft 215 and marginRight 60
+  const PLOT_WIDTH_PX = 885   // width 1200 minus marginLeft 215 and marginRight 100
 
   // Wrap the display label onto two lines at a word boundary when it exceeds
   // the max width (Plot renders \n as separate tspans). Falls back to the raw
@@ -4181,7 +4283,11 @@ application_timeline = {
     // survives the scale unchanged.
     height: Math.max(240, total_height + 60),
     marginLeft: 215,   // measured 2 px over
-    marginRight: 60,   // measured 15 px over
+    // 100, not 60: "N-sulfonated peptide MALDI TOF/TOF de novo sequencing" is
+    // the longest label here and ran 34 px past the frame at 60, measured by
+    // check_chart_overlap.py. PLOT_WIDTH_PX above is derived from this and
+    // moves with it, or the wrap points drift away from the real frame.
+    marginRight: 100,
     marginTop: 20,
     marginBottom: 40,
     x: { type: "time", label: "First publication →", domain: [x_pad_min, x_pad_max], grid: true },
@@ -4393,7 +4499,9 @@ application_sankey = {
   const height = Math.min(1200, Math.max(480, 50 + n_rows * ROW_PX))
   // right 285: the longest sequencer name, 'PSD MALDI high-sensitivity de novo
   // sequencing', ran 6 px past the frame at 260.
-  const margin = { top: 30, right: 285, bottom: 20, left: 260 }
+  // right 325: the same long sequencer name that overflowed the swim lane ran
+  // 34 px past this frame at 285.
+  const margin = { top: 30, right: 325, bottom: 20, left: 260 }
   const inner_w = width  - margin.left - margin.right
   const inner_h = height - margin.top  - margin.bottom
 
