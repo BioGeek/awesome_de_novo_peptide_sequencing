@@ -55,10 +55,12 @@ from __future__ import annotations
 
 import argparse
 import collections
+import itertools
 import csv
 import pathlib
 import re
 import sqlite3
+import statistics
 import sys
 
 import build_pdf_library as bpl
@@ -596,7 +598,8 @@ def row_label(toks: list[dict], first_edge: float) -> str:
 def block_bbox(rows: list[list[dict]], lo: int, hi: int,
                cap_end: int, edges: list[tuple[float, float]],
                left_bound: float, max_header: int = 5,
-               cap_start: int = -1) -> tuple[float, float, float, float]:
+               cap_start: int = -1,
+               right_limit: float = float("inf")) -> tuple[float, float, float, float]:
     """(x0, top, x1, bottom) covering the caption, the header and the body.
 
     Used only to CROP THE PRINTED TABLE OUT OF THE PAGE for review, never for
@@ -617,12 +620,20 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     first = (start if 0 <= start < lo and lo - start <= max_header + 3
              else max(0, lo - 3))
     last = max(hi, cap_end if cap_end > hi else hi)
-    band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]]
+    # MEASURE THE HEIGHT FROM WORDS INSIDE THE CROP, not from every word on
+    # those rows. A journal's rotated margin watermark is one tall "word":
+    # publication 58's page 5 carries 'https://academic.oup.com/...' running
+    # from y 250 to y 489 at x 588, outside the table and outside the crop,
+    # and its bottom stretched Table 2's picture down over Figure 2's venn
+    # diagrams. The horizontal clip is already computed here, so the vertical
+    # extent is taken from the words that clip keeps.
+    x0 = max(0.0, left_bound - 12)
+    x1 = min(edges[-1][1] + 14, right_limit)
+    band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]
+            if w["x1"] >= x0 and w["x0"] <= x1]
     if not band:
         return (0.0, 0.0, 0.0, 0.0)
-    return (max(0.0, left_bound - 12),
-            min(w["top"] for w in band) - 6,
-            edges[-1][1] + 14,
+    return (x0, min(w["top"] for w in band) - 6, x1,
             max(w["bottom"] for w in band) + 6)
 
 
@@ -942,8 +953,14 @@ def level_of(text: str) -> str | None:
 # means a cross-reference inside a sentence -- 'Table2,LIPNovooutperforms
 # AdaNovoby+8.7%' is prose, and read as a label it took the caption of the
 # table below it.
+# A THESIS NUMBERS ITS TABLES BY CHAPTER. Publication 196 prints 'Table 6.1:',
+# which matched as 'Table 6' and left '1:' at the head of the caption, so the
+# badge a reader quotes named a table the thesis does not have. The optional
+# '.N' cannot swallow an ordinary 'Table 1. Comparison', because a digit has to
+# follow the dot.
 LABEL_ROW = re.compile(
-    r"(?i)^\s*Tab(?:le|\.)\s*(S?\d{1,2}|[IVX]{1,4})\s*(?=$|[.:|\u2013\u2014]|\s)")
+    r"(?i)^\s*Tab(?:le|\.)\s*(S?\d{1,2}(?:\.\d{1,2})?|[IVX]{1,4})\s*"
+    r"(?=$|[.:|\u2013\u2014]|\s)")
 
 
 def label_rows(rows: list[list[dict]]) -> list[int]:
@@ -961,23 +978,68 @@ def label_runs(rows: list[list[dict]]) -> list[tuple[int, float, float]]:
     """
     out = []
     for i, r in enumerate(rows):
-        words = sorted(r, key=lambda w: w["x0"])
-        runs: list[list[dict]] = []
-        for w in words:
-            if runs and w["x0"] - runs[-1][-1]["x1"] <= 25.0:
-                runs[-1].append(w)
-            else:
-                runs.append([w])
-        for run in runs:
+        for run in caption_runs(r):
             if LABEL_ROW.match(" ".join(w["text"] for w in run)):
                 out.append((i, min(w["x0"] for w in run),
                             max(w["x1"] for w in run)))
     return out
 
 
+# A FIGURE'S OWN CAPTION, which is a boundary a table caption cannot reach
+# across. Publication 99's page 5 prints a nine-panel figure whose bar labels
+# cluster into rows of numbers exactly as a table does, then Figure 4's
+# caption, then Table 1 -- whose cells carry '(cid:78)' glyphs and so form no
+# numeric block at all. The only block on the page was the CHART, and the only
+# table label was Table 1's, so the chart was handed Table 1's caption and
+# cropped together with the figure and two paragraphs of prose.
+FIGURE_LABEL = re.compile(r"(?i)^\s*Fig(?:ure|\.)?\s*(S?\d{1,2}|[IVX]{1,4})\s*(?=$|[.:|]|\s)")
+
+
+def figure_rows(rows: list[list[dict]]) -> list[int]:
+    """Rows that begin a figure caption."""
+    out = []
+    for i, r in enumerate(rows):
+        for run in caption_runs(r):
+            if FIGURE_LABEL.match(" ".join(w["text"] for w in run)):
+                out.append(i)
+                break
+    return out
+
+
+def caption_runs(row: list[dict]) -> list[list[dict]]:
+    """The row's words grouped into page columns, for reading captions.
+
+    A GUTTER THRESHOLD ALONE IS NOT ENOUGH, and publication 17's page 7 is why:
+    its two captions are single glued words, 'Table3.Leave-one-outcross...' and
+    'Table5.Componentablation...', 18 pt apart -- a narrower gap than the 25 pt
+    that separates a label from its own prose elsewhere, so they merged and the
+    page reported one caption spanning both columns. Two different tables, Table
+    3 and Table 5, then shared one label and one merged caption.
+
+    So a run is also broken at any word that itself BEGINS a label. A second
+    'Table N' on a row is a second caption by definition, which needs no
+    measurement and cannot be defeated by a narrow gutter.
+    """
+    words = sorted(row, key=lambda w: w["x0"])
+    runs: list[list[dict]] = []
+    for w in words:
+        starts = bool(LABEL_ROW.match(w["text"]))
+        if runs and not starts and w["x0"] - runs[-1][-1]["x1"] <= 25.0:
+            runs[-1].append(w)
+        else:
+            runs.append([w])
+    return runs
+
+
 def pair_parts(rows: list[list[dict]],
                parts: list[tuple[int, int, float, float]]) -> dict:
-    """Pair each (block, column span) with its caption label.
+    """Pair each (block, column span) with its caption label, as (row, x0, x1).
+
+    THE LABEL'S X-SPAN TRAVELS WITH IT, because a row can hold two of them.
+    Returning the row alone was enough to pair correctly and still wrong
+    downstream: publication 17's two page-7 captions share row 1, so
+    caption_text re-derived which label that row meant and took the first,
+    giving Table 5's table Table 3's label and caption.
 
     COLUMN FIRST, THEN ORDER. Two tables printed side by side have captions on
     the same rows, so distance alone cannot say which belongs to which; but
@@ -1000,22 +1062,68 @@ def pair_parts(rows: list[list[dict]],
         else:
             cols.append({"x0": x0, "x1": x1, "parts": [part]})
 
+    # A LABEL BELONGS TO THE COLUMN IT MOSTLY SITS IN, and to one only. Taking
+    # every label that merely touches a column, or starts within 30 pt of it,
+    # made publication 17's three labels all candidates for its left column:
+    # Table 5's caption begins 57 pt inside the left column's span, so the
+    # left column saw three captions for two tables, the count no longer
+    # agreed, and the nearest-distance fallback handed the first table the
+    # caption of Table 4 further down the page. Each label is assigned once,
+    # by overlap fraction, which is a measurement of the page rather than a
+    # tolerance.
+    if not cols:
+        return {}
+    # A TABLE CAPTION CANNOT REACH ACROSS A FIGURE'S CAPTION. See FIGURE_LABEL.
+    figs = figure_rows(rows)
+
+    def blocked(part, run) -> bool:
+        a, b = min(part[0], run[0]), max(part[1], run[0])
+        return any(a < f < b for f in figs)
+
+    assigned: dict[int, list] = {i: [] for i in range(len(cols))}
+    for r in runs:
+        width = max(r[2] - r[1], 1.0)
+        best, best_frac = None, 0.0
+        for i, c in enumerate(cols):
+            frac = max(0.0, min(r[2], c["x1"]) - max(r[1], c["x0"])) / width
+            if frac > best_frac:
+                best, best_frac = i, frac
+        if best is None:
+            # No overlap with any column: the nearest one by x takes it.
+            best = min(range(len(cols)),
+                       key=lambda i: min(abs(cols[i]["x0"] - r[2]),
+                                         abs(r[1] - cols[i]["x1"])))
+        assigned[best].append(r)
+
     out: dict = {}
-    for c in cols:
-        cand = [r for r in runs
-                if min(r[2], c["x1"]) - max(r[1], c["x0"]) > 0
-                or c["x0"] - 30 <= r[1] <= c["x1"] + 30]
+    for ci, c in enumerate(cols):
+        cand = list(assigned[ci])
         cand.sort(key=lambda r: r[0])
         mine = sorted(c["parts"], key=lambda t: t[0])
+        cand = [r for r in cand if any(not blocked(part, r) for part in mine)]
         if len(cand) == len(mine) and cand:
-            for part, run in zip(mine, cand):
-                out[(part[0], part[1], part[2])] = run[0]
-            continue
-        for part in mine:
-            lo, hi = part[0], part[1]
-            best = min(cand, key=lambda r: min(abs(r[0] - lo), abs(r[0] - hi)),
-                       default=None)
-            out[(part[0], part[1], part[2])] = best[0] if best else None
+            if all(not blocked(part, run) for part, run in zip(mine, cand)):
+                for part, run in zip(mine, cand):
+                    out[(part[0], part[1], part[2])] = run
+                continue
+        # A CAPTION BELONGS TO ONE TABLE. Handing the same label to every part
+        # that is near it gave a FIGURE the caption of the table above it, and
+        # it then arrived in the review page as a captioned item with no table
+        # in the picture. Each label is claimed once, by the nearest part, and
+        # a part left without one is treated as a figure and skipped.
+        taken: set = set()
+        order = sorted(
+            ((min(abs(r[0] - part[0]), abs(r[0] - part[1])), pi, ri)
+             for pi, part in enumerate(mine) for ri, r in enumerate(cand)
+             if not blocked(part, r)))
+        chosen: dict = {}
+        for _d, pi, ri in order:
+            if pi in chosen or ri in taken:
+                continue
+            chosen[pi], _ = ri, taken.add(ri)
+        for pi, part in enumerate(mine):
+            ri = chosen.get(pi)
+            out[(part[0], part[1], part[2])] = cand[ri] if ri is not None else None
     return out
 
 
@@ -1049,7 +1157,7 @@ def pair_captions(rows: list[list[dict]], blocks: list[tuple[int, int]]) -> dict
     return out
 
 
-def caption_text(rows: list[list[dict]], li: int | None,
+def caption_text(rows: list[list[dict]], paired: tuple | None,
                  blocks: list[tuple[int, int]],
                  fine: list[dict] | None = None,
                  page_width: float = 612.0) -> tuple[str, str, int]:
@@ -1060,7 +1168,11 @@ def caption_text(rows: list[list[dict]], li: int | None,
     ITS WORDS COME FROM A FINER EXTRACTION. At the default word tolerance a
     caption arrives with its spaces gone -- 'Thecomparisonofdenovopeptide' --
     because these producers leave an inter-word gap narrower than 3 pt. At
-    x_tolerance=2 the same line reads 'The comparison of de novo peptide'.
+    x_tolerance=1.6 the same line reads 'The comparison of de novo peptide'.
+    1.6 rather than 2 because a JUSTIFIED caption line is set tighter still:
+    publication 4's third line stayed glued at 2 and separates at 1.6, which
+    is also where it stops changing -- 1.6, 1.3 and 1.0 give the same words on
+    that page, so the floor is the producer's kerning and not a tuned value.
     The PARSING geometry still uses the default, since a tighter tolerance
     would split 'M.mazei' into two words and change which column a cell lands
     in; only the caption's text is re-read.
@@ -1076,9 +1188,12 @@ def caption_text(rows: list[list[dict]], li: int | None,
 
     The last row matters to the header walk, which must not read the caption.
     """
-    if li is None:
+    if paired is None:
         return "", "", -1
-    text = " ".join(w["text"] for w in rows[li])
+    li, pair_x0, pair_x1 = paired
+    text = " ".join(w["text"] for w in sorted(rows[li], key=lambda w: w["x0"])
+                     if pair_x0 - 1 <= w["x0"] and w["x1"] <= pair_x1 + 1) \
+        or " ".join(w["text"] for w in rows[li])
     m = LABEL_ROW.match(text)
     label = m.group(0).strip() if m else ""
     # RESERVE THE ROW DIRECTLY ABOVE EACH DATA BLOCK for the header. Without
@@ -1089,12 +1204,59 @@ def caption_text(rows: list[list[dict]], li: int | None,
     for lo, _ in blocks:
         if lo > li:
             stop = min(stop, lo - 1)
+    # THE TABLE BELOW A CAPTION IS ITS LOWER BOUND, and where there is one
+    # every line in between is caption. A fixed three-line window cut
+    # publication 4's Table 3 short of its last sentence, which happened to be
+    # the one naming the models ('The models tested are Base and PA, alongside
+    # Casanovo's reported numbers'): the two columns interleave, so three ROWS
+    # is barely two caption LINES. Where no table follows -- the caption sits
+    # below its own table, and body prose runs on underneath with no gap to
+    # stop at -- the conservative window stays.
+    runs = caption_runs(rows[li])
+    own_run = next((r for r in runs
+                    if LABEL_ROW.match(" ".join(x["text"] for x in r))
+                    and min(x["x0"] for x in r) <= pair_x1
+                    and max(x["x1"] for x in r) >= pair_x0), runs[0])
+    lx0 = min(w["x0"] for w in own_run)
+    lx1 = max(w["x1"] for w in own_run)
+    right = lx1 + 6
+    limit = min(li + 4, stop) if stop >= len(rows) or stop - li > 14 else stop
     last = li
-    for j in range(li + 1, min(li + 4, stop)):
+    for j in range(li + 1, limit):
         nxt = rows[j]
         if sum(1 for w in nxt if numeric(w["text"])) >= 2:
             break
         if LABEL_ROW.match(" ".join(w["text"] for w in nxt)):
+            break
+        # A HEADER ROW IS NOT PROSE, and once the table below bounds the walk
+        # rather than a line count, the walk reaches it: publication 4's
+        # caption ran on into 'TEST SET NINE-SPECIES V2 MODEL BASE PA
+        # CASANOVO'. Reserving one row for the header is not enough, because a
+        # spanner gives a table two.
+        #
+        # TWO SHAPES OF HEADER ROW, and each needs its own test.
+        #
+        # ALL CAPS: publication 4's 'TEST SET NINE-SPECIES V2' and 'MODEL BASE
+        # PA CASANOVO' carry no lowercase letter at all, which no sentence
+        # does.
+        #
+        # COLUMN-ALIGNED: publication 18's 'ID Clam Human Honey Mouse Tomato
+        # M.mazei Bacillus Yeast Rice Average' is capitalised English, so the
+        # first test passes it. What gives it away is the geometry: its words
+        # sit one per column with the column pitch between them, while a
+        # caption's words are a line of prose a few points apart. Three or
+        # more words whose median gap is over 15 pt is a header.
+        #
+        # Requiring a word to START lowercase was tried instead of both and is
+        # wrong: publication 4's caption line is two glued words, 'MassIVE-KB
+        # set.' and 'Here we tested on each of the species in the', and both
+        # begin with a capital, so the caption lost its last two sentences.
+        mine = sorted((w for w in nxt if lx0 - 6 <= w["x0"] <= right),
+                      key=lambda w: w["x0"])
+        if mine and not any(c.islower() for c in " ".join(w["text"] for w in mine)):
+            break
+        gaps = [b["x0"] - a["x1"] for a, b in zip(mine, mine[1:])]
+        if len(mine) >= 3 and statistics.median(gaps) > 15.0:
             break
         last = j
 
@@ -1106,18 +1268,6 @@ def caption_text(rows: list[list[dict]], li: int | None,
     # identification. We were k...'. The label row's words are grouped into
     # runs separated by a gutter, and the run holding 'Table N' is the caption's
     # own column.
-    lab_row = sorted(rows[li], key=lambda w: w["x0"])
-    runs: list[list[dict]] = [[lab_row[0]]]
-    for w in lab_row[1:]:
-        if w["x0"] - runs[-1][-1]["x1"] > 25.0:
-            runs.append([w])
-        else:
-            runs[-1].append(w)
-    own_run = next((r for r in runs
-                    if LABEL_ROW.match(" ".join(x["text"] for x in r))), runs[0])
-    lx0 = min(w["x0"] for w in own_run)
-    lx1 = max(w["x1"] for w in own_run)
-    right = lx1 + 6
     top = min(w["top"] for w in rows[li]) - 1
     bottom = max(w["bottom"] for w in rows[last]) + 1
 
@@ -1161,7 +1311,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     # A second, finer pass used ONLY for caption text. See caption_text().
     try:
         fine = strip_line_numbers(page.extract_words(
-            use_text_flow=False, keep_blank_chars=False, x_tolerance=2))
+            use_text_flow=False, keep_blank_chars=False, x_tolerance=1.6))
     except Exception:
         fine = None
     rules = page_rules(page)
@@ -1177,6 +1327,20 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             parts.append((lo, hi, [full[k] for k in grp]))
     paired = pair_parts(rows, [(lo, hi, e[0][0], e[-1][1]) for lo, hi, e in parts])
     span_of = {(lo, hi, e[0][0]): (lo, hi) for lo, hi, e in parts}
+    # A PART'S CROP STOPS AT ITS NEIGHBOUR. Two tables printed side by side
+    # share their rows, and each one's picture was free to run into the other:
+    # publication 64's page 6 cropped Table 2 together with the left half of
+    # Table 3, because Table 3's method names sit in the band Table 2's crop
+    # claimed. The left limit matters as much as the right -- Table 3's own
+    # crop began at x 153, inside Table 2 -- so both are bounded by the
+    # adjacent part in the same block.
+    neighbours: dict[tuple, tuple[float, float]] = {}
+    for (lo, hi), group in itertools.groupby(parts, key=lambda t: (t[0], t[1])):
+        g = list(group)
+        for j, (_lo, _hi, edges) in enumerate(g):
+            lim_lo = g[j - 1][2][-1][1] + 4 if j else 0.0
+            lim_hi = g[j + 1][2][0][0] - 4 if j + 1 < len(g) else float("inf")
+            neighbours[(lo, hi, edges[0][0])] = (lim_lo, lim_hi)
     for lo, hi, edges in parts:
         table_label, caption, cap_end = caption_text(
             rows, paired.get((lo, hi, edges[0][0])), blocks, fine,
@@ -1187,12 +1351,15 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         # Computed BEFORE the vetoes, because the review page shows a refused
         # table beside its picture too, and a veto is exactly the case a human
         # most needs to see.
+        lim_lo, lim_hi = neighbours.get((lo, hi, edges[0][0]), (0.0, float("inf")))
         crop_lb = min([w["x0"] for r in rows[lo:hi + 1] for w in r
-                       if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
-                      or [edges[0][0] - 150])
-        _li = paired.get((lo, hi, edges[0][0]))
+                       if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220
+                       and w["x0"] >= lim_lo]
+                      or [max(lim_lo, edges[0][0] - 150)])
+        _pair = paired.get((lo, hi, edges[0][0]))
         bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb,
-                          cap_start=(_li if _li is not None else -1))
+                          cap_start=(_pair[0] if _pair else -1),
+                          right_limit=lim_hi)
         try:
             caption_verdict(caption)
         except Reject as exc:
@@ -1207,6 +1374,20 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         body, dropped, ragged = [], 0, False
         multi = None
         pending: list[str] = []          # interstitial group-label words
+        # WHERE THE DATA REALLY BEGINS, not where the first column's interval
+        # is extrapolated to begin. `column_edges` tiles the intervals by
+        # mirroring each column's right half-width, so the leftmost interval
+        # reaches further left than any number in it -- 89.1 against a first
+        # digit at 107.9 in publication 18's Table 1. A row label is taken
+        # from the words ENTIRELY left of that bound, so a label 1 pt wider
+        # than the extrapolation was discarded: 'TSARseqNovo' (x1 90.1) and
+        # 'vs pi-HelexiNovo' (93.6) vanished while the narrower 'vs CasaNovo'
+        # (83.8) survived, which left the table with no subject and no
+        # comparator and rejected it for carrying no methods. The measured
+        # left edge of the first column's data cannot clip a label.
+        data_x0 = [w["x0"] for r in rows[lo:hi + 1] for w in r
+                   if numeric(w["text"]) and assign(w, edges) == 0]
+        label_right = max(edges[0][0], min(data_x0) - 1.0) if data_x0 else edges[0][0]
         for r in rows[lo:hi + 1]:
             cells: dict[int, dict] = {}
             for w in r:
@@ -1252,7 +1433,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 k = assign(max(left, key=lambda x: x["x1"]), edges)
                 if k is not None and k in cells:
                     cells[k]["wrapped"] = True
-            label = row_label(r, edges[0][0])
+            label = row_label(r, label_right)
             if cells and COUNT_ROW.search(label):
                 dropped += 1
                 continue
@@ -1338,7 +1519,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             [w["x0"] for r in rows[lo:hi + 1] for w in r
              if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
             or [edges[0][0] - 150]) - 4
-        li = paired.get((lo, hi, edges[0][0]))
+        li = (paired.get((lo, hi, edges[0][0])) or (None,))[0]
         own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
             floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules,
@@ -1433,7 +1614,16 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
     # refused for an unresolved method. An algorithm is reachable by any name
     # the paper actually spells out.
     vocab: dict[str, list[tuple[int, str]]] = {}
-    squashed = re.sub(r"[^A-Za-z0-9]", "", text).lower()
+    # A MARGIN LINE NUMBER SITS INSIDE A HYPHENATED NAME. An ICLR submission
+    # numbers every line in the margin, and extract_text() puts that number at
+    # the head of the line it labels -- so CrossNovo's prose, which breaks its
+    # only full spelling of PointNovo across a line as 'Point-' / 'Novo', came
+    # out squashed as 'point360novo' and the de-spaced check below still
+    # missed it. A leading digit run per line is dropped first. Digits are not
+    # removed wholesale, because 'pNovo 3' needs its 3 to stay distinct from
+    # 'pNovo'.
+    squashed = re.sub(r"[^A-Za-z0-9]", "",
+                      re.sub(r"(?m)^\s*\d{1,4}\s", " ", text)).lower()
     for aid, name, aliases in con.execute(
             "SELECT id, name, aliases FROM algorithm WHERE kind IN "
             "('algorithm','post-processor','adjacent')"):
@@ -1458,6 +1648,36 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
                 if (aid, name) not in vocab[norm(nm)]:
                     vocab[norm(nm)].append((aid, name))
     return vocab
+
+
+# A ROW THAT IS A DIFFERENCE, NOT A MEASUREMENT. TSARseqNovo's Table 1
+# (publication 18) prints its own score and then, under it, 'vs CasaNovo' and
+# 'vs pi-HelexiNovo' rows holding the IMPROVEMENT in percentage points: 4.8,
+# 8.4, 10.4. Those labels resolve to methods perfectly well, so read naively
+# the table records 4.8 as CasaNovo's peptide precision, which is both wrong
+# and worse than a rejection because it looks like data. The catalog has no
+# grain for a difference -- `value` is a measurement normalised to 0..1 -- so
+# these rows are identified and excluded, and a table left with no comparator
+# of its own is refused rather than published as a one-method 'comparison'.
+# TWO CLASSES OF MARKER, and they cannot share a lookahead.
+#
+# 'vs' and 'versus' may run straight into the method name, because these
+# labels arrive with their spaces gone: 'vsCasaNovo', 'vspi-HelexiNovo'. No
+# method in this catalog begins with either, so allowing a camel-case boundary
+# there is safe.
+#
+# The word-like markers must be followed by a real separator, and that is not
+# a nicety: 'diff' with a letter allowed after it matches **DiffNovo**, which
+# is publication 13's method, and matched 'DiffuNovo' too -- which is exactly
+# what happened, silently dropping both of DiffuNovo's own rows from its six
+# tables and rejecting all six for having no subject. Note also that an inline
+# (?i) applies to the whole pattern, so a case-insensitive [A-Z] matches every
+# letter; the case-sensitive group below is deliberate.
+DELTA_LABEL = re.compile(
+    r"^\s*(?:(?i:vs\.?|versus)(?=$|[\s._-]|(?-i:[A-Z\u03c0]))"
+    r"|\u0394(?=$|[\s._-]|(?-i:[A-Za-z]))"
+    r"|(?i:delta|diff(?:erence)?|improvements?(?:\s+over)?|"
+    r"gains?(?:\s+over)?)(?=$|[\s._-]))")
 
 
 # A trailing version token, INCLUDING a bare integer: a paper comparing two of
@@ -2197,20 +2417,38 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         if source == "own":
             cols = got
     rows, leftovers = {}, {}
+    deltas: set[int] = set()
     for i, r in enumerate(tb["body"]):
         hit, rest, matched = resolve_in_label(
             r["label"], vocab, index, subject, pub_id)
+        # Matched against the RAW label only. Running it over the unsquashed
+        # form as well put the separator back inside 'DiffNovo' ('Diff Novo')
+        # and matched it; the camel-case branch above already reads
+        # 'vsCasaNovo' straight off the raw text, so the second attempt bought
+        # nothing and cost a method name.
+        if DELTA_LABEL.match(r["label"] or ""):
+            deltas.add(i)
         rows[i] = hit
         printed_rows[i] = matched or r["label"]
         # Words from an interstitial label row count as this row's leftovers:
         # they are the group label, just set on a line of their own.
         leftovers[i] = rest + list(r.get("extra") or [])
     n_col = len({(v[0], v[2] or "") for v in cols.values() if v})
-    n_row = len({(v[0], v[2] or "") for v in rows.values() if v})
+    # Delta rows do not count towards the row axis carrying methods, and are
+    # dropped from it, for the reason DELTA_LABEL records.
+    kept = {i: v for i, v in rows.items() if i not in deltas}
+    n_row = len({(v[0], v[2] or "") for v in kept.values() if v})
     if n_col >= 2 and n_col >= n_row:
         return "columns", cols, {}, printed_cols
     if n_row >= 2:
-        return "rows", rows, leftovers, printed_rows
+        tb["delta_rows"] = sorted(deltas)
+        return "rows", kept, {i: leftovers[i] for i in kept}, printed_rows
+    if deltas and n_row:
+        named = sorted({printed_rows[i] for i in deltas})
+        raise Reject(f"G7 a difference table: its {len(deltas)} 'vs' row(s) "
+                     f"{named} hold improvements in percentage points rather "
+                     f"than measurements, and excluding them leaves "
+                     f"{n_row} method, so there is no comparator to compare to")
     if span_blocked:
         raise Reject(f"N1 the method names are in a spanner whose grouping no "
                      f"rule states, so columns {sorted(amb)} are undecidable; "
