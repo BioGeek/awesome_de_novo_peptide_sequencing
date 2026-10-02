@@ -2634,7 +2634,80 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # (Yilmaz et al., 2024), which the reviewer confirmed against the paper.
     (17, "peaks"): ("PEAKS", None),
     (17, "baseline"): ("Casanovo", None),
+    # TSARseqNovo. Its table misspells pi-HelixNovo as 'pi-HelexiNovo'.
+    (18, "pihelexinovo"): ("\u03c0-HelixNovo", None),
 }
+
+
+# A TABLE THAT PRINTS DIFFERENCES INSTEAD OF BASELINES, and what to do about
+# it. Recorded per table because the reading is a judgement about one paper's
+# design, and each entry says how it was confirmed.
+DIFFERENCE_TABLES: dict[tuple[int, str], dict] = {
+    # TSARseqNovo, Table 1. "The 'vs' rows indicate the improvement of
+    # TSARseqNovo over CasaNovo and pi-HelixNovo for each metric." So each
+    # baseline's score is TSARseqNovo's MINUS the printed improvement -- in
+    # PERCENTAGE POINTS, not relative per cent, and that is confirmed rather
+    # than assumed: TSARseqNovo minus its pi-HelixNovo row reproduces the
+    # pi-HelixNovo peptide recall that CrossNovo prints independently, exactly,
+    # in all nine species (38.8, 39.2, 47.3, 48.3, 56.0, 56.0, 59.6, 56.8,
+    # 62.3); the relative reading matches none of them. The reviewer asked for
+    # the baselines to be shown like any other row, with the design footnoted.
+    (18, "Table1"): {
+        "unit": "percentage points",
+        "note": ("The original table prints only TSARseqNovo's scores, each "
+                 "followed by two 'vs' rows giving its improvement in percentage "
+                 "points over CasaNovo and pi-HelixNovo. The CasaNovo and "
+                 "pi-HelixNovo values here are computed as TSARseqNovo minus that "
+                 "improvement; they are not printed in the paper. The table also "
+                 "misspells pi-HelixNovo as 'pi-HelexiNovo'."),
+    },
+}
+
+
+def apply_difference_table(tb: dict, pub_id) -> None:
+    """Turn a registered table's 'vs X' rows into derived rows for X, in place.
+
+    Each 'vs' row's cell becomes (the subject row above it) minus (the printed
+    improvement), the row's label loses its 'vs', and the cell records the
+    expression it came from, so a derived number is never mistaken for a
+    printed one. The paper's own bold and underline on those rows marked the
+    IMPROVEMENTS, not the scores, so they are cleared.
+    """
+    spec = DIFFERENCE_TABLES.get((pub_id, (tb.get("registry_label")
+                                           or tb.get("table_label") or "").strip()))
+    if not spec or tb.get("differences_applied"):
+        return
+    subject_cells = None
+    for r in tb["body"]:
+        if DELTA_LABEL.match(r["label"] or ""):
+            if subject_cells is None:
+                continue
+            for k, c in list(r["cells"].items()):
+                base = subject_cells.get(k)
+                if base is None:
+                    r["cells"].pop(k)
+                    continue
+                v = round(base["value"] - c["value"], 6)
+                # At the precision of the numbers it came from: '{:g}' printed
+                # 54.0 as '54', which reads like a different, rounder value.
+                dp = max(len(x.split(".")[1]) if "." in x else 0
+                         for x in (base["printed"], c["printed"]))
+                r["cells"][k] = {
+                    "value": v, "stddev": None, "printed": f"{v:.{dp}f}",
+                    "parts": [(v, "")], "bold": False, "underlined": False,
+                    "derived": f"{base['printed']} - {c['printed']}"}
+            r["label"] = re.sub(r"(?i)^\s*(vs\.?|versus)\s*", "", r["label"])
+            # A MISSPELT name is shown CORRECTED on a row this script built:
+            # the row is ours, not the paper's, so it carries the right name,
+            # and the design note records what the paper printed.
+            fixed = PAPER_LABEL_ALIASES.get((pub_id, norm(r["label"])))
+            if fixed:
+                r["label"] = fixed[0]
+            r["derived_row"] = True
+        else:
+            subject_cells = r["cells"]
+    tb["differences_applied"] = True
+    tb["design_note"] = spec["note"]
 
 
 # WHAT EACH COLUMN IS SCORED ON, where a two-level column header cannot be
@@ -2736,10 +2809,9 @@ TABLE_METRIC: dict[tuple[int, str],
     # group is stated only POSITIONALLY, in the caption: "peptide precision
     # (top), amino acid precision (middle), and amino acid recall (bottom)".
     # Nothing in the grid says it -- there is no group label and no repeat of a
-    # method to delimit the groups -- so it cannot be read off the page. Only
-    # the subject's own three rows carry values; the six 'vs' rows hold
-    # improvements in percentage points and record none, which is why this is
-    # three entries and not nine.
+    # method to delimit the groups -- so it cannot be read off the page. Nine
+    # entries, three per group, because DIFFERENCE_TABLES turns each group's
+    # two 'vs' rows into derived CasaNovo and pi-HelixNovo rows.
     # LIPNovo, Table 3. Its spanner reads 'AminoAcid | Peptide | PTM' over six
     # columns and its own header row arrives shredded one character at a time
     # -- 'P r e c . R e c a ll P r e c . A U C P r e c . R e c a ll' -- so the
@@ -2751,9 +2823,9 @@ TABLE_METRIC: dict[tuple[int, str],
     (17, "Table3"): [("precision", "amino acid"), ("recall", "amino acid"),
                      ("precision", "peptide"), ("auc", "peptide"),
                      ("precision", "ptm"), ("recall", "ptm")],
-    (18, "Table1"): {"rows": [("precision", "peptide"),
-                              ("precision", "amino acid"),
-                              ("recall", "amino acid")]},
+    (18, "Table1"): {"rows": [("precision", "peptide")] * 3
+                             + [("precision", "amino acid")] * 3
+                             + [("recall", "amino acid")] * 3},
 }
 
 
@@ -2957,6 +3029,7 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             # them.
             "footnote": tb.get("footnote") or "",
             "header_raw": tb.get("header_raw") or "",
+            "design_note": tb.get("design_note") or "",
             "table_label": f"{tb['table_label']} [{name}]",
             # THE REGISTRIES ARE KEYED ON THE PRINTED LABEL, and a split part
             # renames itself to say which dataset it holds. Without the parent
@@ -2977,6 +3050,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     Raises Reject. A split table returns the count of its parts that survived,
     so the summary counts TABLES RECORDED rather than blocks attempted.
     """
+    apply_difference_table(tb, base.get("publication_id"))
     if split:
         parts = split_by_dataset(tb)
         if parts:
@@ -3511,6 +3585,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             "verdict": "accepted", "reason": "",
             "table_label": tb["table_label"], "caption": tb["caption"],
             "footnote": tb.get("footnote") or "",
+            "design_note": tb.get("design_note") or "",
             "bbox": tb.get("bbox"), "page": tb.get("page"),
             "axis": axis, "metric_axis": metric_axis,
             "dataset": dname, "dataset_version_id": vid,

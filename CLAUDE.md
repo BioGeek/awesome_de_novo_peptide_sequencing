@@ -1764,6 +1764,19 @@ pass: `extract_words` splits a word wherever an extra attribute changes, so
 asking for `fontname` in the parsing pass could move a cell into another
 column.
 
+**A table that prints differences is converted, and the conversion is
+marked.** TSARseqNovo's Table 1 prints only its own scores, each followed by
+'vs CasaNovo' and 'vs pi-HelixNovo' rows giving its improvement. At the
+reviewer's request those become ordinary Casanovo and pi-HelixNovo rows,
+computed as TSARseqNovo minus the improvement, with a note under the table
+saying so. This is the ONLY place the miner records a number the paper did not
+print, which is why it is a registry (`DIFFERENCE_TABLES`) and not a rule, and
+why every such cell carries `derived` with the expression it came from: when
+the schema lands, a derived value must stay distinguishable from a printed one.
+The unit was confirmed rather than assumed: subtracting in percentage points
+reproduces CrossNovo's independently printed pi-HelixNovo values exactly, in
+all nine species; a relative reading matches none.
+
 **Ranking happens within a measurement, and the subset can be a ROW GROUP.**
 With methods down the side, a species can head the column (CrossNovo) or a
 group of rows (LIPNovo's leave-one-out Table 3, one species above each

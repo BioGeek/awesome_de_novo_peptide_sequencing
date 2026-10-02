@@ -1072,6 +1072,9 @@ def item_html(it: dict) -> str:
         if it.get("footnote"):
             H.append("<div class='cap' style='margin-top:8px'>footnote &mdash; "
                      + html.escape(it["footnote"]) + "</div>")
+        if it.get("design_note"):
+            H.append("<div class='cap' style='margin-top:8px'><b>about this table"
+                     "</b> &mdash; " + html.escape(it["design_note"]) + "</div>")
         for n in wrong:
             H.append("<div class='cap' style='margin-top:6px'>"
                      "<b>original emphasis</b> &mdash; " + html.escape(n) + "</div>")
