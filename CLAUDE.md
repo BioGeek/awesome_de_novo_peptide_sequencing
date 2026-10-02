@@ -1053,7 +1053,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**377 datasets, 401 versions, 433 addresses, 577 publication links over 121 papers.**
+**377 datasets, 401 versions, 433 addresses, 579 publication links over 121 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1795,6 +1795,33 @@ The page also prints each paper's `publication_type`, because a preprint and
 its version of record share a title and a year, and without it the legitimate
 pair renders as two identical lines and reads like duplicated data. Where there
 is more than one depositing paper, the section says in one line why.
+
+### Auditing the deposit roles
+
+After the publication-220 error, all 33 `'introduces'` links were re-scored
+against the dataset they claim to have deposited. **Every one survives**, and
+the two that score low are the hand-set nine-species pair, where the paper says
+"multi-species" and the dataset is named "Nine-species benchmark", so a low
+title score is expected. The other checks: 0 dataset versions and 0 datasets
+with more than one introducing work, and **0 of 544 `'uses'` links** score high
+enough to have been a missed promotion.
+
+**326 of 354 deposits have no depositing paper, and that is correct.** A
+`'deposit'` is data some study produced, and most of those studies are
+third-party proteomics papers that are not in this catalog and should not be.
+The audit that matters is the inverse: an orphan deposit whose name matches a
+paper that IS here. Five matched, one was real -- NovoBoard deposited
+`PXD055277`, scoring 100 on a prefix comparison -- and it is now linked from
+both its papers.
+
+**The other four were false, from a one-sided length guard.** `token_set_ratio`
+ignores unmatched tokens in EITHER string, so the guard has to require BOTH to
+be long enough. Checking only the candidate let the catalog's own Zenodo record,
+"Awesome De Novo Peptide Sequencing", match two unrelated deposits at 86, and
+"Peptide Sequencing with Deep Learning" match a soil-metaproteomics deposit at
+87, purely on the shared words. Re-scoring the written links with the two-sided
+guard changed **no** verdict, so this never corrupted the data; it would have,
+had the orphan matches been applied without reading them.
 
 ### Which dataset a checkpoint was trained on
 
