@@ -36,3 +36,7 @@ denovo.db-journal
 denovo.db-wal
 denovo.db-shm
 dataset_candidates.csv
+
+# Comparison-table worksheet from build_paper_comparisons.py, same treatment
+# as the other builder audit CSVs: it is a review artifact, not data.
+paper_comparison_audit.csv
