@@ -77,8 +77,58 @@ AUDIT = HERE / "paper_comparison_audit.csv"
 # '+/-' forms, which are split out into a stddev rather than rejected.
 NUM = re.compile(r"^[(\[]?[<>~]?\s*([+-]?(?:\d{1,3}(?:,\d{3})+|\d*\.\d+|\d+\.?))\s*%?[)\]]?[*+^†‡¹²³]?$")
 PM = re.compile(r"^([+-]?(?:\d*\.\d+|\d+\.?))\s*(?:±|\+/-)\s*(\d*\.\d+|\d+\.?)\s*%?$")
-# A cell holding two numbers, which is a different grain and rejects the table.
+# A cell holding several numbers. By DEFAULT this rejects the table, because
+# two numbers in one cell with nothing to tell them apart is a different grain
+# and guessing which is the measurement is the error every guard here avoids.
+# Where the paper's own footnotes say what each one is, CELL_MARKERS records
+# that and all of them are kept.
 MULTI = re.compile(r"\d\s*/\s*\d|\d\s*\|\s*\d")
+# One number plus an optional footnote marker: '0.530*', '0.664+'.
+PART = re.compile(r"^([<>~]?\s*(?:\d*\.\d+|\d+\.?))\s*%?\s*([*+\u2020\u2021\u00a7\u00b6]?)$")
+
+
+def compound(tok: str) -> list[tuple[float, str]] | None:
+    """Split '0.550/0.530*/0.664+' into [(0.550,''), (0.530,'*'), (0.664,'+')].
+
+    Returns None when the token is not a slash-joined run of numbers, so an
+    ordinary cell is untouched.
+    """
+    bits = [b.strip() for b in re.split(r"\s*/\s*", tok.strip()) if b.strip()]
+    if len(bits) < 2:
+        return None
+    out = []
+    for b in bits:
+        m = PART.match(b)
+        if not m:
+            return None
+        try:
+            out.append((float(m.group(1).replace(" ", "")), m.group(2)))
+        except ValueError:
+            return None
+    return out
+
+
+# WHAT EACH FOOTNOTE MARKER MEANS, per table, from the paper's own legend.
+# Keyed by (publication, table label). The empty marker is the plain number and
+# inherits the column's metric; a marked one may override the metric, the level
+# or the basis. A cell with several numbers and NO entry here is still refused.
+CELL_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
+    # DiffNovo, Table 1. Its legend: "* Indicates the positional accuracy
+    # reported in [10]", where [10] is PepNet (Liu et al., Nat Commun 14:7974,
+    # 2023). So the starred number is a different metric AND somebody else's
+    # measurement, which is what basis 'quoted' records.
+    (13, "Table 1"): {
+        "*": {"metric": "positional-accuracy", "basis": "quoted"},
+    },
+    # DiffNovo, Table 2. Its legend: "+ Indicates the filtered peptide-level
+    # accuracy, and * indicates the peptide-level accuracy reported in [10]".
+    # Three measurements in one cell: the column's own precision, an accuracy
+    # quoted from PepNet's paper, and a filtered accuracy.
+    (13, "Table 2"): {
+        "*": {"metric": "accuracy", "basis": "quoted"},
+        "+": {"metric": "accuracy-filtered"},
+    },
+}
 # A publisher watermark, stamped across the page and landing inside the table's
 # row band. pNovo 3's page carries
 # 'https://academic.oup.com/bioinformatics/article/35/14/i183/5529238' between
@@ -145,6 +195,13 @@ METRIC_WORDS = [
     (re.compile(r"(?i)\bF1\b|f1[- ]score"), "f1"),
     (re.compile(r"(?i)precision|\bprec\b|\bprec\."), "precision"),
     (re.compile(r"(?i)recall|\brec\b|\brec\."), "recall"),
+    # Footnoted variants of accuracy, printed as extra numbers inside a cell
+    # (see CELL_MARKERS). 'positional' is PepNet's own metric; 'filtered' is
+    # accuracy computed after a filtering step. Separate values because they
+    # are separate measurements: collapsing them onto 'accuracy' would make
+    # two numbers in one cell the same measurement, which G6 would then refuse.
+    (re.compile(r"(?i)positional[- ]accuracy"), "positional-accuracy"),
+    (re.compile(r"(?i)filtered[- ](?:peptide[- ]level[- ])?accuracy"), "accuracy-filtered"),
     (re.compile(r"(?i)accuracy|\bacc\b|\bacc\."), "accuracy"),
     # After precision and recall, so 'Prec.' does not land here, and after
     # precision@cov1, whose text also contains 'cov'.
@@ -872,8 +929,18 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 if URLISH.match(w["text"]):
                     continue
                 if MULTI.search(w["text"]):                  # G4
-                    multi = w["text"]
-                    break
+                    parts = compound(w["text"])
+                    if parts is None:
+                        multi = w["text"]
+                        break
+                    k = assign(w, edges)
+                    if k is None:
+                        continue
+                    if k in cells:
+                        ragged = True
+                    cells[k] = {"value": parts[0][0], "stddev": None,
+                                "printed": w["text"].strip(), "parts": parts}
+                    continue
                 parsed = numeric(w["text"])
                 if parsed is None:
                     continue
@@ -883,9 +950,24 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 if k in cells:
                     ragged = True
                 cells[k] = {"value": parsed[0], "stddev": parsed[1],
-                            "printed": w["text"].strip()}
+                            "printed": w["text"].strip(),
+                            "parts": [(parsed[0], "")]}
             if multi:
                 break
+            # A LONE '/' MEANS THE CELL WRAPS. 'Plasma ... 0.491 / 0.782'
+            # with '0.725*' on the line below is one cell holding 0.491 and
+            # 0.725*, broken over two lines by the column width. The slash is
+            # its own token, so the cell it belongs to is the numeric token
+            # immediately to its left.
+            for w in r:
+                if w["text"].strip() != "/":
+                    continue
+                left = [x for x in r if numeric(x["text"]) and x["x1"] <= w["x0"]]
+                if not left:
+                    continue
+                k = assign(max(left, key=lambda x: x["x1"]), edges)
+                if k is not None and k in cells:
+                    cells[k]["wrapped"] = True
             label = row_label(r, edges[0][0])
             if cells and COUNT_ROW.search(label):
                 dropped += 1
@@ -928,6 +1010,38 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         # would otherwise lose it.
         if pending and body:
             body[-1]["extra"] = body[-1]["extra"] + pending
+
+        # The continuation of a wrapped cell sits on the row below the block.
+        # Only numbers that land in a column ALREADY MARKED as wrapped are
+        # taken, so a page number or a footnote marker cannot be mistaken for
+        # a measurement.
+        wrapped = {k for r in body for k, c in r["cells"].items()
+                   if c.get("wrapped")}
+        if wrapped:
+            for after in range(hi + 1, min(hi + 3, len(rows))):
+                nums = [w for w in rows[after] if numeric(w["text"])]
+                if not nums or len(nums) > len(wrapped) + 1:
+                    break
+                took = False
+                for w in nums:
+                    k = assign(w, edges)
+                    if k is None or k not in wrapped:
+                        continue
+                    host = next((r["cells"][k] for r in reversed(body)
+                                 if k in r["cells"] and r["cells"][k].get("wrapped")),
+                                None)
+                    if host is None:
+                        continue
+                    v = numeric(w["text"])
+                    if not v:
+                        continue
+                    mk = re.search(r"([*+\u2020\u2021])\s*$", w["text"].strip())
+                    host.setdefault("parts", [(host["value"], "")]).append(
+                        (v[0], mk.group(1) if mk else ""))
+                    host["printed"] = host["printed"] + " / " + w["text"].strip()
+                    took = True
+                if not took:
+                    break
 
         left_bound = min(
             [w["x0"] for r in rows[lo:hi + 1] for w in r
@@ -1577,6 +1691,12 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     #                     Casanovo Prec. | Casanovo Prec.@Cov=1
     (49, "Table2"): ["DeepNovo", "PointNovo", "Casanovo", "Casanovo", "Casanovo",
                      "DeepNovo", "PointNovo", "Casanovo", "Casanovo"],
+    # DiffNovo, Tables 1 and 2. The header rows are shredded: 'Cascadia' sits a
+    # row above its group and 'DeepNovo-DIAPepNet' arrives as one token, so no
+    # reading of the page recovers which column is which.
+    (13, "Table 1"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia",
+                      "DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
+    (13, "Table 2"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
 }
 
 
@@ -1615,17 +1735,32 @@ COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
                     "LC AspN", "LC LysC", "Average"],
 }
 
+# The same, for the row labels when the methods are the columns.
+ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
+
 
 # A TABLE THAT STATES ITS METRIC ONLY IN THE BODY PROSE. Curated, because
 # guessing a metric from nearby prose is the same error as guessing a dataset
 # version from it: a results page names several metrics and picking one is a
 # coin toss. The quote that licenses each entry is beside it.
-TABLE_METRIC: dict[tuple[int, str], tuple[str, str]] = {
+# A single (metric, level) pair applies to the whole table; a LIST applies one
+# pair per column, for a table whose metric groups cannot be read off its
+# header.
+TABLE_METRIC: dict[tuple[int, str], tuple[str, str] | list[tuple[str, str]]] = {
     # Pairwise Attention, Table 3. Its caption says only "Performance after
     # training the models on the nine-species V2 dataset"; the paragraph above
     # it says "we tested on each of the species in the nine-species dataset and
     # report PEPTIDE PRECISION AT 100% COVERAGE".
     (4, "Table3"): ("precision@cov1", "peptide"),
+    # DiffNovo, Table 1. Four columns of amino-acid recall then four of
+    # amino-acid precision. Its header rows are shredded by the text layer --
+    # 'Cascadia' lands a row above its group and 'DeepNovo-DIAPepNet' arrives
+    # glued -- so neither the methods nor the metric groups can be read from
+    # the page. Both are recorded from the paper, and the reviewer's own
+    # reading of the prose confirms the column order: DiffNovo's UTI recall
+    # (0.665) against the next best (0.566), and its UTI precision (0.675)
+    # against the next best (0.612).
+    (13, "Table 1"): [("recall", "amino acid")] * 4 + [("precision", "amino acid")] * 4,
 }
 
 
@@ -1946,6 +2081,14 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 else segments())
         out = {}
         texts = [" ".join(row_ctx(i) for i in seg).strip() for seg in segs]
+        # THE ROW AXIS MUST ACTUALLY CARRY THE METRIC. Without this check it
+        # "succeeded" on the caption fallback alone, which made the row axis the
+        # metric axis for a table whose rows are datasets -- and the subset is
+        # then dropped, so every method collapsed onto one measurement per
+        # metric. DiffNovo's Table 2 has UTI / OC / Plasma down the side and one
+        # precision for the whole table.
+        if not any(metric_of(t) or level_of(t) for t in texts):
+            return None
         for si, seg in enumerate(segs):
             ctx = texts[si]
             if not (metric_of(ctx) or level_of(ctx)):
@@ -1960,19 +2103,28 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 out[i] = (metric, level)
         return out
 
-    found = along_columns()
-    metric_axis = "columns"
+    # A CURATED ENTRY FIRST. It exists because the page cannot be read, so
+    # letting along_columns try before it meant a mangled header still decided:
+    # DiffNovo's Table 1 has 'Recall' and 'Precision' scattered through its
+    # shredded header rows, which was enough for the column pass to succeed
+    # with the groups in the wrong place.
+    pinned = TABLE_METRIC.get((base.get("publication_id"),
+                               (tb["table_label"] or "").strip()))
+    found, metric_axis = None, "columns"
+    if pinned:
+        if isinstance(pinned, list):
+            if len(pinned) != len(edges):
+                raise Reject(f"M1 TABLE_METRIC lists {len(pinned)} columns, "
+                             f"the table has {len(edges)}")
+            found = dict(enumerate(pinned))
+        else:
+            found = {k: pinned for k in range(len(edges))}
+    if found is None:
+        found = along_columns()
     if found is None:
         # The metric may run down the rows whichever axis carries the methods.
         found = along_rows()
         metric_axis = "rows"
-    if found is None:
-        # A curated entry, where the table states its metric only in prose.
-        pinned = TABLE_METRIC.get((base.get("publication_id"),
-                                   (tb["table_label"] or "").strip()))
-        if pinned:
-            found = {k: pinned for k in range(len(edges))}
-            metric_axis = "columns"
     if found is None:
         # Last resort: the caption names ONE METRIC for the whole table, while
         # the LEVEL may still vary by column. Publication 30 is the example:
@@ -2030,6 +2182,34 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # UNIQUE constraint, because one method legitimately appears many times in
     # one table: ContraNovo's Table 1 is six methods crossed with amino-acid
     # and peptide precision, so 'Peaks.' is columns 1 and 7.
+    legend = CELL_MARKERS.get((base.get("publication_id"),
+                               (tb["table_label"] or "").strip()), {})
+    compound_cells = [c for r in tb["body"] for c in r["cells"].values()
+                      if len(c.get("parts") or []) > 1]
+    if compound_cells and not legend:
+        raise Reject(f"G4 multi-valued cell {compound_cells[0]['printed']!r} "
+                     f"and no CELL_MARKERS legend for this table")
+    unknown = {m for c in compound_cells for _v, m in c["parts"]
+               if m and m not in legend}
+    if unknown:
+        raise Reject(f"G4 cell marker(s) {sorted(unknown)} are not in this "
+                     f"table's CELL_MARKERS legend")
+
+    def parts_of(cell, metric, level):
+        """Every measurement in one cell, as (value, printed, metric, level, basis).
+
+        A plain cell yields one. A footnoted cell yields one per marker, each
+        taking whatever the table's legend says the marker means and otherwise
+        inheriting the column.
+        """
+        out = []
+        for value, marker in (cell.get("parts") or [(cell["value"], "")]):
+            over = legend.get(marker, {}) if marker else {}
+            out.append((value, cell["printed"],
+                        over.get("metric", metric), over.get("level", level),
+                        over.get("basis")))
+        return out
+
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
         m = methods.get(k if axis == "columns" else ri)
@@ -2046,17 +2226,19 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
 
     seen = set()
     for ri, r in enumerate(tb["body"]):
-        for k in r["cells"]:
+        for k, cell in r["cells"].items():
             m, metric, level, sub = cell_meta(k, ri)
             if not m:
                 continue
-            key = (m[0], m[2] or "", metric, level, sub)
-            if key in seen:
-                raise Reject(f"G6 duplicate measurement {m[1]} "
-                             f"{metric}/{level}/{sub or '-'}")
-            seen.add(key)
+            for _v, _p, mt, lv, _b in parts_of(cell, metric, level):
+                key = (m[0], m[2] or "", mt, lv, sub)
+                if key in seen:
+                    raise Reject(f"G6 duplicate measurement {m[1]} "
+                                 f"{mt}/{lv}/{sub or '-'}")
+                seen.add(key)
 
-    vals = [c["value"] for r in tb["body"] for c in r["cells"].values()]
+    vals = [v for r in tb["body"] for c in r["cells"].values()
+            for v, _m in (c.get("parts") or [(c["value"], "")])]
     if not vals:
         raise Reject("G3 no cells")
     lo, hi = min(vals), max(vals)
@@ -2089,8 +2271,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             m, metric, level, sub = cell_meta(k, ri)
             if not m:
                 continue
-            results.append(f"{m[1]}{'@' + m[2] if m[2] else ''}:{metric}/"
-                           f"{level}/{sub or '-'}={cell['value'] / scale:.4f}")
+            for v, _p, mt, lv, bas in parts_of(cell, metric, level):
+                results.append(f"{m[1]}{'@' + m[2] if m[2] else ''}:{mt}/"
+                               f"{lv}/{sub or '-'}={v / scale:.4f}"
+                               + (f"[{bas}]" if bas else ""))
     base.update({"verdict": "accepted", "reason": f"axis={axis}",
                  "subject_resolved": subject["name"] if subject else "",
                  "proposed_results": " ".join(results[:80])})
