@@ -1363,9 +1363,9 @@ triple, `translate.ckpt-31800.data-00000-of-00001` plus its `.index` and a
 permissions error, which reads like rot and is not.
 
 **DeepNovo's is gated**, as above, and it is the one checkpoint here that cannot
-be retrieved at all without a Google account. Both NOASSERTION entries turned
-out to be the awkward ones, which is the same inversion recorded above: the
-least durably published weights are the ones hardest to rescue.
+be retrieved at all without a Google account until the catalog owner fetched it
+from a signed-in session. Both DeepNovo entries turned out to be the awkward
+ones: the least durably published weights are the ones hardest to rescue.
 
 **The scan that preceded this was a lower bound and badly wrong.** Looking for
 host names near checkpoint language in local PDFs found ONE Drive link. There
@@ -1473,14 +1473,29 @@ Drive's legacy `open?id=<id>` form returns a 944 KB application shell with no
 gate text even when the file is gated; the canonical `/file/d/<id>/view` page
 says so plainly. So `body_says_gated` extracts the id and tries both.
 
-**Mirroring is blocked by licence more often than by size, which inverts the
-reason for doing it.** Of the non-archival checkpoints, the five Casanovo and
-InstaNovo-FM GitHub releases are Apache-2.0 and redistributable; Winnow's HeLa
-QC model is **CC-BY-NC-SA-4.0**, so copying it is permitted but conditional
-(non-commercial, share-alike, attributed); and the two most at-risk of all have
-**no licence that can be relied on** -- `nh2tran/DeepNovo` reports NOASSERTION,
-and the `noble.gs.washington.edu/~melih` zip states nothing. So the single item
-most likely to rot is the one that may not be copied. Silence is not permission.
+**Licence, not size, is what governs mirroring.** Of the non-archival
+checkpoints, the five Casanovo and InstaNovo-FM GitHub releases are Apache-2.0
+and redistributable; Winnow's HeLa QC model is **CC-BY-NC-SA-4.0**, so copying
+it is permitted but conditional (non-commercial, share-alike, attributed); the
+two DeepNovo repositories carry **custom non-commercial licences**; and the one
+item with genuinely nothing stated is the `noble.gs.washington.edu/~melih` zip,
+which is training data and was not mirrored.
+
+**`NOASSERTION` means GitHub cannot CLASSIFY the licence, not that there is
+none**, and reading it the second way was a mistake worth recording because it
+produced a confident and wrong claim twice: that the two most at-risk
+checkpoints "may not be copied", and that "silence is not permission" when
+there was no silence. Both repositories have a LICENSE file:
+
+> DeepNovo is publicly available for non-commercial uses. Copyright (C) 2017.
+> Authors. All rights reserved.
+
+> Copyright (C) 2018. Authors. All rights reserved. DeepNovo-DIA is provided
+> free of charge for academic and non-commercial use.
+
+Academic and non-commercial USE is granted; redistribution is not expressly
+granted, which is a narrower and more accurate statement than the one it
+replaced. **Read the LICENSE file, never the API's classification of it.**
 
 Mirroring is therefore a deliberate manual step and **never part of a scheduled
 refresh**: it copies someone else's bytes, publishes them, and commits this
