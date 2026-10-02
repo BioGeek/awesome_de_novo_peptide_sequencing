@@ -1832,6 +1832,11 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                     "caption": caption, "table_label": table_label,
                     "footnote": footnote_text(rows, hi, fine, crop_lb,
                                               edges[-1][1] + 14),
+                    "header_raw": " ".join(
+                        w["text"] for i in range(max(cap_end + 1, lo - 6), lo)
+                        if 0 <= i < len(rows)
+                        for w in rows[i]
+                        if crop_lb - 4 <= w["x0"] and w["x1"] <= edges[-1][1] + 14),
                     "span_ambiguous": span_ambiguous,
                     "registry_label": table_label,
                     "bbox": bbox, "page": page.page_number})
@@ -2929,6 +2934,7 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             # split one carries it: the markers it defines appear in all of
             # them.
             "footnote": tb.get("footnote") or "",
+            "header_raw": tb.get("header_raw") or "",
             "table_label": f"{tb['table_label']} [{name}]",
             # THE REGISTRIES ARE KEYED ON THE PRINTED LABEL, and a split part
             # renames itself to say which dataset it holds. Without the parent
@@ -3015,6 +3021,37 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         raise Reject(f"N1 unresolved on the method axis ({axis}): {unresolved}")
     if subject and not any(v[0] == subject["id"] for v in methods.values()):
         raise Reject("N2 no self column")
+    # AN ABLATION BY STRUCTURE, whatever its caption says. C2 reads the
+    # caption, and CausalNovo's Table 12 is captioned "Experiment results on
+    # different peak distinction strategies", which names no ablation; its rows
+    # are Baseline, CausalNovo and CausalNovo with 18 ion types -- the paper's
+    # own design choices. It had been refused only by accident, as a
+    # multi-dataset table, and recording an unstated dataset instead let it
+    # through. So: the subject in two or more variants with no OTHER method
+    # named in its own right is a study of the subject, not a comparison. A
+    # comparator printed only as 'Baseline' does not count as named. Pairwise
+    # Attention's BASE / PA / CASANOVO stays a comparison because Casanovo is
+    # named; DiffuNovo's (Logits) / (MBR) stays one because five others are.
+    # NOT a '+X' rule. A '+' row reads like an increment, and in CausalNovo's
+    # Table 12 it is one, but CausalNovo is a PLUG-IN: its main results are
+    # printed as 'CasaNovo' against '+CausalNovo' for half a dozen base
+    # models, the same notation with the opposite meaning. A rule on the
+    # notation called its main comparison tables ablations, which hid the
+    # real reasons they fail. What separates the two is whether anything
+    # besides the subject and the study's own baseline is in the table.
+    if subject:
+        own_variants = {v[2] or "" for v in methods.values() if v[0] == subject["id"]}
+        # A comparator the paper itself labels as THE baseline of the study
+        # ('CasaNovo (Baseline)') is the base being built on, not a method
+        # named in its own right.
+        named_others = [k for k, v in methods.items() if v[0] != subject["id"]
+                        and "baseline" not in (printed_of.get(k) or "").lower()
+                        and norm(re.sub(r"[*\u2020\u2021]+$", "",
+                                        printed_of.get(k) or "")) not in
+                        {"base", "vanilla", "ours"}]
+        if len(own_variants) >= 2 and not named_others:
+            raise Reject(f"C2 ablation by structure: every row is a variant of "
+                         f"{subject['name']} or the study's baseline")
 
     # M1/M2. THE METRIC AXIS IS INDEPENDENT OF THE METHOD AXIS, and assuming
     # otherwise cost a whole class of tables. Three layouts are all in use:
@@ -3033,7 +3070,14 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     # every column and silently relabel the recall half of the table. The level
     # may come from the caption, because it does not vary down a stacked
     # table's groups without the metric varying too.
-    ctx_extra = " ".join([tb["caption"], tb["stub"]])
+    # THE TABLE'S OWN HEADER OUTRANKS ITS CAPTION as a statement of the metric,
+    # and it has to be read raw, because the header model keeps only phrases it
+    # can map onto columns. CrossNovo-era AdaNovo's Table 2 centres 'PTMs
+    # precision' over its four method columns; the header model could not
+    # place a phrase that covers no single column and dropped it, and the
+    # table had been getting its metric only because the caption used to run
+    # on into the header. Clean captions removed the accident.
+    ctx_extra = " ".join([tb.get("header_raw") or "", tb["caption"], tb["stub"]])
     subsets = {}
 
     def along_columns():

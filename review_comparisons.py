@@ -490,12 +490,23 @@ def main() -> int:
 
     items: list[dict] = []
     tally: collections.Counter = collections.Counter()
+    import time
+    todo = [pub for pub in rows
+            if (not want or pub["id"] in want) and (cov.get(pub["id"]) or [])]
+    started, done = time.time(), 0
+    progress_banner(0, len(todo), started, "the library")
     for pub in rows:
         if want and pub["id"] not in want:
             continue
         paths = cov.get(pub["id"]) or []
         if not paths:
             continue
+        done += 1
+        took = time.time() - started
+        eta = took / (done - 1) * (len(todo) - done + 1) if done > 1 else 0
+        print(f"  [{done:>3}/{len(todo)}] {int(took)}s elapsed, "
+              f"~{int(eta)}s left  p{pub['id']}", flush=True)
+        progress_banner(done - 1, len(todo), started, f"p{pub['id']}")
         path = paths[0]
         try:
             pdf = pdfplumber.open(path)
@@ -629,6 +640,57 @@ def main() -> int:
               "re-approve under the new id")
     print(f"  {OUT / 'index.html'}")
     return 0
+
+
+# A RENDER TAKES MINUTES AND THE PAGE GAVE NO SIGN OF IT. Opening the page
+# mid-render showed the previous version with nothing to say it was stale, so
+# a reviewer could sign off a table the run was about to change. While a run
+# is in progress the existing page carries a banner with the count, the
+# elapsed time and an estimate, and reloads itself every 15 s; the finished
+# page is written without either, so the reloading stops by itself the moment
+# the new page is ready.
+_PREVIOUS_PAGE: str | None = None
+
+
+def progress_banner(done: int, total: int, started: float, current: str) -> None:
+    global _PREVIOUS_PAGE
+    import time
+    index = OUT / "index.html"
+    if _PREVIOUS_PAGE is None:
+        try:
+            _PREVIOUS_PAGE = index.read_text(encoding="utf-8")
+        except OSError:
+            _PREVIOUS_PAGE = "<!doctype html><html><head><meta charset='utf-8'>" \
+                             "</head><body><p>No previous render.</p></body></html>"
+    took = time.time() - started
+    eta = (took / done * (total - done)) if done else None
+    left = (f"about {int(eta // 60)} min {int(eta % 60):02d} s left" if eta is not None
+            else "estimating time left")
+    pct = int(100 * done / total) if total else 0
+    banner = (
+        "<div style='position:sticky;top:0;z-index:99;background:#1d4ed8;color:#fff;"
+        "padding:10px 16px;font:14px/1.4 system-ui,sans-serif'>"
+        f"<b>Re-rendering</b> &mdash; {done} of {total} papers ({pct}%), "
+        f"{int(took // 60)} min {int(took % 60):02d} s elapsed, {left}. "
+        f"Now reading {html.escape(current)}. "
+        "This is the PREVIOUS version of the page; it reloads every 15 s and "
+        "switches to the new one when the render finishes."
+        f"<div style='margin-top:6px;height:6px;background:#93c5fd;border-radius:3px'>"
+        f"<div style='width:{pct}%;height:6px;background:#fff;border-radius:3px'></div></div>"
+        "</div>")
+    page = _PREVIOUS_PAGE
+    refresh = "<meta http-equiv='refresh' content='15'>"
+    page = page.replace("<head>", "<head>" + refresh, 1) if "<head>" in page else refresh + page
+    i = page.find("<body")
+    if i >= 0:
+        j = page.find(">", i) + 1
+        page = page[:j] + banner + page[j:]
+    else:
+        page = banner + page
+    try:
+        index.write_text(page, encoding="utf-8")
+    except OSError:
+        pass
 
 
 def write_html(items: list[dict], tally, approved: dict | None = None) -> None:
