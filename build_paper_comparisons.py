@@ -3649,6 +3649,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             # The subset carried by a ROW GROUP, where the table sets one
             # species above each group of method rows; see row_subset.
             "row_subsets": {i: v for i, v in row_subset.items() if v},
+            # The stub's own header ('Species Method'), so the grid can name
+            # the row-group column the way the paper does.
+            "stub": tb.get("stub") or "",
+            "header_raw": tb.get("header_raw") or "",
             "body": [{"label": r["label"],
                       "cells": {k: c["printed"] for k, c in r["cells"].items()},
                       # A cell the paper marks as not run, so the page can show

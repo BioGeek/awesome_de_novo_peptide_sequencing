@@ -460,11 +460,22 @@ def grid_html(rec: dict) -> str:
         dimmed and labelled -- rather than left as a blank row that reads like
         a parsing failure.
         """
-        return bool(rec["body"][i]["cells"]) and not rec["methods"].get(i)
+        return (bool(rec["body"][i]["cells"]) and not rec["methods"].get(i)
+                and bool(re.match(r"(?i)\s*(vs\.?|versus|\u0394)", rec["body"][i]["label"] or "")))
+
+    def is_bare(i) -> bool:
+        """A row with numbers and NO label: dropped by the miner and counted.
+
+        Not a difference row, which is what it used to be captioned as:
+        LIPNovo's Table 3 has one row whose label sits on a line of its own
+        above the block, so it arrives bare and records nothing.
+        """
+        return (bool(rec["body"][i]["cells"]) and not rec["methods"].get(i)
+                and not (rec["body"][i]["label"] or "").strip())
 
     def cell(i, k):
         v = rec["body"][i]["cells"].get(k, "")
-        if axis == "rows" and is_delta(i):
+        if axis == "rows" and (is_delta(i) or is_bare(i)):
             return f"<td class='dim'>{html.escape(v)}</td>" if v else "<td></td>"
         if not v:
             # A CELL THE PAPER MARKS AS NOT RUN. Printing nothing made the row
@@ -529,18 +540,61 @@ def grid_html(rec: dict) -> str:
             out.append(f"<tr><th>{label}</th>"
                        + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
     else:
-        out.append("<tr><th>method</th>"
+        # THE ROW GROUP GETS ITS OWN COLUMN, as in the original. LIPNovo's
+        # Table 3 prints the species in a first column, once over each
+        # LIPNovo/Baseline pair; the parse carried it as the rows' subset, which
+        # is what the ranking groups by, and the grid did not show it, so the
+        # picture had a column the grid lacked. It is printed once per group,
+        # spanning the group's rows.
+        rs = {int(k): v for k, v in (rec.get("row_subsets") or {}).items()}
+        group_col = bool(rs)
+        span: dict[int, int] = {}
+        if group_col:
+            i = 0
+            n = len(rec["body"])
+            while i < n:
+                j = i
+                while j + 1 < n and rs.get(j + 1, "") == rs.get(i, ""):
+                    j += 1
+                span[i] = j - i + 1
+                i = j + 1
+        # Named from the stub's own GROUP word, not its first word: LIPNovo's
+        # stub picked up a stray 'Baseline-dagger' from the row above the block,
+        # and the column was headed with it.
+        gw = re.search(r"(?i)\b(species|dataset|datasets|enzyme|organism|group|fold)\b",
+                       " ".join([rec.get("stub") or "", rec.get("header_raw") or ""]))
+        gname = gw.group(1).capitalize() if gw else "group"
+        out.append("<tr>"
+                   + (f"<th>{html.escape(gname)}</th>" if group_col else "")
+                   + "<th>method</th>"
                    + ("<th class='dim'>metric</th>" if maxis == "rows" else "")
-                   + "".join(f"<th>{html.escape(rec['subsets'].get(k) or rec['col_head'][k])}"
+                   + "".join(
+                       # An unreadable header ('?', from a header row the text
+                       # layer shredded) shows its METRIC instead, which is
+                       # what the column holds.
+                       # ...and where the ROW GROUP is the subset, a column
+                       # "subset" can only be a stray header word -- LIPNovo's
+                       # Table 5 puts 'Baseline' over Table 3's last column --
+                       # so the metric is shown alone.
+                       (f"<th>{mcell(k)}</th>" if maxis == "columns"
+                        and (group_col
+                             or (rec['subsets'].get(k) or rec['col_head'][k]) in ("?", ""))
+                        else f"<th>{html.escape(rec['subsets'].get(k) or rec['col_head'][k])}"
                              + (f"<br><small class='dim'>{mcell(k)}</small>"
                                 if maxis == "columns" else "")
-                             + "</th>" for k in range(ncol)) + "</tr>")
+                             + "</th>") for k in range(ncol)) + "</tr>")
         for i, r in enumerate(rec["body"]):
             label = (mname(i) if rec["methods"].get(i)
                      else html.escape(unsquash_name(r["label"]) or "-")
                      + ("<br><small class='dim'>difference, not recorded"
-                        "</small>" if is_delta(i) else ""))
-            out.append(f"<tr><th>{label}</th>"
+                        "</small>" if is_delta(i)
+                        else "<br><small class='dim'>no label on the page, not "
+                             "recorded</small>" if is_bare(i) else ""))
+            grp = ""
+            if group_col and i in span:
+                grp = (f"<th rowspan='{span[i]}' style='vertical-align:middle'>"
+                       f"{html.escape(unsquash(rs.get(i, '')))}</th>")
+            out.append(f"<tr>{grp}<th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
     out.append("</table>")
