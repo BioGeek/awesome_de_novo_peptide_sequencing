@@ -360,6 +360,49 @@ def strip_line_numbers(words: list[dict]) -> list[dict]:
     return [w for w in words if id(w) not in drop] if drop else words
 
 
+# A number or the START of one: '0' and '0.' are both joinable, because the
+# fragments arrive one character at a time and the intermediate results have
+# to be allowed through. Two separate numbers never match it.
+PURE_NUMBER = re.compile(r"^-?\d{1,3}(?:[.,]\d*)?$")
+
+
+def heal_fragments(row: list[dict], gap: float = 2.0) -> list[dict]:
+    """Join word fragments that are one printed number broken by the text layer.
+
+    A SHREDDED ROW IS ONE ROW, NOT A RAGGED ONE. LIPNovo's Table 3 has one
+    data row that arrives as '0 . 7 4 3 0. 7 4 5 0 . 5 5 9 ...', 23 fragments
+    where there are six numbers, which put several cells in every column and
+    refused the whole table as a ragged grid. The fragments are adjacent --
+    under 2 pt apart, against a column pitch of 27 -- so they are joined.
+
+    Only where the JOIN IS A PLAIN NUMBER. That is what keeps a real ragged
+    row ragged: two separate numbers in one column concatenate into something
+    that is not a number and are left alone, and a footnote marker stays
+    attached to its own cell rather than being absorbed ('0.725' + '*' does
+    not join, because the result is not a plain number).
+    """
+    # ONLY A ROW THAT IS ACTUALLY SHREDDED. Four or more one- and two-
+    # character fragments is what a broken text layer looks like; an ordinary
+    # row has none. Without this, a superscript citation beside a value could
+    # be absorbed into it -- '0.785' and a raised '7' are 0.4 pt apart. The
+    # vertical test below is the second guard against exactly that, since a
+    # superscript's top sits about 3 pt higher.
+    if sum(1 for w in row if len(w["text"].strip()) <= 2) < 4:
+        return list(row)
+    out: list[dict] = []
+    for w in sorted(row, key=lambda w: w["x0"]):
+        if out:
+            prev = out[-1]
+            joined = prev["text"] + w["text"]
+            if (w["x0"] - prev["x1"] <= gap and PURE_NUMBER.match(joined)
+                    and abs(w["top"] - prev["top"]) < 2.0):
+                out[-1] = {**prev, "text": joined, "x1": w["x1"],
+                           "bottom": max(prev["bottom"], w["bottom"])}
+                continue
+        out.append(dict(w))
+    return out
+
+
 def word_rows(words: list[dict], tol: float = 2.5) -> list[list[dict]]:
     """Cluster words into visual rows on `top`.
 
@@ -533,6 +576,14 @@ def phrases(row: list[dict], gap: float = 6.0) -> list[dict]:
     it happens to sit over, which is how a spanner silently becomes part of a
     method name.
     """
+    # ONLY A ROW THAT IS ACTUALLY SHREDDED. Four or more one- and two-
+    # character fragments is what a broken text layer looks like; an ordinary
+    # row has none. Without this, a superscript citation beside a value could
+    # be absorbed into it -- '0.785' and a raised '7' are 0.4 pt apart. The
+    # vertical test below is the second guard against exactly that, since a
+    # superscript's top sits about 3 pt higher.
+    if sum(1 for w in row if len(w["text"].strip()) <= 2) < 4:
+        return list(row)
     out: list[dict] = []
     for w in sorted(row, key=lambda w: w["x0"]):
         if out and w["x0"] - out[-1]["x1"] <= gap:
@@ -1384,6 +1435,16 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
             if pitch is None and 2.0 < delta < 40.0:
                 pitch = delta
             prev_top = min(w["top"] for w in mine)
+        # A CAPTION IS FLUSH LEFT; A HEADER ROW IS INDENTED TO ITS COLUMN.
+        # Publication 17's Table 4 caption is one line and the three header
+        # rows under it start 92, 4 and 90 pt right of it, so the caption came
+        # out '...(Mao et al., 2023). Method # Params Peptide Level Amino Acid
+        # Level Recall AUC Recall Prec.'. Every genuine continuation line
+        # measured here starts within 0.5 pt of its caption's own left edge.
+        # The threshold is 20 pt rather than a few, so a house style with a
+        # hanging indent under the label still reads as a caption.
+        if mine and min(w["x0"] for w in mine) > lx0 + 20.0:
+            break
         if mine and not any(c.islower() for c in " ".join(w["text"] for w in mine)):
             break
         gaps = [b["x0"] - a["x1"] for a, b in zip(mine, mine[1:])]
@@ -1591,6 +1652,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                    if numeric(w["text"]) and assign(w, edges) == 0]
         label_right = max(edges[0][0], min(data_x0) - 1.0) if data_x0 else edges[0][0]
         for r in rows[lo:hi + 1]:
+            r = heal_fragments(r)
             cells: dict[int, dict] = {}
             for w in r:
                 if URLISH.match(w["text"]):
@@ -1665,8 +1727,23 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 # the next data row rather than discarded, because that is
                 # where 'AminoAcid' / 'Precision' live when a stacked table
                 # sets its metric on its own line.
-                if row_kind(r) == "interstice":
-                    pending.extend(w["text"] for w in r)
+                # CLIPPED TO THE TABLE'S OWN SPAN FIRST. On a page holding two
+                # tables side by side, an interstitial row carries the other
+                # column's prose as well, which made it read as prose rather
+                # than a label and lost the label entirely: LIPNovo's Table 3
+                # dropped 'ClamBa.' and then gave that species' two rows the
+                # previous species' name, so two different measurements became
+                # one and G6 refused the table. Where the label survived it
+                # arrived with a sentence glued to it
+                # ('Mouse by+5.4%. Theseresults...').
+                # A GROUP LABEL LIVES IN THE STUB, left of the first data
+                # column. Clipping by the table's full span was not enough on
+                # a two-column page whose body text starts INSIDE that span:
+                # 'Mouse' came through as 'Mouse by+5.4%. Theseresultshigh...'.
+                mine_ = [w for w in r if w["x1"] <= label_right + 4
+                         and w["x1"] >= edges[0][0] - 220]
+                if mine_ and row_kind(mine_) == "interstice":
+                    pending.extend(w["text"] for w in mine_)
                 continue
             if len(cells) != len(edges):
                 if missing and len(cells) + len(missing) >= len(edges):
@@ -2081,13 +2158,25 @@ VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
 
 def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
                     pub_id: int, hint: str | None = None,
-                    header: str = ""
+                    header: str = "", label: str = ""
                     ) -> tuple[int | None, str | None, int | None, str | None]:
     """(dataset_id, dataset_name, dataset_version_id, printed) or raise Reject.
 
     Three sources in order: the caption, then the surrounding prose, then the
     paper's own publication_dataset links as a last resort.
     """
+    pinned_ds = TABLE_DATASET.get((pub_id, (label or "").strip()))
+    if pinned_ds:
+        # A CURATED DATASET WINS over anything read off the page: it was put
+        # there because the page cannot be read correctly without the prose.
+        name, printed = pinned_ds
+        if name is None:
+            return None, None, None, printed
+        row = con.execute("SELECT id FROM dataset WHERE name = ?", (name,)).fetchone()
+        if not row:
+            raise Reject(f"D1 TABLE_DATASET names {name!r}, absent from the "
+                         f"dataset table")
+        return row[0], name, None, printed
     if hint:
         # A per-column spanner or header naming the dataset is MORE specific
         # than the caption, which on a split table names all of them at once.
@@ -2553,6 +2642,44 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # A single (metric, level) pair applies to the whole table; a LIST applies one
 # pair per column, for a table whose metric groups cannot be read off its
 # header.
+# THE BASIS OF ONE METHOD IN ONE TABLE, where the paper states it in prose
+# rather than in a legend a marker can carry. Keyed on (publication, printed
+# label) then catalog method name, and every entry quotes the sentence, which
+# is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
+# sentence, and a curated entry is that sentence written down.
+TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # LIPNovo, Table 4. "Training GraphNovo is resource-intensive, making it
+    # impractical to retrain on benchmark datasets. To ensure a fair
+    # comparison, we trained LIPNovo on the dataset collected in GraphNovo."
+    # So GraphNovo's number is GraphNovo's own, on GraphNovo's own data, and
+    # this paper ran only its own model. 'unclear' understated what the paper
+    # actually says.
+    (17, "Table4"): {
+        "GraphNovo": ("quoted",
+                      "Training GraphNovo is resource-intensive, making it "
+                      "impractical to retrain on benchmark datasets"),
+    },
+}
+
+
+# THE DATASET A TABLE RAN ON, where resolving it is a judgement call about
+# prose rather than a cue the table carries. Keyed on (publication, printed
+# label) like the other per-table registries, and every entry quotes the
+# sentence that licenses it, because the alternative is a guess nobody can
+# check. The value is (dataset name as the catalog holds it, as printed).
+TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
+    # LIPNovo, Table 4. Its caption names no benchmark and its page mentions
+    # three, so the cue scan could only report the ambiguity. The paper says
+    # which: "Training GraphNovo is resource-intensive, making it impractical
+    # to retrain on benchmark datasets. To ensure a fair comparison, we trained
+    # LIPNovo on the dataset collected in GraphNovo." So the comparison is on
+    # GraphNovo's OWN deposit, which this catalog holds as dataset 25, and on
+    # none of the three benchmarks the page discusses.
+    (17, "Table4"): ("GraphNovo dataset and checkpoint",
+                     "the dataset collected in GraphNovo"),
+}
+
+
 # (metric, level) for a table whose own page does not say it. Three shapes:
 # one pair for the whole table, a LIST of pairs one per column, or
 # {"rows": [...]} for one per row that carries values.
@@ -2586,6 +2713,17 @@ TABLE_METRIC: dict[tuple[int, str],
     # the subject's own three rows carry values; the six 'vs' rows hold
     # improvements in percentage points and record none, which is why this is
     # three entries and not nine.
+    # LIPNovo, Table 3. Its spanner reads 'AminoAcid | Peptide | PTM' over six
+    # columns and its own header row arrives shredded one character at a time
+    # -- 'P r e c . R e c a ll P r e c . A U C P r e c . R e c a ll' -- so the
+    # metric cannot be read from the page even though the level can. The order
+    # matches its Tables 1 and 2, and the paper's own prose confirms the three
+    # precision columns: "LIPNovo outperforms the baseline by +5.3%, +4.5%, and
+    # +2.3% in precision across the three performance levels", against a
+    # measured +5.3% on column 0 from this parse.
+    (17, "Table3"): [("precision", "amino acid"), ("recall", "amino acid"),
+                     ("precision", "peptide"), ("auc", "peptide"),
+                     ("precision", "ptm"), ("recall", "ptm")],
     (18, "Table1"): {"rows": [("precision", "peptide"),
                               ("precision", "amino acid"),
                               ("recall", "amino acid")]},
@@ -2853,6 +2991,26 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
 
     # N1: on the METHOD axis every entry must resolve. An entry on the other
     # axis is a species or a metric and is not expected to be a method.
+    #
+    # AN ABSENT LABEL IS NOT AN UNRESOLVED NAME. A row with no label at all is
+    # a different failure from a row naming a method we cannot identify: the
+    # first loses one measurement, the second would change which baselines the
+    # paper chose, which is what this guard protects. LIPNovo's Table 3 has
+    # one row whose label sits on a line of its own ABOVE the block, so it
+    # arrives bare while the other 17 rows read correctly, and the eight
+    # baseline rows that remain average to exactly the +5.3% its prose claims.
+    # So a bare row is dropped and COUNTED, and a named one still refuses the
+    # table.
+    if axis == "rows":
+        bare = [i for i, v in resolved_axis.items()
+                if not v and not (tb["body"][i]["label"] or "").strip()]
+        if bare and len(bare) < len(resolved_axis) - 1:
+            for i in bare:
+                resolved_axis.pop(i, None)
+            tb["dropped_rows"] = (tb.get("dropped_rows") or 0) + len(bare)
+            unresolved = [(tb["body"][k]["label"]) or "?"
+                          for k, v in resolved_axis.items() if not v]
+            base["dropped_rows"] = tb["dropped_rows"]
     if unresolved:
         raise Reject(f"N1 unresolved on the method axis ({axis}): {unresolved}")
     if subject and not any(v[0] == subject["id"] for v in methods.values()):
@@ -3133,10 +3291,61 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     if mk_legend:
         for k in list(bases):
             printed = (printed_of.get(k) or "").strip()
-            over = mk_legend.get(label_marker(printed))
+            marker = label_marker(printed)
+            # A LEGEND'S UNMARKED CASE DOES NOT APPLY TO THE PAPER'S OWN
+            # METHOD. LIPNovo's legend reads "† denotes our retrained results,
+            # and other results are provided by NovoBench", and LIPNovo's own
+            # row carries no dagger -- so read literally the legend says this
+            # paper's numbers for its own method came from NovoBench, which is
+            # absurd and was recorded as basis 'quoted' on all six of its
+            # tables. The authors describe their own run: "We compare LIPNovo
+            # with several established de novo sequencing competitors ...
+            # Notably, we retrain a CasaNovo as the direct baseline of our
+            # LIPNovo with the same configurations." So the subject keeps
+            # whatever its own prose says, and an EXPLICIT marker still
+            # applies: a dagger on the subject's row would mean what it says.
+            if not marker and methods[k][0] == (subject["id"] if subject else None):
+                continue
+            over = mk_legend.get(marker)
             if over and over.get("basis"):
                 bases[k] = (over["basis"],
                             f"the table's legend marks {printed!r}", False)
+
+    # A CURATED PER-METHOD BASIS WINS over both the legend and the prose scan,
+    # because it exists where neither can see the answer.
+    for k, v in methods.items():
+        over = TABLE_BASIS.get(
+            (base.get("publication_id"),
+             (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
+        if v[1] in over:
+            bases[k] = (over[v[1]][0], over[v[1]][1], False)
+
+    # A ROW-GROUP LABEL THAT NAMES NO METRIC IS THE SUBSET, and it carries
+    # DOWN the group. When the methods are the rows and the metrics are the
+    # columns, the only thing left for a row-group label to be is the subset --
+    # a species, an enzyme. LIPNovo's Table 3 puts the species above each
+    # LIPNovo/Baseline pair, so without this its nine LIPNovo rows all claimed
+    # one measurement and G6 refused the table, correctly but for the wrong
+    # reason. The label applies until the next one, which is what "above its
+    # pair" means; a group label that DOES name a metric is the metric axis's
+    # business and is left to it.
+    row_subset: dict[int, str] = {}
+    if axis == "rows" and metric_axis == "columns":
+        cur = ""
+        for ri in range(len(tb["body"])):
+            # ONLY THE INTERSTITIAL LABEL, and only its words. Taking every
+            # leftover set the subset from two things that are not group
+            # labels at all: the residue of resolving 'Baseline†' (the word
+            # 'Baseline'), and a row of ablation ticks from the neighbouring
+            # table ('✓ ✗'). Either one then carried down onto the next
+            # species' rows and merged them.
+            words = [w for w in (tb["body"][ri].get("extra") or [])
+                     if isinstance(w, str) and sum(c.isalpha() for c in w) >= 2
+                     and not prosey(w)]
+            txt = unsquash_label(" ".join(words)).strip()
+            if txt and not metric_of(txt) and not level_of(txt):
+                cur = txt
+            row_subset[ri] = cur
 
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
@@ -3155,7 +3364,14 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         sub = (subsets[k] if sub_over
                else "" if (axis == "columns" and metric_axis == "rows")
                else unsquash_label(tb["body"][ri]["label"]) if axis == "columns"
-               else subsets[k])
+               # WITH METHODS DOWN THE SIDE AND METRICS ACROSS THE TOP, THE ROW
+               # GROUP IS THE SUBSET and outranks anything a column header
+               # offers, because in this layout a column header is a metric and
+               # a column "subset" can only be a stray word: LIPNovo's Table 3
+               # sits beside Table 5, whose header 'Baseline Impu.' lands over
+               # Table 3's last column, and every row's cell in that column
+               # claimed the subset 'Baseline'.
+               else (row_subset.get(ri) or subsets[k]))
         return m, metrics[j], levels[j], sub
 
     seen = set()
@@ -3195,7 +3411,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         + [t for k in range(len(edges)) for t in (tb["own"].get(k) or [])])
     did, dname, vid, dprinted = resolve_dataset(
         con, tb["caption"], near, base["publication_id"],
-        tb.get("dataset_hint") or table_dataset_label(tb), header_text)
+        tb.get("dataset_hint") or table_dataset_label(tb), header_text,
+        (tb.get("registry_label") or tb["table_label"] or "").strip())
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
