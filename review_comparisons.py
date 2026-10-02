@@ -102,6 +102,16 @@ def render(pdf_path: pathlib.Path, page_no: int, bbox, dest: pathlib.Path) -> bo
     return True
 
 
+# Every method name and alias the catalog knows, normalised. Filled once in
+# main(); empty means the camel split in unsquash_name() stays off, which is
+# the safe direction.
+KNOWN_NAMES: set[str] = set()
+
+
+def _norm(t: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (t or "").lower()).replace("\u03c0", "pi")
+
+
 def unsquash_name(text: str) -> str:
     """A printed method label, with the spaces a PDF dropped put back.
 
@@ -110,11 +120,25 @@ def unsquash_name(text: str) -> str:
     the label exactly as printed. This is so a reviewer can read it.
     """
     t = (text or "").strip()
-    # Only the CITATION is re-spaced. The method name's own camelCase is left
-    # alone, because splitting it gives 'Ada Novo' and 'Diffu Novo', which is
-    # worse than leaving it glued; the resolved catalog name is shown beneath
-    # it anyway.
     t = re.sub(r"(?<=[^\s(])(?=\()", " ", t)                 # space before '('
+    # THE CAMEL SPLIT IS ONLY TAKEN WHERE THE GLUED FORM IS NOT A METHOD NAME.
+    # Splitting unconditionally gives 'Ada Novo' and 'Diffu Novo' for names
+    # the paper really writes glued; never splitting leaves 'PeaksNovo', which
+    # the paper writes as two words and the PDF squashed. The catalog decides:
+    # 'DeepNovo' and 'AdaNovo' are names in it and stay whole, 'PeaksNovo' is
+    # not one and becomes 'Peaks Novo'.
+    head = t.split(" (")[0]
+    # A FOOTNOTE MARKER AND A VARIANT SUFFIX COME OFF FIRST. 'PrimeNovo-CV*'
+    # is not a catalog name as printed and split into 'Prime Novo-CV*', while
+    # 'PrimeNovo' is one; the same for 'Casanovo-pretrained'.
+    stems = [head]
+    bare = re.sub(r"[*\u2217+\u2020\u2021]+$", "", head)
+    stems.append(bare)
+    stems.append(re.sub(r"[-_][A-Za-z0-9]{1,12}$", "", bare))
+    if head and not any(_norm(x) in KNOWN_NAMES for x in stems if x):
+        split = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", head)
+        if _norm(split.replace(" ", "")) == _norm(head):
+            t = split + t[len(head):]
     t = re.sub(r"(?i)(?<=[a-z])et\s*al\s*\.?", " et al.", t)  # 'Maetal.' -> 'Ma et al.'
     t = re.sub(r",(?=\S)", ", ", t)                           # space after a comma
     t = re.sub(r";(?=\S)", "; ", t)
@@ -251,6 +275,15 @@ def grid_html(rec: dict) -> str:
 
     def cell(i, k):
         v = rec["body"][i]["cells"].get(k, "")
+        if not v:
+            # A CELL THE PAPER MARKS AS NOT RUN. Printing nothing made the row
+            # look like a parsing failure, and in a dataset-split part the row
+            # used to vanish entirely: RefineNovo's Table 6 lists InstaNovo and
+            # PrimeNovo-CV, neither run on seven-species.
+            gone = (rec["body"][i].get("absent") or {}).get(k) \
+                or (rec["body"][i].get("absent") or {}).get(str(k))
+            if gone:
+                return f"<td class='dim' title='not run'>{html.escape(gone)}</td>"
         cls = [c for c in (rank.get((i, k)),) if c]
         if byvalue.get((i, k)) == "best" and rank.get((i, k)) != "best":
             cls.append("topvalue")
@@ -352,6 +385,11 @@ def main() -> int:
 
     OUT.mkdir(parents=True, exist_ok=True)
     CACHE.mkdir(exist_ok=True)
+    KNOWN_NAMES.update(
+        _norm(n) for row in con.execute(
+            "SELECT name, COALESCE(aliases,'') FROM algorithm")
+        for n in [row[0]] + [a.strip() for a in row[1].split(",") if a.strip()]
+        if n)
     approved: dict = {}
     if APPROVED.exists():
         try:
@@ -724,6 +762,9 @@ def item_html(it: dict) -> str:
                  f"<div class='cap' style='margin-bottom:6px'>"
                  f"<b>bold</b> / <u>underline</u> &mdash; {src}</div>"
                  + grid_html(it))
+        if it.get("footnote"):
+            H.append("<div class='cap' style='margin-top:8px'>footnote &mdash; "
+                     + html.escape(it["footnote"]) + "</div>")
         if clash:
             H.append("<div class='cap' style='margin-top:8px'>"
                      "the paper's marks do not follow its own numbers here "

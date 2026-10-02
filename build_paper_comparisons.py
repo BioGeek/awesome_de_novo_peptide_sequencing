@@ -1216,6 +1216,57 @@ def pair_captions(rows: list[list[dict]], blocks: list[tuple[int, int]]) -> dict
     return out
 
 
+def assemble_lines(band: list[dict]) -> str:
+    """Words, bucketed into lines and joined, with line-break hyphens healed.
+
+    LaTeX hyphenates freely, so 'identify' arrives as 'iden-' / 'tify' and a
+    caption read '...models to iden- tify Post-Translational'. The join applies
+    only where the hyphen is the last thing on ITS line, which the buckets
+    know, so a mid-line compound such as 'Post-Translational' is untouched. A
+    compound that breaks AT its own hyphen still loses it, which is inherent:
+    the PDF does not record whether the hyphen was already there.
+    """
+    if not band:
+        return ""
+    # A SUPERSCRIPT IS NOT ITS OWN LINE. Bucketing on `top` put a raised
+    # marker one bucket early, so a footnote came out '+ The best entry is in
+    # bold. Indicates the filtered...' with its own marker moved to the front,
+    # and publication 17's caption read '...in amino acid-level and † peptide-
+    # level performance. denotes our retrained results'. The lines are built
+    # from the full-height words, and anything shorter is attached to the line
+    # whose centre is nearest, which is where it was printed.
+    heights = sorted(w["bottom"] - w["top"] for w in band)
+    h = heights[len(heights) // 2] or 1.0
+    tall = [w for w in band if (w["bottom"] - w["top"]) >= 0.8 * h]
+    small = [w for w in band if (w["bottom"] - w["top"]) < 0.8 * h]
+    rows_: list[list[dict]] = []
+    for w in sorted(tall or band, key=lambda w: w["top"]):
+        if rows_ and abs(w["top"] - rows_[-1][0]["top"]) <= 0.6 * h:
+            rows_[-1].append(w)
+        else:
+            rows_.append([w])
+    for w in small:
+        mid = (w["top"] + w["bottom"]) / 2.0
+        near = min(rows_, key=lambda L: abs(
+            mid - sum((x["top"] + x["bottom"]) / 2.0 for x in L) / len(L)),
+            default=None)
+        (near if near is not None else rows_.append([w]) or rows_[-1]).append(w)
+    lines = [[w["text"] for w in sorted(L, key=lambda w: w["x0"])]
+             for L in rows_]
+    out = ""
+    for line in lines:
+        text = re.sub(r"\s+", " ", " ".join(line)).strip()
+        if out.endswith("\x00"):
+            out = out[:-1] + text
+        elif out:
+            out = out + " " + text
+        else:
+            out = text
+        if out.endswith("-"):
+            out = out[:-1] + "\x00"
+    return out.replace("\x00", "-").strip()
+
+
 def caption_text(rows: list[list[dict]], paired: tuple | None,
                  blocks: list[tuple[int, int]],
                  fine: list[dict] | None = None,
@@ -1281,6 +1332,17 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
     right = lx1 + 6
     limit = min(li + 4, stop) if stop >= len(rows) or stop - li > 14 else stop
     last = li
+    # A PARAGRAPH GAP ENDS THE CAPTION. Its own lines sit one line pitch apart
+    # and the body text under it starts a paragraph further down, which is the
+    # one signal that works whichever side of the table the caption is on.
+    # Publication 16's Table 1 caption is three lines at an 11.0 pt pitch and
+    # the next paragraph begins 32.1 pt below the last of them, so without this
+    # the caption ran on into 'clude DeepNovo (Tran et al., 2017), which
+    # integrates bedding dimensions, attention heads count, and learning' --
+    # two columns of body prose interleaved, which is what the band returns
+    # when a caption spans the full page width and nothing stops the walk.
+    prev_top = min(w["top"] for w in rows[li])
+    pitch = None
     for j in range(li + 1, limit):
         nxt = rows[j]
         if sum(1 for w in nxt if numeric(w["text"])) >= 2:
@@ -1312,6 +1374,16 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # begin with a capital, so the caption lost its last two sentences.
         mine = sorted((w for w in nxt if lx0 - 6 <= w["x0"] <= right),
                       key=lambda w: w["x0"])
+        if mine:
+            # Measured over the caption's OWN lines only: a row carrying just
+            # the other column's text has to be stepped over and says nothing
+            # about this caption's spacing.
+            delta = min(w["top"] for w in mine) - prev_top
+            if pitch is not None and delta > max(1.8 * pitch, pitch + 6.0):
+                break
+            if pitch is None and 2.0 < delta < 40.0:
+                pitch = delta
+            prev_top = min(w["top"] for w in mine)
         if mine and not any(c.islower() for c in " ".join(w["text"] for w in mine)):
             break
         gaps = [b["x0"] - a["x1"] for a, b in zip(mine, mine[1:])]
@@ -1354,32 +1426,68 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
     # 'Post-Translational' is untouched. A compound that happens to break AT
     # its own hyphen loses it, which is inherent: the PDF does not record
     # whether the hyphen was already there.
-    lines: list[list[str]] = []
-    key = None
-    for w in band:
-        b = round(w["top"] / 2.0)
-        if b != key:
-            lines.append([])
-            key = b
-        lines[-1].append(w["text"])
-    cap = ""
-    for line in lines:
-        text = re.sub(r"\s+", " ", " ".join(line)).strip()
-        if cap.endswith("\x00"):
-            cap = cap[:-1] + text
-        elif cap:
-            cap = cap + " " + text
-        else:
-            cap = text
-        if cap.endswith("-"):
-            cap = cap[:-1] + "\x00"
-    cap = cap.replace("\x00", "-").strip()
+    cap = assemble_lines(band)
     # The finer extraction spaces the label differently from the coarse one
     # ('Table 2:' against 'Table2'), so it is stripped by pattern rather than
     # by the exact string.
     cap = LABEL_ROW.sub("", cap, count=1)
     cap = re.sub(r"^\s*[.:|\u2013\u2014]\s*", "", cap).strip()
     return label, cap, last
+
+
+# A TABLE'S FOOTNOTE DEFINES ITS MARKERS, and without it a cell reading
+# '0.550/0.530*/0.664+' is three numbers and no explanation. DiffNovo's two
+# tables carry 'The best entry is in bold. * Indicates the positional accuracy
+# reported in [10].' and '+ Indicates the filtered peptide-level accuracy, and
+# * indicates the peptide-level accuracy reported in [10].' -- which is what
+# says one of those numbers was computed by somebody else, i.e. the basis.
+FOOTNOTE_CUE = re.compile(
+    r"(?i)(?:^|\s)[*\u2217+\u2020\u2021\u00a7\u00b6]\s*"
+    r"(?:indicates?|denotes?|means?|marks?|stands|refers|is|are|the)\b"
+    r"|^\s*(?:note|notes|the best|best (?:results?|entry|values?)|bold|"
+    r"underlined?|scores? for|\u2013 ?indicates)\b")
+
+
+def footnote_text(rows: list[list[dict]], hi: int, fine: list[dict] | None,
+                  x0: float, x1: float) -> str:
+    """The marker-defining note printed under the block, or ''.
+
+    Found rather than assumed: the first row within four of the block's end
+    whose text reads like a marker definition, then its continuation lines
+    while they keep the same pitch. Four rather than one, because a wrapped
+    cell can sit between the table and its note -- DiffNovo's page 7 puts a
+    lone '0.725*' there, the overflow of the cell above it.
+    """
+    start = None
+    for j in range(hi + 1, min(hi + 5, len(rows))):
+        text = " ".join(w["text"] for w in rows[j])
+        if LABEL_ROW.match(text):
+            break
+        if FOOTNOTE_CUE.search(text):
+            start = j
+            break
+    if start is None:
+        return ""
+    last, prev_top = start, min(w["top"] for w in rows[start])
+    pitch = None
+    for j in range(start + 1, min(start + 5, len(rows))):
+        text = " ".join(w["text"] for w in rows[j])
+        if LABEL_ROW.match(text) or sum(1 for w in rows[j]
+                                        if numeric(w["text"])) >= 2:
+            break
+        top = min(w["top"] for w in rows[j])
+        delta = top - prev_top
+        if pitch is not None and delta > max(1.8 * pitch, pitch + 6.0):
+            break
+        if pitch is None and 2.0 < delta < 40.0:
+            pitch = delta
+        prev_top, last = top, j
+    top = min(w["top"] for w in rows[start]) - 1
+    bottom = max(w["bottom"] for w in rows[last]) + 1
+    words = fine if fine else [w for i in range(start, last + 1) for w in rows[i]]
+    band = [w for w in words if top <= w["top"] <= bottom
+            and x0 - 8 <= w["x0"] and w["x1"] <= x1 + 8]
+    return assemble_lines(band)
 
 
 def extract(page) -> tuple[list[dict], list[dict], int]:
@@ -1537,6 +1645,20 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 continue
             missing = [w["text"].strip().lower() for w in r
                        if w["text"].strip().lower() in NOT_RUN]
+            # WHICH COLUMN THE MARKER IS IN, not just how many there are. A
+            # dataset-split part keeps only the columns it owns, so a row whose
+            # cell in THAT dataset is an en-dash had nothing left and vanished
+            # from the part: RefineNovo's Table 6 lists InstaNovo and
+            # PrimeNovo-CV, neither of which was run on seven-species, and the
+            # seven-species part showed eight rows where the paper prints ten.
+            # The row has no measurement there, which is the point, so it is
+            # carried with its marker and no value.
+            absent = {}
+            for w in r:
+                if w["text"].strip().lower() in NOT_RUN:
+                    kk = assign(w, edges)
+                    if kk is not None:
+                        absent[kk] = w["text"].strip()
             if len(cells) == 0:
                 # A row with no cells inside the table is either an
                 # interstitial group label or a rule. Its words are carried to
@@ -1558,7 +1680,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                     dropped += len(edges) - len(cells)
                 else:
                     ragged = True
-            body.append({"label": label, "cells": cells, "extra": pending})
+            body.append({"label": label, "cells": cells, "extra": pending,
+                         "absent": absent})
             pending = []
         if multi:
             vetoed.append({"table_label": table_label, "caption": caption,
@@ -1630,6 +1753,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
                     "caption": caption, "table_label": table_label,
+                    "footnote": footnote_text(rows, hi, fine, crop_lb,
+                                              edges[-1][1] + 14),
                     "span_ambiguous": span_ambiguous,
                     "registry_label": table_label,
                     "bbox": bbox, "page": page.page_number})
@@ -2613,14 +2738,19 @@ def subtable(tb, cols: list[int], name: str) -> dict:
     body = []
     for r in tb["body"]:
         cells = {idx[k]: c for k, c in r["cells"].items() if k in idx}
-        if cells:
-            body.append({"label": r["label"], "cells": cells,
+        gone = {idx[k]: t for k, t in (r.get("absent") or {}).items() if k in idx}
+        if cells or gone:
+            body.append({"label": r["label"], "cells": cells, "absent": gone,
                          "extra": list(r.get("extra") or [])})
     return {"edges": [tb["edges"][k] for k in cols],
             "own": {idx[k]: tb["own"][k] for k in cols if k in tb["own"]},
             "span": {idx[k]: tb["span"][k] for k in cols if k in tb["span"]},
             "stub": tb["stub"], "body": body,
             "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
+            # The note is printed under the whole table, so every part of a
+            # split one carries it: the markers it defines appear in all of
+            # them.
+            "footnote": tb.get("footnote") or "",
             "table_label": f"{tb['table_label']} [{name}]",
             # THE REGISTRIES ARE KEYED ON THE PRINTED LABEL, and a split part
             # renames itself to say which dataset it holds. Without the parent
@@ -3039,6 +3169,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         collect.append({
             "verdict": "accepted", "reason": "",
             "table_label": tb["table_label"], "caption": tb["caption"],
+            "footnote": tb.get("footnote") or "",
             "bbox": tb.get("bbox"), "page": tb.get("page"),
             "axis": axis, "metric_axis": metric_axis,
             "dataset": dname, "dataset_version_id": vid,
@@ -3053,6 +3184,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             "subsets": dict(subsets),
             "body": [{"label": r["label"],
                       "cells": {k: c["printed"] for k, c in r["cells"].items()},
+                      # A cell the paper marks as not run, so the page can show
+                      # the row the paper prints rather than silently dropping
+                      # it. It carries no value, which is the honest record.
+                      "absent": dict(r.get("absent") or {}),
                       # The paper's OWN emphasis, so the review page can show
                       # what the page shows instead of a ranking of its own.
                       "bold": sorted(k for k, c in r["cells"].items() if c.get("bold")),
