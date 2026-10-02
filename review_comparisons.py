@@ -359,10 +359,11 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
     plain mistake: CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and
     InstaNovo (0.732) for peptide recall on Tomato.
 
-    Four things are NOT differences. A tie: a paper may bold any of several
-    equal values. An unmarked measurement. A measurement with a single value,
-    which has nothing to rank. And the absence of underlines in a table that
-    never underlines anything.
+    Three things are NOT differences: an unmarked measurement; a measurement
+    holding a single value, which has nothing to rank; and the absence of
+    underlines in a table that never underlines anything. A tie the paper marks
+    IN FULL is not a difference either -- but a tie it marks only IN PART is,
+    and the footnote names the tied cell we add.
     """
     rk = ranking(rec)
     pr = printed_emphasis(rec)
@@ -385,16 +386,33 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         second = {c for c in cells if rk.get(c) == "second"}
         bold_off = bool(bolds) and not bolds <= best
         under_off = uses_underline and bool(unders) and not unders <= second
-        if not (bold_off or under_off):
+        # A TIE MARKED ONLY IN PART is a difference too, of a milder kind: the
+        # paper is right about the cells it marked and silent about the one it
+        # tied with. LIPNovo's Table 1 underlines pi-HelixNovo at 0.765 for
+        # amino-acid precision and not pi-HelixNovo-dagger, also at 0.765; we
+        # underline both, and the footnote says which one we added.
+        bold_part = bool(bolds) and not bold_off and bolds < best
+        under_part = (uses_underline and bool(unders) and not under_off
+                      and unders < second)
+        if not (bold_off or under_off or bold_part or under_part):
             continue
         cell = lambda c: f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
         name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
-        said = []
+        said, tied = [], []
         if bold_off:
             said.append("bolded " + ", ".join(cell(c) for c in sorted(bolds)))
         if under_off:
             said.append("underlined " + ", ".join(cell(c) for c in sorted(unders)))
-        notes.append(f"{name}: the original table {' and '.join(said)}.")
+        if bold_part:
+            tied.append(f"only bolded {', '.join(cell(c) for c in sorted(bolds))}; "
+                        f"{', '.join(cell(c) for c in sorted(best - bolds))} ties "
+                        f"with it and is bolded here too")
+        if under_part:
+            tied.append(f"only underlined {', '.join(cell(c) for c in sorted(unders))}; "
+                        f"{', '.join(cell(c) for c in sorted(second - unders))} ties "
+                        f"with it and is underlined here too")
+        notes.append(f"{name}: the original table "
+                     + "; and ".join([" and ".join(said)] * bool(said) + tied) + ".")
     return rk, notes
 
 

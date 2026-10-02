@@ -1740,12 +1740,20 @@ pi-PrimeNovo (0.697) and InstaNovo (0.732) for peptide recall on Tomato, and the
 odd-looking 0.732 is genuinely printed, since it reproduces that row's stated
 average of 0.530.
 
-Four things are not differences: a tie (a paper may bold any of several equal
-values), an unmarked measurement, a measurement holding a single value (nothing
-to rank -- LIPNovo's Table 3 'Mean' group, whose baseline row falls outside the
-block, drew six false footnotes before this), and missing underlines in a table
-that never underlines. Measured over the whole library: 7 footnotes, six on
-DiffuNovo's best-competitor underlines and one on that Tomato cell.
+A tie marked only IN PART is footnoted too, naming the tied cell we add:
+LIPNovo's Table 1 underlines pi-HelixNovo-dagger at 0.765 for amino-acid
+precision and not pi-HelixNovo, also 0.765. Which row carries that underline
+was settled by geometry rather than by eye, because the two readings disagreed:
+the rect spans x 184.5-202.9 at y 215.0, on the dagger row's baseline (215.5);
+the plain row's underline, at y 205.0, is in the NEXT column, under its
+amino-acid recall.
+
+Three things are not differences: an unmarked measurement, a measurement
+holding a single value (nothing to rank -- LIPNovo's Table 3 'Mean' group,
+whose baseline row falls outside the block, drew six false footnotes before
+this), and missing underlines in a table that never underlines. Measured over
+the whole library: 11 footnotes -- six on DiffuNovo's best-competitor
+underlines, one on the Tomato cell, and four on ties marked in part.
 
 The marks are still READ, because checking needs them. The underline is exact
 -- a thin rect spanning x 355.0-377.4 under a word spanning 355.0-377.4 -- and
