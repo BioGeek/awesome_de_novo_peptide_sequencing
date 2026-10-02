@@ -193,6 +193,13 @@ ENTITY_QUERIES: dict[str, str] = {
     "algorithms": """
         SELECT id, name FROM algorithm ORDER BY id
     """,
+    # Datasets, keyed by their own id: `dataset.name` is UNIQUE, so unlike
+    # institutions and venues there is nothing to collapse. The name is a
+    # repository title for most of them, which makes a long slug, and that is
+    # still better than an opaque accession in the URL.
+    "datasets": """
+        SELECT id, name FROM dataset ORDER BY id
+    """,
     "institutions": """
         SELECT MIN(id), name FROM affiliation GROUP BY name ORDER BY MIN(id)
     """,

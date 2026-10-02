@@ -66,7 +66,7 @@ SITE_URL = _site_url()
 OUT_ROOT = Path(__file__).parent / "pages"
 
 KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
-         "subdomains", "families")
+         "subdomains", "families", "datasets")
 
 # Anchors on index.qmd, verified against the rendered section ids.
 ANCHORS = {
@@ -75,6 +75,7 @@ ANCHORS = {
     # who followed "Browse all papers" from a method or author page on a list
     # of the newest arrivals instead of on the table they were after.
     "browse-papers":   ("Browse all papers", "every-paper"),
+    "datasets":        ("The data underneath", "the-data-underneath"),
     "browse-authors":  ("Browse all authors", "browse-all-authors"),
     "citations":       ("How the field cites itself", "how-the-field-cites-itself"),
     "impact":          ("Academic impact by citation count", "academic-impact-by-citation-count"),
@@ -649,11 +650,16 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             host = f"[{md_escape(cp['host'])}]({cp['url']})"
             if cp["archival"]:
                 host += " <small>archival</small>"
+            # The date says WHICH question was answered when: `verified` carries
+            # the day the bytes were hashed, everything else the day the link
+            # was last probed. Printing one date for both would conflate "we
+            # have this file" with "this link answered".
             state = cp["status"] or "unchecked"
-            if state != "live":
+            if state not in ("live", "verified"):
                 state = f"**{state}**"
-            if cp["last_checked"]:
-                state += f" <small>{cp['last_checked']}</small>"
+            stamp = cp["verified_at"] if cp["status"] == "verified" else cp["last_checked"]
+            if stamp:
+                state += f" <small>{stamp}</small>"
             # `line`, NOT `row`: `row` is render_algorithm's own parameter, and
             # shadowing it with a string here broke every later use of it with
             # "string indices must be integers".
@@ -669,7 +675,9 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         if any(not cp["archival"] for cp in ctx["checkpoints"]):
             note = ("A host marked *archival* has a DOI and keeps what it is given. "
                     "The others can move or disappear, which is why they are checked "
-                    "rather than merely listed.")
+                    "rather than merely listed. **verified** means the bytes were "
+                    "fetched and hashed on the date shown; **live** means only that "
+                    "the host answered when last asked.")
             if has_mirror:
                 note += (" Where a *copy* is linked, it is a backup of someone "
                          "else's weights kept in case the original link goes stale; "
@@ -837,6 +845,137 @@ def render_venue(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     L += site.seen_in(keys)
     latest = max((p[2] for p in ctx["pubs"] if p[2]), default=None)
     return "\n".join(L) + "\n", date_to_mtime(latest)
+
+
+def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
+    """One dataset: its versions, where each version lives, and who used it.
+
+    The page the Every-dataset table sends a reader to. It exists because
+    "nine-species" names four different objects and no other page can say so:
+    the version list with its addresses IS the answer to which spectra a number
+    was computed over.
+
+    Addresses are per VERSION, not per dataset, because that is the grain they
+    have. Provenance addresses are marked as such rather than listed alongside
+    the real ones: for the nine-species benchmark those nine PRIDE submissions
+    are where the spectra came from, not where the benchmark is.
+    """
+    K = "datasets"
+    L = []
+    bits = [row["kind"]]
+    if row["acquisition_mode"]:
+        bits.append(row["acquisition_mode"])
+    n_pubs = len({r["pub_id"] for r in ctx["pubs"]})
+    bits.append(f"{len(ctx['versions'])} version{'s' if len(ctx['versions']) != 1 else ''}")
+    if n_pubs:
+        bits.append(f"{n_pubs} paper{'s' if n_pubs != 1 else ''}")
+    desc = row["short_description"] or f"{row['name']}, a {row['kind']} in the de novo peptide sequencing catalog."
+    L += front_matter(row["name"], " · ".join(bits), clip(desc, 250))
+
+    ld = {"@context": "https://schema.org", "@type": "Dataset",
+          "name": row["name"], "description": clip(desc, 500)}
+    if row["homepage"]:
+        ld["url"] = row["homepage"]
+    accs = [a["accession"] for v in ctx["versions"] for a in ctx["addrs"].get(v["id"], [])]
+    if accs:
+        ld["identifier"] = accs[:10]
+    L += json_ld(ld)
+
+    L.append("| | |")
+    L.append("|---|---|")
+    L.append(f"| Kind | {md_escape(row['kind'])} |")
+    if row["acquisition_mode"]:
+        L.append(f"| Acquisition | {md_escape(row['acquisition_mode'])} |")
+    if row["organisms"]:
+        L.append(f"| Organisms | {md_escape(row['organisms'])} |")
+    if row["homepage"]:
+        L.append(f"| Home | <{row['homepage']}> |")
+    L.append("")
+    if row["short_description"]:
+        L += [italicise_de_novo(md_escape(row["short_description"])), ""]
+
+    # ---- versions, each with where it lives
+    L += ["## Versions", ""]
+    for v in ctx["versions"]:
+        head = f"### {md_escape(v['version'])}"
+        L += [head, ""]
+        if v["description"]:
+            L += [italicise_de_novo(md_escape(v["description"])), ""]
+        facts = []
+        for label, key in (("spectra", "n_spectra"), ("train", "n_train"),
+                           ("validation", "n_validation"), ("test", "n_test")):
+            if v[key]:
+                facts.append(f"{label} {v[key]:,}")
+        if v["released"]:
+            facts.append(f"released {str(v['released'])[:10]}")
+        if v["introduced_by"]:
+            intro = ctx["pub_titles"].get(v["introduced_by"])
+            if intro:
+                facts.append("introduced by " + site.link("publications", v["introduced_by"],
+                                                          intro, from_kind=K))
+        if facts:
+            L += [" · ".join(facts), ""]
+        direct = [a for a in ctx["addrs"].get(v["id"], []) if not a["is_provenance"]]
+        prov = [a for a in ctx["addrs"].get(v["id"], []) if a["is_provenance"]]
+        if direct:
+            L += ["Where it lives:", ""]
+            for a in direct:
+                line = f"- **{md_escape(a['repository'])}** · [{md_escape(a['accession'])}]({a['url']})"
+                if a["part"]:
+                    line += f" <small>{md_escape(a['part'])}</small>"
+                L.append(line)
+            L.append("")
+        if prov:
+            # Named for what they are. These are other people's studies whose
+            # spectra were re-curated, not copies of this dataset.
+            L += [f"Assembled from {len(prov)} third-party submission"
+                  f"{'s' if len(prov) != 1 else ''}:", ""]
+            for a in prov:
+                line = f"- [{md_escape(a['accession'])}]({a['url']})"
+                if a["part"]:
+                    line += f" — {md_escape(a['part'])}"
+                L.append(line)
+            L.append("")
+        if not direct and not prov:
+            L += ["No public address: this version is named in the literature but "
+                  "cannot be downloaded.", ""]
+
+    # ---- papers, split on what they did with it
+    for heading, roles, blurb in (
+        ("Deposited by", ("introduces",), "produced this data"),
+        ("Used by", ("uses", "trains-on", "evaluates-on"), "ran on it"),
+    ):
+        rows = [r for r in ctx["pubs"] if r["role"] in roles]
+        if not rows:
+            continue
+        L += [f"## {heading} ({len({r['pub_id'] for r in rows})})", ""]
+        seen = set()
+        for r in rows:
+            if r["pub_id"] in seen:
+                continue
+            seen.add(r["pub_id"])
+            line = "- " + site.link("publications", r["pub_id"], r["title"], from_kind=K)
+            if r["publication_date"]:
+                line += f" ({str(r['publication_date'])[:4]})"
+            vers = sorted({x["version"] for x in rows if x["pub_id"] == r["pub_id"] and x["version"]})
+            # A paper that named no version is the finding the catalog exists to
+            # record, so say so rather than leaving the line bare.
+            line += (f" <small>{md_escape(', '.join(vers))}</small>" if vers
+                     else " <small>version not stated</small>")
+            L.append(line)
+        L.append("")
+
+    if ctx["methods"]:
+        L += [f"## Methods on these papers ({len(ctx['methods'])})", ""]
+        for m in ctx["methods"]:
+            L.append(f"- " + site.link("algorithms", m["alg_id"], m["name"], from_kind=K)
+                     + f" <small>{md_escape(m['kind'])}</small>")
+        L += ["", "Taken from the describing links only, so a paper that merely ran a "
+              "tool on this data does not make that tool a method of it.", ""]
+
+    L += site.seen_in(["datasets"])
+    dates = [str(v["released"])[:10] for v in ctx["versions"] if v["released"]]
+    return "\n".join(L) + "\n", date_to_mtime(max(dates) if dates else None)
 
 
 def render_subdomain(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
@@ -1138,7 +1277,7 @@ def load(conn: sqlite3.Connection) -> dict:
     d["checkpoints"] = defaultdict(list)
     for r in q("SELECT algorithm_id, label, tool_version, trained_on, host, url, "
                "       accession, licence, size_bytes, archival, status, last_checked, "
-               "       filename, mirror_url "
+               "       filename, mirror_url, verified_at "
                "  FROM checkpoint "
                " ORDER BY archival DESC, tool_version, host, id"):
         d["checkpoints"][r["algorithm_id"]].append(r)
@@ -1171,6 +1310,41 @@ def load(conn: sqlite3.Connection) -> dict:
                "FROM dataset_address ORDER BY is_provenance, repository, accession"):
         addr_of_version[r["dataset_version_id"]].append(
             (r["repository"], r["accession"], r["url"], r["is_provenance"]))
+    # Per-dataset page data. Versions and addresses are already loaded above for
+    # the publication pages; these are the dataset-side views of the same rows.
+    d["datasets"] = q("SELECT id, name, short_description, kind, acquisition_mode, "
+                      "       organisms, homepage FROM dataset ORDER BY name")
+    d["ds_versions"] = defaultdict(list)
+    for r in q("SELECT dataset_id, id, version, description, n_spectra, n_train, "
+               "       n_validation, n_test, released, introduced_by "
+               "  FROM dataset_version ORDER BY dataset_id, id"):
+        d["ds_versions"][r["dataset_id"]].append(r)
+    d["ds_addrs"] = defaultdict(list)          # version id -> addresses
+    for r in q("SELECT dataset_version_id, repository, accession, url, part, is_provenance "
+               "  FROM dataset_address ORDER BY is_provenance, repository, accession"):
+        d["ds_addrs"][r["dataset_version_id"]].append(r)
+    # Papers per dataset, carrying the role so a page can separate the work that
+    # DEPOSITED the data from the work that merely ran on it, the same split the
+    # algorithm pages make on publication_algorithm.role.
+    d["ds_pubs"] = defaultdict(list)
+    for r in q("SELECT pd.dataset_id, pd.role, pd.dataset_version_id, p.id AS pub_id, "
+               "       p.title, p.publication_date, dv.version "
+               "  FROM publication_dataset pd "
+               "  JOIN publication p ON p.id = pd.publication_id "
+               "  LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id "
+               " ORDER BY pd.dataset_id, p.publication_date DESC"):
+        d["ds_pubs"][r["dataset_id"]].append(r)
+    # Methods reached through those papers, via the DESCRIBING links only: a
+    # venomics paper that ran PEAKS on a deposit does not make PEAKS a method
+    # of that deposit, the same reasoning as the author->model graph.
+    d["ds_methods"] = defaultdict(list)
+    for r in q("SELECT DISTINCT pd.dataset_id, a.id AS alg_id, a.name, a.kind "
+               "  FROM publication_dataset pd "
+               "  JOIN publication_algorithm pa ON pa.publication_id = pd.publication_id "
+               "                               AND pa.role = 'describes' "
+               "  JOIN algorithm a ON a.id = pa.algorithm_id "
+               " ORDER BY pd.dataset_id, a.name"):
+        d["ds_methods"][r["dataset_id"]].append(r)
     d["pub_datasets"] = defaultdict(list)       # publication id -> [(name, kind, version, addrs, role)]
     for r in q("SELECT pd.publication_id, pd.role, pd.dataset_version_id, "
                "       ds.name AS ds_name, ds.kind, dv.version "
@@ -1490,7 +1664,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~3131 thin pages out of
+    # committed under pages/. search: false keeps ~3508 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -1676,6 +1850,20 @@ def main() -> int:
                    "impact": d["journal_impact"].get(name)}
             body, mtime = render_venue(site, name, ctx)
             emit("venues", site.slugs["venues"][key], body, mtime)
+
+    if "datasets" in kinds:
+        pub_titles = {p["id"]: p["title"] for p in d["publications"]}
+        for row in d["datasets"]:
+            did = row["id"]
+            ctx = {
+                "versions": d["ds_versions"].get(did, []),
+                "addrs": d["ds_addrs"],
+                "pubs": d["ds_pubs"].get(did, []),
+                "methods": d["ds_methods"].get(did, []),
+                "pub_titles": pub_titles,
+            }
+            body, mtime = render_dataset(site, row, ctx)
+            emit("datasets", site.slugs["datasets"][did], body, mtime)
 
     if "subdomains" in kinds:
         for row in d["subdomains"]:

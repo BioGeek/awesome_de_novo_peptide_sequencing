@@ -542,7 +542,8 @@ dataset_versions = pd.read_sql("""
 # exactly the duplicated-list pattern this file warns about elsewhere.
 checkpoints = pd.read_sql("""
     SELECT a.name AS method, c.label, c.tool_version, c.trained_on, c.host, c.url,
-           c.licence, c.size_bytes, c.archival, c.status, c.last_checked, c.mirror_url
+           c.licence, c.size_bytes, c.archival, c.status, c.last_checked, c.verified_at,
+           c.mirror_url
       FROM checkpoint c JOIN algorithm a ON a.id = c.algorithm_id
      ORDER BY a.name, c.archival DESC, c.tool_version, c.id
 """, conn)
@@ -612,6 +613,8 @@ _key_sql = {
                     "GROUP BY algorithm_family HAVING COUNT(*) >= 2",
     "venues":       "SELECT MIN(id), journal FROM publication "
                     "WHERE journal IS NOT NULL AND journal <> '' GROUP BY journal",
+    # Keyed by the dataset NAME, which is what the Every-dataset table carries.
+    "datasets":     "SELECT id, name FROM dataset",
 }
 _rows = []
 for _kind, _sql in _key_sql.items():
@@ -3734,6 +3737,13 @@ deep-learning *de novo* checkpoint, now demands a signed-in Google account on a
 link its citing papers call publicly available. **${ck_stats.backed}** have a
 backup copy, which is the answer to that.
 
+The **Link** column says what is actually known about each one, and when.
+*verified* means the bytes were fetched and hashed on the date shown, which is
+stronger than any reply a host can give; *live* means only that the host
+answered when last asked. Google Drive in particular returns the same 200 for a
+file that is there and one that is gone, so nothing it says is worth more than
+a download.
+
 One method name also covers several models. Casanovo 4.0.0, 4.2.0, 5.0.0 and
 5.2.0-Orbitrap are four different sets of weights, and comparing a number
 against "Casanovo" with no version is the same error as comparing one against
@@ -3768,15 +3778,24 @@ Inputs.table(checkpoint_search, {
     },
     size_bytes: n => n == null ? "" : n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB`
                                                : `${Math.round(n / 1e6)} MB`,
-    status: s => s === "live" ? "live"
-      : html`<b style="color:${s === "gated" ? "#b45309" : "#57606a"}">${s ?? "unchecked"}</b>`,
+    // The date is part of the answer, and which date depends on the verdict:
+    // `verified` carries the day the bytes were hashed, the rest the day the
+    // link was last probed.
+    status: (s, i, rows) => {
+      const r = (rows ?? [])[i]
+      const when = s === "verified" ? r?.verified_at : r?.last_checked
+      const stamp = when ? html` <small>${when}</small>` : ""
+      if (s === "live" || s === "verified")
+        return html`<span style="color:${s === "verified" ? "#0f766e" : "#24292f"}">${s}</span>${stamp}`
+      return html`<b style="color:${s === "gated" ? "#b45309" : "#57606a"}">${s ?? "unchecked"}</b>${stamp}`
+    },
     mirror_url: u => u ? html`<a href="${u}" target="_blank">copy</a>` : "—",
     tool_version: v => v ?? "",
     trained_on: v => v ?? "",
     licence: v => v ?? "not stated"
   },
   width: { method: 130, tool_version: 85, host: 110, licence: 150, size_bytes: 72,
-           status: 90, mirror_url: 70 }
+           status: 152, mirror_url: 70 }
 })
 ```
 
@@ -4030,6 +4049,7 @@ all_dataset_rows = {
       // PXD004424 or "zenodo" finds its dataset, which is the whole reason
       // this table exists alongside the charts.
       Accessions: ad.map(a => a.accession).join(" "),
+      source: ad.find(a => a.url)?.url ?? null,
       Repositories: Array.from(new Set(ad.map(a => a.repository))).sort().join(", "),
       url: ad.find(a => a.url)?.url ?? null
     })
@@ -4052,23 +4072,33 @@ viewof dataset_search = Inputs.search(all_dataset_rows, {
 //| echo: false
 Inputs.table(dataset_search, {
   columns: ["Dataset", "Kind", "Versions", "papers", "Deposited", "Spectra",
-            "Repositories", "Accessions"],
-  header: { papers: "Papers", Accessions: "Accession(s)" },
+            "Repositories", "source", "Accessions"],
+  header: { papers: "Papers", Accessions: "Accession(s)", source: "Source" },
   sort: "papers", reverse: true,
   rows: 18,
   format: {
+    // The dataset's own PAGE is the primary link now, because it carries the
+    // versions, every address and the papers either side of it; the repository
+    // link is one of the things ON it. Where no page exists the cell falls back
+    // to the repository, so a row is never dead.
     Dataset: (d, i, rows) => {
       const row = (rows ?? [])[i]
-      const u = row?.url
-      return u ? html`<a href="${u}" target="_blank" title="${d}">${
-        d.length > 60 ? d.slice(0, 59) + "…" : d}</a>`
-        : (d.length > 60 ? d.slice(0, 59) + "…" : d)
+      const label = d.length > 60 ? d.slice(0, 59) + "…" : d
+      const page = page_href("datasets", d)
+      if (page) return html`<a href="${page}" title="${d}">${label}</a>`
+      return row?.url ? html`<a href="${row.url}" target="_blank" title="${d}">${label}</a>` : label
     },
     Spectra: d => d == null ? "" : d3.format(",")(d),
+    // Kept as its own column so the repository is still one click away even
+    // though the name now points at the page.
+    source: (u, i, rows) => {
+      const row = (rows ?? [])[i]
+      return row?.url ? html`<a href="${row.url}" target="_blank">open</a>` : ""
+    },
     Deposited: d => d ? "✓" : ""
   },
   width: { Dataset: 330, Kind: 80, Versions: 70, papers: 62, Deposited: 80,
-           Spectra: 100, Repositories: 120 }
+           Spectra: 100, Repositories: 120, source: 58 }
 })
 ```
 

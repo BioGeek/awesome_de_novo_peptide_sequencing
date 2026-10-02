@@ -22,6 +22,21 @@ http_code and last_checked, and with --mirror copies the at-risk ones.
     uv run python build_checkpoints.py --write        # ... and record it
     uv run python build_checkpoints.py --mirror       # ... and mirror at-risk ones
 
+**The status vocabulary**, in descending order of what it tells you:
+
+    verified      the bytes were fetched and hashed; `verified_at` says when
+    live          the host served the file, or its landing page, today
+    moved         the link redirects somewhere else
+    unverifiable  the link resolves and the response cannot confirm the file
+    gated         the link resolves and demands an account
+    dead          404 or no response
+    unchecked     never probed
+
+`verified` outranks a probe and is set from `sha256`, because a completed
+download is stronger evidence than any HEAD request. It does NOT override
+`dead` or `gated`: those describe the ORIGINAL link, which a reader needs even
+when a backup exists.
+
 **Liveness is checked with curl, not requests**, for the reason recorded under
 'The local PDF library' in CLAUDE.md: HTTPS on the machine this was written for
 is intercepted by a gateway whose re-signed certificates carry no Authority Key
@@ -148,6 +163,19 @@ def main() -> int:
     for r in rows:
         code, ctype, final = probe(r["url"])
         status, why = verdict(r, code, ctype, final)
+        # A DOWNLOAD OUTRANKS A PROBE. Where the bytes were fetched and hashed,
+        # `unverifiable` and `moved` are the checker admitting it cannot tell
+        # from a response, not a finding about the file -- and they were the
+        # status on 10 of 11 rows whose contents we hold. `verified` says what
+        # is actually known.
+        #
+        # `dead` and `gated` are NOT overridden, because those are findings
+        # about the ORIGINAL link and a reader needs them even when a copy
+        # exists: DeepNovo is gated and mirrored, and both halves matter.
+        if r["sha256"] and status in ("unverifiable", "moved"):
+            status = "verified"
+            why = (f"bytes fetched and hashed{' on ' + r['verified_at'] if r['verified_at'] else ''}"
+                   f"; the host's response alone could not confirm the file")
         tally[status] = tally.get(status, 0) + 1
         flag = " " if r["archival"] else "!"
         name = con.execute("SELECT name FROM algorithm WHERE id=?",
@@ -156,8 +184,9 @@ def main() -> int:
               f"{(r['label'] or '')[:22]:22}{' | ' + why if why else ''}")
         if args.write or args.mirror:
             con.execute("""UPDATE checkpoint SET status=?, http_code=?, last_checked=?,
+                           verified_at=COALESCE(verified_at, CASE WHEN ?='verified' THEN ? END),
                            notes=COALESCE(?, notes) WHERE id=?""",
-                        (status, code, today, why, r["id"]))
+                        (status, code, today, status, today, why, r["id"]))
         if not r["archival"] and status in ("live", "moved", "unverifiable"):
             at_risk.append(r)
     if args.write or args.mirror:

@@ -1461,7 +1461,20 @@ binary was expected is recorded as `unverifiable` rather than `live`: the honest
 answer is that the link resolves and what it resolves to cannot be confirmed
 from a header.
 
-Measured over the 26 recorded checkpoints: 15 live, 7 unverifiable, 3 moved, 1 gated.
+**A DOWNLOAD OUTRANKS A PROBE.** `verified` means the bytes were fetched and
+hashed, and `verified_at` says when; it is set from `sha256`, because a
+completed download is stronger evidence than any HEAD request. It replaced
+`unverifiable` and `moved` on 10 of the 11 rows whose contents the catalog
+holds, which were the checker admitting it could not tell from a response
+rather than a finding about the file. It does NOT override `dead` or `gated`:
+those describe the ORIGINAL link and a reader needs them even when a copy
+exists, which is exactly DeepNovo's case.
+
+The pages print the date that matches the verdict: `verified_at` for a verified
+row, `last_checked` for everything else. One date for both would conflate "we
+have this file" with "this link answered".
+
+Measured over the 26 recorded checkpoints: 15 live, 10 verified, 1 gated.
 
 **A gated checkpoint can still be backed up, and DeepNovo now is.** Its weights
 were retrieved from a signed-in session and mirrored, so the backup is the only
@@ -1749,6 +1762,35 @@ row, which keeps PAAS 3's published URL and costs two near-identical pages.
 A new family works with no registration at all: it gets a lane, a generated
 colour and a packed height. Add it to `band_color` only if you want a specific
 colour for it. `SELECT DISTINCT algorithm_family FROM algorithm` is the list.
+
+### A dataset page per dataset
+
+`build_pages.py` generates one page per `dataset` row, all **377** of them,
+reachable from the Dataset column of the Every-dataset table. The page carries
+what no other page can: the **version list, each version with its own
+addresses**, which is the answer to "which spectra was this number computed
+over".
+
+Three things it does deliberately:
+
+- **Addresses hang off the VERSION**, because that is their grain. A page for
+  the nine-species benchmark shows `MSV000081382` under `original` and
+  `MSV000090982` plus two Zenodo records under `revised`, rather than one
+  undifferentiated pile.
+- **Provenance is labelled as provenance.** The nine per-species PRIDE
+  submissions appear under "Assembled from 9 third-party submissions", named by
+  species, not beside the addresses where the benchmark itself lives. They are
+  other people's studies.
+- **Papers split on the role**: "Deposited by" for `introduces` and "Used by"
+  for the rest, and a paper that named no version says *version not stated*
+  rather than going bare. Methods come through the DESCRIBING links only, so a
+  venomics paper that ran PEAKS on a deposit does not make PEAKS a method of
+  that deposit.
+
+Keyed by `dataset.id`, since `dataset.name` is UNIQUE and there is nothing to
+collapse. The table's Dataset cell now points at the page and a separate
+**Source** column keeps the repository one click away, because the page is the
+better default and the repository is still what someone downloading wants.
 
 ### A family page needs two methods
 
