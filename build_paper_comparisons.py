@@ -79,6 +79,19 @@ NUM = re.compile(r"^[(\[]?[<>~]?\s*([+-]?(?:\d{1,3}(?:,\d{3})+|\d*\.\d+|\d+\.?))
 PM = re.compile(r"^([+-]?(?:\d*\.\d+|\d+\.?))\s*(?:±|\+/-)\s*(\d*\.\d+|\d+\.?)\s*%?$")
 # A cell holding two numbers, which is a different grain and rejects the table.
 MULTI = re.compile(r"\d\s*/\s*\d|\d\s*\|\s*\d")
+# A publisher watermark, stamped across the page and landing inside the table's
+# row band. pNovo 3's page carries
+# 'https://academic.oup.com/bioinformatics/article/35/14/i183/5529238' between
+# two data rows, and its slashes-between-digits read as a multi-valued cell,
+# which rejected the whole table. A URL is not a measurement in any layout, so
+# it is dropped before the cell guards see it rather than being allowed to fail
+# them.
+URLISH = re.compile(r"(?i)^(?:https?://|www\.|doi:|10\.\d{4,}/)\S*$")
+# A row of raw counts is not a row of measurements. pNovo 3's '#TotalPSMs' row
+# sits under seven percentages, and its 62,089 against their 64.6 tripped the
+# one-unit guard. Matched on the LABEL, and deliberately not on 'Total' alone,
+# which is a legitimate aggregate label elsewhere.
+COUNT_ROW = re.compile(r"(?i)^\s*#|\b(psms?|spectra|counts?|size|num\.?)\b")
 NOT_RUN = {"-", "–", "—", "n/a", "na", "--", "nan", "none", "x"}
 
 CAPTION = re.compile(r"(?i)\b(Tab(?:le|\.)\s*(?:S?\d{1,2}|[IVX]{1,4}))\s*(?:[.:]|\||–|—)?\s*(.{0,300})", re.S)
@@ -417,9 +430,25 @@ def row_label(toks: list[dict], first_edge: float) -> str:
     return " ".join(w["text"] for run in kept for w in run).strip()
 
 
+def page_rules(page) -> list[tuple[float, float, float]]:
+    """Horizontal rules on the page, as (top, x0, x1).
+
+    A booktabs \\cmidrule under a spanner covers exactly the columns that
+    spanner governs, which is the only unambiguous statement of the grouping a
+    PDF contains. Where they are absent the grouping can be genuinely
+    undecidable, and this script would rather say so than guess.
+    """
+    out = []
+    for o in list(page.lines) + list(page.rects):
+        if abs(o["y0"] - o["y1"]) < 1.5 and (o["x1"] - o["x0"]) > 20:
+            out.append((o["top"], o["x0"], o["x1"]))
+    return out
+
+
 def header_model(rows: list[list[dict]], lo: int,
                  edges: list[tuple[float, float]], max_rows: int = 4,
-                 left_bound: float | None = None, floor: int = 0):
+                 left_bound: float | None = None, floor: int = 0,
+                 rules: list[tuple[float, float, float]] | None = None):
     """Read the header rows above a data block.
 
     A header row carrying about as many phrases as there are columns is a row
@@ -434,6 +463,8 @@ def header_model(rows: list[list[dict]], lo: int,
     own = collections.defaultdict(list)
     span = collections.defaultdict(list)
     stub: list[str] = []
+    grouped: set = set()      # columns whose spanner came from a rule
+    ambiguous: set = set()    # columns whose spanner was guessed by proximity
     col_c = [(a + b) / 2 for a, b in edges]
     # CLIP EVERY ROW TO THE TABLE'S OWN WIDTH before judging it. On a
     # two-column page the other column's prose sits at the same `top` as the
@@ -492,14 +523,44 @@ def header_model(rows: list[list[dict]], lo: int,
                 k = assign(q, edges)
                 if k is not None:
                     own[k].insert(0, q["text"])
+        elif len(inside) == len(edges):
+            # One phrase per column: unambiguous whatever the widths.
+            for k, q in enumerate(sorted(inside, key=lambda q: q["x0"])):
+                span[k].insert(0, q["text"])
         else:
-            for k, c in enumerate(col_c):
-                nearest = min(inside, key=lambda q: abs((q["x0"] + q["x1"]) / 2 - c))
-                span[k].insert(0, nearest["text"])
+            # Fewer phrases than columns, so each governs a GROUP. Prefer the
+            # rules: a partial rule just below this row states its extent.
+            band = [(t, x0, x1) for t, x0, x1 in (rules or [])
+                    if min(q["top"] for q in ph) < t < min(q["top"] for q in ph) + 26
+                    and (x1 - x0) < (edges[-1][1] - edges[0][0]) * 0.95]
+            if len(band) >= 2:
+                for k, c in enumerate(col_c):
+                    seg = next((b for b in band if b[1] - 2 <= c <= b[2] + 2), None)
+                    if seg is None:
+                        continue
+                    hit = [q for q in inside
+                           if seg[1] - 2 <= (q["x0"] + q["x1"]) / 2 <= seg[2] + 2]
+                    if len(hit) == 1:
+                        span[k].insert(0, hit[0]["text"])
+                        grouped.add(k)
+            else:
+                # NO RULE AND NO 1:1 MAPPING: the grouping is undecidable from
+                # the page. Casanovo's Table 2 is the worked example -- three
+                # method names over five columns, because it reports three
+                # metrics for itself and one per baseline, and its page carries
+                # only full-width rules. Nearest-centre put column 2 under
+                # PointNovo when the printed table means Casanovo, which is
+                # precisely the invisible misattribution every guard here
+                # exists to avoid. The phrases are recorded as ambiguous and
+                # are not allowed to name a method.
+                for k, c in enumerate(col_c):
+                    nearest = min(inside, key=lambda q: abs((q["x0"] + q["x1"]) / 2 - c))
+                    span[k].insert(0, nearest["text"])
+                    ambiguous.add(k)
         taken += 1
         if taken >= max_rows:
             break
-    return own, span, " ".join(stub).strip()
+    return own, span, " ".join(stub).strip(), ambiguous - grouped
 
 
 def desquash(text: str) -> str:
@@ -634,6 +695,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     if not words:
         return [], [], 0
     rows = word_rows(words)
+    rules = page_rules(page)
     out, vetoed, uncaptioned = [], [], 0
     blocks = [b for b in data_blocks(rows) if len(column_edges(rows, *b)) >= 2]
     paired = pair_captions(rows, blocks)
@@ -661,6 +723,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         for r in rows[lo:hi + 1]:
             cells: dict[int, dict] = {}
             for w in r:
+                if URLISH.match(w["text"]):
+                    continue
                 if MULTI.search(w["text"]):                  # G4
                     multi = w["text"]
                     break
@@ -677,6 +741,9 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             if multi:
                 break
             label = row_label(r, edges[0][0])
+            if cells and COUNT_ROW.search(label):
+                dropped += 1
+                continue
             missing = [w["text"].strip().lower() for w in r
                        if w["text"].strip().lower() in NOT_RUN]
             if len(cells) == 0:
@@ -717,16 +784,17 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             [w["x0"] for r in rows[lo:hi + 1] for w in r
              if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
             or [edges[0][0] - 150]) - 4
-        own, span, stub = header_model(
+        own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
-            floor=(cap_end + 1 if 0 <= cap_end < lo else 0))
+            floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules)
         if not own and not span:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": "G3 no header above the block"})
             continue
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
-                    "caption": caption, "table_label": table_label})
+                    "caption": caption, "table_label": table_label,
+                    "span_ambiguous": span_ambiguous})
     return out, vetoed, uncaptioned
 
 
@@ -894,29 +962,31 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
 
 
 # Which dataset a table is scored on is NOT in the table body: it is in the
-# caption or the neighbouring prose. These cues map printed phrasing to a
-# `dataset.name`, and a phrase absent from here leaves the dataset unresolved
-# rather than guessed.
+# caption, the column header or the spanner. A cue maps printed phrasing to a
+# LABEL, and DATASET_TARGETS maps that label to a (dataset, version) pair,
+# because what a paper names is not always a whole dataset: "HC-PT" names a
+# VERSION of ProteomeTools. A phrase absent from here leaves the dataset
+# unresolved rather than guessed.
 DATASET_CUES: list[tuple[re.Pattern, str]] = [
-    (re.compile(r"(?i)nine[- ]species|9[- ]species|\bnine species\b"), "Nine-species benchmark"),
+    # HC-PT before ProteomeTools: it is the more specific name for the same
+    # corpus, and a table naming it does not say "ProteomeTools".
+    (re.compile(r"(?i)\bHC-?PT\b"), "HC-PT"),
+    (re.compile(r"(?i)nine[- ]species|9[- ]species|\bnine species\b"), "Nine-species"),
+    (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
     (re.compile(r"(?i)ProteomeTools"), "ProteomeTools"),
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
 ]
 
-# Dataset names that comparison tables print and the catalog has NO row for.
-# Registered so a multi-dataset table can still be SPLIT: the parts naming a
-# known dataset are read, and the parts naming these are rejected loudly by
-# name. Without them one unattributable column blocks the split and the whole
-# table is lost, which hides the gap instead of reporting it.
-#
-# Both of these are real holes in the catalog, found by this builder. DiffuNovo
-# and ReNovo both report on all three benchmarks side by side.
-UNCATALOGUED_DATASETS: list[tuple[re.Pattern, str]] = [
-    (re.compile(r"(?i)\bHC-?PT\b"), "HC-PT"),
-    (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
-]
-
-ALL_DATASET_CUES = DATASET_CUES + UNCATALOGUED_DATASETS
+# HC-PT is NovoBench's 10% subsample of the high-confidence InstaNovo split of
+# ProteomeTools, so naming it pins both grains at once. See 'Datasets, at three
+# grains' in CLAUDE.md for why it is a version and not a dataset.
+DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
+    "HC-PT": ("ProteomeTools", "HC-PT (NovoBench)"),
+    "Nine-species": ("Nine-species benchmark", None),
+    "Seven-species": ("Seven-species benchmark", None),
+    "ProteomeTools": ("ProteomeTools", None),
+    "MassIVE-KB": ("MassIVE-KB", None),
+}
 
 
 # "v2" is not globally meaningful, so the lexicon is PER DATASET and
@@ -945,28 +1015,40 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
     paper's own publication_dataset links as a last resort.
     """
     if hint:
-        # A per-column spanner naming the dataset is MORE specific than the
-        # caption, which on a split table names all of them at once.
-        row = con.execute("SELECT id FROM dataset WHERE name = ?", (hint,)).fetchone()
+        # A per-column spanner or header naming the dataset is MORE specific
+        # than the caption, which on a split table names all of them at once.
+        name, pinned = DATASET_TARGETS.get(hint, (hint, None))
+        row = con.execute("SELECT id FROM dataset WHERE name = ?", (name,)).fetchone()
         if not row:
-            raise Reject(f"D1 spanner names {hint!r}, absent from the dataset table")
+            raise Reject(f"D1 {hint!r} maps to dataset {name!r}, which is absent")
         did = row[0]
-        for rx, version in VERSION_LEXICON.get(hint, []):
+        if pinned:
+            # THE LABEL ITSELF PINS THE VERSION, so no lexicon lookup is
+            # wanted: a column headed 'HC-PT' is NovoBench's subsample and
+            # nothing else, whatever the surrounding prose discusses.
+            got = con.execute(
+                "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
+                (did, pinned)).fetchone()
+            if not got:
+                raise Reject(f"D1 {hint!r} maps to version {pinned!r} of "
+                             f"{name!r}, which is absent")
+            return did, name, got[0], hint
+        for rx, version in VERSION_LEXICON.get(name, []):
             for scope in (caption, near):
                 m = rx.search(scope)
                 if m:
                     got = con.execute(
                         "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
                         (did, version)).fetchone()
-                    return did, hint, (got[0] if got else None), m.group(0)
-        return did, hint, None, None
+                    return did, name, (got[0] if got else None), m.group(0)
+        return did, name, None, None
     found: list[tuple[re.Pattern, str]] = []
     for scope in (caption, near):
         found = [(rx, nm) for rx, nm in DATASET_CUES if rx.search(scope)]
         if found:
             break
     names = {nm for _, nm in found}
-    if len(names) > 1:                                            # D2
+    if len({DATASET_TARGETS.get(n, (n, None)) for n in names}) > 1:   # D2
         raise Reject(f"D2 multi-dataset table {sorted(names)}")
     if not names:
         rows = con.execute(
@@ -976,11 +1058,17 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
         if len(rows) == 1:
             return rows[0][0], rows[0][1], None, None
         raise Reject("D1 dataset unresolved")
-    name = names.pop()
+    label = names.pop()
+    name, pinned = DATASET_TARGETS.get(label, (label, None))
     row = con.execute("SELECT id FROM dataset WHERE name = ?", (name,)).fetchone()
     if not row:                                                   # D1
         raise Reject(f"D1 cue names {name!r}, absent from the dataset table")
     did = row[0]
+    if pinned:
+        got = con.execute(
+            "SELECT id FROM dataset_version WHERE dataset_id=? AND version=?",
+            (did, pinned)).fetchone()
+        return did, name, (got[0] if got else None), label
     # THE CAPTION OUTRANKS THE PROSE, ABSOLUTELY. Scanning both together, with
     # the lexicon in its own order, let the surrounding pages decide: on
     # ContraNovo's Table 1 the caption says '9-species-V1' and the neighbouring
@@ -1280,13 +1368,39 @@ def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
     carries at least two distinct methods wins.
     """
     n = len(tb["edges"])
-    cols = {}
-    for k in range(n):
-        head = " ".join(tb["own"].get(k, [])).strip()
-        if norm(head) in SELF_WORDS and subject:
-            cols[k] = (subject["id"], subject["name"], None)
-        else:
-            cols[k] = try_resolve(head, vocab, index)
+    # THE METHOD NAMES MAY BE THE SPANNER. ContraNovo's Table 1 has the methods
+    # as column headers with the metric spanning them; Casanovo's Table 2 is
+    # the other way round -- 'DeepNovo PointNovo Casanovo' spans, and each
+    # column's own header is 'Prec.' or 'Cov.' -- because Casanovo reports
+    # three metrics for itself and one for each baseline, so the names cannot
+    # align one-to-one with the columns. Reading only the column header found
+    # no methods at all and rejected the most-compared-against paper in the
+    # field. The column's own header is tried first, so a table of the
+    # ContraNovo shape is unaffected.
+    cols, method_source = {}, "own"
+    amb = tb.get("span_ambiguous") or set()
+    span_blocked = False
+    for source in ("own", "span"):
+        if source == "span" and amb:
+            # The spanner's grouping was guessed by proximity, so it cannot say
+            # which column belongs to which method. SKIP it and carry on: most
+            # spanners carry the METRIC, not the methods, and aborting here
+            # stopped the row axis from ever being tried, which took 7 tables
+            # that read correctly off the accepted list.
+            span_blocked = True
+            continue
+        got = {}
+        for k in range(n):
+            head = " ".join(tb[source].get(k, [])).strip()
+            if norm(head) in SELF_WORDS and subject:
+                got[k] = (subject["id"], subject["name"], None)
+            else:
+                got[k] = try_resolve(head, vocab, index)
+        if len({(v[0], v[2] or "") for v in got.values() if v}) >= 2:
+            cols, method_source = got, source
+            break
+        if source == "own":
+            cols = got
     rows, leftovers = {}, {}
     for i, r in enumerate(tb["body"]):
         hit, rest = resolve_in_label(r["label"], vocab, index, subject)
@@ -1300,6 +1414,10 @@ def orientation(tb, vocab, index, subject) -> tuple[str, dict, dict]:
         return "columns", cols, {}
     if n_row >= 2:
         return "rows", rows, leftovers
+    if span_blocked:
+        raise Reject(f"N1 the method names are in a spanner whose grouping no "
+                     f"rule states, so columns {sorted(amb)} are undecidable; "
+                     f"not guessed")
     raise Reject(f"N1 neither axis carries >=2 methods "
                  f"(columns {n_col}, rows {n_row}); "
                  f"headers {[' '.join(tb['own'].get(k, [])) or '?' for k in range(n)]}")
@@ -1329,7 +1447,7 @@ def split_by_dataset(tb) -> dict[str, list[int]] | None:
         # its HC-PT and Seven-species numbers under the nine-species benchmark,
         # which is a wrong attribution rather than a missing one.
         sp = " ".join(tb["span"].get(k, [])) + " " + " ".join(tb["own"].get(k, []))
-        hits = {nm for rx, nm in ALL_DATASET_CUES if rx.search(sp)}
+        hits = {nm for rx, nm in DATASET_CUES if rx.search(sp)}
         groups.setdefault(hits.pop() if len(hits) == 1 else None, []).append(k)
     if None in groups or len(groups) < 2:
         return None
@@ -1351,7 +1469,9 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             "stub": tb["stub"], "body": body,
             "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
             "table_label": f"{tb['table_label']} [{name}]",
-            "dataset_hint": name}
+            "dataset_hint": name,
+            "span_ambiguous": {idx[k] for k in cols
+                               if k in (tb.get("span_ambiguous") or set())}}
 
 
 def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
