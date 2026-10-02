@@ -102,6 +102,25 @@ def render(pdf_path: pathlib.Path, page_no: int, bbox, dest: pathlib.Path) -> bo
     return True
 
 
+def unsquash_name(text: str) -> str:
+    """A printed method label, with the spaces a PDF dropped put back.
+
+    'PeaksNovo(Maetal.,2003)' -> 'Peaks Novo (Ma et al., 2003)'. Display only:
+    what the miner RESOLVES is the catalog name, and what a row would store is
+    the label exactly as printed. This is so a reviewer can read it.
+    """
+    t = (text or "").strip()
+    # Only the CITATION is re-spaced. The method name's own camelCase is left
+    # alone, because splitting it gives 'Ada Novo' and 'Diffu Novo', which is
+    # worse than leaving it glued; the resolved catalog name is shown beneath
+    # it anyway.
+    t = re.sub(r"(?<=[^\s(])(?=\()", " ", t)                 # space before '('
+    t = re.sub(r"(?i)(?<=[a-z])et\s*al\s*\.?", " et al.", t)  # 'Maetal.' -> 'Ma et al.'
+    t = re.sub(r",(?=\S)", ", ", t)                           # space after a comma
+    t = re.sub(r";(?=\S)", "; ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
 def unsquash(text: str) -> str:
     """'ApisMellifera' -> 'Apis Mellifera', for display.
 
@@ -136,7 +155,7 @@ def grid_html(rec: dict) -> str:
         if not m:
             return "&mdash;"
         name, ver, printed = (m + ("",))[:3] if len(m) < 3 else m
-        shown = printed or (f"{name} {ver}" if ver else name)
+        shown = unsquash_name(printed) or (f"{name} {ver}" if ver else name)
         out = html.escape(shown)
         if html.escape(name) != out:
             out += f"<br><small class='dim'>{html.escape(name)}"
@@ -220,9 +239,11 @@ def main() -> int:
             approved.setdefault(tid, {}).update({"state": "dismissed", "on": today})
     for tid in (args.unapprove or "").replace(" ", "").split(","):
         approved.pop(tid, None)
-    if not args.keep_crops:
-        for old in OUT.glob("*.png"):
-            old.unlink()
+    # CROPS ARE REPLACED IN PLACE, NOT DELETED UP FRONT. Deleting them first
+    # left the EXISTING page pointing at files that no longer existed for the
+    # whole of a re-render, which takes minutes: open it in that window and
+    # every screenshot is a broken image. Each crop is overwritten as it is
+    # made, and anything no longer referenced is removed at the end.
 
     rows = con.execute("""
         SELECT DISTINCT p.id, p.title, p.publication_date FROM publication p
@@ -289,9 +310,9 @@ def main() -> int:
                     tid = f"p{pub['id']}-pg{pno + 1}-{n}"
                     name = f"{tid}.png"
                     dest = OUT / name
-                    ok = (dest.exists() if args.keep_crops and dest.exists()
+                    ok = (True if args.keep_crops and dest.exists()
                           else render(path, rec.get("page") or (pno + 1),
-                                      rec.get("bbox"), dest))
+                                      rec.get("bbox"), dest) or dest.exists())
                     # A link straight to the PDF this crop came from, at the
                     # page it came from. Browsers' built-in viewers honour
                     # '#page=N', and the path needs quoting because the library
@@ -321,6 +342,11 @@ def main() -> int:
 
     for f in CACHE.glob("*.png"):
         f.unlink()
+    if not args.keep_crops:
+        keep = {it["img"] for it in items if it.get("img")}
+        for old in OUT.glob("*.png"):
+            if old.name not in keep:
+                old.unlink()
     # Record the fingerprint of everything approved, so a later run can tell
     # whether the id still points at the same table.
     for it in items:

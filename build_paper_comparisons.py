@@ -119,6 +119,15 @@ METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
     # beside a number this paper ran itself. Cross-checks: its Casanovo* reads
     # 0.48 and BENCHMARKS.md records NovoBench's retrained Casanovo at 0.481.
     (16, "Table6"): {"*": {"basis": "quoted"}},
+    # LIPNovo, Tables 1 and 2. Its legend: "dagger denotes our retrained
+    # results, and other results are provided by NovoBench." So the UNMARKED
+    # rows are quoted and the marked ones are this paper's own retraining,
+    # which is why the empty-marker key is present: it is a statement about
+    # every row that carries no dagger.
+    (17, "Table1"): {"": {"basis": "quoted"},
+                     "\u2020": {"basis": "retrained"}},
+    (17, "Table2"): {"": {"basis": "quoted"},
+                     "\u2020": {"basis": "retrained"}},
 }
 
 
@@ -685,22 +694,27 @@ def header_model(rows: list[list[dict]], lo: int,
         # long-phrase prose guard below and ended the walk, so a textbook
         # 1:1 table came back with no header at all.
         covered = {assign(w, edges) for w in r} - {None}
-        ph = phrases(r)
-        # A HEADER WORD IS SHORT, and the guard is applied to WORDS rather than
-        # to merged phrases for the same reason: a merged phrase is long by
-        # construction. Squashed prose arrives as a single 70-plus character
-        # token, which is what this is for.
-        # in a PDF whose producer drops spaces: a line of discussion arrives as
-        # ONE 86-character token, so it passes "few words" and, being fewer
-        # phrases than there are columns, was distributed across them as a
-        # spanner. That is how every column of CrossNovo's Table 2 came back
-        # claiming the metric 'precision', from the sentence
-        # 'significantlyoutperformsthebaselinemodelsinbothprecisionandrecall...'
-        # sitting above it -- which then collapsed its two stacked metric
-        # groups into one and tripped G6. The longest real header here is
-        # 'Amino acid precision' at 20 characters.
-        if any(len(w["text"]) > 34 for w in r):
-            break
+        # THE PROSE FILTER APPLIES TO THE SPANNER PATH ONLY. A row of column
+        # headers is identified by how many distinct columns its WORDS cover,
+        # and a tightly-set header row merges into one long phrase that the
+        # prose test then rejects -- which skipped RefineNovo's Table 1 header
+        # and lost 160 values. Words, not phrases, decide an own-header row.
+        is_own_row = len(covered) >= max(2, int(0.8 * len(edges)))
+        # An own-header row keeps ALL its phrases, so the stub and the
+        # inside/outside split below still work; only the spanner path drops
+        # prose, since that is the path a stray line of body text can corrupt.
+        ph = (phrases(r) if is_own_row
+              else [q for q in phrases(r) if not prosey(q["text"])])
+        if not is_own_row and not ph:
+            # Nothing but prose on this line, from the other column of a
+            # two-column page. Skipped rather than ending the walk: LIPNovo's
+            # PTM table has 'TheHC-PTdatasetcontainsmassspectraof' directly
+            # above it, and breaking there meant neither of its two header
+            # rows was ever read, so its dataset spanner was lost.
+            taken += 1
+            if taken >= max_rows:
+                break
+            continue
 
         inside = [q for q in ph if q["x1"] > edges[0][0]]
         for q in [q for q in ph if q["x1"] <= edges[0][0]]:
@@ -710,7 +724,7 @@ def header_model(rows: list[list[dict]], lo: int,
             if taken >= max_rows:
                 break
             continue
-        if len(covered) >= max(2, int(0.8 * len(edges))):
+        if is_own_row:
             # A row of column headers: assign the individual WORDS, so two
             # labels that a merge would have joined stay in their own columns.
             for w in r:
@@ -727,6 +741,7 @@ def header_model(rows: list[list[dict]], lo: int,
             band = [(t, x0, x1) for t, x0, x1 in (rules or [])
                     if min(q["top"] for q in ph) < t < min(q["top"] for q in ph) + 26
                     and (x1 - x0) < (edges[-1][1] - edges[0][0]) * 0.95]
+            by_rule: dict[int, str] = {}
             if len(band) >= 2:
                 for k, c in enumerate(col_c):
                     seg = next((b for b in band if b[1] - 2 <= c <= b[2] + 2), None)
@@ -735,18 +750,18 @@ def header_model(rows: list[list[dict]], lo: int,
                     hit = [q for q in inside
                            if seg[1] - 2 <= (q["x0"] + q["x1"]) / 2 <= seg[2] + 2]
                     if len(hit) == 1:
-                        span[k].insert(0, hit[0]["text"])
-                        grouped.add(k)
+                        by_rule[k] = hit[0]["text"]
+            # A RULE-BASED MAPPING MUST COVER EVERY COLUMN OR BE DISCARDED.
+            # Taking whatever it happened to match left GAPS, silently: on
+            # LIPNovo's Table 1, whose header is a level over a dataset over a
+            # metric, two of twelve columns got no dataset at all and the level
+            # reached only four, so the dataset split could not fire and every
+            # level collapsed onto the first one the caption named.
+            if len(by_rule) == len(edges):
+                for k, text in by_rule.items():
+                    span[k].insert(0, text)
+                    grouped.add(k)
             else:
-                # NO RULE AND NO 1:1 MAPPING: the grouping is undecidable from
-                # the page. Casanovo's Table 2 is the worked example -- three
-                # method names over five columns, because it reports three
-                # metrics for itself and one per baseline, and its page carries
-                # only full-width rules. Nearest-centre put column 2 under
-                # PointNovo when the printed table means Casanovo, which is
-                # precisely the invisible misattribution every guard here
-                # exists to avoid. The phrases are recorded as ambiguous and
-                # are not allowed to name a method.
                 for k, c in enumerate(col_c):
                     nearest = min(inside, key=lambda q: abs((q["x0"] + q["x1"]) / 2 - c))
                     span[k].insert(0, nearest["text"])
@@ -795,6 +810,24 @@ def desquash(text: str) -> str:
 
 def _forms(text: str) -> tuple[str, str, str]:
     return text, re.sub(r"\s+", "", text), desquash(text)
+
+
+PROSE_TOKEN = re.compile(r"^[a-z][a-z.,;:]{9,}$")
+
+
+def prosey(text: str) -> bool:
+    """Is this phrase a run of prose rather than a header?
+
+    A header phrase carries a capital or is short: 'Nine-species', 'Prec.',
+    'AminoAcid-LevelPerformance'. A long all-lowercase token is a line of body
+    text whose spaces the producer dropped. On LIPNovo's PTM table the
+    neighbouring column's 'andevaluation.' was read as a spanner and became
+    the subset of every cell, which stopped the dataset split firing.
+    """
+    t = text.strip()
+    # A long unbroken token is prose too, whatever its case. The longest real
+    # header phrase here is 'AminoAcid-LevelPerformance' at 26 characters.
+    return bool(PROSE_TOKEN.match(t)) or len(t) > 34
 
 
 def metric_of(text: str) -> str | None:
@@ -1003,9 +1036,16 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 continue
             if len(cells) != len(edges):
                 if missing and len(cells) + len(missing) >= len(edges):
-                    dropped += 1
-                    continue
-                ragged = True
+                    # A NOT-RUN MARKER DOES NOT DISCARD THE ROW. Dropping the
+                    # whole row lost every value beside the gap: RefineNovo's
+                    # Table 6 marks three of its nine rows with an en-dash for
+                    # a dataset a model was never run on, and InstaNovo,
+                    # PrimeNovo-CV and Casanovo-pretrained vanished with them.
+                    # The cells that ARE there are recorded and the absent ones
+                    # are simply absent, which is what a NULL is for.
+                    dropped += len(edges) - len(cells)
+                else:
+                    ragged = True
             body.append({"label": label, "cells": cells, "extra": pending})
             pending = []
         if multi:
@@ -1109,6 +1149,24 @@ def algorithm_index(con: sqlite3.Connection) -> dict[str, list[tuple[int, str]]]
                 if (aid, name) not in bucket:
                     bucket.append((aid, name))
     return index
+
+
+CITE_TAIL = re.compile(
+    r"\s*(?:\[[\d,\s\u2013-]+\]|\((?=[^)]*(?:\b(?:19|20)\d{2}[a-z]?\b|et\s*al))[^)]*\))\s*$")
+MARKER_TAIL = re.compile(r"([*+\u2020\u2021\u00a7\u00b6])\s*$")
+
+
+def label_marker(printed: str) -> str:
+    """The footnote marker on a label, or ''.
+
+    The marker sits BEFORE a citation, not at the end of the string:
+    'AdaNovo-dagger(Xia et al., 2024)'. Looking only at the end found nothing,
+    so the two AdaNovo rows of LIPNovo's Table 1 came back with the same basis
+    and G6 refused the table. The citation is removed first.
+    """
+    raw = CITE_TAIL.sub("", (printed or "").strip()).strip()
+    m = MARKER_TAIL.search(raw)
+    return m.group(1) if m else ""
 
 
 def plus_match(printed: str, candidates: list[tuple[int, str]]):
@@ -2224,11 +2282,36 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             subsets[k] = sub_over[k]
         elif axis == "columns":
             subsets[k] = ""
+        elif tb.get("dataset_hint"):
+            # A SPLIT PART ALREADY KNOWS ITS DATASET, so the spanner that named
+            # it has nothing left to contribute and must not be mined for a
+            # subset: on LIPNovo's PTM table the spanner carries the
+            # neighbouring column's prose, and 'andevaluation.' became the
+            # subset of every cell.
+            # The dataset's own name is already recorded, so strip it out of
+            # the header and keep only what it adds: a column headed
+            # '9Species (yeast)' contributes the test species, not the
+            # benchmark's name a second time.
+            head = col_head[k]
+            # Strip the dataset's own name ONLY IF SOMETHING IS LEFT. For
+            # '9Species (yeast)' that leaves the test species, which is the
+            # useful part. But pNovo 3's columns ARE species names, and a
+            # species name is itself a nine-species cue, so stripping emptied
+            # every subset and its four methods collapsed onto one measurement.
+            stripped = head
+            for rx, _nm in DATASET_CUES:
+                stripped = rx.sub(" ", stripped)
+            stripped = re.sub(r"\s+", " ", re.sub(r"[()\[\]]", " ", stripped)).strip()
+            if stripped:
+                head = stripped
+            subsets[k] = ("" if not head or head == "?" or metric_of(head)
+                          or level_of(head) else unsquash_label(head))
         else:
             head = col_head[k]
             sp = " ".join(span.get(k, [])).strip()
             parts = [x for x in (sp, head)
-                     if x and x != "?" and not metric_of(x) and not level_of(x)]
+                     if x and x != "?" and not metric_of(x) and not level_of(x)
+                     and not any(rx.search(x) for rx, _ in DATASET_CUES)]
             subsets[k] = unsquash_label(" ".join(parts))
     base.update({"metrics_resolved": "|".join(metrics[j] for j in sorted(metrics)),
                  "levels": "|".join(levels[j] for j in sorted(levels)),
@@ -2267,6 +2350,24 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         over.get("basis")))
         return out
 
+    # THE BASIS IS DECIDED BEFORE G6, because it is part of what makes two
+    # numbers different measurements. One table legitimately reports the same
+    # method twice under two bases: LIPNovo's Table 1 lists AdaNovo with
+    # NovoBench's numbers and AdaNovo-dagger with its own retraining, which is
+    # the retrained-versus-released distinction BENCHMARKS.md is about. Keyed
+    # without it they were one measurement and G6 refused the table.
+    bases = {k: find_basis(whole, v[1]) for k, v in methods.items()}
+    mk_legend = METHOD_MARKERS.get(
+        (base.get("publication_id"),
+         (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
+    if mk_legend:
+        for k in list(bases):
+            printed = (printed_of.get(k) or "").strip()
+            over = mk_legend.get(label_marker(printed))
+            if over and over.get("basis"):
+                bases[k] = (over["basis"],
+                            f"the table's legend marks {printed!r}", False)
+
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
         m = methods.get(k if axis == "columns" else ri)
@@ -2287,11 +2388,13 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             m, metric, level, sub = cell_meta(k, ri)
             if not m:
                 continue
-            for _v, _p, mt, lv, _b in parts_of(cell, metric, level):
-                key = (m[0], m[2] or "", mt, lv, sub)
+            j = k if axis == "columns" else ri
+            for _v, _p, mt, lv, pb in parts_of(cell, metric, level):
+                key = (m[0], m[2] or "", mt, lv, sub,
+                       pb or (bases.get(j) or ("unclear",))[0])
                 if key in seen:
                     raise Reject(f"G6 duplicate measurement {m[1]} "
-                                 f"{mt}/{lv}/{sub or '-'}")
+                                 f"{mt}/{lv}/{sub or '-'}/{key[5]}")
                 seen.add(key)
 
     vals = [v for r in tb["body"] for c in r["cells"].values()
@@ -2314,19 +2417,6 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
-    bases = {k: find_basis(whole, v[1]) for k, v in methods.items()}
-    # A legend on the method label OUTRANKS the prose search: the paper has
-    # said in so many words where those numbers came from.
-    mk_legend = METHOD_MARKERS.get((base.get("publication_id"),
-                                    (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
-    if mk_legend:
-        for k in list(bases):
-            printed = (printed_of.get(k) or "").strip()
-            m = re.search(r"([*+\u2020\u2021])\s*$", printed)
-            over = mk_legend.get(m.group(1)) if m else None
-            if over and over.get("basis"):
-                bases[k] = (over["basis"],
-                            f"the table's legend marks {printed!r}", False)
     modal = collections.Counter(b for b, _, _ in bases.values()).most_common(1)[0][0]
     base.update({"basis_assigned": "|".join(
                      f"{methods[k][1]}={bases[k][0]}" for k in sorted(bases)),
@@ -2340,10 +2430,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             m, metric, level, sub = cell_meta(k, ri)
             if not m:
                 continue
+            j = k if axis == "columns" else ri
             for v, _p, mt, lv, bas in parts_of(cell, metric, level):
+                bb = bas or (bases.get(j) or ("unclear",))[0]
                 results.append(f"{m[1]}{'@' + m[2] if m[2] else ''}:{mt}/"
-                               f"{lv}/{sub or '-'}={v / scale:.4f}"
-                               + (f"[{bas}]" if bas else ""))
+                               f"{lv}/{sub or '-'}={v / scale:.4f}[{bb}]")
     base.update({"verdict": "accepted", "reason": f"axis={axis}",
                  "subject_resolved": subject["name"] if subject else "",
                  "proposed_results": " ".join(results[:80])})
