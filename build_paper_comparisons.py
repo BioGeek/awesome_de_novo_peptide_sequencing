@@ -680,8 +680,30 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     # extent is taken from the words that clip keeps.
     x0 = max(0.0, left_bound - 12)
     x1 = min(edges[-1][1] + 14, right_limit)
-    band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]
-            if w["x1"] >= x0 and w["x0"] <= x1]
+    # THE PADDING STOPS SHORT OF THE NEXT COLUMN'S TEXT. A fixed 14 pt past the
+    # last column reached into the page's other column wherever the gutter is
+    # narrower than that: publication 17's Table 2 ends its last column at
+    # x 297.6 and the right-hand column's prose starts at 307.4, so the crop
+    # (to 311.6) carried a sliver of eight lines of body text. Any word that
+    # STARTS beyond the last column within the table's rows bounds the crop;
+    # a header word inside the last column starts before it and is kept.
+    rows_band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]]
+    # MEASURED FROM WHERE THE NUMBERS END, not from the last column's tiled
+    # interval. Intervals are tiled out to the midpoint of the gutter, so for
+    # the left table of a side-by-side pair the last interval runs right up to
+    # its neighbour: LIPNovo's Table 3 ends its data at x 316.9 and its last
+    # interval at 364, and Table 5's words at 326-358 counted as inside it.
+    # Only THIS table's numbers: side-by-side tables share their rows, and
+    # counting the neighbour's put the 'end of the data' at its right edge.
+    nums = [w["x1"] for i in range(lo, hi + 1) if 0 <= i < len(rows)
+            for w in rows[i] if numeric(w["text"])
+            and w["x0"] >= edges[0][0] - 2 and w["x1"] <= edges[-1][1] + 2]
+    data_right = max(nums) if nums else edges[-1][1]
+    beyond = [w["x0"] for w in rows_band
+              if w["x0"] > min(edges[-1][1], data_right + 6) + 2]
+    if beyond:
+        x1 = min(x1, min(beyond) - 2)
+    band = [w for w in rows_band if w["x1"] >= x0 and w["x0"] <= x1]
     if not band:
         return (0.0, 0.0, 0.0, 0.0)
     return (x0, min(w["top"] for w in band) - 6, x1,

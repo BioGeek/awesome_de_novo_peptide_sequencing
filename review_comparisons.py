@@ -314,6 +314,19 @@ def _measurements(rec: dict) -> dict:
     return groups
 
 
+def _absent_peers(rec: dict, key) -> list[str]:
+    """Methods printed as NOT RUN ('-') in the measurement `key`."""
+    maxis, out = rec["metric_axis"], []
+    for i, r in enumerate(rec["body"]):
+        for k in (r.get("absent") or {}):
+            j = k if maxis == "columns" else i
+            kk = (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
+                  _subset(rec, i, k))
+            if kk == key:
+                out.append(_who(rec, (i, k)))
+    return out
+
+
 def _value(rec: dict, c) -> float | None:
     try:
         v = rec["body"][c[0]]["cells"][c[1]]
@@ -381,6 +394,21 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         # and its Table 4 has no GraphNovo AUC ('-'), and both drew a footnote
         # saying the paper "bolded LIPNovo" -- true, and correct.
         if sum(1 for c in cells if _value(rec, c) is not None) < 2:
+            # BUT A LONE VALUE THE PAPER BOLDED IS WORTH SAYING, where the
+            # others are EXPLICITLY not run: LIPNovo's Table 4 bolds its own
+            # AUC (0.707) and prints '-' for GraphNovo's. That is a lone value
+            # on the page, not one the parse lost -- which is the case the rule
+            # above exists for, and why the not-run marker is required: the
+            # Mean group of its Table 3 is one value only because the block
+            # ends before its baseline row.
+            if bolds and _absent_peers(rec, key):
+                notes.append(f"{' / '.join(x for x in (key[2], key[0], key[1]) if x and x != '?')}"
+                             f": the original table bolded "
+                             f"{', '.join(_who(rec, c) + ' (' + rec['body'][c[0]]['cells'][c[1]] + ')' for c in sorted(bolds))}"
+                             f", the only value, since "
+                             f"{', '.join(_absent_peers(rec, key))} "
+                             f"{'was' if len(_absent_peers(rec, key)) == 1 else 'were'} not run; "
+                             f"with nothing to rank it is not marked here.")
             continue
         best = {c for c in cells if rk.get(c) == "best"}
         second = {c for c in cells if rk.get(c) == "second"}
