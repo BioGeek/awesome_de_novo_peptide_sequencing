@@ -133,11 +133,53 @@ def unsquash(text: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
 
 
+def ranking(rec: dict) -> dict:
+    """(row, col) -> 'best' or 'second', within each measurement.
+
+    A measurement is one (metric, level, subset): the same quantity on the same
+    data, which is the only set across which comparing METHODS means anything.
+    Every metric recorded here is higher-is-better, so the ranking is a plain
+    maximum; if a lower-is-better metric is ever added this has to learn the
+    direction.
+    """
+    groups: dict = {}
+    maxis = rec["metric_axis"]
+    for i, r in enumerate(rec["body"]):
+        for k, printed in r["cells"].items():
+            j = k if maxis == "columns" else i
+            key = (rec["metrics"].get(j), rec["levels"].get(j),
+                   rec["subsets"].get(k) if rec["axis"] == "rows"
+                   else r["label"])
+            try:
+                v = float(re.sub(r"[^0-9.\-]", "", printed.split("/")[0]) or "nan")
+            except ValueError:
+                continue
+            if v != v:                                  # NaN
+                continue
+            groups.setdefault(key, []).append((v, i, k))
+    out: dict = {}
+    for cells in groups.values():
+        if len(cells) < 2:
+            continue
+        cells.sort(reverse=True)
+        out[(cells[0][1], cells[0][2])] = "best"
+        if cells[1][0] < cells[0][0]:
+            out[(cells[1][1], cells[1][2])] = "second"
+    return out
+
+
 def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
+    rank = ranking(rec)
     out = ["<table class='grid'>"]
+
+    def cell(i, k):
+        v = rec["body"][i]["cells"].get(k, "")
+        cls = rank.get((i, k))
+        return (f"<td class='{cls}'>{html.escape(v)}</td>" if cls
+                else f"<td>{html.escape(v)}</td>")
 
     def mcell(j):
         return f"{html.escape(rec['metrics'][j])}<br><small>{html.escape(rec['levels'][j])}</small>"
@@ -178,9 +220,8 @@ def grid_html(rec: dict) -> str:
             label = html.escape(unsquash(r["label"]) or "-")
             if maxis == "rows":
                 label += f"<br><small class='dim'>{mcell(i)}</small>"
-            out.append(f"<tr><th>{label}</th>" + "".join(
-                f"<td>{html.escape(r['cells'].get(k, ''))}</td>" for k in range(ncol))
-                + "</tr>")
+            out.append(f"<tr><th>{label}</th>"
+                       + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
     else:
         out.append("<tr><th>method</th>"
                    + ("<th class='dim'>metric</th>" if maxis == "rows" else "")
@@ -193,8 +234,7 @@ def grid_html(rec: dict) -> str:
                      else html.escape(unsquash(r["label"]) or "-"))
             out.append(f"<tr><th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
-                       + "".join(f"<td>{html.escape(r['cells'].get(k, ''))}</td>"
-                                 for k in range(ncol)) + "</tr>")
+                       + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
     out.append("</table>")
     return "".join(out)
 
@@ -208,6 +248,8 @@ def main() -> int:
     ap.add_argument("--approve", help="comma-separated ids: the parse is correct")
     ap.add_argument("--dismiss", help="comma-separated ids: the REFUSAL is correct")
     ap.add_argument("--unapprove", help="comma-separated ids to un-mark either way")
+    ap.add_argument("--unapprove-all", action="store_true",
+                    help="clear every sign-off, to review the set again")
     ap.add_argument("--keep-crops", action="store_true",
                     help="reuse the PNGs already rendered, for an HTML-only change")
     args = ap.parse_args()
@@ -247,6 +289,9 @@ def main() -> int:
             approved.setdefault(tid, {}).update({"state": "dismissed", "on": today})
     for tid in (args.unapprove or "").replace(" ", "").split(","):
         approved.pop(tid, None)
+    if args.unapprove_all:
+        print(f"  clearing {len(approved)} sign-off(s)")
+        approved = {}
     # CROPS ARE REPLACED IN PLACE, NOT DELETED UP FRONT. Deleting them first
     # left the EXISTING page pointing at files that no longer existed for the
     # whole of a re-render, which takes minutes: open it in that window and
@@ -425,6 +470,9 @@ details.appr>summary{cursor:pointer;font-size:13px;color:#3f6b2c}
 .lbl{font-weight:600}
 .meta{color:var(--dim);font-size:12.5px}
 .cap{color:var(--dim);font-size:12.5px;margin:2px 0 8px;max-width:150ch}
+.caplabel{font:600 10px/1.6 ui-monospace,monospace;letter-spacing:.06em;
+ text-transform:uppercase;color:#8a8a80;border:1px solid var(--line);
+ border-radius:4px;padding:0 4px;margin-right:5px}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 @media(max-width:1100px){.pair{grid-template-columns:1fr}}
 .panel{border:1px solid var(--line);background:#fff;border-radius:6px;padding:10px;overflow:auto}
@@ -434,6 +482,8 @@ table.grid{border-collapse:collapse;font:12px/1.4 ui-monospace,monospace}
 table.grid th,table.grid td{border:1px solid var(--line);padding:3px 6px;text-align:right;white-space:nowrap}
 table.grid th{background:#f4f4f0;text-align:left;font-weight:600}
 table.grid .dim{color:var(--dim);font-weight:400;background:#fafaf7}
+table.grid td.best{font-weight:700;background:#eef7ee}
+table.grid td.second{text-decoration:underline;background:#f7f7ef}
 .why{color:var(--no);font:12.5px/1.5 ui-monospace,monospace;white-space:pre-wrap}
 .nope{color:var(--dim);font-style:italic}
 </style></head><body>
@@ -523,7 +573,11 @@ def item_html(it: dict) -> str:
                  + f" &middot; unit {it.get('unit')}</span>")
     H.append("</div>")
     if it.get("caption"):
-        H.append(f"<div class='cap'>{html.escape(it['caption'][:400])}</div>")
+        # IN FULL, and labelled as the paper's own words. It was clipped at 400
+        # characters, which cut the legend off exactly the captions that need
+        # one -- the footnote explaining a marker is always at the end.
+        H.append("<div class='cap'><span class='caplabel'>caption</span> "
+                 + html.escape(it["caption"]) + "</div>")
     H.append("<div class='pair'><div class='panel'><h3>Printed in the paper</h3>")
     H.append(f"<img src='{it['img']}' alt='table crop'>" if it.get("img")
              else "<div class='nope'>no crop could be rendered</div>")

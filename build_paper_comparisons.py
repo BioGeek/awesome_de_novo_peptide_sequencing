@@ -557,8 +557,8 @@ def row_label(toks: list[dict], first_edge: float) -> str:
 
 def block_bbox(rows: list[list[dict]], lo: int, hi: int,
                cap_end: int, edges: list[tuple[float, float]],
-               left_bound: float, max_header: int = 5
-               ) -> tuple[float, float, float, float]:
+               left_bound: float, max_header: int = 5,
+               cap_start: int = -1) -> tuple[float, float, float, float]:
     """(x0, top, x1, bottom) covering the caption, the header and the body.
 
     Used only to CROP THE PRINTED TABLE OUT OF THE PAGE for review, never for
@@ -570,7 +570,13 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     # its table with body prose in between, and starting the crop at the
     # caption then filled the picture with paragraphs and cut off the table:
     # publication 13's crop was mostly text with a fragment of the grid.
-    first = (cap_end if 0 <= cap_end < lo and lo - cap_end <= max_header
+    # START AT THE CAPTION'S OWN LABEL ROW, not where the caption ENDS. A
+    # caption's continuation runs on into the table's header rows, so starting
+    # at its end cut the top off the picture: LIPNovo+'s Table 8 lost its
+    # caption and both of its upper header rows, leaving a crop that began
+    # mid-table.
+    start = cap_start if 0 <= cap_start < lo else cap_end
+    first = (start if 0 <= start < lo and lo - start <= max_header + 3
              else max(0, lo - 3))
     last = max(hi, cap_end if cap_end > hi else hi)
     band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]]
@@ -1007,7 +1013,9 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         crop_lb = min([w["x0"] for r in rows[lo:hi + 1] for w in r
                        if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
                       or [edges[0][0] - 150])
-        bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb)
+        bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb,
+                          cap_start=(paired.get((lo, hi)) if paired.get((lo, hi))
+                                     is not None else -1))
         try:
             caption_verdict(caption)
         except Reject as exc:
