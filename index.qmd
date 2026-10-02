@@ -3959,9 +3959,49 @@ dataset_paper_network = {
     .attr("fill", colour).attr("stroke", "white").attr("stroke-width", 1)
   node_g.filter(d => d.type === "paper").append("circle")
     .attr("r", NODE_R).attr("fill", colour).attr("stroke", "white").attr("stroke-width", 1)
-  node_g.append("title").text(d => d.type === "dataset"
-    ? `${d.name}\n${d.kind} · ${d.degree} papers`
-    : `${d.full || d.name}\n${d.degree} of these datasets`)
+  // A rich .map-tooltip rather than an SVG <title>: the native one needs a
+  // hover pause, cannot be styled, and truncates nothing, so a 120-character
+  // repository title arrives as one unbroken line. Same component the
+  // world-map, co-authorship, bipartite and Sankey charts use.
+  const ds_tip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move_ds_tip = ev => {
+    const pad = 12
+    const box = ds_tip.getBoundingClientRect()
+    const left = Math.min(ev.clientX + pad, window.innerWidth  - box.width  - pad)
+    const top  = Math.min(ev.clientY + pad, window.innerHeight - box.height - pad)
+    ds_tip.style.left = `${Math.max(pad, left)}px`
+    ds_tip.style.top  = `${Math.max(pad, top)}px`
+  }
+  node_g.style("cursor", "pointer")
+    .attr("aria-label", d => d.type === "dataset"
+      ? `${d.name}. ${d.kind}. Used by ${d.degree} papers.`
+      : `${d.full || d.name}. Draws on ${d.degree} of these datasets.`)
+    .on("mouseenter", (ev, d) => {
+      ds_tip.replaceChildren(d.type === "dataset"
+        ? html`<div>
+            <div class="map-tooltip-title">${d.name}</div>
+            <div class="map-tooltip-row">
+              <span class="map-tooltip-swatch" style=${`background:${colour(d)}`}></span>
+              <span>${d.kind}</span>
+            </div>
+            <div class="map-tooltip-meta">used by ${d.degree} paper${d.degree === 1 ? "" : "s"}</div>
+          </div>`
+        : html`<div>
+            <div class="map-tooltip-title">${d.name}</div>
+            ${d.full && d.full !== d.name
+              ? html`<div class="map-tooltip-meta" style="max-width:300px; white-space:normal;">${d.full}</div>`
+              : ""}
+            <div class="map-tooltip-meta">draws on ${d.degree} of these datasets</div>
+          </div>`)
+      ds_tip.classList.add("visible")
+      ds_tip.setAttribute("aria-hidden", "false")
+      move_ds_tip(ev)
+    })
+    .on("mousemove", move_ds_tip)
+    .on("mouseleave", () => {
+      ds_tip.classList.remove("visible")
+      ds_tip.setAttribute("aria-hidden", "true")
+    })
 
   const label = g.append("g").selectAll("text").data(nodes).join("text")
     .attr("font-size", 10)
@@ -4021,7 +4061,20 @@ dataset_paper_network = {
   }
   lg.append("circle").attr("cx", lx + 6).attr("cy", -1).attr("r", 5).attr("fill", "#cbd5e1")
   lg.append("text").attr("x", lx + 16).attr("y", 3).attr("fill", "#24292f").text("paper")
-  return svg.node()
+
+  // Same wrapper as the other force charts: a fullscreen button and a
+  // horizontally scrollable container, so 176 nodes can be read on a laptop.
+  // The tooltip lives INSIDE .chart-wrap, because a fixed-position element
+  // outside the fullscreened subtree is not rendered in fullscreen at all.
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${svg.node()}</div>
+    ${ds_tip}
+  </div>`
 }
 ```
 

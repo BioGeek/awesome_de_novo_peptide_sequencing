@@ -1248,6 +1248,14 @@ compact knot:
 Final measurement: 176 nodes, **0 within 4 px of the frame**, 75% of the width
 filled (against 76% and 79% for the other two), 101 labels shown, 0 overlaps.
 
+It carries the same **fullscreen button and `.map-tooltip`** as the other force
+charts. The SVG `<title>` it shipped with was not good enough: the native
+tooltip needs a hover pause, cannot be styled and wraps nothing, so a
+120-character repository title arrived as one unbroken line. **The tooltip div
+must live INSIDE `.chart-wrap`**, because a fixed-position element outside the
+fullscreened subtree is not rendered in fullscreen at all, so a tooltip parked
+on `body` disappears exactly when the chart is most readable.
+
 **Count node marks, not every rect and circle.** The first spread measurement
 read 36 px as the leftmost node and sent me tuning a centroid for two rounds;
 36 px is the LEGEND swatch, drawn outside the zoom group. Filter to marks whose
