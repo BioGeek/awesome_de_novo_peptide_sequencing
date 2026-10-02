@@ -477,7 +477,8 @@ def row_label(toks: list[dict], first_edge: float) -> str:
 
 def block_bbox(rows: list[list[dict]], lo: int, hi: int,
                cap_end: int, edges: list[tuple[float, float]],
-               left_bound: float) -> tuple[float, float, float, float]:
+               left_bound: float, max_header: int = 5
+               ) -> tuple[float, float, float, float]:
     """(x0, top, x1, bottom) covering the caption, the header and the body.
 
     Used only to CROP THE PRINTED TABLE OUT OF THE PAGE for review, never for
@@ -485,7 +486,12 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     two-column page the neighbouring column sits at the same y and would
     otherwise fill half the picture.
     """
-    first = cap_end if 0 <= cap_end < lo else max(0, lo - 4)
+    # ONLY REACH UP AS FAR AS THE TABLE. A caption can sit many lines above
+    # its table with body prose in between, and starting the crop at the
+    # caption then filled the picture with paragraphs and cut off the table:
+    # publication 13's crop was mostly text with a fragment of the grid.
+    first = (cap_end if 0 <= cap_end < lo and lo - cap_end <= max_header
+             else max(0, lo - 3))
     last = max(hi, cap_end if cap_end > hi else hi)
     band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]]
     if not band:
@@ -1046,6 +1052,11 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
     a rejection is in the tally, which is the trade this whole script makes.
     """
     raw = printed.strip().strip("|,")
+    # A CITATION MARKER IS NOT PART OF THE NAME. Tables label a baseline with
+    # its reference: 'DeepNovo[55]', 'Casanovov4.2[33]'. Stripped before
+    # anything else looks at the string, so the version logic sees
+    # 'Casanovov4.2' and not a bracket.
+    raw = re.sub(r"\s*\[[\d,\s\u2013-]+\]\s*$", "", raw).strip()
     if not raw:
         raise Reject("N1 empty header")
     # A curated per-paper label wins over every general rule.
@@ -1926,7 +1937,13 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         row 3 and swallows all four words into one group, which made every row
         of the table claim amino-acid precision and tripped G6.
         """
-        segs = segments()
+        # WHEN THE METHODS ARE THE COLUMNS, each row is its own group: the
+        # row label names that row's metric or level and there is nothing to
+        # segment. Publication 433 puts 'Peptide' on one row and 'Amino Acid'
+        # on the next with the metric in the caption, and segmenting by a
+        # method list that is not on this axis lumped both rows together.
+        segs = ([[i] for i in range(len(tb["body"]))] if axis == "columns"
+                else segments())
         out = {}
         texts = [" ".join(row_ctx(i) for i in seg).strip() for seg in segs]
         for si, seg in enumerate(segs):

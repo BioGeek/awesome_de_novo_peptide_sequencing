@@ -53,6 +53,11 @@ CACHE = OUT / ".pages"
 # be the right refusal. Both collapse, because the page is a worklist and the
 # point is to shrink it.
 APPROVED = OUT / "approved.json"
+# What each crop actually shows, written for the cross-checker. Without it
+# build_table_vlm.py had to guess from the audit CSV and compared a crop
+# against whichever table came first for that publication, which made every
+# verdict on a multi-table paper meaningless.
+MANIFEST = OUT / "crops.json"
 DPI = 150
 
 
@@ -324,6 +329,13 @@ def main() -> int:
                 {"label": it.get("table_label") or "", "pub": it["pub"],
                  "cells": it.get("n_cells") or len(it.get("body") or [])})
     APPROVED.write_text(json.dumps(approved, indent=1, sort_keys=True))
+    MANIFEST.write_text(json.dumps(
+        {it["tid"]: {"publication_id": it["pub"], "pdf_page": it["pdf_page"],
+                     "table_label": it.get("table_label") or "",
+                     "verdict": it["verdict"],
+                     "values": [c for r in (it.get("body") or [])
+                                for c in r["cells"].values()]}
+         for it in items}, indent=1, sort_keys=True))
     write_html(items, tally, approved)
     print(f"\n  {tally['accepted']} accepted, {tally['approved']} approved, "
           f"{tally['rejected']} rejected, {tally['dismissed']} dismissed")
