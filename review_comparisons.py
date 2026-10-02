@@ -133,6 +133,30 @@ def unsquash(text: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
 
 
+def printed_emphasis(rec: dict) -> dict | None:
+    """(row, col) -> 'best' or 'second' AS THE PAPER PRINTS IT, or None.
+
+    The paper's own bold and underline is the better answer than any ranking
+    computed here, because it is what the picture beside this table shows.
+    They disagree whenever a paper counts its own variants as one method:
+    DiffuNovo's Table 2 bolds DiffuNovo (MBR) and underlines pi-HelixNovo, the
+    best COMPETITOR, while a ranking over the values underlines DiffuNovo
+    (Logits) at 0.785 against pi-HelixNovo's 0.765. Reading an emphasis the
+    page does not carry invites exactly the doubt this page exists to remove.
+
+    Returns None when the table marks nothing, so ranking() still has a job:
+    not every paper emphasises anything, and a reader still wants the best
+    value pointed at.
+    """
+    out = {}
+    for i, r in enumerate(rec["body"]):
+        for k in r.get("bold") or []:
+            out[(i, k)] = "best"
+        for k in r.get("underlined") or []:
+            out.setdefault((i, k), "second")
+    return out or None
+
+
 def ranking(rec: dict) -> dict:
     """(row, col) -> 'best' or 'second', within each measurement.
 
@@ -172,7 +196,8 @@ def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
-    rank = ranking(rec)
+    printed = printed_emphasis(rec)
+    rank = printed if printed is not None else ranking(rec)
     out = ["<table class='grid'>"]
 
     def cell(i, k):
@@ -596,7 +621,17 @@ def item_html(it: dict) -> str:
              else "<div class='nope'>no crop could be rendered</div>")
     H.append("</div><div class='panel'>")
     if v in ("accepted", "approved"):
-        H.append("<h3>What the miner read</h3>" + grid_html(it))
+        # SAY WHICH EMPHASIS IS ON SCREEN. Bold and underline mean two
+        # different things depending on the table, and a reader comparing
+        # against the picture needs to know which, or a legitimate difference
+        # of convention reads as a wrong number.
+        src = ("as printed in the paper" if printed_emphasis(it) is not None
+               else "computed here: best and runner-up per measurement, "
+                    "because this table marks nothing")
+        H.append("<h3>What the miner read</h3>"
+                 f"<div class='cap' style='margin-bottom:6px'>"
+                 f"<b>bold</b> / <u>underline</u> &mdash; {src}</div>"
+                 + grid_html(it))
         if it.get("basis"):
             b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
                           for k, x in it["basis"].items())

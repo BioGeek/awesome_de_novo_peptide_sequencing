@@ -637,6 +637,65 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
             max(w["bottom"] for w in band) + 6)
 
 
+def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
+    """What the PAPER marks: (bold words, underline spans).
+
+    A comparison table's own bold-and-underline is data, not decoration: it
+    says which result the authors call best and which second. The review page
+    used to derive that from the values instead, and the two disagree whenever
+    a paper counts its own variants as one method -- DiffuNovo's Table 2 bolds
+    DiffuNovo (MBR) and underlines pi-HelixNovo, the best COMPETITOR, while a
+    ranking over the values underlines DiffuNovo (Logits). Reading the marks
+    off the page removes the guess, and it is exact rather than heuristic: the
+    underline rect under 0.765 spans x 355.0-377.4 and the word spans
+    355.0-377.4.
+
+    Bold comes from the font name, which needs `extra_attrs`. That is why this
+    is a SEPARATE extraction pass: extract_words splits a word wherever an
+    extra attribute changes, so asking for fontname in the parsing pass could
+    split a cell and move it into another column.
+    """
+    try:
+        words = page.extract_words(use_text_flow=False, keep_blank_chars=False,
+                                   extra_attrs=["fontname"])
+    except Exception:
+        return [], []
+    # BOLD IS THE FACE THAT IS NOT THE PAGE'S OWN REGULAR FACE, measured, not
+    # matched against a list of names. LaTeX with Times renders \textbf as
+    # 'NimbusRomNo9L-Medi', which no pattern for 'bold|black|heavy' catches, and
+    # every producer names its faces differently. The regular face is simply the
+    # commonest one over the page's numeric cells; anything else, barring an
+    # italic, is emphasis.
+    nums = [w for w in words if numeric(w["text"])]
+    faces = collections.Counter((w.get("fontname") or "") for w in nums)
+    regular = faces.most_common(1)[0][0] if faces else ""
+    bold = [w for w in nums
+            if (w.get("fontname") or "") != regular
+            and not re.search(r"(?i)italic|oblique|-it\b", w.get("fontname") or "")]
+    rules = []
+    for o in list(page.lines) + list(page.rects):
+        # A thin horizontal span no wider than a cell. A table's full-width
+        # booktabs rule is far wider and would underline every cell in the row.
+        if abs(o["y0"] - o["y1"]) < 1.6 and 2.0 < (o["x1"] - o["x0"]) < 70.0:
+            rules.append((o["top"], o["x0"], o["x1"]))
+    return bold, rules
+
+
+def emphasis_of(w: dict, bold: list[dict],
+                rules: list[tuple[float, float, float]]) -> tuple[bool, bool]:
+    """(is_bold, is_underlined) for one printed cell."""
+    is_bold = any(abs(b["x0"] - w["x0"]) < 1.5 and abs(b["top"] - w["top"]) < 1.5
+                  and b["text"].strip() == w["text"].strip() for b in bold)
+    # The rect sits at the word's baseline or just below it, and covers most of
+    # it. Both bounds matter: a wider span is a column rule, a narrower one is
+    # a minus sign or a hyphen.
+    is_under = any(-1.5 <= top - w["bottom"] <= 3.5
+                   and x0 <= w["x0"] + 2.0 and x1 >= w["x1"] - 2.0
+                   and (x1 - x0) <= (w["x1"] - w["x0"]) + 8.0
+                   for top, x0, x1 in rules)
+    return is_bold, is_under
+
+
 def page_rules(page) -> list[tuple[float, float, float]]:
     """Horizontal rules on the page, as (top, x0, x1).
 
@@ -1258,7 +1317,14 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         gaps = [b["x0"] - a["x1"] for a, b in zip(mine, mine[1:])]
         if len(mine) >= 3 and statistics.median(gaps) > 15.0:
             break
-        last = j
+        # A CAPTION'S EXTENT IS SET BY ITS OWN LINES. A row holding only the
+        # OTHER column's text has to be walked over, since the two columns
+        # interleave, but it must not extend the caption's bottom: publication
+        # 7's Table 3 caption ends at y 409, the walk crossed two right-column
+        # rows to y 437, and the band that wide then swept in a figure's axis
+        # tick, so the caption ended '...respectively. 12000'.
+        if mine:
+            last = j
 
     # THE COLUMN COMES FROM THE GUTTER BESIDE THE LABEL WORD, not from the
     # width of the label's row. On a two-column page that row already holds
@@ -1280,7 +1346,34 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
     # publication 4's caption read 'Performance after training the models on
     # the Table 3. MassIVE-KB set.' A 2 pt bucket keeps a line together.
     band.sort(key=lambda w: (round(w["top"] / 2.0), w["x0"]))
-    cap = re.sub(r"\s+", " ", " ".join(w["text"] for w in band)).strip()
+    # A HYPHEN AT THE END OF A LINE IS A LINE BREAK, not punctuation. LaTeX
+    # hyphenates a caption freely, so 'identify' arrives as 'iden-' / 'tify'
+    # and the caption read '...models to iden- tify Post-Translational'. The
+    # join is only applied where the hyphen is the last thing on ITS LINE,
+    # which the buckets already know, so a mid-line compound such as
+    # 'Post-Translational' is untouched. A compound that happens to break AT
+    # its own hyphen loses it, which is inherent: the PDF does not record
+    # whether the hyphen was already there.
+    lines: list[list[str]] = []
+    key = None
+    for w in band:
+        b = round(w["top"] / 2.0)
+        if b != key:
+            lines.append([])
+            key = b
+        lines[-1].append(w["text"])
+    cap = ""
+    for line in lines:
+        text = re.sub(r"\s+", " ", " ".join(line)).strip()
+        if cap.endswith("\x00"):
+            cap = cap[:-1] + text
+        elif cap:
+            cap = cap + " " + text
+        else:
+            cap = text
+        if cap.endswith("-"):
+            cap = cap[:-1] + "\x00"
+    cap = cap.replace("\x00", "-").strip()
     # The finer extraction spaces the label differently from the coarse one
     # ('Table 2:' against 'Table2'), so it is stripped by pattern rather than
     # by the exact string.
@@ -1315,6 +1408,7 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
     except Exception:
         fine = None
     rules = page_rules(page)
+    bold_words, under_rules = page_emphasis(page)
     out, vetoed, uncaptioned = [], [], 0
     blocks = [b for b in data_blocks(rows) if len(column_edges(rows, *b)) >= 2]
     # EACH COLUMN GROUP IS ITS OWN TABLE. Rows span the page, so two tables
@@ -1405,6 +1499,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                         ragged = True
                     cells[k] = {"value": parts[0][0], "stddev": None,
                                 "printed": w["text"].strip(), "parts": parts}
+                    cells[k]["bold"], cells[k]["underlined"] = emphasis_of(
+                        w, bold_words, under_rules)
                     continue
                 parsed = numeric(w["text"])
                 if parsed is None:
@@ -1417,6 +1513,8 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
                 cells[k] = {"value": parsed[0], "stddev": parsed[1],
                             "printed": w["text"].strip(),
                             "parts": [(parsed[0], "")]}
+                cells[k]["bold"], cells[k]["underlined"] = emphasis_of(
+                    w, bold_words, under_rules)
             if multi:
                 break
             # A LONE '/' MEANS THE CELL WRAPS. 'Plasma ... 0.491 / 0.782'
@@ -2954,7 +3052,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             "metrics": dict(metrics), "levels": dict(levels),
             "subsets": dict(subsets),
             "body": [{"label": r["label"],
-                      "cells": {k: c["printed"] for k, c in r["cells"].items()}}
+                      "cells": {k: c["printed"] for k, c in r["cells"].items()},
+                      # The paper's OWN emphasis, so the review page can show
+                      # what the page shows instead of a ranking of its own.
+                      "bold": sorted(k for k, c in r["cells"].items() if c.get("bold")),
+                      "underlined": sorted(k for k, c in r["cells"].items()
+                                           if c.get("underlined"))}
                      for r in tb["body"]],
             "basis": {methods[k][1]: bases[k][0] for k in sorted(bases)},
         })
