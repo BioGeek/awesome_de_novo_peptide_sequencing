@@ -2139,12 +2139,30 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
                 return did, name, (got[0] if got else None), printed
         return did, name, None, None
     found: list[tuple[re.Pattern, str]] = []
+    from_prose = False
     for scope in (caption, near):
         found = [(rx, nm) for rx, nm in DATASET_CUES if rx.search(scope)]
         if found:
+            from_prose = scope is near
             break
     names = {nm for _, nm in found}
     if len({DATASET_TARGETS.get(n, (n, None)) for n in names}) > 1:   # D2
+        if from_prose:
+            # THE TABLE ITSELF NAMED NO DATASET, and the page around it
+            # discusses several. That is not a multi-dataset table, it is a
+            # table whose dataset the paper does not state beside it:
+            # publication 17's Table 4 is a comparison against GraphNovo whose
+            # caption names no benchmark, on a page that mentions three.
+            # Rejecting it threw away a real comparison; picking one of the
+            # three would be the nine-species trap committed as data. So the
+            # dataset is recorded as NOT STATED, with the candidates kept in
+            # `dataset_printed`, exactly as a NULL dataset_version_id already
+            # records "the paper did not say which". The schema has to allow a
+            # NULL dataset_id for this; see the plan.
+            return None, None, None, "not stated; page mentions " + ", ".join(
+                sorted(DATASET_TARGETS.get(n, (n, None))[0] for n in names))
+        # A CAPTION naming two datasets for one grid is a different thing: the
+        # table really does hold both and wants splitting, so this stays fatal.
         raise Reject(f"D2 multi-dataset table {sorted(names)}")
     if not names:
         rows = con.execute(
@@ -2535,7 +2553,11 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # A single (metric, level) pair applies to the whole table; a LIST applies one
 # pair per column, for a table whose metric groups cannot be read off its
 # header.
-TABLE_METRIC: dict[tuple[int, str], tuple[str, str] | list[tuple[str, str]]] = {
+# (metric, level) for a table whose own page does not say it. Three shapes:
+# one pair for the whole table, a LIST of pairs one per column, or
+# {"rows": [...]} for one per row that carries values.
+TABLE_METRIC: dict[tuple[int, str],
+                   tuple[str, str] | list[tuple[str, str]] | dict] = {
     # Pairwise Attention, Table 3. Its caption says only "Performance after
     # training the models on the nine-species V2 dataset"; the paragraph above
     # it says "we tested on each of the species in the nine-species dataset and
@@ -2556,6 +2578,17 @@ TABLE_METRIC: dict[tuple[int, str], tuple[str, str] | list[tuple[str, str]]] = {
     # Casanovo* reads 0.48 and BENCHMARKS.md records NovoBench's retrained
     # Casanovo at 0.481 on nine-species.
     (16, "Table6"): ("precision", "peptide"),
+    # TSARseqNovo, Table 1. Three groups of three rows, and the metric of each
+    # group is stated only POSITIONALLY, in the caption: "peptide precision
+    # (top), amino acid precision (middle), and amino acid recall (bottom)".
+    # Nothing in the grid says it -- there is no group label and no repeat of a
+    # method to delimit the groups -- so it cannot be read off the page. Only
+    # the subject's own three rows carry values; the six 'vs' rows hold
+    # improvements in percentage points and record none, which is why this is
+    # three entries and not nine.
+    (18, "Table1"): {"rows": [("precision", "peptide"),
+                              ("precision", "amino acid"),
+                              ("recall", "amino acid")]},
 }
 
 
@@ -2667,11 +2700,18 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         tb["delta_rows"] = sorted(deltas)
         return "rows", kept, {i: leftovers[i] for i in kept}, printed_rows
     if deltas and n_row:
-        named = sorted({printed_rows[i] for i in deltas})
-        raise Reject(f"G7 a difference table: its {len(deltas)} 'vs' row(s) "
-                     f"{named} hold improvements in percentage points rather "
-                     f"than measurements, and excluding them leaves "
-                     f"{n_row} method, so there is no comparator to compare to")
+        # A DIFFERENCE TABLE IS STILL A COMPARISON, and refusing it threw away
+        # the only numbers TSARseqNovo's Table 1 prints: its own three rows,
+        # correctly labelled, under three metrics. What its 'vs CasaNovo' and
+        # 'vs pi-HelexiNovo' rows hold is an improvement in percentage points,
+        # which is not a measurement and has no grain here, so those rows
+        # record NO VALUE -- but they do name the comparators, which is the
+        # edge the cross-paper graph is actually built from. So the table is
+        # accepted with the subject's values and the comparators are carried
+        # as named-but-unmeasured.
+        tb["delta_rows"] = sorted(deltas)
+        tb["delta_methods"] = [(printed_rows[i], rows.get(i)) for i in sorted(deltas)]
+        return "rows", kept, {i: leftovers[i] for i in kept}, printed_rows
     if span_blocked:
         raise Reject(f"N1 the method names are in a spanner whose grouping no "
                      f"rule states, so columns {sorted(amb)} are undecidable; "
@@ -2936,7 +2976,17 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                (tb.get("registry_label") or tb["table_label"] or "").strip()))
     found, metric_axis = None, "columns"
     if pinned:
-        if isinstance(pinned, list):
+        if isinstance(pinned, dict):
+            # PER ROW, in the order the rows carrying values appear. A stacked
+            # table can state its groups' metrics only positionally, in prose,
+            # with nothing in the grid to key on; see TSARseqNovo's Table 1.
+            keys = sorted(methods)
+            if len(pinned["rows"]) != len(keys):
+                raise Reject(f"M1 TABLE_METRIC lists {len(pinned['rows'])} rows, "
+                             f"the table has {len(keys)} carrying methods")
+            found = dict(zip(keys, pinned["rows"]))
+            metric_axis = "rows"
+        elif isinstance(pinned, list):
             if len(pinned) != len(edges):
                 raise Reject(f"M1 TABLE_METRIC lists {len(pinned)} columns, "
                              f"the table has {len(edges)}")
@@ -3091,6 +3141,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
         m = methods.get(k if axis == "columns" else ri)
+        if not m:
+            # A row that carries no method carries no measurement either, and
+            # asking for its metric raises: a difference table's 'vs X' rows
+            # are excluded from the method axis, so they have no entry on the
+            # metric axis to look up.
+            return None, None, None, None
         j = k if metric_axis == "columns" else ri
         # When the methods are columns the row label is normally the subset --
         # a species, an enzyme. But if the row label is what NAMES THE METRIC,
@@ -3117,7 +3173,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                  f"{mt}/{lv}/{sub or '-'}/{key[5]}")
                 seen.add(key)
 
-    vals = [v for r in tb["body"] for c in r["cells"].values()
+    vals = [v for ri, r in enumerate(tb["body"])
+            if methods.get(ri if axis == "rows" else 0) or axis == "columns"
+            for c in r["cells"].values()
             for v, _m in (c.get("parts") or [(c["value"], "")])]
     if not vals:
         raise Reject("G3 no cells")

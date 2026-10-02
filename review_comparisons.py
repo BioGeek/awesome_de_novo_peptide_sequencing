@@ -273,8 +273,21 @@ def grid_html(rec: dict) -> str:
     byvalue = ranking(rec) if printed is not None else {}
     out = ["<table class='grid'>"]
 
+    def is_delta(i) -> bool:
+        """A row with numbers but no method: a 'vs X' difference row.
+
+        TSARseqNovo's Table 1 prints its own score and then the improvement
+        over each baseline in percentage points. Those are not measurements and
+        nothing records them, but they are on the page, so they are shown --
+        dimmed and labelled -- rather than left as a blank row that reads like
+        a parsing failure.
+        """
+        return bool(rec["body"][i]["cells"]) and not rec["methods"].get(i)
+
     def cell(i, k):
         v = rec["body"][i]["cells"].get(k, "")
+        if axis == "rows" and is_delta(i):
+            return f"<td class='dim'>{html.escape(v)}</td>" if v else "<td></td>"
         if not v:
             # A CELL THE PAPER MARKS AS NOT RUN. Printing nothing made the row
             # look like a parsing failure, and in a dataset-split part the row
@@ -340,7 +353,9 @@ def grid_html(rec: dict) -> str:
                              + "</th>" for k in range(ncol)) + "</tr>")
         for i, r in enumerate(rec["body"]):
             label = (mname(i) if rec["methods"].get(i)
-                     else html.escape(unsquash(r["label"]) or "-"))
+                     else html.escape(unsquash_name(r["label"]) or "-")
+                     + ("<br><small class='dim'>difference, not recorded"
+                        "</small>" if is_delta(i) else ""))
             out.append(f"<tr><th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
