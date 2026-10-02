@@ -114,7 +114,21 @@ C3_VETO = re.compile(r"(?i)inference time|running time|runtime|throughput|GPU[- 
                      # '42 (19.44%)'. Those are assembly statistics, not
                      # peptide or amino-acid precision or recall, so the table
                      # is refused for what it is rather than for its geometry.
-                     r"contigs?\b|protein sequence coverage|sequence coverage of")
+                     r"contigs?\b|protein sequence coverage|sequence coverage of|"
+                     # OUT OF SCOPE BY WHAT THEY MEASURE, not by geometry. Each
+                     # of these was being refused for a ragged grid or a
+                     # missing header, which blamed the parser for a table this
+                     # catalog does not record a quantity from, and left the
+                     # real geometry failures buried in the tally.
+                     #
+                     # 'sensitivity' is NOT vetoed on its own: some papers use
+                     # it for recall. Only sensitivity TO something, or a
+                     # sensitivity analysis, which is a robustness study.
+                     r"perplexity|"
+                     r"sensitivity (?:analysis|to\b)|robustness (?:analysis|to\b)|"
+                     r"perturbations?\b|"
+                     r"(?:cosine|pearson|spearman)\b|spectral similarit|"
+                     r"similarities on all")
 
 # M1: metric headers, mapped to the closed vocabulary. Longest first.
 METRIC_WORDS = [
@@ -500,7 +514,8 @@ def page_rules(page) -> list[tuple[float, float, float]]:
 def header_model(rows: list[list[dict]], lo: int,
                  edges: list[tuple[float, float]], max_rows: int = 4,
                  left_bound: float | None = None, floor: int = 0,
-                 rules: list[tuple[float, float, float]] | None = None):
+                 rules: list[tuple[float, float, float]] | None = None,
+                 hard_floor: int = 0):
     """Read the header rows above a data block.
 
     A header row carrying about as many phrases as there are columns is a row
@@ -536,6 +551,43 @@ def header_model(rows: list[list[dict]], lo: int,
     # every column became 'Theboldfontindicatesthebestperformance. HC Methods
     # AspN'. `floor` is the row after the caption, which the pairing step has
     # already identified, so this needs no heuristic.
+    def header_like(i: int) -> bool:
+        """Does row `i` read as a header row of THIS block?
+
+        At least two of its words land in two different columns, and none is a
+        number. A squashed caption line is one very wide token and so covers a
+        single column, which is what keeps this from reading prose as a header.
+        """
+        rr = clipped(rows[i])
+        if not rr or any(numeric(w["text"]) for w in rr):
+            return False
+        return len({assign(w, edges) for w in rr} - {None}) >= 2
+
+    # THE FLOOR IS PERMEABLE TO A HEADER-LIKE ROW. Reserving exactly one row
+    # above the block for the header is not enough when a table has TWO header
+    # rows and the caption sits above them: publication 30 has a level spanner
+    # over method names, the caption's continuation absorbed the spanner, and
+    # every column then took its level from a caption naming BOTH levels, so
+    # the two halves of the table collapsed into one measurement and G6 fired.
+    # Up to two rows above the floor are reconsidered, and only if they read as
+    # header rows by the test above.
+    # THE DESCENT MAY NEVER CROSS THE 'Table N' ROW. Without that bound it
+    # reached publication 30's caption, whose words are spaced and so cover
+    # several columns and read as a header, and the caption's text was assigned
+    # into the column headers: column 0 came back as
+    # 'Precision I: Transformer-DIA'. A caption is prose wherever it sits.
+    limit = max(hard_floor, (lo - 1) - (max_rows - 1))
+    for j in range(floor - 1, limit - 1, -1):
+        rr = clipped(rows[j])
+        if rr and any(numeric(w["text"]) for w in rr):
+            break                     # another table's data; stop here
+        if header_like(j):
+            floor = j                 # keep descending: a STUB row may sit
+                                      # between the spanner and the header, as
+                                      # 'DIADatasets' does in publication 30,
+                                      # and it covers no column so it is not
+                                      # header-like itself
+
     taken = 0
     for i in range(lo - 1, floor - 1, -1):
         r = clipped(rows[i])
@@ -859,9 +911,11 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             [w["x0"] for r in rows[lo:hi + 1] for w in r
              if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
             or [edges[0][0] - 150]) - 4
+        li = paired.get((lo, hi))
         own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
-            floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules)
+            floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules,
+            hard_floor=(li + 1 if li is not None and li < lo else 0))
         if not own and not span:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": "G3 no header above the block",
@@ -926,6 +980,12 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
     (ContraNovo's Baselines section names all five of its baselines in full)
     turns an 8-way ambiguity into a unique answer.
     """
+    # EVERY SPELLING THE PAPER USES BECOMES A KEY, not just the first that
+    # matches. Stopping at the first one recorded 'DiaTrans' for publication 30
+    # and then never looked at its aliases, so the name its own TABLE prints,
+    # 'Transformer-DIA', was absent from the vocabulary and the table was
+    # refused for an unresolved method. An algorithm is reachable by any name
+    # the paper actually spells out.
     vocab: dict[str, list[tuple[int, str]]] = {}
     squashed = re.sub(r"[^A-Za-z0-9]", "", text).lower()
     for aid, name, aliases in con.execute(
@@ -938,7 +998,7 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
                 vocab.setdefault(norm(nm), [])
                 if (aid, name) not in vocab[norm(nm)]:
                     vocab[norm(nm)].append((aid, name))
-                break
+                continue
             # Some producers emit runs with the spaces dropped, so a baseline
             # cited as 'PointNovo (Qiao et al. 2021)' arrives as
             # 'PointNovo(Qiaoetal.2021)' and the word-boundary lookbehind
@@ -951,7 +1011,6 @@ def paper_vocabulary(text: str, con: sqlite3.Connection) -> dict[str, list[tuple
                 vocab.setdefault(norm(nm), [])
                 if (aid, name) not in vocab[norm(nm)]:
                     vocab[norm(nm)].append((aid, name))
-                break
     return vocab
 
 
@@ -1765,18 +1824,28 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         found = along_rows()
         metric_axis = "rows"
     if found is None:
-        # Last resort: the caption names one metric for the whole table.
+        # Last resort: the caption names ONE METRIC for the whole table, while
+        # the LEVEL may still vary by column. Publication 30 is the example:
+        # its caption says 'Precision comparison of ...' and its spanner says
+        # 'Peptide-level performance' over the first three columns and
+        # 'Amino acid-level performance' over the last three. Taking both from
+        # the caption gave every column the level that happened to match
+        # first, which collapsed the two halves into one measurement and
+        # tripped G6. The metric is global here; the level is not.
         metric = metric_of(ctx_extra)
-        level = level_of(ctx_extra)
         if not metric:
             raise Reject(f"M1 no metric on either axis or in the caption; "
                          f"headers {col_head}")
-        if not level:
-            # Distinguished from M1 on purpose: the metric was found and only
-            # the level is missing, which is a different thing to go and fix.
-            raise Reject(f"M2 metric {metric!r} found but no level; "
-                         f"headers {col_head}")
-        found = {k: (metric, level) for k in range(len(edges))}
+        found = {}
+        for k in range(len(edges)):
+            ctx = " ".join(span.get(k, [])) + " " + col_head[k]
+            level = level_of(ctx) or level_of(ctx_extra)
+            if not level:
+                # Distinguished from M1 on purpose: the metric was found and
+                # only the level is missing, a different thing to go and fix.
+                raise Reject(f"M2 metric {metric!r} found but no level; "
+                             f"headers {col_head}")
+            found[k] = (metric, level)
         metric_axis = "columns"
     metrics = {j: v[0] for j, v in found.items()}
     levels = {j: v[1] for j, v in found.items()}

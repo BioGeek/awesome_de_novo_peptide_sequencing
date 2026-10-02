@@ -1,0 +1,3 @@
+publication_id,title,table_label,pdf_page,pdf_cols,latex_cols,caption_match,latex_caption,cmidrules,proposed,fits
+30,Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectro,TABLE I,5,6,7,100.0,"Precision comparison of Transformer-DIA, DeepNovo-DIA and PepNet.",,Transformer-DIA | DeepNovo-DIA | PepNet | Transformer-DIA | DeepNovo-DIA | PepNet,yes
+30,Transformer-Based De Novo Peptide Sequencing for Data-Independent Acquisition Mass Spectro,TABLE I,5,,7,100.0,"Precision comparison of Transformer-DIA, DeepNovo-DIA and PepNet.",, | Transformer-DIA | DeepNovo-DIA | PepNet | Transformer-DIA | DeepNovo-DIA | PepNet,CHECK

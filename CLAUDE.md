@@ -1651,6 +1651,26 @@ so `abstract_source` records where the text came from rather than claiming it
 was curated, and `build_pdf_library.py fetch --ids <id>` for the PDF. See **The
 local PDF library**.
 
+## Reading a table's structure out of its LaTeX source
+
+`build_table_structure.py` fetches an arXiv source tarball and reads
+`\multicolumn` and `\cmidrule` directly, which is the only statement of a
+column grouping that involves no geometry at all. It is REPORT-ONLY: it writes
+`table_structure_candidates.csv` and prints proposed `SPANNER_OVERRIDE`
+entries, and edits no Python, because deciding that a given tabular is the one
+behind a given PDF table is a judgement. Never in CI; it needs the network and
+the PDF library.
+
+**Its reach is limited and worth knowing before reaching for it.** Of the 25
+papers with a refused table and none accepted, 7 are arXiv with source and 3
+more bioRxiv, so at most 10 are reachable. Measured over the 7, it proposed 2
+overrides: most "failures" are tables whose methods are ROWS, which need no
+override, and the rest are caption-match misses. Its real value is the narrow,
+high-value case of a method spanner over an uneven number of columns.
+
+It did pay for itself once: it showed that publication 30's own table prints
+`Transformer-DIA`, which exposed the `paper_vocabulary` bug below.
+
 ## Spot-checking the mined tables
 
 `review_comparisons.py` builds a LOCAL page that puts every mined table beside
