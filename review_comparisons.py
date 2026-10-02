@@ -342,29 +342,27 @@ def _method(rec: dict, c) -> str:
 
 
 def emphasis(rec: dict) -> tuple[dict, list[str]]:
-    """The marks to draw, and footnotes on any the PAPER got wrong.
+    """The marks to draw, and footnotes wherever the PAPER marked otherwise.
 
     WE ALWAYS RANK. Bold is the best value and underline the next, within each
-    measurement, ties included, whether or not the paper marks anything. That
-    is one consistent reading across every table on the page, where the
-    papers' own conventions differ.
+    measurement, ties included, whether or not the paper marks anything: one
+    consistent reading across every table, where the papers' own conventions
+    differ.
 
-    A PAPER'S MARKS ARE CHECKED, NOT DRAWN, and a footnote records what the
-    paper did only where it is wrong. Two readings count as right:
+    THE PAPER'S MARKS ARE CHECKED, NOT DRAWN, and every mark that differs from
+    ours is footnoted, saying what the original table did. That includes a
+    paper counting its own variants as one method -- DiffuNovo underlines
+    pi-HelixNovo, its best competitor, rather than its own other variant --
+    which was first left unfootnoted as a legitimate convention; the reviewer
+    asked for it to be recorded, because a reader comparing the picture with
+    the grid otherwise has no way to tell why they differ. It also covers a
+    plain mistake: CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and
+    InstaNovo (0.732) for peptide recall on Tomato.
 
-      - the plain ranking, ties included -- PLMNovo bolds Casanovo v2 and its
-        own model at 0.676 for human amino-acid precision, which is a tie;
-      - the ranking with a method's VARIANTS treated as one method. DiffuNovo
-        bolds DiffuNovo (MBR) and underlines pi-HelixNovo, its best
-        competitor, rather than its own other variant DiffuNovo (Logits);
-        counting variants as one method is a legitimate convention.
-
-    Anything else gets a footnote saying what the paper bolded and underlined.
-    CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and InstaNovo (0.732)
-    for peptide recall on Tomato and underlines its own 0.695: neither reading
-    produces that. A measurement the paper leaves UNMARKED is not an error and
-    gets no footnote, and a table that never underlines is not faulted for
-    leaving the second best plain.
+    Four things are NOT differences. A tie: a paper may bold any of several
+    equal values. An unmarked measurement. A measurement with a single value,
+    which has nothing to rank. And the absence of underlines in a table that
+    never underlines anything.
     """
     rk = ranking(rec)
     pr = printed_emphasis(rec)
@@ -377,49 +375,24 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         unders = {c for c in cells if pr.get(c) == "second"}
         if not bolds and not unders:
             continue                                   # unmarked: not an error
-        vals = {c: _value(rec, c) for c in cells}
-        vals = {c: v for c, v in vals.items() if v is not None}
-        if not vals:
+        # ONE VALUE IS NOTHING TO RANK, so bolding it cannot be wrong. LIPNovo's
+        # Table 3 'Mean' group has its baseline row cut off at the block's edge
+        # and its Table 4 has no GraphNovo AUC ('-'), and both drew a footnote
+        # saying the paper "bolded LIPNovo" -- true, and correct.
+        if sum(1 for c in cells if _value(rec, c) is not None) < 2:
             continue
-
-        def ranked(collapse: bool):
-            """(best cells, second cells) under one of the two readings."""
-            if not collapse:
-                order = sorted(set(vals.values()), reverse=True)
-                best = {c for c, v in vals.items() if v == order[0]}
-                second = ({c for c, v in vals.items() if v == order[1]}
-                          if len(order) > 1 else set())
-                return best, second
-            # each method's top cell stands for the method
-            top: dict = {}
-            for c, v in vals.items():
-                m = _method(rec, c)
-                if m not in top or v > top[m][0]:
-                    top[m] = (v, set())
-                if v == top[m][0]:
-                    top[m][1].add(c)
-            order = sorted({v for v, _ in top.values()}, reverse=True)
-            best = {c for v, cs in top.values() if v == order[0] for c in cs}
-            second = ({c for v, cs in top.values() if v == order[1] for c in cs}
-                      if len(order) > 1 else set())
-            return best, second
-
-        def agrees(best, second) -> bool:
-            # A paper may bold only some of a tie; it may not bold a loser.
-            if bolds and not bolds <= best:
-                return False
-            if uses_underline and unders and not unders <= second:
-                return False
-            return True
-
-        if agrees(*ranked(False)) or agrees(*ranked(True)):
+        best = {c for c in cells if rk.get(c) == "best"}
+        second = {c for c in cells if rk.get(c) == "second"}
+        bold_off = bool(bolds) and not bolds <= best
+        under_off = uses_underline and bool(unders) and not unders <= second
+        if not (bold_off or under_off):
             continue
         cell = lambda c: f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
         name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
         said = []
-        if bolds:
+        if bold_off:
             said.append("bolded " + ", ".join(cell(c) for c in sorted(bolds)))
-        if unders:
+        if under_off:
             said.append("underlined " + ", ".join(cell(c) for c in sorted(unders)))
         notes.append(f"{name}: the original table {' and '.join(said)}.")
     return rk, notes

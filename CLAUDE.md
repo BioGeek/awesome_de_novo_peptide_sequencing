@@ -1728,18 +1728,24 @@ the previous version as if it were current.
 measurement, ties included, whether or not the paper marks anything. That is
 one consistent reading across tables whose own conventions differ.
 
-**The paper's own marks are checked, not drawn**, and a footnote records what
-the original table bolded and underlined only where it is WRONG. Two readings
-count as right: the plain ranking with ties (PLMNovo bolds Casanovo v2 and its
-own model at 0.676, which is a tie), and the ranking with a method's variants
-treated as one method (DiffuNovo underlines pi-HelixNovo, its best competitor,
-rather than its own other variant, which is a legitimate convention). Anything
-else is footnoted: CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and
-InstaNovo (0.732) for peptide recall on Tomato, and the odd-looking 0.732 is
-genuinely printed, since it reproduces that row's stated average of 0.530. A
-measurement the paper leaves unmarked is not an error, and a table that never
-underlines is not faulted for leaving the second best plain. Measured over the
-whole library: one footnote, on exactly that cell.
+**The paper's own marks are checked, not drawn**, and every mark that differs
+from ours gets a footnote saying what the original table bolded or underlined,
+listing only the marks that differ. That includes a paper counting its own
+variants as one method: DiffuNovo underlines pi-HelixNovo, its best competitor,
+where we underline its other variant DiffuNovo (Logits). That was first left
+unfootnoted as a legitimate convention, and the reviewer reversed it, because a
+reader comparing the picture with the grid otherwise cannot tell why they
+differ. It also covers a plain mistake: CrossNovo's Table 1 bolds both
+pi-PrimeNovo (0.697) and InstaNovo (0.732) for peptide recall on Tomato, and the
+odd-looking 0.732 is genuinely printed, since it reproduces that row's stated
+average of 0.530.
+
+Four things are not differences: a tie (a paper may bold any of several equal
+values), an unmarked measurement, a measurement holding a single value (nothing
+to rank -- LIPNovo's Table 3 'Mean' group, whose baseline row falls outside the
+block, drew six false footnotes before this), and missing underlines in a table
+that never underlines. Measured over the whole library: 7 footnotes, six on
+DiffuNovo's best-competitor underlines and one on that Tomato cell.
 
 The marks are still READ, because checking needs them. The underline is exact
 -- a thin rect spanning x 355.0-377.4 under a word spanning 355.0-377.4 -- and
