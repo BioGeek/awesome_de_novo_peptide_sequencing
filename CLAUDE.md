@@ -1700,35 +1700,61 @@ audit row rather than reimplementing the layout logic. `block_bbox()` is used
 only for the crop and never for parsing, and it is computed BEFORE the caption
 vetoes, because a refused table is exactly the case a human most needs to see.
 
-**A crop is re-rendered only if it MOVED.** Almost all of the several minutes a
-re-render costs is `pdftoppm`, and almost all of that is wasted: a change to
-one caption or one guard leaves every other table's picture identical. Each
-crop is keyed by the source file, its mtime, the page and the bbox; the key
-goes into `crops.json` and a crop whose key is unchanged and whose file is
-still on disk is left alone. The run prints `crops: N reused, M rendered`.
-`--recrop` forces the lot, and `--ids 9` is still the way to work on one paper.
+**Re-rendering is incremental, at three speeds.** Almost all of a full
+render's ~8 minutes is parsing PDFs, so the page stores what it parsed in
+`items.json` and the cheaper paths reuse it:
 
-**Bold and underline are read off the PDF, not computed.** A comparison table's
-own emphasis says which result the authors call best, and deriving it from the
-values instead disagrees with the page whenever a paper counts its own variants
-as one method: DiffuNovo's Table 2 bolds DiffuNovo (MBR) per column and
-underlines π-HelixNovo, the best COMPETITOR, where a ranking underlines
-DiffuNovo (Logits). The underline is exact -- a thin rect spanning x
-355.0-377.4 under a word spanning 355.0-377.4 -- and bold is the face that is
-not the page's commonest numeric face, because LaTeX with Times renders
-`\textbf` as `NimbusRomNo9L-Medi`, which no `bold|black|heavy` pattern catches.
-The fonts come from a separate extraction pass: `extract_words` splits a word
-wherever an extra attribute changes, so asking for `fontname` in the parsing
-pass could move a cell into another column.
+| command | parses | for | time |
+|---|---|---|---|
+| `review_comparisons.py` | every paper | a change to the miner | ~8 min |
+| `... --ids 9,17` | those papers, merged into the full page | a fix to a few papers | seconds per paper |
+| `... --rewrite` | nothing | a change to how the page is drawn, or a sign-off | under a second |
 
-**Where the printed marks disagree with the printed numbers, the page says so**
-rather than choosing. The two causes look identical and only a reader can tell
-them apart: a different convention (above), or an error in the paper.
-CrossNovo's Table 1 marks TWO cells bold in one measurement, peptide recall on
-Tomato, and underlines its own 0.695 below both -- and the odd-looking 0.732 is
-genuinely printed, since it reproduces that row's stated average of 0.530.
-Only bold is checked, because an underline convention varies legitimately and a
-second bold in one measurement does not.
+A crop is also redrawn only if it MOVED: each is keyed by source file, mtime,
+page and bbox in `crops.json`, and the run prints `crops: N reused, M
+rendered`; `--recrop` forces the lot. Sign-offs are re-applied to every item
+from `approved.json` at write time, so an approval for a paper outside `--ids`
+still takes effect. A restricted run must never prune what it did not touch:
+it used to delete every other paper's crops and cut the manifest down to its
+own entries, so a smoke test over seven papers cost the next full run 88
+redrawn crops.
+
+**While a run is in progress the page says so**: a banner with papers done of
+total, elapsed and an estimate, and a 15-second reload that stops by itself
+when the finished page replaces it. Before that, the page mid-render showed
+the previous version as if it were current.
+
+**Bold and underline are OURS, always**: best value and next value within each
+measurement, ties included, whether or not the paper marks anything. That is
+one consistent reading across tables whose own conventions differ.
+
+**The paper's own marks are checked, not drawn**, and a footnote records what
+the original table bolded and underlined only where it is WRONG. Two readings
+count as right: the plain ranking with ties (PLMNovo bolds Casanovo v2 and its
+own model at 0.676, which is a tie), and the ranking with a method's variants
+treated as one method (DiffuNovo underlines pi-HelixNovo, its best competitor,
+rather than its own other variant, which is a legitimate convention). Anything
+else is footnoted: CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and
+InstaNovo (0.732) for peptide recall on Tomato, and the odd-looking 0.732 is
+genuinely printed, since it reproduces that row's stated average of 0.530. A
+measurement the paper leaves unmarked is not an error, and a table that never
+underlines is not faulted for leaving the second best plain. Measured over the
+whole library: one footnote, on exactly that cell.
+
+The marks are still READ, because checking needs them. The underline is exact
+-- a thin rect spanning x 355.0-377.4 under a word spanning 355.0-377.4 -- and
+bold is the face that is not the page's commonest numeric face, because LaTeX
+with Times renders `\\textbf` as `NimbusRomNo9L-Medi`, which no
+`bold|black|heavy` pattern catches. The fonts come from a separate extraction
+pass: `extract_words` splits a word wherever an extra attribute changes, so
+asking for `fontname` in the parsing pass could move a cell into another
+column.
+
+**Ranking happens within a measurement, and the subset can be a ROW GROUP.**
+With methods down the side, a species can head the column (CrossNovo) or a
+group of rows (LIPNovo's leave-one-out Table 3, one species above each
+LIPNovo/Baseline pair). Grouping on the column alone ranked LIPNovo's nine
+species against each other as if they were one measurement.
 
 ## Finding papers the catalog is missing
 

@@ -58,6 +58,31 @@ APPROVED = OUT / "approved.json"
 # against whichever table came first for that publication, which made every
 # verdict on a multi-table paper meaningless.
 MANIFEST = OUT / "crops.json"
+ITEMS = OUT / "items.json"
+
+
+def _restore(it: dict) -> dict:
+    """An item read back from JSON, with its integer keys put back.
+
+    JSON turns every dict key into a string, and the page indexes cells,
+    metrics and methods by integer column or row; read back unconverted, every
+    lookup misses and every table renders empty.
+    """
+    def intkeys(d):
+        return {(int(k) if isinstance(k, str) and k.lstrip("-").isdigit() else k): v
+                for k, v in (d or {}).items()}
+    it = dict(it)
+    for f in ("metrics", "levels", "subsets", "row_subsets"):
+        if isinstance(it.get(f), dict):
+            it[f] = intkeys(it[f])
+    if isinstance(it.get("methods"), dict):
+        it["methods"] = {k: tuple(v) for k, v in intkeys(it["methods"]).items()}
+    for r in it.get("body") or []:
+        r["cells"] = intkeys(r.get("cells"))
+        r["absent"] = intkeys(r.get("absent"))
+    if isinstance(it.get("bbox"), list):
+        it["bbox"] = tuple(it["bbox"])
+    return it
 DPI = 150
 
 
@@ -181,6 +206,20 @@ def printed_emphasis(rec: dict) -> dict | None:
     return out or None
 
 
+def _subset(rec: dict, i: int, k) -> str:
+    """The subset one cell belongs to, whichever axis carries it.
+
+    With methods down the side, a species or an enzyme can head the COLUMN
+    (CrossNovo) or a ROW GROUP (LIPNovo's leave-one-out Table 3, one species
+    above each LIPNovo/Baseline pair). Grouping on the column alone ranked
+    LIPNovo's nine species against each other as if they were one measurement.
+    """
+    if rec["axis"] != "rows":
+        return rec["body"][i]["label"] or ""
+    rs = rec.get("row_subsets") or {}
+    return (rs.get(i) or rs.get(str(i)) or rec["subsets"].get(k) or "")
+
+
 def ranking(rec: dict) -> dict:
     """(row, col) -> 'best' or 'second', within each measurement.
 
@@ -196,8 +235,7 @@ def ranking(rec: dict) -> dict:
         for k, printed in r["cells"].items():
             j = k if maxis == "columns" else i
             key = (rec["metrics"].get(j), rec["levels"].get(j),
-                   rec["subsets"].get(k) if rec["axis"] == "rows"
-                   else r["label"])
+                   _subset(rec, i, k))
             try:
                 v = float(re.sub(r"[^0-9.\-]", "", printed.split("/")[0]) or "nan")
             except ValueError:
@@ -205,14 +243,23 @@ def ranking(rec: dict) -> dict:
             if v != v:                                  # NaN
                 continue
             groups.setdefault(key, []).append((v, i, k))
+    # TIES ARE ALL BEST. Marking only the first of several equal values made a
+    # tie look like a lone winner, and the clash check then reported every
+    # other tied bold as "not the highest value": PLMNovo's Table 1 bolds
+    # Casanovo v2 and PLMNovo (ESM-2 650M) at 0.676 for human amino-acid
+    # precision, correctly, and the page called it a possible error in the
+    # paper. Every cell at the top value is best, every cell at the next
+    # distinct value is second.
     out: dict = {}
     for cells in groups.values():
         if len(cells) < 2:
             continue
-        cells.sort(reverse=True)
-        out[(cells[0][1], cells[0][2])] = "best"
-        if cells[1][0] < cells[0][0]:
-            out[(cells[1][1], cells[1][2])] = "second"
+        distinct = sorted({v for v, _i, _k in cells}, reverse=True)
+        for v, i, k in cells:
+            if v == distinct[0]:
+                out[(i, k)] = "best"
+            elif len(distinct) > 1 and v == distinct[1]:
+                out[(i, k)] = "second"
     return out
 
 
@@ -224,8 +271,7 @@ def _measurements(rec: dict) -> dict:
         for k in r["cells"]:
             j = k if maxis == "columns" else i
             key = (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
-                   (rec["subsets"].get(k) if rec["axis"] == "rows"
-                    else rec["body"][i]["label"]) or "")
+                   _subset(rec, i, k))
             groups.setdefault(key, []).append((i, k))
     return groups
 
@@ -249,66 +295,103 @@ def _who(rec: dict, c) -> str:
     return unsquash_name(printed) or m[0]
 
 
-def emphasis(rec: dict) -> tuple[dict, str, list[str], list[str]]:
-    """The marks to draw, where they came from, footnotes, and clashes.
+def _method(rec: dict, c) -> str:
+    """The catalog method a cell belongs to, ignoring its printed variant."""
+    i, k = c
+    j = i if rec["axis"] == "rows" else k
+    m = rec["methods"].get(j) or rec["methods"].get(str(j))
+    return m[0] if m else f"?{j}"
 
-    The paper's own bold and underline are drawn wherever they are coherent,
-    because they are what the picture beside the table shows. Two cases are
-    told apart, because they look the same and are not:
 
-    A DIFFERENT CONVENTION is left alone and only noted. DiffuNovo's Table 2
-    underlines pi-HelixNovo, the best COMPETITOR, rather than the second-highest
-    value, which is its own other variant. Nothing is wrong.
+def emphasis(rec: dict) -> tuple[dict, list[str]]:
+    """The marks to draw, and footnotes on any the PAPER got wrong.
 
-    A CONTRADICTION IS OVERRIDDEN, and a footnote says what was overridden.
-    Two cells bold in one measurement with DIFFERENT values cannot both be the
-    best, so that measurement is ranked by value instead. CrossNovo's Table 1
-    bolds both pi-PrimeNovo at 0.697 and InstaNovo at 0.732 for peptide recall
-    on Tomato and underlines its own 0.695 -- no reading of "best and second
-    best" produces that. (0.732 is genuinely printed: it reproduces that row's
-    stated average of 0.530.) Equal values in two bold cells are a TIE and stay
-    as printed. Only that measurement is touched; the rest of the table keeps
-    the paper's marks.
+    WE ALWAYS RANK. Bold is the best value and underline the next, within each
+    measurement, ties included, whether or not the paper marks anything. That
+    is one consistent reading across every table on the page, where the
+    papers' own conventions differ.
+
+    A PAPER'S MARKS ARE CHECKED, NOT DRAWN, and a footnote records what the
+    paper did only where it is wrong. Two readings count as right:
+
+      - the plain ranking, ties included -- PLMNovo bolds Casanovo v2 and its
+        own model at 0.676 for human amino-acid precision, which is a tie;
+      - the ranking with a method's VARIANTS treated as one method. DiffuNovo
+        bolds DiffuNovo (MBR) and underlines pi-HelixNovo, its best
+        competitor, rather than its own other variant DiffuNovo (Logits);
+        counting variants as one method is a legitimate convention.
+
+    Anything else gets a footnote saying what the paper bolded and underlined.
+    CrossNovo's Table 1 bolds both pi-PrimeNovo (0.697) and InstaNovo (0.732)
+    for peptide recall on Tomato and underlines its own 0.695: neither reading
+    produces that. A measurement the paper leaves UNMARKED is not an error and
+    gets no footnote, and a table that never underlines is not faulted for
+    leaving the second best plain.
     """
-    pr, rk = printed_emphasis(rec), ranking(rec)
-    if pr is None:
-        return rk, "computed", [], []
-    marks, notes, clashes = dict(pr), [], []
+    rk = ranking(rec)
+    pr = printed_emphasis(rec)
+    if not pr:
+        return rk, []
+    uses_underline = any(v == "second" for v in pr.values())
+    notes = []
     for key, cells in sorted(_measurements(rec).items()):
-        name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
-        bolds = [c for c in cells if pr.get(c) == "best"]
-        unders = [c for c in cells if pr.get(c) == "second"]
-        vals = {_value(rec, c) for c in bolds}
-        if len(bolds) > 1 and len(vals) > 1:
-            said = " and ".join(f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
-                                for c in bolds)
-            if unders:
-                said += " and underlines " + ", ".join(
-                    f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
-                    for c in unders)
-            notes.append(f"{name}: the paper bolds {said}. Two different values "
-                         f"cannot both be the best, so this measurement is "
-                         f"shown ranked by value.")
-            for c in cells:
-                marks.pop(c, None)
-                if rk.get(c):
-                    marks[c] = rk[c]
+        bolds = {c for c in cells if pr.get(c) == "best"}
+        unders = {c for c in cells if pr.get(c) == "second"}
+        if not bolds and not unders:
+            continue                                   # unmarked: not an error
+        vals = {c: _value(rec, c) for c in cells}
+        vals = {c: v for c, v in vals.items() if v is not None}
+        if not vals:
             continue
-        best = [c for c in cells if rk.get(c) == "best"]
-        if bolds and best and bolds[0] not in best:
-            clashes.append(f"{name}: bold is not the highest value")
-    return marks, "printed", notes, clashes
+
+        def ranked(collapse: bool):
+            """(best cells, second cells) under one of the two readings."""
+            if not collapse:
+                order = sorted(set(vals.values()), reverse=True)
+                best = {c for c, v in vals.items() if v == order[0]}
+                second = ({c for c, v in vals.items() if v == order[1]}
+                          if len(order) > 1 else set())
+                return best, second
+            # each method's top cell stands for the method
+            top: dict = {}
+            for c, v in vals.items():
+                m = _method(rec, c)
+                if m not in top or v > top[m][0]:
+                    top[m] = (v, set())
+                if v == top[m][0]:
+                    top[m][1].add(c)
+            order = sorted({v for v, _ in top.values()}, reverse=True)
+            best = {c for v, cs in top.values() if v == order[0] for c in cs}
+            second = ({c for v, cs in top.values() if v == order[1] for c in cs}
+                      if len(order) > 1 else set())
+            return best, second
+
+        def agrees(best, second) -> bool:
+            # A paper may bold only some of a tie; it may not bold a loser.
+            if bolds and not bolds <= best:
+                return False
+            if uses_underline and unders and not unders <= second:
+                return False
+            return True
+
+        if agrees(*ranked(False)) or agrees(*ranked(True)):
+            continue
+        cell = lambda c: f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
+        name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
+        said = []
+        if bolds:
+            said.append("bolded " + ", ".join(cell(c) for c in sorted(bolds)))
+        if unders:
+            said.append("underlined " + ", ".join(cell(c) for c in sorted(unders)))
+        notes.append(f"{name}: the original table {' and '.join(said)}.")
+    return rk, notes
 
 
 def grid_html(rec: dict) -> str:
     """The parse, as a table laid out the way the paper lays it out."""
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
-    rank, source, _notes, _clash = emphasis(rec)
-    # Where the printed marks are in use, the value ranking is still computed,
-    # so a cell the VALUES call best can be pointed at even when the paper
-    # marks another one.
-    byvalue = ranking(rec) if source == "printed" else {}
+    rank, _notes = emphasis(rec)
     out = ["<table class='grid'>"]
 
     def is_delta(i) -> bool:
@@ -336,8 +419,6 @@ def grid_html(rec: dict) -> str:
             if gone:
                 return f"<td class='dim' title='not run'>{html.escape(gone)}</td>"
         cls = [c for c in (rank.get((i, k)),) if c]
-        if byvalue.get((i, k)) == "best" and rank.get((i, k)) != "best":
-            cls.append("topvalue")
         return (f"<td class='{' '.join(cls)}'>{html.escape(v)}</td>" if cls
                 else f"<td>{html.escape(v)}</td>")
 
@@ -417,6 +498,9 @@ def main() -> int:
     ap.add_argument("--accepted-only", action="store_true")
     ap.add_argument("--recrop", action="store_true",
                     help="re-render every crop, ignoring the cache")
+    ap.add_argument("--rewrite", action="store_true",
+                    help="rebuild the page from the stored items, parsing nothing "
+                         "(for a change to how the page is drawn, or a sign-off)")
     ap.add_argument("--approve", help="comma-separated ids: the parse is correct")
     ap.add_argument("--dismiss", help="comma-separated ids: the REFUSAL is correct")
     ap.add_argument("--unapprove", help="comma-separated ids to un-mark either way")
@@ -499,10 +583,20 @@ def main() -> int:
     items: list[dict] = []
     tally: collections.Counter = collections.Counter()
     import time
+    # --rewrite PARSES NOTHING. A change to how the page is drawn -- or a
+    # sign-off -- needs no PDF opened, and the stored items carry everything
+    # the page shows, so the page is rebuilt from them in seconds.
+    if args.rewrite:
+        if not ITEMS.exists():
+            print(f"  --rewrite needs {ITEMS.name}, written by a full run; run one first")
+            return 1
+        items = [_restore(it) for it in json.loads(ITEMS.read_text())]
+        rows = []
     todo = [pub for pub in rows
             if (not want or pub["id"] in want) and (cov.get(pub["id"]) or [])]
     started, done = time.time(), 0
-    progress_banner(0, len(todo), started, "the library")
+    if not args.rewrite:
+        progress_banner(0, len(todo), started, "the library")
     for pub in rows:
         if want and pub["id"] not in want:
             continue
@@ -597,6 +691,7 @@ def main() -> int:
                                 "year": str(pub["publication_date"] or "")[:4],
                                 "img": name if ok else None,
                                 "pdf_page": rec.get("page") or (pno + 1)})
+                    rec["base_verdict"] = rec["verdict"]
                     seen_before = approved.get(tid)
                     if seen_before:
                         # An entry with no state predates the dismissed state
@@ -647,6 +742,37 @@ def main() -> int:
                 if v.get("publication_id") not in want}
         fresh = {**kept, **fresh}
     MANIFEST.write_text(json.dumps(fresh, indent=1, sort_keys=True))
+    # A RESTRICTED RUN MERGES INTO THE WHOLE PAGE. Parsing every PDF is
+    # almost all of a render's minutes, and almost all of it is wasted when one
+    # paper changed: so every run stores its items, and an `--ids` run
+    # re-parses only those papers, replaces their items and writes the full
+    # page from the rest as stored. Sign-offs are re-applied to every item from
+    # approved.json at write time, so an approval given for a paper outside
+    # --ids still takes effect, and a revoked one reverts.
+    if want and ITEMS.exists():
+        try:
+            stored = [_restore(it) for it in json.loads(ITEMS.read_text())]
+        except Exception as exc:
+            print(f"  could not read {ITEMS.name} ({exc}); writing a partial page")
+            stored = []
+        if stored:
+            items = sorted([it for it in stored if it["pub"] not in want] + items,
+                           key=lambda it: (it["pub"], it["pdf_page"],
+                                           int(it["tid"].rsplit("-", 1)[1])))
+    for it in items:
+        base = it.get("base_verdict") or it["verdict"]
+        # An entry with no state predates the dismissed state and meant
+        # approved, exactly as in the build loop above.
+        state = (approved[it["tid"]].get("state", "approved")
+                 if it["tid"] in approved else None)
+        it["verdict"] = ("approved" if state == "approved" and base == "accepted"
+                         else "dismissed" if state == "dismissed" and base == "rejected"
+                         else base)
+    tally = collections.Counter(it["verdict"] for it in items)
+    try:
+        ITEMS.write_text(json.dumps(items, default=list))
+    except (OSError, TypeError) as exc:
+        print(f"  could not store items ({exc}); the next --ids run will be partial")
     write_html(items, tally, approved)
     print(f"\n  crops: {reused} reused, {rendered} rendered")
     print(f"  {tally['accepted']} accepted, {tally['approved']} approved, "
@@ -768,7 +894,6 @@ table.grid th{background:#f4f4f0;text-align:left;font-weight:600}
 table.grid .dim{color:var(--dim);font-weight:400;background:#fafaf7}
 table.grid td.best{font-weight:700;background:#eef7ee}
 table.grid td.second{text-decoration:underline;background:#f7f7ef}
-table.grid td.topvalue{outline:1px dotted #b45309;outline-offset:-2px}
 .why{color:var(--no);font:12.5px/1.5 ui-monospace,monospace;white-space:pre-wrap}
 .nope{color:var(--dim);font-style:italic}
 </style></head><body>
@@ -885,28 +1010,14 @@ def item_html(it: dict) -> str:
         # different things depending on the table, and a reader comparing
         # against the picture needs to know which, or a legitimate difference
         # of convention reads as a wrong number.
-        _m, source, overridden, clash = emphasis(it)
-        marked = source == "printed"
-        src = ("as printed in the paper; a dotted box is the highest VALUE "
-               "where the paper marks another cell" if marked
-               else "computed here: best and runner-up per measurement, "
-                    "because this table marks nothing")
-        H.append("<h3>What the miner read</h3>"
-                 f"<div class='cap' style='margin-bottom:6px'>"
-                 f"<b>bold</b> / <u>underline</u> &mdash; {src}</div>"
-                 + grid_html(it))
+        _m, wrong = emphasis(it)
+        H.append("<h3>What the miner read</h3>" + grid_html(it))
         if it.get("footnote"):
             H.append("<div class='cap' style='margin-top:8px'>footnote &mdash; "
                      + html.escape(it["footnote"]) + "</div>")
-        for n in overridden:
+        for n in wrong:
             H.append("<div class='cap' style='margin-top:6px'>"
-                     "<b>emphasis overridden</b> &mdash; " + html.escape(n) + "</div>")
-        if clash:
-            H.append("<div class='cap' style='margin-top:8px'>"
-                     "the paper's marks do not follow its own numbers here "
-                     "&mdash; either it counts its variants as one method, or "
-                     "it is an error in the paper: "
-                     + html.escape("; ".join(clash)) + "</div>")
+                     "<b>original emphasis</b> &mdash; " + html.escape(n) + "</div>")
         if it.get("basis"):
             b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
                           for k, x in it["basis"].items())

@@ -3501,6 +3501,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         for k, v in methods.items()},
             "metrics": dict(metrics), "levels": dict(levels),
             "subsets": dict(subsets),
+            # The subset carried by a ROW GROUP, where the table sets one
+            # species above each group of method rows; see row_subset.
+            "row_subsets": {i: v for i, v in row_subset.items() if v},
             "body": [{"label": r["label"],
                       "cells": {k: c["printed"] for k, c in r["cells"].items()},
                       # A cell the paper marks as not run, so the page can show
