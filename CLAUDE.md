@@ -1634,6 +1634,35 @@ so `abstract_source` records where the text came from rather than claiming it
 was curated, and `build_pdf_library.py fetch --ids <id>` for the PDF. See **The
 local PDF library**.
 
+## Spot-checking the mined tables
+
+`review_comparisons.py` builds a LOCAL page that puts every mined table beside
+a picture of the printed one, cropped out of the PDF, with the refused tables
+and their reasons in the same list. Checking an extraction from a CSV is
+hopeless, because what needs checking is whether the grid matches the page.
+
+    uv run --with pdfplumber python3 review_comparisons.py
+    uv run --with pdfplumber python3 review_comparisons.py --ids 49,58
+    uv run --with pdfplumber python3 review_comparisons.py --rejected-only
+
+**It writes OUTSIDE the repository and is never published**, into
+`comparison-review/` beside the PDF library, for the same reason
+`build_pdf_library.py` writes `pdf_status.csv` there: the crops are figures
+from other people's papers, so it is a private reading aid. Nothing it
+produces is committed, and it must never run in CI, which has neither a
+library nor poppler.
+
+Rendering is `pdftoppm` plus a PIL crop rather than pdfplumber's `to_image()`,
+since poppler is already behind this project's PDF handling. The page render is
+cached per (file, page): the first version re-ran `pdftoppm` once per table and
+rendered one page seven times.
+
+`emit()` takes an optional `collect` list and appends the resolved structure to
+it, so the review page renders the parse from the same code that writes the
+audit row rather than reimplementing the layout logic. `block_bbox()` is used
+only for the crop and never for parsing, and it is computed BEFORE the caption
+vetoes, because a refused table is exactly the case a human most needs to see.
+
 ## Finding papers the catalog is missing
 
 `build_candidates.py` answers "what should be in here that isn't", which the

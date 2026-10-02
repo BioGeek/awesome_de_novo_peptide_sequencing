@@ -430,6 +430,27 @@ def row_label(toks: list[dict], first_edge: float) -> str:
     return " ".join(w["text"] for run in kept for w in run).strip()
 
 
+def block_bbox(rows: list[list[dict]], lo: int, hi: int,
+               cap_end: int, edges: list[tuple[float, float]],
+               left_bound: float) -> tuple[float, float, float, float]:
+    """(x0, top, x1, bottom) covering the caption, the header and the body.
+
+    Used only to CROP THE PRINTED TABLE OUT OF THE PAGE for review, never for
+    parsing. Clipped horizontally to the table's own extent, because on a
+    two-column page the neighbouring column sits at the same y and would
+    otherwise fill half the picture.
+    """
+    first = cap_end if 0 <= cap_end < lo else max(0, lo - 4)
+    last = max(hi, cap_end if cap_end > hi else hi)
+    band = [w for i in range(first, min(last + 1, len(rows))) for w in rows[i]]
+    if not band:
+        return (0.0, 0.0, 0.0, 0.0)
+    return (max(0.0, left_bound - 12),
+            min(w["top"] for w in band) - 6,
+            edges[-1][1] + 14,
+            max(w["bottom"] for w in band) + 6)
+
+
 def page_rules(page) -> list[tuple[float, float, float]]:
     """Horizontal rules on the page, as (top, x0, x1).
 
@@ -706,11 +727,18 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
         if not table_label:
             uncaptioned += 1
             continue
+        # Computed BEFORE the vetoes, because the review page shows a refused
+        # table beside its picture too, and a veto is exactly the case a human
+        # most needs to see.
+        crop_lb = min([w["x0"] for r in rows[lo:hi + 1] for w in r
+                       if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
+                      or [edges[0][0] - 150])
+        bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb)
         try:
             caption_verdict(caption)
         except Reject as exc:
             vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": str(exc)})
+                           "reason": str(exc), "bbox": bbox, "page": page.page_number})
             continue
 
         # THE BODY IS READ BEFORE THE HEADER, so the header walk can be clipped
@@ -764,15 +792,18 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             pending = []
         if multi:
             vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": f"G4 multi-valued cell {multi!r}"})
+                           "reason": f"G4 multi-valued cell {multi!r}",
+                           "bbox": bbox, "page": page.page_number})
             continue
         if ragged:                                           # G1
             vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": f"G1 ragged grid ({len(edges)} columns)"})
+                           "reason": f"G1 ragged grid ({len(edges)} columns)",
+                           "bbox": bbox, "page": page.page_number})
             continue
         if not body:
             vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": "G3 no data rows survived"})
+                           "reason": "G3 no data rows survived",
+                           "bbox": bbox, "page": page.page_number})
             continue
         # Trailing interstitial words belong to the last group, not to nothing:
         # a stacked table whose final label line sits BELOW its last data row
@@ -789,12 +820,14 @@ def extract(page) -> tuple[list[dict], list[dict], int]:
             floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules)
         if not own and not span:
             vetoed.append({"table_label": table_label, "caption": caption,
-                           "reason": "G3 no header above the block"})
+                           "reason": "G3 no header above the block",
+                           "bbox": bbox, "page": page.page_number})
             continue
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
                     "caption": caption, "table_label": table_label,
-                    "span_ambiguous": span_ambiguous})
+                    "span_ambiguous": span_ambiguous,
+                    "bbox": bbox, "page": page.page_number})
     return out, vetoed, uncaptioned
 
 
@@ -1470,12 +1503,13 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
             "table_label": f"{tb['table_label']} [{name}]",
             "dataset_hint": name,
+            "bbox": tb.get("bbox"), "page": tb.get("page"),
             "span_ambiguous": {idx[k] for k in cols
                                if k in (tb.get("span_ambiguous") or set())}}
 
 
 def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
-         split=True) -> int:
+         split=True, collect: list | None = None) -> int:
     """Resolve one parsed table, append its audit row, return parts accepted.
 
     Raises Reject. A split table returns the count of its parts that survived,
@@ -1491,10 +1525,17 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                        "caption": part["caption"][:260]}
                 try:
                     ok += emit(con, row, part, vocab, index, subject, near,
-                               whole, audit, tally, show, split=False)
+                               whole, audit, tally, show, split=False,
+                               collect=collect)
                 except Reject as exc:
                     tally[f"rejected: {str(exc).split('(')[0].strip()}"] += 1
                     audit.append({**row, "verdict": "rejected", "reason": str(exc)})
+                    if collect is not None:
+                        collect.append({"verdict": "rejected", "reason": str(exc),
+                                        "table_label": part["table_label"],
+                                        "caption": part["caption"],
+                                        "bbox": part.get("bbox"),
+                                        "page": part.get("page")})
             return ok
     edges, own, span = tb["edges"], tb["own"], tb["span"]
     axis, resolved_axis, leftovers = orientation(tb, vocab, index, subject)
@@ -1712,6 +1753,25 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                  "subject_resolved": subject["name"] if subject else "",
                  "proposed_results": " ".join(results[:80])})
     audit.append(dict(base))
+    if collect is not None:
+        # The resolved structure, so a review page can show the parse beside a
+        # picture of the printed table without reimplementing any of this.
+        collect.append({
+            "verdict": "accepted", "reason": "",
+            "table_label": tb["table_label"], "caption": tb["caption"],
+            "bbox": tb.get("bbox"), "page": tb.get("page"),
+            "axis": axis, "metric_axis": metric_axis,
+            "dataset": dname, "dataset_version_id": vid,
+            "dataset_printed": dprinted, "unit": unit,
+            "col_head": list(col_head),
+            "methods": {k: (v[1], v[2]) for k, v in methods.items()},
+            "metrics": dict(metrics), "levels": dict(levels),
+            "subsets": dict(subsets),
+            "body": [{"label": r["label"],
+                      "cells": {k: c["printed"] for k, c in r["cells"].items()}}
+                     for r in tb["body"]],
+            "basis": {methods[k][1]: bases[k][0] for k in sorted(bases)},
+        })
 
     if show:
         print(f"\n  p{base['publication_id']} {base['table_label']} "
