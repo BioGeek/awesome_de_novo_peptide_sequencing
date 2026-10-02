@@ -165,12 +165,20 @@ def grid_html(rec: dict) -> str:
     if axis == "columns":
         out.append("<tr><th></th>" + "".join(
             f"<th>{mname(k)}</th>" for k in range(ncol)) + "</tr>")
-        out.append("<tr><th class='dim'>metric</th>" + "".join(
-            f"<td class='dim'>{mcell(k if maxis == 'columns' else 0)}</td>"
-            for k in range(ncol)) + "</tr>")
-        for r in rec["body"]:
-            out.append(f"<tr><th>{html.escape(unsquash(r['label']) or '-')}</th>"
-                       + "".join(
+        if maxis == "columns":
+            # The metric belongs to the column, so it gets a row of its own.
+            out.append("<tr><th class='dim'>metric</th>" + "".join(
+                f"<td class='dim'>{mcell(k)}</td>" for k in range(ncol)) + "</tr>")
+        for i, r in enumerate(rec["body"]):
+            # WHEN THE METRIC RUNS DOWN THE ROWS, a single metric row printed
+            # row 0's metric under every column, which reads as though the
+            # whole table were peptide accuracy. RT-GCTnovo's TABLE I is
+            # peptide accuracy on one row and amino-acid accuracy on the next,
+            # so the metric belongs beside the ROW.
+            label = html.escape(unsquash(r["label"]) or "-")
+            if maxis == "rows":
+                label += f"<br><small class='dim'>{mcell(i)}</small>"
+            out.append(f"<tr><th>{label}</th>" + "".join(
                 f"<td>{html.escape(r['cells'].get(k, ''))}</td>" for k in range(ncol))
                 + "</tr>")
     else:

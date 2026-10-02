@@ -2362,10 +2362,16 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             shared = {t for t in span.get(0, [])
                       if all(t in (span.get(j) or []) for j in range(len(edges)))}
             sp = " ".join(t for t in span.get(k, []) if t not in shared).strip()
-            parts = [x for x in (sp, head)
-                     if x and x != "?" and not metric_of(x) and not level_of(x)
-                     and not any(rx.search(x) for rx, _ in DATASET_CUES)]
-            subsets[k] = unsquash_label(" ".join(parts))
+            keep = [x for x in (sp, head)
+                    if x and x != "?" and not metric_of(x) and not level_of(x)]
+            # DROPPING A DATASET CUE MUST NOT EMPTY THE SUBSET. A species name
+            # IS a nine-species cue, so 'M.mazei' was removed as if it were the
+            # dataset's name and that column fell back to its raw header while
+            # its neighbours were cleaned up. Excluded only when something else
+            # remains to name the column.
+            narrowed = [x for x in keep
+                        if not any(rx.search(x) for rx, _ in DATASET_CUES)]
+            subsets[k] = unsquash_label(" ".join(narrowed or keep))
     base.update({"metrics_resolved": "|".join(metrics[j] for j in sorted(metrics)),
                  "levels": "|".join(levels[j] for j in sorted(levels)),
                  "reason": f"axis={axis} metric_axis={metric_axis}"})
