@@ -130,6 +130,15 @@ METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
                      "\u2020": {"basis": "retrained"}},
     (17, "Table2"): {"": {"basis": "quoted"},
                      "\u2020": {"basis": "retrained"}},
+    # CausalNovo, Tables 1 and 2: "dagger denotes our retrained results, and
+    # others are provided by NovoBench" -- LIPNovo's legend, word for word.
+    # Table 3 says only "dagger denotes our retrained results", so its
+    # unmarked rows are left to the prose rather than called quoted.
+    (64, "Table1"): {"": {"basis": "quoted"},
+                     "\u2020": {"basis": "retrained"}},
+    (64, "Table2"): {"": {"basis": "quoted"},
+                     "\u2020": {"basis": "retrained"}},
+    (64, "Table3"): {"\u2020": {"basis": "retrained"}},
 }
 
 
@@ -1902,6 +1911,31 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                            "reason": "G3 no header above the block",
                            "bbox": bbox, "page": page.page_number})
             continue
+        # A YEAR COLUMN IS METADATA, NOT A MEASUREMENT. CausalNovo's Table 1
+        # prints each method's publication year beside it (2003, 2017, 2021),
+        # which parses as a number column. Its header names no metric, so the
+        # per-column metric reading failed, the fallback gave every column one
+        # metric, and two columns of the same method then collided (G6). A
+        # column headed 'Year', or holding only years, is dropped the way a
+        # count row is.
+        year_cols = []
+        for k in range(len(edges)):
+            vals = [r["cells"][k]["printed"] for r in body if k in r["cells"]]
+            head = " ".join(own.get(k, [])).strip()
+            if (re.fullmatch(r"(?i)years?", head) or
+                    (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
+                year_cols.append(k)
+        if year_cols and len(year_cols) < len(edges):
+            keep = [k for k in range(len(edges)) if k not in year_cols]
+            remap = {old_k: new_k for new_k, old_k in enumerate(keep)}
+            edges = [edges[k] for k in keep]
+            own = {remap[k]: v for k, v in own.items() if k in remap}
+            span = {remap[k]: v for k, v in span.items() if k in remap}
+            span_ambiguous = {remap[k] for k in (span_ambiguous or set()) if k in remap}
+            for r in body:
+                r["cells"] = {remap[k]: c for k, c in r["cells"].items() if k in remap}
+                r["absent"] = {remap[k]: c for k, c in (r.get("absent") or {}).items()
+                               if k in remap}
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
                     "caption": caption, "table_label": table_label,
@@ -1960,6 +1994,13 @@ def label_marker(printed: str) -> str:
     """
     raw = CITE_TAIL.sub("", (printed or "").strip()).strip()
     m = MARKER_TAIL.search(raw)
+    if m:
+        return m.group(1)
+    # ...or at the START. CausalNovo prints '†CasaNovo (Yilmaz et al., 2024)'
+    # where LIPNovo prints 'AdaNovo†', so the dagger went unseen and its
+    # retrained Casanovo row came back 'quoted', colliding with the plain one.
+    # A '+' is not a marker here: it is CausalNovo's plug-in notation.
+    m = re.match(r"\s*([*\u2217\u2020\u2021\u00a7\u00b6]+)", raw)
     return m.group(1) if m else ""
 
 
@@ -3025,6 +3066,25 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         # Words from an interstitial label row count as this row's leftovers:
         # they are the group label, just set on a line of their own.
         leftovers[i] = rest + list(r.get("extra") or [])
+    # A PLUG-IN ROW IS THE SUBJECT APPLIED TO THE BASE ABOVE IT. CausalNovo
+    # prints its results as '+CausalNovo (Ours)' under each base model it is
+    # added to -- CasaNovo, AdaNovo, pi-HelixNovo -- so three rows resolved to
+    # one bare 'CausalNovo' and collided (G6). Each takes the base it sits
+    # under as its variant, 'on Casanovo' and so on, which is what the row
+    # means. Only a '+' row that resolves to the SUBJECT is touched: AdaNovo's
+    # '+Re-weight' is an alternative applied to Casanovo and is aliased as such.
+    if subject:
+        last_base = None
+        for i in range(len(tb["body"])):
+            v = rows.get(i)
+            lab = (tb["body"][i]["label"] or "").lstrip()
+            if v and lab.startswith("+") and v[0] == subject["id"] and last_base:
+                rows[i] = (v[0], v[1], f"on {last_base}")
+            elif v and not lab.startswith("+"):
+                # The row DIRECTLY above, as printed, marker included: the line
+                # above each '+CausalNovo' is the RETRAINED base ('†CasaNovo'),
+                # and the plug-in is applied to that model, not the quoted one.
+                last_base = CITE_TAIL.sub("", lab).strip() or v[1]
     n_col = len({(v[0], v[2] or "") for v in cols.values() if v})
     # Delta rows do not count towards the row axis carrying methods, and are
     # dropped from it, for the reason DELTA_LABEL records.
