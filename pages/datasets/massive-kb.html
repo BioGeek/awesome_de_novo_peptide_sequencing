@@ -217,6 +217,73 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/introducing-pandanovo-for-practical-large-scale-de-novo-peptide-sequencing.html">Introducing PandaNovo for practical large-scale de novo peptide sequencing</a> (2023) <small>v1</small></li>
 </ul>
 </section>
+<section id="checkpoints-trained-on-this-6" class="level2">
+<h2 class="anchored" data-anchor-id="checkpoints-trained-on-this-6">Checkpoints trained on this (6)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Checkpoint</th>
+<th>Version of this dataset</th>
+<th>Size</th>
+<th>Get it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="../algorithms/casanovo.html">Casanovo</a></td>
+<td>v4.0.0</td>
+<td>v1</td>
+<td>—</td>
+<td><a href="https://github.com/Noble-Lab/casanovo/releases/tag/v4.0.0">GitHub release</a></td>
+</tr>
+<tr class="even">
+<td><a href="../algorithms/casanovo.html">Casanovo</a></td>
+<td>v4.2.0</td>
+<td>v1</td>
+<td>—</td>
+<td><a href="https://github.com/Noble-Lab/casanovo/releases/tag/v4.2.0">GitHub release</a></td>
+</tr>
+<tr class="odd">
+<td><a href="../algorithms/casanovo.html">Casanovo</a></td>
+<td>v4.2.0</td>
+<td>v2</td>
+<td>—</td>
+<td><a href="https://github.com/Noble-Lab/casanovo/releases/tag/v4.2.0">GitHub release</a></td>
+</tr>
+<tr class="even">
+<td><a href="../algorithms/refinenovo.html">RefineNovo</a></td>
+<td>RefineNovo-30M</td>
+<td><small>not stated</small></td>
+<td>388 MB</td>
+<td><a href="https://drive.google.com/file/d/1NtEIdrm1lccZRWOeO20-2c3Ekop-BhCJ/view">Google Drive</a> · <a href="https://huggingface.co/BioGeek/denovo-checkpoints/resolve/main/refinenovo/model_massivekb.ckpt">copy</a></td>
+</tr>
+<tr class="odd">
+<td><a href="../algorithms/pi-primenovo.html">π-PrimeNovo</a></td>
+<td>MassIVE</td>
+<td><small>not stated</small></td>
+<td>387 MB</td>
+<td><a href="https://drive.google.com/file/d/12IZgeGP3ae3KksI5_82yuSTbk_M9sKNY/view">Google Drive</a> · <a href="https://huggingface.co/BioGeek/denovo-checkpoints/resolve/main/pi-primenovo/model_massive.ckpt">copy</a></td>
+</tr>
+<tr class="even">
+<td><a href="../algorithms/pi-primenovo.html">π-PrimeNovo</a></td>
+<td>phosphorylation</td>
+<td><small>not stated</small></td>
+<td>387 MB</td>
+<td><a href="https://drive.google.com/file/d/1YcF9VNE1gFF8T0EfwcFb7v1tiKw25-ai/view">Google Drive</a> · <a href="https://huggingface.co/BioGeek/denovo-checkpoints/resolve/main/pi-primenovo/PTM_Phosphorylation.ckpt">copy</a></td>
+</tr>
+</tbody>
+</table>
+<p>Each link rests on stated evidence rather than a text match:</p>
+<ul>
+<li><strong>Casanovo</strong> v4.0.0: trained_on: ‘MassIVE-KB v1’, from ProteoBench discussion 356</li>
+<li><strong>Casanovo</strong> v4.2.0: trained_on: ‘~2M PSMs from MassIVE-KB v1 + v2.0.15’</li>
+<li><strong>Casanovo</strong> v4.2.0: trained_on: ‘~2M PSMs from MassIVE-KB v1 + v2.0.15’</li>
+<li><strong>RefineNovo</strong> RefineNovo-30M: the FILENAME, model_massivekb.ckpt; BEAM-Labs/denovo states no training set for it</li>
+<li><strong>π-PrimeNovo</strong> MassIVE: trained_on: ‘MassIVE-KB’, with no version given</li>
+<li><strong>π-PrimeNovo</strong> phosphorylation: INHERITED, not direct: fine-tuned from model_massive.ckpt, which was trained on MassIVE-KB. Its own fine-tuning set, 2020-Cell-LUAD, is not in this catalog</li>
+</ul>
+</section>
 <section id="methods-on-these-papers-2" class="level2">
 <h2 class="anchored" data-anchor-id="methods-on-these-papers-2">Methods on these papers (2)</h2>
 <ul>
