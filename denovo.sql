@@ -20437,8 +20437,7 @@ INSERT INTO dataset VALUES(91,'Human testis off-line LC-MS/MS','Human testis off
 INSERT INTO dataset VALUES(92,'A deep proteome and transcriptome abundance atlas of 29 healthy human tissues (MSV000083508)','A deep proteome and transcriptome abundance atlas of 29 healthy human tissues','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(93,'Confetti: A Multi-protease Map of the HeLa Proteome for Comprehensive Proteomics (MSV000081607)','Confetti: A Multi-protease Map of the HeLa Proteome for Comprehensive Proteomics','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(94,'HeLa proteome of 12,250 protein-coding genes (MSV000081563)','HeLa proteome of 12,250 protein-coding genes','deposit',NULL,NULL,NULL);
-INSERT INTO dataset VALUES(95,'InstaDeepAI/ms_proteometools.','InstaDeepAI/ms_proteometools.','deposit',NULL,NULL,NULL);
-INSERT INTO dataset VALUES(96,'InstaDeepAI/InstaNovo-P.','InstaDeepAI/InstaNovo-P.','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(96,'InstaNovo-P fine-tuning data','Reprocessed PRIDE phosphoproteomics projects from Scop3P, as parquet train/validation/test splits, used to fine-tune InstaNovo-P.','training',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(97,'IPX001804000','IPX001804000','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(98,'IPX000540500038','IPX000540500038','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(99,'IPX0001804001','IPX0001804001','deposit',NULL,NULL,NULL);
@@ -20847,8 +20846,7 @@ INSERT INTO dataset_version VALUES(114,91,'as deposited',NULL,NULL,NULL,NULL,NUL
 INSERT INTO dataset_version VALUES(115,92,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(116,93,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(117,94,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO dataset_version VALUES(118,95,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO dataset_version VALUES(119,96,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(119,96,'as published',NULL,NULL,NULL,NULL,NULL,NULL,3);
 INSERT INTO dataset_version VALUES(120,97,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(121,98,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(122,99,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
@@ -21288,8 +21286,7 @@ INSERT INTO dataset_address VALUES(144,114,'MassIVE','MSV000086491','https://mas
 INSERT INTO dataset_address VALUES(145,115,'MassIVE','MSV000083508','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000083508',NULL,0);
 INSERT INTO dataset_address VALUES(146,116,'MassIVE','MSV000081607','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000081607',NULL,0);
 INSERT INTO dataset_address VALUES(147,117,'MassIVE','MSV000081563','https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000081563',NULL,0);
-INSERT INTO dataset_address VALUES(148,118,'Hugging Face','InstaDeepAI/ms_proteometools.','https://huggingface.co/datasets/InstaDeepAI/ms_proteometools.',NULL,0);
-INSERT INTO dataset_address VALUES(149,119,'Hugging Face','InstaDeepAI/InstaNovo-P.','https://huggingface.co/datasets/InstaDeepAI/InstaNovo-P.',NULL,0);
+INSERT INTO dataset_address VALUES(149,119,'Hugging Face','InstaDeepAI/InstaNovo-P','https://huggingface.co/datasets/InstaDeepAI/InstaNovo-P',NULL,0);
 INSERT INTO dataset_address VALUES(150,120,'iProX','IPX001804000','https://www.iprox.cn/page/project.html?id=IPX001804000',NULL,0);
 INSERT INTO dataset_address VALUES(151,121,'iProX','IPX000540500038','https://www.iprox.cn/page/project.html?id=IPX000540500038',NULL,0);
 INSERT INTO dataset_address VALUES(152,122,'iProX','IPX0001804001','https://www.iprox.cn/page/project.html?id=IPX0001804001',NULL,0);
@@ -21775,8 +21772,6 @@ INSERT INTO publication_dataset VALUES(190,214,45,68,'uses');
 INSERT INTO publication_dataset VALUES(191,332,45,68,'uses');
 INSERT INTO publication_dataset VALUES(192,302,78,101,'uses');
 INSERT INTO publication_dataset VALUES(193,312,78,101,'introduces');
-INSERT INTO publication_dataset VALUES(194,1,95,118,'uses');
-INSERT INTO publication_dataset VALUES(195,315,95,118,'uses');
 INSERT INTO publication_dataset VALUES(196,199,63,86,'uses');
 INSERT INTO publication_dataset VALUES(197,361,63,86,'introduces');
 INSERT INTO publication_dataset VALUES(198,273,67,90,'uses');
@@ -21803,8 +21798,8 @@ INSERT INTO publication_dataset VALUES(218,3,84,107,'uses');
 INSERT INTO publication_dataset VALUES(219,251,84,107,'uses');
 INSERT INTO publication_dataset VALUES(220,3,90,113,'uses');
 INSERT INTO publication_dataset VALUES(221,251,90,113,'uses');
-INSERT INTO publication_dataset VALUES(224,3,96,119,'uses');
-INSERT INTO publication_dataset VALUES(225,251,96,119,'uses');
+INSERT INTO publication_dataset VALUES(224,3,96,119,'introduces');
+INSERT INTO publication_dataset VALUES(225,251,96,119,'introduces');
 INSERT INTO publication_dataset VALUES(226,33,79,102,'uses');
 INSERT INTO publication_dataset VALUES(227,41,79,102,'uses');
 INSERT INTO publication_dataset VALUES(228,33,71,94,'uses');
@@ -22190,6 +22185,8 @@ INSERT INTO publication_dataset VALUES(616,2,382,410,'uses');
 INSERT INTO publication_dataset VALUES(617,1,383,411,'uses');
 INSERT INTO publication_dataset VALUES(618,2,383,411,'uses');
 INSERT INTO publication_dataset VALUES(619,194,383,411,'introduces');
+INSERT INTO publication_dataset VALUES(620,1,2,6,'uses');
+INSERT INTO publication_dataset VALUES(621,315,2,6,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

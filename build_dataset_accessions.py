@@ -180,6 +180,11 @@ def scan(library: pathlib.Path, only: set[int] | None, pub_of: dict[str, int]):
         for repo, rx in PATTERNS.items():
             for m in rx.finditer(text):
                 acc = m.group(1) if rx.groups else m.group(0)
+                # A repository name may contain '.', so the pattern takes
+                # dots, and a URL ending a sentence then keeps the full stop:
+                # 'InstaDeepAI/ms_proteometools.' became a dataset of its own,
+                # a duplicate of HC-PT's own address.
+                acc = acc.rstrip(".")
                 hits[(repo, acc)].add(pid)
         if n % 50 == 0:
             print(f"  {n}/{len(pdfs)}", file=sys.stderr)

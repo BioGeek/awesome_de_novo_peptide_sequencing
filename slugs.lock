@@ -2198,8 +2198,7 @@ datasets	91	human-testis-off-line-lc-ms-ms
 datasets	92	a-deep-proteome-and-transcriptome-abundance-atlas-of-29-healthy-human-tissues-92
 datasets	93	confetti-a-multi-protease-map-of-the-hela-proteome-for-comprehensive-proteomics-93
 datasets	94	hela-proteome-of-12-250-protein-coding-genes-msv000081563
-datasets	95	instadeepai-ms-proteometools
-datasets	96	instadeepai-instanovo-p
+datasets	96	instanovo-p-fine-tuning-data
 datasets	97	ipx001804000
 datasets	98	ipx000540500038
 datasets	99	ipx0001804001

@@ -1125,7 +1125,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**374 datasets, 402 versions, 433 addresses, 606 publication links over 131 papers.**
+**373 datasets, 401 versions, 432 addresses, 606 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1214,7 +1214,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 402 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 401 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1472,6 +1472,14 @@ Two traps, both hit while writing it:
     digits too many, so no record existed to flag it;
   - Casanovo's nine-species weights, already checkpoint 5;
   - Winnow's hold-one-out calibrators, which are now a checkpoint row.
+
+  **A trailing full stop is not part of a repository name.** A Hugging Face
+  name may contain dots, so the pattern accepts them, and a URL that ends a
+  sentence brought its full stop along. That created
+  `InstaDeepAI/ms_proteometools.`, a second copy of the HC-PT corpus that was
+  already the address of `high-confidence (InstaNovo)`, and
+  `InstaDeepAI/InstaNovo-P.`, which is now named after its dataset card. The
+  scanner strips it.
 
   One verdict is worth knowing about:
   `Noble-Lab/multi-species-benchmark: Revised benchmark` is excluded as a repo
