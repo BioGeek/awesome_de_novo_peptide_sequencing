@@ -183,6 +183,11 @@ URLISH = re.compile(r"(?i)^(?:https?://|www\.|doi:|10\.\d{4,}/)\S*$")
 # number' arrives as 'Peptiderecallnumber' and holds 31153, a count of
 # peptides, between rows of percentages.
 COUNT_ROW = re.compile(r"(?i)^\s*#|\b(psms?|spectra|counts?|size|num\.?)\b|number\b")
+# A ROW OF A METRIC OUTSIDE THE CLOSED VOCABULARY, dropped and counted like
+# a count row. BiATNovo's preprint follows its precision and recall rows with
+# 'Position-BLEU' and 'Alignment score', which no catalog metric means; with
+# them in, no metric could be read down the rows and the table was refused.
+UNRECORDED_METRIC_ROW = re.compile(r"(?i)\bbleu\b|alignment\s*score")
 NOT_RUN = {"-", "–", "—", "n/a", "na", "--", "nan", "none", "x"}
 
 CAPTION = re.compile(r"(?i)\b(Tab(?:le|\.)\s*(?:S?\d{1,2}|[IVX]{1,4}))\s*(?:[.:]|\||–|—)?\s*(.{0,300})", re.S)
@@ -253,7 +258,8 @@ METRIC_WORDS = [
 # down three successive row labels. Requiring the full phrase left the first
 # and last rows of such a group with no level at all.
 LEVEL_WORDS = [
-    (re.compile(r"(?i)amino[- ]?acid|\bamino\b|\bAA\b|residue[- ]level"), "amino acid"),
+    # 'AAid' is BiATNovo's preprint's own abbreviation ('Precision_AAid(%)').
+    (re.compile(r"(?i)amino[- ]?acid|\bamino\b|\bAA(?:id)?\b|residue[- ]level"), "amino acid"),
     (re.compile(r"(?i)peptide|\bpep\b|\bpept\.|full[- ]sequence"), "peptide"),
     # 'PTMs' and the glued 'PTMsprecision' too: AdaNovo heads its PTM table
     # 'PTMs precision', which the old '\bPTM\b' missed, leaving only the
@@ -1263,8 +1269,12 @@ def desquash(text: str) -> str:
     return re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)
 
 
-def _forms(text: str) -> tuple[str, str, str]:
-    return text, re.sub(r"\s+", "", text), desquash(text)
+def _forms(text: str) -> tuple[str, ...]:
+    # An UNDERSCORE is a word character, so 'Precision_AAid(%)' defeats every
+    # '\b' in the lexicons on both sides of it: BiATNovo's preprint labels its
+    # metric rows that way. A fourth form reads it as a space.
+    return (text, re.sub(r"\s+", "", text), desquash(text),
+            text.replace("_", " "))
 
 
 PROSE_TOKEN = re.compile(r"^[a-z][a-z.,;:]{9,}$")
@@ -2027,6 +2037,27 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         pieces.append((start, hi_, e_))
         for pc in pieces:
             pc = _trim(*pc) if len(pieces) > 1 else pc
+            # EACH PIECE GETS ITS OWN COLUMNS. The part's columns were found
+            # over the rows of every table stacked in it, so PhysNovo's Table 5
+            # (speed, AA precision) inherited Table 6's six columns from below
+            # the cut and was refused as ragged. Recomputed from the piece's
+            # rows, kept to the part's width.
+            if len(pieces) > 1:
+                # From the words inside the part's span only: the table beside
+                # it shares these rows, and its last column, tiled outwards,
+                # had a centre inside this span.
+                inside_rows = [[w for w in r
+                                if x0_ - 2 <= (w["x0"] + w["x1"]) / 2 <= x1_ + 2]
+                               for r in rows]
+                own_e = column_edges(inside_rows, pc[0], pc[1])
+                # ...and kept to it: tiling mirrors the first column's
+                # half-width leftwards, which put Table 6's first column into
+                # Table 3 at x 266 and paired the captions wrongly.
+                if own_e:
+                    own_e[0] = (max(own_e[0][0], x0_), own_e[0][1])
+                    own_e[-1] = (own_e[-1][0], min(own_e[-1][1], x1_))
+                if len(own_e) >= 2:
+                    pc = (pc[0], pc[1], own_e)
             # a piece with no numbers of its own is caption text, not a table
             if not any(sum(1 for w in rows[i] if numeric(w["text"])
                            and x0_ - 2 <= (w["x0"] + w["x1"]) / 2 <= x1_ + 2) >= 2
@@ -2195,7 +2226,8 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                 if above and not any(numeric(w["text"]) for w in above) and \
                         min(w["top"] for w in r) - min(w["top"] for w in above) <= 4.5:
                     label = row_label(above, label_right)
-            if cells and COUNT_ROW.search(label):
+            if cells and (COUNT_ROW.search(label)
+                          or UNRECORDED_METRIC_ROW.search(label)):
                 dropped += 1
                 continue
             missing = [w["text"].strip().lower() for w in r
@@ -2308,10 +2340,14 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                 if not took:
                     break
 
+        # Not past the left neighbour: PhysNovo's Table 5 sits beside Table 3,
+        # whose numbers then counted as this table's stub, and the header walk
+        # stopped on them as "another data block".
         left_bound = min(
             [w["x0"] for r in rows[lo:hi + 1] for w in r
-             if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220]
-            or [edges[0][0] - 150]) - 4
+             if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220
+             and w["x0"] >= nb_lo]
+            or [max(nb_lo, edges[0][0] - 150)]) - 4
         li = (paired.get((lo, hi, edges[0][0])) or (None,))[0]
         own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
@@ -2334,7 +2370,13 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         for k in range(len(edges)):
             vals = [r["cells"][k]["printed"] for r in body if k in r["cells"]]
             head = " ".join(own.get(k, [])).strip()
+            # ...and so is a SPEED or TIME column beside the metrics: PhysNovo's
+            # Table 5 sets 'Speed (spectra/s)' beside 'AA Prec.', and its 11 and
+            # 105 refused the table on mixed units. Only ever a column among
+            # others; an all-runtime table is C3's to refuse.
             if (re.fullmatch(r"(?i)years?", head) or
+                    re.search(r"(?i)\bspeed\b|spectra/s|throughput|latency"
+                              r"|\btime\b|\(ms\)|\(s\)", head) or
                     (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
                 year_cols.append(k)
         if year_cols and len(year_cols) < len(edges):
@@ -3152,6 +3194,11 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     # plasma only.
     (45, "Table 2"): ["DeepNovo-DIA", "BiATNovo", "DeepNovo-DIA", "BiATNovo",
                       "DeepNovo-DIA", "PepNet", "BiATNovo"],
+    # BiATNovo's earlier preprint (bioRxiv v1), Table 2: 'baseline | BiATNovo'
+    # under each of OC, UTI and Plasma. The baseline is DeepNovo-DIA, per the
+    # text: "we compared the performance of DeepNovo-DIA (Tran, et al.,
+    # 2019) and BiATNovo. Table 2 shows the comparison of the results".
+    (283, "Table 2"): ["DeepNovo-DIA", "BiATNovo"] * 3,
     # MemNovo, Table 6: 'InstaNovo | InstaNovo+MemNovo | Delta' over a glued
     # header ('AAPr.AARe.Pep.Pr.Pep.Re.' twice, then 'AAPr.Pep.Re.'). The two
     # Delta columns are DIFFERENCES between the other two and are dropped:
@@ -3301,6 +3348,7 @@ def apply_difference_table(tb: dict, pub_id) -> None:
 COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
     # BiATNovo, Table 2: the datasets over its columns (see SPANNER_OVERRIDE).
     (45, "Table 2"): ["OC", "OC", "UTI", "UTI", "Plasma", "Plasma", "Plasma"],
+    (283, "Table 2"): ["OC", "OC", "UTI", "UTI", "Plasma", "Plasma"],
     # AdaNovo, Table 3: every number is on the Human test set, per its caption.
     (32, "Table3"): ["Human", "Human", "Human"],
     # CrossNovo, Table 6, WIgG1-Mouse: HC over AspN/Chymotrypsin/Trypsin,
@@ -3379,6 +3427,8 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # MSV000082368, the DeepNovo-DIA deposit.
     (45, "Table 2"): ("De novo sequencing of DIA data",
                       "MSV000082368: OC, UTI and plasma"),
+    (283, "Table 2"): ("De novo sequencing of DIA data",
+                       "MSV000082368: OC, UTI and plasma"),
     # InstaNovo-FM, Tables S12 and S13: "the six held-out biological
     # validation datasets". The paper names them only by these labels, gives
     # no accession for any, and they are not among the Hugging Face tiers it
