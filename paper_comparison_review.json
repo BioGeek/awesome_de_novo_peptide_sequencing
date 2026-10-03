@@ -1,0 +1,870 @@
+{
+ "p13-pg7-t1": {
+  "cells": 3,
+  "label": "Table 1",
+  "on": "2026-10-03",
+  "pub": 13,
+  "state": "approved"
+ },
+ "p13-pg8-t2": {
+  "cells": 3,
+  "label": "Table 2",
+  "on": "2026-10-03",
+  "pub": 13,
+  "state": "approved"
+ },
+ "p139-pg6-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 139,
+  "state": "dismissed"
+ },
+ "p16-pg18-t6-hc-pt": {
+  "cells": 9,
+  "label": "Table6 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "approved"
+ },
+ "p16-pg18-t6-nine-species": {
+  "cells": 9,
+  "label": "Table6 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "approved"
+ },
+ "p16-pg18-t6-seven-species": {
+  "cells": 9,
+  "label": "Table6 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "approved"
+ },
+ "p16-pg7-t1": {
+  "cells": 16,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "approved"
+ },
+ "p168-pg6-ti": {
+  "cells": 0,
+  "label": "TABLEI",
+  "on": "2026-10-03",
+  "pub": 168,
+  "state": "dismissed"
+ },
+ "p17-pg6-t1-hc-pt": {
+  "cells": 11,
+  "label": "Table1 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg6-t1-nine-species": {
+  "cells": 11,
+  "label": "Table1 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg6-t1-seven-species": {
+  "cells": 11,
+  "label": "Table1 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg6-t2-hc-pt": {
+  "cells": 10,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg6-t2-nine-species": {
+  "cells": 10,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg6-t2-seven-species": {
+  "cells": 10,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg7-t3": {
+  "cells": 18,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg7-t4": {
+  "cells": 2,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "approved"
+ },
+ "p17-pg7-t5": {
+  "cells": 0,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 17,
+  "state": "dismissed"
+ },
+ "p18-pg5-t1": {
+  "cells": 9,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 18,
+  "state": "approved"
+ },
+ "p196-pg66-t6.1": {
+  "cells": 0,
+  "label": "Table 6.1",
+  "on": "2026-10-03",
+  "pub": 196,
+  "state": "dismissed"
+ },
+ "p20-pg7-t1": {
+  "cells": 16,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 20,
+  "state": "approved"
+ },
+ "p20-pg8-t2": {
+  "cells": 8,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 20,
+  "state": "approved"
+ },
+ "p20-pg8-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 20,
+  "state": "dismissed"
+ },
+ "p202-pg10-t5": {
+  "cells": 0,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p202-pg10-t6": {
+  "cells": 10,
+  "label": "Table 6",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "approved"
+ },
+ "p202-pg10-t7": {
+  "cells": 0,
+  "label": "Table7",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p202-pg10-t9": {
+  "cells": 0,
+  "label": "Table9",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p202-pg6-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p202-pg7-t2": {
+  "cells": 9,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "approved"
+ },
+ "p202-pg7-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p202-pg9-t4": {
+  "cells": 0,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 202,
+  "state": "dismissed"
+ },
+ "p22-pg13-t6": {
+  "cells": 0,
+  "label": "Table6",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "dismissed"
+ },
+ "p22-pg7-t1-hc-pt": {
+  "cells": 6,
+  "label": "Table1 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "approved"
+ },
+ "p22-pg7-t1-nine-species": {
+  "cells": 6,
+  "label": "Table1 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "approved"
+ },
+ "p22-pg7-t1-seven-species": {
+  "cells": 6,
+  "label": "Table1 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "approved"
+ },
+ "p22-pg9-t2": {
+  "cells": 0,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "dismissed"
+ },
+ "p22-pg9-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "dismissed"
+ },
+ "p22-pg9-t4": {
+  "cells": 0,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "dismissed"
+ },
+ "p254-pg7-t1-hc-pt": {
+  "cells": 11,
+  "label": "Table1 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg7-t1-nine-species": {
+  "cells": 11,
+  "label": "Table1 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg7-t1-seven-species": {
+  "cells": 11,
+  "label": "Table1 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg7-t2-hc-pt": {
+  "cells": 8,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg7-t2-nine-species": {
+  "cells": 8,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg7-t2-seven-species": {
+  "cells": 8,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg8-t3": {
+  "cells": 18,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg8-t4": {
+  "cells": 3,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg8-t5": {
+  "cells": 4,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "approved"
+ },
+ "p254-pg8-t6": {
+  "cells": 0,
+  "label": "Table 6",
+  "on": "2026-10-03",
+  "pub": 254,
+  "state": "dismissed"
+ },
+ "p273-pg83-ts10": {
+  "cells": 0,
+  "label": "Table S10",
+  "on": "2026-10-03",
+  "pub": 273,
+  "state": "dismissed"
+ },
+ "p273-pg83-ts11": {
+  "cells": 0,
+  "label": "Table S11",
+  "on": "2026-10-03",
+  "pub": 273,
+  "state": "dismissed"
+ },
+ "p273-pg84-ts12": {
+  "cells": 6,
+  "label": "Table S12",
+  "on": "2026-10-03",
+  "pub": 273,
+  "state": "approved"
+ },
+ "p273-pg84-ts13": {
+  "cells": 6,
+  "label": "Table S13",
+  "on": "2026-10-03",
+  "pub": 273,
+  "state": "approved"
+ },
+ "p28-pg12-t2": {
+  "cells": 0,
+  "label": "Table 2",
+  "on": "2026-10-03",
+  "pub": 28,
+  "state": "dismissed"
+ },
+ "p283-pg7-t2": {
+  "cells": 3,
+  "label": "Table 2",
+  "on": "2026-10-03",
+  "pub": 283,
+  "state": "approved"
+ },
+ "p30-pg5-ti": {
+  "cells": 3,
+  "label": "TABLE I",
+  "on": "2026-10-03",
+  "pub": 30,
+  "state": "approved"
+ },
+ "p32-pg7-t1": {
+  "cells": 9,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 32,
+  "state": "approved"
+ },
+ "p32-pg7-t2": {
+  "cells": 4,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 32,
+  "state": "approved"
+ },
+ "p32-pg8-t3": {
+  "cells": 4,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 32,
+  "state": "approved"
+ },
+ "p32-pg8-t4": {
+  "cells": 4,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 32,
+  "state": "approved"
+ },
+ "p32-pg8-t5": {
+  "cells": 5,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 32,
+  "state": "approved"
+ },
+ "p33-pg6-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 33,
+  "state": "dismissed"
+ },
+ "p339-pg212-t6.7": {
+  "cells": 0,
+  "label": "Table 6.7",
+  "on": "2026-10-03",
+  "pub": 339,
+  "state": "dismissed"
+ },
+ "p354-pg7-t1-hc-pt": {
+  "cells": 10,
+  "label": "Table1 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t1-nine-species": {
+  "cells": 10,
+  "label": "Table1 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t1-seven-species": {
+  "cells": 10,
+  "label": "Table1 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t2-hc-pt": {
+  "cells": 9,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t2-nine-species": {
+  "cells": 9,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t2-seven-species": {
+  "cells": 9,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "approved"
+ },
+ "p354-pg7-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 354,
+  "state": "dismissed"
+ },
+ "p38-pg6-t1": {
+  "cells": 10,
+  "label": "Table 1",
+  "on": "2026-10-03",
+  "pub": 38,
+  "state": "approved"
+ },
+ "p4-pg8-t3": {
+  "cells": 10,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 4,
+  "state": "approved"
+ },
+ "p432-pg15-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "dismissed"
+ },
+ "p432-pg15-t2-hc-pt": {
+  "cells": 13,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg15-t2-nine-species": {
+  "cells": 13,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg15-t2-seven-species": {
+  "cells": 13,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg16-t3-hc-pt": {
+  "cells": 10,
+  "label": "Table3 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg16-t3-nine-species": {
+  "cells": 10,
+  "label": "Table3 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg16-t3-seven-species": {
+  "cells": 10,
+  "label": "Table3 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg17-t4": {
+  "cells": 27,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg18-t5": {
+  "cells": 8,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "approved"
+ },
+ "p432-pg18-t6": {
+  "cells": 0,
+  "label": "Table6",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "dismissed"
+ },
+ "p432-pg21-t7": {
+  "cells": 0,
+  "label": "Table7",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "dismissed"
+ },
+ "p432-pg23-t8": {
+  "cells": 0,
+  "label": "Table8",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "dismissed"
+ },
+ "p432-pg23-t9": {
+  "cells": 0,
+  "label": "Table9",
+  "on": "2026-10-03",
+  "pub": 432,
+  "state": "dismissed"
+ },
+ "p433-pg6-ti": {
+  "cells": 2,
+  "label": "TABLE I",
+  "on": "2026-10-03",
+  "pub": 433,
+  "state": "approved"
+ },
+ "p433-pg6-tii": {
+  "cells": 0,
+  "label": "TABLE II",
+  "on": "2026-10-03",
+  "pub": 433,
+  "state": "dismissed"
+ },
+ "p434-pg7-t2": {
+  "cells": 16,
+  "label": "Table 2",
+  "on": "2026-10-03",
+  "pub": 434,
+  "state": "approved"
+ },
+ "p45-pg8-t2": {
+  "cells": 3,
+  "label": "Table 2",
+  "on": "2026-10-03",
+  "pub": 45,
+  "state": "approved"
+ },
+ "p45-pg8-t3": {
+  "cells": 0,
+  "label": "Table 3",
+  "on": "2026-10-03",
+  "pub": 45,
+  "state": "dismissed"
+ },
+ "p45-pg9-t4": {
+  "cells": 0,
+  "label": "Table 4",
+  "on": "2026-10-03",
+  "pub": 45,
+  "state": "dismissed"
+ },
+ "p49-pg6-t2": {
+  "cells": 9,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 49,
+  "state": "approved"
+ },
+ "p49-pg7-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 49,
+  "state": "dismissed"
+ },
+ "p52-pg7-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 52,
+  "state": "dismissed"
+ },
+ "p58-pg5-t1": {
+  "cells": 0,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 58,
+  "state": "dismissed"
+ },
+ "p58-pg5-t2-nine-species": {
+  "cells": 4,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 58,
+  "state": "approved"
+ },
+ "p58-pg5-t2-qe-hf-x1": {
+  "cells": 4,
+  "label": "Table2 [QE_HF_X1]",
+  "on": "2026-10-03",
+  "pub": 58,
+  "state": "approved"
+ },
+ "p58-pg5-t2-qe-hf-x2": {
+  "cells": 4,
+  "label": "Table2 [QE_HF_X2]",
+  "on": "2026-10-03",
+  "pub": 58,
+  "state": "approved"
+ },
+ "p64-pg18-t10": {
+  "cells": 0,
+  "label": "Table10",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg18-t11": {
+  "cells": 0,
+  "label": "Table11",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg18-t12": {
+  "cells": 0,
+  "label": "Table12",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg18-t9": {
+  "cells": 0,
+  "label": "Table9",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg19-t13": {
+  "cells": 0,
+  "label": "Table13",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg19-t14": {
+  "cells": 0,
+  "label": "Table14",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg6-t1-hc-pt": {
+  "cells": 14,
+  "label": "Table1 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t1-nine-species": {
+  "cells": 14,
+  "label": "Table1 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t1-seven-species": {
+  "cells": 14,
+  "label": "Table1 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t2-hc-pt": {
+  "cells": 13,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t2-nine-species": {
+  "cells": 13,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t2-seven-species": {
+  "cells": 13,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg6-t3": {
+  "cells": 16,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "approved"
+ },
+ "p64-pg7-t4": {
+  "cells": 0,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg7-t5": {
+  "cells": 0,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p64-pg8-t6": {
+  "cells": 0,
+  "label": "Table6",
+  "on": "2026-10-03",
+  "pub": 64,
+  "state": "dismissed"
+ },
+ "p7-pg7-t2-hc-pt": {
+  "cells": 7,
+  "label": "Table2 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t2-nine-species": {
+  "cells": 7,
+  "label": "Table2 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t2-seven-species": {
+  "cells": 7,
+  "label": "Table2 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t3-hc-pt": {
+  "cells": 6,
+  "label": "Table 3 [HC-PT]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t3-nine-species": {
+  "cells": 6,
+  "label": "Table 3 [Nine-species]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t3-seven-species": {
+  "cells": 6,
+  "label": "Table 3 [Seven-species]",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "approved"
+ },
+ "p7-pg7-t4": {
+  "cells": 0,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 7,
+  "state": "dismissed"
+ },
+ "p9-pg26-t6": {
+  "cells": 6,
+  "label": "Table6",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "approved"
+ },
+ "p9-pg26-t7": {
+  "cells": 6,
+  "label": "Table7",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "approved"
+ },
+ "p9-pg8-t1": {
+  "cells": 20,
+  "label": "Table1",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "approved"
+ },
+ "p9-pg8-t2": {
+  "cells": 8,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "approved"
+ },
+ "p99-pg6-t2": {
+  "cells": 0,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 99,
+  "state": "dismissed"
+ }
+}

@@ -42,17 +42,20 @@ import build_paper_comparisons as B
 
 OUT = bpl.DEFAULT_DIR / "comparison-review"
 CACHE = OUT / ".pages"
-# Which tables a person has read and signed off. Lives beside the crops,
-# outside the repository, because it is this reader's review state and not
-# catalog data. Each entry keeps a FINGERPRINT as well as the id, because an id
-# encodes the block's order on its page and that order can shift when the
-# miner improves; a stale approval is then reported rather than silently
-# carried over.
+# Which tables a person has read and signed off. COMMITTED, in the
+# repository: the sign-offs are the curated judgement that decides which
+# parsed tables become catalog data, so the result is not reproducible without
+# them. It used to live beside the crops, outside the repository, as if it were
+# one reader's scratch state. It holds ids, verdicts and dates only -- nothing
+# copied from a paper -- which is why it can be committed when the crops
+# cannot. Each entry keeps a FINGERPRINT as well as the id, so a stale approval
+# is reported rather than silently carried over.
 # Two states, both meaning "a person has read this and is done with it":
 # APPROVED for a parse confirmed correct, DISMISSED for a refusal confirmed to
 # be the right refusal. Both collapse, because the page is a worklist and the
 # point is to shrink it.
-APPROVED = OUT / "approved.json"
+APPROVED = pathlib.Path(__file__).with_name("paper_comparison_review.json")
+LEGACY_APPROVED = OUT / "approved.json"
 # What each crop actually shows, written for the cross-checker. Without it
 # build_table_vlm.py had to guess from the audit CSV and compared a crop
 # against whichever table came first for that publication, which made every
@@ -795,6 +798,8 @@ def main() -> int:
         for n in [row[0]] + [a.strip() for a in row[1].split(",") if a.strip()]
         if n)
     approved: dict = {}
+    if not APPROVED.exists() and LEGACY_APPROVED.exists():
+        APPROVED.write_text(LEGACY_APPROVED.read_text())
     if APPROVED.exists():
         try:
             approved = json.loads(APPROVED.read_text())

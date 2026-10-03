@@ -1700,6 +1700,18 @@ audit row rather than reimplementing the layout logic. `block_bbox()` is used
 only for the crop and never for parsing, and it is computed BEFORE the caption
 vetoes, because a refused table is exactly the case a human most needs to see.
 
+**The sign-offs are committed, in `paper_comparison_review.json`.** They
+are the curated judgement that decides which parsed tables become data -- 80
+approved and 44 dismissed refusals at the first full sign-off -- so the result
+cannot be reproduced without them. The file holds ids, verdicts and dates
+only, nothing copied from a paper, which is why it can be committed when the
+crops cannot. It used to live beside the crops as `approved.json`; the script
+copies that across on first run if the repository file is missing.
+Reproducing the page needs three things: this repository, the local PDF
+library, and `uv run --with pdfplumber python3 review_comparisons.py`. A full
+run takes about 8 minutes and should end on `0 accepted, 0 rejected`, meaning
+every table is signed off; anything else is a table whose parse changed.
+
 **Re-rendering is incremental, at three speeds.** Almost all of a full
 render's ~8 minutes is parsing PDFs, so the page stores what it parsed in
 `items.json` and the cheaper paths reuse it:
