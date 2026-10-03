@@ -50,7 +50,16 @@ NUM = re.compile(r"\d*\.\d+|\d+")
 
 
 def nums(text: str) -> list[str]:
-    return NUM.findall((text or "").replace(",", "").replace("−", "-"))
+    # Compared BY VALUE: GLM writes '0.7540' for a printed '0.754', and a
+    # string comparison called that a misreading. Normalised, so equal values
+    # compare equal while the order of the sequence still matters.
+    out = []
+    for n in NUM.findall((text or "").replace(",", "").replace("−", "-")):
+        try:
+            out.append(format(float(n), "g"))
+        except ValueError:
+            out.append(n)
+    return out
 
 
 def model_rows(reader: str, tid: str) -> list[tuple[str, list[str]]] | None:
@@ -128,7 +137,20 @@ def main() -> int:
             verdict, cells = "UNREAD", []
         else:
             cells = []
-            for r in it["body"]:
+            # Grid rows of role 'data' are the body rows, in order; a body row
+            # whose results carry 'derived' was computed, not printed.
+            grid = it.get("grid") or {}
+            data_rows = [gi for gi, g in enumerate(grid.get("rows") or [])
+                         if g.get("role") == "data"]
+            derived_gi = {x["r"] for x in grid.get("results") or [] if x.get("derived")}
+            derived_rows = {k for k, gi in enumerate(data_rows) if gi in derived_gi}
+            for ri, r in enumerate(it["body"]):
+                # A DERIVED cell (TSARseqNovo's Casanovo rows: its score
+                # minus the printed improvement) is not on the page, so no
+                # reader can confirm it; it is checked through the printed
+                # cells it was computed from.
+                if ri in derived_rows:
+                    continue
                 parsed = [n for c in r["cells"].values() for n in nums(c)]
                 if not parsed:
                     continue
