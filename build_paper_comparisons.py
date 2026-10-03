@@ -956,7 +956,7 @@ def header_model(rows: list[list[dict]], lo: int,
                  edges: list[tuple[float, float]], max_rows: int = 4,
                  left_bound: float | None = None, floor: int = 0,
                  rules: list[tuple[float, float, float]] | None = None,
-                 hard_floor: int = 0):
+                 hard_floor: int = 0, data_left: float | None = None):
     """Read the header rows above a data block.
 
     A header row carrying about as many phrases as there are columns is a row
@@ -1129,7 +1129,26 @@ def header_model(rows: list[list[dict]], lo: int,
             # InstaNovo-FM's 'IN-FM (fine-tuned)' into '(fine-tuned) IN-FM'
             # and 'IN v1.2' into 'v1.2 IN', neither of which resolves.
             row_own = collections.defaultdict(list)
+            # A PHRASE THAT ENDS BEFORE THE DATA BEGINS heads the stub, not
+            # column 0. The first column's interval is tiled leftwards past
+            # its numbers, and CausalNovo's Table 3 headed column 0
+            # 'Method Prec.' because 'Method' fell inside that overhang. The
+            # test is on the whole PHRASE: InstaNovo-FM's 'IN-FM (fine-tuned)'
+            # is wider than its numbers, so 'IN-FM' alone also ends early.
+            stubbed: set[int] = set()
+            if data_left is not None:
+                ordered = sorted(r, key=lambda w: w["x0"])
+                phrase: list[dict] = []
+                for w in ordered + [None]:
+                    if w is not None and phrase and w["x0"] - phrase[-1]["x1"] <= 4.0:
+                        phrase.append(w)
+                        continue
+                    if phrase and max(x["x1"] for x in phrase) <= data_left:
+                        stubbed.update(id(x) for x in phrase)
+                    phrase = [w] if w is not None else []
             for w in sorted(r, key=lambda w: w["x0"]):
+                if id(w) in stubbed:
+                    continue
                 k = assign(w, edges)
                 if k is not None:
                     row_own[k].append(w["text"])
@@ -1151,7 +1170,15 @@ def header_model(rows: list[list[dict]], lo: int,
             row_own = collections.defaultdict(list)
             for q in sorted(inside, key=lambda q: q["x0"]):
                 k = assign(q, edges)
-                if k is not None and edges[k][0] - 1 <= q["x0"] and q["x1"] <= edges[k][1] + 1:
+                fits = (k is not None and edges[k][0] - 1 <= q["x0"]
+                        and q["x1"] <= edges[k][1] + 1)
+                # The same stub test as for a row of column headers, applied
+                # only to what would otherwise head a column: CausalNovo sets
+                # 'Method' on its own line, 4 pt above 'Prec.'.
+                if fits and data_left is not None and q["x1"] <= data_left:
+                    stub.append(q["text"])
+                    continue
+                if fits:
                     row_own[k].append(q["text"])
                 else:
                     own_wide.append(q)
@@ -2285,7 +2312,8 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         own, span, stub, span_ambiguous = header_model(
             rows, lo, edges, left_bound=left_bound,
             floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules,
-            hard_floor=(li + 1 if li is not None and li < lo else 0))
+            hard_floor=(li + 1 if li is not None and li < lo else 0),
+            data_left=label_right)
         if not own and not span:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": "G3 no header above the block",
