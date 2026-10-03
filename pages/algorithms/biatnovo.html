@@ -199,6 +199,289 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
+<section id="reported-comparisons-2" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-2" class="level3">
+<h3 class="anchored" data-anchor-id="table-2">Table 2</h3>
+<p><a href="../publications/biatnovo-a-self-attention-based-bidirectional-peptide-sequencing-method.html">BiATNovo: A Self-Attention based Bidirectional Peptide Sequencing Method</a>, page 7: <em>Results of BiATNovo and Baseline.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
+</th>
+<th colspan="3">
+OC
+</th>
+<th colspan="3">
+UTI
+</th>
+<th colspan="3">
+Plasma
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo-dia.html">DeepNovo-DIA</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.6812
+</td>
+<td>
+0.6822
+</td>
+<td>
+0.5240
+</td>
+<td>
+0.6581
+</td>
+<td>
+0.6598
+</td>
+<td>
+0.5106
+</td>
+<td>
+0.6379
+</td>
+<td>
+0.6430
+</td>
+<td>
+0.3740
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="biatnovo.html">BiATNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.7457</strong>
+</td>
+<td>
+<strong>0.7513</strong>
+</td>
+<td>
+<strong>0.6147</strong>
+</td>
+<td>
+<strong>0.7078</strong>
+</td>
+<td>
+<strong>0.7151</strong>
+</td>
+<td>
+<strong>0.5760</strong>
+</td>
+<td>
+<strong>0.6628</strong>
+</td>
+<td>
+<strong>0.6707</strong>
+</td>
+<td>
+<strong>0.4364</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table-2-1" class="level3">
+<h3 class="anchored" data-anchor-id="table-2-1">Table 2</h3>
+<p><a href="../publications/biatnovo-an-attention-based-bidirectional-de-novo-sequencing-framework-for-data.html">BiATNovo: An Attention-based Bidirectional De Novo Sequencing Framework for Data-Independent-Acquisition Mass Spectrometry</a>, page 8: <em>Comparison of DeepNovo-DIA, PepNet and BiATNovo</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
+</th>
+<th colspan="3">
+OC
+</th>
+<th colspan="3">
+UTI
+</th>
+<th colspan="3">
+Plasma
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo-dia.html">DeepNovo-DIA</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.5562
+</td>
+<td>
+0.5596
+</td>
+<td>
+0.5098
+</td>
+<td>
+0.6286
+</td>
+<td>
+0.6243
+</td>
+<td>
+0.5525
+</td>
+<td>
+<u>0.4354</u>
+</td>
+<td>
+<u>0.4335</u>
+</td>
+<td>
+<u>0.3322</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="biatnovo.html">BiATNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.6817</strong>
+</td>
+<td>
+<strong>0.6746</strong>
+</td>
+<td>
+<strong>0.6439</strong>
+</td>
+<td>
+<strong>0.7108</strong>
+</td>
+<td>
+<strong>0.7076</strong>
+</td>
+<td>
+<strong>0.6584</strong>
+</td>
+<td>
+<strong>0.4525</strong>
+</td>
+<td>
+<strong>0.4511</strong>
+</td>
+<td>
+<strong>0.3691</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.4008
+</td>
+<td>
+0.4004
+</td>
+<td>
+0.3064
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>
 <ul>

@@ -192,6 +192,796 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="reported-comparisons-6" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-6">Reported comparisons (6)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-3-hc-pt" class="level3">
+<h3 class="anchored" data-anchor-id="table-3-hc-pt">Table 3 (HC-PT)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>Empirical comparison of PTM identification. We evaluate the ability of DiffuNovo and other models to identify Post-Translational Modifications (PTMs) on the benchmark datasets. The best results and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
+</th>
+<th colspan="1">
+HC-PT
+</th>
+</tr>
+<tr>
+<th>
+PTM precision<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.626
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.676</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.552
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.501
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.568
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.705</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table-3-nine-species" class="level3">
+<h3 class="anchored" data-anchor-id="table-3-nine-species">Table 3 (Nine-species)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>Empirical comparison of PTM identification. We evaluate the ability of DiffuNovo and other models to identify Post-Translational Modifications (PTMs) on the benchmark datasets. The best results and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1">
+Nine-Species
+</th>
+</tr>
+<tr>
+<th>
+PTM precision<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.576
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.629
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.652
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.706</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.680
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.822</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table-3-seven-species" class="level3">
+<h3 class="anchored" data-anchor-id="table-3-seven-species">Table 3 (Seven-species)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>Empirical comparison of PTM identification. We evaluate the ability of DiffuNovo and other models to identify Post-Translational Modifications (PTMs) on the benchmark datasets. The best results and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
+</th>
+<th colspan="1">
+Seven-Species
+</th>
+</tr>
+<tr>
+<th>
+PTM precision<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.391
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.117
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.448
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.360
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.473</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.515</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table2-hc-pt" class="level3">
+<h3 class="anchored" data-anchor-id="table2-hc-pt">Table2 (HC-PT)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>The comparison of de novo peptide sequencing performance between our proposed model, DiffuNovo, and other stateof-the-art methods on the three benchmark datasets. We report precision and AUC at the peptide level, and precision and recall at the amino acid level. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.313
+</td>
+<td>
+0.255
+</td>
+<td>
+0.531
+</td>
+<td>
+0.534
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.419
+</td>
+<td>
+<u>0.373</u>
+</td>
+<td>
+0.623
+</td>
+<td>
+0.622
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.211
+</td>
+<td>
+0.177
+</td>
+<td>
+0.442
+</td>
+<td>
+0.453
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.212
+</td>
+<td>
+0.178
+</td>
+<td>
+0.442
+</td>
+<td>
+0.451
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.356
+</td>
+<td>
+0.318
+</td>
+<td>
+0.588
+</td>
+<td>
+0.582
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.485</strong>
+</td>
+<td>
+0.324
+</td>
+<td>
+<u>0.648</u>
+</td>
+<td>
+<u>0.648</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.458</u>
+</td>
+<td>
+<strong>0.434</strong>
+</td>
+<td>
+<strong>0.654</strong>
+</td>
+<td>
+<strong>0.654</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: precision / amino acid: the original table underlined PointNovo (0.623).<br>In the paper: precision / peptide: the original table underlined PointNovo (0.419).<br>In the paper: recall / amino acid: the original table underlined PointNovo (0.622).</small>
+</p>
+</section>
+<section id="table2-nine-species" class="level3">
+<h3 class="anchored" data-anchor-id="table2-nine-species">Table2 (Nine-species)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>The comparison of de novo peptide sequencing performance between our proposed model, DiffuNovo, and other stateof-the-art methods on the three benchmark datasets. We report precision and AUC at the peptide level, and precision and recall at the amino acid level. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.428
+</td>
+<td>
+0.376
+</td>
+<td>
+0.696
+</td>
+<td>
+0.638
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.480
+</td>
+<td>
+0.436
+</td>
+<td>
+0.740
+</td>
+<td>
+0.671
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.481
+</td>
+<td>
+0.439
+</td>
+<td>
+0.697
+</td>
+<td>
+0.696
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.505
+</td>
+<td>
+<u>0.469</u>
+</td>
+<td>
+0.698
+</td>
+<td>
+0.709
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.517
+</td>
+<td>
+0.453
+</td>
+<td>
+0.765
+</td>
+<td>
+0.758
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.572</strong>
+</td>
+<td>
+0.413
+</td>
+<td>
+<u>0.785</u>
+</td>
+<td>
+<u>0.783</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.565</u>
+</td>
+<td>
+<strong>0.536</strong>
+</td>
+<td>
+<strong>0.791</strong>
+</td>
+<td>
+<strong>0.789</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: precision / amino acid: the original table underlined HelixNovo (0.765).<br>In the paper: precision / peptide: the original table underlined HelixNovo (0.517).<br>In the paper: recall / amino acid: the original table underlined HelixNovo (0.758).</small>
+</p>
+</section>
+<section id="table2-seven-species" class="level3">
+<h3 class="anchored" data-anchor-id="table2-seven-species">Table2 (Seven-species)</h3>
+<p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>The comparison of de novo peptide sequencing performance between our proposed model, DiffuNovo, and other stateof-the-art methods on the three benchmark datasets. We report precision and AUC at the peptide level, and precision and recall at the amino acid level. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.204
+</td>
+<td>
+0.136
+</td>
+<td>
+<strong>0.492</strong>
+</td>
+<td>
+0.433
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.022
+</td>
+<td>
+0.007
+</td>
+<td>
+0.196
+</td>
+<td>
+0.169
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.119
+</td>
+<td>
+0.084
+</td>
+<td>
+0.322
+</td>
+<td>
+0.327
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.174
+</td>
+<td>
+0.135
+</td>
+<td>
+0.379
+</td>
+<td>
+0.385
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.234</strong>
+</td>
+<td>
+<strong>0.173</strong>
+</td>
+<td>
+<u>0.481</u>
+</td>
+<td>
+<strong>0.472</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.233</u>
+</td>
+<td>
+0.104
+</td>
+<td>
+0.430
+</td>
+<td>
+0.428
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.193
+</td>
+<td>
+<u>0.162</u>
+</td>
+<td>
+0.437
+</td>
+<td>
+<u>0.435</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>
 <ul>

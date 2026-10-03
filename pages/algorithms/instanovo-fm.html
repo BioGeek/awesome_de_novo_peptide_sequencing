@@ -225,6 +225,354 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>A host marked <em>archival</em> has a DOI and keeps what it is given. The others can move or disappear, which is why they are checked rather than merely listed. <strong>verified</strong> means the bytes were fetched and hashed on the date shown; <strong>live</strong> means only that the host answered when last asked.</p>
 </section>
+<section id="reported-comparisons-2" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-s12" class="level3">
+<h3 class="anchored" data-anchor-id="table-s12">Table S12</h3>
+<p><a href="../publications/learning-from-tandem-mass-spectra-at-scale-with-a-self-supervised-foundation.html">Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics</a>, page 84: <em>Peptide recall across the biological validation datasets for the de novo sequencing benchmark. The best model per dataset is in bold.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+the six held-out biological validation datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL Antibodies, Wound Fluids); no accession stated
+</th>
+<th colspan="1">
+GluC
+</th>
+<th colspan="1">
+S Brodae
+</th>
+<th colspan="1">
+Snake Venoms
+</th>
+<th colspan="1">
+Hela QC
+</th>
+<th colspan="1">
+TPL Antibodies
+</th>
+<th colspan="1">
+Wound Fluids
+</th>
+</tr>
+<tr>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-fm.html">InstaNovo-FM</a> <small>fine-tuned</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.821</u>
+</td>
+<td>
+0.740
+</td>
+<td>
+<u>0.230</u>
+</td>
+<td>
+0.662
+</td>
+<td>
+<u>0.528</u>
+</td>
+<td>
+0.366
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a> <small>v1.2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.868</strong>
+</td>
+<td>
+<strong>0.764</strong>
+</td>
+<td>
+0.227
+</td>
+<td>
+<strong>0.708</strong>
+</td>
+<td>
+0.517
+</td>
+<td>
+<u>0.431</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.767
+</td>
+<td>
+<u>0.743</u>
+</td>
+<td>
+0.217
+</td>
+<td>
+0.531
+</td>
+<td>
+0.465
+</td>
+<td>
+0.262
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.808
+</td>
+<td>
+0.741
+</td>
+<td>
+<strong>0.233</strong>
+</td>
+<td>
+<u>0.673</u>
+</td>
+<td>
+<strong>0.529</strong>
+</td>
+<td>
+<strong>0.466</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table-s13" class="level3">
+<h3 class="anchored" data-anchor-id="table-s13">Table S13</h3>
+<p><a href="../publications/learning-from-tandem-mass-spectra-at-scale-with-a-self-supervised-foundation.html">Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics</a>, page 84: <em>Peptide recall across the biological validation datasets for the de novo sequencing InstaNovo-FM and InstaNovo model variant benchmarks. The best model per dataset is in bold. We abbreviate “InstaNovo (FM size matched)” to “IN (FM-SM)” to conserve page space.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+the six held-out biological validation datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL Antibodies, Wound Fluids); no accession stated
+</th>
+<th colspan="1">
+GluC
+</th>
+<th colspan="1">
+S Brodae
+</th>
+<th colspan="1">
+Snake Venoms
+</th>
+<th colspan="1">
+Hela QC
+</th>
+<th colspan="1">
+TPL Antibodies
+</th>
+<th colspan="1">
+Wound Fluids
+</th>
+</tr>
+<tr>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-fm.html">InstaNovo-FM</a> <small>fine-tuned</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.821</u>
+</td>
+<td>
+0.740
+</td>
+<td>
+<u>0.230</u>
+</td>
+<td>
+<strong>0.662</strong>
+</td>
+<td>
+<strong>0.528</strong>
+</td>
+<td>
+<strong>0.366</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-fm.html">InstaNovo-FM</a> <small>from scratch</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.819
+</td>
+<td>
+0.747
+</td>
+<td>
+<strong>0.239</strong>
+</td>
+<td>
+<u>0.657</u>
+</td>
+<td>
+<u>0.522</u>
+</td>
+<td>
+0.354
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-fm.html">InstaNovo-FM</a> <small>frozen</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.775
+</td>
+<td>
+0.726
+</td>
+<td>
+0.156
+</td>
+<td>
+0.577
+</td>
+<td>
+0.474
+</td>
+<td>
+0.266
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.821</u>
+</td>
+<td>
+<strong>0.756</strong>
+</td>
+<td>
+0.219
+</td>
+<td>
+0.652
+</td>
+<td>
+0.520
+</td>
+<td>
+0.345
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a> <small>FM size matched</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.823</strong>
+</td>
+<td>
+<u>0.748</u>
+</td>
+<td>
+0.226
+</td>
+<td>
+0.650
+</td>
+<td>
+0.516
+</td>
+<td>
+<u>0.362</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

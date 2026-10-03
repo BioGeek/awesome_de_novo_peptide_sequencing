@@ -192,6 +192,457 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="reported-comparisons-3" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table1-hc-pt" class="level3">
+<h3 class="anchored" data-anchor-id="table1-hc-pt">Table1 (HC-PT)</h3>
+<p><a href="../publications/renovo-retrieval-based-de-novo-mass-spectrometry-peptide-sequencing.html">ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing</a>, page 7: <em>Empirical comparison of de novo peptide sequencing models. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.313
+</td>
+<td>
+0.255
+</td>
+<td>
+0.531
+</td>
+<td>
+0.534
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.419</u>
+</td>
+<td>
+<u>0.373</u>
+</td>
+<td>
+<u>0.623</u>
+</td>
+<td>
+<u>0.622</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.211
+</td>
+<td>
+0.177
+</td>
+<td>
+0.442
+</td>
+<td>
+0.453
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.356
+</td>
+<td>
+0.318
+</td>
+<td>
+0.588
+</td>
+<td>
+0.582
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.212
+</td>
+<td>
+0.178
+</td>
+<td>
+0.442
+</td>
+<td>
+0.451
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+<strong>0.467</strong>
+</td>
+<td>
+<strong>0.436</strong>
+</td>
+<td>
+<strong>0.651</strong>
+</td>
+<td>
+<strong>0.648</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table1-nine-species" class="level3">
+<h3 class="anchored" data-anchor-id="table1-nine-species">Table1 (Nine-species)</h3>
+<p><a href="../publications/renovo-retrieval-based-de-novo-mass-spectrometry-peptide-sequencing.html">ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing</a>, page 7: <em>Empirical comparison of de novo peptide sequencing models. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.428
+</td>
+<td>
+0.376
+</td>
+<td>
+0.696
+</td>
+<td>
+0.638
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.480
+</td>
+<td>
+0.436
+</td>
+<td>
+0.740
+</td>
+<td>
+0.671
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.481
+</td>
+<td>
+0.439
+</td>
+<td>
+0.697
+</td>
+<td>
+0.696
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.517</u>
+</td>
+<td>
+0.453
+</td>
+<td>
+<u>0.765</u>
+</td>
+<td>
+<u>0.758</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.505
+</td>
+<td>
+<u>0.469</u>
+</td>
+<td>
+0.698
+</td>
+<td>
+0.709
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+<strong>0.568</strong>
+</td>
+<td>
+<strong>0.528</strong>
+</td>
+<td>
+<strong>0.770</strong>
+</td>
+<td>
+<strong>0.769</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table1-seven-species" class="level3">
+<h3 class="anchored" data-anchor-id="table1-seven-species">Table1 (Seven-species)</h3>
+<p><a href="../publications/renovo-retrieval-based-de-novo-mass-spectrometry-peptide-sequencing.html">ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing</a>, page 7: <em>Empirical comparison of de novo peptide sequencing models. The best and the second best are highlighted with bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.204
+</td>
+<td>
+0.136
+</td>
+<td>
+<u>0.492</u>
+</td>
+<td>
+0.433
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.022
+</td>
+<td>
+0.007
+</td>
+<td>
+0.196
+</td>
+<td>
+0.169
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.119
+</td>
+<td>
+0.084
+</td>
+<td>
+0.322
+</td>
+<td>
+0.327
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.234</u>
+</td>
+<td>
+<u>0.173</u>
+</td>
+<td>
+0.481
+</td>
+<td>
+<u>0.472</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.174
+</td>
+<td>
+0.135
+</td>
+<td>
+0.379
+</td>
+<td>
+0.385
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+<strong>0.278</strong>
+</td>
+<td>
+<strong>0.228</strong>
+</td>
+<td>
+<strong>0.512</strong>
+</td>
+<td>
+<strong>0.514</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

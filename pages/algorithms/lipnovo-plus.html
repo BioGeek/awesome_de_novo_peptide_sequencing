@@ -199,6 +199,2231 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Live stars, open issues and last-push figures are on the <a href="../../index.html#code-activity">Code activity chart</a>.</p>
 </section>
+<section id="reported-comparisons-8" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-8">Reported comparisons (8)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table2-hc-pt" class="level3">
+<h3 class="anchored" data-anchor-id="table2-hc-pt">Table2 (HC-PT)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 15: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in amino acid-level and peptide-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.531
+</td>
+<td>
+0.534
+</td>
+<td>
+0.313
+</td>
+<td>
+0.255
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.623
+</td>
+<td>
+0.622
+</td>
+<td>
+0.419
+</td>
+<td>
+0.373
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.442
+</td>
+<td>
+0.453
+</td>
+<td>
+0.211
+</td>
+<td>
+0.177
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.442
+</td>
+<td>
+0.451
+</td>
+<td>
+0.212
+</td>
+<td>
+0.178
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.588
+</td>
+<td>
+0.582
+</td>
+<td>
+0.356
+</td>
+<td>
+0.318
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.289
+</td>
+<td>
+0.285
+</td>
+<td>
+0.057
+</td>
+<td>
+0.034
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.652
+</td>
+<td>
+<u>0.658</u>
+</td>
+<td>
+0.447
+</td>
+<td>
+0.413
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.651
+</td>
+<td>
+0.648
+</td>
+<td>
+<u>0.467</u>
+</td>
+<td>
+<u>0.436</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.654</u>
+</td>
+<td>
+0.654
+</td>
+<td>
+0.458
+</td>
+<td>
+0.434
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.525
+</td>
+<td>
+0.530
+</td>
+<td>
+0.324
+</td>
+<td>
+0.290
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.637
+</td>
+<td>
+0.643
+</td>
+<td>
+0.458
+</td>
+<td>
+0.427
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.698</strong>
+</td>
+<td>
+<strong>0.694</strong>
+</td>
+<td>
+<strong>0.519</strong>
+</td>
+<td>
+<strong>0.490</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: precision / amino acid: the original table underlined LIPNovo (Ours) (0.637).</small>
+</p>
+</section>
+<section id="table2-nine-species" class="level3">
+<h3 class="anchored" data-anchor-id="table2-nine-species">Table2 (Nine-species)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 15: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in amino acid-level and peptide-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.748
+</td>
+<td>
+</td>
+<td>
+0.428
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.696
+</td>
+<td>
+0.638
+</td>
+<td>
+0.428
+</td>
+<td>
+0.376
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.740
+</td>
+<td>
+0.671
+</td>
+<td>
+0.480
+</td>
+<td>
+0.436
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.697
+</td>
+<td>
+0.696
+</td>
+<td>
+0.481
+</td>
+<td>
+0.439
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.698
+</td>
+<td>
+0.709
+</td>
+<td>
+0.505
+</td>
+<td>
+0.469
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.765
+</td>
+<td>
+0.758
+</td>
+<td>
+0.517
+</td>
+<td>
+0.453
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.420
+</td>
+<td>
+0.395
+</td>
+<td>
+0.164
+</td>
+<td>
+0.123
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.748
+</td>
+<td>
+0.746
+</td>
+<td>
+0.550
+</td>
+<td>
+0.489
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.770
+</td>
+<td>
+0.769
+</td>
+<td>
+0.568
+</td>
+<td>
+0.528
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.791
+</td>
+<td>
+0.789
+</td>
+<td>
+0.565
+</td>
+<td>
+0.536
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.741
+</td>
+<td>
+0.740
+</td>
+<td>
+0.529
+</td>
+<td>
+0.493
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.797</u>
+</td>
+<td>
+<u>0.797</u>
+</td>
+<td>
+<u>0.582</u>
+</td>
+<td>
+<u>0.547</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.831</strong>
+</td>
+<td>
+<strong>0.831</strong>
+</td>
+<td>
+<strong>0.637</strong>
+</td>
+<td>
+<strong>0.612</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table2-seven-species" class="level3">
+<h3 class="anchored" data-anchor-id="table2-seven-species">Table2 (Seven-species)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 15: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in amino acid-level and peptide-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.492
+</td>
+<td>
+0.433
+</td>
+<td>
+0.204
+</td>
+<td>
+0.136
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.196
+</td>
+<td>
+0.169
+</td>
+<td>
+0.022
+</td>
+<td>
+0.007
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.322
+</td>
+<td>
+0.327
+</td>
+<td>
+0.119
+</td>
+<td>
+0.084
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.379
+</td>
+<td>
+0.385
+</td>
+<td>
+0.174
+</td>
+<td>
+0.135
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.481
+</td>
+<td>
+0.472
+</td>
+<td>
+0.234
+</td>
+<td>
+0.173
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.192
+</td>
+<td>
+0.176
+</td>
+<td>
+0.031
+</td>
+<td>
+0.009
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.489
+</td>
+<td>
+0.488
+</td>
+<td>
+0.259
+</td>
+<td>
+0.174
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="renovo.html">ReNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.512
+</td>
+<td>
+0.514
+</td>
+<td>
+0.278
+</td>
+<td>
+0.228
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffunovo.html">DiffuNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.437
+</td>
+<td>
+0.435
+</td>
+<td>
+0.193
+</td>
+<td>
+0.162
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.357
+</td>
+<td>
+0.366
+</td>
+<td>
+0.159
+</td>
+<td>
+0.119
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.557</u>
+</td>
+<td>
+<u>0.560</u>
+</td>
+<td>
+<u>0.327</u>
+</td>
+<td>
+<u>0.281</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.619</strong>
+</td>
+<td>
+<strong>0.622</strong>
+</td>
+<td>
+<strong>0.383</strong>
+</td>
+<td>
+<strong>0.337</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table3-hc-pt" class="level3">
+<h3 class="anchored" data-anchor-id="table3-hc-pt">Table3 (HC-PT)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 16: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in PTM-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.626
+</td>
+<td>
+0.615
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.676
+</td>
+<td>
+0.740
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.350
+</td>
+<td>
+0.261
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.501
+</td>
+<td>
+0.460
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.552
+</td>
+<td>
+0.482
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.568
+</td>
+<td>
+0.667
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.715
+</td>
+<td>
+<u>0.772</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.550
+</td>
+<td>
+0.582
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.732</u>
+</td>
+<td>
+0.745
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.757</strong>
+</td>
+<td>
+<strong>0.805</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: recall / ptm: the original table underlined SearchNovo[22] (0.772), LIPNovo (0.745).</small>
+</p>
+</section>
+<section id="table3-nine-species" class="level3">
+<h3 class="anchored" data-anchor-id="table3-nine-species">Table3 (Nine-species)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 16: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in PTM-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.576
+</td>
+<td>
+0.529
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.629
+</td>
+<td>
+0.546
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.443
+</td>
+<td>
+0.294
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.706
+</td>
+<td>
+0.566
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.652
+</td>
+<td>
+0.570
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.680
+</td>
+<td>
+0.598
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.764
+</td>
+<td>
+0.599
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.755
+</td>
+<td>
+0.601
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.765</u>
+</td>
+<td>
+<u>0.656</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.801</strong>
+</td>
+<td>
+<strong>0.678</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table3-seven-species" class="level3">
+<h3 class="anchored" data-anchor-id="table3-seven-species">Table3 (Seven-species)</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 16: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in PTM-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.391
+</td>
+<td>
+0.373
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.117
+</td>
+<td>
+0.094
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.126
+</td>
+<td>
+0.115
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.360
+</td>
+<td>
+0.251
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.448
+</td>
+<td>
+0.321
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.473
+</td>
+<td>
+0.366
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="searchnovo.html">SearchNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.472
+</td>
+<td>
+0.447
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.368
+</td>
+<td>
+0.292
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.604</u>
+</td>
+<td>
+<u>0.498</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.648</strong>
+</td>
+<td>
+<strong>0.561</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table4" class="level3">
+<h3 class="anchored" data-anchor-id="table4">Table4</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 17: <em>Leave-one-out cross-validation on the Nine-species dataset.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="6">
+Bacillus subtilis
+</th>
+<th colspan="6">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="6">
+Apis mellifera
+</th>
+<th colspan="6">
+Homo sapiens
+</th>
+<th colspan="6">
+Methanosarcina mazei
+</th>
+<th colspan="6">
+Mus musculus
+</th>
+<th colspan="6">
+Vigna mungo
+</th>
+<th colspan="6">
+Solanum lycopersicum
+</th>
+<th colspan="6">
+Mean
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>ptm</small>
+</th>
+<th>
+Recall<br><small>ptm</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.743
+</td>
+<td>
+0.745
+</td>
+<td>
+0.559
+</td>
+<td>
+0.523
+</td>
+<td>
+0.797
+</td>
+<td>
+0.689
+</td>
+<td>
+0.754
+</td>
+<td>
+0.752
+</td>
+<td>
+0.544
+</td>
+<td>
+0.509
+</td>
+<td>
+0.742
+</td>
+<td>
+0.591
+</td>
+<td>
+0.761
+</td>
+<td>
+0.757
+</td>
+<td>
+0.554
+</td>
+<td>
+0.519
+</td>
+<td>
+0.762
+</td>
+<td>
+0.624
+</td>
+<td>
+0.769
+</td>
+<td>
+0.770
+</td>
+<td>
+0.575
+</td>
+<td>
+0.540
+</td>
+<td>
+<u>0.784</u>
+</td>
+<td>
+0.612
+</td>
+<td>
+0.754
+</td>
+<td>
+0.754
+</td>
+<td>
+0.558
+</td>
+<td>
+0.532
+</td>
+<td>
+0.779
+</td>
+<td>
+0.582
+</td>
+<td>
+0.753
+</td>
+<td>
+0.752
+</td>
+<td>
+0.558
+</td>
+<td>
+0.521
+</td>
+<td>
+0.799
+</td>
+<td>
+0.608
+</td>
+<td>
+0.753
+</td>
+<td>
+0.755
+</td>
+<td>
+0.549
+</td>
+<td>
+0.510
+</td>
+<td>
+0.760
+</td>
+<td>
+0.593
+</td>
+<td>
+0.717
+</td>
+<td>
+0.716
+</td>
+<td>
+0.506
+</td>
+<td>
+0.464
+</td>
+<td>
+0.710
+</td>
+<td>
+0.540
+</td>
+<td>
+0.751
+</td>
+<td>
+0.750
+</td>
+<td>
+0.550
+</td>
+<td>
+0.515
+</td>
+<td>
+0.767
+</td>
+<td>
+0.605
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.806</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.607</u>
+</td>
+<td>
+<u>0.581</u>
+</td>
+<td>
+<u>0.855</u>
+</td>
+<td>
+<u>0.739</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.591</u>
+</td>
+<td>
+<u>0.563</u>
+</td>
+<td>
+<u>0.764</u>
+</td>
+<td>
+<u>0.647</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.806</u>
+</td>
+<td>
+<u>0.606</u>
+</td>
+<td>
+<u>0.577</u>
+</td>
+<td>
+<u>0.769</u>
+</td>
+<td>
+<u>0.675</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.596</u>
+</td>
+<td>
+<u>0.567</u>
+</td>
+<td>
+0.772
+</td>
+<td>
+<u>0.672</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.596</u>
+</td>
+<td>
+<u>0.565</u>
+</td>
+<td>
+<u>0.812</u>
+</td>
+<td>
+<u>0.630</u>
+</td>
+<td>
+<u>0.808</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.607</u>
+</td>
+<td>
+<u>0.579</u>
+</td>
+<td>
+<u>0.803</u>
+</td>
+<td>
+<u>0.667</u>
+</td>
+<td>
+<u>0.794</u>
+</td>
+<td>
+<u>0.796</u>
+</td>
+<td>
+<u>0.577</u>
+</td>
+<td>
+<u>0.545</u>
+</td>
+<td>
+<u>0.764</u>
+</td>
+<td>
+<u>0.634</u>
+</td>
+<td>
+<u>0.800</u>
+</td>
+<td>
+<u>0.798</u>
+</td>
+<td>
+<u>0.577</u>
+</td>
+<td>
+<u>0.544</u>
+</td>
+<td>
+<u>0.777</u>
+</td>
+<td>
+<u>0.627</u>
+</td>
+<td>
+<u>0.804</u>
+</td>
+<td>
+<u>0.804</u>
+</td>
+<td>
+<u>0.595</u>
+</td>
+<td>
+<u>0.565</u>
+</td>
+<td>
+<u>0.790</u>
+</td>
+<td>
+<u>0.661</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.845</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.669</strong>
+</td>
+<td>
+<strong>0.647</strong>
+</td>
+<td>
+<strong>0.888</strong>
+</td>
+<td>
+<strong>0.782</strong>
+</td>
+<td>
+<strong>0.843</strong>
+</td>
+<td>
+<strong>0.842</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.634</strong>
+</td>
+<td>
+<strong>0.776</strong>
+</td>
+<td>
+<strong>0.699</strong>
+</td>
+<td>
+<strong>0.849</strong>
+</td>
+<td>
+<strong>0.848</strong>
+</td>
+<td>
+<strong>0.679</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.816</strong>
+</td>
+<td>
+<strong>0.728</strong>
+</td>
+<td>
+<strong>0.851</strong>
+</td>
+<td>
+<strong>0.851</strong>
+</td>
+<td>
+<strong>0.673</strong>
+</td>
+<td>
+<strong>0.651</strong>
+</td>
+<td>
+<strong>0.835</strong>
+</td>
+<td>
+<strong>0.696</strong>
+</td>
+<td>
+<strong>0.841</strong>
+</td>
+<td>
+<strong>0.840</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.632</strong>
+</td>
+<td>
+<strong>0.827</strong>
+</td>
+<td>
+<strong>0.707</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.843</strong>
+</td>
+<td>
+<strong>0.658</strong>
+</td>
+<td>
+<strong>0.633</strong>
+</td>
+<td>
+<strong>0.834</strong>
+</td>
+<td>
+<strong>0.703</strong>
+</td>
+<td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.653</strong>
+</td>
+<td>
+<strong>0.628</strong>
+</td>
+<td>
+<strong>0.841</strong>
+</td>
+<td>
+<strong>0.703</strong>
+</td>
+<td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.838</strong>
+</td>
+<td>
+<strong>0.652</strong>
+</td>
+<td>
+<strong>0.626</strong>
+</td>
+<td>
+<strong>0.824</strong>
+</td>
+<td>
+<strong>0.704</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.843</strong>
+</td>
+<td>
+<strong>0.662</strong>
+</td>
+<td>
+<strong>0.639</strong>
+</td>
+<td>
+<strong>0.830</strong>
+</td>
+<td>
+<strong>0.715</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table5" class="level3">
+<h3 class="anchored" data-anchor-id="table5">Table5</h3>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 18: <em>Comparison with state-of-the-art methods on GraphNovo dataset [11].</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+<a href="../datasets/graphnovo-dataset-and-checkpoint.html">GraphNovo dataset and checkpoint</a>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+AUC<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.475
+</td>
+<td>
+</td>
+<td>
+0.758
+</td>
+<td>
+0.775
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="novor.html">Novor</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.431
+</td>
+<td>
+</td>
+<td>
+0.740
+</td>
+<td>
+0.753
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.497
+</td>
+<td>
+</td>
+<td>
+0.769
+</td>
+<td>
+0.771
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.601
+</td>
+<td>
+</td>
+<td>
+0.815
+</td>
+<td>
+0.816
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.605
+</td>
+<td>
+</td>
+<td>
+0.684
+</td>
+<td>
+0.684
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="graphnovo.html">GraphNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.712
+</td>
+<td>
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+0.874
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.729</u>
+</td>
+<td>
+0.707
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+<u>0.882</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.740</strong>
+</td>
+<td>
+<strong>0.720</strong>
+</td>
+<td>
+<strong>0.889</strong>
+</td>
+<td>
+<strong>0.891</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

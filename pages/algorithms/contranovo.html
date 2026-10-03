@@ -235,6 +235,527 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
+<section id="reported-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-1" class="level3">
+<h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
+<p><a href="../publications/contranovo-a-contrastive-learning-approach-to-enhance-de-novo-peptide-sequencing.html">ContraNovo: A Contrastive Learning Approach to Enhance De Novo Peptide Sequencing</a>, page 6: <em>Comparison of the performance of ContraNovo and five baseline methods on 9-species-V1 test set. The bold font indicates the best performance.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="2">
+Mus musculus
+</th>
+<th colspan="2">
+Homo sapiens
+</th>
+<th colspan="2">
+Saccharomyces cerevisiae
+</th>
+<th colspan="2">
+Methanosarcina mazei
+</th>
+<th colspan="2">
+Apis mellifera
+</th>
+<th colspan="2">
+Solanum lycopersicum
+</th>
+<th colspan="2">
+Vigna mungo
+</th>
+<th colspan="2">
+Bacillus subtilis
+</th>
+<th colspan="2">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="2">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.600
+</td>
+<td>
+0.197
+</td>
+<td>
+0.639
+</td>
+<td>
+0.277
+</td>
+<td>
+0.748
+</td>
+<td>
+0.428
+</td>
+<td>
+0.673
+</td>
+<td>
+0.356
+</td>
+<td>
+0.633
+</td>
+<td>
+0.287
+</td>
+<td>
+0.728
+</td>
+<td>
+0.403
+</td>
+<td>
+0.644
+</td>
+<td>
+0.362
+</td>
+<td>
+0.719
+</td>
+<td>
+0.387
+</td>
+<td>
+0.586
+</td>
+<td>
+0.203
+</td>
+<td>
+0.663
+</td>
+<td>
+0.322
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.623
+</td>
+<td>
+0.286
+</td>
+<td>
+0.610
+</td>
+<td>
+0.293
+</td>
+<td>
+0.750
+</td>
+<td>
+0.462
+</td>
+<td>
+0.694
+</td>
+<td>
+0.422
+</td>
+<td>
+0.630
+</td>
+<td>
+0.330
+</td>
+<td>
+0.731
+</td>
+<td>
+0.454
+</td>
+<td>
+0.679
+</td>
+<td>
+0.436
+</td>
+<td>
+0.742
+</td>
+<td>
+0.449
+</td>
+<td>
+0.602
+</td>
+<td>
+0.253
+</td>
+<td>
+0.673
+</td>
+<td>
+0.376
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.626
+</td>
+<td>
+0.355
+</td>
+<td>
+0.606
+</td>
+<td>
+0.351
+</td>
+<td>
+<u>0.779</u>
+</td>
+<td>
+0.534
+</td>
+<td>
+0.712
+</td>
+<td>
+0.478
+</td>
+<td>
+0.644
+</td>
+<td>
+0.396
+</td>
+<td>
+0.733
+</td>
+<td>
+0.513
+</td>
+<td>
+0.730
+</td>
+<td>
+0.511
+</td>
+<td>
+0.768
+</td>
+<td>
+0.518
+</td>
+<td>
+0.589
+</td>
+<td>
+0.298
+</td>
+<td>
+0.687
+</td>
+<td>
+0.439
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.689
+</td>
+<td>
+0.426
+</td>
+<td>
+0.586
+</td>
+<td>
+0.341
+</td>
+<td>
+0.684
+</td>
+<td>
+0.490
+</td>
+<td>
+0.679
+</td>
+<td>
+0.478
+</td>
+<td>
+0.629
+</td>
+<td>
+0.406
+</td>
+<td>
+0.721
+</td>
+<td>
+0.521
+</td>
+<td>
+0.668
+</td>
+<td>
+0.506
+</td>
+<td>
+0.749
+</td>
+<td>
+0.537
+</td>
+<td>
+0.603
+</td>
+<td>
+0.330
+</td>
+<td>
+0.667
+</td>
+<td>
+0.448
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.760</u>
+</td>
+<td>
+<u>0.483</u>
+</td>
+<td>
+<u>0.676</u>
+</td>
+<td>
+<u>0.446</u>
+</td>
+<td>
+0.752
+</td>
+<td>
+<u>0.599</u>
+</td>
+<td>
+<u>0.755</u>
+</td>
+<td>
+<u>0.557</u>
+</td>
+<td>
+<u>0.706</u>
+</td>
+<td>
+<u>0.493</u>
+</td>
+<td>
+<u>0.785</u>
+</td>
+<td>
+<u>0.618</u>
+</td>
+<td>
+<u>0.748</u>
+</td>
+<td>
+<u>0.589</u>
+</td>
+<td>
+<u>0.790</u>
+</td>
+<td>
+<u>0.622</u>
+</td>
+<td>
+<u>0.681</u>
+</td>
+<td>
+<u>0.446</u>
+</td>
+<td>
+<u>0.739</u>
+</td>
+<td>
+<u>0.539</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.798</strong>
+</td>
+<td>
+<strong>0.567</strong>
+</td>
+<td>
+<strong>0.771</strong>
+</td>
+<td>
+<strong>0.622</strong>
+</td>
+<td>
+<strong>0.797</strong>
+</td>
+<td>
+<strong>0.674</strong>
+</td>
+<td>
+<strong>0.799</strong>
+</td>
+<td>
+<strong>0.630</strong>
+</td>
+<td>
+<strong>0.745</strong>
+</td>
+<td>
+<strong>0.576</strong>
+</td>
+<td>
+<strong>0.810</strong>
+</td>
+<td>
+<strong>0.672</strong>
+</td>
+<td>
+<strong>0.807</strong>
+</td>
+<td>
+<strong>0.677</strong>
+</td>
+<td>
+<strong>0.828</strong>
+</td>
+<td>
+<strong>0.688</strong>
+</td>
+<td>
+<strong>0.711</strong>
+</td>
+<td>
+<strong>0.486</strong>
+</td>
+<td>
+<strong>0.785</strong>
+</td>
+<td>
+<strong>0.621</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

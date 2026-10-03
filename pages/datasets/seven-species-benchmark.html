@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="pNovo 3: algorithm · Learning-to-rank. Learning-to-rank + pDeep">
+<meta name="description" content="DeepNovo’s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both…">
 
-<title>pNovo 3 – Awesome De Novo Peptide Sequencing</title>
+<title>Seven-species benchmark – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -79,10 +79,10 @@ ul.task-list li input[type="checkbox"] {
      instead. (No count here on purpose: the page total moves with
      the data, and nothing checks a number buried in an HTML
      comment.) -->
-<meta property="og:title" content="pNovo 3 – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="pNovo 3: algorithm · Learning-to-rank. Learning-to-rank + pDeep">
+<meta property="og:title" content="Seven-species benchmark – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="DeepNovo’s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both…">
 <style>#title-block-header .description { display: none; }</style>
-<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/pnovo-3.html">
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/seven-species-benchmark.html">
 
 
 </head>
@@ -148,13 +148,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">pNovo 3</h1>
-<p class="subtitle lead">algorithm · Learning-to-rank</p>
+<h1 class="title">Seven-species benchmark</h1>
+<p class="subtitle lead">benchmark · DDA · 2 versions · 14 papers</p>
 </div>
 
 <div>
   <div class="description">
-    pNovo 3: algorithm · Learning-to-rank. Learning-to-rank + pDeep
+    DeepNovo’s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both…
   </div>
 </div>
 
@@ -171,339 +171,83 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Learning-to-rank + pDeep</p>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","description":"DeepNovo's LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both come from Tran et al. 2017 and papers name them side by side.","name":"Seven-species benchmark"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Kind</td>
-<td>algorithm</td>
+<td>benchmark</td>
 </tr>
 <tr class="even">
-<td>Deep learning</td>
-<td>no</td>
-</tr>
-<tr class="odd">
 <td>Acquisition</td>
 <td>DDA</td>
 </tr>
-<tr class="even">
-<td>Family</td>
-<td><a href="../families/learning-to-rank.html">Learning-to-rank</a></td>
-</tr>
 </tbody>
 </table>
-<section id="code" class="level2">
-<h2 class="anchored" data-anchor-id="code">Code</h2>
+<p>DeepNovo’s LOW-resolution evaluation set, assembled from seven earlier publications and scored leave-one-out: train on six species, test on the seventh. Distinct data from the high-resolution nine-species benchmark, not a version of it, though both come from Tran et al.&nbsp;2017 and papers name them side by side.</p>
+<section id="versions" class="level2">
+<h2 class="anchored" data-anchor-id="versions">Versions</h2>
+<section id="original-deepnovo-2017" class="level3">
+<h3 class="anchored" data-anchor-id="original-deepnovo-2017">original (DeepNovo, 2017)</h3>
+<p>The low-resolution seven-species set as DeepNovo defined and used it, scored leave-one-out over the seven species. No single accession is published for it: the seven constituent datasets come from seven separate prior publications.</p>
+<p>introduced by <a href="../publications/de-novo-peptide-sequencing-by-deep-learning.html">De novo peptide sequencing by deep learning</a></p>
+<p>No public address: this version is named in the literature but cannot be downloaded.</p>
+</section>
+<section id="novobench-split" class="level3">
+<h3 class="anchored" data-anchor-id="novobench-split">NovoBench split</h3>
+<p>NovoBench’s fixed split: yeast held out as the test species and the other six used for training, 3 PTMs, mean peptide length 15.79. This is the split NovoBench retrains every architecture on, so a number reported “on seven-species” by a NovoBench-derived paper means this and not DeepNovo’s own leave-one-out.</p>
+<p>train 317,009 · validation 17,740 · test 17,094 · introduced by <a href="../publications/novobench-benchmarking-deep-learning-based-de-novo-peptide-sequencing-methods.html">NovoBench: Benchmarking Deep Learning-based De Novo Peptide Sequencing Methods in Proteomics</a></p>
+<p>No public address: this version is named in the literature but cannot be downloaded.</p>
+</section>
+</section>
+<section id="deposited-by-2" class="level2">
+<h2 class="anchored" data-anchor-id="deposited-by-2">Deposited by (2)</h2>
+<p>Each of these introduced a DIFFERENT version, listed beside it; a deposit itself happens once.</p>
 <ul>
-<li><a href="http://pfind.org/software/pNovo/index.html" class="uri">http://pfind.org/software/pNovo/index.html</a></li>
-</ul>
-<p>Not tracked on the Code activity chart: those figures come from the GitHub API, and this link is not a public GitHub repository.</p>
-</section>
-<section id="reported-comparisons-3" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
-<section id="table2-nine-species" class="level3">
-<h3 class="anchored" data-anchor-id="table2-nine-species">Table2 (Nine-species)</h3>
-<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
-<div class="table-responsive">
-<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
-<thead>
-<tr>
-<th colspan="2" rowspan="2">
-<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Apis mellifera
-</th>
-</tr>
-<tr>
-<th>
-Recall<br><small>peptide</small>
-</th>
-<th>
-Recall<br><small>peptide</small>
-</th>
-<th>
-Recall<br><small>peptide</small>
-</th>
-<th>
-Recall<br><small>peptide</small>
-</th>
-<th>
-Recall<br><small>peptide</small>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<strong>0.646</strong>
-</td>
-<td>
-<strong>0.504</strong>
-</td>
-<td>
-<strong>0.660</strong>
-</td>
-<td>
-<strong>0.647</strong>
-</td>
-<td>
-<strong>0.625</strong>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-0.429
-</td>
-<td>
-<u>0.257</u>
-</td>
-<td>
-<u>0.424</u>
-</td>
-<td>
-0.477
-</td>
-<td>
-0.367
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<u>0.443</u>
-</td>
-<td>
-0.249
-</td>
-<td>
-<u>0.424</u>
-</td>
-<td>
-<u>0.500</u>
-</td>
-<td>
-<u>0.380</u>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="novor.html">Novor</a>
-</th>
-<td>
-<small>unclear</small>
-</td>
-<td>
-0.174
-</td>
-<td>
-0.097
-</td>
-<td>
-0.191
-</td>
-<td>
-0.191
-</td>
-<td>
-0.137
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="table2-qe_hf_x1" class="level3">
-<h3 class="anchored" data-anchor-id="table2-qe_hf_x1">Table2 (QE_HF_X1)</h3>
-<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
-<div class="table-responsive">
-<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
-<thead>
-<tr>
-<th colspan="2" rowspan="2">
-<a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X1</small>
-</th>
-<th colspan="1">
-QE_HF_X1
-</th>
-</tr>
-<tr>
-<th>
-Recall<br><small>peptide</small>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<strong>0.478</strong>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-0.298
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<u>0.322</u>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="novor.html">Novor</a>
-</th>
-<td>
-<small>unclear</small>
-</td>
-<td>
-0.109
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="table2-qe_hf_x2" class="level3">
-<h3 class="anchored" data-anchor-id="table2-qe_hf_x2">Table2 (QE_HF_X2)</h3>
-<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
-<div class="table-responsive">
-<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
-<thead>
-<tr>
-<th colspan="2" rowspan="2">
-<a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X2</small>
-</th>
-<th colspan="1">
-QE_HF_X2
-</th>
-</tr>
-<tr>
-<th>
-Recall<br><small>peptide</small>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<strong>0.383</strong>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-0.214
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-<u>0.246</u>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="novor.html">Novor</a>
-</th>
-<td>
-<small>unclear</small>
-</td>
-<td>
-0.093
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-</section>
-<section id="paper-describing-it" class="level2">
-<h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
-<ul>
-<li><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a> (2019, Bioinformatics, peer-reviewed)</li>
+<li><a href="../publications/novobench-benchmarking-deep-learning-based-de-novo-peptide-sequencing-methods.html">NovoBench: Benchmarking Deep Learning-based De Novo Peptide Sequencing Methods in Proteomics</a> (2024) <small>ML conference</small> <small>NovoBench split</small></li>
+<li><a href="../publications/de-novo-peptide-sequencing-by-deep-learning.html">De novo peptide sequencing by deep learning</a> (2017) <small>peer-reviewed</small> <small>original (DeepNovo, 2017)</small></li>
 </ul>
 </section>
-<section id="paper-using-it" class="level2">
-<h2 class="anchored" data-anchor-id="paper-using-it">Paper using it</h2>
-<p>An application or evaluation that ran this method. It is not counted among its authors below.</p>
+<section id="used-by-12" class="level2">
+<h2 class="anchored" data-anchor-id="used-by-12">Used by (12)</h2>
 <ul>
-<li><a href="../publications/identification-of-unknown-biological-toxin-proteins-using-mass-spectrometry-a.html">Identification of Unknown Biological Toxin Proteins Using Mass Spectrometry: A Case Study on De Novo Sequencing of Ricin</a> (2025, Toxins, peer-reviewed)</li>
+<li><a href="../publications/pi-mnovo-improves-de-novo-peptide-sequencing-through-microbial-domain.html">π-MNovo improves de novo peptide sequencing through microbial-domain adaptation and evidence-guided candidate selection</a> (2026) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo.html">GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing</a> (2026) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/discrete-diffusion-with-physical-mass-constraints-for-de-novo-peptide-sequencing.html">Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing</a> (2026) <small>ML conference</small> <small>NovoBench split</small></li>
+<li><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a> (2026) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a> (2026) <small>peer-reviewed</small> <small>NovoBench split</small></li>
+<li><a href="../publications/causalnovo-advancing-de-novo-peptide-sequencing-via-a-causality-informed.html">CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework</a> (2026) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/curriculum-learning-for-biological-sequence-prediction-the-case-of-de-novo.html">Curriculum Learning for Biological Sequence Prediction: The Case of De Novo Peptide Sequencing</a> (2025) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/latent-imputation-before-prediction-a-new-computational-paradigm-for-de-novo.html">Latent Imputation before Prediction: A New Computational Paradigm for De Novo Peptide Sequencing</a> (2025) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/bridging-the-gap-between-database-search-and-de-novo-peptide-sequencing-with.html">Bridging the Gap between Database Search and De Novo Peptide Sequencing with SearchNovo</a> (2025) <small>ML conference</small> <small>NovoBench split</small></li>
+<li><a href="../publications/renovo-retrieval-based-de-novo-mass-spectrometry-peptide-sequencing.html">ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing</a> (2024) <small>ML conference</small> <small>NovoBench split</small></li>
+<li><a href="../publications/bridging-the-gap-between-database-search-and-de-novo-peptide-preprint.html">Bridging the Gap between Database Search and De Novo Peptide Sequencing with SearchNovo</a> (2024) <small>preprint</small> <small>NovoBench split</small></li>
+<li><a href="../publications/enhancing-peptide-mass-spectra-encoder-through-pretraining-using-contrastive.html">Enhancing Peptide Mass Spectra Encoder through Pretraining using Contrastive Predictive Coding</a> (2024) <small>thesis</small> <small>NovoBench split</small></li>
 </ul>
 </section>
-<section id="authors-5" class="level2">
-<h2 class="anchored" data-anchor-id="authors-5">Authors (5)</h2>
-<p><a href="../authors/hao-yang.html">Hao Yang</a>, <a href="../authors/hao-chi.html">Hao Chi</a>, <a href="../authors/wen-feng-zeng.html">Wen-Feng Zeng</a>, <a href="../authors/wen-jing-zhou.html">Wen-Jing Zhou</a>, <a href="../authors/si-min-he.html">Si-Min He</a></p>
+<section id="methods-on-these-papers-13" class="level2">
+<h2 class="anchored" data-anchor-id="methods-on-these-papers-13">Methods on these papers (13)</h2>
+<ul>
+<li><a href="../algorithms/cpc-spectrum-encoder-pretraining.html">CPC spectrum encoder pretraining</a> <small>adjacent</small></li>
+<li><a href="../algorithms/causalnovo.html">CausalNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/deepnovo.html">DeepNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/diffunovo.html">DiffuNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/gyronovo.html">GyroNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/lipnovo.html">LIPNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/lipnovo-plus.html">LIPNovo+</a> <small>algorithm</small></li>
+<li><a href="../algorithms/novobench.html">NovoBench</a> <small>benchmark</small></li>
+<li><a href="../algorithms/physnovo.html">PhysNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/renovo.html">ReNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/refinenovo.html">RefineNovo</a> <small>algorithm</small></li>
+<li><a href="../algorithms/searchnovo.html">SearchNovo</a> <small>adjacent</small></li>
+<li><a href="../algorithms/pi-mnovo.html">π-MNovo</a> <small>algorithm</small></li>
+</ul>
+<p>Taken from the describing links only, so a paper that merely ran a tool on this data does not make that tool a method of it.</p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#the-architectures">The architectures</a></li>
-<li><a href="../../index.html#models-and-the-authors-behind-them">Models and the authors behind them</a></li>
+<li><a href="../../index.html#the-data-underneath">The data underneath</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 

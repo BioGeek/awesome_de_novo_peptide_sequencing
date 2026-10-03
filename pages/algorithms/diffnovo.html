@@ -224,6 +224,341 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
+<section id="reported-comparisons-2" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-1" class="level3">
+<h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
+<p><a href="../publications/diffnovo-a-transformer-diffusion-model-for-de-novo-peptide-sequencing.html">DiffNovo: A Transformer-Diffusion Model for De Novo Peptide Sequencing</a>, page 7: <em>Comparison of DiffNovo and other state-of-the-art (SOTA) methods on amino acid recall and precision across three DIA datasets.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
+</th>
+<th colspan="2">
+UTI
+</th>
+<th colspan="2">
+OC
+</th>
+<th colspan="3">
+Plasma
+</th>
+</tr>
+<tr>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Positional accuracy<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffnovo.html">DiffNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.665</strong>
+</td>
+<td>
+<strong>0.675</strong>
+</td>
+<td>
+<strong>0.749</strong>
+</td>
+<td>
+<strong>0.743</strong>
+</td>
+<td>
+0.663
+</td>
+<td>
+0.675
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo-dia.html">DeepNovo-DIA</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.566</u>
+</td>
+<td>
+<u>0.612</u>
+</td>
+<td>
+<u>0.547</u>
+</td>
+<td>
+<u>0.601</u>
+</td>
+<td>
+<u>0.689</u>
+</td>
+<td>
+<u>0.702</u>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.396
+</td>
+<td>
+0.391
+</td>
+<td>
+0.455
+</td>
+<td>
+0.451
+</td>
+<td>
+0.509
+</td>
+<td>
+0.491
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="cascadia.html">Cascadia</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.293
+</td>
+<td>
+0.341
+</td>
+<td>
+0.286
+</td>
+<td>
+0.349
+</td>
+<td>
+<strong>0.704</strong>
+</td>
+<td>
+<strong>0.782</strong>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>quoted</small>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.725
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table-2" class="level3">
+<h3 class="anchored" data-anchor-id="table-2">Table 2</h3>
+<p><a href="../publications/diffnovo-a-transformer-diffusion-model-for-de-novo-peptide-sequencing.html">DiffNovo: A Transformer-Diffusion Model for De Novo Peptide Sequencing</a>, page 8: <em>Comparison of DiffNovo and other state-of-the-art (SOTA) methods on peptide precision across three DIA datasets.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
+</th>
+<th colspan="1">
+UTI
+</th>
+<th colspan="1">
+OC
+</th>
+<th colspan="3">
+Plasma
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Accuracy<br><small>peptide</small>
+</th>
+<th>
+Filtered accuracy<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="diffnovo.html">DiffNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.659</strong>
+</td>
+<td>
+<strong>0.735</strong>
+</td>
+<td>
+<u>0.632</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo-dia.html">DeepNovo-DIA</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.403</u>
+</td>
+<td>
+<u>0.417</u>
+</td>
+<td>
+0.351
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.296
+</td>
+<td>
+0.368
+</td>
+<td>
+0.550
+</td>
+<td>
+</td>
+<td>
+0.664
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="cascadia.html">Cascadia</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.291
+</td>
+<td>
+0.301
+</td>
+<td>
+<strong>0.736</strong>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>quoted</small>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.530
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

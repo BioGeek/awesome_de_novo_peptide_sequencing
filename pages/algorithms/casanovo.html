@@ -281,6 +281,566 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
+<section id="reported-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table2" class="level3">
+<h3 class="anchored" data-anchor-id="table2">Table2</h3>
+<p><a href="../publications/de-novo-mass-spectrometry-peptide-sequencing-with-a-transformer-model-preprint.html">De novo mass spectrometry peptide sequencing with a transformer model</a>, page 6: <em>Empirical comparison of Casanovo, DeepNovo and PointNovo. The table lists the peptide-level and amino acid-level precision of three competing models and coverage of Casanovo with precursor m/z filtering on all nine benchmark cross-validation folds. Each fold’s test set contains spectra from a single species, with nearly disjoint sets of peptides between species. For cross-validation folds corresponding to mouse and human, five models were trained with different random initializations. For these species, we report standard deviation of the performance measures.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="5">
+Mus musculus
+</th>
+<th colspan="5">
+Homo sapiens
+</th>
+<th colspan="5">
+Saccharomyces cerevisiae
+</th>
+<th colspan="5">
+Methanosarcina mazei
+</th>
+<th colspan="5">
+Apis mellifera
+</th>
+<th colspan="5">
+Solanum lycopersicum
+</th>
+<th colspan="5">
+Vigna mungo
+</th>
+<th colspan="5">
+Bacillus subtilis
+</th>
+<th colspan="5">
+Candidatus Thiodiazotropha endoloripes
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Coverage<br><small>peptide</small>
+</th>
+<th>
+Precision at coverage 1<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision at coverage 1<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.286
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.623
+</td>
+<td>
+</td>
+<td>
+0.293
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.610</u>
+</td>
+<td>
+</td>
+<td>
+0.462
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.750
+</td>
+<td>
+</td>
+<td>
+0.422
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.694
+</td>
+<td>
+</td>
+<td>
+0.330
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.630
+</td>
+<td>
+</td>
+<td>
+0.454
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.731
+</td>
+<td>
+</td>
+<td>
+0.436
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.679
+</td>
+<td>
+</td>
+<td>
+0.449
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.742
+</td>
+<td>
+</td>
+<td>
+0.253
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.602</u>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.355</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.626</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.351</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.606
+</td>
+<td>
+</td>
+<td>
+<u>0.534</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.779</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.478</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.712</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.396</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.644</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.513</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.733</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.511</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.730</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.518</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.768</u>
+</td>
+<td>
+</td>
+<td>
+<u>0.298</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.589
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.665</strong>
+</td>
+<td>
+0.666
+</td>
+<td>
+0.443
+</td>
+<td>
+<strong>0.899</strong>
+</td>
+<td>
+0.562
+</td>
+<td>
+<strong>0.683</strong>
+</td>
+<td>
+0.537
+</td>
+<td>
+0.367
+</td>
+<td>
+<strong>0.898</strong>
+</td>
+<td>
+0.424
+</td>
+<td>
+<strong>0.824</strong>
+</td>
+<td>
+0.681
+</td>
+<td>
+0.561
+</td>
+<td>
+<strong>0.952</strong>
+</td>
+<td>
+0.591
+</td>
+<td>
+<strong>0.771</strong>
+</td>
+<td>
+0.630
+</td>
+<td>
+0.486
+</td>
+<td>
+<strong>0.935</strong>
+</td>
+<td>
+0.518
+</td>
+<td>
+<strong>0.732</strong>
+</td>
+<td>
+0.557
+</td>
+<td>
+0.408
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+0.461
+</td>
+<td>
+<strong>0.771</strong>
+</td>
+<td>
+0.557
+</td>
+<td>
+0.460
+</td>
+<td>
+<strong>0.929</strong>
+</td>
+<td>
+0.471
+</td>
+<td>
+<strong>0.798</strong>
+</td>
+<td>
+0.547
+</td>
+<td>
+0.437
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+0.442
+</td>
+<td>
+<strong>0.805</strong>
+</td>
+<td>
+0.671
+</td>
+<td>
+0.540
+</td>
+<td>
+<strong>0.943</strong>
+</td>
+<td>
+0.573
+</td>
+<td>
+<strong>0.695</strong>
+</td>
+<td>
+0.534
+</td>
+<td>
+0.371
+</td>
+<td>
+<strong>0.908</strong>
+</td>
+<td>
+0.405
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="papers-describing-it-7" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-7">Papers describing it (7)</h2>
 <ul>
