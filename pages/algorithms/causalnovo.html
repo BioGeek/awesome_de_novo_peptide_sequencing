@@ -201,7 +201,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-8" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-8">Reported comparisons (8)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table1-hc-pt">Table1 (HC-PT)</h3>
 <p><a href="../publications/causalnovo-advancing-de-novo-peptide-sequencing-via-a-causality-informed.html">CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework</a>, page 6: <em>Comparison with state-of-the-art models in amino acid-level and peptide-level performance. † denotes our retrained results, and others are provided by NovoBench. The best results are marked in bold, and the second-best results are underlined.</em></p>
@@ -209,31 +209,28 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo(Tranetal.,2017)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.531
 </td>
@@ -249,11 +246,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo(Qiaoetal.,2021)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.623
 </td>
@@ -269,11 +263,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo(Eloffetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.289
 </td>
@@ -289,11 +280,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo(Xiaetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.652</u>
 </td>
@@ -309,11 +297,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo(Yilmazetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.442
 </td>
@@ -329,11 +314,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo(Yilmazetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.525
 </td>
@@ -352,9 +334,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.635
 </td>
 <td>
@@ -369,11 +348,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo(Xiaetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.442
 </td>
@@ -389,11 +365,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo(Xiaetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.492
 </td>
@@ -412,9 +385,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.634
 </td>
 <td>
@@ -429,11 +399,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo(Yangetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.588
 </td>
@@ -449,11 +416,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo(Yangetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.532
 </td>
@@ -471,9 +435,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.656</strong>
 </td>
@@ -498,31 +459,28 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="the table's legend marks 'PEAKS(Maetal.,2003)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.748
 </td>
@@ -536,11 +494,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo(Tranetal.,2017)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.696
 </td>
@@ -556,11 +511,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo(Qiaoetal.,2021)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.740
 </td>
@@ -576,11 +528,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo(Eloffetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.420
 </td>
@@ -596,11 +545,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo(Xiaetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.748
 </td>
@@ -616,11 +562,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo(Yilmazetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.697
 </td>
@@ -636,11 +579,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo(Yilmazetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.741
 </td>
@@ -659,9 +599,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.765</u>
 </td>
 <td>
@@ -676,11 +613,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo(Xiaetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.698
 </td>
@@ -696,11 +630,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo(Xiaetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.681
 </td>
@@ -719,9 +650,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.744
 </td>
 <td>
@@ -736,11 +664,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo(Yangetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.765</u>
 </td>
@@ -756,11 +681,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo(Yangetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.765</u>
 </td>
@@ -778,9 +700,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.787</strong>
 </td>
@@ -805,31 +724,28 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo(Tranetal.,2017)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.492</u>
 </td>
@@ -845,11 +761,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo(Qiaoetal.,2021)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.196
 </td>
@@ -865,11 +778,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo(Eloffetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.192
 </td>
@@ -885,11 +795,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo(Xiaetal.,2025)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.489
 </td>
@@ -905,11 +812,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo(Yilmazetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.322
 </td>
@@ -925,11 +829,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo(Yilmazetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.357
 </td>
@@ -948,9 +849,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.477
 </td>
 <td>
@@ -965,11 +863,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo(Xiaetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.379
 </td>
@@ -985,11 +880,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo(Xiaetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.403
 </td>
@@ -1008,9 +900,6 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.453
 </td>
 <td>
@@ -1025,11 +914,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo(Yangetal.,2024)'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.481
 </td>
@@ -1045,11 +931,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo(Yangetal.,2024)'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.465
 </td>
@@ -1067,9 +950,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.536</strong>
 </td>
@@ -1094,25 +974,22 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.626
 </td>
@@ -1122,11 +999,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.676
 </td>
@@ -1136,11 +1010,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.350
 </td>
@@ -1150,11 +1021,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.715</u>
 </td>
@@ -1164,11 +1032,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.501
 </td>
@@ -1178,11 +1043,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.550
 </td>
@@ -1195,9 +1057,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.671
 </td>
 <td>
@@ -1206,11 +1065,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.552
 </td>
@@ -1220,11 +1076,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.562
 </td>
@@ -1237,9 +1090,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.652
 </td>
 <td>
@@ -1248,11 +1098,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.568
 </td>
@@ -1262,11 +1109,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.632
 </td>
@@ -1278,9 +1122,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.737</strong>
 </td>
@@ -1299,25 +1140,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.576
 </td>
@@ -1327,11 +1165,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.629
 </td>
@@ -1341,11 +1176,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.443
 </td>
@@ -1355,11 +1187,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.764
 </td>
@@ -1369,11 +1198,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.706
 </td>
@@ -1383,11 +1209,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.755
 </td>
@@ -1400,9 +1223,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.791</strong>
 </td>
 <td>
@@ -1411,11 +1231,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.652
 </td>
@@ -1425,11 +1242,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.678
 </td>
@@ -1442,9 +1256,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.769</u>
 </td>
 <td>
@@ -1453,11 +1264,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.680
 </td>
@@ -1467,11 +1275,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.723
 </td>
@@ -1483,9 +1288,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.731
 </td>
@@ -1504,25 +1306,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="the table's legend marks 'DeepNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.391
 </td>
@@ -1532,11 +1331,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="the table's legend marks 'PointNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.117
 </td>
@@ -1546,11 +1342,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="the table's legend marks 'InstaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.126
 </td>
@@ -1560,11 +1353,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="searchnovo.html">SearchNovo</a>
+<a href="searchnovo.html">SearchNovo</a> <small class="text-muted" title="the table's legend marks 'SearchNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.472
 </td>
@@ -1574,11 +1364,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks 'CasaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.360
 </td>
@@ -1588,11 +1375,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.368
 </td>
@@ -1605,9 +1389,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.503</u>
 </td>
 <td>
@@ -1616,11 +1397,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks 'AdaNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.448
 </td>
@@ -1630,11 +1408,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="the table's legend marks '†AdaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.430
 </td>
@@ -1647,9 +1422,6 @@ Recall<br><small>ptm</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †AdaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.469
 </td>
 <td>
@@ -1658,11 +1430,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks 'π-HelixNovo'">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.473
 </td>
@@ -1672,11 +1441,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="the table's legend marks '†π-HelixNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.362
 </td>
@@ -1688,9 +1454,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="causalnovo.html">CausalNovo</a> <small>on †π-HelixNovo</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.513</strong>
 </td>
@@ -1709,233 +1472,218 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="4">
-Bacillus subtilis
+<th colspan="8" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="4">
-Candidatus Thiodiazotropha endoloripes
+<th colspan="8" style="text-align:center">
+Amino acid recall
 </th>
-<th colspan="4">
-Apis mellifera
+<th colspan="8" style="text-align:center">
+Peptide precision
 </th>
-<th colspan="4">
-Homo sapiens
-</th>
-<th colspan="4">
-Methanosarcina mazei
-</th>
-<th colspan="4">
-Mus musculus
-</th>
-<th colspan="4">
-Vigna mungo
-</th>
-<th colspan="4">
-Solanum lycopersicum
+<th colspan="8" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="the table's legend marks '†CasaNovo'">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.743
 </td>
 <td>
-0.745
-</td>
-<td>
-0.559
-</td>
-<td>
-0.523
-</td>
-<td>
 0.754
-</td>
-<td>
-0.752
-</td>
-<td>
-0.544
-</td>
-<td>
-0.509
 </td>
 <td>
 0.761
 </td>
 <td>
-0.757
-</td>
-<td>
-0.554
-</td>
-<td>
-0.519
-</td>
-<td>
 0.769
 </td>
 <td>
-0.770
-</td>
-<td>
-0.575
-</td>
-<td>
-0.540
-</td>
-<td>
 0.754
-</td>
-<td>
-0.754
-</td>
-<td>
-0.558
-</td>
-<td>
-0.532
 </td>
 <td>
 0.753
 </td>
 <td>
-0.752
-</td>
-<td>
-0.558
-</td>
-<td>
-0.521
-</td>
-<td>
 0.753
-</td>
-<td>
-0.755
-</td>
-<td>
-0.549
-</td>
-<td>
-0.510
 </td>
 <td>
 0.717
 </td>
 <td>
+0.745
+</td>
+<td>
+0.752
+</td>
+<td>
+0.757
+</td>
+<td>
+0.770
+</td>
+<td>
+0.754
+</td>
+<td>
+0.752
+</td>
+<td>
+0.755
+</td>
+<td>
 0.716
 </td>
 <td>
+0.559
+</td>
+<td>
+0.544
+</td>
+<td>
+0.554
+</td>
+<td>
+0.575
+</td>
+<td>
+0.558
+</td>
+<td>
+0.558
+</td>
+<td>
+0.549
+</td>
+<td>
 0.506
+</td>
+<td>
+0.523
+</td>
+<td>
+0.509
+</td>
+<td>
+0.519
+</td>
+<td>
+0.540
+</td>
+<td>
+0.532
+</td>
+<td>
+0.521
+</td>
+<td>
+0.510
 </td>
 <td>
 0.464
@@ -1946,100 +1694,97 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.773</strong>
-</td>
-<td>
-<strong>0.774</strong>
-</td>
-<td>
-<strong>0.584</strong>
-</td>
-<td>
-<strong>0.551</strong>
 </td>
 <td>
 <strong>0.772</strong>
 </td>
 <td>
-<strong>0.773</strong>
-</td>
-<td>
-<strong>0.578</strong>
-</td>
-<td>
-<strong>0.544</strong>
-</td>
-<td>
 <strong>0.772</strong>
-</td>
-<td>
-<strong>0.774</strong>
-</td>
-<td>
-<strong>0.578</strong>
-</td>
-<td>
-<strong>0.545</strong>
 </td>
 <td>
 <strong>0.780</strong>
 </td>
 <td>
-<strong>0.779</strong>
-</td>
-<td>
-<strong>0.587</strong>
-</td>
-<td>
-<strong>0.553</strong>
-</td>
-<td>
 <strong>0.773</strong>
-</td>
-<td>
-<strong>0.776</strong>
-</td>
-<td>
-<strong>0.580</strong>
-</td>
-<td>
-<strong>0.544</strong>
 </td>
 <td>
 <strong>0.784</strong>
 </td>
 <td>
-<strong>0.782</strong>
-</td>
-<td>
-<strong>0.595</strong>
-</td>
-<td>
-<strong>0.560</strong>
-</td>
-<td>
 <strong>0.763</strong>
-</td>
-<td>
-<strong>0.763</strong>
-</td>
-<td>
-<strong>0.557</strong>
-</td>
-<td>
-<strong>0.521</strong>
 </td>
 <td>
 <strong>0.748</strong>
 </td>
 <td>
+<strong>0.774</strong>
+</td>
+<td>
+<strong>0.773</strong>
+</td>
+<td>
+<strong>0.774</strong>
+</td>
+<td>
+<strong>0.779</strong>
+</td>
+<td>
+<strong>0.776</strong>
+</td>
+<td>
+<strong>0.782</strong>
+</td>
+<td>
+<strong>0.763</strong>
+</td>
+<td>
 <strong>0.752</strong>
 </td>
 <td>
+<strong>0.584</strong>
+</td>
+<td>
+<strong>0.578</strong>
+</td>
+<td>
+<strong>0.578</strong>
+</td>
+<td>
+<strong>0.587</strong>
+</td>
+<td>
+<strong>0.580</strong>
+</td>
+<td>
+<strong>0.595</strong>
+</td>
+<td>
+<strong>0.557</strong>
+</td>
+<td>
 <strong>0.545</strong>
+</td>
+<td>
+<strong>0.551</strong>
+</td>
+<td>
+<strong>0.544</strong>
+</td>
+<td>
+<strong>0.545</strong>
+</td>
+<td>
+<strong>0.553</strong>
+</td>
+<td>
+<strong>0.544</strong>
+</td>
+<td>
+<strong>0.560</strong>
+</td>
+<td>
+<strong>0.521</strong>
 </td>
 <td>
 <strong>0.506</strong>
@@ -2056,100 +1801,94 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th colspan="4">
-Celegans
+<th colspan="6" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="4">
-Ecoli.
+<th colspan="6" style="text-align:center">
+Amino acid recall
 </th>
-<th colspan="4">
-Fruitfly
+<th colspan="6" style="text-align:center">
+Peptide precision
 </th>
-<th colspan="4">
-Homo sapiens
-</th>
-<th colspan="4">
-Mus musculus
-</th>
-<th colspan="4">
-Pseudomonas
+<th colspan="6" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Celegans</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Ecoli.</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Fruitfly</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Pseudomonas</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Celegans</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Ecoli.</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Fruitfly</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Pseudomonas</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Celegans</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Ecoli.</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Fruitfly</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Pseudomonas</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Celegans</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Ecoli.</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Fruitfly</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Pseudomonas</small>
 </th>
 </tr>
 </thead>
@@ -2159,76 +1898,73 @@ AUC<br><small>peptide</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.436
-</td>
-<td>
-0.439
-</td>
-<td>
-0.220
-</td>
-<td>
-0.174
 </td>
 <td>
 0.407
 </td>
 <td>
-0.412
-</td>
-<td>
-0.208
-</td>
-<td>
-0.165
-</td>
-<td>
 0.435
-</td>
-<td>
-0.438
-</td>
-<td>
-0.222
-</td>
-<td>
-0.179
 </td>
 <td>
 0.418
 </td>
 <td>
-0.421
-</td>
-<td>
-0.210
-</td>
-<td>
-0.167
-</td>
-<td>
 0.496
-</td>
-<td>
-0.496
-</td>
-<td>
-0.268
-</td>
-<td>
-0.223
 </td>
 <td>
 0.425
 </td>
 <td>
+0.439
+</td>
+<td>
+0.412
+</td>
+<td>
+0.438
+</td>
+<td>
+0.421
+</td>
+<td>
+0.496
+</td>
+<td>
 0.437
 </td>
 <td>
+0.220
+</td>
+<td>
+0.208
+</td>
+<td>
+0.222
+</td>
+<td>
+0.210
+</td>
+<td>
+0.268
+</td>
+<td>
 0.227
+</td>
+<td>
+0.174
+</td>
+<td>
+0.165
+</td>
+<td>
+0.179
+</td>
+<td>
+0.167
+</td>
+<td>
+0.223
 </td>
 <td>
 0.188
@@ -2239,76 +1975,73 @@ AUC<br><small>peptide</small>
 <a href="causalnovo.html">CausalNovo</a> <small>on †CasaNovo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.512</strong>
-</td>
-<td>
-<strong>0.513</strong>
-</td>
-<td>
-<strong>0.284</strong>
-</td>
-<td>
-<strong>0.234</strong>
 </td>
 <td>
 <strong>0.511</strong>
 </td>
 <td>
-<strong>0.514</strong>
-</td>
-<td>
-<strong>0.285</strong>
-</td>
-<td>
-<strong>0.241</strong>
-</td>
-<td>
 <strong>0.503</strong>
-</td>
-<td>
-<strong>0.513</strong>
-</td>
-<td>
-<strong>0.293</strong>
-</td>
-<td>
-<strong>0.250</strong>
 </td>
 <td>
 <strong>0.507</strong>
 </td>
 <td>
-<strong>0.509</strong>
-</td>
-<td>
-<strong>0.292</strong>
-</td>
-<td>
-<strong>0.247</strong>
-</td>
-<td>
 <strong>0.534</strong>
+</td>
+<td>
+<strong>0.502</strong>
+</td>
+<td>
+<strong>0.513</strong>
+</td>
+<td>
+<strong>0.514</strong>
+</td>
+<td>
+<strong>0.513</strong>
+</td>
+<td>
+<strong>0.509</strong>
 </td>
 <td>
 <strong>0.536</strong>
 </td>
 <td>
+<strong>0.502</strong>
+</td>
+<td>
+<strong>0.284</strong>
+</td>
+<td>
+<strong>0.285</strong>
+</td>
+<td>
+<strong>0.293</strong>
+</td>
+<td>
+<strong>0.292</strong>
+</td>
+<td>
 <strong>0.299</strong>
 </td>
 <td>
-<strong>0.256</strong>
-</td>
-<td>
-<strong>0.502</strong>
-</td>
-<td>
-<strong>0.502</strong>
-</td>
-<td>
 <strong>0.281</strong>
+</td>
+<td>
+<strong>0.234</strong>
+</td>
+<td>
+<strong>0.241</strong>
+</td>
+<td>
+<strong>0.250</strong>
+</td>
+<td>
+<strong>0.247</strong>
+</td>
+<td>
+<strong>0.256</strong>
 </td>
 <td>
 <strong>0.242</strong>

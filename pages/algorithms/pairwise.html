@@ -208,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-3" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table2-nine-species-original-deepnovo-2017" class="level3">
 <h3 class="anchored" data-anchor-id="table2-nine-species-original-deepnovo-2017">Table2 (Nine-species · original (DeepNovo, 2017))</h3>
 <p><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a>, page 7: <em>Peptide precision at 100% coverage as measured on the V1 and V2 of the nine-species dataset. Here, Base denotes our implementation of a standard transformer, i.e.&nbsp;without pairwise features. PA is our implementation of pairwise attention, and Casanovo is the reported numbers for Casanovo bm in the original publication7. For PA we report the average of 3 runs at seeds 0, 10, and 20, with standard deviation in parentheses.</em></p>
@@ -216,70 +216,43 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
 </th>
-<th colspan="1">
-Apis mellifera
-</th>
-<th colspan="1">
-Bacillus subtilis
-</th>
-<th colspan="1">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="1">
-Homo sapiens
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Solanum lycopersicum
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Average
+<th colspan="10" style="text-align:center">
+Peptide precision
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 </tr>
 </thead>
@@ -288,9 +261,6 @@ Precision<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pairwise.html">Pairwise</a> <small>base</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.390
 </td>
@@ -327,9 +297,6 @@ Precision<br><small>peptide</small>
 <a href="pairwise.html">Pairwise</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.463</strong>
 </td>
 <td>
@@ -362,11 +329,8 @@ Precision<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Thiscanincludeapplicationswherethesearch 100%coverageby12.7%(5.9percentagepoints) spaceisnaturallylarge,suchasimmunopeptidomics11,or over our base transformer on the original nine- theuncertaintyaroundthecontentoftheanalyzedsample speciesbenchmark.Wehavealsoachieveda7.4% makeschoosingareferenceseque">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <u>0.433</u>
 </td>
@@ -409,70 +373,43 @@ Precision<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
 </th>
-<th colspan="1">
-Apis mellifera
-</th>
-<th colspan="1">
-Bacillus subtilis
-</th>
-<th colspan="1">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="1">
-Homo sapiens
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Solanum lycopersicum
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Average
+<th colspan="10" style="text-align:center">
+Peptide precision
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 </tr>
 </thead>
@@ -481,9 +418,6 @@ Precision<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pairwise.html">Pairwise</a> <small>base</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.390
 </td>
@@ -520,9 +454,6 @@ Precision<br><small>peptide</small>
 <a href="pairwise.html">Pairwise</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.446</u>
 </td>
 <td>
@@ -555,11 +486,8 @@ Precision<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Thiscanincludeapplicationswherethesearch 100%coverageby12.7%(5.9percentagepoints) spaceisnaturallylarge,suchasimmunopeptidomics11,or over our base transformer on the original nine- theuncertaintyaroundthecontentoftheanalyzedsample speciesbenchmark.Wehavealsoachieveda7.4% makeschoosingareferenceseque">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <strong>0.456</strong>
 </td>
@@ -602,70 +530,43 @@ Precision<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
 </th>
-<th colspan="1">
-Apis mellifera
-</th>
-<th colspan="1">
-Bacillus subtilis
-</th>
-<th colspan="1">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="1">
-Homo sapiens
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Solanum lycopersicum
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Average
+<th colspan="10" style="text-align:center">
+Peptide precision at coverage 1
 </th>
 </tr>
 <tr>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Average</small>
 </th>
 </tr>
 </thead>
@@ -674,9 +575,6 @@ Precision at coverage 1<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pairwise.html">Pairwise</a> <small>base</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.618
 </td>
@@ -713,9 +611,6 @@ Precision at coverage 1<br><small>peptide</small>
 <a href="pairwise.html">Pairwise</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.640</u>
 </td>
 <td>
@@ -748,11 +643,8 @@ Precision at coverage 1<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Thiscanincludeapplicationswherethesearch 100%coverageby12.7%(5.9percentagepoints) spaceisnaturallylarge,suchasimmunopeptidomics11,or over our base transformer on the original nine- theuncertaintyaroundthecontentoftheanalyzedsample speciesbenchmark.Wehavealsoachieveda7.4% makeschoosingareferenceseque">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <strong>0.662</strong>
 </td>

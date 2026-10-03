@@ -222,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-9" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-9">Reported comparisons (9)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table1-hc-pt">Table1 (HC-PT)</h3>
 <p><a href="../publications/discrete-diffusion-with-physical-mass-constraints-for-de-novo-peptide-sequencing.html">Discrete Diffusion with Physical Mass Constraints for De Novo Peptide Sequencing</a>, page 7: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in amino acid-level and peptidelevel performance. The best results are marked in bold, and the second best are underlined.</em></p>
@@ -230,31 +230,28 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.531
 </td>
@@ -270,11 +267,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.623
 </td>
@@ -290,11 +284,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.289
 </td>
@@ -310,11 +301,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.442
 </td>
@@ -330,11 +318,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.442
 </td>
@@ -350,11 +335,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.588
 </td>
@@ -370,11 +352,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.637
 </td>
@@ -393,9 +372,6 @@ AUC<br><small>peptide</small>
 <a href="renovo.html">ReNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.651</strong>
 </td>
 <td>
@@ -410,11 +386,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.649</u>
 </td>
@@ -439,20 +412,20 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (balanced)</small>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
@@ -461,9 +434,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="peaks.html">PEAKS</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.748
 </td>
@@ -477,11 +447,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.696
 </td>
@@ -497,11 +464,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.740
 </td>
@@ -517,11 +481,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.420
 </td>
@@ -537,11 +498,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.697
 </td>
@@ -557,11 +515,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.698
 </td>
@@ -577,11 +532,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.765
 </td>
@@ -597,11 +549,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.797</u>
 </td>
@@ -620,9 +569,6 @@ AUC<br><small>peptide</small>
 <a href="pi-primenovo.html">π-PrimeNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.790
 </td>
 <td>
@@ -636,9 +582,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="renovo.html">ReNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.770
 </td>
@@ -654,11 +597,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.815</strong>
 </td>
@@ -683,31 +623,28 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.492
 </td>
@@ -723,11 +660,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.196
 </td>
@@ -743,11 +677,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.192
 </td>
@@ -763,11 +694,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.322
 </td>
@@ -783,11 +711,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.379
 </td>
@@ -803,11 +728,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.481
 </td>
@@ -823,11 +745,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.557</u>
 </td>
@@ -846,9 +765,6 @@ AUC<br><small>peptide</small>
 <a href="renovo.html">ReNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.512
 </td>
 <td>
@@ -863,11 +779,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.568</strong>
 </td>
@@ -892,25 +805,22 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.626
 </td>
@@ -920,11 +830,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.676
 </td>
@@ -934,11 +841,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.350
 </td>
@@ -948,11 +852,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.501
 </td>
@@ -962,11 +863,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.552
 </td>
@@ -976,11 +874,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.568
 </td>
@@ -990,11 +885,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.732</u>
 </td>
@@ -1004,11 +896,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.763</strong>
 </td>
@@ -1027,25 +916,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (balanced)</small>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.576
 </td>
@@ -1055,11 +941,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.629
 </td>
@@ -1069,11 +952,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.443
 </td>
@@ -1083,11 +963,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.706
 </td>
@@ -1097,11 +974,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.652
 </td>
@@ -1111,11 +985,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.680
 </td>
@@ -1125,11 +996,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.765</u>
 </td>
@@ -1139,11 +1007,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.793</strong>
 </td>
@@ -1162,25 +1027,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.391
 </td>
@@ -1190,11 +1052,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.117
 </td>
@@ -1204,11 +1063,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.126
 </td>
@@ -1218,11 +1074,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.360
 </td>
@@ -1232,11 +1085,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.448
 </td>
@@ -1246,11 +1096,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pi-helixnovo.html">π-HelixNovo</a>
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.473
 </td>
@@ -1260,11 +1107,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.604</u>
 </td>
@@ -1274,11 +1118,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.654</strong>
 </td>
@@ -1297,368 +1138,356 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="6">
-Bacillus subtilis
+<th colspan="9" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="6">
-Candidatus Thiodiazotropha endoloripes
+<th colspan="9" style="text-align:center">
+Amino acid recall
 </th>
-<th colspan="6">
-Apis mellifera
+<th colspan="9" style="text-align:center">
+Peptide precision
 </th>
-<th colspan="6">
-Homo sapiens
+<th colspan="9" style="text-align:center">
+Peptide AUC
 </th>
-<th colspan="6">
-Methanosarcina mazei
+<th colspan="9" style="text-align:center">
+PTM precision
 </th>
-<th colspan="6">
-Mus musculus
-</th>
-<th colspan="6">
-Vigna mungo
-</th>
-<th colspan="6">
-Solanum lycopersicum
-</th>
-<th colspan="6">
-Mean
+<th colspan="9" style="text-align:center">
+PTM recall
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-PTM recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
 <td>
-<small>retrained</small>
-</td>
-<td>
 0.806
 </td>
 <td>
-0.807
-</td>
-<td>
-0.607
-</td>
-<td>
-0.581
-</td>
-<td>
-0.855
-</td>
-<td>
-0.739
-</td>
-<td>
 0.805
-</td>
-<td>
-0.805
-</td>
-<td>
-0.591
-</td>
-<td>
-0.563
-</td>
-<td>
-0.764
-</td>
-<td>
-0.647
 </td>
 <td>
 0.807
 </td>
 <td>
-0.806
-</td>
-<td>
-0.606
-</td>
-<td>
-0.577
-</td>
-<td>
-0.769
-</td>
-<td>
-0.675
-</td>
-<td>
 0.805
 </td>
 <td>
-0.805
-</td>
-<td>
-0.596
-</td>
-<td>
-0.567
-</td>
-<td>
-0.772
-</td>
-<td>
-0.672
-</td>
-<td>
 0.807
-</td>
-<td>
-0.807
-</td>
-<td>
-0.596
-</td>
-<td>
-0.565
-</td>
-<td>
-0.812
-</td>
-<td>
-0.630
 </td>
 <td>
 0.808
 </td>
 <td>
-0.807
-</td>
-<td>
-0.607
-</td>
-<td>
-0.579
-</td>
-<td>
-0.803
-</td>
-<td>
-0.667
-</td>
-<td>
 0.794
-</td>
-<td>
-0.796
-</td>
-<td>
-0.577
-</td>
-<td>
-0.545
-</td>
-<td>
-0.764
-</td>
-<td>
-0.634
 </td>
 <td>
 0.800
 </td>
 <td>
+0.804
+</td>
+<td>
+0.807
+</td>
+<td>
+0.805
+</td>
+<td>
+0.806
+</td>
+<td>
+0.805
+</td>
+<td>
+0.807
+</td>
+<td>
+0.807
+</td>
+<td>
+0.796
+</td>
+<td>
 0.798
+</td>
+<td>
+0.804
+</td>
+<td>
+0.607
+</td>
+<td>
+0.591
+</td>
+<td>
+0.606
+</td>
+<td>
+0.596
+</td>
+<td>
+0.596
+</td>
+<td>
+0.607
 </td>
 <td>
 0.577
 </td>
 <td>
-0.544
-</td>
-<td>
-0.777
-</td>
-<td>
-0.627
-</td>
-<td>
-0.804
-</td>
-<td>
-0.804
+0.577
 </td>
 <td>
 0.595
 </td>
 <td>
+0.581
+</td>
+<td>
+0.563
+</td>
+<td>
+0.577
+</td>
+<td>
+0.567
+</td>
+<td>
 0.565
 </td>
 <td>
+0.579
+</td>
+<td>
+0.545
+</td>
+<td>
+0.544
+</td>
+<td>
+0.565
+</td>
+<td>
+0.855
+</td>
+<td>
+0.764
+</td>
+<td>
+0.769
+</td>
+<td>
+0.772
+</td>
+<td>
+0.812
+</td>
+<td>
+0.803
+</td>
+<td>
+0.764
+</td>
+<td>
+0.777
+</td>
+<td>
 0.790
+</td>
+<td>
+0.739
+</td>
+<td>
+0.647
+</td>
+<td>
+0.675
+</td>
+<td>
+0.672
+</td>
+<td>
+0.630
+</td>
+<td>
+0.667
+</td>
+<td>
+0.634
+</td>
+<td>
+0.627
 </td>
 <td>
 0.661
@@ -1666,118 +1495,25 @@ PTM recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
 <td>
-<small>retrained</small>
-</td>
-<td>
 <strong>0.822</strong>
-</td>
-<td>
-<strong>0.822</strong>
-</td>
-<td>
-<strong>0.614</strong>
-</td>
-<td>
-<strong>0.589</strong>
-</td>
-<td>
-<strong>0.878</strong>
-</td>
-<td>
-<strong>0.765</strong>
 </td>
 <td>
 <strong>0.819</strong>
 </td>
 <td>
-<strong>0.820</strong>
-</td>
-<td>
-<strong>0.598</strong>
-</td>
-<td>
-<strong>0.571</strong>
-</td>
-<td>
-<strong>0.794</strong>
-</td>
-<td>
-<strong>0.685</strong>
-</td>
-<td>
 <strong>0.825</strong>
-</td>
-<td>
-<strong>0.825</strong>
-</td>
-<td>
-<strong>0.610</strong>
-</td>
-<td>
-<strong>0.584</strong>
-</td>
-<td>
-<strong>0.800</strong>
-</td>
-<td>
-<strong>0.699</strong>
 </td>
 <td>
 <strong>0.811</strong>
 </td>
 <td>
-<strong>0.810</strong>
-</td>
-<td>
-<strong>0.600</strong>
-</td>
-<td>
-<strong>0.575</strong>
-</td>
-<td>
-<strong>0.797</strong>
-</td>
-<td>
-<strong>0.701</strong>
-</td>
-<td>
 <strong>0.825</strong>
 </td>
 <td>
-<strong>0.826</strong>
-</td>
-<td>
-<strong>0.603</strong>
-</td>
-<td>
-<strong>0.568</strong>
-</td>
-<td>
-<strong>0.839</strong>
-</td>
-<td>
-<strong>0.664</strong>
-</td>
-<td>
 <strong>0.827</strong>
-</td>
-<td>
-<strong>0.827</strong>
-</td>
-<td>
-<strong>0.611</strong>
-</td>
-<td>
-<strong>0.592</strong>
-</td>
-<td>
-<strong>0.828</strong>
-</td>
-<td>
-<strong>0.694</strong>
 </td>
 <td>
 <strong>0.813</strong>
@@ -1786,49 +1522,139 @@ PTM recall<br><small>ptm</small>
 <strong>0.815</strong>
 </td>
 <td>
+<strong>0.820</strong>
+</td>
+<td>
+<strong>0.822</strong>
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+<strong>0.825</strong>
+</td>
+<td>
+<strong>0.810</strong>
+</td>
+<td>
+<strong>0.826</strong>
+</td>
+<td>
+<strong>0.827</strong>
+</td>
+<td>
+<strong>0.815</strong>
+</td>
+<td>
+<strong>0.815</strong>
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+<strong>0.614</strong>
+</td>
+<td>
+<strong>0.598</strong>
+</td>
+<td>
+<strong>0.610</strong>
+</td>
+<td>
+<strong>0.600</strong>
+</td>
+<td>
+<strong>0.603</strong>
+</td>
+<td>
+<strong>0.611</strong>
+</td>
+<td>
 <strong>0.585</strong>
-</td>
-<td>
-<strong>0.549</strong>
-</td>
-<td>
-<strong>0.793</strong>
-</td>
-<td>
-<strong>0.669</strong>
-</td>
-<td>
-<strong>0.815</strong>
-</td>
-<td>
-<strong>0.815</strong>
 </td>
 <td>
 <strong>0.583</strong>
 </td>
 <td>
-<strong>0.550</strong>
-</td>
-<td>
-<strong>0.799</strong>
-</td>
-<td>
-<strong>0.658</strong>
-</td>
-<td>
-<strong>0.820</strong>
-</td>
-<td>
-<strong>0.820</strong>
-</td>
-<td>
 <strong>0.601</strong>
+</td>
+<td>
+<strong>0.589</strong>
+</td>
+<td>
+<strong>0.571</strong>
+</td>
+<td>
+<strong>0.584</strong>
+</td>
+<td>
+<strong>0.575</strong>
+</td>
+<td>
+<strong>0.568</strong>
+</td>
+<td>
+<strong>0.592</strong>
+</td>
+<td>
+<strong>0.549</strong>
+</td>
+<td>
+<strong>0.550</strong>
 </td>
 <td>
 <strong>0.572</strong>
 </td>
 <td>
+<strong>0.878</strong>
+</td>
+<td>
+<strong>0.794</strong>
+</td>
+<td>
+<strong>0.800</strong>
+</td>
+<td>
+<strong>0.797</strong>
+</td>
+<td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.828</strong>
+</td>
+<td>
+<strong>0.793</strong>
+</td>
+<td>
+<strong>0.799</strong>
+</td>
+<td>
 <strong>0.816</strong>
+</td>
+<td>
+<strong>0.765</strong>
+</td>
+<td>
+<strong>0.685</strong>
+</td>
+<td>
+<strong>0.699</strong>
+</td>
+<td>
+<strong>0.701</strong>
+</td>
+<td>
+<strong>0.664</strong>
+</td>
+<td>
+<strong>0.694</strong>
+</td>
+<td>
+<strong>0.669</strong>
+</td>
+<td>
+<strong>0.658</strong>
 </td>
 <td>
 <strong>0.692</strong>
@@ -1845,31 +1671,28 @@ PTM recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 not stated; page mentions Nine-species benchmark, ProteomeTools, Seven-species benchmark
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.741
 </td>
@@ -1885,11 +1708,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.797</u>
 </td>
@@ -1905,11 +1725,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a>
+<a href="physnovo.html">PhysNovo</a> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.815</strong>
 </td>
@@ -1934,22 +1751,19 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 not stated; page mentions Nine-species benchmark, ProteomeTools, Seven-species benchmark
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>AR</small>
+<a href="casanovo.html">Casanovo</a> <small>AR</small> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.697
 </td>
@@ -1959,30 +1773,21 @@ Precision<br><small>amino acid</small>
 <a href="pi-primenovo.html">π-PrimeNovo</a> <small>NAR</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.790
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a> <small>T =100</small>
+<a href="physnovo.html">PhysNovo</a> <small>T =100</small> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <strong>0.815</strong>
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="physnovo.html">PhysNovo</a> <small>T =50</small>
+<a href="physnovo.html">PhysNovo</a> <small>T =50</small> <small class="text-muted" title="Recall DeepNovo 0.576 0.529 0.391 0.373 0.626 0.615 PointNovo 0.629 0.546 0.117 0.094 0.676 0.740 InstaNovo 0.443 0.294 0.126 0.115 0.350 0.261 CasaNovo 0.706 0.566 0.360 0.251 0.501 0.460 AdaNovo 0.652 0.570 0.448 0.321 0.552 0.482 π-HelixNovo 0.680 0.598 0.473 0.366 0.568 0.667 LIPNovo 0.765 0.656">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 <u>0.801</u>
 </td>

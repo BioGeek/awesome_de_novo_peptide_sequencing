@@ -237,7 +237,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
-<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-1" class="level3">
 <h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
 <p><a href="../publications/protein-identification-with-deep-learning-from-abc-to-xyz.html">Protein identification with deep learning: from abc to xyz</a>, page 10: <em>The recall of PEAKS and DeepNovo at the amino acid level and the peptide level.</em></p>
@@ -245,25 +245,22 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 S. cerevisiae proteome of Hebert et al.&nbsp;2014 (The one hour yeast proteome), Orbitrap Fusion HCD; no accession
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Recall<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a> <small>de novo</small>
+<a href="peaks.html">PEAKS</a> <small>de novo</small> <small class="text-muted" title="We also included the de novo sequencing results of PEAKS.">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 0.574
 </td>
@@ -276,9 +273,6 @@ Recall<br><small>peptide</small>
 <a href="deepnovo.html">DeepNovo</a> <small>de novo</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.743</u>
 </td>
 <td>
@@ -289,9 +283,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a> <small>database search</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.899</strong>
 </td>

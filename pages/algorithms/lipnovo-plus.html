@@ -201,7 +201,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-8" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-8">Reported comparisons (8)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table2-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table2-hc-pt">Table2 (HC-PT)</h3>
 <p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 15: <em>Comparison with state-of-the-art methods on Nine-species, Seven-species, and HC-PT datasets in amino acid-level and peptide-level performance. The best and second-best results are marked in bold and underline, respectively.</em></p>
@@ -209,20 +209,20 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
@@ -231,9 +231,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.531
 </td>
@@ -252,9 +249,6 @@ AUC<br><small>peptide</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.623
 </td>
 <td>
@@ -271,9 +265,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.442
 </td>
@@ -292,9 +283,6 @@ AUC<br><small>peptide</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.442
 </td>
 <td>
@@ -311,9 +299,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.588
 </td>
@@ -332,9 +317,6 @@ AUC<br><small>peptide</small>
 <a href="instanovo.html">InstaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.289
 </td>
 <td>
@@ -351,9 +333,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="searchnovo.html">SearchNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.652
 </td>
@@ -372,9 +351,6 @@ AUC<br><small>peptide</small>
 <a href="renovo.html">ReNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.651
 </td>
 <td>
@@ -392,9 +368,6 @@ AUC<br><small>peptide</small>
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.654</u>
 </td>
 <td>
@@ -409,11 +382,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.525
 </td>
@@ -432,9 +402,6 @@ AUC<br><small>peptide</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.637
 </td>
 <td>
@@ -451,9 +418,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.698</strong>
 </td>
@@ -481,20 +445,20 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
@@ -503,9 +467,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="peaks.html">PEAKS</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.748
 </td>
@@ -521,9 +482,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.696
 </td>
@@ -542,9 +500,6 @@ AUC<br><small>peptide</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.740
 </td>
 <td>
@@ -561,9 +516,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.697
 </td>
@@ -582,9 +534,6 @@ AUC<br><small>peptide</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.698
 </td>
 <td>
@@ -601,9 +550,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.765
 </td>
@@ -622,9 +568,6 @@ AUC<br><small>peptide</small>
 <a href="instanovo.html">InstaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.420
 </td>
 <td>
@@ -641,9 +584,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="searchnovo.html">SearchNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.748
 </td>
@@ -662,9 +602,6 @@ AUC<br><small>peptide</small>
 <a href="renovo.html">ReNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.770
 </td>
 <td>
@@ -682,9 +619,6 @@ AUC<br><small>peptide</small>
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.791
 </td>
 <td>
@@ -699,11 +633,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.741
 </td>
@@ -722,9 +653,6 @@ AUC<br><small>peptide</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.797</u>
 </td>
 <td>
@@ -741,9 +669,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.831</strong>
 </td>
@@ -768,20 +693,20 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
@@ -790,9 +715,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.492
 </td>
@@ -811,9 +733,6 @@ AUC<br><small>peptide</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.196
 </td>
 <td>
@@ -830,9 +749,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.322
 </td>
@@ -851,9 +767,6 @@ AUC<br><small>peptide</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.379
 </td>
 <td>
@@ -870,9 +783,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.481
 </td>
@@ -891,9 +801,6 @@ AUC<br><small>peptide</small>
 <a href="instanovo.html">InstaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.192
 </td>
 <td>
@@ -910,9 +817,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="searchnovo.html">SearchNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.489
 </td>
@@ -931,9 +835,6 @@ AUC<br><small>peptide</small>
 <a href="renovo.html">ReNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.512
 </td>
 <td>
@@ -951,9 +852,6 @@ AUC<br><small>peptide</small>
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.437
 </td>
 <td>
@@ -968,11 +866,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.357
 </td>
@@ -991,9 +886,6 @@ AUC<br><small>peptide</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.557</u>
 </td>
 <td>
@@ -1010,9 +902,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.619</strong>
 </td>
@@ -1037,14 +926,14 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
@@ -1053,9 +942,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.626
 </td>
@@ -1068,9 +954,6 @@ Recall<br><small>ptm</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.676
 </td>
 <td>
@@ -1081,9 +964,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.350
 </td>
@@ -1096,9 +976,6 @@ Recall<br><small>ptm</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.501
 </td>
 <td>
@@ -1109,9 +986,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="adanovo.html">AdaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.552
 </td>
@@ -1124,9 +998,6 @@ Recall<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.568
 </td>
 <td>
@@ -1138,9 +1009,6 @@ Recall<br><small>ptm</small>
 <a href="searchnovo.html">SearchNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.715
 </td>
 <td>
@@ -1149,11 +1017,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.550
 </td>
@@ -1166,9 +1031,6 @@ Recall<br><small>ptm</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.732</u>
 </td>
 <td>
@@ -1179,9 +1041,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.757</strong>
 </td>
@@ -1203,14 +1062,14 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
@@ -1219,9 +1078,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.576
 </td>
@@ -1234,9 +1090,6 @@ Recall<br><small>ptm</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.629
 </td>
 <td>
@@ -1247,9 +1100,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.443
 </td>
@@ -1262,9 +1112,6 @@ Recall<br><small>ptm</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.706
 </td>
 <td>
@@ -1275,9 +1122,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="adanovo.html">AdaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.652
 </td>
@@ -1290,9 +1134,6 @@ Recall<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.680
 </td>
 <td>
@@ -1304,9 +1145,6 @@ Recall<br><small>ptm</small>
 <a href="searchnovo.html">SearchNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.764
 </td>
 <td>
@@ -1315,11 +1153,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.755
 </td>
@@ -1332,9 +1167,6 @@ Recall<br><small>ptm</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.765</u>
 </td>
 <td>
@@ -1345,9 +1177,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.801</strong>
 </td>
@@ -1366,14 +1195,14 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
@@ -1382,9 +1211,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.391
 </td>
@@ -1397,9 +1223,6 @@ Recall<br><small>ptm</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.117
 </td>
 <td>
@@ -1410,9 +1233,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.126
 </td>
@@ -1425,9 +1245,6 @@ Recall<br><small>ptm</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.360
 </td>
 <td>
@@ -1438,9 +1255,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="adanovo.html">AdaNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.448
 </td>
@@ -1453,9 +1267,6 @@ Recall<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.473
 </td>
 <td>
@@ -1467,9 +1278,6 @@ Recall<br><small>ptm</small>
 <a href="searchnovo.html">SearchNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.472
 </td>
 <td>
@@ -1478,11 +1286,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.368
 </td>
@@ -1495,9 +1300,6 @@ Recall<br><small>ptm</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.604</u>
 </td>
 <td>
@@ -1508,9 +1310,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.648</strong>
 </td>
@@ -1529,368 +1328,356 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="6">
-Bacillus subtilis
+<th colspan="9" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="6">
-Candidatus Thiodiazotropha endoloripes
+<th colspan="9" style="text-align:center">
+Amino acid recall
 </th>
-<th colspan="6">
-Apis mellifera
+<th colspan="9" style="text-align:center">
+Peptide precision
 </th>
-<th colspan="6">
-Homo sapiens
+<th colspan="9" style="text-align:center">
+Peptide AUC
 </th>
-<th colspan="6">
-Methanosarcina mazei
+<th colspan="9" style="text-align:center">
+Ptm precision
 </th>
-<th colspan="6">
-Mus musculus
-</th>
-<th colspan="6">
-Vigna mungo
-</th>
-<th colspan="6">
-Solanum lycopersicum
-</th>
-<th colspan="6">
-Mean
+<th colspan="9" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mean</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-AUC<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>ptm</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Recall<br><small>ptm</small>
+<small>Mean</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>retrained</small>
+<a href="casanovo.html">Casanovo</a> <small>retrained</small> <small class="text-muted" title="we retrain CasaNovo with the same data splits and training/inference configurations as our methods (reported as Baseline)">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.743
 </td>
 <td>
-0.745
-</td>
-<td>
-0.559
-</td>
-<td>
-0.523
-</td>
-<td>
-0.797
-</td>
-<td>
-0.689
-</td>
-<td>
 0.754
-</td>
-<td>
-0.752
-</td>
-<td>
-0.544
-</td>
-<td>
-0.509
-</td>
-<td>
-0.742
-</td>
-<td>
-0.591
 </td>
 <td>
 0.761
 </td>
 <td>
-0.757
-</td>
-<td>
-0.554
-</td>
-<td>
-0.519
-</td>
-<td>
-0.762
-</td>
-<td>
-0.624
-</td>
-<td>
 0.769
 </td>
 <td>
-0.770
-</td>
-<td>
-0.575
-</td>
-<td>
-0.540
-</td>
-<td>
-<u>0.784</u>
-</td>
-<td>
-0.612
-</td>
-<td>
 0.754
-</td>
-<td>
-0.754
-</td>
-<td>
-0.558
-</td>
-<td>
-0.532
-</td>
-<td>
-0.779
-</td>
-<td>
-0.582
 </td>
 <td>
 0.753
 </td>
 <td>
-0.752
-</td>
-<td>
-0.558
-</td>
-<td>
-0.521
-</td>
-<td>
-0.799
-</td>
-<td>
-0.608
-</td>
-<td>
 0.753
-</td>
-<td>
-0.755
-</td>
-<td>
-0.549
-</td>
-<td>
-0.510
-</td>
-<td>
-0.760
-</td>
-<td>
-0.593
 </td>
 <td>
 0.717
 </td>
 <td>
-0.716
-</td>
-<td>
-0.506
-</td>
-<td>
-0.464
-</td>
-<td>
-0.710
-</td>
-<td>
-0.540
-</td>
-<td>
 0.751
+</td>
+<td>
+0.745
+</td>
+<td>
+0.752
+</td>
+<td>
+0.757
+</td>
+<td>
+0.770
+</td>
+<td>
+0.754
+</td>
+<td>
+0.752
+</td>
+<td>
+0.755
+</td>
+<td>
+0.716
 </td>
 <td>
 0.750
 </td>
 <td>
+0.559
+</td>
+<td>
+0.544
+</td>
+<td>
+0.554
+</td>
+<td>
+0.575
+</td>
+<td>
+0.558
+</td>
+<td>
+0.558
+</td>
+<td>
+0.549
+</td>
+<td>
+0.506
+</td>
+<td>
 0.550
+</td>
+<td>
+0.523
+</td>
+<td>
+0.509
+</td>
+<td>
+0.519
+</td>
+<td>
+0.540
+</td>
+<td>
+0.532
+</td>
+<td>
+0.521
+</td>
+<td>
+0.510
+</td>
+<td>
+0.464
 </td>
 <td>
 0.515
 </td>
 <td>
+0.797
+</td>
+<td>
+0.742
+</td>
+<td>
+0.762
+</td>
+<td>
+<u>0.784</u>
+</td>
+<td>
+0.779
+</td>
+<td>
+0.799
+</td>
+<td>
+0.760
+</td>
+<td>
+0.710
+</td>
+<td>
 0.767
+</td>
+<td>
+0.689
+</td>
+<td>
+0.591
+</td>
+<td>
+0.624
+</td>
+<td>
+0.612
+</td>
+<td>
+0.582
+</td>
+<td>
+0.608
+</td>
+<td>
+0.593
+</td>
+<td>
+0.540
 </td>
 <td>
 0.605
@@ -1901,166 +1688,163 @@ Recall<br><small>ptm</small>
 <a href="lipnovo.html">LIPNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.806</u>
 </td>
 <td>
-<u>0.807</u>
-</td>
-<td>
-<u>0.607</u>
-</td>
-<td>
-<u>0.581</u>
-</td>
-<td>
-<u>0.855</u>
-</td>
-<td>
-<u>0.739</u>
-</td>
-<td>
 <u>0.805</u>
-</td>
-<td>
-<u>0.805</u>
-</td>
-<td>
-<u>0.591</u>
-</td>
-<td>
-<u>0.563</u>
-</td>
-<td>
-<u>0.764</u>
-</td>
-<td>
-<u>0.647</u>
 </td>
 <td>
 <u>0.807</u>
 </td>
 <td>
-<u>0.806</u>
-</td>
-<td>
-<u>0.606</u>
-</td>
-<td>
-<u>0.577</u>
-</td>
-<td>
-<u>0.769</u>
-</td>
-<td>
-<u>0.675</u>
-</td>
-<td>
 <u>0.805</u>
 </td>
 <td>
-<u>0.805</u>
-</td>
-<td>
-<u>0.596</u>
-</td>
-<td>
-<u>0.567</u>
-</td>
-<td>
-0.772
-</td>
-<td>
-<u>0.672</u>
-</td>
-<td>
 <u>0.807</u>
-</td>
-<td>
-<u>0.807</u>
-</td>
-<td>
-<u>0.596</u>
-</td>
-<td>
-<u>0.565</u>
-</td>
-<td>
-<u>0.812</u>
-</td>
-<td>
-<u>0.630</u>
 </td>
 <td>
 <u>0.808</u>
 </td>
 <td>
-<u>0.807</u>
-</td>
-<td>
-<u>0.607</u>
-</td>
-<td>
-<u>0.579</u>
-</td>
-<td>
-<u>0.803</u>
-</td>
-<td>
-<u>0.667</u>
-</td>
-<td>
 <u>0.794</u>
-</td>
-<td>
-<u>0.796</u>
-</td>
-<td>
-<u>0.577</u>
-</td>
-<td>
-<u>0.545</u>
-</td>
-<td>
-<u>0.764</u>
-</td>
-<td>
-<u>0.634</u>
 </td>
 <td>
 <u>0.800</u>
 </td>
 <td>
+<u>0.804</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.806</u>
+</td>
+<td>
+<u>0.805</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.796</u>
+</td>
+<td>
 <u>0.798</u>
+</td>
+<td>
+<u>0.804</u>
+</td>
+<td>
+<u>0.607</u>
+</td>
+<td>
+<u>0.591</u>
+</td>
+<td>
+<u>0.606</u>
+</td>
+<td>
+<u>0.596</u>
+</td>
+<td>
+<u>0.596</u>
+</td>
+<td>
+<u>0.607</u>
 </td>
 <td>
 <u>0.577</u>
 </td>
 <td>
-<u>0.544</u>
-</td>
-<td>
-<u>0.777</u>
-</td>
-<td>
-<u>0.627</u>
-</td>
-<td>
-<u>0.804</u>
-</td>
-<td>
-<u>0.804</u>
+<u>0.577</u>
 </td>
 <td>
 <u>0.595</u>
 </td>
 <td>
+<u>0.581</u>
+</td>
+<td>
+<u>0.563</u>
+</td>
+<td>
+<u>0.577</u>
+</td>
+<td>
+<u>0.567</u>
+</td>
+<td>
 <u>0.565</u>
 </td>
 <td>
+<u>0.579</u>
+</td>
+<td>
+<u>0.545</u>
+</td>
+<td>
+<u>0.544</u>
+</td>
+<td>
+<u>0.565</u>
+</td>
+<td>
+<u>0.855</u>
+</td>
+<td>
+<u>0.764</u>
+</td>
+<td>
+<u>0.769</u>
+</td>
+<td>
+0.772
+</td>
+<td>
+<u>0.812</u>
+</td>
+<td>
+<u>0.803</u>
+</td>
+<td>
+<u>0.764</u>
+</td>
+<td>
+<u>0.777</u>
+</td>
+<td>
 <u>0.790</u>
+</td>
+<td>
+<u>0.739</u>
+</td>
+<td>
+<u>0.647</u>
+</td>
+<td>
+<u>0.675</u>
+</td>
+<td>
+<u>0.672</u>
+</td>
+<td>
+<u>0.630</u>
+</td>
+<td>
+<u>0.667</u>
+</td>
+<td>
+<u>0.634</u>
+</td>
+<td>
+<u>0.627</u>
 </td>
 <td>
 <u>0.661</u>
@@ -2071,133 +1855,49 @@ Recall<br><small>ptm</small>
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.845</strong>
 </td>
 <td>
-<strong>0.844</strong>
-</td>
-<td>
-<strong>0.669</strong>
-</td>
-<td>
-<strong>0.647</strong>
-</td>
-<td>
-<strong>0.888</strong>
-</td>
-<td>
-<strong>0.782</strong>
-</td>
-<td>
 <strong>0.843</strong>
-</td>
-<td>
-<strong>0.842</strong>
-</td>
-<td>
-<strong>0.657</strong>
-</td>
-<td>
-<strong>0.634</strong>
-</td>
-<td>
-<strong>0.776</strong>
-</td>
-<td>
-<strong>0.699</strong>
 </td>
 <td>
 <strong>0.849</strong>
 </td>
 <td>
-<strong>0.848</strong>
-</td>
-<td>
-<strong>0.679</strong>
-</td>
-<td>
-<strong>0.657</strong>
-</td>
-<td>
-<strong>0.816</strong>
-</td>
-<td>
-<strong>0.728</strong>
-</td>
-<td>
 <strong>0.851</strong>
-</td>
-<td>
-<strong>0.851</strong>
-</td>
-<td>
-<strong>0.673</strong>
-</td>
-<td>
-<strong>0.651</strong>
-</td>
-<td>
-<strong>0.835</strong>
-</td>
-<td>
-<strong>0.696</strong>
 </td>
 <td>
 <strong>0.841</strong>
-</td>
-<td>
-<strong>0.840</strong>
-</td>
-<td>
-<strong>0.657</strong>
-</td>
-<td>
-<strong>0.632</strong>
-</td>
-<td>
-<strong>0.827</strong>
-</td>
-<td>
-<strong>0.707</strong>
 </td>
 <td>
 <strong>0.844</strong>
 </td>
 <td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.839</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.842</strong>
+</td>
+<td>
+<strong>0.848</strong>
+</td>
+<td>
+<strong>0.851</strong>
+</td>
+<td>
+<strong>0.840</strong>
+</td>
+<td>
 <strong>0.843</strong>
-</td>
-<td>
-<strong>0.658</strong>
-</td>
-<td>
-<strong>0.633</strong>
-</td>
-<td>
-<strong>0.834</strong>
-</td>
-<td>
-<strong>0.703</strong>
-</td>
-<td>
-<strong>0.839</strong>
-</td>
-<td>
-<strong>0.839</strong>
-</td>
-<td>
-<strong>0.653</strong>
-</td>
-<td>
-<strong>0.628</strong>
-</td>
-<td>
-<strong>0.841</strong>
-</td>
-<td>
-<strong>0.703</strong>
 </td>
 <td>
 <strong>0.839</strong>
@@ -2206,31 +1906,112 @@ Recall<br><small>ptm</small>
 <strong>0.838</strong>
 </td>
 <td>
-<strong>0.652</strong>
-</td>
-<td>
-<strong>0.626</strong>
-</td>
-<td>
-<strong>0.824</strong>
-</td>
-<td>
-<strong>0.704</strong>
-</td>
-<td>
-<strong>0.844</strong>
-</td>
-<td>
 <strong>0.843</strong>
+</td>
+<td>
+<strong>0.669</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.679</strong>
+</td>
+<td>
+<strong>0.673</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.658</strong>
+</td>
+<td>
+<strong>0.653</strong>
+</td>
+<td>
+<strong>0.652</strong>
 </td>
 <td>
 <strong>0.662</strong>
 </td>
 <td>
+<strong>0.647</strong>
+</td>
+<td>
+<strong>0.634</strong>
+</td>
+<td>
+<strong>0.657</strong>
+</td>
+<td>
+<strong>0.651</strong>
+</td>
+<td>
+<strong>0.632</strong>
+</td>
+<td>
+<strong>0.633</strong>
+</td>
+<td>
+<strong>0.628</strong>
+</td>
+<td>
+<strong>0.626</strong>
+</td>
+<td>
 <strong>0.639</strong>
 </td>
 <td>
+<strong>0.888</strong>
+</td>
+<td>
+<strong>0.776</strong>
+</td>
+<td>
+<strong>0.816</strong>
+</td>
+<td>
+<strong>0.835</strong>
+</td>
+<td>
+<strong>0.827</strong>
+</td>
+<td>
+<strong>0.834</strong>
+</td>
+<td>
+<strong>0.841</strong>
+</td>
+<td>
+<strong>0.824</strong>
+</td>
+<td>
 <strong>0.830</strong>
+</td>
+<td>
+<strong>0.782</strong>
+</td>
+<td>
+<strong>0.699</strong>
+</td>
+<td>
+<strong>0.728</strong>
+</td>
+<td>
+<strong>0.696</strong>
+</td>
+<td>
+<strong>0.707</strong>
+</td>
+<td>
+<strong>0.703</strong>
+</td>
+<td>
+<strong>0.703</strong>
+</td>
+<td>
+<strong>0.704</strong>
 </td>
 <td>
 <strong>0.715</strong>
@@ -2247,20 +2028,20 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/graphnovo-dataset-and-checkpoint.html">GraphNovo dataset and checkpoint</a>
 </th>
-<th>
-Recall<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide recall
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
 </tr>
 </thead>
@@ -2269,9 +2050,6 @@ Precision<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="peaks.html">PEAKS</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.475
 </td>
@@ -2289,9 +2067,6 @@ Precision<br><small>amino acid</small>
 <a href="novor.html">Novor</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.431
 </td>
 <td>
@@ -2307,9 +2082,6 @@ Precision<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.497
 </td>
@@ -2327,9 +2099,6 @@ Precision<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.601
 </td>
 <td>
@@ -2345,9 +2114,6 @@ Precision<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.605
 </td>
@@ -2365,9 +2131,6 @@ Precision<br><small>amino acid</small>
 <a href="graphnovo.html">GraphNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.712
 </td>
 <td>
@@ -2383,9 +2146,6 @@ Precision<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="lipnovo.html">LIPNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.729</u>
 </td>
@@ -2403,9 +2163,6 @@ Precision<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="lipnovo-plus.html">LIPNovo+</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.740</strong>
 </td>

@@ -194,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="reported-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
-<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-5" class="level3">
 <h3 class="anchored" data-anchor-id="table-5">Table 5</h3>
 <p><a href="../publications/ga-novo-de-novo-peptide-sequencing-via-tandem-mass-spectrometry-using-genetic.html">GA-Novo: De Novo Peptide Sequencing via Tandem Mass Spectrometry Using Genetic Algorithm</a>, page 11: <em>The results of sequencing 120 MS/MS spectra by GA-Novo and PEAKS.</em></p>
@@ -202,17 +202,17 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 120 spectra of the Wessels et al.&nbsp;2012 full factorial LC-MS/MS benchmark (E. coli K12, LTQ-FT); no accession
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Recall<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 </thead>
@@ -221,9 +221,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="ga-novo.html">GA-Novo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.89</strong>
 </td>
@@ -236,11 +233,8 @@ Recall<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="For each spectrum, the top scored sequence is taken as the output of de novo sequencing by PEAKS. PEAKS was run with an error tolerance of 0.5 Da and tryptic digestion.">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 0.85
 </td>

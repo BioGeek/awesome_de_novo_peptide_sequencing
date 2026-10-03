@@ -194,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="reported-comparisons-6" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-6">Reported comparisons (6)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table1-hc-pt">Table1 (HC-PT)</h3>
 <p><a href="../publications/gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo.html">GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing</a>, page 7: <em>Amino-acid- and peptide-level performance on the Nine-Species, Seven-Species, and HC-PT datasets. Best results are shown in bold.</em></p>
@@ -202,31 +202,28 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.531
 </td>
@@ -242,11 +239,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.623
 </td>
@@ -262,11 +256,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.442
 </td>
@@ -282,11 +273,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.442
 </td>
@@ -302,11 +290,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.289
 </td>
@@ -322,11 +307,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.637
 </td>
@@ -342,11 +324,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.698</u>
 </td>
@@ -362,11 +341,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.653
 </td>
@@ -384,9 +360,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.704</strong>
 </td>
@@ -411,31 +384,28 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.748
 </td>
@@ -449,11 +419,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.696
 </td>
@@ -469,11 +436,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.740
 </td>
@@ -489,11 +453,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.697
 </td>
@@ -509,11 +470,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.698
 </td>
@@ -529,11 +487,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.420
 </td>
@@ -549,11 +504,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.797
 </td>
@@ -569,11 +521,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.831</u>
 </td>
@@ -589,11 +538,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.794
 </td>
@@ -611,9 +557,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.848</strong>
 </td>
@@ -638,31 +581,28 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.492
 </td>
@@ -678,11 +618,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.196
 </td>
@@ -698,11 +635,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.322
 </td>
@@ -718,11 +652,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.379
 </td>
@@ -738,11 +669,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.192
 </td>
@@ -758,11 +686,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.557
 </td>
@@ -778,11 +703,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.619</u>
 </td>
@@ -798,11 +720,8 @@ AUC<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.553
 </td>
@@ -820,9 +739,6 @@ AUC<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.632</strong>
 </td>
@@ -847,25 +763,22 @@ AUC<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.626
 </td>
@@ -875,11 +788,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.676
 </td>
@@ -889,11 +799,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.350
 </td>
@@ -903,11 +810,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.501
 </td>
@@ -917,11 +821,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.552
 </td>
@@ -931,11 +832,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.732
 </td>
@@ -945,11 +843,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.757</u>
 </td>
@@ -959,11 +854,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.690
 </td>
@@ -975,9 +867,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.790</strong>
 </td>
@@ -996,25 +885,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.576
 </td>
@@ -1024,11 +910,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.629
 </td>
@@ -1038,11 +921,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.443
 </td>
@@ -1052,11 +932,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.706
 </td>
@@ -1066,11 +943,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.652
 </td>
@@ -1080,11 +954,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.765
 </td>
@@ -1094,11 +965,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.801</u>
 </td>
@@ -1108,11 +976,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.773
 </td>
@@ -1124,9 +989,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.815</strong>
 </td>
@@ -1145,25 +1007,22 @@ Recall<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm precision
 </th>
-<th>
-Recall<br><small>ptm</small>
+<th colspan="1" style="text-align:center">
+Ptm recall
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="deepnovo.html">DeepNovo</a>
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.391
 </td>
@@ -1173,11 +1032,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pointnovo.html">PointNovo</a>
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.117
 </td>
@@ -1187,11 +1043,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="instanovo.html">InstaNovo</a>
+<a href="instanovo.html">InstaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.126
 </td>
@@ -1201,11 +1054,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.360
 </td>
@@ -1215,11 +1065,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a>
+<a href="adanovo.html">AdaNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.448
 </td>
@@ -1229,11 +1076,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a>
+<a href="lipnovo.html">LIPNovo</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.604
 </td>
@@ -1243,11 +1087,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo-plus.html">LIPNovo+</a>
+<a href="lipnovo-plus.html">LIPNovo+</a> <small class="text-muted" title="Unless otherwise noted, the reported results are taken from NovoBench.">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.648</u>
 </td>
@@ -1257,11 +1098,8 @@ Recall<br><small>ptm</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small>
+<a href="lipnovo.html">LIPNovo</a> <small>reproduced</small> <small class="text-muted" title="we report both its NovoBench results and our reproduced results to ensure a fair comparison. We refer to the reproduced version as the “baseline”">· <em>retrained</em></small>
 </th>
-<td>
-<small>retrained</small>
-</td>
 <td>
 0.602
 </td>
@@ -1273,9 +1111,6 @@ Recall<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="gyronovo.html">GyroNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.665</strong>
 </td>

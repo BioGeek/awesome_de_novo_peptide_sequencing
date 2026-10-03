@@ -283,7 +283,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
-<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table2" class="level3">
 <h3 class="anchored" data-anchor-id="table2">Table2</h3>
 <p><a href="../publications/de-novo-mass-spectrometry-peptide-sequencing-with-a-transformer-model-preprint.html">De novo mass spectrometry peptide sequencing with a transformer model</a>, page 6: <em>Empirical comparison of Casanovo, DeepNovo and PointNovo. The table lists the peptide-level and amino acid-level precision of three competing models and coverage of Casanovo with precursor m/z filtering on all nine benchmark cross-validation folds. Each fold’s test set contains spectra from a single species, with nearly disjoint sets of peptides between species. For cross-validation folds corresponding to mouse and human, five models were trained with different random initializations. For these species, we report standard deviation of the performance measures.</em></p>
@@ -291,172 +291,160 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="5">
-Mus musculus
+<th colspan="9" style="text-align:center">
+Peptide precision
 </th>
-<th colspan="5">
-Homo sapiens
+<th colspan="9" style="text-align:center">
+Peptide coverage
 </th>
-<th colspan="5">
-Saccharomyces cerevisiae
+<th colspan="9" style="text-align:center">
+Peptide precision at coverage 1
 </th>
-<th colspan="5">
-Methanosarcina mazei
+<th colspan="9" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="5">
-Apis mellifera
-</th>
-<th colspan="5">
-Solanum lycopersicum
-</th>
-<th colspan="5">
-Vigna mungo
-</th>
-<th colspan="5">
-Bacillus subtilis
-</th>
-<th colspan="5">
-Candidatus Thiodiazotropha endoloripes
+<th colspan="9" style="text-align:center">
+Amino acid precision at coverage 1
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Coverage<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision at coverage 1<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision at coverage 1<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 </tr>
 </thead>
@@ -466,103 +454,28 @@ Precision at coverage 1<br><small>amino acid</small>
 <a href="deepnovo.html">DeepNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.286
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.623
-</td>
-<td>
 </td>
 <td>
 0.293
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-<u>0.610</u>
-</td>
-<td>
-</td>
-<td>
 0.462
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.750
-</td>
-<td>
 </td>
 <td>
 0.422
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-0.694
-</td>
-<td>
-</td>
-<td>
 0.330
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.630
-</td>
-<td>
 </td>
 <td>
 0.454
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-0.731
-</td>
-<td>
-</td>
-<td>
 0.436
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-0.679
-</td>
-<td>
-</td>
-<td>
 0.449
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.742
-</td>
-<td>
 </td>
 <td>
 0.253
@@ -572,7 +485,79 @@ Precision at coverage 1<br><small>amino acid</small>
 <td>
 </td>
 <td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.623
+</td>
+<td>
+<u>0.610</u>
+</td>
+<td>
+0.750
+</td>
+<td>
+0.694
+</td>
+<td>
+0.630
+</td>
+<td>
+0.731
+</td>
+<td>
+0.679
+</td>
+<td>
+0.742
+</td>
+<td>
 <u>0.602</u>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
 </td>
 <td>
 </td>
@@ -582,103 +567,28 @@ Precision at coverage 1<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.355</u>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-<u>0.626</u>
-</td>
-<td>
 </td>
 <td>
 <u>0.351</u>
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-0.606
-</td>
-<td>
-</td>
-<td>
 <u>0.534</u>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-<u>0.779</u>
-</td>
-<td>
 </td>
 <td>
 <u>0.478</u>
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-<u>0.712</u>
-</td>
-<td>
-</td>
-<td>
 <u>0.396</u>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-<u>0.644</u>
-</td>
-<td>
 </td>
 <td>
 <u>0.513</u>
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-<u>0.733</u>
-</td>
-<td>
-</td>
-<td>
 <u>0.511</u>
 </td>
 <td>
-</td>
-<td>
-</td>
-<td>
-<u>0.730</u>
-</td>
-<td>
-</td>
-<td>
 <u>0.518</u>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-<u>0.768</u>
-</td>
-<td>
 </td>
 <td>
 <u>0.298</u>
@@ -688,7 +598,79 @@ Precision at coverage 1<br><small>amino acid</small>
 <td>
 </td>
 <td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<u>0.626</u>
+</td>
+<td>
+0.606
+</td>
+<td>
+<u>0.779</u>
+</td>
+<td>
+<u>0.712</u>
+</td>
+<td>
+<u>0.644</u>
+</td>
+<td>
+<u>0.733</u>
+</td>
+<td>
+<u>0.730</u>
+</td>
+<td>
+<u>0.768</u>
+</td>
+<td>
 0.589
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
 </td>
 <td>
 </td>
@@ -698,139 +680,136 @@ Precision at coverage 1<br><small>amino acid</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.665</strong>
-</td>
-<td>
-0.666
-</td>
-<td>
-0.443
-</td>
-<td>
-<strong>0.899</strong>
-</td>
-<td>
-0.562
 </td>
 <td>
 <strong>0.683</strong>
 </td>
 <td>
-0.537
-</td>
-<td>
-0.367
-</td>
-<td>
-<strong>0.898</strong>
-</td>
-<td>
-0.424
-</td>
-<td>
 <strong>0.824</strong>
 </td>
 <td>
-0.681
-</td>
-<td>
-0.561
-</td>
-<td>
-<strong>0.952</strong>
-</td>
-<td>
-0.591
-</td>
-<td>
 <strong>0.771</strong>
-</td>
-<td>
-0.630
-</td>
-<td>
-0.486
-</td>
-<td>
-<strong>0.935</strong>
-</td>
-<td>
-0.518
 </td>
 <td>
 <strong>0.732</strong>
 </td>
 <td>
-0.557
-</td>
-<td>
-0.408
-</td>
-<td>
-<strong>0.920</strong>
-</td>
-<td>
-0.461
-</td>
-<td>
 <strong>0.771</strong>
-</td>
-<td>
-0.557
-</td>
-<td>
-0.460
-</td>
-<td>
-<strong>0.929</strong>
-</td>
-<td>
-0.471
 </td>
 <td>
 <strong>0.798</strong>
 </td>
 <td>
-0.547
-</td>
-<td>
-0.437
-</td>
-<td>
-<strong>0.920</strong>
-</td>
-<td>
-0.442
-</td>
-<td>
 <strong>0.805</strong>
-</td>
-<td>
-0.671
-</td>
-<td>
-0.540
-</td>
-<td>
-<strong>0.943</strong>
-</td>
-<td>
-0.573
 </td>
 <td>
 <strong>0.695</strong>
 </td>
 <td>
+0.666
+</td>
+<td>
+0.537
+</td>
+<td>
+0.681
+</td>
+<td>
+0.630
+</td>
+<td>
+0.557
+</td>
+<td>
+0.557
+</td>
+<td>
+0.547
+</td>
+<td>
+0.671
+</td>
+<td>
 0.534
+</td>
+<td>
+0.443
+</td>
+<td>
+0.367
+</td>
+<td>
+0.561
+</td>
+<td>
+0.486
+</td>
+<td>
+0.408
+</td>
+<td>
+0.460
+</td>
+<td>
+0.437
+</td>
+<td>
+0.540
 </td>
 <td>
 0.371
 </td>
 <td>
+<strong>0.899</strong>
+</td>
+<td>
+<strong>0.898</strong>
+</td>
+<td>
+<strong>0.952</strong>
+</td>
+<td>
+<strong>0.935</strong>
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+<strong>0.929</strong>
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+<strong>0.943</strong>
+</td>
+<td>
 <strong>0.908</strong>
+</td>
+<td>
+0.562
+</td>
+<td>
+0.424
+</td>
+<td>
+0.591
+</td>
+<td>
+0.518
+</td>
+<td>
+0.461
+</td>
+<td>
+0.471
+</td>
+<td>
+0.442
+</td>
+<td>
+0.573
 </td>
 <td>
 0.405

@@ -237,7 +237,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-2" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-1" class="level3">
 <h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
 <p><a href="../publications/contranovo-a-contrastive-learning-approach-to-enhance-de-novo-peptide-sequencing.html">ContraNovo: A Contrastive Learning Approach to Enhance De Novo Peptide Sequencing</a>, page 6: <em>Comparison of the performance of ContraNovo and five baseline methods on 9-species-V1 test set. The bold font indicates the best performance.</em></p>
@@ -245,100 +245,76 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
 </th>
-<th colspan="2">
-Mus musculus
+<th colspan="10" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="2">
-Homo sapiens
-</th>
-<th colspan="2">
-Saccharomyces cerevisiae
-</th>
-<th colspan="2">
-Methanosarcina mazei
-</th>
-<th colspan="2">
-Apis mellifera
-</th>
-<th colspan="2">
-Solanum lycopersicum
-</th>
-<th colspan="2">
-Vigna mungo
-</th>
-<th colspan="2">
-Bacillus subtilis
-</th>
-<th colspan="2">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="2">
-Average
+<th colspan="10" style="text-align:center">
+Peptide precision
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 </tr>
 </thead>
@@ -348,64 +324,61 @@ Precision<br><small>peptide</small>
 <a href="peaks.html">PEAKS</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.600
-</td>
-<td>
-0.197
 </td>
 <td>
 0.639
 </td>
 <td>
-0.277
-</td>
-<td>
 0.748
-</td>
-<td>
-0.428
 </td>
 <td>
 0.673
 </td>
 <td>
-0.356
-</td>
-<td>
 0.633
-</td>
-<td>
-0.287
 </td>
 <td>
 0.728
 </td>
 <td>
-0.403
-</td>
-<td>
 0.644
-</td>
-<td>
-0.362
 </td>
 <td>
 0.719
 </td>
 <td>
-0.387
-</td>
-<td>
 0.586
 </td>
 <td>
-0.203
+0.663
 </td>
 <td>
-0.663
+0.197
+</td>
+<td>
+0.277
+</td>
+<td>
+0.428
+</td>
+<td>
+0.356
+</td>
+<td>
+0.287
+</td>
+<td>
+0.403
+</td>
+<td>
+0.362
+</td>
+<td>
+0.387
+</td>
+<td>
+0.203
 </td>
 <td>
 0.322
@@ -416,64 +389,61 @@ Precision<br><small>peptide</small>
 <a href="deepnovo.html">DeepNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.623
-</td>
-<td>
-0.286
 </td>
 <td>
 0.610
 </td>
 <td>
-0.293
-</td>
-<td>
 0.750
-</td>
-<td>
-0.462
 </td>
 <td>
 0.694
 </td>
 <td>
-0.422
-</td>
-<td>
 0.630
-</td>
-<td>
-0.330
 </td>
 <td>
 0.731
 </td>
 <td>
-0.454
-</td>
-<td>
 0.679
-</td>
-<td>
-0.436
 </td>
 <td>
 0.742
 </td>
 <td>
-0.449
-</td>
-<td>
 0.602
 </td>
 <td>
-0.253
+0.673
 </td>
 <td>
-0.673
+0.286
+</td>
+<td>
+0.293
+</td>
+<td>
+0.462
+</td>
+<td>
+0.422
+</td>
+<td>
+0.330
+</td>
+<td>
+0.454
+</td>
+<td>
+0.436
+</td>
+<td>
+0.449
+</td>
+<td>
+0.253
 </td>
 <td>
 0.376
@@ -484,64 +454,61 @@ Precision<br><small>peptide</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.626
-</td>
-<td>
-0.355
 </td>
 <td>
 0.606
 </td>
 <td>
-0.351
-</td>
-<td>
 <u>0.779</u>
-</td>
-<td>
-0.534
 </td>
 <td>
 0.712
 </td>
 <td>
-0.478
-</td>
-<td>
 0.644
-</td>
-<td>
-0.396
 </td>
 <td>
 0.733
 </td>
 <td>
-0.513
-</td>
-<td>
 0.730
-</td>
-<td>
-0.511
 </td>
 <td>
 0.768
 </td>
 <td>
-0.518
-</td>
-<td>
 0.589
 </td>
 <td>
-0.298
+0.687
 </td>
 <td>
-0.687
+0.355
+</td>
+<td>
+0.351
+</td>
+<td>
+0.534
+</td>
+<td>
+0.478
+</td>
+<td>
+0.396
+</td>
+<td>
+0.513
+</td>
+<td>
+0.511
+</td>
+<td>
+0.518
+</td>
+<td>
+0.298
 </td>
 <td>
 0.439
@@ -552,64 +519,61 @@ Precision<br><small>peptide</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.689
-</td>
-<td>
-0.426
 </td>
 <td>
 0.586
 </td>
 <td>
-0.341
-</td>
-<td>
 0.684
-</td>
-<td>
-0.490
 </td>
 <td>
 0.679
 </td>
 <td>
-0.478
-</td>
-<td>
 0.629
-</td>
-<td>
-0.406
 </td>
 <td>
 0.721
 </td>
 <td>
-0.521
-</td>
-<td>
 0.668
-</td>
-<td>
-0.506
 </td>
 <td>
 0.749
 </td>
 <td>
-0.537
-</td>
-<td>
 0.603
 </td>
 <td>
-0.330
+0.667
 </td>
 <td>
-0.667
+0.426
+</td>
+<td>
+0.341
+</td>
+<td>
+0.490
+</td>
+<td>
+0.478
+</td>
+<td>
+0.406
+</td>
+<td>
+0.521
+</td>
+<td>
+0.506
+</td>
+<td>
+0.537
+</td>
+<td>
+0.330
 </td>
 <td>
 0.448
@@ -620,64 +584,61 @@ Precision<br><small>peptide</small>
 <a href="casanovo.html">Casanovo</a> <small>V2</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.760</u>
-</td>
-<td>
-<u>0.483</u>
 </td>
 <td>
 <u>0.676</u>
 </td>
 <td>
-<u>0.446</u>
-</td>
-<td>
 0.752
-</td>
-<td>
-<u>0.599</u>
 </td>
 <td>
 <u>0.755</u>
 </td>
 <td>
-<u>0.557</u>
-</td>
-<td>
 <u>0.706</u>
-</td>
-<td>
-<u>0.493</u>
 </td>
 <td>
 <u>0.785</u>
 </td>
 <td>
-<u>0.618</u>
-</td>
-<td>
 <u>0.748</u>
-</td>
-<td>
-<u>0.589</u>
 </td>
 <td>
 <u>0.790</u>
 </td>
 <td>
-<u>0.622</u>
+<u>0.681</u>
 </td>
 <td>
-<u>0.681</u>
+<u>0.739</u>
+</td>
+<td>
+<u>0.483</u>
 </td>
 <td>
 <u>0.446</u>
 </td>
 <td>
-<u>0.739</u>
+<u>0.599</u>
+</td>
+<td>
+<u>0.557</u>
+</td>
+<td>
+<u>0.493</u>
+</td>
+<td>
+<u>0.618</u>
+</td>
+<td>
+<u>0.589</u>
+</td>
+<td>
+<u>0.622</u>
+</td>
+<td>
+<u>0.446</u>
 </td>
 <td>
 <u>0.539</u>
@@ -688,64 +649,61 @@ Precision<br><small>peptide</small>
 <a href="contranovo.html">ContraNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.798</strong>
-</td>
-<td>
-<strong>0.567</strong>
 </td>
 <td>
 <strong>0.771</strong>
 </td>
 <td>
-<strong>0.622</strong>
-</td>
-<td>
 <strong>0.797</strong>
-</td>
-<td>
-<strong>0.674</strong>
 </td>
 <td>
 <strong>0.799</strong>
 </td>
 <td>
-<strong>0.630</strong>
-</td>
-<td>
 <strong>0.745</strong>
-</td>
-<td>
-<strong>0.576</strong>
 </td>
 <td>
 <strong>0.810</strong>
 </td>
 <td>
-<strong>0.672</strong>
-</td>
-<td>
 <strong>0.807</strong>
-</td>
-<td>
-<strong>0.677</strong>
 </td>
 <td>
 <strong>0.828</strong>
 </td>
 <td>
-<strong>0.688</strong>
-</td>
-<td>
 <strong>0.711</strong>
 </td>
 <td>
-<strong>0.486</strong>
+<strong>0.785</strong>
 </td>
 <td>
-<strong>0.785</strong>
+<strong>0.567</strong>
+</td>
+<td>
+<strong>0.622</strong>
+</td>
+<td>
+<strong>0.674</strong>
+</td>
+<td>
+<strong>0.630</strong>
+</td>
+<td>
+<strong>0.576</strong>
+</td>
+<td>
+<strong>0.672</strong>
+</td>
+<td>
+<strong>0.677</strong>
+</td>
+<td>
+<strong>0.688</strong>
+</td>
+<td>
+<strong>0.486</strong>
 </td>
 <td>
 <strong>0.621</strong>
@@ -762,100 +720,76 @@ Precision<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
 </th>
-<th colspan="2">
-Mus musculus
+<th colspan="10" style="text-align:center">
+Amino acid precision
 </th>
-<th colspan="2">
-Homo sapiens
-</th>
-<th colspan="2">
-Saccharomyces cerevisiae
-</th>
-<th colspan="2">
-Methanosarcina mazei
-</th>
-<th colspan="2">
-Apis mellifera
-</th>
-<th colspan="2">
-Solanum lycopersicum
-</th>
-<th colspan="2">
-Vigna mungo
-</th>
-<th colspan="2">
-Bacillus subtilis
-</th>
-<th colspan="2">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="2">
-Average
+<th colspan="10" style="text-align:center">
+Peptide precision
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>Average</small>
 </th>
 </tr>
 </thead>
@@ -865,64 +799,61 @@ Precision<br><small>peptide</small>
 <a href="casanovo.html">Casanovo</a> <small>V2</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.792
-</td>
-<td>
-0.520
 </td>
 <td>
 0.836
 </td>
 <td>
-0.651
-</td>
-<td>
 0.851
-</td>
-<td>
-<strong>0.729</strong>
 </td>
 <td>
 0.828
 </td>
 <td>
-0.675
-</td>
-<td>
 0.759
-</td>
-<td>
-0.572
 </td>
 <td>
 0.823
 </td>
 <td>
-0.692
-</td>
-<td>
 0.858
-</td>
-<td>
-0.702
 </td>
 <td>
 0.852
 </td>
 <td>
-<strong>0.717</strong>
-</td>
-<td>
 0.760
 </td>
 <td>
-0.505
+0.818
 </td>
 <td>
-0.818
+0.520
+</td>
+<td>
+0.651
+</td>
+<td>
+<strong>0.729</strong>
+</td>
+<td>
+0.675
+</td>
+<td>
+0.572
+</td>
+<td>
+0.692
+</td>
+<td>
+0.702
+</td>
+<td>
+<strong>0.717</strong>
+</td>
+<td>
+0.505
 </td>
 <td>
 0.640
@@ -933,64 +864,61 @@ Precision<br><small>peptide</small>
 <a href="contranovo.html">ContraNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.816</strong>
-</td>
-<td>
-<strong>0.566</strong>
 </td>
 <td>
 <strong>0.893</strong>
 </td>
 <td>
-<strong>0.745</strong>
-</td>
-<td>
 <strong>0.875</strong>
-</td>
-<td>
-0.719
 </td>
 <td>
 <strong>0.863</strong>
 </td>
 <td>
-<strong>0.716</strong>
-</td>
-<td>
 <strong>0.804</strong>
-</td>
-<td>
-<strong>0.608</strong>
 </td>
 <td>
 <strong>0.860</strong>
 </td>
 <td>
-<strong>0.716</strong>
-</td>
-<td>
 <strong>0.909</strong>
-</td>
-<td>
-<strong>0.791</strong>
 </td>
 <td>
 <strong>0.861</strong>
 </td>
 <td>
-0.713
-</td>
-<td>
 <strong>0.778</strong>
 </td>
 <td>
-<strong>0.521</strong>
+<strong>0.851</strong>
 </td>
 <td>
-<strong>0.851</strong>
+<strong>0.566</strong>
+</td>
+<td>
+<strong>0.745</strong>
+</td>
+<td>
+0.719
+</td>
+<td>
+<strong>0.716</strong>
+</td>
+<td>
+<strong>0.608</strong>
+</td>
+<td>
+<strong>0.716</strong>
+</td>
+<td>
+<strong>0.791</strong>
+</td>
+<td>
+0.713
+</td>
+<td>
+<strong>0.521</strong>
 </td>
 <td>
 <strong>0.677</strong>

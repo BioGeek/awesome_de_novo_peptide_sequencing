@@ -201,7 +201,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-3" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table2-nine-species" class="level3">
 <h3 class="anchored" data-anchor-id="table2-nine-species">Table2 (Nine-species)</h3>
 <p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
@@ -209,51 +209,36 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Apis mellifera
+<th colspan="5" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
+<a href="pnovo-3.html">pNovo 3</a> <small class="text-muted" title="The recall of top-1 suggestingthegoodeffectandcomplementaryofthefeaturescon- results reported by pNovo 3 was 15.0–35.2% higher than that of sideredinourmodel.Inordertofurtherinvestigatethevalidityof pNovo 3-NM and 15.6–35.8% higher than that of pNovo 3-NR thefeatures,wehavecomparedthedistributionsbe">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <strong>0.646</strong>
 </td>
@@ -272,11 +257,8 @@ Recall<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.429
 </td>
@@ -295,11 +277,8 @@ Recall<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.443</u>
 </td>
@@ -320,9 +299,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="novor.html">Novor</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.174
 </td>
@@ -350,49 +326,40 @@ Recall<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X1</small>
 </th>
-<th colspan="1">
-QE_HF_X1
+<th colspan="1" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>peptide</small>
+<small>QE_HF_X1</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
+<a href="pnovo-3.html">pNovo 3</a> <small class="text-muted" title="The recall of top-1 suggestingthegoodeffectandcomplementaryofthefeaturescon- results reported by pNovo 3 was 15.0–35.2% higher than that of sideredinourmodel.Inordertofurtherinvestigatethevalidityof pNovo 3-NM and 15.6–35.8% higher than that of pNovo 3-NR thefeatures,wehavecomparedthedistributionsbe">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <strong>0.478</strong>
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.298
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.322</u>
 </td>
@@ -401,9 +368,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="novor.html">Novor</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.109
 </td>
@@ -419,49 +383,40 @@ Recall<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X2</small>
 </th>
-<th colspan="1">
-QE_HF_X2
+<th colspan="1" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>peptide</small>
+<small>QE_HF_X2</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo-3.html">pNovo 3</a>
+<a href="pnovo-3.html">pNovo 3</a> <small class="text-muted" title="The recall of top-1 suggestingthegoodeffectandcomplementaryofthefeaturescon- results reported by pNovo 3 was 15.0–35.2% higher than that of sideredinourmodel.Inordertofurtherinvestigatethevalidityof pNovo 3-NM and 15.6–35.8% higher than that of pNovo 3-NR thefeatures,wehavecomparedthedistributionsbe">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <strong>0.383</strong>
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="pnovo.html">pNovo</a>
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 0.214
 </td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="peaks.html">PEAKS</a>
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Although the recall of top-10 results reported by pNovo (SupplementaryFig.S2).Thedetailsaboutthesedatasetsareshown was slightlyhigher than that of PEAKS, the recall of top-1 results inSupplementaryTableS1.ForV.mungodataset,thereareashigh reportedbypNovowasevenalittleworsethanthatofPEAKS.This as82–87">· <em>quoted</em></small>
 </th>
-<td>
-<small>quoted</small>
-</td>
 <td>
 <u>0.246</u>
 </td>
@@ -470,9 +425,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="novor.html">Novor</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.093
 </td>

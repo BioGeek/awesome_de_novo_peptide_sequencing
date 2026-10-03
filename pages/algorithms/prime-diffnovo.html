@@ -190,7 +190,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="reported-comparisons-2" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-1-nine-species-original-deepnovo-2017" class="level3">
 <h3 class="anchored" data-anchor-id="table-1-nine-species-original-deepnovo-2017">Table 1 (Nine-species · original (DeepNovo, 2017))</h3>
 <p><a href="../publications/prime-diffnovo-accurate-peptide-de-novo-sequencing-via-non-autoregressive.html">Prime-DiffNovo: Accurate Peptide De Novo Sequencing via Non-autoregressive Generation and Diffusion Refinement</a>, page 8: <em>Peptide accuracy comparison of different de novo peptide sequencing methods across nine species on two benchmark datasets.</em></p>
@@ -198,70 +198,43 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
 </th>
-<th colspan="1">
-Apis mellifera
-</th>
-<th colspan="1">
-Bacillus subtilis
-</th>
-<th colspan="1">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="1">
-Homo sapiens
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Solanum lycopersicum
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Weighted average
+<th colspan="10" style="text-align:center">
+Peptide accuracy
 </th>
 </tr>
 <tr>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Weighted average</small>
 </th>
 </tr>
 </thead>
@@ -270,9 +243,6 @@ Accuracy<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a> <small>v1.1</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.526
 </td>
@@ -309,9 +279,6 @@ Accuracy<br><small>peptide</small>
 <a href="instanovo-plus.html">InstaNovo+</a> <small>v1.1</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.555
 </td>
 <td>
@@ -347,9 +314,6 @@ Accuracy<br><small>peptide</small>
 <a href="pi-primenovo.html">π-PrimeNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.592</u>
 </td>
 <td>
@@ -384,9 +348,6 @@ Accuracy<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="prime-diffnovo.html">Prime-DiffNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.607</strong>
 </td>
@@ -429,70 +390,43 @@ Accuracy<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
 </th>
-<th colspan="1">
-Apis mellifera
-</th>
-<th colspan="1">
-Bacillus subtilis
-</th>
-<th colspan="1">
-Candidatus Thiodiazotropha endoloripes
-</th>
-<th colspan="1">
-Homo sapiens
-</th>
-<th colspan="1">
-Methanosarcina mazei
-</th>
-<th colspan="1">
-Mus musculus
-</th>
-<th colspan="1">
-Saccharomyces cerevisiae
-</th>
-<th colspan="1">
-Solanum lycopersicum
-</th>
-<th colspan="1">
-Vigna mungo
-</th>
-<th colspan="1">
-Weighted average
+<th colspan="10" style="text-align:center">
+Peptide accuracy
 </th>
 </tr>
 <tr>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Apis mellifera</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Bacillus subtilis</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Candidatus Thiodiazotropha endoloripes</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Homo sapiens</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Methanosarcina mazei</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Mus musculus</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Saccharomyces cerevisiae</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Solanum lycopersicum</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Vigna mungo</small>
 </th>
 <th>
-Accuracy<br><small>peptide</small>
+<small>Weighted average</small>
 </th>
 </tr>
 </thead>
@@ -501,9 +435,6 @@ Accuracy<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a> <small>v1.1</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.625
 </td>
@@ -540,9 +471,6 @@ Accuracy<br><small>peptide</small>
 <a href="instanovo-plus.html">InstaNovo+</a> <small>v1.1</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.646</u>
 </td>
 <td>
@@ -578,9 +506,6 @@ Accuracy<br><small>peptide</small>
 <a href="pi-primenovo.html">π-PrimeNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.602
 </td>
 <td>
@@ -615,9 +540,6 @@ Accuracy<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="prime-diffnovo.html">Prime-DiffNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.658</strong>
 </td>

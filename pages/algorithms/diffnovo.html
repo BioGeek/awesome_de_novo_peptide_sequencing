@@ -226,7 +226,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-2" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-1" class="level3">
 <h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
 <p><a href="../publications/diffnovo-a-transformer-diffusion-model-for-de-novo-peptide-sequencing.html">DiffNovo: A Transformer-Diffusion Model for De Novo Peptide Sequencing</a>, page 7: <em>Comparison of DiffNovo and other state-of-the-art (SOTA) methods on amino acid recall and precision across three DIA datasets.</em></p>
@@ -234,40 +234,34 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
 </th>
-<th colspan="2">
-UTI
+<th colspan="3" style="text-align:center">
+Amino acid recall
 </th>
-<th colspan="2">
-OC
-</th>
-<th colspan="3">
-Plasma
+<th colspan="3" style="text-align:center">
+Amino acid precision
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>amino acid</small>
+<small>UTI</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>OC</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>Plasma</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
+<small>UTI</small>
 </th>
 <th>
-Recall<br><small>amino acid</small>
+<small>OC</small>
 </th>
 <th>
-Precision<br><small>amino acid</small>
-</th>
-<th>
-Positional accuracy<br><small>amino acid</small>
+<small>Plasma</small>
 </th>
 </tr>
 </thead>
@@ -277,27 +271,22 @@ Positional accuracy<br><small>amino acid</small>
 <a href="diffnovo.html">DiffNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.665</strong>
-</td>
-<td>
-<strong>0.675</strong>
 </td>
 <td>
 <strong>0.749</strong>
 </td>
 <td>
-<strong>0.743</strong>
-</td>
-<td>
 0.663
 </td>
 <td>
-0.675
+<strong>0.675</strong>
 </td>
 <td>
+<strong>0.743</strong>
+</td>
+<td>
+0.675
 </td>
 </tr>
 <tr>
@@ -305,27 +294,22 @@ Positional accuracy<br><small>amino acid</small>
 <a href="deepnovo-dia.html">DeepNovo-DIA</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.566</u>
-</td>
-<td>
-<u>0.612</u>
 </td>
 <td>
 <u>0.547</u>
 </td>
 <td>
-<u>0.601</u>
-</td>
-<td>
 <u>0.689</u>
 </td>
 <td>
-<u>0.702</u>
+<u>0.612</u>
 </td>
 <td>
+<u>0.601</u>
+</td>
+<td>
+<u>0.702</u>
 </td>
 </tr>
 <tr>
@@ -333,27 +317,22 @@ Positional accuracy<br><small>amino acid</small>
 <a href="pepnet.html">PepNet</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.396
-</td>
-<td>
-0.391
 </td>
 <td>
 0.455
 </td>
 <td>
-0.451
-</td>
-<td>
 0.509
 </td>
 <td>
-0.491
+0.391
 </td>
 <td>
+0.451
+</td>
+<td>
+0.491
 </td>
 </tr>
 <tr>
@@ -361,55 +340,30 @@ Positional accuracy<br><small>amino acid</small>
 <a href="cascadia.html">Cascadia</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.293
-</td>
-<td>
-0.341
 </td>
 <td>
 0.286
 </td>
 <td>
-0.349
-</td>
-<td>
 <strong>0.704</strong>
 </td>
 <td>
+0.341
+</td>
+<td>
+0.349
+</td>
+<td>
 <strong>0.782</strong>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="pepnet.html">PepNet</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.725
 </td>
 </tr>
 </tbody>
 </table>
 </div>
+<p class="comparison-notes">
+<small>PepNet, Plasma: the printed cell reads “0.491 / 0.725*”, and only 0.491 is in the table. The paper’s note: “* Indicates the positional accuracy reported in [10].”</small>
+</p>
 </section>
 <section id="table-2" class="level3">
 <h3 class="anchored" data-anchor-id="table-2">Table 2</h3>
@@ -418,34 +372,22 @@ Positional accuracy<br><small>amino acid</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/de-novo-sequencing-of-dia-data.html">De novo sequencing of DIA data</a>
 </th>
-<th colspan="1">
-UTI
-</th>
-<th colspan="1">
-OC
-</th>
-<th colspan="3">
-Plasma
+<th colspan="3" style="text-align:center">
+Peptide precision
 </th>
 </tr>
 <tr>
 <th>
-Precision<br><small>peptide</small>
+<small>UTI</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
+<small>OC</small>
 </th>
 <th>
-Precision<br><small>peptide</small>
-</th>
-<th>
-Accuracy<br><small>peptide</small>
-</th>
-<th>
-Filtered accuracy<br><small>peptide</small>
+<small>Plasma</small>
 </th>
 </tr>
 </thead>
@@ -454,9 +396,6 @@ Filtered accuracy<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="diffnovo.html">DiffNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.659</strong>
 </td>
@@ -466,18 +405,11 @@ Filtered accuracy<br><small>peptide</small>
 <td>
 <u>0.632</u>
 </td>
-<td>
-</td>
-<td>
-</td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
 <a href="deepnovo-dia.html">DeepNovo-DIA</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.403</u>
 </td>
@@ -487,18 +419,11 @@ Filtered accuracy<br><small>peptide</small>
 <td>
 0.351
 </td>
-<td>
-</td>
-<td>
-</td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
 <a href="pepnet.html">PepNet</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.296
 </td>
@@ -508,19 +433,11 @@ Filtered accuracy<br><small>peptide</small>
 <td>
 0.550
 </td>
-<td>
-</td>
-<td>
-0.664
-</td>
 </tr>
 <tr>
 <th style="white-space:nowrap">
 <a href="cascadia.html">Cascadia</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.291
 </td>
@@ -530,33 +447,13 @@ Filtered accuracy<br><small>peptide</small>
 <td>
 <strong>0.736</strong>
 </td>
-<td>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="pepnet.html">PepNet</a>
-</th>
-<td>
-<small>quoted</small>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-</td>
-<td>
-0.530
-</td>
-<td>
-</td>
 </tr>
 </tbody>
 </table>
 </div>
+<p class="comparison-notes">
+<small>PepNet, Plasma: the printed cell reads “0.550/0.530*/0.664+”, and only 0.550 is in the table. The paper’s note: “+ Indicates the filtered peptide-level accuracy, and * indicates the peptide-level accuracy reported in [10].”</small>
+</p>
 </section>
 </section>
 <section id="paper-describing-it" class="level2">

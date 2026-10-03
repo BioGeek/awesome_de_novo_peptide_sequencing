@@ -194,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="reported-comparisons-6" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-6">Reported comparisons (6)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-3-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table-3-hc-pt">Table 3 (HC-PT)</h3>
 <p><a href="../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit.html">Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control</a>, page 7: <em>Empirical comparison of PTM identification. We evaluate the ability of DiffuNovo and other models to identify Post-Translational Modifications (PTMs) on the benchmark datasets. The best results and the second best are highlighted with bold and underline, respectively.</em></p>
@@ -202,16 +202,16 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th colspan="1">
-HC-PT
+<th colspan="1" style="text-align:center">
+PTM precision
 </th>
 </tr>
 <tr>
 <th>
-PTM precision<br><small>ptm</small>
+<small>HC-PT</small>
 </th>
 </tr>
 </thead>
@@ -221,9 +221,6 @@ PTM precision<br><small>ptm</small>
 <a href="deepnovo.html">DeepNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.626
 </td>
 </tr>
@@ -231,9 +228,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="pointnovo.html">PointNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.676</u>
 </td>
@@ -243,9 +237,6 @@ PTM precision<br><small>ptm</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.552
 </td>
 </tr>
@@ -253,9 +244,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.501
 </td>
@@ -265,9 +253,6 @@ PTM precision<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.568
 </td>
 </tr>
@@ -275,9 +260,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.705</strong>
 </td>
@@ -293,16 +275,16 @@ PTM precision<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th colspan="1">
-Nine-Species
+<th colspan="1" style="text-align:center">
+PTM precision
 </th>
 </tr>
 <tr>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Nine-Species</small>
 </th>
 </tr>
 </thead>
@@ -312,9 +294,6 @@ PTM precision<br><small>ptm</small>
 <a href="deepnovo.html">DeepNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.576
 </td>
 </tr>
@@ -322,9 +301,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="pointnovo.html">PointNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.629
 </td>
@@ -334,9 +310,6 @@ PTM precision<br><small>ptm</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.652
 </td>
 </tr>
@@ -344,9 +317,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.706</u>
 </td>
@@ -356,9 +326,6 @@ PTM precision<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.680
 </td>
 </tr>
@@ -366,9 +333,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.822</strong>
 </td>
@@ -384,16 +348,16 @@ PTM precision<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th colspan="1">
-Seven-Species
+<th colspan="1" style="text-align:center">
+PTM precision
 </th>
 </tr>
 <tr>
 <th>
-PTM precision<br><small>ptm</small>
+<small>Seven-Species</small>
 </th>
 </tr>
 </thead>
@@ -403,9 +367,6 @@ PTM precision<br><small>ptm</small>
 <a href="deepnovo.html">DeepNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.391
 </td>
 </tr>
@@ -413,9 +374,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="pointnovo.html">PointNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.117
 </td>
@@ -425,9 +383,6 @@ PTM precision<br><small>ptm</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.448
 </td>
 </tr>
@@ -435,9 +390,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.360
 </td>
@@ -447,9 +399,6 @@ PTM precision<br><small>ptm</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.473</u>
 </td>
 </tr>
@@ -457,9 +406,6 @@ PTM precision<br><small>ptm</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.515</strong>
 </td>
@@ -475,20 +421,20 @@ PTM precision<br><small>ptm</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -497,9 +443,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.313
 </td>
@@ -518,9 +461,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.419
 </td>
 <td>
@@ -537,9 +477,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.211
 </td>
@@ -558,9 +495,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.212
 </td>
 <td>
@@ -577,9 +511,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.356
 </td>
@@ -598,9 +529,6 @@ Recall<br><small>amino acid</small>
 <a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.485</strong>
 </td>
 <td>
@@ -617,9 +545,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.458</u>
 </td>
@@ -647,20 +572,20 @@ Recall<br><small>amino acid</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -669,9 +594,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.428
 </td>
@@ -690,9 +612,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.480
 </td>
 <td>
@@ -709,9 +628,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.481
 </td>
@@ -730,9 +646,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.505
 </td>
 <td>
@@ -749,9 +662,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.517
 </td>
@@ -770,9 +680,6 @@ Recall<br><small>amino acid</small>
 <a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.572</strong>
 </td>
 <td>
@@ -789,9 +696,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.565</u>
 </td>
@@ -819,20 +723,20 @@ Recall<br><small>amino acid</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -841,9 +745,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.204
 </td>
@@ -862,9 +763,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.022
 </td>
 <td>
@@ -881,9 +779,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.119
 </td>
@@ -902,9 +797,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.174
 </td>
 <td>
@@ -921,9 +813,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.234</strong>
 </td>
@@ -942,9 +831,6 @@ Recall<br><small>amino acid</small>
 <a href="diffunovo.html">DiffuNovo</a> <small>Logits</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.233</u>
 </td>
 <td>
@@ -961,9 +847,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="diffunovo.html">DiffuNovo</a> <small>MBR</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.193
 </td>

@@ -227,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="reported-comparisons-2" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table-s12" class="level3">
 <h3 class="anchored" data-anchor-id="table-s12">Table S12</h3>
 <p><a href="../publications/learning-from-tandem-mass-spectra-at-scale-with-a-self-supervised-foundation.html">Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics</a>, page 84: <em>Peptide recall across the biological validation datasets for the de novo sequencing benchmark. The best model per dataset is in bold.</em></p>
@@ -235,46 +235,31 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 one per row (InstaNovo's application datasets)
 </th>
-<th colspan="1">
-HeLa degradome
-</th>
-<th colspan="1">
-Candidatus Scalindua brodae
-</th>
-<th colspan="1">
-Snake venoms
-</th>
-<th colspan="1">
-HeLa single-shot
-</th>
-<th colspan="1">
-Nanobodies
-</th>
-<th colspan="1">
-Wound exudates
+<th colspan="6" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>peptide</small>
+<small>HeLa degradome</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Candidatus Scalindua brodae</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Snake venoms</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>HeLa single-shot</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Nanobodies</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Wound exudates</small>
 </th>
 </tr>
 </thead>
@@ -283,9 +268,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo-fm.html">InstaNovo-FM</a> <small>fine-tuned</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.821</u>
 </td>
@@ -310,9 +292,6 @@ Recall<br><small>peptide</small>
 <a href="instanovo.html">InstaNovo</a> <small>v1.2</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <strong>0.868</strong>
 </td>
 <td>
@@ -336,9 +315,6 @@ Recall<br><small>peptide</small>
 <a href="casanovo.html">Casanovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.767
 </td>
 <td>
@@ -361,9 +337,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="xuanjinovo.html">XuanjiNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.808
 </td>
@@ -397,46 +370,31 @@ Recall<br><small>peptide</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2" rowspan="2">
+<th rowspan="2">
 one per row (InstaNovo's application datasets)
 </th>
-<th colspan="1">
-HeLa degradome
-</th>
-<th colspan="1">
-Candidatus Scalindua brodae
-</th>
-<th colspan="1">
-Snake venoms
-</th>
-<th colspan="1">
-HeLa single-shot
-</th>
-<th colspan="1">
-Nanobodies
-</th>
-<th colspan="1">
-Wound exudates
+<th colspan="6" style="text-align:center">
+Peptide recall
 </th>
 </tr>
 <tr>
 <th>
-Recall<br><small>peptide</small>
+<small>HeLa degradome</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Candidatus Scalindua brodae</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Snake venoms</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>HeLa single-shot</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Nanobodies</small>
 </th>
 <th>
-Recall<br><small>peptide</small>
+<small>Wound exudates</small>
 </th>
 </tr>
 </thead>
@@ -445,9 +403,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo-fm.html">InstaNovo-FM</a> <small>fine-tuned</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <u>0.821</u>
 </td>
@@ -472,9 +427,6 @@ Recall<br><small>peptide</small>
 <a href="instanovo-fm.html">InstaNovo-FM</a> <small>from scratch</small>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.819
 </td>
 <td>
@@ -497,9 +449,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo-fm.html">InstaNovo-FM</a> <small>frozen</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.775
 </td>
@@ -524,9 +473,6 @@ Recall<br><small>peptide</small>
 <a href="instanovo.html">InstaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.821</u>
 </td>
 <td>
@@ -549,9 +495,6 @@ Recall<br><small>peptide</small>
 <th style="white-space:nowrap">
 <a href="instanovo.html">InstaNovo</a> <small>FM size matched</small>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 <strong>0.823</strong>
 </td>

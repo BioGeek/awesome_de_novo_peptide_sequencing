@@ -194,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="reported-comparisons-3" class="level2">
 <h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
-<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table1-hc-pt">Table1 (HC-PT)</h3>
 <p><a href="../publications/renovo-retrieval-based-de-novo-mass-spectrometry-peptide-sequencing.html">ReNovo: Retrieval-Based De Novo Mass Spectrometry Peptide Sequencing</a>, page 7: <em>Empirical comparison of de novo peptide sequencing models. The best and the second best are highlighted with bold and underline, respectively.</em></p>
@@ -202,20 +202,20 @@ ul.task-list li input[type="checkbox"] {
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/proteometools.html">ProteomeTools</a><br><small>HC-PT (NovoBench)</small>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -224,9 +224,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.313
 </td>
@@ -245,9 +242,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.419</u>
 </td>
 <td>
@@ -264,9 +258,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.211
 </td>
@@ -285,9 +276,6 @@ Recall<br><small>amino acid</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.356
 </td>
 <td>
@@ -305,9 +293,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.212
 </td>
 <td>
@@ -322,11 +307,8 @@ Recall<br><small>amino acid</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="renovo.html">ReNovo</a>
+<a href="renovo.html">ReNovo</a> <small class="text-muted" title="After the model training stage, ReNovo utilizes the pre-trained model P(y | s,p;θ∗) along with thetrainingdataset(S,P,Y)tobuildthedatastoreD,whereθ∗ denotestheparametersofthepre- trainedReNovomodel.">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <strong>0.467</strong>
 </td>
@@ -351,20 +333,20 @@ Recall<br><small>amino acid</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -373,9 +355,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.428
 </td>
@@ -394,9 +373,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.480
 </td>
 <td>
@@ -413,9 +389,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.481
 </td>
@@ -434,9 +407,6 @@ Recall<br><small>amino acid</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.517</u>
 </td>
 <td>
@@ -454,9 +424,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.505
 </td>
 <td>
@@ -471,11 +438,8 @@ Recall<br><small>amino acid</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="renovo.html">ReNovo</a>
+<a href="renovo.html">ReNovo</a> <small class="text-muted" title="After the model training stage, ReNovo utilizes the pre-trained model P(y | s,p;θ∗) along with thetrainingdataset(S,P,Y)tobuildthedatastoreD,whereθ∗ denotestheparametersofthepre- trainedReNovomodel.">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <strong>0.568</strong>
 </td>
@@ -500,20 +464,20 @@ Recall<br><small>amino acid</small>
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
-<th colspan="2">
+<th>
 <a href="../datasets/seven-species-benchmark.html">Seven-species benchmark</a>
 </th>
-<th>
-Precision<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide precision
 </th>
-<th>
-AUC<br><small>peptide</small>
+<th colspan="1" style="text-align:center">
+Peptide AUC
 </th>
-<th>
-Precision<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid precision
 </th>
-<th>
-Recall<br><small>amino acid</small>
+<th colspan="1" style="text-align:center">
+Amino acid recall
 </th>
 </tr>
 </thead>
@@ -522,9 +486,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="deepnovo.html">DeepNovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.204
 </td>
@@ -543,9 +504,6 @@ Recall<br><small>amino acid</small>
 <a href="pointnovo.html">PointNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.022
 </td>
 <td>
@@ -562,9 +520,6 @@ Recall<br><small>amino acid</small>
 <th style="white-space:nowrap">
 <a href="casanovo.html">Casanovo</a>
 </th>
-<td>
-<small>unclear</small>
-</td>
 <td>
 0.119
 </td>
@@ -583,9 +538,6 @@ Recall<br><small>amino acid</small>
 <a href="pi-helixnovo.html">π-HelixNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 <u>0.234</u>
 </td>
 <td>
@@ -603,9 +555,6 @@ Recall<br><small>amino acid</small>
 <a href="adanovo.html">AdaNovo</a>
 </th>
 <td>
-<small>unclear</small>
-</td>
-<td>
 0.174
 </td>
 <td>
@@ -620,11 +569,8 @@ Recall<br><small>amino acid</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="renovo.html">ReNovo</a>
+<a href="renovo.html">ReNovo</a> <small class="text-muted" title="After the model training stage, ReNovo utilizes the pre-trained model P(y | s,p;θ∗) along with thetrainingdataset(S,P,Y)tobuildthedatastoreD,whereθ∗ denotestheparametersofthepre- trainedReNovomodel.">· <em>released</em></small>
 </th>
-<td>
-<small>released</small>
-</td>
 <td>
 <strong>0.278</strong>
 </td>
