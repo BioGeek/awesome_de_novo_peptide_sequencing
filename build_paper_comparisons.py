@@ -3864,6 +3864,19 @@ ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]
                                                "Three-species"))],
     # pi-PrimeNovo's preprint prints the same table.
     107: [],
+    # InstaNovo-FM's six validation sets ARE InstaNovo's application sets:
+    # "we made use of the biological validation dataset featuring six smaller
+    # sets ... we exclude the Immuno and Herceptin datasets used in the
+    # InstaNovo paper", eight minus two. Four keep InstaNovo's names (TPL
+    # Antibodies is glossed "(nanobodies)"); GluC is InstaNovo's HeLa
+    # degradome, which that paper calls the "HeLa GluC degradome" (Extended
+    # Data Fig. 7); which leaves Hela QC as HeLa single-shot. Winnow's 'HeLa
+    # QC' is a different set and is not meant here.
+    273: [(re.compile(r"(?i)^GluC$"), (_INSTANOVO_DEPOSIT, None, "HeLa degradome")),
+          (re.compile(r"(?i)^hela ?qc$"), (_INSTANOVO_DEPOSIT, None, "HeLa single-shot")),
+          (re.compile(r"(?i)^TPL"), (_INSTANOVO_DEPOSIT, None, "Nanobodies"))]
+         + [e for e in _INSTANOVO_ROWS if e[1][2] in
+            ("Candidatus Scalindua brodae", "Snake venoms", "Wound exudates")],
     # The preprint's yeast row is "Exc. Yeast": trained on nine-species
     # excluding yeast, evaluated on yeast, which in 2023 could only be the
     # original 2017 benchmark.
@@ -3923,7 +3936,14 @@ _EXC_YEAST = ("'Exc. Yeast' is measured ON yeast: it names the leave-one-out "
               "defined in DeepNovo and PointNovo'. Fig. 2d's caption reads 'accuracy "
               "... on the high-resolution nine-species dataset excluding yeast' before "
               "saying 'evaluated on yeast', which invites the opposite reading.")
+_FM_SETS = ("No accession is printed for the six validation sets. They are mapped "
+            "from the Methods, which call them InstaNovo's application datasets "
+            "minus 'the Immuno and Herceptin datasets': GluC is InstaNovo's 'HeLa "
+            "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
+            "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (273, "Table S12"): _FM_SETS,
+    (273, "Table S13"): _FM_SETS,
     (1, "Supplementary Table 2"): _EXC_YEAST,
     (1, "Supplementary Table 3"): _EXC_YEAST + (
         " THE TEXT AND THIS TABLE DISAGREE: p. 10 says that after fine-tuning on "
@@ -3998,16 +4018,10 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     (283, "Table 2"): ("De novo sequencing of DIA data",
                        "MSV000082368: OC, UTI and plasma"),
     # InstaNovo-FM, Tables S12 and S13: "the six held-out biological
-    # validation datasets". The paper names them only by these labels, gives
-    # no accession for any, and they are not among the Hugging Face tiers it
-    # publishes, so nothing in the catalog can be said to BE them. Recorded as
-    # printed rather than mapped to a guess.
-    (273, "Table S12"): (None, "the six held-out biological validation "
-                         "datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL "
-                         "Antibodies, Wound Fluids); no accession stated"),
-    (273, "Table S13"): (None, "the six held-out biological validation "
-                         "datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL "
-                         "Antibodies, Wound Fluids); no accession stated"),
+    # validation datasets", one per row. No accession is printed, but the
+    # Methods say what they are, so ROW_DATASET maps them (see there).
+    (273, "Table S12"): (None, "one per row (InstaNovo's application datasets)"),
+    (273, "Table S13"): (None, "one per row (InstaNovo's application datasets)"),
     (30, "TABLE I"): ("De novo sequencing of DIA data",
                       "MSV000082368: UTI, OC and plasma (206,477 / 203,780 / "
                       "1,097,400 spectra), each split randomly 0.9 / 0.05 / 0.05 "

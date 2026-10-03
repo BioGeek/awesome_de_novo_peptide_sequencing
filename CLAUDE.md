@@ -1125,7 +1125,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**373 datasets, 401 versions, 432 addresses, 606 publication links over 131 papers.**
+**373 datasets, 401 versions, 432 addresses, 608 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1987,6 +1987,15 @@ Yeast/Bacillus/Mouse rows name no version, because the paper does not say.
 IgG1-Human-HC, PT and three-species down the side, and is mapped the same
 way. Three-species is GraphNovo's own test set on Zenodo 8000316, the deposit
 LIPNovo and LIPNovo+ also compare on.
+
+InstaNovo-FM's Tables S12 and S13 print no accession for their "six held-out
+biological validation datasets". The Methods identify them anyway: they are
+InstaNovo's application sets minus "the Immuno and Herceptin datasets". Four
+keep InstaNovo's names (TPL Antibodies is glossed "nanobodies"). GluC is
+InstaNovo's "HeLa GluC degradome", and Hela QC is, by elimination, HeLa
+single-shot. Winnow's HeLa QC is a different set. The chain of evidence is
+in the tables' design note, and the rows carry InstaNovo's canonical names, so
+the two papers' numbers now meet on one subset.
 
 **A protease is a subset, and the chain belongs in it.** Digest-level tables
 (CrossNovo's antibody tables, π-PrimeNovo's Supplementary Table 7) record each
