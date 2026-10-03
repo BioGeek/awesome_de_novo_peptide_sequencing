@@ -31,7 +31,7 @@ are easy to misread, are in CLAUDE.md under **Public benchmarks** and
 | **NovoBench** | Table 2 of the PDF committed to its repo | 117 blobs, no CSV or JSON. And it answers a different question: see below. |
 | **NovoBoard** | — | `nh2tran/NovoBoard` carries no results files. |
 | **DLDN-Bench** | — | `ddz-icb/DLDN-Bench` has `create_result_csv.py`, a script that *produces* result CSVs, but no CSVs. |
-| **Living proteomics benchmark** | Nature Methods Registered Report, March 2026 | Nothing to poll yet. This is the one to watch: it is explicitly designed as a continuously updated resource, and it is co-authored by 53 researchers spanning most of the groups whose tools it evaluates. |
+| **Living proteomics benchmark** | Nature Methods Registered Report, March 2026 | **Already charted: its running implementation IS denovo_benchmarks** (`bittremieuxlab/denovo_benchmarks`), the first benchmark above. What is still missing is the peer-reviewed results paper, not the data. It is explicitly designed as a continuously updated resource, co-authored by 53 researchers spanning most of the groups whose tools it evaluates. |
 
 The bar for adding one is the same bar the two charted benchmarks clear: results
 published as data, at a stable address, refreshed by their owners. A leaderboard

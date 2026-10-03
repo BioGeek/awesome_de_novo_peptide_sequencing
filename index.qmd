@@ -23,6 +23,7 @@ format:
 #| label: load-data
 #| echo: false
 #| output: false
+import json
 import sqlite3
 from datetime import date
 import pandas as pd
@@ -625,6 +626,142 @@ for _kind, _sql in _key_sql.items():
             _rows.append({"type": _kind, "key": _key, "slug": _slug})
 entity_slugs = pd.DataFrame(_rows, columns=["type", "key", "slug"])
 
+# PERFORMANCE OVER TIME: every reported number on four shared datasets,
+# placed at the RELEASE DATE of the method it is about (the earliest paper
+# describing it), with the two independent benchmarks laid over it.
+#
+# Three sources, one point table:
+#   paper              paper_comparison_measurement. A number several papers
+#                      print for the same method, variant, metric, species and
+#                      dataset version (almost always a NovoBench number
+#                      quoted again) becomes ONE point listing every paper.
+#   denovo_benchmarks  per species, from the nine 9_species_* datasets, plus the
+#                      mean of the nine for tools that ran on all of them.
+#   ProteoBench        the pooled nine-species selection, so only under Average.
+#
+# A benchmark value is offered only on the paper metric whose DEFINITION it
+# shares. denovo_benchmarks' curve at coverage 1 is correct peptides over ALL
+# spectra (evaluate.py counts an unanswered spectrum as a miss), so it sits on
+# 'peptide recall' and 'peptide precision' (equal when every spectrum gets a
+# prediction, as in NovoBench), and on amino-acid precision at its own level.
+_firsts = dict(conn.execute(
+    "SELECT pa.algorithm_id, MIN(p.publication_date) FROM publication_algorithm pa "
+    "JOIN publication p ON p.id = pa.publication_id WHERE pa.role = 'describes' "
+    "GROUP BY pa.algorithm_id"))
+_family = dict(conn.execute("SELECT id, algorithm_family FROM algorithm"))
+_species9 = {
+    "apis_mellifera": "Apis mellifera", "bacillus_subtilis": "Bacillus subtilis",
+    "candidatus_thiodiazotropha": "Candidatus Thiodiazotropha endoloripes",
+    "human": "Homo sapiens", "methanosarcina_mazei": "Methanosarcina mazei",
+    "mus_musculus": "Mus musculus", "saccharomyces_cerevisiae": "Saccharomyces cerevisiae",
+    "solanum_lycopersicum": "Solanum lycopersicum", "vigna_mungo": "Vigna mungo"}
+_WHOLE = "Whole test split"
+_pts: dict = {}
+for (rid, pub, title, ptype, pdate, label, part, page, aid, alg, variant, printed,
+     metric, level, ds, ver, sub, sub_printed, agg, value, basis, cue, derived) in conn.execute("""
+        SELECT m.review_id, m.reported_by, p.title, p.publication_type, m.reported_on,
+               m.table_label, m.part, m.pdf_page, m.algorithm_id, m.algorithm,
+               COALESCE(m.variant, ''), m.algorithm_printed, m.metric, m.level,
+               m.dataset, m.dataset_version, COALESCE(m.subset, ''),
+               COALESCE(m.subset_printed, ''), m.is_aggregate, m.value, m.basis,
+               COALESCE(m.basis_cue, ''), COALESCE(m.derived_from, '')
+          FROM paper_comparison_measurement m JOIN publication p ON p.id = m.reported_by"""):
+    if ds == "Nine-species benchmark":
+        panel = "nine"
+        if agg:
+            subset = "Average"
+        elif sub in _species9.values():
+            subset = sub
+        elif sub in ("", "Nine-Species"):
+            subset = _WHOLE
+        else:
+            continue
+    elif ds == "Seven-species benchmark":
+        panel, subset = "seven", _WHOLE
+    elif ver == "HC-PT (NovoBench)":
+        panel, subset = "hcpt", _WHOLE
+    elif ds == "De novo sequencing of DIA data" and sub in ("OC", "UTI", "Plasma"):
+        panel, subset = "dia", sub
+    else:
+        continue
+    vlabel = ver or "version not stated"
+    # Casanovo's 'Prec. at Cov.=1' IS peptide recall by definition: precision
+    # with every spectrum answered, an unanswered one counted wrong.
+    as_printed = ""
+    if metric == "precision@cov1":
+        metric, as_printed = "recall", "reported as precision at coverage 1"
+    key = (panel, subset, aid, variant, f"{level} {metric}", vlabel, round(value, 4))
+    pt = _pts.setdefault(key, {
+        "panel": panel, "subset": subset, "metric": f"{level} {metric}",
+        "algorithm_id": aid, "algorithm": alg, "variant": variant,
+        "family": _family.get(aid) or "", "date": _firsts.get(aid),
+        "value": value, "source": "paper", "version": vlabel,
+        "bases": set(), "seen": []})
+    pt["bases"].add(basis)
+    pt["seen"].append({"pub": pub, "title": title, "year": str(pdate)[:4],
+                       "type": ptype, "table": label + (f" ({part})" if part else ""),
+                       "page": page, "printed": printed, "subset": sub_printed,
+                       "basis": basis, "cue": cue[:220], "derived": derived,
+                       "as": as_printed})
+_rows = []
+for pt in _pts.values():
+    bases = pt.pop("bases")
+    pt["basis"] = bases.pop() if len(bases) == 1 else "mixed"
+    pt["n_papers"] = len({x["pub"] for x in pt["seen"]})
+    pt["detail"] = json.dumps(pt.pop("seen"))
+    _rows.append(pt)
+# denovo_benchmarks, per species and as the mean of the nine.
+_dvb = {}
+_dvb_commit = dict(conn.execute("SELECT key, value FROM benchmark_source"))
+for ds, tool, version, aid, ap_p, ap_a, pf_p, pf_a in conn.execute("""
+        SELECT r.dataset, t.display_name, r.version, t.algorithm_id, r.ap_peptide,
+               r.ap_aa, r.prec_full_peptide, r.prec_full_aa
+          FROM benchmark_result r JOIN benchmark_tool t ON t.tool = r.tool
+         WHERE r.is_latest = 1 AND t.algorithm_id IS NOT NULL"""):
+    sp = _species9.get(ds[len("9_species_"):]) if ds.startswith("9_species_") else None
+    if not sp:
+        continue
+    for metric, v in (("peptide auc", ap_p), ("amino acid auc", ap_a),
+                      ("peptide recall", pf_p), ("peptide precision", pf_p),
+                      ("amino acid precision", pf_a)):
+        if v is not None:
+            _dvb.setdefault((aid, tool, metric), []).append((sp, version, v))
+for (aid, tool, metric), vals in _dvb.items():
+    alg = conn.execute("SELECT name FROM algorithm WHERE id = ?", (aid,)).fetchone()[0]
+    base = {"panel": "nine", "metric": metric, "algorithm_id": aid, "algorithm": alg,
+            "variant": "", "family": _family.get(aid) or "", "date": _firsts.get(aid),
+            "source": "denovo_benchmarks", "version": "", "basis": "released",
+            "n_papers": 0}
+    for sp, version, v in vals:
+        _rows.append({**base, "subset": sp, "value": v, "detail": json.dumps(
+            {"tool": tool, "version": version, "commit": _dvb_commit.get("commit", "")[:12],
+             "commit_date": _dvb_commit.get("commit_date", "")[:10]})})
+    if len({sp for sp, _v, _x in vals}) == 9:
+        _rows.append({**base, "subset": "Average", "value": sum(x for _s, _v, x in vals) / 9,
+                      "detail": json.dumps({"tool": tool, "version": vals[0][1],
+                                            "mean_of": 9,
+                                            "commit": _dvb_commit.get("commit", "")[:12],
+                                            "commit_date": _dvb_commit.get("commit_date", "")[:10]})})
+# ProteoBench: the pooled nine-species selection, mass-based match.
+for sid, name, version, aid, decoding, ckpt, submitted, level, prec, rec, auc_ in conn.execute("""
+        SELECT s.id, s.display_name, s.version, s.algorithm_id, s.decoding, s.checkpoint,
+               s.submitted, m.level, m.precision, m.recall, m.auc
+          FROM proteobench_submission s JOIN proteobench_metric m ON m.submission_id = s.id
+         WHERE m.match_type = 'mass' AND s.algorithm_id IS NOT NULL"""):
+    lev = "peptide" if level == "peptide" else "amino acid"
+    alg = conn.execute("SELECT name FROM algorithm WHERE id = ?", (aid,)).fetchone()[0]
+    for metric, v in ((f"{lev} precision", prec), (f"{lev} recall", rec), (f"{lev} auc", auc_)):
+        if v is None:
+            continue
+        _rows.append({"panel": "nine", "subset": "Average", "metric": metric,
+                      "algorithm_id": aid, "algorithm": alg, "variant": version or "",
+                      "family": _family.get(aid) or "", "date": _firsts.get(aid),
+                      "value": v, "source": "ProteoBench", "version": "", "basis": "released",
+                      "n_papers": 0, "detail": json.dumps(
+                          {"tool": name, "version": version, "decoding": decoding,
+                           "checkpoint": ckpt, "submitted": submitted, "id": sid})})
+perf_points = pd.DataFrame(_rows)
+
 conn.close()
 
 ojs_define(
@@ -657,6 +794,7 @@ ojs_define(
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
+    perf_points=perf_points,
     build_date=build_date,
 )
 
@@ -3196,6 +3334,268 @@ Inputs.table(pb_table, {
     "AA AUC": v => v.toFixed(3)
   },
   width: { Method: 130, Version: 80, Family: 130, Decoding: 150 }
+})
+```
+
+## Performance over time
+
+What the papers report, placed at the release date of the method each number
+is about, with the two independent benchmarks laid over it. Every point from a
+paper is a number some paper printed in its comparison table; a number several
+papers printed (usually NovoBench's, quoted again) is one point, and its
+tooltip lists every paper it was seen in. The benchmark points are larger and
+outlined: **denovo_benchmarks**, the living proteomics benchmark, per species
+and as the mean of the nine, and **ProteoBench**, on the pooled nine-species
+selection and so only under *Average*.
+
+```{ojs}
+//| echo: false
+perf_all = transpose(perf_points).map(d => ({
+  ...d,
+  date: new Date(d.date),
+  detail: JSON.parse(d.detail),
+  cat: d.source === "paper" ? `paper · ${d.basis}` : d.source
+}))
+```
+
+```{ojs}
+//| echo: false
+perf_metric_label = m => ({
+  "peptide precision": "Peptide precision", "peptide recall": "Peptide recall",
+  "peptide auc": "Peptide AUC / AP", "amino acid precision": "Amino-acid precision",
+  "amino acid recall": "Amino-acid recall", "amino acid auc": "Amino-acid AUC / AP",
+  "ptm precision": "PTM precision", "ptm recall": "PTM recall",
+  "ptm ptm-precision": "PTM precision (per modification)",
+  "ptm ptm-recall": "PTM recall (per modification)"
+})[m] ?? m
+```
+
+```{ojs}
+//| echo: false
+viewof perf_panel = Inputs.select(new Map([
+  ["Nine-species benchmark", "nine"],
+  ["Seven-species benchmark", "seven"],
+  ["HC-PT (ProteomeTools, NovoBench split)", "hcpt"],
+  ["DIA: OC, UTI and plasma (MSV000082368)", "dia"]
+]), {label: "Dataset"})
+```
+
+```{ojs}
+//| echo: false
+perf_metric_options = {
+  const papers = perf_all.filter(d => d.panel === perf_panel && d.source === "paper")
+  const n = d3.rollup(papers, v => v.length, d => d.metric)
+  return [...n].filter(([, c]) => c >= 8).sort((a, b) => b[1] - a[1]).map(([m]) => m)
+}
+```
+
+```{ojs}
+//| echo: false
+viewof perf_metric = Inputs.select(perf_metric_options, {
+  label: "Metric", format: perf_metric_label,
+  value: perf_metric_options.includes("peptide recall") ? "peptide recall" : perf_metric_options[0]})
+```
+
+```{ojs}
+//| echo: false
+perf_subset_options = {
+  const subs = new Set(perf_all.filter(d => d.panel === perf_panel && d.metric === perf_metric
+                                            && d.source === "paper").map(d => d.subset))
+  const head = ["Average", "Whole test split"].filter(s => subs.has(s))
+  return [...head, ...[...subs].filter(s => !head.includes(s)).sort()]
+}
+```
+
+```{ojs}
+//| echo: false
+viewof perf_subset = Inputs.select(perf_subset_options, {label: "Species / set"})
+```
+
+```{ojs}
+//| echo: false
+perf_sel = perf_all.filter(d => d.panel === perf_panel && d.metric === perf_metric
+                                && d.subset === perf_subset)
+```
+
+```{ojs}
+//| echo: false
+perf_chart = {
+  const paper = perf_sel.filter(d => d.source === "paper")
+    .sort((a, b) => b.n_papers - a.n_papers)
+  const dvb = perf_sel.filter(d => d.source === "denovo_benchmarks")
+  const pb = perf_sel.filter(d => d.source === "ProteoBench")
+  // The spread of what papers report about ONE method: a long line is papers
+  // disagreeing about the same thing.
+  const spread = [...d3.group(paper, d => d.algorithm)]
+    .map(([alg, v]) => ({alg, date: v[0].date, lo: d3.min(v, d => d.value), hi: d3.max(v, d => d.value)}))
+    .filter(d => d.hi > d.lo)
+  const cats = ["paper · retrained", "paper · quoted", "paper · released",
+                "paper · unclear", "paper · mixed", "denovo_benchmarks", "ProteoBench"]
+  const versions = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
+                    "version not stated"]
+  const chart = Plot.plot({
+    width: Math.min(width, 1100), height: 460, marginLeft: 52, marginBottom: 48,
+    x: {type: "time", label: "Method release date (first describing paper)", labelOffset: 40},
+    y: {domain: [0, 1], grid: true, label: perf_metric_label(perf_metric)},
+    // r is a SCALE in Plot: without this the radius formula below is squeezed
+    // into Plot's default range and every paper point draws at about 2 px.
+    r: {type: "identity"},
+    color: {domain: cats, range: ["#d97706", "#475569", "#16a34a", "#8a97ab", "#7c3aed",
+                                  "#dc2626", "#2563eb"], legend: true},
+    symbol: {domain: versions, range: ["circle", "triangle", "square", "times"],
+             legend: perf_panel === "nine"},
+    marks: [
+      Plot.ruleX(spread, {x: "date", y1: "lo", y2: "hi", stroke: "#cbd5e1", strokeWidth: 3}),
+      Plot.dot(paper, {x: "date", y: "value", fill: "cat", r: d => 4 + Math.sqrt(d.n_papers) * 2,
+                       // The version shape exists only on nine-species. A
+                       // value outside the symbol domain DROPS the mark
+                       // silently in Plot, which is how HC-PT (version
+                       // 'HC-PT (NovoBench)') first drew no points at all.
+                       symbol: perf_panel === "nine" ? "version" : "circle",
+                       fillOpacity: 0.85, stroke: "white", strokeWidth: 0.8,
+                       sort: null}),
+      Plot.dot(dvb, {x: "date", y: "value", fill: "cat", r: 7, symbol: "diamond",
+                     stroke: "black", strokeWidth: 1.2}),
+      Plot.dot(pb, {x: "date", y: "value", fill: "cat", r: 7, symbol: "star",
+                    stroke: "black", strokeWidth: 1.2})
+    ]
+  })
+  // Rich tooltip, bound by DOM order: each Plot.dot mark is one group, in the
+  // order the marks are listed, and `sort: null` keeps a mark's elements in
+  // data order (Plot otherwise sorts dots by radius).
+  const tip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move = ev => {
+    const pad = 12, box = tip.getBoundingClientRect()
+    tip.style.left = `${Math.max(pad, Math.min(ev.clientX + pad, window.innerWidth - box.width - pad))}px`
+    tip.style.top = `${Math.max(pad, Math.min(ev.clientY + pad, window.innerHeight - box.height - pad))}px`
+  }
+  const fmt = v => v.toFixed(3)
+  const body = d => {
+    const head = html`<div class="map-tooltip-title">${d.algorithm}${d.variant ? ` · ${d.variant}` : ""}</div>
+      <div class="map-tooltip-meta">${perf_metric_label(d.metric)}: <b>${fmt(d.value)}</b>
+        · ${d.subset} · released ${d.date.toISOString().slice(0, 10)}</div>`
+    if (d.source === "paper") {
+      const seen = d.detail.slice(0, 8)
+      return html`<div>${head}
+        <div class="map-tooltip-meta">${d.version} · basis ${d.basis}</div>
+        <div class="map-tooltip-meta" style="margin-top:6px">Seen in ${d.n_papers} paper${d.n_papers > 1 ? "s" : ""}:</div>
+        ${seen.map(x => html`<div class="map-tooltip-meta" style="max-width:340px; white-space:normal; margin-top:3px">
+          · <i>${x.title}</i> (${x.year}, ${x.type}), ${x.table}, p. ${x.page}; printed as
+          “${x.printed}”${x.subset ? ` on ${x.subset}` : ""}; ${x.basis}${x.as ? `; ${x.as}` : ""}${x.derived ? "; not printed, derived" : ""}</div>`)}
+        ${d.detail.length > 8 ? html`<div class="map-tooltip-meta">… and ${d.detail.length - 8} more</div>` : ""}
+      </div>`
+    }
+    const x = d.detail
+    return html`<div>${head}
+      <div class="map-tooltip-meta" style="margin-top:6px">${d.source === "denovo_benchmarks"
+        ? `denovo_benchmarks: ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
+        : `ProteoBench: ${x.tool}${x.version ? ` ${x.version}` : ""}${x.decoding ? `, ${x.decoding}` : ""}${x.checkpoint ? `, checkpoint ${x.checkpoint}` : ""}; submitted ${x.submitted}; pooled nine-species selection`}</div>
+    </div>`
+  }
+  const groups = chart.querySelectorAll('g[aria-label="dot"]')
+  ;[paper, dvb, pb].forEach((data, gi) => {
+    if (!groups[gi]) return
+    Array.from(groups[gi].children).forEach((el, i) => {
+      const d = data[i]
+      if (!d) return
+      el.style.cursor = "pointer"
+      el.addEventListener("mouseenter", ev => {
+        tip.replaceChildren(body(d)); tip.classList.add("visible")
+        tip.setAttribute("aria-hidden", "false"); move(ev)
+      })
+      el.addEventListener("mousemove", move)
+      el.addEventListener("mouseleave", () => {
+        tip.classList.remove("visible"); tip.setAttribute("aria-hidden", "true")
+      })
+    })
+  })
+  return html`<div class="chart-wrap" style="position:relative">${chart}${tip}</div>`
+}
+```
+
+```{ojs}
+//| echo: false
+perf_gap = {
+  // The same method, the same data, two numbers: what papers quote from
+  // NovoBench (which RETRAINS every architecture on 499,402 spectra) against
+  // denovo_benchmarks running the RELEASED checkpoint, at peptide recall.
+  // The number MOST PAPERS print for a method, which is NovoBench's: papers
+  // disagree about what to call it (one says "provided by NovoBench", another
+  // marks the same 0.164 as its own retraining), so the merged point's basis
+  // is 'mixed' and cannot be the filter.
+  const printed = perf_all.filter(d => d.panel === "nine" && d.source === "paper"
+    && d.subset === "Whole test split"
+    && (d.metric === "peptide precision" || d.metric === "peptide recall"))
+  const bench = perf_all.filter(d => d.panel === "nine" && d.source === "denovo_benchmarks"
+    && d.subset === "Average" && d.metric === "peptide recall")
+  return bench.map(b => {
+    const q = d3.greatest(printed.filter(d => d.algorithm === b.algorithm), d => d.n_papers)
+    return q && q.n_papers >= 2
+      ? {algorithm: b.algorithm, quoted: q.value, n: q.n_papers, released: b.value,
+         gap: b.value - q.value}
+      : null
+  }).filter(Boolean).sort((a, b) => a.gap - b.gap)
+}
+```
+
+```{ojs}
+//| echo: false
+perf_interp = {
+  if (!perf_gap.length) return md``
+  const lo = perf_gap[0], hi = perf_gap[perf_gap.length - 1]
+  const f = v => v.toFixed(3)
+  return md`**Where the papers and the benchmarks disagree, the disagreement is the
+finding.** Most numbers papers print are either their own retraining or
+NovoBench's, quoted again, and NovoBench retrains every architecture on the same
+499,402 spectra. Both benchmarks run the checkpoint you would download. The gap
+between the two runs **both ways**, which is the tell that it is about training
+data rather than about any one tool: ${lo.algorithm} reads ${f(lo.quoted)} in the
+${lo.n} papers that print it and ${f(lo.released)} as released
+(${lo.gap >= 0 ? "+" : ""}${f(lo.gap)}), because its public weights are old;
+${hi.algorithm} reads ${f(hi.quoted)} in ${hi.n} papers and ${f(hi.released)}
+released (+${f(hi.gap)}), because its public checkpoint was trained on far more
+data than NovoBench gives it. Both are true statements about
+different models that share a name. Measured over the ${perf_gap.length} methods
+that have both, comparing the number most papers print for each (NovoBench's) with
+denovo_benchmarks' mean over the nine species at peptide recall; see
+[the retrained-versus-released trap](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/BENCHMARKS.md#the-retrained-versus-released-trap).`
+}
+```
+
+```{ojs}
+//| echo: false
+perf_table = {
+  const by = d3.group(perf_sel, d => d.algorithm)
+  return [...by].map(([alg, v]) => {
+    const p = v.filter(d => d.source === "paper")
+    const dv = v.find(d => d.source === "denovo_benchmarks")
+    const pb = v.filter(d => d.source === "ProteoBench")
+    const med = p.length ? d3.median(p, d => d.value) : null
+    return {
+      Method: alg,
+      Released: v[0].date.toISOString().slice(0, 10),
+      "Papers: median": med,
+      "Papers: range": p.length > 1 ? `${d3.min(p, d => d.value).toFixed(3)}–${d3.max(p, d => d.value).toFixed(3)}` : "",
+      "Paper points": p.length,
+      denovo_benchmarks: dv ? dv.value : null,
+      ProteoBench: pb.length ? d3.max(pb, d => d.value) : null,
+      "Gap (denovo − papers)": dv && med != null ? dv.value - med : null
+    }
+  }).sort((a, b) => a.Released.localeCompare(b.Released))
+}
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(perf_table, {
+  rows: 14, layout: "auto",
+  format: {
+    Method: (m, i) => page_link("algorithms", m, m),
+    "Papers: median": v => v == null ? "" : v.toFixed(3),
+    denovo_benchmarks: v => v == null ? "" : v.toFixed(3),
+    ProteoBench: v => v == null ? "" : v.toFixed(3),
+    "Gap (denovo − papers)": v => v == null ? "" : (v >= 0 ? "+" : "") + v.toFixed(3)
+  }
 })
 ```
 

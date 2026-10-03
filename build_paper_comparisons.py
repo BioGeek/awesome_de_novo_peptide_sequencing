@@ -3592,6 +3592,13 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # MSV000082368, the DeepNovo-DIA deposit.
     (45, "Table 2"): ("De novo sequencing of DIA data",
                       "MSV000082368: OC, UTI and plasma"),
+    # CrossNovo, Tables 6 and 7: antibodies, as the captions say ("... on
+    # WIgG1-Mouse", "... on IgG1-Human"). With no dataset named in a header,
+    # the cue scan fell back to the paper's nine-species link and filed both
+    # under nine-species, which put eight enzyme columns into that benchmark.
+    # The paper gives no accession, so the antibody is recorded as printed.
+    (9, "Table6"): (None, "WIgG1-Mouse antibody (CrossNovo); no accession stated"),
+    (9, "Table7"): (None, "IgG1-Human antibody (CrossNovo); no accession stated"),
     (283, "Table 2"): ("De novo sequencing of DIA data",
                        "MSV000082368: OC, UTI and plasma"),
     # InstaNovo-FM, Tables S12 and S13: "the six held-out biological

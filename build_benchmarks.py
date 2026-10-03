@@ -267,7 +267,20 @@ def interp(grid: list[float], xs: list[float], ys: list[float]) -> list[float]:
 
 
 def fetch_level(sha: str, datasets: list[str], filename: str) -> dict:
-    """{(dataset, tool, version): (ap, curve_on_grid)} for one metric level."""
+    """{(dataset, tool, version): (ap, curve_on_grid, precision_at_full)}.
+
+    `precision_at_full` is the curve's own last point, at coverage 1, read from
+    the raw points rather than the interpolated grid. What it MEANS differs by
+    level, and is fixed by upstream's evaluation/evaluate.py:
+
+    - peptide: the curve runs over every LABELLED spectrum sorted by score,
+      with an unanswered spectrum counted as a miss, and its denominator is
+      the number of labelled spectra. So the last point is correct peptides
+      over all spectra: the papers' 'peptide recall'.
+    - amino acid: the curve runs over every PREDICTED residue, so the last
+      point is correct residues over predicted residues: the papers'
+      'amino-acid precision'.
+    """
     csv.field_size_limit(10_000_000)
 
     def one(dataset: str) -> tuple[str, bytes | None]:
@@ -304,11 +317,12 @@ def fetch_level(sha: str, datasets: list[str], filename: str) -> dict:
                     # One real case: deepnovo on PT_orbitrap_HLAII_TMT at the
                     # amino-acid level has auc 0.0 and an empty curve. The AP is
                     # still meaningful, the curve is not.
-                    out[(dataset, tool, version)] = (ap, None)
+                    out[(dataset, tool, version)] = (ap, None, None)
                     continue
                 pairs = sorted(zip(xs, ys))
                 out[(dataset, tool, version)] = (
-                    ap, interp(GRID, [p[0] for p in pairs], [p[1] for p in pairs]))
+                    ap, interp(GRID, [p[0] for p in pairs], [p[1] for p in pairs]),
+                    pairs[-1][1] if pairs[-1][0] >= 0.999 else None)
     if skipped:
         print(f"  {skipped} malformed row(s) skipped in {filename}", file=sys.stderr)
     return out
@@ -365,6 +379,9 @@ CREATE TABLE IF NOT EXISTS benchmark_result (
     version    TEXT NOT NULL,
     ap_peptide REAL,              -- area under the peptide precision-coverage curve
     ap_aa      REAL,              -- ... and the amino-acid one
+    prec_full_peptide REAL,       -- peptide precision at coverage 1: correct
+                                  -- over all spectra, the papers' 'peptide recall'
+    prec_full_aa      REAL,       -- amino-acid precision at coverage 1
     -- 1 on the newest version of this tool that ran on this dataset. The rule
     -- lives in version_key() and is not expressible in SQL, so it is applied
     -- once here and the site filters on the flag.
@@ -396,6 +413,11 @@ def main() -> int:
 
     db = sqlite3.connect(DB_PATH)
     db.executescript(SCHEMA)
+    # CREATE TABLE IF NOT EXISTS adds no column to a table that already exists.
+    have_cols = {r[1] for r in db.execute("PRAGMA table_info(benchmark_result)")}
+    for col in ("prec_full_peptide", "prec_full_aa"):
+        if col not in have_cols:
+            db.execute(f"ALTER TABLE benchmark_result ADD COLUMN {col} REAL")
 
     sha, commit_date = head_commit()
     have = dict(db.execute("SELECT key, value FROM benchmark_source"))
@@ -430,7 +452,7 @@ def main() -> int:
     for level, rows in levels.items():
         sums: dict[str, list[float]] = {}
         counts: dict[str, int] = {}
-        for (dataset, tool, version), (_ap, curve) in rows.items():
+        for (dataset, tool, version), (_ap, curve, _pf) in rows.items():
             if curve is None or latest.get((tool, dataset)) != version:
                 continue
             acc = sums.setdefault(tool, [0.0] * len(GRID))
@@ -485,10 +507,13 @@ def main() -> int:
               n_datasets[tool]) for tool in tools])
         db.executemany(
             "INSERT INTO benchmark_result (dataset, tool, version, ap_peptide,"
-            " ap_aa, is_latest) VALUES (?,?,?,?,?,?)",
+            " ap_aa, prec_full_peptide, prec_full_aa, is_latest)"
+            " VALUES (?,?,?,?,?,?,?,?)",
             [(d, t, v,
               pep[(d, t, v)][0] if (d, t, v) in pep else None,
               aa[(d, t, v)][0] if (d, t, v) in aa else None,
+              pep[(d, t, v)][2] if (d, t, v) in pep else None,
+              aa[(d, t, v)][2] if (d, t, v) in aa else None,
               1 if latest.get((t, d)) == v else 0)
              for (d, t, v) in keys])
         db.executemany(

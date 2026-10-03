@@ -307,6 +307,18 @@ Five tables, all written by that one builder and by nothing else:
 101-point averaged curve per tool and metric level) and `benchmark_source` (the
 upstream commit, its date and the fetch date, which the site quotes).
 
+**Two more numbers per run, read off the same curves.** `prec_full_peptide`
+and `prec_full_aa` are each curve's own last point, at coverage 1, from the raw
+points rather than the interpolated grid. Their meaning is fixed by upstream's
+`evaluation/evaluate.py`, not guessed: the peptide curve runs over every
+LABELLED spectrum with an unanswered one counted as a miss, so its last point
+is correct peptides over all spectra, the papers' **peptide recall**; the
+amino-acid curve runs over PREDICTED residues, so its last point is the papers'
+**amino-acid precision**. Every run's curves reach coverage 1. The per-species
+results ARE these curves: each `results/<dataset>/` folder holds the two
+precision curves plus spectral-angle and retention-time curves that no paper
+table has a counterpart for.
+
 **What the numbers are.** `auc` in the upstream CSVs is the area under a
 precision-coverage curve, which the benchmark manuscript calls AP. Two levels
 are stored, peptide and amino acid. `benchmark_curve` holds the
@@ -442,6 +454,49 @@ is wrong here: these curves do not all start at coverage 0 (one tool's
 amino-acid curve starts at 0.028, which the design discussion flags), and
 interpolating would invent values below a curve's first point rather than leave
 the gap visible.
+
+## Performance over time
+
+A section on the site, right after **How they score**: every number the papers
+print on four shared datasets (nine-species, seven-species, HC-PT, and DIA's
+OC/UTI/plasma), at the **release date of the method** it is about, the earliest
+paper describing it. denovo_benchmarks -- the living proteomics benchmark,
+whose peer-reviewed results paper is not out yet -- is laid over it per species
+and as the mean of the nine; ProteoBench as one pooled point under *Average*.
+
+- **A number several papers print is one point**, its tooltip listing every
+  paper, table and page it was seen in. Seven-species' 371 printed values are
+  143 points: most are NovoBench's, quoted again.
+- **A benchmark appears only on the metric whose definition it shares**:
+  AP on AUC, `prec_full_peptide` on peptide recall and precision,
+  `prec_full_aa` on amino-acid precision. Casanovo's "Prec. at Cov.=1" is
+  filed as peptide recall, which it is by definition, and says so in the hover.
+- **The gap between the papers and the benchmarks is the finding**, and the
+  prose computes it live: the number most papers print for a method
+  (NovoBench's) against denovo_benchmarks' released checkpoint. It runs both
+  ways -- DeepNovo lower released, because its weights are old; InstaNovo far
+  higher, because its checkpoint saw far more data -- which is the
+  retrained-versus-released trap made visible.
+- **A merged point's basis can be `mixed`, and that is real.** Papers disagree
+  about the same number: one calls InstaNovo's 0.164 "provided by NovoBench",
+  another marks it its own retraining. So `mixed` cannot be filtered on; the
+  interpretation picks each method's MOST-PRINTED value instead.
+
+Two Plot traps, both silent:
+
+- **A symbol value outside the symbol domain drops the mark.** The version
+  shape is meaningful only on nine-species; HC-PT points carried version
+  `HC-PT (NovoBench)` and drew NOTHING, with no error, until the symbol became
+  a constant off nine-species. Same family as `fill: "family"` on a field that
+  is not there.
+- **`r` is a scale.** A radius computed per point is squeezed into Plot's
+  default range unless the plot declares `r: {type: "identity"}`; without it
+  every paper point drew at about 2 px.
+
+Tooltips are the `.map-tooltip` div bound by DOM order, one Plot.dot mark per
+source, with `sort: null` so a mark's elements stay in data order (Plot
+otherwise sorts dots by radius). Verified in headless Chrome: all four datasets
+draw, 0 OJS errors, and a hover on each of the three marks shows its provenance.
 
 ## Benchmark numbers on the method pages
 
