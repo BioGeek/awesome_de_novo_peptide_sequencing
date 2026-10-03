@@ -1,4 +1,11 @@
 {
+ "p1-pg58-supplementary-table-1": {
+  "cells": 0,
+  "label": "Supplementary Table 1",
+  "on": "2026-10-03",
+  "pub": 1,
+  "state": "dismissed"
+ },
  "p13-pg7-t1": {
   "cells": 3,
   "label": "Table 1",
@@ -369,6 +376,13 @@
   "on": "2026-10-03",
   "pub": 283,
   "state": "approved"
+ },
+ "p3-pg20-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 3,
+  "state": "dismissed"
  },
  "p30-pg5-ti": {
   "cells": 3,
