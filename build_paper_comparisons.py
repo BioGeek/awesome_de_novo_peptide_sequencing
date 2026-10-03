@@ -764,7 +764,8 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
                cap_end: int, edges: list[tuple[float, float]],
                left_bound: float, max_header: int = 5,
                cap_start: int = -1,
-               right_limit: float = float("inf")) -> tuple[float, float, float, float]:
+               right_limit: float = float("inf"),
+               left_limit: float = 0.0) -> tuple[float, float, float, float]:
     """(x0, top, x1, bottom) covering the caption, the header and the body.
 
     Used only to CROP THE PRINTED TABLE OUT OF THE PAGE for review, never for
@@ -832,7 +833,7 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     # and its bottom stretched Table 2's picture down over Figure 2's venn
     # diagrams. The horizontal clip is already computed here, so the vertical
     # extent is taken from the words that clip keeps.
-    x0 = max(0.0, left_bound - 12)
+    x0 = max(0.0, left_bound - 12, left_limit)
     x1 = min(edges[-1][1] + 14, right_limit)
     # THE PADDING STOPS SHORT OF THE NEXT COLUMN'S TEXT. A fixed 14 pt past the
     # last column reached into the page's other column wherever the gutter is
@@ -1334,8 +1335,14 @@ def pair_parts(rows: list[list[dict]],
     Using distance alone paired LIPNovo's first table with the caption of the
     SECOND, which sat two rows below it while its own was five rows above.
     """
+    # A label is discarded as being INSIDE a table only if it is inside that
+    # table's rows AND its width. A side-by-side neighbour's caption sits
+    # within the other table's rows and in another column: PhysNovo's Table 6
+    # caption (right column) falls inside Table 3's rows (left), was dropped
+    # here, and Table 6 was paired with a line of prose further down instead.
     runs = [r for r in label_runs(rows)
-            if not any(lo <= r[0] <= hi for lo, hi, _a, _b in parts)]
+            if not any(lo <= r[0] <= hi and min(r[2], b) - max(r[1], a) > 0
+                       for lo, hi, a, b in parts)]
     # Cluster the parts into page columns by x overlap.
     cols: list[dict] = []
     for part in sorted(parts, key=lambda t: t[2]):
@@ -1409,21 +1416,43 @@ def pair_parts(rows: list[list[dict]],
                 for part, run in zip(mine, cand):
                     out[(part[0], part[1], part[2])] = run
                 continue
-        # A CAPTION BELONGS TO ONE TABLE. Handing the same label to every part
-        # that is near it gave a FIGURE the caption of the table above it, and
-        # it then arrived in the review page as a captioned item with no table
-        # in the picture. Each label is claimed once, by the nearest part, and
-        # a part left without one is treated as a figure and skipped.
-        taken: set = set()
-        order = sorted(
-            ((min(abs(r[0] - part[0]), abs(r[0] - part[1])), pi, ri)
-             for pi, part in enumerate(mine) for ri, r in enumerate(cand)
-             if not blocked(part, r)))
+        # A CAPTION BELONGS TO ONE TABLE, and labels and tables both run down
+        # the column in order. Handing the same label to every part near it
+        # gave a FIGURE the caption of the table above it; claiming labels
+        # greedily, nearest first, was the next fault: PhysNovo's right column
+        # has Table 5's caption, Table 6's, and much lower a line of prose that
+        # starts 'Table6.' at a line break, and greed let the parts steal each
+        # other's labels until Table 6 took the prose. Labels and parts are now
+        # ALIGNED in order -- each label used once, a part may go without one
+        # (it is then a figure), total distance minimised -- which is the
+        # reading of a column a person does.
+        INF, SKIP = float("inf"), 25.0
+        nl, np_ = len(cand), len(mine)
+        dist = [[(INF if blocked(mine[j], cand[i]) else
+                  min(abs(cand[i][0] - mine[j][0]), abs(cand[i][0] - mine[j][1])))
+                 for j in range(np_)] for i in range(nl)]
+        dp = [[INF] * (np_ + 1) for _ in range(nl + 1)]
+        back: dict = {}
+        dp[0][0] = 0.0
+        for i in range(nl + 1):
+            for j in range(np_ + 1):
+                if dp[i][j] == INF:
+                    continue
+                if i < nl and dp[i][j] < dp[i + 1][j]:            # label unused
+                    dp[i + 1][j], back[(i + 1, j)] = dp[i][j], ("L", i, j)
+                if j < np_ and dp[i][j] + SKIP < dp[i][j + 1]:     # part uncaptioned
+                    dp[i][j + 1], back[(i, j + 1)] = dp[i][j] + SKIP, ("P", i, j)
+                if i < nl and j < np_ and dist[i][j] < INF and \
+                        dp[i][j] + dist[i][j] < dp[i + 1][j + 1]:
+                    dp[i + 1][j + 1] = dp[i][j] + dist[i][j]
+                    back[(i + 1, j + 1)] = ("M", i, j)
         chosen: dict = {}
-        for _d, pi, ri in order:
-            if pi in chosen or ri in taken:
-                continue
-            chosen[pi], _ = ri, taken.add(ri)
+        i, j = nl, np_
+        while (i, j) in back:
+            kind, pi_, pj_ = back[(i, j)]
+            if kind == "M":
+                chosen[pj_] = pi_
+            i, j = pi_, pj_
         for pi, part in enumerate(mine):
             ri = chosen.get(pi)
             out[(part[0], part[1], part[2])] = cand[ri] if ri is not None else None
@@ -1777,10 +1806,48 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
     # printed side by side arrive as one block; column_groups() finds the
     # gutter and each group is extracted separately, with its own caption.
     parts: list[tuple[int, int, list[tuple[float, float]]]] = []
+    # THE PAGE'S OWN COLUMN SPLIT, where it states one: two captions on one
+    # row are the two page columns, and the boundary between them is the
+    # gutter. PhysNovo's page 8 sets Table 3 beside Tables 5 and 6, and the
+    # numeric gutter was too narrow to see -- Table 3 ends at x 282 and Table
+    # 6's length-error column ('0', '1', '>=2') starts at 313 -- so all three
+    # came out as one twelve-column block, refused as ragged and labelled
+    # with the Table 4 caption below it.
+    # A gutter governs only the block its caption row CAPTIONS: the label row
+    # nearest above the block, or one inside it. Publication 64's page 6 sets
+    # Tables 2 and 3 side by side BELOW a full-width Table 1, and applying
+    # their gutter page-wide cut Table 1 in half.
+    # The test uses where a column's NUMBERS sit, never its tiled interval:
+    # tiling stretches a column to the next one's midpoint, so LIPNovo's last
+    # Table 3 column (numbers at x 271-284) was tiled to 364, its centre fell
+    # past the 298 gutter and it was cut off as a one-column table.
+    runs_all = label_runs(rows)
+    label_rows = sorted({r[0] for r in runs_all})
+    def gutters_for(lo, hi):
+        above = [r for r in label_rows if r < lo]
+        mine = ([above[-1]] if above else []) + [r for r in label_rows if lo <= r <= hi]
+        out = []
+        for r in mine:
+            same = sorted((q for q in runs_all if q[0] == r), key=lambda q: q[1])
+            out += [(a[2] + b[1]) / 2 for a, b in zip(same, same[1:])]
+        return out
     for lo, hi in blocks:
         full = column_edges(rows, lo, hi)
+        gutters = gutters_for(lo, hi)
+        def centre(k):
+            xs = [(w["x0"] + w["x1"]) / 2 for i in range(lo, hi + 1) for w in rows[i]
+                  if numeric(w["text"]) and full[k][0] <= (w["x0"] + w["x1"]) / 2 < full[k][1]]
+            return statistics.median(xs) if xs else (full[k][0] + full[k][1]) / 2
         for grp in column_groups(full):
-            parts.append((lo, hi, [full[k] for k in grp]))
+            cur: list[int] = []
+            for k in grp:
+                c = centre(k)
+                if cur and any(centre(cur[-1]) < g < c for g in gutters):
+                    parts.append((lo, hi, [full[j] for j in cur]))
+                    cur = []
+                cur.append(k)
+            if cur:
+                parts.append((lo, hi, [full[j] for j in cur]))
     # EACH SIDE-BY-SIDE TABLE STARTS AT ITS OWN FIRST ROW OF NUMBERS. Blocks
     # are built from whole rows, so two tables printed side by side share one
     # block from the higher one's first data row to the lower one's last.
@@ -1805,8 +1872,28 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
     trimmed = []
     for pt in parts:
         tp = _trim(*pt) if len(parts) > 1 else pt
-        origin[(tp[0], tp[1], tp[2][0][0])] = (pt[0], pt[1])
-        trimmed.append(tp)
+        # A CAPTION INSIDE A PART'S ROWS, in its own column, separates two
+        # tables stacked in that column: PhysNovo's right column holds Table 5
+        # and then Table 6, and Table 6's caption sits between their rows.
+        lo_, hi_, e_ = tp
+        x0_, x1_ = e_[0][0], e_[-1][1]
+        cuts = sorted(r[0] for r in runs_all if lo_ < r[0] < hi_
+                      and min(r[2], x1_) - max(r[1], x0_) > 0.3 * (r[2] - r[1]))
+        pieces, start = [], lo_
+        for cut in cuts:
+            if cut - 1 >= start:
+                pieces.append((start, cut - 1, e_))
+            start = cut + 1
+        pieces.append((start, hi_, e_))
+        for pc in pieces:
+            pc = _trim(*pc) if len(pieces) > 1 else pc
+            # a piece with no numbers of its own is caption text, not a table
+            if not any(sum(1 for w in rows[i] if numeric(w["text"])
+                           and x0_ - 2 <= (w["x0"] + w["x1"]) / 2 <= x1_ + 2) >= 2
+                       for i in range(pc[0], pc[1] + 1)):
+                continue
+            origin[(pc[0], pc[1], pc[2][0][0])] = (pt[0], pt[1])
+            trimmed.append(pc)
     parts = trimmed
     paired = pair_parts(rows, [(lo, hi, e[0][0], e[-1][1]) for lo, hi, e in parts])
     span_of = {(lo, hi, e[0][0]): (lo, hi) for lo, hi, e in parts}
@@ -1861,7 +1948,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         _pair = paired.get((lo, hi, edges[0][0]))
         bbox = block_bbox(rows, lo, hi, cap_end, edges, crop_lb,
                           cap_start=(_pair[0] if _pair else -1),
-                          right_limit=lim_hi)
+                          right_limit=lim_hi, left_limit=lim_lo)
         try:
             if (pub_id, (table_label or "").strip()) not in CAPTION_VETO_OVERRIDE:
                 caption_verdict(caption)
