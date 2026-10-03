@@ -459,8 +459,14 @@ the gap visible.
 
 A section on the site, right after **How they score**: every number the papers
 print on four shared datasets (nine-species, seven-species, HC-PT, and DIA's
-OC/UTI/plasma), at the **release date of the method** it is about, the earliest
-paper describing it. denovo_benchmarks -- the living proteomics benchmark,
+OC/UTI/plasma), one **equal-width column per method**, the methods in order
+of release date (the earliest paper describing each). It was a time axis.
+That put PEAKS (2003) a decade before everything else and squeezed the field
+into its last years, and even a broken axis left 2024-2026 crowded. So the
+order now carries the chronology, with a faint rule and the year wherever the
+year changes, and the date stays in every tooltip. The method labels are
+vertical: at an angle their boxes overlapped, which `check_chart_overlap.py`
+counts. denovo_benchmarks -- the living proteomics benchmark,
 whose peer-reviewed results paper is not out yet -- is laid over it per species
 and as the mean of the nine; ProteoBench as one pooled point under *Average*.
 
@@ -482,7 +488,13 @@ and as the mean of the nine; ProteoBench as one pooled point under *Average*.
   another marks it its own retraining. So `mixed` cannot be filtered on; the
   interpretation picks each method's MOST-PRINTED value instead.
 
-Two Plot traps, both silent:
+Three Plot traps, all silent:
+
+- **A stroke-only symbol vanishes under a white outline.** 'version not
+  stated' was drawn as `times`, which Plot draws by stroke alone. With the
+  dots' white outline a lone one was invisible, so PLMNovo's column looked
+  empty, and the stray x elsewhere showed only where it overlapped a circle.
+  Every shape in the version scale is now a FILLED symbol (`cross`).
 
 - **A symbol value outside the symbol domain drops the mark.** The version
   shape is meaningful only on nine-species; HC-PT points carried version

@@ -3339,8 +3339,9 @@ Inputs.table(pb_table, {
 
 ## Performance over time
 
-What the papers report, placed at the release date of the method each number
-is about, with the two independent benchmarks laid over it. Every point from a
+What the papers report, one column per method, the methods in the order they
+were released (the date of the first paper describing each), with the two
+independent benchmarks laid over it. Every point from a
 paper is a number some paper printed in its comparison table; a number several
 papers printed (usually NovoBench's, quoted again) is one point, and its
 tooltip lists every paper it was seen in. The benchmark points are larger and
@@ -3433,50 +3434,50 @@ perf_chart = {
                 "paper · unclear", "paper · mixed", "denovo_benchmarks", "ProteoBench"]
   const versions = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
                     "version not stated"]
-  // A BROKEN X AXIS where the release dates have one long empty stretch.
-  // PEAKS (2003) stands alone a decade before everything else, and a linear
-  // axis spent most of its width on the empty years and squeezed the rest of
-  // the field into the last few. Where the largest gap between consecutive
-  // release dates exceeds five years, the axis is piecewise: a narrow strip
-  // for the early segment, a few pixels for the gap -- marked with a double
-  // lightning strike -- and the rest for the recent one. Computed per
-  // selection, so it switches itself off when there is no such gap.
-  const W = Math.min(width, 1100), mL = 52, mR = 20
-  const dates = [...new Set(perf_sel.map(d => +d.date))].sort((a, b) => a - b)
-  let brk = null
-  for (let i = 1; i < dates.length; i++) {
-    const g = dates[i] - dates[i - 1]
-    if (g > 5 * 365.25 * 864e5 && (!brk || g > brk.g)) brk = {g, a: dates[i - 1], b: dates[i]}
+  // ONE EQUAL SLOT PER METHOD, ordered by release date. A time axis put
+  // PEAKS (2003) a decade before everything else and squeezed the field into
+  // its last few years, and even a broken axis left 2024-2026 crowded. The
+  // order still carries the chronology; a faint rule and the year mark each
+  // point where the year changes, and the date is in every tooltip.
+  const W = Math.min(width, 1100), mL = 62, mR = 20, mB = 150, H = 560
+  const first = new Map()
+  for (const d of perf_sel) {
+    const t = +d.date
+    if (!first.has(d.algorithm) || t < first.get(d.algorithm)) first.set(d.algorithm, t)
   }
-  const yr = 365.25 * 864e5
-  let xScale
-  if (brk) {
-    const L0 = new Date(dates[0] - 0.6 * yr), L1 = new Date(brk.a + 0.6 * yr)
-    const R0 = new Date(brk.b - 0.6 * yr), R1 = new Date(dates[dates.length - 1] + 0.6 * yr)
-    const wL = 70, gapW = 26
-    const ticks = [...d3.utcYear.range(L0, L1), ...d3.utcYear.every(
-      (R1 - R0) / yr > 9 ? 2 : 1).range(R0, R1)]
-    xScale = {type: "time", domain: [L0, L1, R0, R1],
-              range: [mL, mL + wL, mL + wL + gapW, W - mR], ticks,
-              tickFormat: d3.utcFormat("%Y")}
-    brk.px = mL + wL + gapW / 2
-  } else {
-    xScale = {type: "time"}
-  }
+  const order = [...first].sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0])).map(e => e[0])
+  const yearOf = alg => new Date(first.get(alg)).getUTCFullYear()
+  const step = (W - mL - mR) / Math.max(order.length, 1)
+  const yearStarts = order.filter((alg, i) => i === 0 || yearOf(alg) !== yearOf(order[i - 1]))
+    .map(alg => ({alg, year: String(yearOf(alg))}))  // a string: a number prints '2,003'
   const chart = Plot.plot({
-    width: W, height: 460, marginLeft: mL, marginRight: mR, marginBottom: 48,
-    x: {...xScale, label: "Method release date (first describing paper)", labelOffset: 40},
-    y: {domain: [0, 1], grid: true, label: perf_metric_label(perf_metric)},
+    width: W, height: H, marginLeft: mL, marginRight: mR, marginBottom: mB, marginTop: 24,
+    x: {type: "band", domain: order, padding: 0, tickRotate: -90,
+        tickFormat: alg => `${alg} (${yearOf(alg)})`,
+        label: "Methods, ordered by release date (first describing paper)", labelOffset: mB - 12},
+    // The y title runs ALONG the axis: at the top-left it sat where the
+    // first year label now goes.
+    y: {domain: [0, 1], grid: true, label: perf_metric_label(perf_metric),
+        labelAnchor: "center", labelArrow: "none"},
     // r is a SCALE in Plot: without this the radius formula below is squeezed
     // into Plot's default range and every paper point draws at about 2 px.
     r: {type: "identity"},
     color: {domain: cats, range: ["#d97706", "#475569", "#16a34a", "#8a97ab", "#7c3aed",
                                   "#dc2626", "#2563eb"], legend: true},
-    symbol: {domain: versions, range: ["circle", "triangle", "square", "times"],
+    // Every shape here must be a FILLED symbol. 'times' is drawn by stroke
+    // alone, and with the dots' white outline a point whose version is not
+    // stated was invisible on white: PLMNovo's column looked empty, and other
+    // methods showed a stray x only where it happened to sit on a circle.
+    symbol: {domain: versions, range: ["circle", "triangle", "square", "cross"],
              legend: perf_panel === "nine"},
     marks: [
-      Plot.ruleX(spread, {x: "date", y1: "lo", y2: "hi", stroke: "#cbd5e1", strokeWidth: 3}),
-      Plot.dot(paper, {x: "date", y: "value", fill: "cat", r: d => 4 + Math.sqrt(d.n_papers) * 2,
+      // Where the year changes: a faint rule on the slot's left edge, and the
+      // year above it.
+      Plot.ruleX(yearStarts.slice(1), {x: "alg", dx: -step / 2, stroke: "#e2e8f0"}),
+      Plot.text(yearStarts, {x: "alg", text: "year", frameAnchor: "top", dy: -14, dx: -step / 2,
+                             textAnchor: "start", fontSize: 10, fill: "#64748b"}),
+      Plot.ruleX(spread, {x: "alg", y1: "lo", y2: "hi", stroke: "#cbd5e1", strokeWidth: 3}),
+      Plot.dot(paper, {x: "algorithm", y: "value", fill: "cat", r: d => 4 + Math.sqrt(d.n_papers) * 2,
                        // The version shape exists only on nine-species. A
                        // value outside the symbol domain DROPS the mark
                        // silently in Plot, which is how HC-PT (version
@@ -3484,10 +3485,12 @@ perf_chart = {
                        symbol: perf_panel === "nine" ? "version" : "circle",
                        fillOpacity: 0.85, stroke: "white", strokeWidth: 0.8,
                        sort: null}),
-      Plot.dot(dvb, {x: "date", y: "value", fill: "cat", r: 7, symbol: "diamond",
-                     stroke: "black", strokeWidth: 1.2}),
-      Plot.dot(pb, {x: "date", y: "value", fill: "cat", r: 7, symbol: "star",
-                    stroke: "black", strokeWidth: 1.2})
+      // The benchmarks sit just beside the method's paper points, not on top
+      // of them: dx is a constant per mark, which is all this needs.
+      Plot.dot(dvb, {x: "algorithm", y: "value", fill: "cat", r: 7, symbol: "diamond",
+                     dx: Math.min(9, step * 0.28), stroke: "black", strokeWidth: 1.2}),
+      Plot.dot(pb, {x: "algorithm", y: "value", fill: "cat", r: 7, symbol: "star",
+                    dx: -Math.min(9, step * 0.28), stroke: "black", strokeWidth: 1.2})
     ]
   })
   // Rich tooltip, bound by DOM order: each Plot.dot mark is one group, in the
@@ -3521,30 +3524,6 @@ perf_chart = {
         ? `denovo_benchmarks: ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
         : `ProteoBench: ${x.tool}${x.version ? ` ${x.version}` : ""}${x.decoding ? `, ${x.decoding}` : ""}${x.checkpoint ? `, checkpoint ${x.checkpoint}` : ""}; submitted ${x.submitted}; pooled nine-species selection`}</div>
     </div>`
-  }
-  // The double lightning strike: two zigzags across the x axis at the break,
-  // on a white backing so the axis line does not run through them.
-  if (brk) {
-    const svg = chart.tagName.toLowerCase() === "svg" ? chart
-      : chart.querySelector('svg[aria-label], svg:last-of-type') || chart.querySelector("svg")
-    const plotSvg = [...chart.querySelectorAll("svg")].find(s => s.querySelector('g[aria-label="dot"]')) || svg
-    const ns = "http://www.w3.org/2000/svg"
-    const y0 = 460 - 48
-    const g = document.createElementNS(ns, "g")
-    g.setAttribute("aria-label", "axis break")
-    const bg = document.createElementNS(ns, "rect")
-    bg.setAttribute("x", brk.px - 9); bg.setAttribute("y", y0 - 9)
-    bg.setAttribute("width", 18); bg.setAttribute("height", 18); bg.setAttribute("fill", "white")
-    g.appendChild(bg)
-    for (const dx of [-4, 4]) {
-      const path = document.createElementNS(ns, "path")
-      const x = brk.px + dx
-      path.setAttribute("d", `M${x - 2},${y0 - 8} L${x + 2},${y0 - 2} L${x - 2},${y0 + 2} L${x + 2},${y0 + 8}`)
-      path.setAttribute("fill", "none"); path.setAttribute("stroke", "currentColor")
-      path.setAttribute("stroke-width", 1.4)
-      g.appendChild(path)
-    }
-    plotSvg.appendChild(g)
   }
   const groups = chart.querySelectorAll('g[aria-label="dot"]')
   ;[paper, dvb, pb].forEach((data, gi) => {
