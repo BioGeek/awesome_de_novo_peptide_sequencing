@@ -330,11 +330,45 @@ def canon_html(printed: str) -> str:
     shown = html.escape(unsquash(printed or ""))
     if CON is None or not printed:
         return shown
-    name, acc = B.canonical_subset(printed, CON)
-    if not name or _norm(name) == _norm(printed):
+    # A table whose rows are datasets (ROW_DATASET) resolved each row while
+    # parsing; that reading, dataset included, is what the record stores, so
+    # it is what the page shows.
+    hit = ROW_READING.get(_norm(printed)) if ROW_READING else None
+    if hit:
+        name, acc, ds = hit
+    else:
+        (name, acc), ds = B.canonical_subset(printed, CON), ""
+    if not name or (_norm(name) == _norm(printed) and not ds):
         return shown
     tip = f" title='{html.escape(acc)}'" if acc else ""
-    return f"{shown}<br><small class='dim'{tip}>{html.escape(name)}</small>"
+    out = f"{shown}<br><small class='dim'{tip}>{html.escape(name)}</small>"
+    if ds:
+        out += f"<br><small class='dim'>dataset: {html.escape(ds)}</small>"
+    return out
+
+
+# Set per record while drawing: printed subset -> (canonical, accession,
+# 'dataset · version'), only for records whose rows carry their own dataset.
+ROW_READING: dict = {}
+
+
+def row_reading(rec: dict) -> dict:
+    out = {}
+    if (rec.get("dataset_printed") or "").startswith("one per row") and CON is not None:
+        for x in (rec.get("grid") or {}).get("results", []):
+            if _norm(x["subset"]) in out:
+                continue
+            ds = ""
+            if x.get("dataset_id"):
+                row = CON.execute(
+                    "SELECT d.name, v.version FROM dataset d LEFT JOIN dataset_version v "
+                    "ON v.id = ? WHERE d.id = ?",
+                    (x.get("dataset_version_id"), x["dataset_id"])).fetchone()
+                if row:
+                    nm = row[0] if len(row[0]) <= 60 else row[0][:57] + "..."
+                    ds = nm + (f" \u00b7 {row[1]}" if row[1] else " \u00b7 version not stated")
+            out[_norm(x["subset"])] = (x["subset_canonical"], x["subset_accession"], ds)
+    return out
 
 
 def _measured(rec: dict, i: int, k) -> bool:
@@ -587,6 +621,8 @@ def grid_html(rec: dict) -> str:
     ncol = len(rec["col_head"])
     axis, maxis = rec["axis"], rec["metric_axis"]
     rank, _notes = emphasis(rec)
+    ROW_READING.clear()
+    ROW_READING.update(row_reading(rec))
     out = ["<table class='grid'>"]
 
     def is_delta(i) -> bool:
@@ -893,6 +929,11 @@ CREATE TABLE IF NOT EXISTS paper_comparison_result (
                           'precision@cov1','ptm-precision','ptm-recall','accuracy',
                           'accuracy-filtered','coverage','positional-accuracy')),
     level             TEXT NOT NULL CHECK (level IN ('peptide','amino acid','ptm')),
+    -- The table's dataset, or the ROW's where the rows are datasets
+    -- (InstaNovo's results tables, see ROW_DATASET): one dataset per table
+    -- would file HeLa and snake venom numbers under ProteomeTools.
+    dataset_id         INTEGER REFERENCES dataset(id),
+    dataset_version_id INTEGER REFERENCES dataset_version(id),
     subset_printed    TEXT,                    -- 'B. sub.', as read
     subset_canonical  TEXT,                    -- 'Bacillus subtilis'
     subset_accession  TEXT,                    -- 'PXD004565'
@@ -924,7 +965,8 @@ SELECT r.id                AS result_id,
        r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
        r.algorithm_printed, r.is_self,
        r.metric, r.level,
-       c.dataset_id, d.name AS dataset, c.dataset_version_id,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
        dv.version AS dataset_version, c.dataset_printed,
        r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
        r.is_aggregate,
@@ -934,8 +976,8 @@ SELECT r.id                AS result_id,
   JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
   JOIN publication p      ON p.id = c.publication_id
   JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = c.dataset_id
-  LEFT JOIN dataset_version dv ON dv.id = c.dataset_version_id;
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 
 CREATE TABLE IF NOT EXISTS paper_comparison_note (
     comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
@@ -1030,11 +1072,13 @@ def write_db(items: list[dict], approved: dict) -> None:
         con.executemany(
             "INSERT INTO paper_comparison_result (comparison_id, row_index, col_index,"
             " part_index, algorithm_id, algorithm_printed, variant_printed, is_self,"
-            " metric, level, subset_printed, subset_canonical, subset_accession,"
+            " metric, level, dataset_id, dataset_version_id, subset_printed,"
+            " subset_canonical, subset_accession,"
             " is_aggregate, value, stddev, basis, basis_cue, derived_from)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [(cid, x["r"], x["c"], x["part"], x["algorithm_id"], x["printed"],
               x["variant"] or None, x["is_self"], x["metric"], x["level"],
+              x.get("dataset_id"), x.get("dataset_version_id"),
               x["subset"] or None, x["subset_canonical"] or None,
               x["subset_accession"] or None, x["is_aggregate"], round(x["value"], 6),
               x["stddev"], x["basis"], x["basis_cue"] or None, x["derived"] or None)

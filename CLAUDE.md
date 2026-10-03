@@ -1125,7 +1125,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**379 datasets, 406 versions, 435 addresses, 607 publication links over 131 papers.**
+**382 datasets, 410 versions, 442 addresses, 616 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1212,7 +1212,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 406 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 410 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1258,6 +1258,17 @@ subsample, recorded as a version; a second `dataset` row would have split one
 resource across two pages each claiming the same spectra. A paper reporting "on
 HC-PT" is reporting on a tenth of that corpus under NovoBench's split.
 
+**Except in InstaNovo's own papers, where HC-PT is the WHOLE corpus.**
+InstaNovo coined the name: its HC-PT is the full high-confidence set (2.6M
+spectra, best PSM per peptide), and its AC-PT is every PSM regardless of
+quality (about 28M spectra over the same 742k peptides), now a version of its
+own, `all-confidence (InstaNovo)`. So the same four letters name two different
+sets of spectra depending on who prints them, and the miner's default mapping
+to NovoBench's subsample would be wrong on InstaNovo's tables. It is never
+applied there: those tables resolve each row through `ROW_DATASET` (see
+**Comparison tables in the database**), which pins InstaNovo's HC-PT to
+`high-confidence (InstaNovo)`.
+
 Both NovoBench splits have **no address**, which is the point rather than a
 gap: NovoBench publishes code and not data, so its retrained numbers, the ones
 `BENCHMARKS.md` warns against reading beside released-checkpoint numbers,
@@ -1270,8 +1281,9 @@ label alone. The nine-species count silently moved from 16 to 17 and `--fix`
 rewrote the prose to agree. Both queries now name the dataset too. Any new
 registry query over `dataset_version.version` must do the same.
 
-**ProteomeTools has seven versions, and they are not re-releases.** Parts I-III,
-the high-confidence InstaNovo split, the 21-PTM subset, the same peptide pools
+**ProteomeTools has eight versions, and they are not re-releases.** Parts I-III,
+the high-confidence InstaNovo split, its all-confidence superset, NovoBench's
+HC-PT subsample of it, the 21-PTM subset, the same peptide pools
 re-run on a **Bruker timsTOF**, their **non-tryptic** counterpart on that
 instrument, and a **TMT 6-plex** form. Instrument and label change the fragment
 ladder a model has to read, so "trained on ProteomeTools" is as
@@ -1925,9 +1937,28 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**80 verified tables from 24 papers, 3404 measurements.** The 44 refusals the
+**80 verified tables from 24 papers, 3404 measurements.** The 46 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
+
+**A table whose ROWS are datasets carries a dataset per measurement.**
+InstaNovo's results tables list eleven to fourteen evaluation sets down the
+side, and only two of them are ProteomeTools; the caption mentions
+ProteomeTools, so the whole table used to be filed under it. `ROW_DATASET` in
+the miner maps each printed row label, per paper, to a dataset, version and
+canonical name, taken from the paper's Data Availability statement:
+- HeLa single-shot, HeLa degradome, nanobodies and *S. brodae* go to
+  InstaNovo's own deposit, PXD044934;
+- immunopeptidomics and snake venoms go to the deposits already catalogued;
+- the wound exudates and Herceptin go to deposits added for them;
+- HC-PT and AC-PT go to ProteomeTools.
+
+`paper_comparison_result` therefore has its own `dataset_id` and
+`dataset_version_id`, and the measurement view reads them before the table's.
+The table itself records `one per row`, and a row the registry does not name,
+such as the mean, has no dataset. A deposit with a single version takes it,
+while a benchmark with several stays NULL. That is why InstaNovo's
+Yeast/Bacillus/Mouse rows name no version, because the paper does not say.
 
 **What the miner does not record is still in the printed layer.** A count
 row, a BLEU row, a year or speed column, a difference row: each is a row or

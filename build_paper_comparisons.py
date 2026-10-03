@@ -3769,7 +3769,83 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
 # label) like the other per-table registries, and every entry quotes the
 # sentence that licenses it, because the alternative is a guess nobody can
 # check. The value is (dataset name as the catalog holds it, as printed).
+# A TABLE WHOSE ROWS ARE DATASETS has no single dataset, and filing it under
+# the one its caption happens to name is a wrong attribution for most rows.
+# InstaNovo's results tables (Supplementary Tables 2-3 of the preprint,
+# Extended Data Tables 2-3 of the paper) are eleven to fourteen evaluation
+# sets down the side, and only HC-PT and AC-PT are ProteomeTools; the caption
+# mentioned ProteomeTools, so the whole table was filed under it. The paper's
+# Data Availability statement says where every row lives, so the mapping is a
+# registry, per paper, from the printed label to (dataset, version, canonical
+# name). A row the registry does not name -- 'mean' -- keeps the table's
+# dataset, which for these tables is "one per row".
+#
+# HC-PT HERE IS NOT NOVOBENCH'S HC-PT. InstaNovo defines it as the full
+# high-confidence ProteomeTools set (2.6M spectra, best PSM per peptide); the
+# 'HC-PT' every NovoBench-derived paper prints is a 10% subsample of it. Same
+# name, different spectra, so in these papers it pins the InstaNovo version.
+_INSTANOVO_DEPOSIT = ("InstaNovo enables diffusion-powered de novo peptide "
+                      "identification in large scale proteomics experiments")
+_INSTANOVO_ROWS: list[tuple[re.Pattern, tuple[str, str | None, str | None]]] = [
+    (re.compile(r"(?i)^hela ?single"), (_INSTANOVO_DEPOSIT, None, "HeLa single-shot")),
+    (re.compile(r"(?i)^hela ?degradome"), (_INSTANOVO_DEPOSIT, None, "HeLa degradome")),
+    (re.compile(r"(?i)nanobod"), (_INSTANOVO_DEPOSIT, None, "Nanobodies")),
+    (re.compile(r"(?i)brodae"), (_INSTANOVO_DEPOSIT, None, "Candidatus Scalindua brodae")),
+    (re.compile(r"(?i)^immunopeptidomics"),
+     ("High-throughput MS-based immunopeptidomics", None, "Immunopeptidomics")),
+    (re.compile(r"(?i)^snake ?venom"),
+     ("High-throughput proteomics of the 26 medically most important elapids and "
+      "vipers from sub-Saharan Africa", None, "Snake venoms")),
+    (re.compile(r"(?i)^wound"),
+     ("Longitudinal evaluation of biomarkers in wound fluids of venous leg ulcers "
+      "treated with a protease-modulating wound dressing", None, "Wound exudates")),
+    (re.compile(r"(?i)^herceptin"),
+     ('Supplementary Data for "Comprehensive evaluation of peptide de novo sequencing '
+      'tools for monoclonal antibody assembly"', None, "Herceptin")),
+    (re.compile(r"(?i)^HC-?PT"), ("ProteomeTools", "high-confidence (InstaNovo)", "HC-PT")),
+    (re.compile(r"(?i)^AC-?PT"), ("ProteomeTools", "all-confidence (InstaNovo)", "AC-PT")),
+]
+ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]]]] = {
+    # The preprint's yeast row is "Exc. Yeast": trained on nine-species
+    # excluding yeast, evaluated on yeast, which in 2023 could only be the
+    # original 2017 benchmark.
+    1: _INSTANOVO_ROWS + [(re.compile(r"(?i)yeast"),
+                           ("Nine-species benchmark", "original (DeepNovo, 2017)",
+                            "Saccharomyces cerevisiae"))],
+    # The paper prints Yeast, Bacillus and Mouse and does not say which curated
+    # version they came from, so the version stays NULL: the finding, not a gap.
+    2: _INSTANOVO_ROWS + [(re.compile(r"(?i)^(yeast|bacillus|mouse)"),
+                           ("Nine-species benchmark", None, None))],
+}
+
+
+def row_dataset(con, pub_id, label: str) -> tuple[int | None, int | None, str | None] | None:
+    """(dataset_id, dataset_version_id, canonical) for a row label, or None."""
+    for rx, (name, version, canon) in ROW_DATASET.get(pub_id, []):
+        if rx.search((label or "").strip()):
+            got = con.execute(
+                "SELECT d.id, v.id FROM dataset d LEFT JOIN dataset_version v "
+                "ON v.dataset_id = d.id AND v.version = ? WHERE d.name = ?",
+                (version, name)).fetchone()
+            if not got or (version and got[1] is None):
+                raise Reject(f"D1 ROW_DATASET names {name!r} {version or ''}, absent")
+            vid = got[1]
+            if not version:
+                # A deposit with ONE version has nothing to be ambiguous about;
+                # a benchmark with several stays NULL, the finding.
+                only = con.execute("SELECT id FROM dataset_version WHERE dataset_id = ?",
+                                   (got[0],)).fetchall()
+                vid = only[0][0] if len(only) == 1 else None
+            return got[0], vid, canon
+    return None
+
+
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
+    # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
+    (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
+    (1, "Supplementary Table 3"): (None, "one per row (Data availability)"),
+    (2, "Extended Data Table 2"): (None, "one per row (Data availability)"),
+    (2, "Extended Data Table 3"): (None, "one per row (Data availability)"),
     # LIPNovo, Table 4. Its caption names no benchmark and its page mentions
     # three, so the cue scan could only report the ambiguity. The paper says
     # which: "Training GraphNovo is resource-intensive, making it impractical
@@ -4987,8 +5063,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 if not m:
                     continue
                 j = k if axis == "columns" else ri
+                rd = row_dataset(con, base.get("publication_id"), sub) if sub else None
                 for pi, (v, _p, mt, lv, bas) in enumerate(parts_of(cell, metric, level)):
                     canon, acc = canonical_subset(sub, con) if sub else (None, None)
+                    if rd and rd[2]:
+                        canon, acc = rd[2], species_index(con).get(rd[2])
                     sd = cell.get("stddev")
                     results.append({
                         "r": row_of[ri], "c": col_of_k[k], "part": pi,
@@ -4996,7 +5075,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         "printed": printed_of.get(j) or "",
                         "variant": m[2] or "", "is_self": int(m[0] in own_ids),
                         "metric": mt, "level": lv,
-                        "dataset_id": did, "dataset_version_id": vid,
+                        # A ROW_DATASET row carries its own dataset.
+                        "dataset_id": rd[0] if rd else did,
+                        "dataset_version_id": rd[1] if rd else vid,
                         # A subset that is not a species (OC, UTI, a pNovo
                         # run) KEEPS ITS PRINTED FORM as its canonical name,
                         # the rule canonical_subset() states; left empty, a
