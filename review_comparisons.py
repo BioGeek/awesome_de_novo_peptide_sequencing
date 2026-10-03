@@ -841,7 +841,7 @@ CREATE TABLE IF NOT EXISTS paper_comparison (
     kind               TEXT NOT NULL DEFAULT 'comparison'
                        CHECK (kind IN ('comparison','own_results')),
     extraction         TEXT NOT NULL DEFAULT 'text'
-                       CHECK (extraction IN ('text','image')),
+                       CHECK (extraction IN ('text','image','figure')),
                                                -- image: no text layer; read by two
                                                -- vision models that agreed on
                                                -- every cell
@@ -1435,6 +1435,60 @@ def main() -> int:
                                 rec["verdict"] = "dismissed"
                             items.append(rec)
                             tally[rec["verdict"]] += 1
+        # FIGURES WHOSE VALUES ARE PRINTED ON THE CHART (B.FIGURE_TABLES):
+        # read off the main PDF's text layer by bar_figure_grid(), then
+        # resolved like any table and marked extraction='figure'.
+        for (fpub, flabel), spec in B.FIGURE_TABLES.items():
+            if fpub != pub["id"]:
+                continue
+            path, pno = paths[0], spec["page"] - 1
+            tid = table_tid(pub["id"], spec["page"], flabel, set(), "")
+            name = f"{tid}.png"
+            dest = OUT / name
+            ok = render(path, spec["page"], spec["bbox"], dest) or dest.exists()
+            recs = []
+            try:
+                with pdfplumber.open(path) as fpdf:
+                    grid = B.bar_figure_grid(fpdf.pages[pno], spec)
+                tb = IT.grid_table(grid, flabel, spec["caption"], spec["bbox"], spec["page"])
+                tb["extraction"] = "figure"
+                tb["design_note"] = (
+                    "Read from a FIGURE: every value is the label printed on its bar, "
+                    "taken from the PDF's text layer (rotated labels reversed), with "
+                    "the bar order set by the legend. Nothing was estimated from bar "
+                    "heights.")
+                fvocab = B.paper_vocabulary(whole_all, con)
+                fsubject = con.execute("""
+                    SELECT a.id, a.name FROM algorithm a
+                      JOIN publication_algorithm pa ON pa.algorithm_id = a.id
+                     WHERE pa.publication_id = ? AND pa.role='describes'
+                     ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
+                base = {c: "" for c in B.AUDIT_COLUMNS}
+                base.update({"publication_id": pub["id"], "pdf_page": spec["page"]})
+                B.emit(con, base, tb, fvocab, index, fsubject,
+                       "\n".join(texts[""][max(0, pno - 1):pno + 2]), whole_all,
+                       [], collections.Counter(), False, collect=recs)
+            except B.Reject as exc:
+                recs.append({"verdict": "rejected", "reason": str(exc),
+                             "table_label": flabel, "caption": spec["caption"]})
+            for n_r, rec in enumerate(recs):
+                rec_tid = tid if n_r == 0 else f"{tid}-{n_r + 1}"
+                rec.update({"bbox": list(spec["bbox"]), "page": spec["page"],
+                            "extraction": "figure",
+                            "pdf_url": "file://" + urllib.parse.quote(str(path)),
+                            "pdf_name": path.name, "tid": rec_tid,
+                            "pub": pub["id"], "title": pub["title"], "source": "main",
+                            "year": str(pub["publication_date"] or "")[:4],
+                            "img": name if ok else None, "pdf_page": spec["page"],
+                            "crop_key": ""})
+                rec["base_verdict"] = rec["verdict"]
+                st = (approved.get(rec_tid) or {}).get("state")
+                if st == "approved" and rec["verdict"] == "accepted":
+                    rec["verdict"] = "approved"
+                elif st == "dismissed" and rec["verdict"] == "rejected":
+                    rec["verdict"] = "dismissed"
+                items.append(rec)
+                tally[rec["verdict"]] += 1
         print(f"  p{pub['id']:<4} {len([i for i in items if i['pub']==pub['id']]):>3} "
               f"table(s)  {pub['title'][:52]}", flush=True)
 

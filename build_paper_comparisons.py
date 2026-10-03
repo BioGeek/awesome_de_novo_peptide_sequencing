@@ -3694,6 +3694,11 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # InstaNovo; S13's caption states the last: 'We abbreviate "InstaNovo (FM
     # size matched)" to "IN (FM-SM)"'. The bracketed words are the variant.
     (273, "infmfinetuned"): ("InstaNovo-FM", "fine-tuned"),
+    # Deep Novo A+, Fig. 3: DeepNovo with ONE of A+'s two changes each, which
+    # are partial versions of A+, and A+ itself.
+    (53, "deepnovo+aions"): ("Deep Novo A+", "a-ions only"),
+    (53, "deepnovo+validation"): ("Deep Novo A+", "validation set only"),
+    (53, "deepnovoa+"): ("Deep Novo A+", None),
     # PLMNovo, Table 1: the protein language model it aligns to, 'ESM-2 8M'
     # and 'ESM-2 650M', which the text layer glues into 'ESM-28M'.
     (434, "plmnovoesm28m"): ("PLMNovo", "ESM-2 8M"),
@@ -3834,6 +3839,15 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # Deep Novo A+, Fig. 3: all four methods were trained on the paper's own
+    # random split of one yeast dataset; DeepNovo is the base model it alters.
+    # The cue the basis search found was a sentence interleaved with the
+    # paper's pseudocode, so the licensing sentence is pinned here.
+    (53, "Fig. 3"): {
+        "*": ("retrained", "To ensure an unbiased evaluation, the dataset is randomly "
+                           "partitioned into training, validation, and testing sets with "
+                           "90%, 5% and 5%."),
+    },
     # LIPNovo, Table 4. "Training GraphNovo is resource-intensive, making it
     # impractical to retrain on benchmark datasets. To ensure a fair
     # comparison, we trained LIPNovo on the dataset collected in GraphNovo."
@@ -4034,12 +4048,86 @@ TABLE_NOTE: dict[tuple[int, str], str] = {
 }
 
 
+# FIGURES WHOSE VALUES ARE PRINTED ON THE CHART. A bar chart that labels each
+# bar with its value carries the same numbers a table would, and those labels
+# are in the text layer, so they are EXTRACTED, never transcribed: the entry
+# states only the layout -- page, legend order (which is the bar order within
+# each category), the x-range and metric of each panel, and categories to
+# leave out -- and bar_figure_grid() reads the values off the page. Opt-in per
+# figure, because most charts print no values, and a value read from a chart
+# is marked extraction='figure' all the way into the database.
+FIGURE_TABLES: dict[tuple[int, str], dict] = {
+    # Deep Novo A+, Fig. 3: amino-acid and peptide accuracy of DeepNovo, of
+    # DeepNovo with each of A+'s two changes alone (a-ions; validation-set
+    # early stopping), and of A+ itself. 'train' is accuracy on the TRAINING
+    # set, not an evaluation, so it is left out.
+    (53, "Fig. 3"): {
+        "page": 5,
+        "caption": ("Average accuracy at the amino acid level (left) and the peptide "
+                    "level (right) of the four methods."),
+        "series": ["DeepNovo", "DeepNovo+A_Ions", "DeepNovo+Validation", "DeepNovo A+"],
+        "panels": [(60.0, 306.0, "Amino acid accuracy"), (306.0, 590.0, "Peptide accuracy")],
+        "categories": r"^(train|test_length\(\d+\))$",
+        "drop": ["train"],
+        "bbox": (60.0, 50.0, 585.0, 262.0),
+    },
+}
+
+
+def bar_figure_grid(page, spec: dict) -> list[list[str]]:
+    """A registered bar chart's printed values as a grid, header rows first.
+
+    Each value label is assigned to the x-axis category nearest its centre,
+    then ordered left to right within the category, which is the legend's
+    order. Rotated labels come out of the text layer reversed ('1489.0' is
+    0.9841) and are turned back. A category holding any other number of
+    labels than there are series raises: a missing or extra label would
+    silently shift every value after it into the wrong series.
+    """
+    words = page.extract_words()
+    cat_rx = re.compile(spec["categories"])
+    head_metric, head_cat = ["Method"], ["Method"]
+    cols: list[list[str]] = []
+    for x0, x1, metric in spec["panels"]:
+        cats = sorted((w for w in words if cat_rx.match(w["text"])
+                       and x0 <= (w["x0"] + w["x1"]) / 2 < x1), key=lambda w: w["x0"])
+        labels = []
+        for w in words:
+            if w.get("upright", True) or not (x0 <= (w["x0"] + w["x1"]) / 2 < x1):
+                continue
+            txt = w["text"][::-1]
+            if numeric(txt) is not None:
+                labels.append((w, txt))
+        by_cat: dict[str, list] = {c["text"]: [] for c in cats}
+        for w, txt in labels:
+            cx = (w["x0"] + w["x1"]) / 2
+            near = min(cats, key=lambda c: abs((c["x0"] + c["x1"]) / 2 - cx))
+            by_cat[near["text"]].append((cx, txt))
+        for c in cats:
+            vals = [t for _x, t in sorted(by_cat[c["text"]])]
+            if len(vals) != len(spec["series"]):
+                raise Reject(f"F1 figure category {c['text']!r} carries {len(vals)} "
+                             f"value labels for {len(spec['series'])} series")
+            if c["text"] in spec.get("drop", []):
+                continue
+            head_metric.append(metric)
+            head_cat.append(c["text"])
+            cols.append(vals)
+    rows = [[name] + [col[i] for col in cols] for i, name in enumerate(spec["series"])]
+    return [head_metric, head_cat] + rows
+
+
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     (434, "Table 1."): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     (434, "Table 1"): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     # pi-PrimeNovo's four-test-set table, likewise.
     (21, "SupplementaryTable6"): (None, "one per row (Data availability)"),
     (107, "SupplementaryTable6"): (None, "one per row (Data availability)"),
+    # Deep Novo A+, Fig. 3: "the high-resolution Saccharomyces Cerevisiae
+    # (Baker's yeast) dataset ... 5 raw files and 277,077 spectra acquired from
+    # the Thermo Scientific Q-Exactive", split at random 90/5/5. No accession.
+    (53, "Fig. 3"): (None, "Saccharomyces cerevisiae HCD dataset (5 raw files, "
+                     "277,077 spectra, Q-Exactive), random 90/5/5 split; no accession"),
     # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
     (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
     (1, "Supplementary Table 3"): (None, "one per row (Data availability)"),

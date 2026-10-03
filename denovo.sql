@@ -26058,7 +26058,7 @@ CREATE TABLE paper_comparison (
     kind               TEXT NOT NULL DEFAULT 'comparison'
                        CHECK (kind IN ('comparison','own_results')),
     extraction         TEXT NOT NULL DEFAULT 'text'
-                       CHECK (extraction IN ('text','image')),
+                       CHECK (extraction IN ('text','image','figure')),
                                                -- image: no text layer; read by two
                                                -- vision models that agreed on
                                                -- every cell

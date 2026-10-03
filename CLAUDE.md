@@ -2170,6 +2170,25 @@ rows. A PaddleOCR-VL pass over all of them takes over two hours on the 8 GB
 card, longer than one background job may run, but readings are cached per
 table, so a restart picks up where it stopped.
 
+**A chart that prints its values is read like a table, from the text layer.**
+`FIGURE_TABLES` registers such a figure by its LAYOUT only:
+- the page;
+- the legend order, which is the bar order within each category;
+- each panel's x-range and metric;
+- the categories to leave out.
+
+`bar_figure_grid()` reads the bar labels, assigns each label to its nearest
+x-axis category, and orders the labels left to right. A category with the
+wrong number of labels refuses the figure (F1), since one missing label would
+shift every later value into the wrong series. Rotated labels come out of the
+text layer reversed (`1489.0` is 0.9841) and are turned back. Nothing is
+estimated from bar heights, and the result is marked `extraction = 'figure'`.
+
+One entry so far: Deep Novo A+'s Fig. 3, which compares DeepNovo, DeepNovo
+with each of A+'s two changes alone, and A+ itself, on three test-length
+splits. Its 'train' category is accuracy on the training set and is left out.
+It is opt-in per figure because most charts print no values.
+
 What still cannot be read is the TABLE THAT IS AN IMAGE WITH NO CAPTION IN THE
 TEXT LAYER. DeepNovo-DIA's supplementary
 tables are not in its Supplementary Information PDF at all: they are six Excel
