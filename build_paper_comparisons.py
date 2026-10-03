@@ -139,6 +139,10 @@ METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
     (64, "Table2"): {"": {"basis": "quoted"},
                      "\u2020": {"basis": "retrained"}},
     (64, "Table3"): {"\u2020": {"basis": "retrained"}},
+    # MemNovo, Table 2: "Results marked with dagger are reported from original
+    # publications". The unmarked rows are its own evaluations, and how those
+    # were run is left to its prose.
+    (202, "Table2"): {"\u2020": {"basis": "quoted"}},
 }
 
 
@@ -328,7 +332,10 @@ def norm(s: str) -> str:
 
 def numeric(tok: str) -> tuple[float, float | None] | None:
     """Parse a cell. Returns (value, stddev) or None if it is not a number."""
-    tok = tok.strip()
+    # A TYPESET MINUS is U+2212, not '-': MemNovo prints its negative
+    # differences as '−0.4', which read as text left those rows one value
+    # short and refused the table as ragged.
+    tok = tok.strip().replace("\u2212", "-")
     m = PM.match(tok)
     if m:
         return float(m.group(1)), float(m.group(2))
@@ -2158,7 +2165,10 @@ DELTA_LABEL = re.compile(
     r"^\s*(?:(?i:vs\.?|versus)(?=$|[\s._-]|(?-i:[A-Z\u03c0]))"
     r"|\u0394(?=$|[\s._-]|(?-i:[A-Za-z]))"
     r"|(?i:delta|diff(?:erence)?|improvements?(?:\s+over)?|"
-    r"gains?(?:\s+over)?)(?=$|[\s._-]))")
+    r"gains?(?:\s+over)?)(?=$|[\s._-])"
+    # 'Rel. Imp. (%)': MemNovo's relative-improvement rows, glued as
+    # 'Rel.Imp.(%)', so the lookahead takes an opening bracket too.
+    r"|(?i:rel\.?\s*imp(?:rovement|\.)?)(?=$|[\s(._-]))")
 
 
 # A trailing version token, INCLUDING a bare integer: a paper comparing two of
@@ -2778,6 +2788,11 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     # plasma only.
     (45, "Table 2"): ["DeepNovo-DIA", "BiATNovo", "DeepNovo-DIA", "BiATNovo",
                       "DeepNovo-DIA", "PepNet", "BiATNovo"],
+    # MemNovo, Table 6: 'InstaNovo | InstaNovo+MemNovo | Delta' over a glued
+    # header ('AAPr.AARe.Pep.Pr.Pep.Re.' twice, then 'AAPr.Pep.Re.'). The two
+    # Delta columns are DIFFERENCES between the other two and are dropped:
+    # None in this list means "not a measurement".
+    (202, "Table 6"): ["InstaNovo"] * 4 + ["InstaNovo+MemNovo"] * 4 + [None, None],
     (13, "Table 1"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia",
                       "DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
     (13, "Table 2"): ["DiffNovo", "DeepNovo-DIA", "PepNet", "Cascadia"],
@@ -2811,6 +2826,11 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # AdaNovo and the first alternative can help improve Casanovo's ability".
     (32, "reweight"): ("Casanovo", "re-weight"),
     (32, "focalloss"): ("Casanovo", "focal loss"),
+    # MemNovo. A plug-in like CausalNovo, written glued to its base:
+    # 'Casanovo+MemNovo' is MemNovo applied to Casanovo, which its captions
+    # state ("results with MemNovo applied").
+    (202, "casanovomemnovo"): ("MemNovo", "on Casanovo"),
+    (202, "instanovomemnovo"): ("MemNovo", "on InstaNovo"),
     # TSARseqNovo. Its table misspells pi-HelixNovo as 'pi-HelexiNovo'.
     (18, "pihelexinovo"): ("\u03c0-HelixNovo", None),
 }
@@ -3005,6 +3025,11 @@ TABLE_METRIC: dict[tuple[int, str],
     # Casanovo* reads 0.48 and BENCHMARKS.md records NovoBench's retrained
     # Casanovo at 0.481 on nine-species.
     (16, "Table6"): ("precision", "peptide"),
+    # MemNovo, Table 6: AA Pr., AA Re., Pep. Pr., Pep. Re. under each model;
+    # the last two (Delta) columns carry no measurement.
+    (202, "Table 6"): [("precision", "amino acid"), ("recall", "amino acid"),
+                       ("precision", "peptide"), ("recall", "peptide")] * 2
+                      + [("precision", "amino acid"), ("recall", "peptide")],
     # TSARseqNovo, Table 1. Three groups of three rows, and the metric of each
     # group is stated only POSITIONALLY, in the caption: "peptide precision
     # (top), amino acid precision (middle), and amino acid recall (bottom)".
@@ -3062,11 +3087,13 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
                          f"the table has {n}")
         got = {}
         for k, printed in enumerate(over):
+            if printed is None:
+                continue                  # a difference column, not a measurement
             if norm(printed) in SELF_WORDS and subject:
                 got[k] = (subject["id"], subject["name"], None)
             else:
                 got[k] = resolve_method(printed, vocab, index, pub_id)
-        return "columns", got, {}, {k: v for k, v in enumerate(over)}
+        return "columns", got, {}, {k: v for k, v in enumerate(over) if v is not None}
 
     # THE METHOD NAMES MAY BE THE SPANNER. ContraNovo's Table 1 has the methods
     # as column headers with the metric spanning them; Casanovo's Table 2 is
@@ -3789,8 +3816,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 seen.add(key)
 
     vals = [v for ri, r in enumerate(tb["body"])
-            if methods.get(ri if axis == "rows" else 0) or axis == "columns"
-            for c in r["cells"].values()
+            if axis == "columns" or methods.get(ri)
+            for k, c in r["cells"].items()
+            if axis == "rows" or k in methods      # a dropped column is not measured
             for v, _m in (c.get("parts") or [(c["value"], "")])]
     if not vals:
         raise Reject("G3 no cells")
