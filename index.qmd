@@ -3433,9 +3433,39 @@ perf_chart = {
                 "paper · unclear", "paper · mixed", "denovo_benchmarks", "ProteoBench"]
   const versions = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
                     "version not stated"]
+  // A BROKEN X AXIS where the release dates have one long empty stretch.
+  // PEAKS (2003) stands alone a decade before everything else, and a linear
+  // axis spent most of its width on the empty years and squeezed the rest of
+  // the field into the last few. Where the largest gap between consecutive
+  // release dates exceeds five years, the axis is piecewise: a narrow strip
+  // for the early segment, a few pixels for the gap -- marked with a double
+  // lightning strike -- and the rest for the recent one. Computed per
+  // selection, so it switches itself off when there is no such gap.
+  const W = Math.min(width, 1100), mL = 52, mR = 20
+  const dates = [...new Set(perf_sel.map(d => +d.date))].sort((a, b) => a - b)
+  let brk = null
+  for (let i = 1; i < dates.length; i++) {
+    const g = dates[i] - dates[i - 1]
+    if (g > 5 * 365.25 * 864e5 && (!brk || g > brk.g)) brk = {g, a: dates[i - 1], b: dates[i]}
+  }
+  const yr = 365.25 * 864e5
+  let xScale
+  if (brk) {
+    const L0 = new Date(dates[0] - 0.6 * yr), L1 = new Date(brk.a + 0.6 * yr)
+    const R0 = new Date(brk.b - 0.6 * yr), R1 = new Date(dates[dates.length - 1] + 0.6 * yr)
+    const wL = 70, gapW = 26
+    const ticks = [...d3.utcYear.range(L0, L1), ...d3.utcYear.every(
+      (R1 - R0) / yr > 9 ? 2 : 1).range(R0, R1)]
+    xScale = {type: "time", domain: [L0, L1, R0, R1],
+              range: [mL, mL + wL, mL + wL + gapW, W - mR], ticks,
+              tickFormat: d3.utcFormat("%Y")}
+    brk.px = mL + wL + gapW / 2
+  } else {
+    xScale = {type: "time"}
+  }
   const chart = Plot.plot({
-    width: Math.min(width, 1100), height: 460, marginLeft: 52, marginBottom: 48,
-    x: {type: "time", label: "Method release date (first describing paper)", labelOffset: 40},
+    width: W, height: 460, marginLeft: mL, marginRight: mR, marginBottom: 48,
+    x: {...xScale, label: "Method release date (first describing paper)", labelOffset: 40},
     y: {domain: [0, 1], grid: true, label: perf_metric_label(perf_metric)},
     // r is a SCALE in Plot: without this the radius formula below is squeezed
     // into Plot's default range and every paper point draws at about 2 px.
@@ -3491,6 +3521,30 @@ perf_chart = {
         ? `denovo_benchmarks: ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
         : `ProteoBench: ${x.tool}${x.version ? ` ${x.version}` : ""}${x.decoding ? `, ${x.decoding}` : ""}${x.checkpoint ? `, checkpoint ${x.checkpoint}` : ""}; submitted ${x.submitted}; pooled nine-species selection`}</div>
     </div>`
+  }
+  // The double lightning strike: two zigzags across the x axis at the break,
+  // on a white backing so the axis line does not run through them.
+  if (brk) {
+    const svg = chart.tagName.toLowerCase() === "svg" ? chart
+      : chart.querySelector('svg[aria-label], svg:last-of-type') || chart.querySelector("svg")
+    const plotSvg = [...chart.querySelectorAll("svg")].find(s => s.querySelector('g[aria-label="dot"]')) || svg
+    const ns = "http://www.w3.org/2000/svg"
+    const y0 = 460 - 48
+    const g = document.createElementNS(ns, "g")
+    g.setAttribute("aria-label", "axis break")
+    const bg = document.createElementNS(ns, "rect")
+    bg.setAttribute("x", brk.px - 9); bg.setAttribute("y", y0 - 9)
+    bg.setAttribute("width", 18); bg.setAttribute("height", 18); bg.setAttribute("fill", "white")
+    g.appendChild(bg)
+    for (const dx of [-4, 4]) {
+      const path = document.createElementNS(ns, "path")
+      const x = brk.px + dx
+      path.setAttribute("d", `M${x - 2},${y0 - 8} L${x + 2},${y0 - 2} L${x - 2},${y0 + 2} L${x + 2},${y0 + 8}`)
+      path.setAttribute("fill", "none"); path.setAttribute("stroke", "currentColor")
+      path.setAttribute("stroke-width", 1.4)
+      g.appendChild(path)
+    }
+    plotSvg.appendChild(g)
   }
   const groups = chart.querySelectorAll('g[aria-label="dot"]')
   ;[paper, dvb, pb].forEach((data, gi) => {
