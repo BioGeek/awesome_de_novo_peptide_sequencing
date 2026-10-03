@@ -3840,6 +3840,28 @@ def row_dataset(con, pub_id, label: str) -> tuple[int | None, int | None, str | 
     return None
 
 
+# WHAT A READER OF ONE TABLE NEEDS TO KNOW that the table itself does not say:
+# a label the paper uses in an unexpected sense, or a number the paper's own
+# text contradicts. Appended to the design note, so it reaches the review page
+# and paper_comparison.design_note. Each entry quotes its evidence with a page.
+_EXC_YEAST = ("'Exc. Yeast' is measured ON yeast: it names the leave-one-out "
+              "setup in which the model is trained on the other eight species. The "
+              "paper: 'the models were trained on nine-species excluding yeast, and "
+              "then evaluated on yeast' (p. 8), and 'For Yeast, we use the splits as "
+              "defined in DeepNovo and PointNovo'. Fig. 2d's caption reads 'accuracy "
+              "... on the high-resolution nine-species dataset excluding yeast' before "
+              "saying 'evaluated on yeast', which invites the opposite reading.")
+TABLE_NOTE: dict[tuple[int, str], str] = {
+    (1, "Supplementary Table 2"): _EXC_YEAST,
+    (1, "Supplementary Table 3"): _EXC_YEAST + (
+        " THE TEXT AND THIS TABLE DISAGREE: p. 10 says that after fine-tuning on "
+        "nine-species exc. yeast 'IN+ reaching a peptide-level accuracy of 54.6%', "
+        "while this table's Exc. Yeast row prints 0.579 \u00b1 0.006 peptide accuracy "
+        "(and 0.556 AUC). The two do not match, and the paper does not say which run "
+        "each comes from. The table's value is recorded, as printed."),
+}
+
+
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
     (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
@@ -5105,6 +5127,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             tb["design_note"] = ("A table of the paper's OWN results: it names one "
                                  "method and compares nothing, so it is recorded as own "
                                  "results rather than as a comparison.")
+        extra = TABLE_NOTE.get((base.get("publication_id"),
+                                (tb.get("registry_label") or tb["table_label"] or "").strip()))
+        if extra and extra not in (tb.get("design_note") or ""):
+            tb["design_note"] = " ".join(x for x in (tb.get("design_note"), extra) if x)
         collect.append({
             "kind": tb.get("kind") or "comparison",
             "grid": build_grid(),
