@@ -495,6 +495,18 @@ def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None,
     for key, name in enz.items():
         if rest == key or (len(rest) >= 4 and key.startswith(rest)):
             return (f"{chain} {name}" if chain else name), None
+    # 'ProteinaseK' arrives as 'proteinasek'; pi-PrimeNovo prints
+    # 'Chymotrysin', a typo for the same enzyme. A near match from six letters.
+    if rest == "proteinasek":
+        return (f"{chain} Proteinase K" if chain else "Proteinase K"), None
+    if len(rest) >= 6:
+        try:
+            from rapidfuzz import fuzz
+            near = [n for k, n in enz.items() if fuzz.ratio(rest, k) >= 88]
+        except ImportError:
+            near = []
+        if len(near) == 1:
+            return (f"{chain} {near[0]}" if chain else near[0]), None
     if len(toks) >= 2:
         g, e = toks[0], toks[-1]
         hits = [n for n in species
@@ -2294,6 +2306,30 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         # table beside its picture too, and a veto is exactly the case a human
         # most needs to see.
         lim_lo, lim_hi = neighbours.get((lo, hi, edges[0][0]), (0.0, float("inf")))
+        # A TABLE SET BESIDE THE TEXT (a LaTeX wrapfigure) shares its rows with
+        # a column of prose, and the nearest-words rule below took the crop's
+        # left edge from that prose: CrossNovo's Table 3 crop opened on half
+        # a paragraph ('Table 3 shows', 'We an-'). The tell is the caption's
+        # own line, where the prose sits to the LEFT of the 'Table N' label.
+        # Then the label, not the prose, is the table's left edge.
+        _cap = paired.get((lo, hi, edges[0][0]))
+        if _cap and 0 <= _cap[0] < len(rows):
+            _li, _lx0 = _cap[0], _cap[1]
+            _lab = [w for w in rows[_li] if w["x0"] >= _lx0 - 1]
+            if _lab and _lx0 <= edges[0][0]:
+                _ltop = min(w["top"] for w in _lab)
+                beside = [w for r in rows[max(0, _li - 1):_li + 2] for w in r
+                          if abs(w["top"] - _ltop) <= 4 and w["x1"] < _lx0 - 5]
+                # THE LABEL MAY BE INDENTED FROM THE TABLE: MemNovo's Table 9
+                # sets 'Table9:' at x 325 over a stub starting at 318, and a
+                # bound at the label cut 'B. subtilis' in half. So the bound is
+                # the label or the table's own stub words just left of it,
+                # whichever is further left; the prose beside a wrapfigure ends
+                # well short of that window.
+                stub_x = [w["x0"] for r in rows[lo:hi + 1] for w in r
+                          if _lx0 - 20 <= w["x0"] < min(_lx0, edges[0][0])]
+                if beside:
+                    lim_lo = max(lim_lo, min([_lx0] + stub_x) - 4)
         crop_lb = min([w["x0"] for r in rows[lo:hi + 1] for w in r
                        if w["x1"] <= edges[0][0] and w["x0"] > edges[0][0] - 220
                        and w["x0"] >= lim_lo]
@@ -2910,6 +2946,10 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"(?i)\b7[- ]?species\b|\bseven[- ]?species\b"), "Seven-species"),
     (re.compile(r"(?i)ProteomeTools"), "ProteomeTools"),
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
+    # pi-PrimeNovo's name for the Tran et al. 2016 antibody deposit, whose
+    # accession its Data Availability gives (MSV000079801). Only the -HC form:
+    # CrossNovo's bare 'IgG1-Human' gives no accession and stays unresolved.
+    (re.compile(r"(?i)IgG1-?Human-?HC"), "IgG1-Human-HC"),
     # pNovo 3's two HeLa runs, which share one PRIDE submission and differ only
     # in how much of it was used, so the label pins the version.
     (re.compile(r"(?i)\bQE_?HF_?X1\b"), "QE_HF_X1"),
@@ -2940,6 +2980,7 @@ DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
     "Seven-species": ("Seven-species benchmark", None),
     "ProteomeTools": ("ProteomeTools", None),
     "MassIVE-KB": ("MassIVE-KB", None),
+    "IgG1-Human-HC": ("Monoclonal antibody de novo assembly", None),
     "QE_HF_X1": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X1"),
     "QE_HF_X2": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X2"),
 }
@@ -3806,6 +3847,23 @@ _INSTANOVO_ROWS: list[tuple[re.Pattern, tuple[str, str | None, str | None]]] = [
     (re.compile(r"(?i)^AC-?PT"), ("ProteomeTools", "all-confidence (InstaNovo)", "AC-PT")),
 ]
 ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]]]] = {
+    # pi-PrimeNovo's Supplementary Table 6: four test sets down the side, filed
+    # under nine-species because the page mentions it. Its Data Availability
+    # names each: HCC from iProX IPX0000937000; IgG1-Human-HC the antibody set
+    # MSV000079801; PT from PXD004732 under the paper's OWN split (58,000 test
+    # PSMs), which is none of the catalog's ProteomeTools versions, so NULL;
+    # and three-species, GraphNovo's test set (A. thaliana, C. elegans,
+    # E. coli) "shared by the GraphNovo authors on Zenodo (zenodo.8000316)",
+    # the same deposit LIPNovo's Table 4 and LIPNovo+'s Table 5 compare on.
+    21: [(re.compile(r"(?i)^HCC$"), ("Proteomics identifies new therapeutic targets of "
+                                      "early-stage hepatocellular carcinoma", None, "HCC")),
+         (re.compile(r"(?i)^IgG1"), ("Monoclonal antibody de novo assembly", None,
+                                     "IgG1-Human-HC")),
+         (re.compile(r"(?i)^PT$"), ("ProteomeTools", None, "PT")),
+         (re.compile(r"(?i)^three-?species"), ("GraphNovo dataset and checkpoint", None,
+                                               "Three-species"))],
+    # pi-PrimeNovo's preprint prints the same table.
+    107: [],
     # The preprint's yeast row is "Exc. Yeast": trained on nine-species
     # excluding yeast, evaluated on yeast, which in 2023 could only be the
     # original 2017 benchmark.
@@ -3816,6 +3874,20 @@ ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]
     # version they came from, so the version stays NULL: the finding, not a gap.
     2: _INSTANOVO_ROWS + [(re.compile(r"(?i)^(yeast|bacillus|mouse)"),
                            ("Nine-species benchmark", None, None))],
+}
+
+
+ROW_DATASET[107] = ROW_DATASET[21]
+
+# A SUBSET THE DATASET'S OWN NAME QUALIFIES. pi-PrimeNovo's Supplementary
+# Table 7 heads its columns 'AspN', 'Trypsin', ... in "the IgG1-Human-HC
+# dataset": every digest is of the heavy chain. CrossNovo prints the same
+# digests as 'HC AspN', 'HC Trypsin', so without the chain the two papers'
+# numbers never meet on one subset. The prefix is the dataset's name, not a
+# guess.
+SUBSET_PREFIX: dict[tuple[int, str], str] = {
+    (21, "SupplementaryTable7"): "HC",
+    (107, "SupplementaryTable7"): "HC",
 }
 
 
@@ -3863,6 +3935,9 @@ TABLE_NOTE: dict[tuple[int, str], str] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
+    # pi-PrimeNovo's four-test-set table, likewise.
+    (21, "SupplementaryTable6"): (None, "one per row (Data availability)"),
+    (107, "SupplementaryTable6"): (None, "one per row (Data availability)"),
     # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
     (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
     (1, "Supplementary Table 3"): (None, "one per row (Data availability)"),
@@ -4922,6 +4997,18 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 nm, acc = canonical_subset(sub, con)
                 seen_sub[sub] = (f"{nm}" + (f" [{acc}]" if acc else "")) if nm else ""
     base["subsets_canonical"] = "|".join(f"{k}={v}" for k, v in seen_sub.items() if v)
+    # PER-RESIDUE PRECISION IS A DIFFERENT GRAIN. A table whose subsets are
+    # amino-acid residues ('M(O)', 'Q', 'F', 'K': publication 16's Table 3,
+    # "precision for amino acids with similar masses") reports precision on
+    # one residue at a time. Stored, each residue would become a subset beside
+    # the species of every other table, and 'amino-acid precision on Q' would
+    # read as a measurement on a dataset called Q. Refused whole (C4).
+    residue = re.compile(r"^[ACDEFGHIKLMNPQRSTVWY](\s*\(.{1,12}\)|\[.{1,12}\]"
+                         r"|\+\d+(\.\d+)?)?\*?$")
+    subs = [x.strip() for x in seen_sub if x and x.strip()]
+    if len(subs) >= 2 and 2 * sum(bool(residue.match(x)) for x in subs) >= len(subs):
+        raise Reject(f"C4 per-residue precision, a different grain from a "
+                     f"table's amino-acid precision: {subs[:6]}")
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 
@@ -5087,7 +5174,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 j = k if axis == "columns" else ri
                 rd = row_dataset(con, base.get("publication_id"), sub) if sub else None
                 for pi, (v, _p, mt, lv, bas) in enumerate(parts_of(cell, metric, level)):
-                    canon, acc = canonical_subset(sub, con) if sub else (None, None)
+                    _pre = SUBSET_PREFIX.get((base.get("publication_id"),
+                                              (tb.get("registry_label") or tb["table_label"] or "").strip()))
+                    canon, acc = (canonical_subset(f"{_pre} {sub}" if _pre else sub, con)
+                                  if sub else (None, None))
                     if rd and rd[2]:
                         canon, acc = rd[2], species_index(con).get(rd[2])
                     sd = cell.get("stddev")

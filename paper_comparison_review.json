@@ -6,6 +6,20 @@
   "pub": 1,
   "state": "dismissed"
  },
+ "p10-pg27-t1": {
+  "cells": 0,
+  "label": "Table 1",
+  "on": "2026-10-03",
+  "pub": 10,
+  "state": "dismissed"
+ },
+ "p11-pg82-t4.1": {
+  "cells": 0,
+  "label": "Table 4.1",
+  "on": "2026-10-03",
+  "pub": 11,
+  "state": "dismissed"
+ },
  "p13-pg7-t1": {
   "cells": 3,
   "label": "Table 1",
@@ -25,6 +39,13 @@
   "label": "Table1",
   "on": "2026-10-03",
   "pub": 139,
+  "state": "dismissed"
+ },
+ "p16-pg14-t5": {
+  "cells": 0,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 16,
   "state": "dismissed"
  },
  "p16-pg18-t6-hc-pt": {
@@ -54,6 +75,27 @@
   "on": "2026-10-03",
   "pub": 16,
   "state": "approved"
+ },
+ "p16-pg9-t2": {
+  "cells": 6,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "approved"
+ },
+ "p16-pg9-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "dismissed"
+ },
+ "p16-pg9-t4": {
+  "cells": 0,
+  "label": "Table4",
+  "on": "2026-10-03",
+  "pub": 16,
+  "state": "dismissed"
  },
  "p168-pg6-ti": {
   "cells": 0,
@@ -139,6 +181,13 @@
   "pub": 196,
   "state": "dismissed"
  },
+ "p20-pg13-t5": {
+  "cells": 0,
+  "label": "Table5",
+  "on": "2026-10-03",
+  "pub": 20,
+  "state": "dismissed"
+ },
  "p20-pg7-t1": {
   "cells": 16,
   "label": "Table1",
@@ -215,6 +264,20 @@
   "on": "2026-10-03",
   "pub": 202,
   "state": "dismissed"
+ },
+ "p21-si1-pg26-supplementary-table-3": {
+  "cells": 10,
+  "label": "Supplementary Table 3",
+  "on": "2026-10-03",
+  "pub": 21,
+  "state": "approved"
+ },
+ "p21-si1-pg27-supplementarytable4": {
+  "cells": 10,
+  "label": "SupplementaryTable4",
+  "on": "2026-10-03",
+  "pub": 21,
+  "state": "approved"
  },
  "p22-pg13-t6": {
   "cells": 0,
@@ -881,6 +944,13 @@
   "pub": 9,
   "state": "approved"
  },
+ "p9-pg28-t8": {
+  "cells": 0,
+  "label": "Table 8",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "dismissed"
+ },
  "p9-pg8-t1": {
   "cells": 20,
   "label": "Table1",
@@ -894,6 +964,13 @@
   "on": "2026-10-03",
   "pub": 9,
   "state": "approved"
+ },
+ "p9-pg9-t4": {
+  "cells": 0,
+  "label": "Table 4",
+  "on": "2026-10-03",
+  "pub": 9,
+  "state": "dismissed"
  },
  "p99-pg6-t2": {
   "cells": 0,

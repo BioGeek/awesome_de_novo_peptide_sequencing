@@ -1960,7 +1960,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**80 verified tables from 24 papers, 3404 measurements.** The 46 refusals the
+**85 verified tables from 25 papers, 3654 measurements.** The 55 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -1982,6 +1982,30 @@ The table itself records `one per row`, and a row the registry does not name,
 such as the mean, has no dataset. A deposit with a single version takes it,
 while a benchmark with several stays NULL. That is why InstaNovo's
 Yeast/Bacillus/Mouse rows name no version, because the paper does not say.
+
+π-PrimeNovo's Supplementary Table 6 has the same layout, with HCC,
+IgG1-Human-HC, PT and three-species down the side, and is mapped the same
+way. Three-species is GraphNovo's own test set on Zenodo 8000316, the deposit
+LIPNovo and LIPNovo+ also compare on.
+
+**A protease is a subset, and the chain belongs in it.** Digest-level tables
+(CrossNovo's antibody tables, π-PrimeNovo's Supplementary Table 7) record each
+digest as the measurement's subset, canonicalised by `canonical_subset()`.
+That covers the paper's typo 'Chymotrysin' and the glued 'ProteinaseK'.
+CrossNovo prints 'HC Trypsin'; π-PrimeNovo prints 'Trypsin' in "the
+IgG1-Human-HC dataset". `SUBSET_PREFIX` adds the 'HC' that dataset name
+states, which is what lets the two papers' numbers meet on one subset.
+
+**A per-residue table is refused (C4).** Precision on M(O), Q, F and K one
+residue at a time is a different grain from a table's amino-acid precision.
+Stored, "Q" would sit in the subset column beside *S. cerevisiae*.
+
+**A crop beside running text starts at the caption.** A table set in a
+wrapfigure shares its lines with prose, and the crop's left edge used to come
+from that prose. When prose sits left of the 'Table N' label on the caption's
+own line, the crop is bounded at the label, or at the table's own stub words
+just left of it, since a centred label can be indented from its stub. Over
+the whole library it moved six other crops, every one an improvement.
 
 **What the miner does not record is still in the printed layer.** A count
 row, a BLEU row, a year or speed column, a difference row: each is a row or
@@ -2106,7 +2130,7 @@ results.
 
 ### On the algorithm pages
 
-**22 methods carry a `## Reported comparisons` section**, placed after
+**23 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the
