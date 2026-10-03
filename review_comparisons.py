@@ -268,6 +268,10 @@ def unsquash(text: str) -> str:
     bacteria', cannot be recovered and is shown as the page has it.
     """
     text = text or ""
+    # An underscore marks an identifier the paper chose, as in
+    # 'Precision_AAid(%)'; splitting it gave 'Precision_A Aid(%)'.
+    if "_" in text:
+        return text.strip()
     # 'M.mazei' -> 'M. mazei': an abbreviated genus keeps its space. The miner
     # already does this for subsets; row labels came through raw.
     text = re.sub(r"\b([A-Z])\.(?=[a-z])", r"\1. ", text)

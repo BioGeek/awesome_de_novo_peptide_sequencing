@@ -1245,6 +1245,11 @@ def unsquash_label(text: str) -> str:
     'Clambacteria' for 'Clam bacteria', cannot be recovered this way and is
     left as the page has it.
     """
+    # A LABEL WITH AN UNDERSCORE IS AN IDENTIFIER the paper chose, not a
+    # squashed phrase: BiATNovo's preprint prints 'Precision_AAid(%)', and
+    # splitting at its case change gave 'Precision_A Aid(%)'.
+    if "_" in text:
+        return text.strip()
     out = desquash(text)
     # An abbreviated genus loses the space after its initial too:
     # 'C.bacteria' -> 'C. bacteria', 'M.mazei' -> 'M. mazei'. Only after a
