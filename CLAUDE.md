@@ -1902,7 +1902,11 @@ is no PDF library on a runner, and a sign-off is a human's.
 **The basis follows the paper, and every non-`unclear` basis cites its
 sentence.** Invariants that must read zero, registered in `check_counts.py`:
 0 verified tables without a result for the paper's own method, 0 duplicate
-measurements within a table, 0 quoted results without a cue. A basis set by a
+measurements within a table, 0 quoted results without a cue, and
+0 results with a printed subset and no canonical one -- a subset that is not
+a species (OC, UTI, a pNovo run) keeps its printed form as its canonical
+name. That last one read 174 when first registered: left empty, a
+standardised table built from the view lost its dataset column. A basis set by a
 cell's legend marker cites that marker.
 
     uv run --with pdfplumber python3 review_comparisons.py --write-db            # full re-parse, ~8 min

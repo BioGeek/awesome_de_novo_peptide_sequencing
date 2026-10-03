@@ -4690,7 +4690,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         "variant": m[2] or "", "is_self": int(m[0] == sid),
                         "metric": mt, "level": lv,
                         "dataset_id": did, "dataset_version_id": vid,
-                        "subset": sub or "", "subset_canonical": canon or "",
+                        # A subset that is not a species (OC, UTI, a pNovo
+                        # run) KEEPS ITS PRINTED FORM as its canonical name,
+                        # the rule canonical_subset() states; left empty, a
+                        # standardised table lost its dataset column.
+                        "subset": sub or "", "subset_canonical": canon or sub or "",
                         "subset_accession": acc or "",
                         "is_aggregate": int(bool(AGGREGATE.match(sub or ""))),
                         "value": v / scale,
