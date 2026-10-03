@@ -388,6 +388,89 @@ def strip_line_numbers(words: list[dict]) -> list[dict]:
 PURE_NUMBER = re.compile(r"^-?\d{1,3}(?:[.,]\d*)?$")
 
 
+# ONE NAME PER SPECIES, whatever a paper prints. Measured across the accepted
+# tables: 69 spellings for nine species and an aggregate -- 'B. sub.',
+# 'B.sub.', 'Bacillus', 'BacillusSubtilis' are one organism, and 'Clam
+# bacteria', 'Clam Ba.', 'C. end.' and 'CandidatusEndoloripes' another. The
+# canonical names are the catalog's OWN: the nine-species benchmark's
+# provenance submissions record their species in dataset_address.part, so a
+# resolved subset also carries the accession its spectra came from.
+#
+# Common names are explicit, because no rule derives 'Human' from 'Homo
+# sapiens'. Abbreviations resolve by genus initial plus the START of the
+# epithet ('M. maz.' -> Methanosarcina mazei), typos by a near match on the
+# epithet ('B. subtilus'). An unresolved subset keeps its printed form: an
+# enzyme, a DIA dataset, a run, is not a species and is not forced into one.
+SPECIES_COMMON = {
+    "human": "Homo sapiens", "mouse": "Mus musculus",
+    "yeast": "Saccharomyces cerevisiae",
+    "honeybee": "Apis mellifera", "honey bee": "Apis mellifera",
+    "tomato": "Solanum lycopersicum",
+    "rice bean": "Vigna mungo", "ricebean": "Vigna mungo",
+    "clam bacteria": "Candidatus Thiodiazotropha endoloripes",
+    "clambacteria": "Candidatus Thiodiazotropha endoloripes",
+    "c bacteria": "Candidatus Thiodiazotropha endoloripes",
+    "bacillus": "Bacillus subtilis",
+}
+AGGREGATE = re.compile(r"(?i)^\s*(average|avg\.?|mean|overall)\s*$")
+_SPECIES_CACHE: dict | None = None
+
+
+def species_index(con: sqlite3.Connection) -> dict[str, str]:
+    """canonical species name -> its provenance accession, from the catalog."""
+    global _SPECIES_CACHE
+    if _SPECIES_CACHE is None:
+        _SPECIES_CACHE = {part: acc for acc, part in con.execute(
+            "SELECT da.accession, da.part FROM dataset_address da "
+            "JOIN dataset_version dv ON dv.id = da.dataset_version_id "
+            "JOIN dataset d ON d.id = dv.dataset_id "
+            "WHERE d.name = 'Nine-species benchmark' AND da.is_provenance = 1 "
+            "AND da.part IS NOT NULL")}
+    return _SPECIES_CACHE
+
+
+def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None, str | None]:
+    """(canonical subset, provenance accession) for a printed subset, or (None, None)."""
+    if not printed:
+        return None, None
+    if AGGREGATE.match(printed):
+        return "Average", None
+    species = species_index(con)
+    spaced = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", printed)        # ApisMellifera
+    toks = re.findall(r"[a-z]+", spaced.lower())
+    if not toks:
+        return None, None
+    joined = " ".join(toks)
+    for key, name in SPECIES_COMMON.items():
+        # A common name, or a truncation of one ('Honeyb.', 'Clam Ba.'), but
+        # only from four letters, so 'Hum' or 'Ho' cannot pick one.
+        if joined == key or (len(joined) >= 4 and key.startswith(joined)):
+            return name, species.get(name)
+    # A PROTEASE, with its chain if printed: CrossNovo's two antibody tables
+    # say 'HC Chymo.' and 'HC Chymotrypsin' for the same digest.
+    enz = {"aspn": "AspN", "chymotrypsin": "Chymotrypsin", "gluc": "GluC",
+           "lysc": "LysC", "proteinase": "Proteinase K", "trypsin": "Trypsin"}
+    chain = toks[0].upper() if toks[0] in ("hc", "lc") else None
+    rest = "".join(toks[1:] if chain else toks)
+    for key, name in enz.items():
+        if rest == key or (len(rest) >= 4 and key.startswith(rest)):
+            return (f"{chain} {name}" if chain else name), None
+    if len(toks) >= 2:
+        g, e = toks[0], toks[-1]
+        hits = [n for n in species
+                if n.lower().split()[0].startswith(g) and n.lower().split()[-1].startswith(e)]
+        if not hits:
+            try:
+                from rapidfuzz import fuzz
+                hits = [n for n in species if n.lower().split()[0].startswith(g)
+                        and fuzz.ratio(e, n.lower().split()[-1]) >= 80]
+            except ImportError:
+                hits = []
+        if len(hits) == 1:
+            return hits[0], species.get(hits[0])
+    return None, None
+
+
 def heal_fragments(row: list[dict], gap: float = 2.0) -> list[dict]:
     """Join word fragments that are one printed number broken by the text layer.
 
@@ -2605,6 +2688,7 @@ AUDIT_COLUMNS = [
     "methods_printed", "methods_resolved", "methods_unresolved",
     "paper_vocabulary", "metrics_resolved", "levels",
     "dataset_printed", "dataset_resolved", "dataset_version_resolved",
+    "subsets_canonical",
     "value_min", "value_max", "unit",
     "basis_assigned", "basis_cue", "basis_conflict", "proposed_results",
 ]
@@ -3850,6 +3934,18 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         con, tb["caption"], near, base["publication_id"],
         tb.get("dataset_hint") or table_dataset_label(tb), header_text,
         (tb.get("registry_label") or tb["table_label"] or "").strip())
+    # EVERY PRINTED SUBSET WITH ITS CANONICAL NAME, so the record a schema
+    # will write holds both: the species as the paper printed it, for
+    # checking against the page, and as the catalog names it, with the
+    # provenance accession, for lining one paper up against another.
+    seen_sub: dict[str, str] = {}
+    for ri, r in enumerate(tb["body"]):
+        for k in r["cells"]:
+            _m, _mt, _lv, sub = cell_meta(k, ri)
+            if _m and sub and sub not in seen_sub:
+                nm, acc = canonical_subset(sub, con)
+                seen_sub[sub] = (f"{nm}" + (f" [{acc}]" if acc else "")) if nm else ""
+    base["subsets_canonical"] = "|".join(f"{k}={v}" for k, v in seen_sub.items() if v)
     base.update({"dataset_resolved": dname or "", "dataset_printed": dprinted or "",
                  "dataset_version_resolved": vid or ""})
 

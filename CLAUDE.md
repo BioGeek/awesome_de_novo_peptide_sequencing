@@ -1776,6 +1776,21 @@ pass: `extract_words` splits a word wherever an extra attribute changes, so
 asking for `fontname` in the parsing pass could move a cell into another
 column.
 
+**One name per species, whatever a paper prints.** Across the accepted
+tables, nine species and an aggregate arrive under 69 spellings: `B. sub.`,
+`B.sub.`, `Bacillus` and `BacillusSubtilis` are one organism, `Clam bacteria`,
+`Clam Ba.`, `C. end.` and `CandidatusEndoloripes` another. `canonical_subset()`
+resolves each to the catalog's OWN name -- the nine-species benchmark's
+provenance submissions record their species in `dataset_address.part` -- and so
+to the accession its spectra came from. Common names are an explicit table
+(nothing derives 'Human' from 'Homo sapiens'); abbreviations resolve by genus
+initial plus the start of the epithet; a typo (`B. subtilus`) by a near match on
+the epithet; proteases likewise (`HC Chymo.` is `HC Chymotrypsin`). A subset
+that is not a species -- OC, UTI, a pNovo run -- keeps its printed form rather
+than being forced into one. The review page shows the canonical name under the
+printed one, and the audit records both, `subsets_canonical`, so a schema can
+store the species as printed for checking and as named for comparing.
+
 **A table that prints differences is converted, and the conversion is
 marked.** TSARseqNovo's Table 1 prints only its own scores, each followed by
 'vs CasaNovo' and 'vs pi-HelixNovo' rows giving its improvement. At the

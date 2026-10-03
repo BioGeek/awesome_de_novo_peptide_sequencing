@@ -299,6 +299,30 @@ def printed_emphasis(rec: dict) -> dict | None:
     return out or None
 
 
+# The catalog connection, for resolving a printed subset to its canonical
+# name; set in main(). None leaves every subset as printed.
+CON = None
+
+
+def canon_html(printed: str) -> str:
+    """The printed subset, with its canonical name beneath where they differ.
+
+    One species is printed a dozen ways across these papers -- 'B. sub.',
+    'Bacillus', 'BacillusSubtilis' -- and the canonical name, the catalog's
+    own from the nine-species provenance records, is what lets a reader line
+    one paper's number up against another's. The provenance accession is the
+    tooltip. The printed form stays on top, because it is what the crop shows.
+    """
+    shown = html.escape(unsquash(printed or ""))
+    if CON is None or not printed:
+        return shown
+    name, acc = B.canonical_subset(printed, CON)
+    if not name or _norm(name) == _norm(printed):
+        return shown
+    tip = f" title='{html.escape(acc)}'" if acc else ""
+    return f"{shown}<br><small class='dim'{tip}>{html.escape(name)}</small>"
+
+
 def _measured(rec: dict, i: int, k) -> bool:
     """Whether a cell belongs to a METHOD, and so can be ranked at all.
 
@@ -633,7 +657,7 @@ def grid_html(rec: dict) -> str:
                 while j + 1 < ncol and subs[j + 1] == subs[k]:
                     j += 1
                 cells_.append(f"<th colspan='{j - k + 1}' style='text-align:center'>"
-                              f"{html.escape(subs[k])}</th>")
+                              f"{canon_html(subs[k])}</th>")
                 k = j + 1
             out.append("<tr><th></th>" + "".join(cells_) + "</tr>")
         out.append("<tr><th></th>" + "".join(
@@ -648,7 +672,7 @@ def grid_html(rec: dict) -> str:
             # whole table were peptide accuracy. RT-GCTnovo's TABLE I is
             # peptide accuracy on one row and amino-acid accuracy on the next,
             # so the metric belongs beside the ROW.
-            label = html.escape(unsquash(r["label"]) or "-")
+            label = canon_html(r["label"]) if r["label"] else "-"
             if maxis == "rows":
                 label += f"<br><small class='dim'>{mcell(i)}</small>"
             out.append(f"<tr><th>{label}</th>"
@@ -693,7 +717,7 @@ def grid_html(rec: dict) -> str:
                        (f"<th>{mcell(k)}</th>" if maxis == "columns"
                         and (group_col
                              or (rec['subsets'].get(k) or rec['col_head'][k]) in ("?", ""))
-                        else f"<th>{html.escape(rec['subsets'].get(k) or rec['col_head'][k])}"
+                        else f"<th>{canon_html(rec['subsets'].get(k)) if rec['subsets'].get(k) else html.escape(rec['col_head'][k])}"
                              + (f"<br><small class='dim'>{mcell(k)}</small>"
                                 if maxis == "columns" else "")
                              + "</th>") for k in range(ncol)) + "</tr>")
@@ -707,7 +731,7 @@ def grid_html(rec: dict) -> str:
             grp = ""
             if group_col and i in span:
                 grp = (f"<th rowspan='{span[i]}' style='vertical-align:middle'>"
-                       f"{html.escape(unsquash(rs.get(i, '')))}</th>")
+                       f"{canon_html(rs.get(i, ''))}</th>")
             out.append(f"<tr>{grp}<th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
@@ -755,6 +779,8 @@ def main() -> int:
 
     OUT.mkdir(parents=True, exist_ok=True)
     CACHE.mkdir(exist_ok=True)
+    global CON
+    CON = con
     KNOWN_NAMES.update(
         _norm(n) for row in con.execute(
             "SELECT name, COALESCE(aliases,'') FROM algorithm")
