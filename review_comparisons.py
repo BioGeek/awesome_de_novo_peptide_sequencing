@@ -714,10 +714,14 @@ def grid_html(rec: dict) -> str:
                        # "subset" can only be a stray header word -- LIPNovo's
                        # Table 5 puts 'Baseline' over Table 3's last column --
                        # so the metric is shown alone.
+                       # The PRINTED header still leads, with our metric
+                       # beneath it as everywhere else; only the stray subset
+                       # is dropped. Showing the metric alone left PhysNovo's
+                       # Table 3 with no printed header to compare against.
                        (f"<th>{mcell(k)}</th>" if maxis == "columns"
-                        and (group_col
-                             or (rec['subsets'].get(k) or rec['col_head'][k]) in ("?", ""))
-                        else f"<th>{canon_html(rec['subsets'].get(k)) if rec['subsets'].get(k) else html.escape(rec['col_head'][k])}"
+                        and (rec['col_head'][k] if group_col
+                             else rec['subsets'].get(k) or rec['col_head'][k]) in ("?", "")
+                        else f"<th>{html.escape(rec['col_head'][k]) if group_col else canon_html(rec['subsets'].get(k)) if rec['subsets'].get(k) else html.escape(rec['col_head'][k])}"
                              + (f"<br><small class='dim'>{mcell(k)}</small>"
                                 if maxis == "columns" else "")
                              + "</th>") for k in range(ncol)) + "</tr>")

@@ -744,6 +744,19 @@ def row_label(toks: list[dict], first_edge: float) -> str:
     left = [w for w in toks if w["x1"] <= first_edge]
     if not left:
         return ""
+    # FRAGMENTS THAT TOUCH ARE ONE WORD. Some producers emit a label glyph by
+    # glyph with jittered baselines, and the text layer splits it where the
+    # baseline jumps: CausalNovo's Table 3 reads '†C a sa N o v o' and
+    # '+ C a us a l Novo'. A real space is 2-3 pt; these gaps run from
+    # slightly negative (overlapping glyph boxes) to 1.5 pt.
+    merged: list[dict] = []
+    for w in sorted(left, key=lambda w: w["x0"]):
+        if merged and -1.0 <= w["x0"] - merged[-1]["x1"] <= 1.6:
+            merged[-1] = {**merged[-1], "text": merged[-1]["text"] + w["text"],
+                          "x1": w["x1"]}
+        else:
+            merged.append(w)
+    left = merged
     runs: list[list[dict]] = [[left[0]]]
     for w in left[1:]:
         if w["x0"] - runs[-1][-1]["x1"] <= 20.0:
@@ -2078,7 +2091,19 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         data_x0 = [w["x0"] for r in rows[lo:hi + 1] for w in r
                    if numeric(w["text"]) and assign(w, edges) == 0]
         label_right = max(edges[0][0], min(data_x0) - 1.0) if data_x0 else edges[0][0]
+        # EACH ROW IS CLIPPED TO THIS PART'S OWN WIDTH, between its side-by-
+        # side neighbours. A page row holds both tables' words, so a row's
+        # 'top' came from the neighbour's text, and a species label set beside
+        # the neighbour's data never arrived as an interstitial at all:
+        # CausalNovo's Table 3 centres each species between a CasaNovo-dagger
+        # and a +CausalNovo row, and with Table 2's words in the same page
+        # rows the centred-label rule measured against the wrong heights,
+        # paired two species' rows and refused the table as a duplicate.
+        nb_lo, nb_hi = neighbours.get((lo, hi, edges[0][0]), (0.0, float("inf")))
         for ri_abs, r in enumerate(rows[lo:hi + 1], start=lo):
+            r = [w for w in r if w["x1"] > nb_lo and w["x0"] < nb_hi]
+            if not r:
+                continue
             r = split_glued_year(heal_fragments(r), edges)
             cells: dict[int, dict] = {}
             for w in r:
