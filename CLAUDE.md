@@ -2027,9 +2027,14 @@ anything.
 
 What still cannot be read is the TABLE THAT IS AN IMAGE WITH NO CAPTION IN THE
 TEXT LAYER. DeepNovo-DIA's supplementary
-tables are not in its Supplementary Information PDF at all: they are the
-Excel files Nature lists as Supplementary Data, which the fetcher skips because
-it takes PDFs. A spreadsheet is structured data and needs no vision model.
+tables are not in its Supplementary Information PDF at all: they are six Excel
+files labelled "Supplementary Table 1-6". The fetcher now takes an `.xlsx`
+whose label says Supplementary Table, saved under that label
+(`supplement_sheets()` finds them). Read, none of the six is a comparison:
+dataset statistics, per-feature predictions, immunoglobulin and variant
+peptides. DeepNovo-DIA's comparisons exist only as figures, so no spreadsheet
+reader was built for them; one would be worth writing the day a sheet holds
+results.
 
 ### On the algorithm pages
 

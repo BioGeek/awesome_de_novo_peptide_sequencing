@@ -390,6 +390,16 @@ def supplement_files(pub: dict, root: Path) -> list[Path]:
                   key=lambda f: int(re.search(r"(\d+)\.pdf$", f.name).group(1)))
 
 
+def supplement_sheets(pub: dict, root: Path) -> list[Path]:
+    """The supplementary spreadsheets filed for this publication, by label."""
+    d = root / SUPP_DIR
+    if not d.is_dir():
+        return []
+    stem = zotero_name(pub)[:-4]
+    return sorted(d.glob(glob.escape(stem) + " - Supplementary Table *.xlsx"),
+                  key=lambda f: int(re.search(r"(\d+)\.xlsx$", f.name).group(1)))
+
+
 # What a supplement link is labelled on a Springer Nature article page. Only
 # these are taken: the Reporting Summary, the peer-review file and Source Data
 # are supplementary files too, and none of them holds a results table.
@@ -418,8 +428,12 @@ def supplement_links(doi: str) -> tuple[list[tuple[str, str]], str]:
         if not (label and href):
             continue
         url = href.group(1)
-        if url.lower().endswith(".pdf") and SUPP_LABEL.match(label.group(1)):
-            out.append((label.group(1), "https:" + url if url.startswith("//") else url))
+        lab = label.group(1)
+        # A SPREADSHEET counts too when it is labelled a table: DeepNovo-DIA's
+        # Supplementary Tables 1-6 are .xlsx files, not pages of its PDF.
+        if (url.lower().endswith(".pdf") and SUPP_LABEL.match(lab)) or \
+                (url.lower().endswith(".xlsx") and re.match(r"(?i)^supplementary tables? \d", lab)):
+            out.append((lab, "https:" + url if url.startswith("//") else url))
     return out, "" if out else "no supplementary PDF listed"
 
 
@@ -438,14 +452,22 @@ def cmd_supplements(args, conn, pubs, root):
             print(f"  p{pid}: {note}")
             continue
         stem = zotero_name(pub)[:-4]
-        for n, (label, url) in enumerate(links, start=1):
-            dest = d / f"{stem} - Supplementary {n}.pdf"
+        n = 0
+        for label, url in links:
+            if url.lower().endswith(".xlsx"):
+                # Named by its LABEL, which is how the paper cites it.
+                dest = d / f"{stem} - {label.title()}.xlsx"
+                magic = b"PK"
+            else:
+                n += 1
+                dest = d / f"{stem} - Supplementary {n}.pdf"
+                magic = b"%PDF"
             if dest.exists():
                 print(f"  p{pid}: have {dest.name}")
                 continue
             ok, body = fetch(url)
-            if not ok or not body.startswith(b"%PDF"):
-                print(f"  p{pid}: {label}: {body if not ok else 'not a PDF'}")
+            if not ok or not body.startswith(magic):
+                print(f"  p{pid}: {label}: {body if not ok else 'not the expected file type'}")
                 continue
             dest.write_bytes(body)
             print(f"  p{pid}: {label} -> {dest.name} ({len(body) // 1024} KB)")
