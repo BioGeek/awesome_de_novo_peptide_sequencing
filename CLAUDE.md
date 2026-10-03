@@ -1787,7 +1787,10 @@ to the accession its spectra came from. Common names are an explicit table
 initial plus the start of the epithet; a typo (`B. subtilus`) by a near match on
 the epithet; proteases likewise (`HC Chymo.` is `HC Chymotrypsin`). A subset
 that is not a species -- OC, UTI, a pNovo run -- keeps its printed form rather
-than being forced into one. The review page shows the canonical name under the
+than being forced into one, and an aggregate keeps its own WORD: 'Average' and
+'Mean' are not merged, since one paper's average may be weighted by spectra
+where another's mean is the plain mean of its per-species values; only
+spellings of one word are ('Average', 'AVERAGE', 'Avg.'). The review page shows the canonical name under the
 printed one, and the audit records both, `subsets_canonical`, so a schema can
 store the species as printed for checking and as named for comparing.
 

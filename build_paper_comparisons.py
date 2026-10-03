@@ -433,8 +433,17 @@ def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None,
     """(canonical subset, provenance accession) for a printed subset, or (None, None)."""
     if not printed:
         return None, None
-    if AGGREGATE.match(printed):
-        return "Average", None
+    # AN AGGREGATE KEEPS ITS OWN WORD. 'Average' and 'Mean' are NOT merged:
+    # a paper's average may be weighted by spectra where another's mean is the
+    # plain mean of its per-species values (LIPNovo: "'mean' is computed by
+    # averaging across the eight test species"), and one name for both would
+    # hide a difference the papers chose to state. Only spellings of one word
+    # are unified -- 'Average', 'AVERAGE', 'Avg.'.
+    ma = AGGREGATE.match(printed)
+    if ma:
+        word = ma.group(1).lower().rstrip(".")
+        return {"average": "Average", "avg": "Average",
+                "mean": "Mean", "overall": "Overall"}[word], None
     species = species_index(con)
     spaced = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", printed)        # ApisMellifera
     toks = re.findall(r"[a-z]+", spaced.lower())
