@@ -395,58 +395,6 @@ repo_metrics = pd.read_sql(
     conn,
 )
 
-# FIRST APPEARANCE OF EACH METHODOLOGICAL FAMILY.
-# The only dataset that covers the field's whole 42-year span. The wave chart
-# squashes the sparse early years against a linear count axis, and the
-# architectures swim lane now gives all 52 families a lane, but it is 6069 px of
-# scroll and spends 20 of its 91 height units on Transformer (AR) alone, so the
-# classical era is still a thin band at the top of a very tall chart. Ten of the
-# families outside the 13 hand-tuned bands first appeared before 2005.
-# One row per family, dated by the earliest publication of its earliest method.
-family_firsts = pd.read_sql(
-    """
-    WITH per_method AS (
-        SELECT alg.id                  AS alg_id,
-               alg.algorithm_family    AS family,
-               alg.name                AS method,
-               alg.kind                AS kind,
-               alg.is_deep_learning    AS is_dl,
-               MIN(p.publication_date) AS first_date,
-               MIN(p.id)               AS pub_id
-        FROM algorithm alg
-        JOIN publication_algorithm pa ON pa.algorithm_id = alg.id
-        JOIN publication p            ON p.id = pa.publication_id
-        -- Describing papers only, for the same reason as first_pub above: this
-        -- chart dates a family by when its earliest method APPEARED.
-        WHERE COALESCE(alg.algorithm_family, '') <> ''
-          AND pa.role = 'describes'
-        GROUP BY alg.id
-    ),
-    ranked AS (
-        SELECT per_method.*,
-               ROW_NUMBER() OVER (PARTITION BY family
-                                  ORDER BY first_date, alg_id) AS rn,
-               COUNT(*)     OVER (PARTITION BY family)          AS n_methods
-        FROM per_method
-    )
-    SELECT r.family,
-           r.first_date,
-           r.method  AS first_method,
-           r.kind    AS first_kind,
-           r.is_dl   AS first_is_dl,
-           r.n_methods,
-           r.pub_id  AS first_pub_id,
-           p.title   AS first_title,
-           p.journal AS first_journal,
-           p.doi     AS first_doi,
-           p.url     AS first_url
-    FROM ranked r
-    JOIN publication p ON p.id = r.pub_id
-    WHERE r.rn = 1
-    ORDER BY r.first_date
-    """,
-    conn,
-)
 
 # ---------------------------------------------------------------------------
 # Public benchmarks. Written by build_benchmarks.py from
@@ -777,7 +725,6 @@ ojs_define(
     author_details=author_details,
     citations=citations,
     pub_versions=pub_versions,
-    family_firsts=family_firsts,
     entity_slugs=entity_slugs,
     journal_impact=journal_impact,
     publication_impact=publication_impact,
@@ -970,7 +917,7 @@ family_color_scale = {
   //
   // Assignment walks families in order of FIRST APPEARANCE and picks, for each,
   // the grid hue furthest in CIE Lab from its neighbours in that order. Both
-  // swim lanes and "The long view" lay families out chronologically, so a
+  // swim lanes (in either mode) lay families out chronologically, so a
   // family's neighbours in this walk are the lanes it will actually sit next
   // to, which is the only adjacency the eye compares. Alphabetical assignment
   // measured four adjacent pairs under the deltaE >= 20 bar, worst 11.1; this
@@ -1159,7 +1106,7 @@ algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
 // the other 26 hold exactly one method, so their page would have carried that
 // method's papers, authors and dates and nothing else. Rather than leave a
 // lane label dead, a singleton family links straight to its one method: every
-// label in the swim lane and every row of the long-view table is clickable, and
+// label in the swim lane is clickable, and
 // which of the two kinds of target it has is not something a reader needs to
 // know.
 family_sole_method = new Map(
@@ -1616,11 +1563,20 @@ Plot.plot({
 
 ## The architectures
 
-*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it.
+*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it. Switch on **First appearance only** for the field's history at a glance: each family shrinks to the method that introduced it, sized by how many methods followed, which is where the nine quiet years between PAAS (1981) and the next family (1990) show.
 
 ```{ojs}
 //| echo: false
 viewof family_filter = Inputs.checkbox(families, { label: "Families", value: families })
+```
+
+```{ojs}
+//| echo: false
+// FIRST APPEARANCE ONLY turns the swim lane into what "The long view" used to
+// be as a separate chart: each family's lane keeps only its earliest method
+// (among whatever the other filters leave), lanes shrink to one compact row,
+// and the dot grows with the number of methods the family went on to collect.
+viewof arch_first_only = Inputs.toggle({ label: "First appearance only", value: false })
 ```
 
 ```{ojs}
@@ -1641,7 +1597,7 @@ innovations_timeline = {
     a => a.family
   )
   // Lanes stack UPWARD from y = 0, so the array runs latest-first to put the
-  // earliest family at the top, matching "The long view". Family name breaks a
+  // earliest family at the top. Family name breaks a
   // tie so the order is deterministic; an undated family sorts as latest.
   const LATEST = new Date(8640000000000)
   const lane_sort = (a, b) =>
@@ -1658,8 +1614,10 @@ innovations_timeline = {
   // Packing by measured label width removes the class rather than retuning it,
   // and it makes the hand-tuned band_heights table unnecessary -- a lane is now
   // exactly as tall as the rows its labels need.
-  const ROW_PX = 43           // 24 px for up to two label lines, 3 gap, 16 dot
-  const DOT_IN_ROW_PX = 35    // dot centre from the row top, label in the 24 above
+  // In first-appearance mode a lane holds one dot with its label BESIDE it,
+  // so it needs a single line, not two lines of label above a dot.
+  const ROW_PX = arch_first_only ? 26 : 43        // 24 px for two label lines, 3 gap, 16 dot
+  const DOT_IN_ROW_PX = arch_first_only ? 13 : 35 // dot centre from the row top
   const CHAR_PX = 5.7         // mean advance of 10 px bold Source Sans Pro
   const LABEL_GAP_PX = 8      // clear air between two labels sharing a row
   const PLOT_WIDTH_PX = 1130  // width 1400 minus marginLeft 210 and marginRight 60
@@ -1706,10 +1664,18 @@ innovations_timeline = {
   const half_px = label => Math.max(9,
     d3.max(String(label).split('\n'), l => l.length) * CHAR_PX / 2)
 
-  const rows = surviving
+  // How many methods each family holds after the filters: the dot size and a
+  // tooltip line in first-appearance mode.
+  const n_in_family = d3.rollup(surviving, v => new Set(v.map(a => a.base_model ?? a.model)).size,
+                                a => a.family)
+  let rows = surviving
     .filter(a => present.has(a.family))
-    .map(a => ({ ...a, label: wrap_label(a.model) }))
-    .sort((a, b) => a.first_pub - b.first_pub)
+    .map(a => ({ ...a, label: arch_first_only ? a.model : wrap_label(a.model) }))
+    .sort((a, b) => a.first_pub - b.first_pub || d3.ascending(a.model, b.model))
+  if (arch_first_only) {
+    const seen = new Set()
+    rows = rows.filter(a => !seen.has(a.family) && seen.add(a.family))
+  }
 
   // The x domain is padded by exactly the widest label's half width, solved for
   // rather than guessed: with plot width W, data span S days and pad P days,
@@ -1717,7 +1683,9 @@ innovations_timeline = {
   // guess left 'PepSeq' 7 px outside the frame.
   const x_min = d3.min(rows, a => a.first_pub) ?? new Date(Date.UTC(1984, 0, 1))
   const x_max = d3.max(rows, a => a.first_pub) ?? new Date()
-  const max_half = d3.max(rows, a => half_px(a.label)) ?? 9
+  // Beside-the-dot labels flip to the left near the right edge, so the
+  // domain only has to clear the largest dot.
+  const max_half = arch_first_only ? 14 : (d3.max(rows, a => half_px(a.label)) ?? 9)
   const span_days = Math.max(365, (x_max - x_min) / 86400000)
   const pad_days = Math.min(3650,
     max_half * span_days / Math.max(1, PLOT_WIDTH_PX - 2 * max_half))
@@ -1751,7 +1719,7 @@ innovations_timeline = {
   // Stack bands bottom-to-top, each exactly as tall as its packed rows.
   // visible_bands is already latest-first and y grows upward, so walking it in
   // order puts the latest family at the bottom and the earliest at the top,
-  // which is the order "The long view" uses. Reversing here would insist on
+  // which is the chronological order. Reversing here would insist on
   // the opposite and did: the first cut of this put Sparse autoencoder on top.
   let y_cursor = 0
   const bands = visible_bands.map(family => {
@@ -1770,8 +1738,12 @@ innovations_timeline = {
     return { ...d, y: band.y1 - d.row * ROW_PX - DOT_IN_ROW_PX }
   })
 
+  const flips = d => x_px(d.first_pub) + 14 + String(d.label).length * CHAR_PX > PLOT_WIDTH_PX
   const chart = Plot.plot({
     width: 1400,
+    // r is a SCALE in Plot: without this the per-family radius in
+    // first-appearance mode is squeezed into Plot's default range.
+    r: { type: "identity" },
     // total_height is in pixels, so 1 y unit = 1 px: the row packing above
     // computed real label geometry and the plot must not rescale it.
     height: Math.max(240, total_height + 60),
@@ -1818,7 +1790,9 @@ innovations_timeline = {
         x: "first_pub",
         y: "y",
         fill: "family",
-        r: 7,
+        // A family that kept being used gets a bigger first dot, as in the
+        // old long view: 4 px plus up to 8 more over its first nine methods.
+        r: arch_first_only ? (d => 4 + Math.min(n_in_family.get(d.family) ?? 1, 9) * 0.9) : 7,
         stroke: "white",
         strokeWidth: 1.5,
         // Plot wraps each mark in an SVG <a> itself, which sidesteps the
@@ -1831,17 +1805,31 @@ innovations_timeline = {
       // packing gives every label its own 24 px instead, so a single anchor is
       // both simpler and collision-free. Names over ~22 chars wrap onto two
       // lines; the full name stays in the tooltip.
-      Plot.text(items, {
-        x: "first_pub",
-        y: "y",
-        text: "label",
-        textAnchor: "middle",
-        lineAnchor: "bottom",
-        dy: -11,
-        fontSize: 10,
-        fontWeight: "bold",
-        fill: "family"
-      })
+      ...(arch_first_only ? [
+        // BESIDE the dot, flipped to its left once a label would run past the
+        // frame. Two marks rather than one with functions: Plot's dx and
+        // textAnchor are constants, and a function silently applies neither.
+        Plot.text(items.filter(d => !flips(d)), {
+          x: "first_pub", y: "y", text: "label", textAnchor: "start", dx: 14,
+          fontSize: 10, fontWeight: "bold", fill: "family"
+        }),
+        Plot.text(items.filter(flips), {
+          x: "first_pub", y: "y", text: "label", textAnchor: "end", dx: -14,
+          fontSize: 10, fontWeight: "bold", fill: "family"
+        })
+      ] : [
+        Plot.text(items, {
+          x: "first_pub",
+          y: "y",
+          text: "label",
+          textAnchor: "middle",
+          lineAnchor: "bottom",
+          dy: -11,
+          fontSize: 10,
+          fontWeight: "bold",
+          fill: "family"
+        })
+      ])
     ]
   })
 
@@ -1876,6 +1864,7 @@ innovations_timeline = {
           <span>${d.family}</span>
         </div>
         ${d.description ? html`<div class="map-tooltip-meta" style="margin-top:6px; max-width:280px; white-space:normal;">${d.description}</div>` : ""}
+        ${arch_first_only ? html`<div class="map-tooltip-meta" style="margin-top:6px">First of ${n_in_family.get(d.family) ?? 1} method${(n_in_family.get(d.family) ?? 1) > 1 ? "s" : ""} in this family</div>` : ""}
       </div>`)
       arch_tooltip.classList.add("visible")
       arch_tooltip.setAttribute("aria-hidden", "false")
@@ -1961,200 +1950,6 @@ innovations_timeline = {
   border: 1px solid rgba(31, 35, 40, 0.35); flex: 0 0 auto;
 }
 </style>
-```
-
-## The long view
-
-```{ojs}
-//| echo: false
-md`Every methodological family in the catalog, placed at the moment it first
-appeared. The span runs from **${ff_first_year}** to **${ff_last_year}**,
-**${ff_span}** years, across **${ff_rows.length}** distinct families. This is the
-only view that fits them on one screen: the chart above gives each family a lane
-too, but spends 20 of its 91 height units on Transformer (AR) alone, and the
-volume chart below counts papers per year, where the early era is a one-paper
-sliver against a linear axis. Families appear here in the same order as the
-lanes above.`
-```
-
-```{ojs}
-//| echo: false
-ff_rows = transpose(family_firsts)
-  .map(r => ({ ...r, date: new Date(r.first_date), year: +r.first_date.slice(0, 4) }))
-  .sort((a, b) => a.date - b.date)
-```
-
-```{ojs}
-//| echo: false
-ff_first_year = d3.min(ff_rows, r => r.year)
-```
-
-```{ojs}
-//| echo: false
-ff_last_year = d3.max(ff_rows, r => r.year)
-```
-
-```{ojs}
-//| echo: false
-ff_span = ff_last_year - ff_first_year
-```
-
-```{ojs}
-//| echo: false
-// Approach is derived from the introducing method's is_deep_learning, not from
-// the family name: several families (Graph / DP + neural network, Sparse
-// autoencoder) are only classifiable that way, and NULL is its own case rather
-// than being folded into classical.
-// A label flips to the left of its dot once the dot is far enough right that a
-// ~40-character name would leave the plot area. 0.62 of the span was chosen
-// from the measurement: it flips every family that overflowed and none that
-// did not.
-ff_label_flips = d => {
-  const lo = new Date(`${ff_first_year - 1}-01-01`).getTime()
-  const hi = new Date(`${ff_last_year + 1}-01-01`).getTime()
-  return (d.date.getTime() - lo) / (hi - lo) > 0.62
-}
-
-ff_approach = r => r.first_is_dl === true || r.first_is_dl === 1 ? "Deep learning"
-              : r.first_is_dl === false || r.first_is_dl === 0 ? "Classical"
-              : "Not applicable"
-```
-
-```{ojs}
-//| echo: false
-Plot.plot({
-  width: 1100,
-  height: 22 * ff_rows.length + 70,
-  marginLeft: 250,
-  marginRight: 100,  // flipping late labels left cut 182 px of overflow to
-                     // 68; this clears the rest without crushing the axis
-  marginTop: 34,
-  x: {
-    label: "First appearance",
-    grid: true,
-    // Fixed to whole years so the 1984-to-1994 gap reads as a real decade of
-    // quiet rather than being compressed away by a data-driven domain.
-    domain: [new Date(`${ff_first_year - 1}-01-01`), new Date(`${ff_last_year + 1}-01-01`)]
-  },
-  y: { label: null, domain: ff_rows.map(r => r.family), tickSize: 0 },
-  color: {
-    legend: true,
-    domain: ["Classical", "Deep learning", "Not applicable"],
-    range: ["#6c757d", "#C44E52", "#b0b7bd"]
-  },
-  marks: [
-    // A rule from the axis to the dot: without it, a 49-row dot plot is hard to
-    // read across 250px of label gutter.
-    Plot.ruleY(ff_rows, {
-      y: "family",
-      x1: new Date(`${ff_first_year - 1}-01-01`),
-      x2: "date",
-      stroke: "#e3e6e9",
-      strokeWidth: 1
-    }),
-    Plot.dot(ff_rows, {
-      x: "date",
-      y: "family",
-      r: r => 3 + Math.min(r.n_methods, 9) * 0.55,
-      fill: ff_approach,
-      stroke: "white",
-      strokeWidth: 0.8,
-      tip: true,
-      channels: {
-        "introduced by": "first_method",
-        "paper": "first_title",
-        "venue": "first_journal",
-        "methods in this family": "n_methods"
-      }
-    }),
-    // Labels sit to the RIGHT of the dot, except for late families, whose
-    // labels would run off the chart: measured 182 px of overflow, worst case
-    // "Sparse autoencoder interpretability of InstaNovo" at 2026-06-25.
-    // Flipping them to the left of the dot costs nothing, because the right
-    // side of a late dot is empty by definition, whereas reserving 215 px of
-    // marginRight would squeeze 42 years of timeline into less width.
-    //
-    // TWO MARKS, not one with functions. Plot's `dx`, `dy` and `textAnchor` are
-    // CONSTANT options, not channels: passing a function silently applies
-    // neither, so the first attempt at this left every label centred on its own
-    // dot with dx 0. That is what put a dot in the middle of all 49 names, and
-    // it was invisible in the code because a function is a perfectly legal
-    // value. Measured before: 49 label-over-dot collisions, 9 px each.
-    //
-    // dx of 11 clears the largest dot, whose radius is 3 + 9 * 0.55 = 7.95.
-    Plot.text(ff_rows.filter(d => !ff_label_flips(d)), {
-      x: "date",
-      y: "family",
-      text: "first_method",
-      dx: 11,
-      textAnchor: "start",
-      fontSize: 10,
-      fill: "#444"
-    }),
-    Plot.text(ff_rows.filter(ff_label_flips), {
-      x: "date",
-      y: "family",
-      text: "first_method",
-      dx: -11,
-      textAnchor: "end",
-      fontSize: 10,
-      fill: "#444"
-    })
-  ]
-})
-```
-
-```{ojs}
-//| echo: false
-md`Dot size is the number of methods the family has accumulated since, so a
-large dot on the left is an idea that kept being used. The table below is the
-same data, sortable.`
-```
-
-```{ojs}
-//| echo: false
-Inputs.table(
-  ff_rows.map(r => ({
-    "First seen": r.first_date,
-    "Family": r.family,
-    "Approach": ff_approach(r),
-    "Introduced by": r.first_method,
-    "Methods since": r.n_methods,
-    "Paper": r.first_title,
-    "Venue": r.first_journal || ""
-  })),
-  {
-    rows: 20,
-    sort: "First seen",
-    reverse: false,
-    layout: "auto",
-    // Same cell-linking convention as the other tables: an internal detail page,
-    // plus an arrow to the publisher where there is one. Inputs.table passes the
-    // index into the ORIGINAL array, not the sorted position, so ff_rows[i] is the
-    // right row however the reader sorts the table.
-    format: {
-      // The family name links to the family's own page where it has one, and to
-      // its single method where it does not; same rule as the swim-lane labels.
-      "Family": f => {
-        const href = family_href(f)
-        return href ? htl.html`<a href=${href}>${f}</a>` : f
-      },
-      "Introduced by": (m, i) => page_link("algorithms", ff_rows[i].first_method, m),
-      "Paper": (t, i) => {
-        const row = ff_rows[i]
-        const internal = page_href("publications", row.first_pub_id)
-        const external = row.first_url || (row.first_doi ? `https://doi.org/${row.first_doi}` : null)
-        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
-        return external
-          ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
-              title="Publisher / DOI" style="text-decoration:none">↗</a>`
-          : label
-      },
-      "Venue": v => v ? page_link("venues", v, v) : ""
-    },
-    width: { "First seen": 92, "Methods since": 92, "Approach": 100 }
-  }
-)
 ```
 
 ## How they score
@@ -4677,7 +4472,7 @@ application_timeline = {
     .filter(sd => !subdomain_order.includes(sd))
     .sort()
   // Lane order is CHRONOLOGICAL by each subdomain's first appearance, the order
-  // "The long view" and the architectures swim lane both use, so all three
+  // the architectures swim lane uses, so both
   // timelines can be read against one another. subdomain_order survives as the
   // registry of labels, colours and lane heights, and as the test for an
   // unregistered subdomain; it is no longer the display order.
@@ -4688,7 +4483,7 @@ application_timeline = {
   //
   // Computed over ALL entries rather than the filtered ones so a lane keeps its
   // place as filters change, and latest-first because lanes stack upward from
-  // y = 0, which puts the earliest subdomain at the top to match the long view.
+  // y = 0, which puts the earliest subdomain at the top, as the architectures do.
   // A registered subdomain with no dated entry sorts as "latest", at the bottom.
   const sd_first = d3.rollup(
     algorithms_t.filter(a => a.subdomain && a.first_pub),
@@ -4775,7 +4570,7 @@ application_timeline = {
   }
 
   // lane_order is latest-first and y grows upward, so walking it in order puts
-  // the earliest subdomain at the top, matching "The long view".
+  // the earliest subdomain at the top, matching the architectures.
   let y_cursor = 0
   const lanes = lane_order.map(sd => {
     const h = Math.max(1, rows_used.get(sd) ?? 1) * ROW_PX

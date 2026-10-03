@@ -2398,7 +2398,7 @@ naming people, a half-finished finding) belongs in the Python chunk, not beside
 the chart it describes. The network-statistics notes at the end of the Python
 chunk in `index.qmd` are there for exactly this reason and say so.
 
-### Every family gets a lane; "The long view" is still the history chart
+### Every family gets a lane, and one switch turns it into the history chart
 
 The architectures swim lane draws **every** family, in chronological order of
 first appearance, with a lane exactly as tall as its labels need. Getting there
@@ -2410,12 +2410,12 @@ dropped from the chart entirely. The checkbox list offers all 49, so unchecking
 everything and checking one of the other 36 produced an **empty chart**: 36
 families and 76 of the 192 methods were unreachable.
 
-**Lane order is chronological**, matching "The long view", so the two charts can
-be read against each other. It is computed over **all** entries, not the
+**Lane order is chronological**, so the chart reads as the field's history
+whether it shows every method or only each family's first. It is computed over **all** entries, not the
 filtered ones, so a lane keeps its place as the filters change. The array runs
 **latest-first** because lanes stack upward from `y = 0`, which means the array
 is walked in order and NOT reversed: reversing put `Sparse autoencoder` on top
-and `Heuristic` at the bottom, the opposite of the long view. Verified in the
+and `Heuristic` at the bottom, the opposite of chronological order. Verified in the
 rendered SVG, top to bottom: Heuristic, Graph / DP, Sequence tag, Neural
 network, Chemical labeling assisted, ... Flow, Palaeoproteomics workflow, Sparse
 autoencoder.
@@ -2461,11 +2461,21 @@ Measured: the default all-checked view is **49 lanes / 201 dots / 5779 px**, and
 filtering to one family renders one lane at the 240 px floor (verified for
 `Sequence tag`, 5 dots on one row).
 
-**"The long view"** is still the right chart for the field's history, and is not
-made redundant by this. It places one row per family at the first publication of
-its earliest method, with an x-domain pinned to whole years, so the **nine years
-of quiet between 1981 and 1990** read as a gap: `Heuristic` arrives with PAAS in
-April 1981 and the second family, `Graph / DP`, not until Bartels in June 1990.
+**"The long view" is now a mode of this chart, not a chart of its own.** It
+was one row per family at the first publication of its earliest method, which
+is this swim lane with every method but the first removed, drawn a second
+time. The **First appearance only** toggle does that removal instead:
+- each lane keeps its earliest method among whatever the other filters leave;
+- lanes shrink to one 26 px row, labelled beside the dot, flipping left near
+  the right edge (two `Plot.text` marks, because dx is a constant);
+- the dot grows with the number of methods the family went on to collect,
+  which needs `r: {type: "identity"}`.
+
+The chart, its table and the `family_firsts` query are gone. Measured: 52
+dots in 1,412 px against 231 in 6,768, and 0 collisions in either mode. The
+**nine years of quiet between 1981 and 1990** still read as a gap, because
+the x axis is still time: `Heuristic` arrives with PAAS in April 1981 and the
+second family, `Graph / DP`, not until Bartels in June 1990.
 
 That gap used to be written here as 1984 to 1994, and it moved because the
 catalog gained PAAS (1981) and Improved PAAS (1983). **PAAS 3 was the earliest
@@ -2619,8 +2629,7 @@ Casanovo are not papers about transformers.
 
 **No lane label is dead.** `family_href` sends a family with a page to that page
 and a one-method family straight to its single method, so every label in the
-architectures swim lane and every Family cell in the long-view table is
-clickable, and a reader never has to know which of the two kinds of target they
+architectures swim lane is clickable, in either mode, and a reader never has to know which of the two kinds of target they
 got.
 
 **The one thing the page cannot derive is prose**, so `family_note` holds it:
@@ -2649,7 +2658,9 @@ Passing a function to `dx`, `dy` or `textAnchor` on a `Plot.text` mark applies
 to `dx: 0` and `textAnchor: "middle"`. Nothing warns, because a function is a
 perfectly legal value to hand an option.
 
-This is what put a dot in the middle of all 49 names in "The long view". The
+This is what put a dot in the middle of all 49 names in the former "long view"
+chart, now the swim lane's first-appearance mode, which splits its marks the
+same way. The
 mark meant "labels right of the dot, except late ones, which flip left", written
 as `dx: d => flips(d) ? -10 : 10`. What rendered was every label centred on its
 own dot: 49 label-over-dot collisions, 9 px each, measured in the DOM. It also

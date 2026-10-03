@@ -342,10 +342,6 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' "
      "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
-    ("index.qmd", "families in the swim lane",
-     r"gives all (\d+) families a lane",
-     "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
-     "WHERE COALESCE(algorithm_family,'') <> ''"),
     ("BENCHMARKS.md", "denovo_benchmarks datasets",
      r"(\d+) datasets: instruments, organisms",
      "SELECT COUNT(*) FROM benchmark_dataset"),
