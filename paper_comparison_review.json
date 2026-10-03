@@ -377,6 +377,13 @@
   "pub": 283,
   "state": "approved"
  },
+ "p3-pg19-t2": {
+  "cells": 0,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 3,
+  "state": "dismissed"
+ },
  "p3-pg20-t3": {
   "cells": 0,
   "label": "Table3",
@@ -494,6 +501,20 @@
   "label": "Table 1",
   "on": "2026-10-03",
   "pub": 38,
+  "state": "approved"
+ },
+ "p4-pg7-t2-nine-species-original-deepnovo-2017": {
+  "cells": 10,
+  "label": "Table2 [Nine-species \u00b7 original (DeepNovo, 2017)]",
+  "on": "2026-10-03",
+  "pub": 4,
+  "state": "approved"
+ },
+ "p4-pg7-t2-nine-species-revised-main": {
+  "cells": 10,
+  "label": "Table2 [Nine-species \u00b7 revised (main)]",
+  "on": "2026-10-03",
+  "pub": 4,
   "state": "approved"
  },
  "p4-pg8-t3": {
