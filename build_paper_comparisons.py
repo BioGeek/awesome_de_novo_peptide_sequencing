@@ -378,6 +378,27 @@ def numeric(tok: str) -> tuple[float, float | None] | None:
 LINE_NO = re.compile(r"^\d{1,4}$")
 
 
+def collapse_fake_bold(words: list[dict]) -> list[dict]:
+    """Undo FAKE BOLD: text drawn three times at small offsets to look heavy.
+
+    SeqNovo's Table V bolds its best values that way, and the text layer reads
+    '30.93' as '333000...999333' -- every character tripled -- so the cell is
+    not a number and the row it sits in stopped being a data row. A word whose
+    characters come in identical runs of three is collapsed and marked
+    `fake_bold`, which page_emphasis() then counts as the paper's bold, since
+    that is what it is on the page. Six characters at least, so a genuine
+    'www' or 'III' is left alone.
+    """
+    out = []
+    for w in words:
+        t = w["text"]
+        if (len(t) >= 6 and len(t) % 3 == 0
+                and all(t[i] == t[i + 1] == t[i + 2] for i in range(0, len(t), 3))):
+            w = {**w, "text": t[::3], "fake_bold": True}
+        out.append(w)
+    return out
+
+
 def strip_line_numbers(words: list[dict]) -> list[dict]:
     """Drop ICLR-style margin line numbers before anything else reads the page.
 
@@ -560,6 +581,32 @@ def heal_fragments(row: list[dict], gap: float = 2.0) -> list[dict]:
     return out
 
 
+def join_spaced_pm(row: list[dict]) -> list[dict]:
+    """Join a spread printed as three words, '0.89', '±', '0.03', into one.
+
+    The text layer splits 'value ± sd' wherever the setter spaced it, and the
+    three words then count as two numbers in one column: GA-Novo's Table 5 read
+    as ragged. Only number, '±', number, each gap under 12 pt.
+    """
+    out: list[dict] = []
+    i = 0
+    row = sorted(row, key=lambda w: w["x0"])
+    while i < len(row):
+        a = row[i]
+        if (i + 2 < len(row) and row[i + 1]["text"].strip() == "\u00b1"
+                and PURE_NUMBER.match(a["text"].strip())
+                and PURE_NUMBER.match(row[i + 2]["text"].strip())
+                and row[i + 1]["x0"] - a["x1"] < 12 and row[i + 2]["x0"] - row[i + 1]["x1"] < 12):
+            c = row[i + 2]
+            out.append({**a, "text": f"{a['text'].strip()}\u00b1{c['text'].strip()}",
+                        "x1": c["x1"], "bottom": max(a["bottom"], c["bottom"])})
+            i += 3
+            continue
+        out.append(a)
+        i += 1
+    return out
+
+
 def word_rows(words: list[dict], tol: float = 2.5) -> list[list[dict]]:
     """Cluster words into visual rows on `top`.
 
@@ -573,7 +620,7 @@ def word_rows(words: list[dict], tol: float = 2.5) -> list[list[dict]]:
             rows[-1].append(w)
         else:
             rows.append([w])
-    return [sorted(r, key=lambda w: w["x0"]) for r in rows]
+    return [join_spaced_pm(sorted(r, key=lambda w: w["x0"])) for r in rows]
 
 
 def row_kind(row: list[dict]) -> str:
@@ -586,9 +633,34 @@ def row_kind(row: list[dict]) -> str:
     8-row table into fragments, and the fragment below the header then had no
     header at all, which is where 29 of the rejections came from.
     """
+    # A CAPTION LINE IS NEVER DATA, whatever numbers it mentions: GA-Novo's
+    # 'Table 5. The results of sequencing 120 MS/MS spectra' carries '5.' and
+    # '120', joined the block below it and made the grid ragged.
+    if row and LABEL_ROW.match(" ".join(w["text"] for w in row)):
+        return "other"
     nums = sum(1 for w in row if numeric(w["text"]))
+    # A LINE OF PROSE IS NOT DATA because it names two numbers: 'a confidence
+    # score level between 0 and 100 [7]' under GA-Novo's Table 5 joined the
+    # block and gave the grid seven columns. Eight WORDS or more -- tokens
+    # with letters in them, so a not-run dash is not one: LIPNovo's PEAKS row
+    # is a label, two numbers and ten '-', and counting the dashes made it a
+    # sentence -- and numbers under a quarter of them, is a sentence.
+    # ONLY A CONTINUOUS LINE. On a two-column page a table row shares its line
+    # with the other column's prose -- AdaNovo's 'CasaNovo 0.582 0.297 thus
+    # shows superiority over the re-weighting methods in' -- and that row is
+    # data. A sentence has no gap wider than a word space in it.
+    words_ = sum(1 for w in row if sum(c.isalpha() for c in w["text"]) >= 2)
+    srt = sorted(row, key=lambda w: w["x0"])
+    widest = max((b["x0"] - a["x1"] for a, b in zip(srt, srt[1:])), default=0.0)
+    if words_ >= 8 and nums < 0.25 * words_ and widest < 15.0:
+        return "other"
     if nums >= 2:
         return "data"
+    # A ROW OF SIGNIFICANCE MARKERS -- GA-Novo's '(+) (+) (+) (+) (=)', a
+    # t-test against PEAKS set on its own line under the values -- is not a
+    # row of the table; it is read past like a label line.
+    if row and all(re.fullmatch(r"\([+=\-\u2212*]\)", w["text"].strip()) for w in row):
+        return "interstice"
     if nums == 0 and len(row) <= 3:
         return "interstice"
     return "other"
@@ -632,6 +704,20 @@ def data_blocks(rows: list[list[dict]], min_rows: int = 2) -> list[tuple[int, in
             # where a large share of the ragged rejections came from.
             gap = rows[nxt][0]["top"] - rows[j][0]["top"]
             if gap > 3.2 * line_gap:
+                break
+            # A BLOCK CANNOT RUN THROUGH A BARE TABLE LABEL. SeqNovo prints
+            # Table IV and Table V close together, IEEE style, and between them
+            # sit only 'TABLE V' alone on its line and a one-word small-caps
+            # caption: two short rows with no numbers, which pass as
+            # interstices. The two tables became one block, the page had three
+            # labels for two grids, and every label shifted onto the table above
+            # it. ONLY A BARE LABEL: a label row that carries its caption is
+            # what a two-column page puts beside the OTHER column's rows, and
+            # breaking there split GyroNovo's Table 2 and PhysNovo's Table 3,
+            # both approved, in half.
+            if any(re.fullmatch(r"(?i)table\s*[IVXLC\d]+[.:]?",
+                                " ".join(w["text"] for w in rows[b]).strip())
+                   for b in range(j + 1, nxt)):
                 break
             # Any number of interstices may be skipped; at most one 'other',
             # which covers a rule, a continued label or a stray prose line.
@@ -997,8 +1083,8 @@ def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
     split a cell and move it into another column.
     """
     try:
-        words = page.extract_words(use_text_flow=False, keep_blank_chars=False,
-                                   extra_attrs=["fontname"])
+        words = collapse_fake_bold(page.extract_words(
+            use_text_flow=False, keep_blank_chars=False, extra_attrs=["fontname"]))
     except Exception:
         return [], []
     # BOLD IS THE FACE THAT IS NOT THE PAGE'S OWN REGULAR FACE, measured, not
@@ -1020,8 +1106,8 @@ def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
     plain = [(f, n) for f, n in faces.most_common() if not heavy.search(f)]
     regular = (plain[0][0] if plain else faces.most_common(1)[0][0]) if faces else ""
     bold = [w for w in nums
-            if (w.get("fontname") or "") != regular
-            and not re.search(r"(?i)italic|oblique|-it\b", w.get("fontname") or "")]
+            if w.get("fake_bold") or ((w.get("fontname") or "") != regular
+            and not re.search(r"(?i)italic|oblique|-it\b", w.get("fontname") or ""))]
     rules = []
     for o in list(page.lines) + list(page.rects):
         # A thin horizontal span no wider than a cell. A table's full-width
@@ -1927,6 +2013,29 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # caption sets the hats of two 'ŝe_B's on a line of their own, at x 183
         # and 225, and that line read as an indented header row and ended the
         # caption one sentence early.
+        # A BARE CENTRED LABEL OVER A WIDER CENTRED CAPTION. IEEE sets
+        # 'TABLE V' alone on a centred line and the caption, wider, centred
+        # under it: SeqNovo's label sits at x 290 and its caption starts at x
+        # 190, so a band the width of the label held none of the caption. The
+        # first line under a bare label is taken whole when it is centred on
+        # the label, and the band widens to it.
+        bare = last == li and re.fullmatch(
+            r"(?i)table\s*[IVXLC\d]+[.:]?", " ".join(w["text"] for w in own_run).strip())
+        if bare:
+            cx = (lx0 + lx1) / 2
+            row_ = sorted(nxt, key=lambda w: w["x0"])
+            runs_, cur_ = [], []
+            for w in row_:
+                if cur_ and w["x0"] - cur_[-1]["x1"] > 15.0:
+                    runs_.append(cur_)
+                    cur_ = []
+                cur_.append(w)
+            if cur_:
+                runs_.append(cur_)
+            for run_ in runs_:
+                r0, r1 = run_[0]["x0"], max(w["x1"] for w in run_)
+                if r0 <= cx <= r1 and abs((r0 + r1) / 2 - cx) < 25.0:
+                    lx0, right = min(lx0, r0), max(right, r1 + 6)
         mine = sorted((w for w in nxt if lx0 - 6 <= w["x0"] <= right
                        and not CID.fullmatch(w["text"].strip())),
                       key=lambda w: w["x0"])
@@ -1970,7 +2079,15 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # hanging indent under the label still reads as a caption.
         if mine and min(w["x0"] for w in mine) > lx0 + 20.0:
             break
-        if mine and not any(c.islower() for c in " ".join(w["text"] for w in mine)):
+        # AN IEEE CAPTION IS IN SMALL CAPITALS on the line under a bare
+        # 'TABLE V', and so carries no lower-case letter: 'T HE B EST R ESULTS
+        # (ACCURACY ) OF F OUR M ODELS ON T ESTSET'. The all-caps test took it
+        # for a header row and SeqNovo lost all three captions. Where the label
+        # line holds the label and nothing else, the first line under it is the
+        # caption whatever its case; the column-aligned test below still
+        # catches a header row.
+        if mine and not bare and not any(
+                c.islower() for c in " ".join(w["text"] for w in mine)):
             break
         gaps = [b["x0"] - a["x1"] for a, b in zip(mine, mine[1:])]
         if len(mine) >= 3 and statistics.median(gaps) > 15.0:
@@ -2024,6 +2141,13 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
     # denotes ...' -- so the caption says visibly that a symbol was there.
     # CAPTION_OVERRIDE holds captions corrected by hand.
     cap = re.sub(r"\s{2,}", " ", CID.sub("\ufffd", cap)).strip()
+    # SMALL CAPITALS ARRIVE SPLIT: each word's larger first capital is its own
+    # glyph run, so 'THE BEST' reads 'T HE B EST' and '(ACCURACY)' reads
+    # '(ACCURACY )'. Only in a caption with no lower-case letter at all, so an
+    # ordinary 'a' or 'A' starting a word in running text is never glued on.
+    if cap and not any(c.islower() for c in cap):
+        cap = re.sub(r"\b([A-Z]) (?=[A-Z]{2,})", r"\1", cap)
+        cap = re.sub(r"\s+([)\],.;:])", r"\1", cap)
     return label, cap, last
 
 
@@ -2168,16 +2292,16 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
     # -- so a character with both terms non-zero is dropped.
     page = page.filter(lambda o: o.get("object_type") != "char" or not (
         abs(o["matrix"][1]) > 0.05 and abs(o["matrix"][0]) > 0.05))
-    words = split_metric_runs(strip_line_numbers(
+    words = split_metric_runs(strip_line_numbers(collapse_fake_bold(
         page.extract_words(use_text_flow=False, keep_blank_chars=False,
-                           return_chars=True)))
+                           return_chars=True))))
     if not words:
         return [], [], 0
     rows = word_rows(words)
     # A second, finer pass used ONLY for caption text. See caption_text().
     try:
-        fine = strip_line_numbers(page.extract_words(
-            use_text_flow=False, keep_blank_chars=False, x_tolerance=1.6))
+        fine = strip_line_numbers(collapse_fake_bold(page.extract_words(
+            use_text_flow=False, keep_blank_chars=False, x_tolerance=1.6)))
     except Exception:
         fine = None
     rules = page_rules(page)
@@ -2497,6 +2621,16 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                 if above and not any(numeric(w["text"]) for w in above) and \
                         min(w["top"] for w in r) - min(w["top"] for w in above) <= 4.5:
                     label = row_label(above, label_right)
+            # ...OR JUST BELOW IT, where a cell holds two lines and its label is
+            # centred between them: GA-Novo's Table 5 sets 'GA-Novo' 6 pt under
+            # its values, above the line of significance markers. Only a line
+            # whose words all sit in the stub, within 7 pt.
+            if cells and not label.strip() and ri_abs + 1 < len(rows):
+                below = rows[ri_abs + 1]
+                if below and not any(numeric(w["text"]) for w in below) and \
+                        all(w["x1"] <= label_right + 1 for w in below) and \
+                        min(w["top"] for w in below) - min(w["top"] for w in r) <= 7.0:
+                    label = row_label(below, label_right)
             if cells and (COUNT_ROW.search(label)
                           or UNRECORDED_METRIC_ROW.search(label)):
                 dropped += 1
@@ -2653,7 +2787,10 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         year_cols = []
         for k in range(len(edges)):
             vals = [r["cells"][k]["printed"] for r in body if k in r["cells"]]
-            head = " ".join(own.get(k, [])).strip()
+            # The column's UPPER header lines count too: GA-Novo heads a column
+            # 'avg. len. of' / 'partial matches' over two lines, and the own
+            # line alone ('partial matches') said nothing about a length.
+            head = " ".join(span.get(k, []) + own.get(k, [])).strip()
             # ...and so is a SPEED or TIME column beside the metrics: PhysNovo's
             # Table 5 sets 'Speed (spectra/s)' beside 'AA Prec.', and its 11 and
             # 105 refused the table on mixed units. Only ever a column among
@@ -2667,8 +2804,12 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                               # where lower is better and nothing compares.
                               # The text layer glues it ('ClassificationLoss'),
                               # so a capital L after a lower-case letter counts.
-                              r"|error\s*rate|\bloss\b|(?-i:(?<=[a-z])Loss)", head) or
-                    (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
+                              r"|error\s*rate|\bloss\b|(?-i:(?<=[a-z])Loss)"
+                              # an AVERAGE LENGTH (GA-Novo's 'avg. len. of
+                              # partial matches') is a count, not a metric
+                              r"|avg\.?\s*len", head) or
+                    (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))
+                    or k in NOT_RECORDED_COLUMNS.get((pub_id, (table_label or "").strip()), {})):
                 year_cols.append(k)
         not_recorded_cols: list[dict] = []
         if year_cols and len(year_cols) < len(edges):
@@ -2678,8 +2819,13 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                     "x": (edges[k][0] + edges[k][1]) / 2, "header": head_k,
                     "why": "year" if (re.fullmatch(r"(?i)years?", head_k) or not head_k)
                            else "error rate" if re.search(r"(?i)error\s*rate", head_k)
-                           else "loss" if re.search(r"(?i)\bloss\b|(?-i:(?<=[a-z])Loss)", head_k)
-                           else "speed or time",
+                           else (NOT_RECORDED_COLUMNS.get(
+                                     (pub_id, (table_label or "").strip()), {}).get(k)
+                                 or ("loss" if re.search(r"(?i)\bloss\b|(?-i:(?<=[a-z])Loss)",
+                                                         head_k) else None)
+                                 or ("length" if re.search(r"(?i)avg\.?\s*len", head_k)
+                                     else None)
+                                 or "speed or time"),
                     "cells": {r["top"]: r["cells"][k]["printed"]
                               for r in body if k in r["cells"]}})
             keep = [k for k in range(len(edges)) if k not in year_cols]
@@ -3707,6 +3853,17 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # InstaNovo; S13's caption states the last: 'We abbreviate "InstaNovo (FM
     # size matched)" to "IN (FM-SM)"'. The bracketed words are the variant.
     (273, "infmfinetuned"): ("InstaNovo-FM", "fine-tuned"),
+    # 'From abc to xyz', Table 1: each method with how it was run.
+    (225, "peaksdenovo"): ("PEAKS", "de novo"),
+    (225, "deepnovodenovo"): ("DeepNovo", "de novo"),
+    (225, "deepnovodatabase"): ("DeepNovo", "database search"),
+    # SeqNovo, Tables IV and V: 'Seq2Seq' is the paper's own plain
+    # sequence-to-sequence model, the architecture SeqNovo improves on, not a
+    # published method; the two improved variants are the paper's MLP and
+    # attention forms.
+    (42, "seq2seq"): ("SeqNovo", "plain Seq2Seq baseline"),
+    (42, "seqnovomlp"): ("SeqNovo", "MLP"),
+    (42, "seqnovoattention"): ("SeqNovo", "attention"),
     # Deep Novo A+, Fig. 3: DeepNovo with ONE of A+'s two changes each, which
     # are partial versions of A+, and A+ itself.
     (53, "deepnovo+aions"): ("Deep Novo A+", "a-ions only"),
@@ -3852,6 +4009,23 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # 'From abc to xyz', Table 1: the authors ran PEAKS beside DeepNovo.
+    (225, "Table 1"): {
+        "PEAKS": ("released", "We also included the de novo sequencing results of PEAKS."),
+    },
+    # GA-Novo, Table 5: the authors ran the PEAKS software themselves.
+    (152, "Table 5"): {
+        "PEAKS": ("released", "For each spectrum, the top scored sequence is taken as "
+                              "the output of de novo sequencing by PEAKS. PEAKS was run "
+                              "with an error tolerance of 0.5 Da and tryptic digestion."),
+    },
+    # SeqNovo, Table V: the basis search found the right paragraph, glued to
+    # the line before it in a two-column layout; this is its sentence.
+    (42, "TABLEV"): {
+        "DeepNovo": ("retrained", "We trained DeepNovo using the same dataset and "
+                                  "compared it with the best results of the above "
+                                  "models, as shown in Table. V."),
+    },
     # Deep Novo A+, Fig. 3: all four methods were trained on the paper's own
     # random split of one yeast dataset; DeepNovo is the base model it alters.
     # The cue the basis search found was a sentence interleaved with the
@@ -4161,6 +4335,29 @@ def bar_figure_grid(page, spec: dict) -> list[list[str]]:
     return [head_metric, head_cat] + rows
 
 
+# COLUMNS THAT ARE NOT MEASUREMENTS, named where the header cannot say so:
+# column index (after the stub) -> why. The cells stay in the printed layer
+# as a not-recorded column, exactly like a year or a speed column.
+NOT_RECORDED_COLUMNS: dict[tuple[int, str], dict[int, str]] = {
+    # GA-Novo, Table 5: the last two columns are 'avg. len. of partial
+    # matches' and 'avg. len. of predicted sequences', lengths in residues.
+    # Their two-line headers interleave, so 'avg. len.' attaches to the wrong
+    # column and the header rule caught only one of them.
+    (152, "Table 5"): {3: "length", 4: "length"},
+}
+
+
+# A TABLE'S OWN METHOD, where the catalog's link for the paper names
+# something else. 'Protein identification with deep learning: from abc to
+# xyz' is catalogued as describing a deep-learning identification primer, but
+# its Table 1 is DeepNovo's authors running DeepNovo (de novo and database
+# search) beside PEAKS. Without this the table has no column for the paper's
+# own method and N2 refuses it.
+TABLE_SELF: dict[tuple[int, str], list[str]] = {
+    (225, "Table 1"): ["DeepNovo"],
+}
+
+
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     (434, "Table 1."): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     (434, "Table 1"): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
@@ -4178,6 +4375,24 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     (53, "Fig. 3"): ("Nine-species benchmark",
                      "yeast only, from PXD003868 (Seidel et al.), 5 raw files and 277,077 "
                      "spectra re-searched with PEAKS DB, random 90/5/5 split"),
+    # SeqNovo, Tables IV and V: "an open-source peptide mass spectrometry
+    # library dataset stored in the MSP format [36]", reference [36] being
+    # Zolg et al., ProteomeTools. Screened to 163,924 spectra and split 9:1 by
+    # the paper itself, which is none of the catalog's versions.
+    (42, "TABLEIV"): ("ProteomeTools", "MSP spectral library (Zolg et al. 2017), "
+                      "screened to 163,924 spectra, own 9:1 split"),
+    (42, "TABLEV"): ("ProteomeTools", "MSP spectral library (Zolg et al. 2017), "
+                     "screened to 163,924 spectra, own 9:1 split"),
+    # GA-Novo, Table 5: "120 MS/MS spectra" of "the comprehensive full
+    # factorial LC-MS/MS benchmark dataset ... 50 protein samples extracted
+    # from Escherichia coli K12" (Wessels et al. 2012), which is not catalogued.
+    (152, "Table 5"): (None, "120 spectra of the Wessels et al. 2012 full factorial "
+                       "LC-MS/MS benchmark (E. coli K12, LTQ-FT); no accession"),
+    # 'From abc to xyz', Table 1: "a dataset of Saccharomyces cerevisiae
+    # proteome [18]" -- Hebert et al. 2014, The one hour yeast proteome --
+    # on an Orbitrap Fusion, with PEAKS DB results as ground truth.
+    (225, "Table 1"): (None, "S. cerevisiae proteome of Hebert et al. 2014 (The one "
+                       "hour yeast proteome), Orbitrap Fusion HCD; no accession"),
     # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
     (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
     (1, "Supplementary Table 3"): (None, "one per row (Data availability)"),
@@ -4269,6 +4484,12 @@ TABLE_METRIC: dict[tuple[int, str],
     # (0.665) against the next best (0.566), and its UTI precision (0.675)
     # against the next best (0.612).
     (13, "Table 1"): [("recall", "amino acid")] * 4 + [("precision", "amino acid")] * 4,
+    # GA-Novo, Table 5: 'Precision' and 'Recall' are equations 7 and 8, which
+    # "measure the accuracy of the results in amino acid level"; the third
+    # column is equation 9, recall "in peptide level". The split header
+    # 'recall / pep. level' had lent its level to Precision too.
+    (152, "Table 5"): [("precision", "amino acid"), ("recall", "amino acid"),
+                       ("recall", "peptide")],
     # RefineNovo, Table 6. Its caption says only "Performance comparison on
     # the NovoBench benchmark (yeast test species)". The metric is NovoBench's
     # peptide-level precision, which the numbers themselves confirm: its
@@ -4629,6 +4850,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         "SELECT a.id, a.name FROM publication_algorithm pa JOIN algorithm a "
         "ON a.id = pa.algorithm_id WHERE pa.publication_id = ? AND pa.role = 'describes'",
         (base.get("publication_id"),))]
+    _key = (base.get("publication_id"),
+            (tb.get("registry_label") or tb["table_label"] or "").strip())
+    tb["own_methods"] += [tuple(r) for nm in TABLE_SELF.get(_key, [])
+                          for r in con.execute("SELECT id, name FROM algorithm WHERE name = ?",
+                                               (nm,))]
     tb["catalog_names"] = [(aid, nm.strip()) for aid, name, aliases in con.execute(
         "SELECT id, name, COALESCE(aliases, '') FROM algorithm")
         for nm in [name] + aliases.split(",") if len(nm.strip()) >= 4]
@@ -5423,7 +5649,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         own_ids = {r[0] for r in con.execute(
             "SELECT algorithm_id FROM publication_algorithm "
             "WHERE publication_id = ? AND role = 'describes'",
-            (base.get("publication_id"),))}
+            (base.get("publication_id"),))} | {aid for aid, _n in tb.get("own_methods") or []}
         for ri, r in enumerate(tb["body"]):
             for k, cell in r["cells"].items():
                 m, metric, level, sub = cell_meta(k, ri)

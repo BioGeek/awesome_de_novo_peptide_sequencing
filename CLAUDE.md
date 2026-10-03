@@ -1985,7 +1985,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**101 verified tables from 29 papers, 4328 measurements.** The 100 refusals the
+**101 verified tables from 29 papers, 4328 measurements.** The 119 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2066,6 +2066,38 @@ line. And a header wider than its numbers ('Peptide AUC') now widens the
 crop, counting only header rows, since the prose underneath starts inside the
 last column too. Over the library: no data changed and 14 crops moved, all
 improvements.
+
+**Three tables brought in eleven general rules, and two of the rules went
+too far first.** SeqNovo's Table V, GA-Novo's Table 5 and the "abc to xyz"
+Table 1 had all been refused. The rules that fixed them:
+- **IEEE layout.** A bare centred 'TABLE V' over a wider centred caption
+  takes that line whole. Small capitals arrive split ('T HE B EST') and are
+  rejoined, but only in a caption with no lower-case letter. A block cannot
+  run through a bare label line, so two IEEE tables set close together stay
+  two tables.
+- **Fake bold.** Text drawn three times arrives as '333000...999333'. It is
+  collapsed and counted as the paper's bold.
+- **Spaced spreads.** '0.89', '±', '0.03' becomes one cell.
+- **Marker rows.** A row of significance markers ('(+) (=)') is read past.
+- **Label below.** A label-only line just under an unlabelled value row
+  labels it.
+- **Not data.** A caption line is never data. Neither is a continuous line of
+  prose.
+- **Not-recorded columns.** An upper header line counts toward the
+  not-recorded column test. `NOT_RECORDED_COLUMNS` names a column the header
+  cannot.
+- **Own method.** `TABLE_SELF` names a table's own method where the catalog
+  link names another.
+
+The two overreaches, both caught by a full re-parse before anything was
+committed:
+- **The label rule.** Breaking a block at ANY label line split approved
+  tables on two-column pages, where the other column's 'Table 4: ...' shares
+  a line with this table's rows. It is now bare labels only.
+- **The prose rule.** Ten words with few numbers counted LIPNovo's PEAKS row
+  (ten '-' markers) and AdaNovo's two-column row as prose, and five approved
+  multi-dataset tables lost their header. It now counts only lettered words,
+  and only on a line with no gap wider than a word space.
 
 **A sentence that mentions a table is not its caption (C0).** A caption never
 continues with a lower-case word. All five such "captions" in the library
