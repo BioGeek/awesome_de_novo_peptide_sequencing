@@ -394,9 +394,12 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "level, COALESCE(subset_printed,''), basis HAVING COUNT(*) > 1)"),
     ("CLAUDE.md", "methods with a Reported comparisons section",
      r"\*\*(\d+) methods carry a `## Reported comparisons` section\*\*",
+     # kind = 'comparison' only: an own-results table compares nothing and is
+     # kept off the method pages, so InstaNovo and InstaNovo+, whose only
+     # tables are their own results, carry no such section.
      "SELECT COUNT(DISTINCT r.algorithm_id) FROM paper_comparison_result r "
      "JOIN paper_comparison c ON c.id = r.comparison_id "
-     "WHERE r.is_self = 1 AND c.review_status = 'verified'"),
+     "WHERE r.is_self = 1 AND c.review_status = 'verified' AND c.kind = 'comparison'"),
     ("CLAUDE.md", "results with a subset but no canonical subset",
      r"(\d+) results with a printed subset and no canonical one",
      "SELECT COUNT(*) FROM paper_comparison_result "

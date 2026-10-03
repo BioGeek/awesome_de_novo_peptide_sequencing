@@ -2264,7 +2264,7 @@ results.
 
 ### On the algorithm pages
 
-**29 methods carry a `## Reported comparisons` section**, placed after
+**27 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the
