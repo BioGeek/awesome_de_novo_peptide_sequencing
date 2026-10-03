@@ -1719,6 +1719,17 @@ it used to delete every other paper's crops and cut the manifest down to its
 own entries, so a smoke test over seven papers cost the next full run 88
 redrawn crops.
 
+**A table's id is derived from the table, not its position**: paper, page
+and printed label, as in `p202-pg10-t6` or `p64-pg6-t1-nine-species`, with
+`-2` for a clash on one page. It used to be the n-th item on the page, in an
+order that followed each item's verdict, so turning a refusal into an accept
+reshuffled the page -- MemNovo's Table 6 moved from `pg10-0` to `pg10-2` -- and
+a sign-off keyed by id could have landed on a different table. None had, which
+was checked before the change: all 64 recorded labels still matched. The
+migration re-keyed sign-offs, crop manifest and crop files together, and a full
+re-parse then generated identical ids (118 of 118, every crop reused). An id
+now changes only if its label is read differently.
+
 **While a run is in progress the page says so**: a banner with papers done of
 total, elapsed and an estimate, and a 15-second reload that stops by itself
 when the finished page replaces it. Before that, the page mid-render showed

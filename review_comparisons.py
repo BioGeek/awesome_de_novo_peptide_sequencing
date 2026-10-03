@@ -61,6 +61,34 @@ MANIFEST = OUT / "crops.json"
 ITEMS = OUT / "items.json"
 
 
+def table_tid(pub: int, page: int, label: str, taken: set) -> str:
+    """A table's identifier, from WHAT it is rather than where it falls.
+
+    It used to be 'p202-pg10-0': the n-th item on the page, in an order that
+    followed each item's verdict, so turning a refusal into an accept
+    reshuffled every id on that page -- MemNovo's Table 6 moved from pg10-0 to
+    pg10-2 -- and a sign-off keyed by id could land on a different table. The
+    id is now the paper, the page and the PRINTED label: 'Table 6' gives
+    p202-pg10-t6, a dataset part 'Table1 [Nine-species]' gives
+    p64-pg6-t1-nine-species. It changes only if the label itself is read
+    differently. A clash on one page gets '-2', '-3'.
+    """
+    lab = (label or "").strip()
+    m = re.match(r"(?i)tab(?:le|\.)\s*([A-Z]?\s*[\dIVX]+(?:\.\d+)?)\s*(.*)$", lab)
+    if m:
+        num = re.sub(r"\s+", "", m.group(1)).lower()
+        rest = re.sub(r"[^a-z0-9]+", "-", m.group(2).lower()).strip("-")
+        slug = "t" + num + (f"-{rest}" if rest else "")
+    else:
+        slug = re.sub(r"[^a-z0-9]+", "-", lab.lower()).strip("-") or "x"
+    tid = f"p{pub}-pg{page}-{slug}"
+    base, n = tid, 2
+    while tid in taken:
+        tid, n = f"{base}-{n}", n + 1
+    taken.add(tid)
+    return tid
+
+
 def _restore(it: dict) -> dict:
     """An item read back from JSON, with its integer keys put back.
 
@@ -793,17 +821,17 @@ def main() -> int:
                                           "bbox": tb.get("bbox"),
                                           "page": tb.get("page")})
                     found.extend(collected)
+                taken_ids: set = set()
                 for n, rec in enumerate(found):
                     if args.rejected_only and rec["verdict"] != "rejected":
                         continue
                     if args.accepted_only and rec["verdict"] != "accepted":
                         continue
                     # A STABLE IDENTIFIER PER TABLE, so a person can say which
-                    # one they mean. It is the crop's own stem, which already
-                    # encodes publication, page and the block's order on that
-                    # page, and it is reproduced as the HTML anchor so the chip
-                    # links to itself and the URL can be copied.
-                    tid = f"p{pub['id']}-pg{pno + 1}-{n}"
+                    # one they mean; see table_tid(). It is also the crop's
+                    # stem and the HTML anchor, so the chip links to itself.
+                    tid = table_tid(pub["id"], rec.get("page") or (pno + 1),
+                                    rec.get("table_label") or "", taken_ids)
                     name = f"{tid}.png"
                     dest = OUT / name
                     bb = rec.get("bbox") or []
@@ -904,7 +932,8 @@ def main() -> int:
         if stored:
             items = sorted([it for it in stored if it["pub"] not in want] + items,
                            key=lambda it: (it["pub"], it["pdf_page"],
-                                           int(it["tid"].rsplit("-", 1)[1])))
+                                           (it.get("bbox") or (0, 0, 0, 0))[1],
+                                           (it.get("bbox") or (0, 0, 0, 0))[0]))
     for it in items:
         base = it.get("base_verdict") or it["verdict"]
         # An entry with no state predates the dismissed state and meant
