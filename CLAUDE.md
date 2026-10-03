@@ -455,7 +455,7 @@ amino-acid curve starts at 0.028, which the design discussion flags), and
 interpolating would invent values below a curve's first point rather than leave
 the gap visible.
 
-## Performance over time
+## Performance in release order
 
 A section on the site, right after **How they score**: every number the papers
 print on four shared datasets (nine-species, seven-species, HC-PT, and DIA's
@@ -466,7 +466,9 @@ into its last years, and even a broken axis left 2024-2026 crowded. So the
 order now carries the chronology, with a faint rule and the year wherever the
 year changes, and the date stays in every tooltip. The method labels are
 vertical: at an angle their boxes overlapped, which `check_chart_overlap.py`
-counts. denovo_benchmarks -- the living proteomics benchmark,
+counts. The section was called *Performance over time* and was renamed once
+the axis stopped being time. Its heading keeps the old anchor,
+`{#performance-over-time}`, so links already pointing at it still land. denovo_benchmarks -- the living proteomics benchmark,
 whose peer-reviewed results paper is not out yet -- is laid over it per species
 and as the mean of the nine; ProteoBench as one pooled point under *Average*.
 
@@ -1985,7 +1987,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**103 verified tables from 31 papers, 4342 measurements.** The 119 refusals the
+**104 verified tables from 32 papers, 4348 measurements.** The 119 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2262,7 +2264,7 @@ results.
 
 ### On the algorithm pages
 
-**28 methods carry a `## Reported comparisons` section**, placed after
+**29 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the

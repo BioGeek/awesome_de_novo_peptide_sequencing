@@ -146,6 +146,13 @@
   "pub": 139,
   "state": "dismissed"
  },
+ "p152-pg11-t5": {
+  "cells": 2,
+  "label": "Table 5",
+  "on": "2026-10-04",
+  "pub": 152,
+  "state": "approved"
+ },
  "p152-pg14-t8": {
   "cells": 0,
   "label": "Table8",

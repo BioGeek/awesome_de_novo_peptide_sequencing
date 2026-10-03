@@ -1888,7 +1888,7 @@ def load(conn: sqlite3.Connection) -> dict:
         "LEFT JOIN dataset_version dv ON dv.id = c.dataset_version_id "
         # Comparisons only: a table of a paper's own results (one method, no
         # baselines) is not "reported comparisons", and feeds the
-        # Performance-over-time chart instead.
+        # Performance-in-release-order chart instead.
         "WHERE c.review_status = 'verified' AND c.kind = 'comparison'")}
     for c in comps.values():
         c["results"] = []

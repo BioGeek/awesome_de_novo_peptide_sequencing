@@ -626,7 +626,7 @@ for _kind, _sql in _key_sql.items():
             _rows.append({"type": _kind, "key": _key, "slug": _slug})
 entity_slugs = pd.DataFrame(_rows, columns=["type", "key", "slug"])
 
-# PERFORMANCE OVER TIME: every reported number on four shared datasets,
+# PERFORMANCE IN RELEASE ORDER: every reported number on four shared datasets,
 # placed at the RELEASE DATE of the method it is about (the earliest paper
 # describing it), with the two independent benchmarks laid over it.
 #
@@ -3337,7 +3337,7 @@ Inputs.table(pb_table, {
 })
 ```
 
-## Performance over time
+## Performance in release order {#performance-over-time}
 
 What the papers report, one column per method, the methods in the order they
 were released (the date of the first paper describing each), with the two
