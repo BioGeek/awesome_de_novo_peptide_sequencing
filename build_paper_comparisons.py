@@ -258,7 +258,8 @@ LEVEL_WORDS = [
     # 'PTMs' and the glued 'PTMsprecision' too: AdaNovo heads its PTM table
     # 'PTMs precision', which the old '\bPTM\b' missed, leaving only the
     # caption's "amino acids" to supply a level -- the wrong one.
-    (re.compile(r"(?i)(?<![a-z])PTMs?(?![a-rt-z])|modification"), "ptm"),
+    # 'PTMlevel' arrives glued (LIPNovo+'s Table 4), so 'level' may follow.
+    (re.compile(r"(?i)(?<![a-z])PTMs?(?:(?![a-rt-z])|(?=level))|modification"), "ptm"),
     (re.compile(r"(?i)spectr(?:um|a)[- ]level"), "spectrum"),
 ]
 
@@ -2089,6 +2090,9 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                           cap_start=(_pair[0] if _pair else -1),
                           right_limit=lim_hi, left_limit=lim_lo)
         try:
+            if (pub_id, (table_label or "").strip()) in CAPTION_VETO_ADD:
+                raise Reject("C1 not a cross-method comparison (curated): "
+                             + CAPTION_VETO_ADD[(pub_id, (table_label or "").strip())])
             if (pub_id, (table_label or "").strip()) not in CAPTION_VETO_OVERRIDE:
                 caption_verdict(caption)
         except Reject as exc:
@@ -2877,6 +2881,17 @@ CAPTION_VETO_OVERRIDE: dict[tuple[int, str], str] = {
 }
 
 
+# THE CONVERSE: a table no caption rule refuses that the reviewer judged is
+# not a cross-method comparison. Each entry carries the reason, which is
+# printed as the refusal.
+CAPTION_VETO_ADD: dict[tuple[int, str], str] = {
+    # LIPNovo+, Table 6, "Performance comparison of amino acids with similar
+    # masses". Its columns are residues (M(o), F, Q, K), so what it compares
+    # is amino acids, not methods; the reviewer rejected it on the caption.
+    (432, "Table6"): "compares amino acids with similar masses, not methods",
+}
+
+
 def caption_verdict(caption: str) -> None:
     """Apply the two caption VETOES. There is deliberately no positive test.
 
@@ -3345,6 +3360,11 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # none of the three benchmarks the page discusses.
     (17, "Table4"): ("GraphNovo dataset and checkpoint",
                      "the dataset collected in GraphNovo"),
+    # LIPNovo+, Table 5: "Comparison with state-of-the-art methods on
+    # GraphNovo dataset [11]" -- the same comparison as LIPNovo's Table 4,
+    # extended by LIPNovo+, on the same deposit.
+    (432, "Table5"): ("GraphNovo dataset and checkpoint",
+                      "GraphNovo dataset [11]"),
     # Transformer-DIA (the arXiv postprint of DiaTrans), TABLE I. Already
     # resolved to MSV000082368 through the paper's own catalog link; what this
     # adds is the SPLIT, in the paper's words: "three distinct DIA datasets of
@@ -4150,6 +4170,43 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             if txt and not metric_of(txt) and not level_of(txt):
                 cur = txt
             row_subset[ri] = cur
+        # A GROUP LABEL ON A ROW OF ITS GROUP, typically the middle one.
+        # LIPNovo+'s leave-one-out Table 4 prints each species on the
+        # LIPNovo row of its Baseline / LIPNovo / LIPNovo+ triple, so the
+        # label is neither on a line of its own nor between two rows; it
+        # arrives as the leftover of resolving 'Bacillus LIPNovo', and all
+        # nine Baseline rows fell into one measurement. Groups are read from
+        # the spacing, which is wider between groups (16.4 pt) than within
+        # them (9-11 pt), and the reading is used only if EVERY group holds
+        # exactly one such label.
+        body_ = tb["body"]
+        if not any(row_subset.values()) and len(body_) >= 4:
+            own_lab = {}
+            for ri, r in enumerate(body_):
+                extra = set(r.get("extra") or [])
+                words = [w for w in leftovers.get(ri, [])
+                         if isinstance(w, str) and w not in extra
+                         and sum(c.isalpha() for c in w) >= 2 and not prosey(w)]
+                txt = unsquash_label(" ".join(words)).strip()
+                if txt and not metric_of(txt) and not level_of(txt):
+                    own_lab[ri] = txt
+            tops = [r.get("top") for r in body_]
+            if len(own_lab) >= 2 and all(t is not None for t in tops):
+                gaps = [b - a for a, b in zip(tops, tops[1:])]
+                cut = 1.3 * statistics.median(gaps)
+                groups, curg = [], [0]
+                for ri in range(1, len(body_)):
+                    if gaps[ri - 1] > cut:
+                        groups.append(curg)
+                        curg = []
+                    curg.append(ri)
+                groups.append(curg)
+                if len(groups) >= 2 and all(
+                        sum(1 for ri in g if ri in own_lab) == 1 for g in groups):
+                    for g in groups:
+                        lab = next(own_lab[ri] for ri in g if ri in own_lab)
+                        for ri in g:
+                            row_subset[ri] = lab
 
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""
