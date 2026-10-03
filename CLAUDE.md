@@ -1996,12 +1996,40 @@ supplement. Three changes reach them:
   describes it. Own results feed the measurement view, and are kept OUT of the
   method pages' Reported comparisons, because they compare nothing.
 
-What still cannot be read is the TABLE THAT IS AN IMAGE. InstaNovo's published
-Extended Data tables carry a caption and a footnote in the text layer and
-nothing between them; DeepNovo-DIA's supplementary tables have almost no text
-layer at all. The preprint's text versions stand in for InstaNovo's. Reading
-images would mean letting `build_table_vlm.py` be the source of a number, which
-its own docstring forbids, so it is a decision rather than a fix.
+**Tables that are images are read by two vision models, and kept only where
+they agree.** `image_tables.find_image_tables()` takes a table caption with a
+text-free gap of 60 pt or more beside it, the gap holding images or vector
+drawings: the shape of InstaNovo's published Extended Data tables, whose text
+layer has a caption and a footnote and nothing between. The review page crops
+each one and lists it in `image_tables.json`;
+`read_table_images.py --reader glm` and `--reader paddle` read the crops, each
+in its own environment, into `vlm-cache/`. The table is resolved only when the
+two grids have the same shape and EVERY cell matches (whitespace and case
+aside), and then it goes through `emit()` like any text table, marked
+`extraction = 'image'` all the way into `paper_comparison`. A disagreement is a
+refusal naming the cells; a missing reading is `V0`, waiting. Either way a
+person signs it off against the crop.
+
+Two environment facts, both measured. GLM-OCR runs on transformers 5.
+PaddleOCR-VL's own code calls `create_causal_mask(inputs_embeds=...)`, the
+transformers-5 name, while needing `ROPE_INIT_FUNCTIONS['default']`, which
+transformers 5 removed: no released version runs it as shipped (4.55, the
+version its config names, and 4.57 both fail). `read_table_images.paddle_overlay()`
+builds `~/.cache/paddleocr-vl-tf4` -- symlinks to the clone plus a copy of the
+modeling file with that one argument renamed -- and it runs on 4.57.
+
+The models also CHECK the text tables: `read_table_images.py --crosscheck`
+reads every accepted or signed-off text table's crop, and
+`crosscheck_tables.py` compares the parse with both readings ROW BY ROW, in
+column order, exact string for string. Both models agreeing with each other
+and not with the parse (`CHECK`) points a person at a cell; it never edits
+anything.
+
+What still cannot be read is the TABLE THAT IS AN IMAGE WITH NO CAPTION IN THE
+TEXT LAYER. DeepNovo-DIA's supplementary
+tables are not in its Supplementary Information PDF at all: they are the
+Excel files Nature lists as Supplementary Data, which the fetcher skips because
+it takes PDFs. A spreadsheet is structured data and needs no vision model.
 
 ### On the algorithm pages
 

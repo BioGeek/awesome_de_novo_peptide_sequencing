@@ -39,6 +39,7 @@ import urllib.parse
 
 import build_pdf_library as bpl
 import build_paper_comparisons as B
+import image_tables as IT
 
 OUT = bpl.DEFAULT_DIR / "comparison-review"
 CACHE = OUT / ".pages"
@@ -62,6 +63,10 @@ LEGACY_APPROVED = OUT / "approved.json"
 # verdict on a multi-table paper meaningless.
 MANIFEST = OUT / "crops.json"
 ITEMS = OUT / "items.json"
+# Image-only tables for read_table_images.py, and where it caches each model's
+# reading. See image_tables.py.
+IMAGE_MANIFEST = OUT / "image_tables.json"
+VLM_CACHE = OUT / "vlm-cache"
 
 
 def table_tid(pub: int, page: int, label: str, taken: set, src: str = "") -> str:
@@ -790,6 +795,11 @@ CREATE TABLE IF NOT EXISTS paper_comparison (
     part               TEXT,                   -- dataset part of a split table
     kind               TEXT NOT NULL DEFAULT 'comparison'
                        CHECK (kind IN ('comparison','own_results')),
+    extraction         TEXT NOT NULL DEFAULT 'text'
+                       CHECK (extraction IN ('text','image')),
+                                               -- image: no text layer; read by two
+                                               -- vision models that agreed on
+                                               -- every cell
                                                -- own_results: one method, no
                                                -- baselines (InstaNovo's results
                                                -- tables); never a comparison
@@ -901,7 +911,7 @@ SELECT r.id                AS result_id,
        c.review_id,
        c.publication_id    AS reported_by,
        p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.pdf_page,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
        r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
        r.algorithm_printed, r.is_self,
        r.metric, r.level,
@@ -969,11 +979,12 @@ def write_db(items: list[dict], approved: dict) -> None:
         verified = state == "approved"
         cur = con.execute(
             "INSERT INTO paper_comparison (publication_id, review_id, table_label,"
-            " part, kind, pdf_page, pdf_file, bbox, caption, footnote, design_note,"
-            " methods_along, metrics_along, unit_printed, dataset_id,"
+            " part, kind, extraction, pdf_page, pdf_file, bbox, caption, footnote,"
+            " design_note, methods_along, metrics_along, unit_printed, dataset_id,"
             " dataset_version_id, dataset_printed, review_status, reject_reason,"
-            " reviewed_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            " reviewed_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (rec["pub"], rec["tid"], label, part, rec.get("kind") or "comparison",
+             rec.get("extraction") or "text",
              rec["pdf_page"], rec["pdf_name"],
              ",".join(f"{x:.1f}" for x in rec["bbox"]) if rec.get("bbox") else None,
              rec["caption"] or "", rec.get("footnote") or None,
@@ -1128,6 +1139,7 @@ def main() -> int:
     reused = rendered = 0
 
     items: list[dict] = []
+    image_manifest: list[dict] = []
     tally: collections.Counter = collections.Counter()
     import time
     # --rewrite PARSES NOTHING. A change to how the page is drawn -- or a
@@ -1275,9 +1287,115 @@ def main() -> int:
                                 rec["verdict"] = "dismissed"
                         items.append(rec)
                         tally[rec["verdict"]] += 1
+        # TABLES THAT ARE IMAGES. A caption with a large text-free gap beside
+        # it, holding a picture or drawings, is a table the text miner cannot
+        # read (InstaNovo's published Extended Data tables). It is cropped and
+        # listed for read_table_images.py; once BOTH vision models have read
+        # it, and only if they agree on every cell, it is resolved like any
+        # other table. A label the text miner already produced is skipped.
+        img_vocab = None
+        for src, path in sources:
+            if texts.get(src) is None:
+                continue
+            pages_with_caption = [pno for pno, t in enumerate(texts[src])
+                                  if any(B.LABEL_ROW.match(l) for l in t.splitlines())]
+            if not pages_with_caption:
+                continue
+            seen_here = collections.defaultdict(set)
+            for it in items:
+                if it["pub"] == pub["id"] and it.get("source", "main") == (src or "main"):
+                    seen_here[it["pdf_page"]].add(
+                        (it.get("table_label") or "").split(" [")[0].strip())
+            try:
+                pdf = pdfplumber.open(path)
+            except Exception:
+                continue
+            with pdf:
+                for pno in pages_with_caption:
+                    for det in IT.find_image_tables(pdf.pages[pno], seen_here[pno + 1]):
+                        tid = table_tid(pub["id"], pno + 1, det["table_label"],
+                                        set(), src) + "-img"
+                        name = f"{tid}.png"
+                        dest = OUT / name
+                        ok = render(path, pno + 1, det["bbox"], dest) or dest.exists()
+                        image_manifest.append({"tid": tid, "img": name})
+                        reads = {r: (VLM_CACHE / f"{tid}.{r}.txt")
+                                 for r in ("glm", "paddle")}
+                        recs: list[dict] = []
+                        if not all(f.exists() for f in reads.values()):
+                            recs.append({"verdict": "rejected",
+                                         "reason": "V0 an image table, waiting for both "
+                                                   "vision models (read_table_images.py)",
+                                         "table_label": det["table_label"],
+                                         "caption": det["caption"]})
+                        else:
+                            g1 = IT.html_grid(reads["glm"].read_text())
+                            g2 = IT.otsl_grid(reads["paddle"].read_text())
+                            diffs = IT.compare(g1, g2)
+                            if diffs:
+                                show = "; ".join(
+                                    f"r{r}c{c} {a!r}/{b!r}" if r >= 0 else f"shape {a} vs {b}"
+                                    for r, c, a, b in diffs[:4])
+                                recs.append({"verdict": "rejected",
+                                             "reason": f"V1 the two vision models disagree "
+                                                       f"on {len(diffs)} cell(s): {show}",
+                                             "table_label": det["table_label"],
+                                             "caption": det["caption"]})
+                            else:
+                                if img_vocab is None:
+                                    img_vocab = B.paper_vocabulary(whole_all, con)
+                                img_subject = con.execute("""
+                                    SELECT a.id, a.name FROM algorithm a
+                                      JOIN publication_algorithm pa ON pa.algorithm_id = a.id
+                                     WHERE pa.publication_id = ? AND pa.role='describes'
+                                     ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
+                                tb = IT.grid_table(g1, det["table_label"], det["caption"],
+                                                   det["bbox"], pno + 1)
+                                base = {c: "" for c in B.AUDIT_COLUMNS}
+                                base.update({"publication_id": pub["id"],
+                                             "pdf_page": pno + 1})
+                                try:
+                                    B.emit(con, base, tb, img_vocab, index, img_subject,
+                                           "\n".join(texts[src][max(0, pno - 1):pno + 2]),
+                                           whole_all, [], collections.Counter(), False,
+                                           collect=recs)
+                                except B.Reject as exc:
+                                    recs.append({"verdict": "rejected", "reason": str(exc),
+                                                 "table_label": det["table_label"],
+                                                 "caption": det["caption"]})
+                        for n_r, rec in enumerate(recs):
+                            rec_tid = tid if n_r == 0 else f"{tid}-{n_r + 1}"
+                            rec.update({"bbox": det["bbox"], "page": pno + 1,
+                                        "extraction": "image",
+                                        "pdf_url": "file://" + urllib.parse.quote(str(path)),
+                                        "pdf_name": path.name, "tid": rec_tid,
+                                        "pub": pub["id"], "title": pub["title"],
+                                        "source": src or "main",
+                                        "year": str(pub["publication_date"] or "")[:4],
+                                        "img": name if ok else None, "pdf_page": pno + 1,
+                                        "crop_key": ""})
+                            rec["base_verdict"] = rec["verdict"]
+                            st = (approved.get(rec_tid) or {}).get("state")
+                            if st == "approved" and rec["verdict"] == "accepted":
+                                rec["verdict"] = "approved"
+                            elif st == "dismissed" and rec["verdict"] == "rejected":
+                                rec["verdict"] = "dismissed"
+                            items.append(rec)
+                            tally[rec["verdict"]] += 1
         print(f"  p{pub['id']:<4} {len([i for i in items if i['pub']==pub['id']]):>3} "
               f"table(s)  {pub['title'][:52]}", flush=True)
 
+    # The image-table list for read_table_images.py. A restricted run keeps
+    # the other papers' entries, as it keeps their crops.
+    if not args.rewrite:
+        keep_img = []
+        if want and IMAGE_MANIFEST.exists():
+            try:
+                keep_img = [e for e in json.loads(IMAGE_MANIFEST.read_text())
+                            if int(re.match(r"p(\d+)-", e["tid"]).group(1)) not in want]
+            except Exception:
+                keep_img = []
+        IMAGE_MANIFEST.write_text(json.dumps(keep_img + image_manifest, indent=1))
     for f in CACHE.glob("*.png"):
         f.unlink()
     # A RESTRICTED RUN TOUCHES ONLY ITS OWN PAPERS. `--ids 18` used to delete

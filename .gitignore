@@ -46,3 +46,4 @@ paper_comparison_audit.csv
 # builder audit CSVs.
 table_structure_candidates.csv
 table_vlm_candidates.csv
+table_crosscheck.csv
