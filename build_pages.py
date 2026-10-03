@@ -634,7 +634,7 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
            '<table class="table table-sm table-hover comparison" '
            'style="font-size:0.85em; width:auto">', "<thead>"]
     if two_rows:
-        out.append(f'<tr><th colspan="2" rowspan="2">{ds}</th>')
+        out.append(f'<tr><th rowspan="2">{ds}</th>')
         i = 0
         while i < len(cols):
             j = i
@@ -644,21 +644,36 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
             i = j + 1
         out.append("</tr><tr>")
     else:
-        out.append(f'<tr><th colspan="2">{ds}</th>')
+        out.append(f'<tr><th>{ds}</th>')
     for _sub, met, lev in cols:
         out.append(f"<th>{html.escape(METRIC_LABEL.get(met, met))}"
                    f"<br><small>{html.escape(lev)}</small></th>")
     out.append("</tr></thead><tbody>")
     derived = False
+    # THE BASIS IS NOT A COLUMN. It is our reading of the paper's prose, not
+    # part of the printed table, and as a column of its own it sat there with
+    # no header, mostly reading 'unclear'. Where the paper does say how a
+    # method was run, the word follows the method's name and the sentence
+    # that says so is its tooltip; where it does not, nothing is shown. Two
+    # rows of one method on different bases (CrossNovo's dagger-Casanovo,
+    # retrained, beside Casanovo, quoted) stay told apart that way.
+    cue_of = {}
+    for x in res:
+        rk = (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "", x["basis"])
+        if x.get("basis_cue") and rk not in cue_of:
+            cue_of[rk] = x["basis_cue"]
     for rk in rows:
         aid, name, variant, basis = rk
         cell = a("algorithms", aid, name)
         if variant:
             cell += f" <small>{html.escape(variant)}</small>"
+        if basis and basis != "unclear":
+            tip = cue_of.get(rk, "")
+            cell += (f' <small class="text-muted" title="{html.escape(tip, quote=True)}">'
+                     f"&middot; <em>{html.escape(basis)}</em></small>")
         # nowrap: in a wide table the browser otherwise breaks a method name
         # mid-word ('DeepNov o') to save a column's width.
-        out.append(f'<tr><th style="white-space:nowrap">{cell}</th>'
-                   f"<td><small>{html.escape(basis)}</small></td>")
+        out.append(f'<tr><th style="white-space:nowrap">{cell}</th>')
         for ck in cols:
             x = val.get((rk, ck))
             if not x:
@@ -859,8 +874,9 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
               "leaderboard, and they do not compare across tables: each was "
               "produced by a different group, on the dataset named in its "
               "corner, with each baseline either retrained, run from released "
-              "weights or quoted from another paper. The *basis* column says "
-              "which where the paper states it, and in most papers it does not. "
+              "weights or quoted from another paper. Where the paper says which, "
+              "it follows the method's name (hover it for the sentence); most "
+              "papers do not say. "
               "**Bold** is the best value in a column and underline the "
               "runner-up, our ranking rather than the paper's own marks.", ""]
         for c in ctx["comparisons"]:

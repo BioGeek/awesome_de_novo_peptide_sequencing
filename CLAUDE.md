@@ -2266,8 +2266,8 @@ results.
 
 **27 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
-STANDARDISED table per printed table (or dataset part): methods down the side
-with their basis, species then metric across, every value on 0-1 at the
+STANDARDISED table per printed table (or dataset part): methods down the side,
+species then metric across, every value on 0-1 at the
 printed precision (`0.530` stays `0.530`; a percentage table gains two
 decimals). The dataset heads the table and links to its page; every method
 links to its page. Bold and underline are our ranking per column.
@@ -2287,6 +2287,11 @@ other. Three rules worth knowing:
   reading of each paper's prose: CrossNovo's two preprints print the same
   Table 2 and only one's prose says 'retrained'. Tables that differ in any
   number are both shown -- BiATNovo's two preprints are, since one adds PepNet.
+- **The basis is not a column.** It is our reading of the paper's prose and
+  not part of the printed table; as a column of its own it had no header and
+  read 'unclear' down most of its length. Where a paper does say how a method
+  was run, the word follows the method's name, with the licensing sentence as
+  its tooltip, and 'unclear' shows nothing.
 - **Bootstrap classes, not custom CSS.** `custom.scss` is in the publish's
   global render key, so styling the tables there would force a full render of
   every page for a section on 22 of them.
