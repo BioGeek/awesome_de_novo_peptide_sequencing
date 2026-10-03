@@ -2287,6 +2287,13 @@ other. Three rules worth knowing:
   reading of each paper's prose: CrossNovo's two preprints print the same
   Table 2 and only one's prose says 'retrained'. Tables that differ in any
   number are both shown -- BiATNovo's two preprints are, since one adds PepNet.
+- **A second metric in one printed cell is a note, not a column.** DiffNovo
+  prints PepNet's Plasma cells as '0.491 / 0.725*' and '0.550/0.530*/0.664+',
+  the marked numbers being other metrics, some quoted from PepNet's paper.
+  Given rows and columns of their own they read as a misaligned table. The
+  cell's own value stays in the grid, and a note under the table quotes the
+  printed cell and the footnote sentence that explains its markers. The
+  database keeps all three measurements; only the page changes.
 - **The basis is not a column.** It is our reading of the paper's prose and
   not part of the printed table; as a column of its own it had no header and
   read 'unclear' down most of its length. Where a paper does say how a method

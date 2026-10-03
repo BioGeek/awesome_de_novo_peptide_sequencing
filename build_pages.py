@@ -582,7 +582,24 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
         t = html.escape(label)
         return f'<a href="{href}">{t}</a>' if href else t
 
-    res = c["results"]
+    # A SECOND METRIC IN ONE PRINTED CELL is not a column of the table. DiffNovo
+    # prints PepNet's Plasma precision as '0.491 / 0.725*', the starred number
+    # being "the positional accuracy reported in [10]". Given a row and a
+    # column of its own it read as a misaligned table -- a mostly empty
+    # 'PepNet · quoted' row under a column nobody else fills. The cell's own
+    # value stays in the grid; the extra ones move to a note under the table
+    # that quotes the printed cell and the paper's footnote. The data are
+    # unchanged; this is only how the page shows them.
+    first_part = {}
+    for x in c["results"]:
+        key = (x["row_index"], x["col_index"])
+        if key not in first_part or x["part_index"] < first_part[key]["part_index"]:
+            first_part[key] = x
+    def extra(x):
+        f = first_part[(x["row_index"], x["col_index"])]
+        return x["part_index"] > 0 and (x["metric"], x["level"]) != (f["metric"], f["level"])
+    extras = [x for x in c["results"] if extra(x)]
+    res = [x for x in c["results"] if not extra(x)]
     rows, cols = [], []
     first_sub: dict[str, int] = {}
     col_pos: dict[tuple, tuple] = {}
@@ -697,6 +714,22 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
     if derived:
         notes.append("&#8225; Not printed in the paper: computed from the "
                      "differences it prints, as described under the table.")
+    seen_cells = set()
+    for x in extras:
+        key = (x["row_index"], x["col_index"])
+        if key in seen_cells:
+            continue
+        seen_cells.add(key)
+        f = first_part[key]
+        printed = re.sub(r"\s+", " ", x["text_printed"] or "").strip()
+        marks = set(re.findall(r"[*+\u2020\u2021\u00a7]", printed))
+        foot = " ".join(sent for sent in re.split(r"(?<=\.)\s+", c.get("footnote") or "")
+                        if marks & set(sent))
+        where = ", ".join(b for b in (x["algorithm"], x["subset_canonical"]) if b)
+        notes.append(f"{html.escape(where)}: the printed cell reads "
+                     f"&ldquo;{html.escape(printed)}&rdquo;, and only "
+                     f"{html.escape(f['text_printed'].split('/')[0].strip())} is in the table."
+                     + (f" The paper&rsquo;s note: &ldquo;{html.escape(foot)}&rdquo;" if foot else ""))
     if c["design_note"]:
         notes.append(html.escape(c["design_note"]))
     for n in c["notes"]:
@@ -1896,7 +1929,8 @@ def load(conn: sqlite3.Connection) -> dict:
                  "preprint": 3, "thesis": 4}
     comps = {r["id"]: dict(r) for r in q(
         "SELECT c.id, c.review_id, c.publication_id, c.table_label, c.part, c.pdf_page,"
-        "       c.caption, c.design_note, c.dataset_id, c.dataset_printed, c.unit_printed,"
+        "       c.caption, c.footnote, c.design_note, c.dataset_id, c.dataset_printed,"
+        "       c.unit_printed,"
         "       ds.name AS dataset, dv.version AS dataset_version,"
         "       p.title, p.publication_date, p.publication_type "
         "FROM paper_comparison c JOIN publication p ON p.id = c.publication_id "
