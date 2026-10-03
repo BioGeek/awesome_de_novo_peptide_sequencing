@@ -84,7 +84,7 @@ def _generated_pages(db) -> int:
 #  SQL string OR a callable(db) returning it)
 CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "tables",
-     r"\*\*(\d+) tables and one view\.\*\*",
+     r"\*\*(\d+) tables and (?:one|two|three) views?\.\*\*",
      "SELECT COUNT(*) FROM sqlite_master WHERE type='table' "
      "AND name NOT LIKE 'sqlite_%'"),
     ("CLAUDE.md", "authors with an external id",
@@ -370,6 +370,36 @@ CLAIMS: list[tuple[str, str, str, object]] = [
             FROM publication_dataset pd
            WHERE pd.role='introduces' AND pd.dataset_version_id IS NOT NULL)
         SELECT COUNT(*) FROM (SELECT vid FROM canon GROUP BY vid HAVING COUNT(DISTINCT work) > 1)"""),
+    # The mined comparison tables. Counts first, then three invariants that
+    # must read zero: each is a guard of the miner restated in SQL, so a
+    # loosened guard fails the commit rather than shipping.
+    ("CLAUDE.md", "verified comparison tables",
+     r"\*\*(\d+) verified tables from \d+ papers",
+     "SELECT COUNT(*) FROM paper_comparison WHERE review_status='verified'"),
+    ("CLAUDE.md", "papers with a verified comparison table",
+     r"verified tables from (\d+) papers",
+     "SELECT COUNT(DISTINCT publication_id) FROM paper_comparison "
+     "WHERE review_status='verified'"),
+    ("CLAUDE.md", "comparison measurements",
+     r"papers, (\d+) measurements\.\*\*",
+     "SELECT COUNT(*) FROM paper_comparison_result"),
+    ("CLAUDE.md", "rejected comparison tables",
+     r"The (\d+) refusals the\s+reviewer confirmed",
+     "SELECT COUNT(*) FROM paper_comparison WHERE review_status='rejected'"),
+    ("CLAUDE.md", "verified tables without the paper's own method",
+     r"(\d+) verified tables without a result for the paper's own method",
+     "SELECT COUNT(*) FROM paper_comparison c WHERE review_status='verified' "
+     "AND NOT EXISTS (SELECT 1 FROM paper_comparison_result r "
+     "WHERE r.comparison_id = c.id AND r.is_self = 1)"),
+    ("CLAUDE.md", "duplicate measurements",
+     r"(\d+) duplicate\s+measurements within a table",
+     "SELECT COUNT(*) FROM (SELECT 1 FROM paper_comparison_result "
+     "GROUP BY comparison_id, algorithm_id, COALESCE(variant_printed,''), metric, "
+     "level, COALESCE(subset_printed,''), basis HAVING COUNT(*) > 1)"),
+    ("CLAUDE.md", "quoted results without a cue",
+     r"(\d+) quoted results without a cue",
+     "SELECT COUNT(*) FROM paper_comparison_result "
+     "WHERE basis='quoted' AND basis_cue IS NULL"),
     ("CLAUDE.md", "methods with a checkpoint",
      r"The (\d+) methods with a recorded checkpoint",
      "SELECT COUNT(DISTINCT algorithm_id) FROM checkpoint"),

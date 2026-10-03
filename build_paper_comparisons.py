@@ -139,6 +139,10 @@ METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
     (64, "Table2"): {"": {"basis": "quoted"},
                      "\u2020": {"basis": "retrained"}},
     (64, "Table3"): {"\u2020": {"basis": "retrained"}},
+    # LIPNovo, Table 3, the leave-one-out table: its caption says "dagger
+    # means our re-trained results", and its only daggered row is Baseline,
+    # which is Casanovo.
+    (17, "Table3"): {"\u2020": {"basis": "retrained"}},
     # MemNovo, Table 2: "Results marked with dagger are reported from original
     # publications". The unmarked rows are its own evaluations, and how those
     # were run is left to its prose.
@@ -2141,6 +2145,11 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         # meant guessing that width from the columns alone, which on a
         # two-column page let the neighbouring column's prose end the walk.
         body, dropped, ragged = [], 0, False
+        # WHAT THE MINER DOES NOT RECORD IS STILL PART OF THE PRINTED TABLE.
+        # A count row, a BLEU row, a year or speed column: none is a
+        # measurement, but a faithful copy of the table needs them, so they are
+        # kept here with their positions instead of being thrown away.
+        not_recorded_rows: list[dict] = []
         multi = None
         pending: list[str] = []          # interstitial group-label words
         pending_top: float | None = None   # where that label sits
@@ -2234,6 +2243,12 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
             if cells and (COUNT_ROW.search(label)
                           or UNRECORDED_METRIC_ROW.search(label)):
                 dropped += 1
+                not_recorded_rows.append({
+                    "label": label, "top": min(w["top"] for w in r),
+                    "why": ("count" if COUNT_ROW.search(label)
+                            else "metric outside the vocabulary"),
+                    "words": [((w["x0"] + w["x1"]) / 2, w["text"].strip())
+                              for w in r if w["x0"] >= label_right - 1]})
                 continue
             missing = [w["text"].strip().lower() for w in r
                        if w["text"].strip().lower() in NOT_RUN]
@@ -2384,7 +2399,16 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                               r"|\btime\b|\(ms\)|\(s\)", head) or
                     (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
                 year_cols.append(k)
+        not_recorded_cols: list[dict] = []
         if year_cols and len(year_cols) < len(edges):
+            for k in year_cols:
+                head_k = " ".join(own.get(k, [])).strip()
+                not_recorded_cols.append({
+                    "x": (edges[k][0] + edges[k][1]) / 2, "header": head_k,
+                    "why": "year" if (re.fullmatch(r"(?i)years?", head_k) or not head_k)
+                           else "speed or time",
+                    "cells": {r["top"]: r["cells"][k]["printed"]
+                              for r in body if k in r["cells"]}})
             keep = [k for k in range(len(edges)) if k not in year_cols]
             remap = {old_k: new_k for new_k, old_k in enumerate(keep)}
             edges = [edges[k] for k in keep]
@@ -2397,6 +2421,8 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                                if k in remap}
         out.append({"edges": edges, "own": own, "span": span, "stub": stub,
                     "body": body, "dropped_rows": dropped,
+                    "not_recorded_rows": not_recorded_rows,
+                    "not_recorded_cols": not_recorded_cols,
                     "caption": caption, "table_label": table_label,
                     "footnote": footnote_text(rows, hi, fine, crop_lb,
                                               edges[-1][1] + 14),
@@ -3395,6 +3421,17 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
                       "Training GraphNovo is resource-intensive, making it "
                       "impractical to retrain on benchmark datasets"),
     },
+    # GyroNovo, Tables 1 and 2: 'Baseline' is LIPNovo as the authors
+    # reproduced it, beside LIPNovo's NovoBench numbers.
+    **{(354, t): {"LIPNovo@reproduced": (
+        "retrained", "we report both its NovoBench results and our reproduced "
+        "results to ensure a fair comparison. We refer to the reproduced "
+        "version as the \u201cbaseline\u201d")} for t in ("Table1", "Table2")},
+    # LIPNovo+, Tables 2, 3 and 4: 'Baseline' is Casanovo, retrained.
+    **{(432, t): {"Casanovo@retrained": (
+        "retrained", "we retrain CasaNovo with the same data splits and "
+        "training/inference configurations as our methods (reported as "
+        "Baseline)")} for t in ("Table2", "Table3", "Table4")},
 }
 
 
@@ -3711,6 +3748,7 @@ def table_dataset_label(tb) -> str | None:
 def subtable(tb, cols: list[int], name: str) -> dict:
     """`tb` restricted to `cols`, renumbered, tagged with its dataset."""
     idx = {old: new for new, old in enumerate(cols)}
+    lo_x, hi_x = tb["edges"][cols[0]][0], tb["edges"][cols[-1]][1]
     body = []
     for r in tb["body"]:
         cells = {idx[k]: c for k, c in r["cells"].items() if k in idx}
@@ -3724,6 +3762,17 @@ def subtable(tb, cols: list[int], name: str) -> dict:
             "span": {idx[k]: tb["span"][k] for k in cols if k in tb["span"]},
             "stub": tb["stub"], "body": body,
             "dropped_rows": tb["dropped_rows"], "caption": tb["caption"],
+            # Only what falls inside THIS part's columns. A column left of
+            # every part (a year column before the first dataset) goes to the
+            # leftmost part, so a rejoined table shows it once.
+            "not_recorded_rows": [
+                {**nr, "words": [(x, t) for x, t in nr["words"]
+                                 if lo_x <= x <= hi_x]}
+                for nr in tb.get("not_recorded_rows") or []],
+            "not_recorded_cols": [
+                nc for nc in tb.get("not_recorded_cols") or []
+                if lo_x <= nc["x"] <= hi_x
+                or (cols[0] == 0 and nc["x"] < lo_x)],
             # The note is printed under the whole table, so every part of a
             # split one carries it: the markers it defines appear in all of
             # them.
@@ -4168,8 +4217,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         over = TABLE_BASIS.get(
             (base.get("publication_id"),
              (tb.get("registry_label") or tb["table_label"] or "").strip()), {})
-        if v[1] in over:
-            bases[k] = (over[v[1]][0], over[v[1]][1], False)
+        # 'Name@variant' wins over the bare name, for a table that prints one
+        # method twice under two bases: GyroNovo quotes LIPNovo from NovoBench
+        # AND reports its own reproduction, as 'Baseline'.
+        key = f"{v[1]}@{v[2]}" if f"{v[1]}@{v[2]}" in over else v[1]
+        if key in over:
+            bases[k] = (over[key][0], over[key][1], False)
 
     # A ROW-GROUP LABEL THAT NAMES NO METRIC IS THE SUBSET, and it carries
     # DOWN the group. When the methods are the rows and the metrics are the
@@ -4367,10 +4420,148 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                  "subject_resolved": subject["name"] if subject else "",
                  "proposed_results": " ".join(results[:80])})
     audit.append(dict(base))
+    def build_grid() -> dict:
+        """The table as PRINTED, plus every measurement read from it.
+
+        Two layers, so one record can reproduce the paper and standardise it.
+        `columns`, `header`, `rows` and `cells` are the printed grid, stub and
+        all, including what the miner does not record (difference rows, count
+        rows, year and speed columns), each with the reason. `results` are the
+        standardised measurements, each keyed to the printed cell it came from.
+        """
+        has_group = any(row_subset.values())
+        stub_roles = (["group"] if has_group else []) + ["label"]
+        data = [{"role": "data" if (axis == "rows" or k in methods)
+                 else "not_recorded",
+                 "why": "" if (axis == "rows" or k in methods) else "difference",
+                 "x": (edges[k][0] + edges[k][1]) / 2, "k": k} for k in range(len(edges))]
+        extra = [{"role": "not_recorded", "why": nc["why"], "x": nc["x"], "nc": nc}
+                 for nc in tb.get("not_recorded_cols") or []]
+        ordered = sorted(data + extra, key=lambda c: c["x"])
+        columns = [{"role": r, "why": ""} for r in stub_roles] + [
+            {"role": c["role"], "why": c["why"]} for c in ordered]
+        off = len(stub_roles)
+        col_of_k = {c["k"]: off + i for i, c in enumerate(ordered) if "k" in c}
+        # HEADER: each data column's spanner phrases, top to bottom, then its
+        # own header; columns with shorter stacks are aligned at the bottom,
+        # next to the body, which is where a header row sits. Equal phrases in
+        # adjacent columns of one header row are one spanning cell.
+        stacks = {}
+        for i, c in enumerate(ordered):
+            if "k" in c:
+                k = c["k"]
+                stacks[off + i] = list(tb["span"].get(k) or []) + [
+                    " ".join(tb["own"].get(k) or []).strip()]
+            else:
+                stacks[off + i] = [c["nc"]["header"]]
+        depth = max([len(v) for v in stacks.values()] or [1])
+        rowsh: dict[int, dict[int, str]] = collections.defaultdict(dict)
+        for gc, st in stacks.items():
+            for i, t in enumerate(st):
+                if t:
+                    rowsh[depth - len(st) + i][gc] = t
+        stub_words = [w for w in (tb.get("stub") or "").split()
+                      if w.lower().strip(".,;:") not in FUNCTION_WORDS and not prosey(w)]
+        if stub_words:
+            rowsh[depth - 1][0] = " ".join(stub_words)
+        header = []
+        for hr in sorted(rowsh):
+            cells_h = rowsh[hr]
+            gcs = sorted(cells_h)
+            i = 0
+            while i < len(gcs):
+                j = i
+                while (j + 1 < len(gcs) and gcs[j + 1] == gcs[j] + 1
+                       and cells_h[gcs[j + 1]] == cells_h[gcs[i]] and gcs[i] >= off):
+                    j += 1
+                header.append({"row": hr, "c0": gcs[i],
+                               "c1": gcs[j] if gcs[i] >= off else off - 1,
+                               "text": cells_h[gcs[i]]})
+                i = j + 1
+        # ROWS, body and not-recorded, in the order they are printed.
+        items = [("body", ri, r.get("top") or 0.0) for ri, r in enumerate(tb["body"])] + [
+            ("nr", ni, nr["top"]) for ni, nr in enumerate(tb.get("not_recorded_rows") or [])]
+        items.sort(key=lambda t: t[2])
+        rows_out, cells_out, row_of = [], [], {}
+        col_x = [(gc, c["x"]) for gc, c in ((off + i, c) for i, c in enumerate(ordered))]
+        for gi, (kind, idx, _t) in enumerate(items):
+            if kind == "body":
+                r = tb["body"][idx]
+                row_of[idx] = gi
+                measured = any(cell_meta(k, idx)[0] for k in r["cells"])
+                role = ("data" if measured else
+                        "difference" if (r["label"] or "").strip() and r["cells"]
+                        else "not_recorded")
+                rows_out.append({"role": role, "label": r["label"] or "",
+                                 "group": row_subset.get(idx, ""),
+                                 "why": "" if role == "data" else
+                                        ("difference" if role == "difference"
+                                         else "no label on the page")})
+                for k, c in r["cells"].items():
+                    cells_out.append({"r": gi, "c": col_of_k[k], "text": c["printed"],
+                                      "bold": bool(c.get("bold")),
+                                      "underlined": bool(c.get("underlined")),
+                                      "not_run": False})
+                for k, t in (r.get("absent") or {}).items():
+                    if k in col_of_k:
+                        cells_out.append({"r": gi, "c": col_of_k[k], "text": t,
+                                          "bold": False, "underlined": False,
+                                          "not_run": True})
+                for c in ordered:
+                    if "nc" in c and r.get("top") in c["nc"]["cells"]:
+                        cells_out.append({"r": gi, "c": col_x[ordered.index(c)][0],
+                                          "text": c["nc"]["cells"][r["top"]],
+                                          "bold": False, "underlined": False,
+                                          "not_run": False})
+            else:
+                nr = tb["not_recorded_rows"][idx]
+                rows_out.append({"role": "not_recorded", "label": nr["label"],
+                                 "group": "", "why": nr["why"]})
+                for x, t in nr["words"]:
+                    if col_x:
+                        gc = min(col_x, key=lambda q: abs(q[1] - x))[0]
+                        cells_out.append({"r": gi, "c": gc, "text": t, "bold": False,
+                                          "underlined": False, "not_run": False})
+        # RESULTS: the standardised layer, one per measurement.
+        results = []
+        sid = subject["id"] if subject else None
+        for ri, r in enumerate(tb["body"]):
+            for k, cell in r["cells"].items():
+                m, metric, level, sub = cell_meta(k, ri)
+                if not m:
+                    continue
+                j = k if axis == "columns" else ri
+                for pi, (v, _p, mt, lv, bas) in enumerate(parts_of(cell, metric, level)):
+                    canon, acc = canonical_subset(sub, con) if sub else (None, None)
+                    sd = cell.get("stddev")
+                    results.append({
+                        "r": row_of[ri], "c": col_of_k[k], "part": pi,
+                        "algorithm_id": m[0], "algorithm": m[1],
+                        "printed": printed_of.get(j) or "",
+                        "variant": m[2] or "", "is_self": int(m[0] == sid),
+                        "metric": mt, "level": lv,
+                        "dataset_id": did, "dataset_version_id": vid,
+                        "subset": sub or "", "subset_canonical": canon or "",
+                        "subset_accession": acc or "",
+                        "is_aggregate": int(bool(AGGREGATE.match(sub or ""))),
+                        "value": v / scale,
+                        "stddev": (sd / scale) if sd is not None else None,
+                        "basis": bas or (bases.get(j) or ("unclear",))[0],
+                        # A basis set by a CELL's marker cites that marker; a
+                        # method-level basis cites its own sentence.
+                        "basis_cue": (
+                            f"the table's legend marks this cell "
+                            f"'{(cell.get('parts') or [(0, '')])[pi][1]}'"
+                            if bas else (bases.get(j) or ("", ""))[1] or ""),
+                        "derived": cell.get("derived") or ""})
+        return {"columns": columns, "header": header, "rows": rows_out,
+                "cells": cells_out, "results": results}
+
     if collect is not None:
         # The resolved structure, so a review page can show the parse beside a
         # picture of the printed table without reimplementing any of this.
         collect.append({
+            "grid": build_grid(),
             "verdict": "accepted", "reason": "",
             "table_label": tb["table_label"], "caption": tb["caption"],
             "footnote": tb.get("footnote") or "",

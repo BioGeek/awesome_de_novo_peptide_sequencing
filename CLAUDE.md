@@ -212,7 +212,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**34 tables and one view.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**41 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -1836,6 +1836,57 @@ taken. A label within a quarter of the gap of the midpoint between two rows
 now belongs to both; read that way every species has its pair, the printed
 Mean row is 0.751 against 0.804, and all three prose figures match exactly.
 **Check a parse against every number the prose gives, not the first one.**
+
+## Comparison tables in the database
+
+Seven `paper_comparison*` tables hold every SIGNED-OFF mined table, in two
+layers, so that one record can both reproduce the table as the paper printed
+it and put its numbers beside another paper's:
+
+| layer | table | holds |
+|---|---|---|
+| printed | `paper_comparison` | one printed table, or one dataset part of a split one: label, page, crop box, caption, footnote, our design note, review status |
+| printed | `paper_comparison_column` | every grid column, stub included, with its role (`group`, `label`, `data`, `not_recorded`) |
+| printed | `paper_comparison_header` | header cells with `col_start`/`col_end`, so a spanner stays one cell |
+| printed | `paper_comparison_row` | every printed row, its label and row-group label |
+| printed | `paper_comparison_cell` | every printed cell, text exactly as printed, plus the paper's own bold, underline and not-run marks |
+| standard | `paper_comparison_result` | one measurement per cell (or per part of a two-value cell): method, variant, metric, level, canonical species and accession, value on 0-1, basis and its cue |
+| standard | `paper_comparison_note` | every place the paper's bold or underline differs from the ranking of the values |
+
+Plus the view **`paper_comparison_measurement`**, which flattens a result
+with its paper, method and dataset and is where a standardised table starts.
+
+**80 verified tables from 24 papers, 3404 measurements.** The 44 refusals the
+reviewer confirmed are kept as `rejected`, with their reason and no cells, so
+a refusal is a recorded decision and not an absence.
+
+**What the miner does not record is still in the printed layer.** A count
+row, a BLEU row, a year or speed column, a difference row: each is a row or
+column with role `not_recorded` and a `why`, holding its printed cells, so
+the table renders as printed and none of it is mistaken for a measurement.
+Getting there meant extending the miner, which used to throw those away
+before the review payload was built.
+
+**Our bold and underline are not stored.** They are a ranking of the stored
+values within a measurement, recomputed wherever a table is drawn; storing
+them would be a second copy that could disagree. The PAPER's marks are
+stored, and the notes record each disagreement.
+
+**One writer, rebuilt whole.** `review_comparisons.py --write-db` replaces
+all seven tables from the parsed items and the committed sign-offs in
+`paper_comparison_review.json`, and writes only signed-off tables. So the
+result depends on the PDFs, the code and that file, and nothing else. These
+tables are deliberately NOT in `.github/actions/commit-refreshed-db`: there
+is no PDF library on a runner, and a sign-off is a human's.
+
+**The basis follows the paper, and every non-`unclear` basis cites its
+sentence.** Invariants that must read zero, registered in `check_counts.py`:
+0 verified tables without a result for the paper's own method, 0 duplicate
+measurements within a table, 0 quoted results without a cue. A basis set by a
+cell's legend marker cites that marker.
+
+    uv run --with pdfplumber python3 review_comparisons.py --write-db            # full re-parse, ~8 min
+    uv run --with pdfplumber python3 review_comparisons.py --rewrite --write-db  # from stored items, seconds
 
 ## Finding papers the catalog is missing
 

@@ -750,6 +750,268 @@ def grid_html(rec: dict) -> str:
     return "".join(out)
 
 
+# THE SCHEMA. Two layers in seven tables, so one record can both reproduce a
+# table as the paper printed it and line its numbers up with other papers'.
+#
+#   PRINTED  paper_comparison         one printed table (or one dataset part
+#                                     of a table the miner split), with its
+#                                     caption, footnote, page and crop box
+#            paper_comparison_column  every grid column, stub included, with
+#                                     its role and why a column is not recorded
+#            paper_comparison_header  header cells with their span, so a
+#                                     spanner over several columns stays one
+#            paper_comparison_row     every printed row, with its label and
+#                                     row-group label, and why a row is not
+#                                     recorded
+#            paper_comparison_cell    every printed cell, text exactly as
+#                                     printed, plus the paper's own bold,
+#                                     underline and not-run marks
+#   STANDARD paper_comparison_result  one measurement per cell (or per part of
+#                                     a cell holding two), keyed to that cell:
+#                                     method, metric, level, species, value
+#                                     on 0-1, basis
+#            paper_comparison_note    where the paper's bold/underline differs
+#                                     from the ranking of the values
+#
+# OUR bold and underline are NOT stored: they are a ranking of the stored
+# values within each measurement and are recomputed wherever a table is drawn.
+# The paper's marks are stored, and the notes record every disagreement.
+PAPER_COMPARISON_SCHEMA = """
+CREATE TABLE IF NOT EXISTS paper_comparison (
+    id                 INTEGER PRIMARY KEY,
+    publication_id     INTEGER NOT NULL REFERENCES publication(id),
+    review_id          TEXT NOT NULL UNIQUE,   -- the sign-off key, p64-pg6-t3
+    table_label        TEXT NOT NULL,          -- as printed, 'Table3'
+    part               TEXT,                   -- dataset part of a split table
+    pdf_page           INTEGER NOT NULL,       -- 1-based
+    pdf_file           TEXT NOT NULL,          -- library filename
+    bbox               TEXT,                   -- 'x0,y0,x1,y1' in PDF points
+    caption            TEXT NOT NULL,
+    footnote           TEXT,                   -- printed beneath the table
+    design_note        TEXT,                   -- OURS: how the table was read
+    methods_along      TEXT CHECK (methods_along IN ('rows','columns')),
+    metrics_along      TEXT CHECK (metrics_along IN ('rows','columns')),
+    unit_printed       TEXT CHECK (unit_printed IN ('0-1','0-100')),
+    dataset_id         INTEGER REFERENCES dataset(id),
+    dataset_version_id INTEGER REFERENCES dataset_version(id),
+    dataset_printed    TEXT,                   -- what the paper says, when no
+                                               -- catalog dataset is it
+    review_status      TEXT NOT NULL CHECK (review_status IN ('verified','rejected')),
+    reject_reason      TEXT,
+    reviewed_on        DATE,
+    CHECK ((review_status = 'rejected') = (reject_reason IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS idx_paper_comparison_pub ON paper_comparison(publication_id);
+
+CREATE TABLE IF NOT EXISTS paper_comparison_column (
+    comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    col_index     INTEGER NOT NULL,            -- 0-based, stub columns first
+    role          TEXT NOT NULL CHECK (role IN ('group','label','data','not_recorded')),
+    why           TEXT,                        -- for not_recorded: year, speed
+                                               -- or time, difference
+    PRIMARY KEY (comparison_id, col_index)
+);
+
+CREATE TABLE IF NOT EXISTS paper_comparison_header (
+    comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    header_row    INTEGER NOT NULL,            -- 0 = top
+    col_start     INTEGER NOT NULL,
+    col_end       INTEGER NOT NULL,            -- inclusive; > col_start = spanner
+    text          TEXT NOT NULL,               -- as printed
+    PRIMARY KEY (comparison_id, header_row, col_start),
+    CHECK (col_end >= col_start)
+);
+
+CREATE TABLE IF NOT EXISTS paper_comparison_row (
+    comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    row_index     INTEGER NOT NULL,            -- 0-based, printed order
+    role          TEXT NOT NULL CHECK (role IN ('data','difference','not_recorded')),
+    label_printed TEXT NOT NULL,
+    group_printed TEXT,                        -- row-group label (a species set
+                                               -- once over several rows)
+    why           TEXT,
+    PRIMARY KEY (comparison_id, row_index)
+);
+
+CREATE TABLE IF NOT EXISTS paper_comparison_cell (
+    comparison_id      INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    row_index          INTEGER NOT NULL,
+    col_index          INTEGER NOT NULL,
+    text_printed       TEXT NOT NULL,          -- exactly as printed: '74.57',
+                                               -- '0.743*', '-'
+    bold_printed       INTEGER NOT NULL DEFAULT 0,
+    underlined_printed INTEGER NOT NULL DEFAULT 0,
+    not_run            INTEGER NOT NULL DEFAULT 0,   -- a '-' or 'n/a' marker
+    PRIMARY KEY (comparison_id, row_index, col_index),
+    FOREIGN KEY (comparison_id, row_index)
+        REFERENCES paper_comparison_row(comparison_id, row_index),
+    FOREIGN KEY (comparison_id, col_index)
+        REFERENCES paper_comparison_column(comparison_id, col_index)
+);
+
+CREATE TABLE IF NOT EXISTS paper_comparison_result (
+    id                INTEGER PRIMARY KEY,
+    comparison_id     INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    row_index         INTEGER NOT NULL,
+    col_index         INTEGER NOT NULL,
+    part_index        INTEGER NOT NULL DEFAULT 0,  -- a cell holding two values
+    algorithm_id      INTEGER NOT NULL REFERENCES algorithm(id),
+    algorithm_printed TEXT NOT NULL,           -- '†CasaNovo', as printed
+    variant_printed   TEXT,                    -- 'V2', 'on †CasaNovo', 'retrained'
+    is_self           INTEGER NOT NULL DEFAULT 0,   -- the paper's own method
+    metric            TEXT NOT NULL CHECK (metric IN ('precision','recall','auc',
+                          'precision@cov1','ptm-precision','ptm-recall','accuracy',
+                          'accuracy-filtered','coverage','positional-accuracy')),
+    level             TEXT NOT NULL CHECK (level IN ('peptide','amino acid','ptm')),
+    subset_printed    TEXT,                    -- 'B. sub.', as read
+    subset_canonical  TEXT,                    -- 'Bacillus subtilis'
+    subset_accession  TEXT,                    -- 'PXD004565'
+    is_aggregate      INTEGER NOT NULL DEFAULT 0,   -- an Average / Mean row
+    value             REAL NOT NULL CHECK (value BETWEEN 0 AND 1),
+    stddev            REAL,
+    basis             TEXT NOT NULL CHECK (basis IN ('released','retrained',
+                          'reimplemented','quoted','unclear')),
+    basis_cue         TEXT,                    -- the sentence that licensed it
+    derived_from      TEXT,                    -- set ONLY when the paper did not
+                                               -- print this number
+    UNIQUE (comparison_id, row_index, col_index, part_index),
+    FOREIGN KEY (comparison_id, row_index, col_index)
+        REFERENCES paper_comparison_cell(comparison_id, row_index, col_index)
+);
+CREATE INDEX IF NOT EXISTS idx_pcr_comparison ON paper_comparison_result(comparison_id);
+CREATE INDEX IF NOT EXISTS idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
+
+-- THE STANDARDISED READING, one row per measurement with everything needed
+-- to line it up against another paper's: who reported it, about which method
+-- and variant, on what, and on which basis. Verified tables only.
+CREATE VIEW IF NOT EXISTS paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       c.dataset_id, d.name AS dataset, c.dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = c.dataset_id
+  LEFT JOIN dataset_version dv ON dv.id = c.dataset_version_id;
+
+CREATE TABLE IF NOT EXISTS paper_comparison_note (
+    comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
+    note_index    INTEGER NOT NULL,
+    kind          TEXT NOT NULL CHECK (kind IN ('emphasis')),
+    text          TEXT NOT NULL,
+    PRIMARY KEY (comparison_id, note_index)
+);
+"""
+
+PC_TABLES = ["paper_comparison_note", "paper_comparison_result",
+             "paper_comparison_cell", "paper_comparison_row",
+             "paper_comparison_header", "paper_comparison_column",
+             "paper_comparison"]
+
+
+def write_db(items: list[dict], approved: dict) -> None:
+    """Replace the paper_comparison tables with every SIGNED-OFF table.
+
+    These seven tables have one writer, this function, and it rebuilds them
+    whole from the parsed items and the committed sign-offs, so the result
+    depends on nothing but the PDFs, the code and paper_comparison_review.json.
+    A table nobody has signed off is not written; it is counted instead.
+    """
+    con = __import__("sqlite3").connect(B.DB)
+    con.execute("PRAGMA foreign_keys = ON")
+    con.executescript(PAPER_COMPARISON_SCHEMA)
+    for t in PC_TABLES:
+        con.execute(f"DELETE FROM {t}")
+    n = collections.Counter()
+    for rec in sorted(items, key=lambda r: (r["pub"], r["page"], r["tid"])):
+        state = (approved.get(rec["tid"]) or {}).get("state")
+        if state not in ("approved", "dismissed"):
+            n["not signed off, skipped"] += 1
+            continue
+        if state == "approved" and not rec.get("grid"):
+            n["approved but no grid, skipped"] += 1
+            continue
+        m = re.match(r"^(.*?)\s*\[(.+)\]$", rec["table_label"] or "")
+        label, part = (m.group(1), m.group(2)) if m else (rec["table_label"], None)
+        did = None
+        if rec.get("dataset"):
+            row = con.execute("SELECT id FROM dataset WHERE name = ?",
+                              (rec["dataset"],)).fetchone()
+            did = row[0] if row else None
+        verified = state == "approved"
+        cur = con.execute(
+            "INSERT INTO paper_comparison (publication_id, review_id, table_label,"
+            " part, pdf_page, pdf_file, bbox, caption, footnote, design_note,"
+            " methods_along, metrics_along, unit_printed, dataset_id,"
+            " dataset_version_id, dataset_printed, review_status, reject_reason,"
+            " reviewed_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (rec["pub"], rec["tid"], label, part, rec["pdf_page"], rec["pdf_name"],
+             ",".join(f"{x:.1f}" for x in rec["bbox"]) if rec.get("bbox") else None,
+             rec["caption"] or "", rec.get("footnote") or None,
+             rec.get("design_note") or None,
+             rec.get("axis") if verified else None,
+             rec.get("metric_axis") if verified else None,
+             rec.get("unit") if verified else None,
+             did if verified else None,
+             rec.get("dataset_version_id") if verified else None,
+             (rec.get("dataset_printed") or None) if verified else None,
+             "verified" if verified else "rejected",
+             None if verified else (rec.get("reason") or "refused"),
+             (approved.get(rec["tid"]) or {}).get("on")))
+        cid = cur.lastrowid
+        n["verified" if verified else "rejected"] += 1
+        if not verified:
+            continue
+        g = rec["grid"]
+        con.executemany(
+            "INSERT INTO paper_comparison_column VALUES (?,?,?,?)",
+            [(cid, i, c["role"], c["why"] or None) for i, c in enumerate(g["columns"])])
+        con.executemany(
+            "INSERT INTO paper_comparison_header VALUES (?,?,?,?,?)",
+            [(cid, h["row"], h["c0"], h["c1"], h["text"]) for h in g["header"]])
+        con.executemany(
+            "INSERT INTO paper_comparison_row VALUES (?,?,?,?,?,?)",
+            [(cid, i, r["role"], r["label"], r["group"] or None, r["why"] or None)
+             for i, r in enumerate(g["rows"])])
+        con.executemany(
+            "INSERT INTO paper_comparison_cell VALUES (?,?,?,?,?,?,?)",
+            [(cid, c["r"], c["c"], c["text"], int(c["bold"]), int(c["underlined"]),
+              int(c["not_run"])) for c in g["cells"]])
+        con.executemany(
+            "INSERT INTO paper_comparison_result (comparison_id, row_index, col_index,"
+            " part_index, algorithm_id, algorithm_printed, variant_printed, is_self,"
+            " metric, level, subset_printed, subset_canonical, subset_accession,"
+            " is_aggregate, value, stddev, basis, basis_cue, derived_from)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            [(cid, x["r"], x["c"], x["part"], x["algorithm_id"], x["printed"],
+              x["variant"] or None, x["is_self"], x["metric"], x["level"],
+              x["subset"] or None, x["subset_canonical"] or None,
+              x["subset_accession"] or None, x["is_aggregate"], round(x["value"], 6),
+              x["stddev"], x["basis"], x["basis_cue"] or None, x["derived"] or None)
+             for x in g["results"]])
+        n["results"] += len(g["results"])
+        _rank, notes = emphasis(rec)
+        con.executemany(
+            "INSERT INTO paper_comparison_note VALUES (?,?,?,?)",
+            [(cid, i, "emphasis", t) for i, t in enumerate(notes)])
+        n["notes"] += len(notes)
+    con.commit()
+    print("  wrote " + ", ".join(f"{v} {k}" for k, v in n.items()))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -766,6 +1028,9 @@ def main() -> int:
     ap.add_argument("--unapprove", help="comma-separated ids to un-mark either way")
     ap.add_argument("--unapprove-all", action="store_true",
                     help="clear every sign-off, to review the set again")
+    ap.add_argument("--write-db", action="store_true",
+                    help="after the page, rebuild the paper_comparison tables in "
+                         "denovo.db from every signed-off table")
     ap.add_argument("--keep-crops", action="store_true",
                     help="reuse the PNGs already rendered, for an HTML-only change")
     args = ap.parse_args()
@@ -1047,6 +1312,8 @@ def main() -> int:
         print(f"  {len(stale)} approved id(s) no longer present: {', '.join(sorted(stale))}")
         print("  the block order on a page can shift as the miner changes; "
               "re-approve under the new id")
+    if args.write_db:
+        write_db(items, approved)
     print(f"  {OUT / 'index.html'}")
     return 0
 
