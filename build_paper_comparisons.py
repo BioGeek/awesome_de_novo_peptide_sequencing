@@ -687,7 +687,14 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
     # label exists for a caption far above its table with body prose between;
     # it also refused publication 168's TABLE I, whose ten-line caption ends
     # four rows above the data. What matters is where the caption ENDS.
-    cap_close = 0 <= cap_end < lo and lo - cap_end <= max_header + 1
+    # Rows between the caption and the data count only if they hold text in
+    # THIS table's width: the other table of a side-by-side pair fills those
+    # rows too, and counting them made LIPNovo's Table 5 caption look far
+    # from its table, so the crop started below it.
+    _tx0, _tx1 = left_bound - 12, min(edges[-1][1] + 14, right_limit)
+    between = [i for i in range(cap_end + 1, lo) if 0 <= i < len(rows)
+               and any(w["x1"] >= _tx0 and w["x0"] <= _tx1 for w in rows[i])]
+    cap_close = 0 <= cap_end < lo and len(between) <= max_header + 1
     if 0 <= start < lo and (lo - start <= max_header + 3 or cap_close):
         first = start
     else:
@@ -1276,10 +1283,27 @@ def pair_parts(rows: list[list[dict]],
         assigned[best].append(r)
 
     out: dict = {}
+    # SIDE BY SIDE IS ORDERED LEFT TO RIGHT, not top to bottom. A full-width
+    # table merges both page columns into one, and within it captions and
+    # tables are paired in reading order; for two tables that share rows,
+    # reading order is x, and ordering them by their first data row instead
+    # swapped CausalNovo's Table 2 and Table 3, once Table 2 correctly started
+    # four rows below Table 3. Parts that overlap vertically form one band,
+    # ordered by x; labels on one row are ordered by x likewise.
+    def _reading_order(parts_):
+        parts_ = sorted(parts_, key=lambda t: t[0])
+        bands: list[list] = []
+        for pt in parts_:
+            if bands and pt[0] <= max(q[1] for q in bands[-1]):
+                bands[-1].append(pt)
+            else:
+                bands.append([pt])
+        return [pt for b in bands for pt in sorted(b, key=lambda t: t[2])]
+
     for ci, c in enumerate(cols):
         cand = list(assigned[ci])
-        cand.sort(key=lambda r: r[0])
-        mine = sorted(c["parts"], key=lambda t: t[0])
+        cand.sort(key=lambda r: (r[0], r[1]))
+        mine = _reading_order(c["parts"])
         cand = [r for r in cand if any(not blocked(part, r) for part in mine)]
         if len(cand) == len(mine) and cand:
             if all(not blocked(part, run) for part, run in zip(mine, cand)):
@@ -1658,6 +1682,33 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         full = column_edges(rows, lo, hi)
         for grp in column_groups(full):
             parts.append((lo, hi, [full[k] for k in grp]))
+    # EACH SIDE-BY-SIDE TABLE STARTS AT ITS OWN FIRST ROW OF NUMBERS. Blocks
+    # are built from whole rows, so two tables printed side by side share one
+    # block from the higher one's first data row to the lower one's last.
+    # CausalNovo's Table 3 (right) starts four rows above its Table 2 (left),
+    # which put Table 2's whole header -- 'Nine-species Seven-species HC-PT',
+    # 'Prec. Recall ...' -- INSIDE the block, where the header reader never
+    # looks; it read Table 3's header above the block instead and refused
+    # Table 2 for having no metric. Each part is trimmed to the rows carrying
+    # at least two numbers inside its own columns.
+    def _trim(lo, hi, e):
+        x0, x1 = e[0][0], e[-1][1]
+        def has(i):
+            return sum(1 for w in rows[i] if numeric(w["text"])
+                       and x0 - 2 <= (w["x0"] + w["x1"]) / 2 <= x1 + 2) >= 2
+        nlo = next((i for i in range(lo, hi + 1) if has(i)), lo)
+        nhi = next((i for i in range(hi, lo - 1, -1) if has(i)), hi)
+        return (nlo, nhi, e) if nlo <= nhi else (lo, hi, e)
+    # Remember each part's BLOCK OF ORIGIN: side-by-side tables are neighbours
+    # because they came out of one block, and trimming each to its own rows
+    # can leave them with no rows in common.
+    origin: dict[tuple, tuple] = {}
+    trimmed = []
+    for pt in parts:
+        tp = _trim(*pt) if len(parts) > 1 else pt
+        origin[(tp[0], tp[1], tp[2][0][0])] = (pt[0], pt[1])
+        trimmed.append(tp)
+    parts = trimmed
     paired = pair_parts(rows, [(lo, hi, e[0][0], e[-1][1]) for lo, hi, e in parts])
     span_of = {(lo, hi, e[0][0]): (lo, hi) for lo, hi, e in parts}
     # A PART'S CROP STOPS AT ITS NEIGHBOUR. Two tables printed side by side
@@ -1667,13 +1718,22 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
     # claimed. The left limit matters as much as the right -- Table 3's own
     # crop began at x 153, inside Table 2 -- so both are bounded by the
     # adjacent part in the same block.
+    # Neighbours are the parts that OVERLAP VERTICALLY, not those with the
+    # same rows: once each side-by-side part is trimmed to its own data, two
+    # neighbours no longer share (lo, hi), and grouping on that dropped the
+    # limit, so LIPNovo's Table 5 crop spread 200 pt left over Table 3.
     neighbours: dict[tuple, tuple[float, float]] = {}
-    for (lo, hi), group in itertools.groupby(parts, key=lambda t: (t[0], t[1])):
-        g = list(group)
-        for j, (_lo, _hi, edges) in enumerate(g):
-            lim_lo = g[j - 1][2][-1][1] + 4 if j else 0.0
-            lim_hi = g[j + 1][2][0][0] - 4 if j + 1 < len(g) else float("inf")
-            neighbours[(lo, hi, edges[0][0])] = (lim_lo, lim_hi)
+    for pt in parts:
+        lo, hi, edges = pt
+        home = origin.get((lo, hi, edges[0][0]))
+        side = sorted((q for q in parts if q is not pt
+                       and origin.get((q[0], q[1], q[2][0][0])) == home),
+                      key=lambda q: q[2][0][0])
+        left_ = [q for q in side if q[2][-1][1] <= edges[0][0] + 1]
+        right_ = [q for q in side if q[2][0][0] >= edges[-1][1] - 1]
+        lim_lo = (max(q[2][-1][1] for q in left_) + 4) if left_ else 0.0
+        lim_hi = (min(q[2][0][0] for q in right_) - 4) if right_ else float("inf")
+        neighbours[(lo, hi, edges[0][0])] = (lim_lo, lim_hi)
     for lo, hi, edges in parts:
         table_label, caption, cap_end = caption_text(
             rows, paired.get((lo, hi, edges[0][0])), blocks, fine,
@@ -3817,6 +3877,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                            if c.get("underlined"))}
                      for r in tb["body"]],
             "basis": {methods[k][1]: bases[k][0] for k in sorted(bases)},
+            # PER ROW, because one method can appear twice under two bases --
+            # CausalNovo's 'CasaNovo' (quoted from NovoBench) and '†CasaNovo'
+            # (retrained) -- and keyed by name the second overwrote the first,
+            # so the page said 'Casanovo: retrained' for both.
+            "row_basis": {k: bases[k][0] for k in sorted(bases)},
         })
 
     if show:

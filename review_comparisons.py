@@ -527,7 +527,15 @@ def grid_html(rec: dict) -> str:
         name, ver, printed = (m + ("",))[:3] if len(m) < 3 else m
         shown = unsquash_name(printed) or (f"{name} {ver}" if ver else name)
         out = html.escape(shown)
-        if html.escape(name) != out:
+        # WHERE ONE METHOD APPEARS UNDER TWO BASES, the basis is what tells
+        # the rows apart, so it is shown as the row's variant:
+        # '†CasaNovo' -> 'Casanovo · retrained', 'CasaNovo' -> 'Casanovo · quoted'.
+        rb = {int(k): v for k, v in (rec.get("row_basis") or {}).items()}
+        same = [k for k, mm in rec["methods"].items()
+                if mm and mm[0] == name and (mm[1] or "") == (ver or "")]
+        if not ver and len({rb.get(int(k)) for k in same}) > 1 and rb.get(j):
+            ver = rb[j]
+        if html.escape(name) != out or ver:
             out += f"<br><small class='dim'>{html.escape(name)}"
             out += f" &middot; {html.escape(ver)}</small>" if ver else "</small>"
         return out
@@ -1168,7 +1176,24 @@ def item_html(it: dict) -> str:
         for n in wrong:
             H.append("<div class='cap' style='margin-top:6px'>"
                      "<b>original emphasis</b> &mdash; " + html.escape(n) + "</div>")
-        if it.get("basis"):
+        rb = {int(k): v for k, v in (it.get("row_basis") or {}).items()}
+        if rb:
+            # One entry per ROW, as printed, so a method listed twice under two
+            # bases is listed twice: 'CasaNovo: quoted, †CasaNovo: retrained'.
+            seen, parts_ = set(), []
+            for k in sorted(rb):
+                m = it["methods"].get(k) or it["methods"].get(str(k))
+                if not m:
+                    continue
+                shown = unsquash_name(m[2] if len(m) > 2 and m[2] else m[0])
+                shown = re.sub(r"\s*\([^)]*\d{4}[^)]*\)\s*$", "", shown)   # drop the citation
+                entry = f"{shown}: {rb[k]}"
+                if entry not in seen:
+                    seen.add(entry)
+                    parts_.append(html.escape(entry))
+            H.append("<div class='cap' style='margin-top:8px'>basis &mdash; "
+                     + ", ".join(parts_) + "</div>")
+        elif it.get("basis"):
             b = ", ".join(f"{html.escape(k)}: {html.escape(x)}"
                           for k, x in it["basis"].items())
             H.append(f"<div class='cap' style='margin-top:8px'>basis &mdash; {b}</div>")
