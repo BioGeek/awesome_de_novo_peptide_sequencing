@@ -4673,7 +4673,13 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                           "underlined": False, "not_run": False})
         # RESULTS: the standardised layer, one per measurement.
         results = []
-        sid = subject["id"] if subject else None
+        # THE PAPER'S OWN METHODS, all of them: LIPNovo+'s paper describes both
+        # LIPNovo and LIPNovo+, and marking only the first left LIPNovo+'s
+        # tables on LIPNovo's page alone.
+        own_ids = {r[0] for r in con.execute(
+            "SELECT algorithm_id FROM publication_algorithm "
+            "WHERE publication_id = ? AND role = 'describes'",
+            (base.get("publication_id"),))}
         for ri, r in enumerate(tb["body"]):
             for k, cell in r["cells"].items():
                 m, metric, level, sub = cell_meta(k, ri)
@@ -4687,7 +4693,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         "r": row_of[ri], "c": col_of_k[k], "part": pi,
                         "algorithm_id": m[0], "algorithm": m[1],
                         "printed": printed_of.get(j) or "",
-                        "variant": m[2] or "", "is_self": int(m[0] == sid),
+                        "variant": m[2] or "", "is_self": int(m[0] in own_ids),
                         "metric": mt, "level": lv,
                         "dataset_id": did, "dataset_version_id": vid,
                         # A subset that is not a species (OC, UTI, a pNovo

@@ -37,6 +37,7 @@ two can never disagree.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import os
 import re
@@ -559,6 +560,138 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     return "\n".join(L) + "\n", date_to_mtime(latest)
 
 
+METRIC_LABEL = {"precision": "Precision", "recall": "Recall", "auc": "AUC",
+                "precision@cov1": "Precision at coverage 1",
+                "ptm-precision": "PTM precision", "ptm-recall": "PTM recall",
+                "accuracy": "Accuracy", "accuracy-filtered": "Filtered accuracy",
+                "coverage": "Coverage", "positional-accuracy": "Positional accuracy"}
+
+
+def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
+    """One printed table, STANDARDISED: methods down the side, then the
+    species and the metric across, every value on 0-1.
+
+    Built from paper_comparison_result alone, never from the printed header,
+    so a table the paper itself mis-typeset (DiffNovo's Table 1) comes out as
+    clean as any other. Bold is the best value in a column and underline the
+    runner-up where a column has three or more: OUR ranking, the same rule the
+    review page applies, whatever the paper marked.
+    """
+    def a(kind, eid, label):
+        href = site.href(kind, eid, from_kind=from_kind)
+        t = html.escape(label)
+        return f'<a href="{href}">{t}</a>' if href else t
+
+    res = c["results"]
+    rows, cols = [], []
+    first_sub: dict[str, int] = {}
+    col_pos: dict[tuple, tuple] = {}
+    for x in res:
+        rk = (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "", x["basis"])
+        ck = (x["subset_canonical"] or "", x["metric"], x["level"])
+        if rk not in rows:
+            rows.append(rk)
+        if ck not in cols:
+            cols.append(ck)
+        first_sub.setdefault(ck[0], len(first_sub))
+        pos = (x["col_index"], x["row_index"])
+        col_pos[ck] = min(col_pos.get(ck, pos), pos)
+    # COLUMNS IN PRINTED ORDER, not in order of first appearance: a first row
+    # with gaps (PEAKS, run on two metrics only) put 'Precision peptide'
+    # before 'Recall amino acid' in one part of a table and not the other.
+    cols.sort(key=lambda ck: (first_sub[ck[0]], col_pos[ck]))
+    val = {}
+    for x in res:
+        rk = (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "", x["basis"])
+        ck = (x["subset_canonical"] or "", x["metric"], x["level"])
+        val[(rk, ck)] = x
+    # Our ranking, per column.
+    mark = {}
+    for ck in cols:
+        vs = sorted({round(val[(rk, ck)]["value"], 6) for rk in rows if (rk, ck) in val},
+                    reverse=True)
+        n = sum(1 for rk in rows if (rk, ck) in val)
+        for rk in rows:
+            if (rk, ck) not in val or n < 2:
+                continue
+            v = round(val[(rk, ck)]["value"], 6)
+            if v == vs[0]:
+                mark[(rk, ck)] = "best"
+            elif n >= 3 and len(vs) > 1 and v == vs[1]:
+                mark[(rk, ck)] = "second"
+
+    ds = (a("datasets", c["dataset_id"], c["dataset"]) if c["dataset_id"]
+          else html.escape(c["dataset_printed"] or "dataset not stated"))
+    if c["dataset_version"]:
+        ds += f'<br><small>{html.escape(c["dataset_version"])}</small>'
+    subsets = [ck[0] for ck in cols]
+    two_rows = any(subsets)
+    # Bootstrap's own classes, not new CSS: custom.scss is in the publish's
+    # global render key, so styling these in it would force a full render of
+    # every page for a section on 22 of them. `table-responsive` lets a wide
+    # table (MemNovo's runs to 21 columns) scroll instead of overflowing.
+    out = ['<div class="table-responsive">',
+           '<table class="table table-sm table-hover comparison" '
+           'style="font-size:0.85em; width:auto">', "<thead>"]
+    if two_rows:
+        out.append(f'<tr><th colspan="2" rowspan="2">{ds}</th>')
+        i = 0
+        while i < len(cols):
+            j = i
+            while j + 1 < len(cols) and subsets[j + 1] == subsets[i]:
+                j += 1
+            out.append(f'<th colspan="{j - i + 1}">{html.escape(subsets[i])}</th>')
+            i = j + 1
+        out.append("</tr><tr>")
+    else:
+        out.append(f'<tr><th colspan="2">{ds}</th>')
+    for _sub, met, lev in cols:
+        out.append(f"<th>{html.escape(METRIC_LABEL.get(met, met))}"
+                   f"<br><small>{html.escape(lev)}</small></th>")
+    out.append("</tr></thead><tbody>")
+    derived = False
+    for rk in rows:
+        aid, name, variant, basis = rk
+        cell = a("algorithms", aid, name)
+        if variant:
+            cell += f" <small>{html.escape(variant)}</small>"
+        # nowrap: in a wide table the browser otherwise breaks a method name
+        # mid-word ('DeepNov o') to save a column's width.
+        out.append(f'<tr><th style="white-space:nowrap">{cell}</th>'
+                   f"<td><small>{html.escape(basis)}</small></td>")
+        for ck in cols:
+            x = val.get((rk, ck))
+            if not x:
+                out.append("<td></td>")
+                continue
+            # THE PRINTED PRECISION: '0.530' stays '0.530', not '0.53'. A
+            # percentage table moved to 0-1 gains two decimals (68.12 -> 0.6812).
+            nums = re.findall(r"\d+(?:\.(\d*))?", x["text_printed"] or "")
+            dec = len(nums[x["part_index"]]) if x["part_index"] < len(nums) else 3
+            dec += 2 if c["unit_printed"] == "0-100" else 0
+            t = f"{x['value']:.{max(dec, 1)}f}"
+            if x["derived_from"]:
+                t += "&#8225;"
+                derived = True
+            m = mark.get((rk, ck))
+            t = f"<strong>{t}</strong>" if m == "best" else f"<u>{t}</u>" if m == "second" else t
+            out.append(f"<td>{t}</td>")
+        out.append("</tr>")
+    out += ["</tbody></table>", "</div>"]
+    notes = []
+    if derived:
+        notes.append("&#8225; Not printed in the paper: computed from the "
+                     "differences it prints, as described under the table.")
+    if c["design_note"]:
+        notes.append(html.escape(c["design_note"]))
+    for n in c["notes"]:
+        notes.append("In the paper: " + html.escape(n))
+    if notes:
+        out.append('<p class="comparison-notes"><small>' + "<br>".join(notes)
+                   + "</small></p>")
+    return ["", "\n".join(out), ""]
+
+
 def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     K = "algorithms"
     L = []
@@ -712,6 +845,37 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                      + (f" ({detail})" if detail else "") + ".")
         L += ["", "Both are mass-based matches on the tool's most recent run. "
               f"[What these numbers mean]({site.home('benchmarks')}).", ""]
+
+    # WHAT THIS METHOD'S OWN PAPERS REPORT, standardised from the comparison
+    # tables mined out of them. After the benchmarks on purpose: the reader
+    # meets the independently run numbers first.
+    if ctx.get("comparisons"):
+        n = len(ctx["comparisons"])
+        L += [f"## Reported comparisons ({n})" if n > 1 else "## Reported comparison", "",
+              "The comparison table" + ("s" if n > 1 else "") + " this method's own "
+              "papers print, standardised: every value on a 0-1 scale, methods "
+              "down the side, species and metric across. These are numbers papers "
+              "report **about themselves and their baselines**. They are not a "
+              "leaderboard, and they do not compare across tables: each was "
+              "produced by a different group, on the dataset named in its "
+              "corner, with each baseline either retrained, run from released "
+              "weights or quoted from another paper. The *basis* column says "
+              "which where the paper states it, and in most papers it does not. "
+              "**Bold** is the best value in a column and underline the "
+              "runner-up, our ranking rather than the paper's own marks.", ""]
+        for c in ctx["comparisons"]:
+            head = (f"### {md_escape(c['table_label'])}"
+                    + (f" ({md_escape(c['part'])})" if c["part"] else ""))
+            L += [head, "",
+                  f"{site.link('publications', c['publication_id'], c['title'], from_kind=K)}, "
+                  f"page {c['pdf_page']}: *{md_escape(c['caption'])}*", ""]
+            if c.get("also_in"):
+                L += ["The same table is also printed in "
+                      + ", ".join(site.link("publications", t["publication_id"],
+                                            t["title"], from_kind=K)
+                                  + f" ({md_escape(t['table_label'])}, page {t['pdf_page']})"
+                                  for t in c["also_in"]) + ".", ""]
+            L += comparison_table(site, c, K)
 
     # Two sections, never one: a paper that introduced this method and a paper
     # that ran it on a snake venom are not the same claim, and PEAKS's list of
@@ -1697,6 +1861,75 @@ def load(conn: sqlite3.Connection) -> dict:
     # Lukas Kall's page that put his 2025 J Proteome Research paper AFTER two
     # 2026 papers. Every tuple here happens to carry the date at index 2 and the
     # publication id at index 0, so one pass fixes all four.
+    # THE COMPARISON TABLES THIS METHOD'S OWN PAPERS PRINT, standardised: one
+    # per printed table (or dataset part of one), from the verified rows of
+    # paper_comparison. Keyed by the paper's OWN method, the result rows with
+    # is_self = 1, so a table lands on the page of the method it was printed to
+    # promote and nowhere else.
+    #
+    # ONE COPY OF A TABLE PRINTED TWICE. A preprint and its version of record
+    # usually carry the same table, and showing both says the same thing twice.
+    # Two tables are the same when what they REPORT is the same -- every method,
+    # variant, metric, level, species and value -- which also catches
+    # pairs publication_version does not link (a postprint and its conference
+    # paper). The kept copy is the most authoritative publication; the other is
+    # named under it. Tables that differ in anything are both shown, because
+    # the difference is the point.
+    d["comparisons"] = defaultdict(list)
+    TYPE_RANK = {"peer-reviewed": 0, "ML conference": 1, "postprint": 2,
+                 "preprint": 3, "thesis": 4}
+    comps = {r["id"]: dict(r) for r in q(
+        "SELECT c.id, c.review_id, c.publication_id, c.table_label, c.part, c.pdf_page,"
+        "       c.caption, c.design_note, c.dataset_id, c.dataset_printed, c.unit_printed,"
+        "       ds.name AS dataset, dv.version AS dataset_version,"
+        "       p.title, p.publication_date, p.publication_type "
+        "FROM paper_comparison c JOIN publication p ON p.id = c.publication_id "
+        "LEFT JOIN dataset ds ON ds.id = c.dataset_id "
+        "LEFT JOIN dataset_version dv ON dv.id = c.dataset_version_id "
+        "WHERE c.review_status = 'verified'")}
+    for c in comps.values():
+        c["results"] = []
+        c["notes"] = []
+    for r in q("SELECT r.*, a.name AS algorithm, cell.text_printed "
+               "FROM paper_comparison_result r "
+               "JOIN algorithm a ON a.id = r.algorithm_id "
+               "JOIN paper_comparison_cell cell ON cell.comparison_id = r.comparison_id "
+               " AND cell.row_index = r.row_index AND cell.col_index = r.col_index "
+               "ORDER BY r.comparison_id, r.row_index, r.col_index, r.part_index"):
+        if r["comparison_id"] in comps:
+            comps[r["comparison_id"]]["results"].append(dict(r))
+    for r in q("SELECT comparison_id, text FROM paper_comparison_note "
+               "ORDER BY comparison_id, note_index"):
+        if r["comparison_id"] in comps:
+            comps[r["comparison_id"]]["notes"].append(r["text"])
+    by_subject: dict[int, list[dict]] = defaultdict(list)
+    for c in comps.values():
+        # The BASIS is left out on purpose: it is our reading of each paper's
+        # prose, not part of the printed table. CrossNovo's two preprints print
+        # the same Table 2, and one's prose licenses 'retrained' where the
+        # other's says nothing; that is not two tables.
+        c["signature"] = frozenset(
+            (x["algorithm_id"], x["variant_printed"] or "", x["metric"], x["level"],
+             x["subset_canonical"] or "", round(x["value"], 4))
+            for x in c["results"])
+        for aid in {x["algorithm_id"] for x in c["results"] if x["is_self"]}:
+            by_subject[aid].append(c)
+    for aid, cs in by_subject.items():
+        cs.sort(key=lambda c: (TYPE_RANK.get(c["publication_type"], 9),
+                               -int(str(c["publication_date"] or "0")[:4] or 0),
+                               c["publication_id"]))
+        kept: list[dict] = []
+        for c in cs:
+            twin = next((k for k in kept if k["signature"] == c["signature"]
+                         and k["publication_id"] != c["publication_id"]), None)
+            if twin:
+                twin.setdefault("also_in", []).append(c)
+            else:
+                kept.append({**c})
+        kept.sort(key=lambda c: (str(c["publication_date"] or ""), c["pdf_page"],
+                                 c["table_label"], c["part"] or ""))
+        d["comparisons"][aid] = kept
+
     def by_date_desc(rows: list[tuple]) -> list[tuple]:
         return sorted(rows, key=lambda r: (str(r[2] or ""), r[0]), reverse=True)
 
@@ -1889,6 +2122,7 @@ def main() -> int:
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
                 "bench": d["bench"].get(gid),
                 "proteobench": d["proteobench"].get(gid),
+                "comparisons": d["comparisons"].get(gid, []),
                 "subdomain": d["subdomain_by_name"].get(row["subdomain"]),
                 "family_key": d["family_key"].get(row["algorithm_family"]),
             }

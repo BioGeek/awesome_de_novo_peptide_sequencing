@@ -1909,6 +1909,35 @@ name. That last one read 174 when first registered: left empty, a
 standardised table built from the view lost its dataset column. A basis set by a
 cell's legend marker cites that marker.
 
+### On the algorithm pages
+
+**22 methods carry a `## Reported comparisons` section**, placed after
+`## Benchmarks` so a reader meets the independently run numbers first. One
+STANDARDISED table per printed table (or dataset part): methods down the side
+with their basis, species then metric across, every value on 0-1 at the
+printed precision (`0.530` stays `0.530`; a percentage table gains two
+decimals). The dataset heads the table and links to its page; every method
+links to its page. Bold and underline are our ranking per column.
+
+It is built from `paper_comparison_result` alone and never from the printed
+header, which is why DiffNovo's mis-typeset Table 1 comes out as clean as any
+other. Three rules worth knowing:
+
+- **A table lands on every method its paper DESCRIBES** (`is_self`), not just
+  the first: LIPNovo+'s paper describes LIPNovo too, so its tables appear on
+  both pages.
+- **A table printed twice is shown once.** Two tables are the same when every
+  method, variant, metric, level, species and value matches; the copy from the
+  most authoritative publication is kept (peer-reviewed, conference,
+  postprint, preprint, thesis, then the later date) and the other is named
+  under it. The BASIS is left out of that comparison, because it is our
+  reading of each paper's prose: CrossNovo's two preprints print the same
+  Table 2 and only one's prose says 'retrained'. Tables that differ in any
+  number are both shown -- BiATNovo's two preprints are, since one adds PepNet.
+- **Bootstrap classes, not custom CSS.** `custom.scss` is in the publish's
+  global render key, so styling the tables there would force a full render of
+  every page for a section on 22 of them.
+
     uv run --with pdfplumber python3 review_comparisons.py --write-db            # full re-parse, ~8 min
     uv run --with pdfplumber python3 review_comparisons.py --rewrite --write-db  # from stored items, seconds
 

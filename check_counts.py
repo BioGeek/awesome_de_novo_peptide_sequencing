@@ -396,6 +396,11 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM (SELECT 1 FROM paper_comparison_result "
      "GROUP BY comparison_id, algorithm_id, COALESCE(variant_printed,''), metric, "
      "level, COALESCE(subset_printed,''), basis HAVING COUNT(*) > 1)"),
+    ("CLAUDE.md", "methods with a Reported comparisons section",
+     r"\*\*(\d+) methods carry a `## Reported comparisons` section\*\*",
+     "SELECT COUNT(DISTINCT r.algorithm_id) FROM paper_comparison_result r "
+     "JOIN paper_comparison c ON c.id = r.comparison_id "
+     "WHERE r.is_self = 1 AND c.review_status = 'verified'"),
     ("CLAUDE.md", "results with a subset but no canonical subset",
      r"(\d+) results with a printed subset and no canonical one",
      "SELECT COUNT(*) FROM paper_comparison_result "
