@@ -3949,6 +3949,16 @@ ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]
                                                "Three-species"))],
     # pi-PrimeNovo's preprint prints the same table.
     107: [],
+    # ReNovo's Table 8: the nine-species test set, whole and with near
+    # duplicates of training peptides removed. "(Original)" means UNFILTERED
+    # here, not the 2017 original version, so the version stays NULL as in
+    # ReNovo's Table 1. The canonical names say what each set is.
+    22: [(re.compile(r"(?i)^nine-?species\s*dataset\s*\(original\)"),
+          ("Nine-species benchmark", None, "test set, unfiltered")),
+         (re.compile(r"(?i)^nine-?species\s*test\s*dataset\s*\(>\s*3\)"),
+          ("Nine-species benchmark", None, "test set, min. Levenshtein distance to training >= 3")),
+         (re.compile(r"(?i)^nine-?species\s*test\s*dataset\s*\(>\s*5\)"),
+          ("Nine-species benchmark", None, "test set, min. Levenshtein distance to training >= 5"))],
     # PLMNovo's Table 1: both test sets come from "Data for 'accounting for
     # digestion enzyme bias in Casanovo'" (its reference [32], Zenodo
     # 12587317): the MSKB split's 200,000 tryptic test spectra, and the
@@ -4039,6 +4049,14 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (22, "Table8"): ("The filtered test sets are defined on p. 14: the authors computed, "
+                     "for each nine-species test peptide, the minimum Levenshtein distance "
+                     "to any training peptide, and 'filtered out test sequences with a "
+                     "minimum Levenshtein distance <3 and <5, respectively, resulting in "
+                     "Nine-species Test Dataset (>3) and Nine-species Test Dataset (>5)'. "
+                     "Removing distances below 3 keeps distances of 3 or more, so the "
+                     "printed '>3' and '>5' mean >= 3 and >= 5. '(Original)' is the "
+                     "unfiltered test set, not the 2017 original version of the benchmark."),
     (434, "Table 1"): ("MSKB is MassIVE-KB, under the train/test split (200,000 tryptic "
                        "test spectra) published with Melendez et al.'s enzyme-bias data "
                        "on Zenodo 12587317, the paper's reference [32]; that split mixes "

@@ -1056,6 +1056,13 @@
   "pub": 433,
   "state": "dismissed"
  },
+ "p434-pg6-t1": {
+  "cells": 6,
+  "label": "Table 1",
+  "on": "2026-10-03",
+  "pub": 434,
+  "state": "approved"
+ },
  "p434-pg7-t2": {
   "cells": 16,
   "label": "Table 2",
