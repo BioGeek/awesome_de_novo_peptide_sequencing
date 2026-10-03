@@ -1052,7 +1052,12 @@ def header_model(rows: list[list[dict]], lo: int,
             gap = rows[i + 1][0]["top"] - rows[i][0]["top"]
             local = (rows[i + 2][0]["top"] - rows[i + 1][0]["top"]
                      if i + 2 < len(rows) and rows[i + 2] else pitch)
-            if gap > 2.6 * max(local, 3.0):
+            # AND larger than the page's own line pitch: a stub label centred
+            # beside a two-row header makes a tiny local gap. LIPNovo+'s
+            # 'Method Year' sits 4 pt above its dataset row, so the ordinary
+            # 12 pt line above it read as a jump and the level spanner
+            # ('Amino acid-level performance') was never reached.
+            if gap > 2.6 * max(local, 3.0) and gap > 1.5 * pitch:
                 break
         r = clipped(rows[i])
         if not r:
@@ -1798,6 +1803,64 @@ def footnote_text(rows: list[list[dict]], hi: int, fine: list[dict] | None,
     return assemble_lines(band)
 
 
+METRIC_TOKEN = re.compile(r"[A-Z]{2,}(?=[A-Z][a-z]|$)|[A-Z][a-z]+\.?")
+
+
+def split_metric_runs(words: list[dict]) -> list[dict]:
+    """Split a header word that is several metric names glued together.
+
+    LIPNovo+'s Table 2 sets its twelve metric headers so tightly that the text
+    layer returns one word, 'PrecisionRecallPrecisionRecall...PrecisionAUC',
+    spanning every column, so every column took the same metric and G6 fired.
+    Each token is cut out at its own characters' x, which is exact, and only
+    when the whole word is three or more metric names and nothing else.
+    """
+    out = []
+    for w in words:
+        chars = w.get("chars") or []
+        toks = list(METRIC_TOKEN.finditer(w["text"]))
+        if (len(toks) >= 3 and len(chars) == len(w["text"])
+                and "".join(t.group() for t in toks) == w["text"]
+                and all(metric_of(t.group()) for t in toks)):
+            for t in toks:
+                cs = chars[t.start():t.end()]
+                out.append({**w, "text": t.group(), "chars": cs,
+                            "x0": min(c["x0"] for c in cs),
+                            "x1": max(c["x1"] for c in cs)})
+            continue
+        out.append(w)
+    return out
+
+
+GLUED_YEAR = re.compile(r"^(.*[^\d\s])((?:19|20)\d{2})$")
+
+
+def split_glued_year(row: list[dict], edges: list[tuple[float, float]]) -> list[dict]:
+    """Split a year that the PDF glued onto its row label.
+
+    LIPNovo+'s Table 2 prints every method with its year in a column of its
+    own, except the last row, whose text layer reads 'LIPNovo+(Ours)2026' as
+    one word. That row came up one cell short and refused the whole table as
+    ragged. The year is cut off only where its estimated position lands in a
+    column that this row has no other word in, so a name that merely ends in
+    digits is left alone.
+    """
+    out = []
+    for w in row:
+        m = GLUED_YEAR.match(w["text"])
+        if m and len(m.group(1)) >= 2:
+            frac = len(m.group(1)) / len(w["text"])
+            cut = w["x0"] + (w["x1"] - w["x0"]) * frac
+            year = {**w, "text": m.group(2), "x0": cut}
+            k = assign(year, edges)
+            if k is not None and not any(
+                    x is not w and assign(x, edges) == k for x in row):
+                out += [{**w, "text": m.group(1), "x1": cut}, year]
+                continue
+        out.append(w)
+    return out
+
+
 def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], int]:
     """Parse every table on a page.
 
@@ -1812,8 +1875,19 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
     does. Measured over this library, 621 of 710 numeric blocks are of that
     kind, so listing them would bury the 89 real tables in the worksheet.
     """
-    words = strip_line_numbers(
-        page.extract_words(use_text_flow=False, keep_blank_chars=False))
+    # A DIAGONAL WATERMARK IS NOT TEXT ON THE PAGE. SSRN stamps "This preprint
+    # research paper has not been peer reviewed" across every page in 74 pt
+    # grey Helvetica at about 52 degrees, and its letters arrive one by one at
+    # whatever height they cross the table: LIPNovo+'s Table 2 read AdaNovo's
+    # '0.379' as '0p.379', pushed it onto a row of its own and refused the
+    # table as ragged. Body text is never set diagonally -- a landscape table
+    # is rotated by a right angle, which leaves a zero on the matrix diagonal
+    # -- so a character with both terms non-zero is dropped.
+    page = page.filter(lambda o: o.get("object_type") != "char" or not (
+        abs(o["matrix"][1]) > 0.05 and abs(o["matrix"][0]) > 0.05))
+    words = split_metric_runs(strip_line_numbers(
+        page.extract_words(use_text_flow=False, keep_blank_chars=False,
+                           return_chars=True)))
     if not words:
         return [], [], 0
     rows = word_rows(words)
@@ -2005,7 +2079,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                    if numeric(w["text"]) and assign(w, edges) == 0]
         label_right = max(edges[0][0], min(data_x0) - 1.0) if data_x0 else edges[0][0]
         for ri_abs, r in enumerate(rows[lo:hi + 1], start=lo):
-            r = heal_fragments(r)
+            r = split_glued_year(heal_fragments(r), edges)
             cells: dict[int, dict] = {}
             for w in r:
                 if URLISH.match(w["text"]):
@@ -2416,7 +2490,14 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
                  "", raw).strip()
     # A dagger or asterisk on the label is a footnote marker, not a name; what
     # it MEANS is recorded per table in METHOD_MARKERS.
+    # A TRAILING '+' IS PART OF THE NAME when the catalog has a '+' variant:
+    # GyroNovo prints 'LIPNovo+(Du et al. 2026)' beside 'LIPNovo(Du et al.
+    # 2025)', and stripping the '+' as a marker merged the two methods.
+    plus_named = raw.endswith("+") and any(
+        "+" in n for _, n in index.get(norm(raw), []))
     raw = re.sub(r"[*+\u2020\u2021\u00a7\u00b6]+\s*$", "", raw).strip()
+    if plus_named:
+        raw += "+"
     if not raw:
         raise Reject("N1 empty header")
     # A curated per-paper label wins over every general rule.
@@ -3057,6 +3138,15 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     (273, "inv12"): ("InstaNovo", "v1.2"),
     (273, "in"): ("InstaNovo", None),
     (273, "infmsm"): ("InstaNovo", "FM size matched"),
+    # GyroNovo. 'Baseline' is LIPNovo as the authors reproduced it, beside
+    # the NovoBench-quoted LIPNovo row: "we report both its NovoBench results
+    # and our reproduced results ... We refer to the reproduced version as
+    # the 'baseline' throughout the paper and in the result tables."
+    (354, "baseline"): ("LIPNovo", "reproduced"),
+    # LIPNovo+. "we retrain CasaNovo with the same data splits and
+    # training/inference configurations as our methods (reported as
+    # Baseline)" -- the same reading as LIPNovo's own tables, above.
+    (432, "baseline"): ("Casanovo", "retrained"),
 }
 
 
