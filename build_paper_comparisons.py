@@ -2092,7 +2092,11 @@ def split_glued_year(row: list[dict], edges: list[tuple[float, float]]) -> list[
     out = []
     for w in row:
         m = GLUED_YEAR.match(w["text"])
-        if m and len(m.group(1)) >= 2:
+        # A NUMBER IS NEVER A LABEL WITH A YEAR ON IT. '0.1983', PLMNovo's
+        # classification loss, matched as '0.' plus the year 1983, and every
+        # loss of the form 0.19xx split into two cells in one column, which
+        # refused Table 1 as ragged.
+        if m and len(m.group(1)) >= 2 and numeric(w["text"]) is None:
             frac = len(m.group(1)) / len(w["text"])
             cut = w["x0"] + (w["x1"] - w["x0"]) * frac
             year = {**w, "text": m.group(2), "x0": cut}
@@ -2342,6 +2346,15 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
             if (pub_id, (table_label or "").strip()) in CAPTION_VETO_ADD:
                 raise Reject("C1 not a cross-method comparison (curated): "
                              + CAPTION_VETO_ADD[(pub_id, (table_label or "").strip())])
+            # A SENTENCE THAT MENTIONS THE TABLE IS NOT ITS CAPTION. 'Table 3
+            # reports the results of these benchmark experiments' opens a
+            # paragraph, and the percentages in it were read as a ragged grid.
+            # A caption never continues with a lower-case word; all five
+            # captions in the library that did were prose, every one refused
+            # for a reason that named the wrong fault.
+            if caption and caption.strip()[:1].islower():
+                raise Reject("C0 a sentence that mentions the table, not its caption: "
+                             + caption.strip()[:60])
             if (pub_id, (table_label or "").strip()) not in CAPTION_VETO_OVERRIDE:
                 caption_verdict(caption)
         except Reject as exc:
@@ -2616,8 +2629,10 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                               # an ERROR RATE is outside the metric vocabulary:
                               # InstaNovo's results table leads with one; so is
                               # a LOSS (PLMNovo's 'Classification Loss (↓)'),
-                              # where lower is better and nothing compares
-                              r"|error\s*rate|\bloss\b", head) or
+                              # where lower is better and nothing compares.
+                              # The text layer glues it ('ClassificationLoss'),
+                              # so a capital L after a lower-case letter counts.
+                              r"|error\s*rate|\bloss\b|(?-i:(?<=[a-z])Loss)", head) or
                     (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
                 year_cols.append(k)
         not_recorded_cols: list[dict] = []
@@ -2628,7 +2643,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                     "x": (edges[k][0] + edges[k][1]) / 2, "header": head_k,
                     "why": "year" if (re.fullmatch(r"(?i)years?", head_k) or not head_k)
                            else "error rate" if re.search(r"(?i)error\s*rate", head_k)
-                           else "loss" if re.search(r"(?i)\bloss\b", head_k)
+                           else "loss" if re.search(r"(?i)\bloss\b|(?-i:(?<=[a-z])Loss)", head_k)
                            else "speed or time",
                     "cells": {r["top"]: r["cells"][k]["printed"]
                               for r in body if k in r["cells"]}})
@@ -3636,6 +3651,10 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # InstaNovo; S13's caption states the last: 'We abbreviate "InstaNovo (FM
     # size matched)" to "IN (FM-SM)"'. The bracketed words are the variant.
     (273, "infmfinetuned"): ("InstaNovo-FM", "fine-tuned"),
+    # PLMNovo, Table 1: the protein language model it aligns to, 'ESM-2 8M'
+    # and 'ESM-2 650M', which the text layer glues into 'ESM-28M'.
+    (434, "plmnovoesm28m"): ("PLMNovo", "ESM-2 8M"),
+    (434, "plmnovoesm2650m"): ("PLMNovo", "ESM-2 650M"),
     (273, "infmfromscratch"): ("InstaNovo-FM", "from scratch"),
     (273, "infmfrozen"): ("InstaNovo-FM", "frozen"),
     (273, "inv12"): ("InstaNovo", "v1.2"),
@@ -3864,6 +3883,18 @@ ROW_DATASET: dict[int, list[tuple[re.Pattern, tuple[str, str | None, str | None]
                                                "Three-species"))],
     # pi-PrimeNovo's preprint prints the same table.
     107: [],
+    # PLMNovo's Table 1: both test sets come from "Data for 'accounting for
+    # digestion enzyme bias in Casanovo'" (its reference [32], Zenodo
+    # 12587317): the MSKB split's 200,000 tryptic test spectra, and the
+    # held-out non-tryptic multi-enzyme set.
+    # MSKB is MassIVE-KB ("originates from the MassIVE Knowledge Base ... we
+    # refer to this dataset as the MSKB dataset"), under the train/test split
+    # Melendez et al. published in that deposit. The split mixes the spectra
+    # Casanovo v4 trained on (MassIVE-KB v1 plus v2.0.15), so neither catalog
+    # version is it and the version stays NULL.
+    434: [(re.compile(r"(?i)^MSKB"), ("MassIVE-KB", None, "MSKB (tryptic)")),
+          (re.compile(r"(?i)^multi-?enzyme"), ("Casanovo digestion enzyme bias data", None,
+                                              "Multi-enzyme (non-tryptic)"))],
     # InstaNovo-FM's six validation sets ARE InstaNovo's application sets:
     # "we made use of the biological validation dataset featuring six smaller
     # sets ... we exclude the Immuno and Herceptin datasets used in the
@@ -3942,6 +3973,12 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (434, "Table 1"): ("MSKB is MassIVE-KB, under the train/test split (200,000 tryptic "
+                       "test spectra) published with Melendez et al.'s enzyme-bias data "
+                       "on Zenodo 12587317, the paper's reference [32]; that split mixes "
+                       "MassIVE-KB v1 and v2.0.15, so no version is recorded. The "
+                       "multi-enzyme rows are the held-out non-tryptic set from the same "
+                       "deposit."),
     (273, "Table S12"): _FM_SETS,
     (273, "Table S13"): _FM_SETS,
     (1, "Supplementary Table 2"): _EXC_YEAST,
@@ -3955,6 +3992,8 @@ TABLE_NOTE: dict[tuple[int, str], str] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
+    (434, "Table 1."): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
+    (434, "Table 1"): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     # pi-PrimeNovo's four-test-set table, likewise.
     (21, "SupplementaryTable6"): (None, "one per row (Data availability)"),
     (107, "SupplementaryTable6"): (None, "one per row (Data availability)"),
@@ -4931,6 +4970,30 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         lab = next(own_lab[ri] for ri in g if ri in own_lab)
                         for ri in g:
                             row_subset[ri] = lab
+                else:
+                    # EVENLY SPACED GROUPS, separated by a RULE rather than a
+                    # wider gap: PLMNovo's Table 1 prints 'MSKB (Tryptic)' and
+                    # 'Multi-Enzyme (Non-Tryptic)' on the middle row of three
+                    # rows each, every row 10-12 pt apart. Each row joins the
+                    # nearest label, and the reading is kept only if no row is
+                    # equidistant from two labels and every label sits at the
+                    # middle of the rows it gathered.
+                    labs = sorted(own_lab)
+                    nearest: dict[int, int] = {}
+                    for ri in range(len(body_)):
+                        d = sorted((abs(ri - li), li) for li in labs)
+                        if len(d) > 1 and d[0][0] == d[1][0]:
+                            nearest = {}
+                            break
+                        nearest[ri] = d[0][1]
+                    gathered: dict[int, list[int]] = {}
+                    for ri, li in nearest.items():
+                        gathered.setdefault(li, []).append(ri)
+                    if nearest and all(
+                            len(g) >= 2 and abs(li - (g[0] + g[-1]) / 2) <= 0.5
+                            for li, g in gathered.items()):
+                        for ri, li in nearest.items():
+                            row_subset[ri] = own_lab[li]
 
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""

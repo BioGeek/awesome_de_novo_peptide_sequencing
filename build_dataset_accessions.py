@@ -220,8 +220,11 @@ def main() -> int:
           FROM dataset_address a JOIN dataset_version v ON v.id = a.dataset_version_id
     """).fetchall()
     by_acc: dict[str, list[tuple[int, int, int]]] = collections.defaultdict(list)
+    # A DOI IS CASE-INSENSITIVE, and papers print Zenodo's in both cases:
+    # '10.5281/ZENODO.6791263' became a second dataset beside the lower-case
+    # one already catalogued. Every accession is keyed in lower case.
     for acc, dsid, vid, prov in rows:
-        by_acc[acc.split("#")[0]].append((dsid, vid, prov))
+        by_acc[acc.split("#")[0].lower()].append((dsid, vid, prov))
     for acc, claims in by_acc.items():
         datasets = {d for d, _, _ in claims}
         direct = [(d, v) for d, v, p in claims if not p]
@@ -249,7 +252,7 @@ def main() -> int:
     seen: set[tuple[int, int, int, str]] = set()
     unknown: list[tuple[int, str, str, str]] = []
     for (repo, acc), pids in sorted(hits.items(), key=lambda kv: -len(kv[1])):
-        target = known.get(acc)
+        target = known.get(acc.lower())
         if target is None:
             title = con.execute("SELECT title FROM publication WHERE id=?",
                                 (sorted(pids)[0],)).fetchone()

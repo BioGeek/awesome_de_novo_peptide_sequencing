@@ -1125,7 +1125,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**373 datasets, 401 versions, 432 addresses, 608 publication links over 131 papers.**
+**372 datasets, 400 versions, 431 addresses, 608 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1214,7 +1214,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 401 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 400 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1472,6 +1472,10 @@ Two traps, both hit while writing it:
     digits too many, so no record existed to flag it;
   - Casanovo's nine-species weights, already checkpoint 5;
   - Winnow's hold-one-out calibrators, which are now a checkpoint row.
+
+  **A DOI is case-insensitive**, and papers print Zenodo's in both cases, so
+  `10.5281/ZENODO.6791263` was a second Casanovo dataset beside the
+  lower-case one. Accessions are compared in lower case.
 
   **A trailing full stop is not part of a repository name.** A Hugging Face
   name may contain dots, so the pattern accepts them, and a URL that ends a
@@ -1960,7 +1964,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**85 verified tables from 25 papers, 3654 measurements.** The 55 refusals the
+**87 verified tables from 26 papers, 3734 measurements.** The 83 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2015,6 +2019,26 @@ from that prose. When prose sits left of the 'Table N' label on the caption's
 own line, the crop is bounded at the label, or at the table's own stub words
 just left of it, since a centred label can be indented from its stub. Over
 the whole library it moved six other crops, every one an improvement.
+
+**Four parser faults, found on one table.** PLMNovo's Table 1 was refused
+three times over, and each cause was general:
+- A number is never a label with a year glued on. `0.1983` matched as `0.`
+  plus the year 1983.
+- A glued `ClassificationLoss` counts as a loss column, which is not recorded.
+- Row groups separated by a RULE rather than by a wider gap are read by
+  attaching each row to its nearest group label. That reading is kept only
+  when every label sits at the middle of its group.
+- **Never reuse `near` as a local name inside `emit()`.** That is its page
+  text parameter, and shadowing it crashed dataset resolution on the next
+  table.
+
+Its MSKB rows are MassIVE-KB, with no version, under the split published with
+Melendez et al.'s enzyme-bias data.
+
+**A sentence that mentions a table is not its caption (C0).** A caption never
+continues with a lower-case word. All five such "captions" in the library
+were paragraphs opening "Table 3 reports...", refused before for whatever
+the prose's numbers happened to trip.
 
 **What the miner does not record is still in the printed layer.** A count
 row, a BLEU row, a year or speed column, a difference row: each is a row or
@@ -2139,7 +2163,7 @@ results.
 
 ### On the algorithm pages
 
-**23 methods carry a `## Reported comparisons` section**, placed after
+**24 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the
