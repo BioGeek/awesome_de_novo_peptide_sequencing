@@ -955,6 +955,18 @@ def block_bbox(rows: list[list[dict]], lo: int, hi: int,
             for w in rows[i] if numeric(w["text"])
             and w["x0"] >= edges[0][0] - 2 and w["x1"] <= edges[-1][1] + 2]
     data_right = max(nums) if nums else edges[-1][1]
+    # A HEADER WIDER THAN ITS NUMBERS is still the table's. ReNovo's Table 8
+    # heads its last column 'Peptide AUC', which runs 33 pt past the values
+    # and past the 14 pt pad, so the crop showed 'Peptide AU'. A word that
+    # STARTS inside the last column belongs to it, however far it runs.
+    # Only the HEADER rows, above the first data row: the prose under a table
+    # starts inside its last column just the same, and would widen the crop to
+    # the text block's edge.
+    tail = [w["x1"] for i in range(first, lo) if 0 <= i < len(rows)
+            for w in rows[i] if not numeric(w["text"])
+            and edges[-1][0] - 2 <= w["x0"] <= edges[-1][1]]
+    if tail:
+        x1 = max(x1, min(max(tail) + 6, right_limit))
     beyond = [w["x0"] for w in rows_band
               if w["x0"] > min(edges[-1][1], data_right + 6) + 2]
     if beyond:
@@ -1915,6 +1927,20 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # last sentence. At most two words of at most three characters each.
         if mine and len(mine) <= 2 and all(len(w["text"].strip()) <= 3 for w in mine):
             continue
+        # BODY PROSE UNDER A CENTRED ONE-LINE CAPTION. With a single caption
+        # line there is no pitch yet for the paragraph-gap test, and ReNovo's
+        # 'Table 8: Performance Comparison on Filtered Test Datasets.' ran on
+        # into fragments of the paragraph beneath it, which also clipped the
+        # crop on the prose's right edge. Once the caption read so far ends a
+        # sentence, a line with a word STRADDLING the caption's left edge is
+        # the text block, not the caption: a caption's own continuation lines
+        # start at that edge, and the other column's text ends before the
+        # gutter rather than running across it.
+        so_far = " ".join(w["text"] for i in range(li, last + 1) for w in rows[i]
+                          if lx0 - 6 <= w["x0"] <= right).rstrip()
+        if so_far.endswith((".", "!", "?")) and any(
+                w["x0"] < lx0 - 6 < w["x1"] for w in nxt):
+            break
         if mine:
             # Measured over the caption's OWN lines only: a row carrying just
             # the other column's text has to be stepped over and says nothing
@@ -3294,6 +3320,18 @@ _INSTANOVO_CI = ("Confidence intervals are calculated as ±1.96 × se_B where se
 CAPTION_OVERRIDE: dict[tuple[int, str], str] = {
     (1, "Supplementary Table 2"): "InstaNovo evaluation results on all datasets. " + _INSTANOVO_CI,
     (1, "Supplementary Table 3"): "InstaNovo+ evaluation results on all datasets. " + _INSTANOVO_CI,
+    # ReNovo, Table 8: the printed caption is one sentence; the reviewer asked
+    # for the paragraph set under the table to be carried with it, because it
+    # is what says how the filtered test sets were built and read. The walk had
+    # stitched fragments of that paragraph onto the caption.
+    (22, "Table8"): ("Performance Comparison on Filtered Test Datasets. From Table 8, we "
+                     "observe that the performance of both ReNovo and AdaNovo declines on "
+                     "the filtered test datasets, which is expected as the test set contains "
+                     "fewer similar data to the training set. However, it is also evident "
+                     "that ReNovo still outperforms the state-of-the-art baseline models "
+                     "significantly on the same filtered test sets. This clearly indicates "
+                     "that the improved performance of ReNovo is due to generalization "
+                     "rather than overfitting to the training dataset."),
 }
 
 
@@ -3301,6 +3339,11 @@ CAPTION_OVERRIDE: dict[tuple[int, str], str] = {
 # not a cross-method comparison. Each entry carries the reason, which is
 # printed as the refusal.
 CAPTION_VETO_ADD: dict[tuple[int, str], str] = {
+    # pi-PrimeNovo's Supplementary Table 10 (both versions): PrimeNovo against
+    # PepNet split by precursor charge, which the reviewer reads as an
+    # ablation over charge states rather than a comparison on a dataset.
+    (21, "SupplementaryTable10"): "per-charge breakdown, an ablation over charge states",
+    (107, "SupplementaryTable10"): "per-charge breakdown, an ablation over charge states",
     # LIPNovo+, Table 6, "Performance comparison of amino acids with similar
     # masses". Its columns are residues (M(o), F, Q, K), so what it compares
     # is amino acids, not methods; the reviewer rejected it on the caption.

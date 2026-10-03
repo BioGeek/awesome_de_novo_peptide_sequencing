@@ -1964,7 +1964,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**87 verified tables from 26 papers, 3734 measurements.** The 83 refusals the
+**94 verified tables from 28 papers, 4042 measurements.** The 95 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2034,6 +2034,17 @@ three times over, and each cause was general:
 
 Its MSKB rows are MassIVE-KB, with no version, under the split published with
 Melendez et al.'s enzyme-bias data.
+
+**A one-line centred caption has no pitch to stop on.** The caption walk ends
+at a paragraph gap measured against the caption's own line spacing, so a
+single centred line ran on into the paragraph under the table. That garbled
+ReNovo's Table 8 caption and clipped its crop on the prose's right edge. Once
+the caption read so far ends a sentence, a line with a word straddling the
+caption's left edge stops the walk: that is the text block, not a caption
+line. And a header wider than its numbers ('Peptide AUC') now widens the
+crop, counting only header rows, since the prose underneath starts inside the
+last column too. Over the library: no data changed and 14 crops moved, all
+improvements.
 
 **A sentence that mentions a table is not its caption (C0).** A caption never
 continues with a lower-case word. All five such "captions" in the library
@@ -2146,9 +2157,18 @@ modeling file with that one argument renamed -- and it runs on 4.57.
 The models also CHECK the text tables: `read_table_images.py --crosscheck`
 reads every accepted or signed-off text table's crop, and
 `crosscheck_tables.py` compares the parse with both readings ROW BY ROW, in
-column order, exact string for string. Both models agreeing with each other
-and not with the parse (`CHECK`) points a person at a cell; it never edits
-anything.
+column order. Numbers are compared by value, so GLM's '0.7540' is the
+printed '0.754'. Rows the miner DERIVED, not printed (TSARseqNovo's
+Casanovo rows), are skipped. Both models agreeing with each other and not
+with the parse (`CHECK`) points a person at a cell; it never edits anything.
+
+Run over all 100 accepted and signed-off text tables: **86 AGREE, 14
+ONE-READER, 0 CHECK, 0 DIFFER**. Every extracted number is confirmed by at
+least one model and contradicted by neither. Each one-reader case is a model's
+slip: PaddleOCR-VL dropping columns or reading 1.1 for 0.1, or GLM merging two
+rows. A PaddleOCR-VL pass over all of them takes over two hours on the 8 GB
+card, longer than one background job may run, but readings are cached per
+table, so a restart picks up where it stopped.
 
 What still cannot be read is the TABLE THAT IS AN IMAGE WITH NO CAPTION IN THE
 TEXT LAYER. DeepNovo-DIA's supplementary
@@ -2163,7 +2183,7 @@ results.
 
 ### On the algorithm pages
 
-**24 methods carry a `## Reported comparisons` section**, placed after
+**26 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the
