@@ -2287,6 +2287,15 @@ other. Three rules worth knowing:
   reading of each paper's prose: CrossNovo's two preprints print the same
   Table 2 and only one's prose says 'retrained'. Tables that differ in any
   number are both shown -- BiATNovo's two preprints are, since one adds PepNet.
+- **Measure first, then species.** The header's top row is the measure,
+  level first ('Amino acid recall', 'Peptide precision'), one merged cell
+  over all of its columns. The species sit in the row beneath, in the paper's
+  order. Measures follow where each first appears in the printed table.
+  Grouping by species first had split one measure across the whole width.
+- **Escape an asterisk in a note.** The page is Markdown around this HTML,
+  and Pandoc read the footnote markers in '0.491 / 0.725*' and '* Indicates
+  ...' as emphasis: they paired up, vanished, and italicised the text
+  between. Notes print `&#42;`.
 - **A second metric in one printed cell is a note, not a column.** DiffNovo
   prints PepNet's Plasma cells as '0.491 / 0.725*' and '0.550/0.530*/0.664+',
   the marked numbers being other metrics, some quoted from PepNet's paper.

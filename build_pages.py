@@ -568,8 +568,8 @@ METRIC_LABEL = {"precision": "Precision", "recall": "Recall", "auc": "AUC",
 
 
 def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
-    """One printed table, STANDARDISED: methods down the side, then the
-    species and the metric across, every value on 0-1.
+    """One printed table, STANDARDISED: methods down the side, the measure and
+    then the species across, every value on 0-1.
 
     Built from paper_comparison_result alone, never from the printed header,
     so a table the paper itself mis-typeset (DiffNovo's Table 1) comes out as
@@ -613,10 +613,17 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
         first_sub.setdefault(ck[0], len(first_sub))
         pos = (x["col_index"], x["row_index"])
         col_pos[ck] = min(col_pos.get(ck, pos), pos)
-    # COLUMNS IN PRINTED ORDER, not in order of first appearance: a first row
-    # with gaps (PEAKS, run on two metrics only) put 'Precision peptide'
-    # before 'Recall amino acid' in one part of a table and not the other.
-    cols.sort(key=lambda ck: (first_sub[ck[0]], col_pos[ck]))
+    # MEASURE FIRST, THEN SPECIES. Columns are grouped by what they measure
+    # (amino-acid recall, peptide precision, ...), so every column of one
+    # measure sits together under one merged header, and within a measure the
+    # species keep the paper's order. Measures follow where each first appears
+    # in the printed table. Grouping by species first, as the tables used to,
+    # split one measure across the width of the table.
+    first_meas: dict[tuple, tuple] = {}
+    for ck in cols:
+        m = (ck[1], ck[2])
+        first_meas[m] = min(first_meas.get(m, col_pos[ck]), col_pos[ck])
+    cols.sort(key=lambda ck: (first_meas[(ck[1], ck[2])], first_sub[ck[0]], col_pos[ck]))
     val = {}
     for x in res:
         rk = (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "", x["basis"])
@@ -643,6 +650,14 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
         ds += f'<br><small>{html.escape(c["dataset_version"])}</small>'
     subsets = [ck[0] for ck in cols]
     two_rows = any(subsets)
+
+    def measure(met: str, lev: str) -> str:
+        """'Amino acid recall', 'Peptide precision': the level first."""
+        lab = METRIC_LABEL.get(met, met)
+        if met.startswith("ptm") or not lev:
+            return lab
+        lab = lab if lab[:2].isupper() else lab[0].lower() + lab[1:]
+        return f"{lev[0].upper()}{lev[1:]} {lab}"
     # Bootstrap's own classes, not new CSS: custom.scss is in the publish's
     # global render key, so styling these in it would force a full render of
     # every page for a section on 22 of them. `table-responsive` lets a wide
@@ -650,22 +665,22 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
     out = ['<div class="table-responsive">',
            '<table class="table table-sm table-hover comparison" '
            'style="font-size:0.85em; width:auto">', "<thead>"]
+    # Top row: the measure, one merged cell over all its adjacent columns.
+    out.append(f'<tr><th rowspan="2">{ds}</th>' if two_rows else f'<tr><th>{ds}</th>')
+    i = 0
+    while i < len(cols):
+        j = i
+        while j + 1 < len(cols) and cols[j + 1][1:] == cols[i][1:]:
+            j += 1
+        out.append(f'<th colspan="{j - i + 1}" style="text-align:center">'
+                   f'{html.escape(measure(cols[i][1], cols[i][2]))}</th>')
+        i = j + 1
+    out.append("</tr>")
+    # Second row: the species or test set under each measure.
     if two_rows:
-        out.append(f'<tr><th rowspan="2">{ds}</th>')
-        i = 0
-        while i < len(cols):
-            j = i
-            while j + 1 < len(cols) and subsets[j + 1] == subsets[i]:
-                j += 1
-            out.append(f'<th colspan="{j - i + 1}">{html.escape(subsets[i])}</th>')
-            i = j + 1
-        out.append("</tr><tr>")
-    else:
-        out.append(f'<tr><th>{ds}</th>')
-    for _sub, met, lev in cols:
-        out.append(f"<th>{html.escape(METRIC_LABEL.get(met, met))}"
-                   f"<br><small>{html.escape(lev)}</small></th>")
-    out.append("</tr></thead><tbody>")
+        out.append("<tr>" + "".join(f"<th><small>{html.escape(sub)}</small></th>"
+                                    for sub in subsets) + "</tr>")
+    out.append("</thead><tbody>")
     derived = False
     # THE BASIS IS NOT A COLUMN. It is our reading of the paper's prose, not
     # part of the printed table, and as a column of its own it sat there with
@@ -735,8 +750,12 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
     for n in c["notes"]:
         notes.append("In the paper: " + html.escape(n))
     if notes:
-        out.append('<p class="comparison-notes"><small>' + "<br>".join(notes)
-                   + "</small></p>")
+        # The page is MARKDOWN around this HTML, and Pandoc still reads
+        # emphasis inside it: the footnote markers in "0.491 / 0.725*" and
+        # "* Indicates ..." paired up into italics and vanished. An entity
+        # prints the asterisk and means nothing to Markdown.
+        out.append('<p class="comparison-notes"><small>'
+                   + "<br>".join(notes).replace("*", "&#42;") + "</small></p>")
     return ["", "\n".join(out), ""]
 
 
@@ -902,7 +921,7 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         L += [f"## Reported comparisons ({n})" if n > 1 else "## Reported comparison", "",
               "The comparison table" + ("s" if n > 1 else "") + " this method's own "
               "papers print, standardised: every value on a 0-1 scale, methods "
-              "down the side, species and metric across. These are numbers papers "
+              "down the side, the measure and then the species across. These are numbers papers "
               "report **about themselves and their baselines**. They are not a "
               "leaderboard, and they do not compare across tables: each was "
               "produced by a different group, on the dataset named in its "
