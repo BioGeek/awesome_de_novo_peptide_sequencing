@@ -275,6 +275,18 @@ def printed_emphasis(rec: dict) -> dict | None:
     return out or None
 
 
+def _measured(rec: dict, i: int, k) -> bool:
+    """Whether a cell belongs to a METHOD, and so can be ranked at all.
+
+    A row with numbers and no method is a difference row -- MemNovo's
+    'Rel. Imp. (%)', TSARseqNovo's 'vs' -- or a bare one, and the miner
+    records nothing from it; ranking it anyway let a relative improvement of
+    +40.3 take the underline from every real peptide precision in its column.
+    """
+    j = i if rec["axis"] == "rows" else k
+    return bool(rec["methods"].get(j) or rec["methods"].get(str(j)))
+
+
 def _subset(rec: dict, i: int, k) -> str:
     """The subset one cell belongs to, whichever axis carries it.
 
@@ -310,6 +322,8 @@ def ranking(rec: dict) -> dict:
     maxis = rec["metric_axis"]
     for i, r in enumerate(rec["body"]):
         for k, printed in r["cells"].items():
+            if not _measured(rec, i, k):
+                continue
             j = k if maxis == "columns" else i
             key = (rec["metrics"].get(j), rec["levels"].get(j),
                    _subset(rec, i, k))
@@ -346,6 +360,8 @@ def _measurements(rec: dict) -> dict:
     groups: dict = {}
     for i, r in enumerate(rec["body"]):
         for k in r["cells"]:
+            if not _measured(rec, i, k):
+                continue
             j = k if maxis == "columns" else i
             key = (rec["metrics"].get(j) or "?", rec["levels"].get(j) or "?",
                    _subset(rec, i, k))
@@ -499,8 +515,10 @@ def grid_html(rec: dict) -> str:
         dimmed and labelled -- rather than left as a blank row that reads like
         a parsing failure.
         """
+        # Any labelled row with numbers and no method: the miner only leaves
+        # a row methodless when it is a difference ('vs X', 'Rel. Imp. (%)').
         return (bool(rec["body"][i]["cells"]) and not rec["methods"].get(i)
-                and bool(re.match(r"(?i)\s*(vs\.?|versus|\u0394)", rec["body"][i]["label"] or "")))
+                and bool((rec["body"][i]["label"] or "").strip()))
 
     def is_bare(i) -> bool:
         """A row with numbers and NO label: dropped by the miner and counted.
