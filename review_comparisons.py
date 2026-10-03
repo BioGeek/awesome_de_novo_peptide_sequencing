@@ -278,7 +278,9 @@ def unsquash(text: str) -> str:
     # 'M.mazei' -> 'M. mazei': an abbreviated genus keeps its space. The miner
     # already does this for subsets; row labels came through raw.
     text = re.sub(r"\b([A-Z])\.(?=[a-z])", r"\1. ", text)
-    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    # Only before a capital FOLLOWED BY A LETTER, so 'GluC', 'AspN' and
+    # 'LysC' keep their trailing capital; see unsquash_label in the miner.
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z][A-Za-z])", " ", text)
     return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
 
 
@@ -815,11 +817,12 @@ CREATE TABLE IF NOT EXISTS paper_comparison_column (
 CREATE TABLE IF NOT EXISTS paper_comparison_header (
     comparison_id INTEGER NOT NULL REFERENCES paper_comparison(id) ON DELETE CASCADE,
     header_row    INTEGER NOT NULL,            -- 0 = top
+    header_row_end INTEGER NOT NULL,           -- > header_row: set across rows
     col_start     INTEGER NOT NULL,
     col_end       INTEGER NOT NULL,            -- inclusive; > col_start = spanner
     text          TEXT NOT NULL,               -- as printed
     PRIMARY KEY (comparison_id, header_row, col_start),
-    CHECK (col_end >= col_start)
+    CHECK (col_end >= col_start AND header_row_end >= header_row)
 );
 
 CREATE TABLE IF NOT EXISTS paper_comparison_row (
@@ -931,10 +934,14 @@ def write_db(items: list[dict], approved: dict) -> None:
     A table nobody has signed off is not written; it is counted instead.
     """
     con = __import__("sqlite3").connect(B.DB)
-    con.execute("PRAGMA foreign_keys = ON")
-    con.executescript(PAPER_COMPARISON_SCHEMA)
+    # DROPPED AND RECREATED, not emptied: the tables are rebuilt whole on every
+    # run, and `CREATE TABLE IF NOT EXISTS` would silently keep an older shape
+    # after the schema changed (as it did when header_row_end was added).
+    con.execute("DROP VIEW IF EXISTS paper_comparison_measurement")
     for t in PC_TABLES:
-        con.execute(f"DELETE FROM {t}")
+        con.execute(f"DROP TABLE IF EXISTS {t}")
+    con.executescript(PAPER_COMPARISON_SCHEMA)
+    con.execute("PRAGMA foreign_keys = ON")
     n = collections.Counter()
     for rec in sorted(items, key=lambda r: (r["pub"], r["page"], r["tid"])):
         state = (approved.get(rec["tid"]) or {}).get("state")
@@ -980,8 +987,9 @@ def write_db(items: list[dict], approved: dict) -> None:
             "INSERT INTO paper_comparison_column VALUES (?,?,?,?)",
             [(cid, i, c["role"], c["why"] or None) for i, c in enumerate(g["columns"])])
         con.executemany(
-            "INSERT INTO paper_comparison_header VALUES (?,?,?,?,?)",
-            [(cid, h["row"], h["c0"], h["c1"], h["text"]) for h in g["header"]])
+            "INSERT INTO paper_comparison_header VALUES (?,?,?,?,?,?)",
+            [(cid, h["row"], h.get("row_end", h["row"]), h["c0"], h["c1"], h["text"])
+             for h in g["header"]])
         con.executemany(
             "INSERT INTO paper_comparison_row VALUES (?,?,?,?,?,?)",
             [(cid, i, r["role"], r["label"], r["group"] or None, r["why"] or None)

@@ -762,9 +762,12 @@ def row_label(toks: list[dict], first_edge: float) -> str:
     # slightly negative (overlapping glyph boxes) to 1.5 pt.
     merged: list[dict] = []
     for w in sorted(left, key=lambda w: w["x0"]):
-        if merged and -1.0 <= w["x0"] - merged[-1]["x1"] <= 1.6:
+        # (the LAST FRAGMENT's length, not the merged word's: '+Causal' then
+        # 'Novo' joins because the piece before 'Novo' was 'l')
+        if (merged and -1.0 <= w["x0"] - merged[-1]["x1"] <= 1.6
+                and min(len(w["text"]), merged[-1].get("_frag", len(merged[-1]["text"]))) <= 2):
             merged[-1] = {**merged[-1], "text": merged[-1]["text"] + w["text"],
-                          "x1": w["x1"]}
+                          "x1": w["x1"], "_frag": len(w["text"])}
         else:
             merged.append(w)
     left = merged
@@ -967,7 +970,8 @@ def header_model(rows: list[list[dict]], lo: int,
                  edges: list[tuple[float, float]], max_rows: int = 4,
                  left_bound: float | None = None, floor: int = 0,
                  rules: list[tuple[float, float, float]] | None = None,
-                 hard_floor: int = 0, data_left: float | None = None):
+                 hard_floor: int = 0, data_left: float | None = None,
+                 right_bound: float | None = None):
     """Read the header rows above a data block.
 
     A header row carrying about as many phrases as there are columns is a row
@@ -993,9 +997,30 @@ def header_model(rows: list[list[dict]], lo: int,
     # line is empty inside the table and is simply skipped.
     lo_x = edges[0][0] - 150 if left_bound is None else left_bound
     hi_x = edges[-1][1] + 10
+    # ...and never into the table beside it. The left side was already bounded
+    # by `left_bound`; the right was not, so LIPNovo's Table 3 read Table 5's
+    # 'Baseline Impu.' into its header, and CausalNovo's Table 2 read
+    # '†CasaNovo' and 'Bacillus' from Table 3.
+    if right_bound is not None:
+        hi_x = min(hi_x, right_bound)
 
     def clipped(r):
-        return [w for w in r if w["x1"] > lo_x and w["x0"] < hi_x]
+        # FRAGMENTS THAT TOUCH ARE ONE WORD here too, as in row labels:
+        # LIPNovo's Table 3 header arrives letter by letter ('P r e c .'), 30
+        # one-letter words that read as a line of prose and ended the walk.
+        out: list[dict] = []
+        for w in sorted((w for w in r if w["x1"] > lo_x and w["x0"] < hi_x),
+                        key=lambda w: w["x0"]):
+            # ...only where one side is a SHRED of one or two characters:
+            # LIPNovo+'s metric names touch too, and were split apart on
+            # purpose (split_metric_runs); joining them again undid that.
+            if (out and -1.0 <= w["x0"] - out[-1]["x1"] <= 1.6
+                    and min(len(w["text"]), out[-1].get("_frag", len(out[-1]["text"]))) <= 2):
+                out[-1] = {**out[-1], "text": out[-1]["text"] + w["text"],
+                           "x1": w["x1"], "_frag": len(w["text"])}
+            else:
+                out.append(w)
+        return out
 
     # NEVER WALK PAST THE CAPTION. Clipping the rows to the table's width made
     # the caption reachable, and a caption line holds few phrases, so it was
@@ -1085,9 +1110,10 @@ def header_model(rows: list[list[dict]], lo: int,
                 break
         r = clipped(rows[i])
         if not r:
-            taken += 1
-            if taken >= max_rows:
-                break
+            # An EMPTY row, once clipped, is the neighbour's line and costs
+            # nothing: counting it stopped LIPNovo's Table 3 one row short of
+            # its 'Amino Acid / Peptide / PTM' spanner. The floor and the gap
+            # rule still bound the walk.
             continue
         if sum(1 for w in r if numeric(w["text"])) >= 2:
             break                      # another data block, not a header
@@ -1124,8 +1150,10 @@ def header_model(rows: list[list[dict]], lo: int,
             continue
 
         inside = [q for q in ph if q["x1"] > edges[0][0]]
-        for q in [q for q in ph if q["x1"] <= edges[0][0]]:
-            stub.insert(0, q["text"])
+        # Prepended as a group in reading order, like the column headers: one
+        # at a time reversed 'Species Method' into 'Method Species'.
+        stub[0:0] = [q["text"] for q in sorted(ph, key=lambda q: q["x0"])
+                     if q["x1"] <= edges[0][0]]
         if not inside:
             taken += 1
             if taken >= max_rows:
@@ -1254,7 +1282,12 @@ def unsquash_label(text: str) -> str:
     # splitting at its case change gave 'Precision_A Aid(%)'.
     if "_" in text:
         return text.strip()
-    out = desquash(text)
+    # NOT desquash(), which also serves matching and must split 'PeptideAUC'.
+    # For a label it may split before a capital only when a letter follows:
+    # 'ApisMellifera' and 'HelaQC' split, while a protease written 'GluC',
+    # 'AspN' or 'LysC' keeps its trailing capital ('Glu C' was wrong).
+    out = re.sub(r"(?<=[a-z0-9])(?=[A-Z][A-Za-z])", " ", text)
+    out = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", out)
     # An abbreviated genus loses the space after its initial too:
     # 'C.bacteria' -> 'C. bacteria', 'M.mazei' -> 'M. mazei'. Only after a
     # SINGLE capital, so 'Chymo.' and 'Prec.' are untouched.
@@ -1307,7 +1340,11 @@ def prosey(text: str) -> bool:
     t = text.strip()
     # A long unbroken token is prose too, whatever its case. The longest real
     # header phrase here is 'AminoAcid-LevelPerformance' at 26 characters.
-    return bool(PROSE_TOKEN.match(t)) or len(t) > 34
+    # A long phrase that opens in lower case is the tail of a sentence:
+    # PLMNovo's caption ends 'in the 9-Species-v2 dataset.', glued to
+    # 'inthe9-Species-v2dataset.', and was read as a spanner over every column.
+    return (bool(PROSE_TOKEN.match(t)) or len(t) > 34
+            or (t[:1].islower() and len(t) >= 16))
 
 
 def metric_of(text: str) -> str | None:
@@ -2373,7 +2410,14 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
             rows, lo, edges, left_bound=left_bound,
             floor=(cap_end + 1 if 0 <= cap_end < lo else 0), rules=rules,
             hard_floor=(li + 1 if li is not None and li < lo else 0),
-            data_left=label_right)
+            data_left=label_right,
+            # bounded by this table's OWN last number too: the neighbour's
+            # limit is its first data column, and its stub (CausalNovo's
+            # Table 3 species, at x 327) sits left of that.
+            right_bound=min(nb_hi, max(
+                [w["x1"] for r in rows[lo:hi + 1] for w in r
+                 if numeric(w["text"]) and assign(w, edges) == len(edges) - 1]
+                or [edges[-1][1]]) + 14))
         if not own and not span:
             vetoed.append({"table_label": table_label, "caption": caption,
                            "reason": "G3 no header above the block",
@@ -2954,6 +2998,77 @@ CAPTION_VETO_OVERRIDE: dict[tuple[int, str], str] = {
 }
 
 
+# THE PRINTED LAYOUT, transcribed from the page, for a table whose header or
+# row groups the text layer cannot give back. These are the same tables whose
+# METHODS needed a curated column list (SPANNER_OVERRIDE and friends): what
+# defeated the parser defeats the header reader too. Used ONLY for the printed
+# layer; nothing standardised is read from it.
+#   header      (row, row_end, c0, c1, text). Columns count the printed
+#               non-stub columns from 0; -1 is the label column and -2 the
+#               row-group column. row_end > row is a cell set across rows.
+#   row_groups  (first body row, last body row, text) for a group column.
+#   row_labels  the body rows' labels, where the text layer glued the group
+#               label into them.
+LAYOUT_OVERRIDE: dict[tuple[int, str], dict] = {
+    # DiffNovo, Table 1. Mis-typeset IN THE PAPER: the method names wrap
+    # inside the two metric spanners, and 'Cascadia' sits alone over the last
+    # column. Reproduced as printed rather than tidied.
+    (13, "Table 1"): {"header": [
+        (0, 0, -1, -1, "DIA Datasets"),
+        (0, 0, 0, 3, "Amino Acid Recall DiffNovo DeepNovo-DIA PepNet Cascadia"),
+        (0, 0, 4, 6, "Amino Acid Precision DiffNovo DeepNovo-DIAPepNet"),
+        (0, 0, 7, 7, "Cascadia")]},
+    # BiATNovo, Table 2. The method row arrives as one glued token.
+    (45, "Table 2"): {"header": [
+        (0, 0, 0, 1, "OC Dataset"), (0, 0, 2, 3, "UTI Dataset"),
+        (0, 0, 4, 6, "Plasma Dataset"),
+        (1, 1, -1, -1, "Evaluation"),
+        (1, 1, 0, 0, "DeepNovo-DIA"), (1, 1, 1, 1, "BiATNovo"),
+        (1, 1, 2, 2, "DeepNovo-DIA"), (1, 1, 3, 3, "BiATNovo"),
+        (1, 1, 4, 4, "DeepNovo-DIA"), (1, 1, 5, 5, "PepNet"),
+        (1, 1, 6, 6, "BiATNovo")]},
+    # Casanovo, Table 2: level spanners, then method names (Casanovo over
+    # three of its own columns), then the measure.
+    (49, "Table2"): {"header": [
+        (0, 0, 0, 4, "Peptide-level performance"),
+        (0, 0, 5, 8, "Amino acid-level performance"),
+        (1, 1, 0, 0, "DeepNovo"), (1, 1, 1, 1, "PointNovo"),
+        (1, 1, 2, 4, "Casanovo"),
+        (1, 1, 5, 5, "DeepNovo"), (1, 1, 6, 6, "PointNovo"),
+        (1, 1, 7, 8, "Casanovo"),
+        (2, 2, -1, -1, "Species"),
+        (2, 2, 0, 0, "Prec."), (2, 2, 1, 1, "Prec."), (2, 2, 2, 2, "Prec."),
+        (2, 2, 3, 3, "Cov."), (2, 2, 4, 4, "Prec. at Cov.=1"),
+        (2, 2, 5, 5, "Prec."), (2, 2, 6, 6, "Prec."), (2, 2, 7, 7, "Prec."),
+        (2, 2, 8, 8, "Prec at Cov.=1")]},
+    # MemNovo, Table 6. Its metric row arrives glued
+    # ('AAPr.AARe.Pep.Pr.Pep.Re.').
+    (202, "Table 6"): {"header": [
+        (0, 0, 0, 3, "InstaNovo"), (0, 0, 4, 7, "InstaNovo + MemNovo"),
+        (0, 0, 8, 9, "\u0394"),
+        (1, 1, -1, -1, "Species"),
+        *[(1, 1, i, i, t) for i, t in enumerate(
+            ["AA Pr.", "AA Re.", "Pep. Pr.", "Pep. Re."] * 2
+            + ["AA Pr.", "Pep. Re."])]]},
+    # CrossNovo, Tables 6 and 7 (antibodies). Metric groups down the side,
+    # set across three rows each, and HC/LC chain spanners over the enzymes.
+    (9, "Table6"): {"header": [
+        (0, 1, -2, -2, "Metrics"), (0, 1, -1, -1, "Methods"),
+        (0, 0, 0, 2, "HC"), (0, 0, 3, 3, "LC"), (0, 1, 4, 4, "Average"),
+        (1, 1, 0, 0, "AspN"), (1, 1, 1, 1, "Chymotrypsin"),
+        (1, 1, 2, 2, "Trypsin"), (1, 1, 3, 3, "AspN")],
+        "row_groups": [(0, 2, "Amino Acid Precision"), (3, 5, "Peptide Recall")]},
+    (9, "Table7"): {"header": [
+        (0, 1, -2, -2, "Metrics"), (0, 1, -1, -1, "Methods"),
+        (0, 0, 0, 5, "HC"), (0, 0, 6, 7, "LC"), (0, 1, 8, 8, "Average"),
+        *[(1, 1, i, i, t) for i, t in enumerate(
+            ["AspN", "Chymo.", "GluC", "LysC", "Proteinase", "Trypsin",
+             "AspN", "LysC"])]],
+        "row_groups": [(0, 2, "Amino Acid Precision"), (3, 5, "Peptide Recall")],
+        "row_labels": ["Casa.V2", "Contra.", "Ours"] * 2},
+}
+
+
 # THE CONVERSE: a table no caption rule refuses that the reviewer judged is
 # not a cross-method comparison. Each entry carries the reason, which is
 # printed as the refusal.
@@ -3423,10 +3538,18 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
     },
     # GyroNovo, Tables 1 and 2: 'Baseline' is LIPNovo as the authors
     # reproduced it, beside LIPNovo's NovoBench numbers.
-    **{(354, t): {"LIPNovo@reproduced": (
-        "retrained", "we report both its NovoBench results and our reproduced "
-        "results to ensure a fair comparison. We refer to the reproduced "
-        "version as the \u201cbaseline\u201d")} for t in ("Table1", "Table2")},
+    # Every other baseline is quoted: "Unless otherwise noted, the reported
+    # results are taken from NovoBench." That includes LIPNovo+, whose
+    # numbers NovoBench cannot hold -- they match LIPNovo+'s own paper
+    # exactly (0.831 / 0.831 / 0.619) -- so 'quoted' is right even where the
+    # source the sentence names is not.
+    **{(354, t): {
+        "LIPNovo@reproduced": (
+            "retrained", "we report both its NovoBench results and our "
+            "reproduced results to ensure a fair comparison. We refer to the "
+            "reproduced version as the \u201cbaseline\u201d"),
+        "*": ("quoted", "Unless otherwise noted, the reported results are "
+                        "taken from NovoBench.")} for t in ("Table1", "Table2")},
     # LIPNovo+, Tables 2, 3 and 4: 'Baseline' is Casanovo, retrained.
     **{(432, t): {"Casanovo@retrained": (
         "retrained", "we retrain CasaNovo with the same data splits and "
@@ -4221,6 +4344,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         # method twice under two bases: GyroNovo quotes LIPNovo from NovoBench
         # AND reports its own reproduction, as 'Baseline'.
         key = f"{v[1]}@{v[2]}" if f"{v[1]}@{v[2]}" in over else v[1]
+        # '*' covers every OTHER method in the table, never the paper's own:
+        # "Unless otherwise noted, the reported results are taken from
+        # NovoBench" is a statement about the baselines.
+        if key not in over and "*" in over and not (subject and v[0] == subject["id"]):
+            key = "*"
         if key in over:
             bases[k] = (over[key][0], over[key][1], False)
 
@@ -4429,7 +4557,9 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         rows, year and speed columns), each with the reason. `results` are the
         standardised measurements, each keyed to the printed cell it came from.
         """
-        has_group = any(row_subset.values())
+        lay = LAYOUT_OVERRIDE.get((base.get("publication_id"),
+                                   (tb.get("registry_label") or tb["table_label"] or "").strip()))
+        has_group = any(row_subset.values()) or bool(lay and lay.get("row_groups"))
         stub_roles = (["group"] if has_group else []) + ["label"]
         data = [{"role": "data" if (axis == "rows" or k in methods)
                  else "not_recorded",
@@ -4460,8 +4590,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             for i, t in enumerate(st):
                 if t:
                     rowsh[depth - len(st) + i][gc] = t
+        # Not a body row's own label either: LIPNovo's 'Baseline†' sits on a
+        # line of its own above the block and was read into the stub header.
+        body_labels = {(r["label"] or "").strip() for r in tb["body"]}
         stub_words = [w for w in (tb.get("stub") or "").split()
-                      if w.lower().strip(".,;:") not in FUNCTION_WORDS and not prosey(w)]
+                      if w.lower().strip(".,;:") not in FUNCTION_WORDS and not prosey(w)
+                      and w not in body_labels]
         if stub_words:
             rowsh[depth - 1][0] = " ".join(stub_words)
         header = []
@@ -4474,10 +4608,18 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 while (j + 1 < len(gcs) and gcs[j + 1] == gcs[j] + 1
                        and cells_h[gcs[j + 1]] == cells_h[gcs[i]] and gcs[i] >= off):
                     j += 1
-                header.append({"row": hr, "c0": gcs[i],
+                header.append({"row": hr, "row_end": hr, "c0": gcs[i],
                                "c1": gcs[j] if gcs[i] >= off else off - 1,
                                "text": cells_h[gcs[i]]})
                 i = j + 1
+        if lay and lay.get("header"):
+            def gcol(c):
+                if c >= 0:
+                    return off + c
+                return (off - 1) if c == -1 else 0
+            header = [{"row": r0, "row_end": r1, "c0": gcol(c0),
+                       "c1": gcol(c1), "text": t}
+                      for r0, r1, c0, c1, t in lay["header"]]
         # ROWS, body and not-recorded, in the order they are printed.
         items = [("body", ri, r.get("top") or 0.0) for ri, r in enumerate(tb["body"])] + [
             ("nr", ni, nr["top"]) for ni, nr in enumerate(tb.get("not_recorded_rows") or [])]
@@ -4492,8 +4634,15 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 role = ("data" if measured else
                         "difference" if (r["label"] or "").strip() and r["cells"]
                         else "not_recorded")
-                rows_out.append({"role": role, "label": r["label"] or "",
-                                 "group": row_subset.get(idx, ""),
+                lab_i, grp_i = r["label"] or "", row_subset.get(idx, "")
+                if lay:
+                    if lay.get("row_labels") and idx < len(lay["row_labels"]):
+                        lab_i = lay["row_labels"][idx]
+                    for g0, g1, gt in lay.get("row_groups") or []:
+                        if g0 <= idx <= g1:
+                            grp_i = gt
+                rows_out.append({"role": role, "label": lab_i,
+                                 "group": grp_i,
                                  "why": "" if role == "data" else
                                         ("difference" if role == "difference"
                                          else "no label on the page")})

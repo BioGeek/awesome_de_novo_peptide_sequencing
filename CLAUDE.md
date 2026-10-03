@@ -1847,7 +1847,7 @@ it and put its numbers beside another paper's:
 |---|---|---|
 | printed | `paper_comparison` | one printed table, or one dataset part of a split one: label, page, crop box, caption, footnote, our design note, review status |
 | printed | `paper_comparison_column` | every grid column, stub included, with its role (`group`, `label`, `data`, `not_recorded`) |
-| printed | `paper_comparison_header` | header cells with `col_start`/`col_end`, so a spanner stays one cell |
+| printed | `paper_comparison_header` | header cells with `col_start`/`col_end` and `header_row`/`header_row_end`, so a spanner, or a cell set across two header rows, stays one cell |
 | printed | `paper_comparison_row` | every printed row, its label and row-group label |
 | printed | `paper_comparison_cell` | every printed cell, text exactly as printed, plus the paper's own bold, underline and not-run marks |
 | standard | `paper_comparison_result` | one measurement per cell (or per part of a two-value cell): method, variant, metric, level, canonical species and accession, value on 0-1, basis and its cue |
@@ -1866,6 +1866,26 @@ column with role `not_recorded` and a `why`, holding its printed cells, so
 the table renders as printed and none of it is mistaken for a measurement.
 Getting there meant extending the miner, which used to throw those away
 before the review payload was built.
+
+**The header is read from the page, except where the page cannot be read.**
+Most headers come straight from the miner's header walk, which needed four
+fixes to be good enough to store:
+- the walk is now bounded on the RIGHT by the table's own last number;
+- empty rows no longer count against its four-row limit;
+- touching one- or two-letter shreds are joined (`P r e c .`);
+- a stub row keeps its reading order.
+
+Six tables defeat it, the same six whose METHODS needed a curated column list:
+DiffNovo's Table 1, BiATNovo's Table 2, Casanovo's Table 2, MemNovo's Table 6
+and CrossNovo's two antibody tables. Their layout is transcribed from the
+page in `LAYOUT_OVERRIDE`, which feeds only the printed layer. DiffNovo's
+Table 1 is mis-typeset in the paper itself, with its method names wrapped
+inside the metric spanners, and it is stored that way rather than tidied.
+
+What remains imperfect is the TEXT, not the structure: where a PDF drops the
+spaces, a label is stored as extracted (`Aminoacid-levelprecision(%)`). The
+review page re-inserts them for display, and the stored string is never
+silently "corrected".
 
 **Our bold and underline are not stored.** They are a ranking of the stored
 values within a measurement, recomputed wherever a table is drawn; storing
