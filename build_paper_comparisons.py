@@ -1738,7 +1738,17 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                       key=lambda q: q[2][0][0])
         left_ = [q for q in side if q[2][-1][1] <= edges[0][0] + 1]
         right_ = [q for q in side if q[2][0][0] >= edges[-1][1] - 1]
-        lim_lo = (max(q[2][-1][1] for q in left_) + 4) if left_ else 0.0
+
+        # THE LEFT NEIGHBOUR ENDS WHERE ITS NUMBERS END, not where its last
+        # column is tiled to: that interval runs to the gutter's midpoint, past
+        # the start of THIS table's stub, and CausalNovo's Table 3 lost its
+        # species column (x 327) to Table 2's tiled edge.
+        def data_right(q):
+            xs = [w["x1"] for i in range(q[0], q[1] + 1) if 0 <= i < len(rows)
+                  for w in rows[i] if numeric(w["text"])
+                  and q[2][0][0] - 2 <= w["x0"] and w["x1"] <= q[2][-1][1] + 2]
+            return max(xs) if xs else q[2][-1][1]
+        lim_lo = (max(data_right(q) for q in left_) + 4) if left_ else 0.0
         lim_hi = (min(q[2][0][0] for q in right_) - 4) if right_ else float("inf")
         neighbours[(lo, hi, edges[0][0])] = (lim_lo, lim_hi)
     for lo, hi, edges in parts:
