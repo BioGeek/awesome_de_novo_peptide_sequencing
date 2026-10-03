@@ -2533,6 +2533,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         not_recorded_rows: list[dict] = []
         multi = None
         pending: list[str] = []          # interstitial group-label words
+        used_as_label: set[int] = set()  # label lines already given to a row
         pending_top: float | None = None   # where that label sits
         # WHERE THE DATA REALLY BEGINS, not where the first column's interval
         # is extrapolated to begin. `column_edges` tiles the intervals by
@@ -2631,6 +2632,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                         all(w["x1"] <= label_right + 1 for w in below) and \
                         min(w["top"] for w in below) - min(w["top"] for w in r) <= 7.0:
                     label = row_label(below, label_right)
+                    used_as_label.add(ri_abs + 1)
             if cells and (COUNT_ROW.search(label)
                           or UNRECORDED_METRIC_ROW.search(label)):
                 dropped += 1
@@ -2657,6 +2659,11 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                     kk = assign(w, edges)
                     if kk is not None:
                         absent[kk] = w["text"].strip()
+            if len(cells) == 0 and ri_abs in used_as_label:
+                # Already the label of the row above it (GA-Novo's Table 5):
+                # carried on as a group label too, it put 'GA-Novo' over the
+                # PEAKS row as well.
+                continue
             if len(cells) == 0:
                 # A row with no cells inside the table is either an
                 # interstitial group label or a rule. Its words are carried to

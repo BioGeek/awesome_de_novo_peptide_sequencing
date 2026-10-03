@@ -545,6 +545,13 @@
   "pub": 22,
   "state": "dismissed"
  },
+ "p225-pg10-t1": {
+  "cells": 2,
+  "label": "Table 1",
+  "on": "2026-10-04",
+  "pub": 225,
+  "state": "approved"
+ },
  "p227-pg8-tiv": {
   "cells": 0,
   "label": "TABLEIV",
@@ -1076,6 +1083,13 @@
   "on": "2026-10-03",
   "pub": 42,
   "state": "dismissed"
+ },
+ "p42-pg10-tv": {
+  "cells": 2,
+  "label": "TABLEV",
+  "on": "2026-10-04",
+  "pub": 42,
+  "state": "approved"
  },
  "p42-pg8-tii": {
   "cells": 0,

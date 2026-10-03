@@ -1985,7 +1985,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**101 verified tables from 29 papers, 4328 measurements.** The 119 refusals the
+**103 verified tables from 31 papers, 4342 measurements.** The 119 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2262,7 +2262,7 @@ results.
 
 ### On the algorithm pages
 
-**26 methods carry a `## Reported comparisons` section**, placed after
+**28 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side
 with their basis, species then metric across, every value on 0-1 at the
