@@ -1009,6 +1009,14 @@ def header_model(rows: list[list[dict]], lo: int,
         rr = clipped(rows[j])
         if rr and any(numeric(w["text"]) for w in rr):
             break                     # another table's data; stop here
+        # A WRAPPED CAPTION LINE IS NOT A HEADER, though its spaced words
+        # cover several columns just as a header's do. InstaNovo-FM's Table
+        # S13 caption runs three lines ('... The best model per dataset is in
+        # bold.', 'We abbreviate ... to conserve page space.'), and both
+        # continuation lines were read into the column headers. A header row
+        # carries no function words; two or more of them make it a sentence.
+        if sum(1 for w in rr if w["text"].lower().strip(".,;:") in FUNCTION_WORDS) >= 2:
+            break
         if header_like(j):
             floor = j                 # keep descending: a STUB row may sit
                                       # between the spanner and the header, as
@@ -1097,10 +1105,18 @@ def header_model(rows: list[list[dict]], lo: int,
         if is_own_row:
             # A row of column headers: assign the individual WORDS, so two
             # labels that a merge would have joined stay in their own columns.
-            for w in r:
+            # Prepended as a GROUP, in reading order. The walk goes upward, so
+            # each row goes in front of the rows below it -- but prepending
+            # word by word also reversed the words WITHIN a row, which turned
+            # InstaNovo-FM's 'IN-FM (fine-tuned)' into '(fine-tuned) IN-FM'
+            # and 'IN v1.2' into 'v1.2 IN', neither of which resolves.
+            row_own = collections.defaultdict(list)
+            for w in sorted(r, key=lambda w: w["x0"]):
                 k = assign(w, edges)
                 if k is not None:
-                    own[k].insert(0, w["text"])
+                    row_own[k].append(w["text"])
+            for k, ws in row_own.items():
+                own[k][0:0] = ws
         elif len(inside) == len(edges):
             # One phrase per column: unambiguous whatever the widths.
             for k, q in enumerate(sorted(inside, key=lambda q: q["x0"])):
@@ -1114,12 +1130,15 @@ def header_model(rows: list[list[dict]], lo: int,
             # with no header of their own, so they collided. A real spanner is
             # WIDER than a column by construction.
             own_wide = []
-            for q in list(inside):
+            row_own = collections.defaultdict(list)
+            for q in sorted(inside, key=lambda q: q["x0"]):
                 k = assign(q, edges)
                 if k is not None and edges[k][0] - 1 <= q["x0"] and q["x1"] <= edges[k][1] + 1:
-                    own[k].insert(0, q["text"])
+                    row_own[k].append(q["text"])
                 else:
                     own_wide.append(q)
+            for k, ws in row_own.items():
+                own[k][0:0] = ws
             inside = own_wide
             if not inside:
                 taken += 1
@@ -1203,6 +1222,12 @@ def _forms(text: str) -> tuple[str, str, str]:
 
 
 PROSE_TOKEN = re.compile(r"^[a-z][a-z.,;:]{9,}$")
+
+
+# Words a sentence needs and a header row does not.
+FUNCTION_WORDS = frozenset(
+    "the a an and or of to in is are was were for with on by we our this that "
+    "per as from at be".split())
 
 
 def prosey(text: str) -> bool:
@@ -3023,6 +3048,15 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     (202, "instanovomemnovo"): ("MemNovo", "on InstaNovo"),
     # TSARseqNovo. Its table misspells pi-HelixNovo as 'pi-HelexiNovo'.
     (18, "pihelexinovo"): ("\u03c0-HelixNovo", None),
+    # InstaNovo-FM, Tables S12 and S13. 'IN-FM' is InstaNovo-FM and 'IN' is
+    # InstaNovo; S13's caption states the last: 'We abbreviate "InstaNovo (FM
+    # size matched)" to "IN (FM-SM)"'. The bracketed words are the variant.
+    (273, "infmfinetuned"): ("InstaNovo-FM", "fine-tuned"),
+    (273, "infmfromscratch"): ("InstaNovo-FM", "from scratch"),
+    (273, "infmfrozen"): ("InstaNovo-FM", "frozen"),
+    (273, "inv12"): ("InstaNovo", "v1.2"),
+    (273, "in"): ("InstaNovo", None),
+    (273, "infmsm"): ("InstaNovo", "FM size matched"),
 }
 
 
@@ -3182,6 +3216,17 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # MSV000082368, the DeepNovo-DIA deposit.
     (45, "Table 2"): ("De novo sequencing of DIA data",
                       "MSV000082368: OC, UTI and plasma"),
+    # InstaNovo-FM, Tables S12 and S13: "the six held-out biological
+    # validation datasets". The paper names them only by these labels, gives
+    # no accession for any, and they are not among the Hugging Face tiers it
+    # publishes, so nothing in the catalog can be said to BE them. Recorded as
+    # printed rather than mapped to a guess.
+    (273, "Table S12"): (None, "the six held-out biological validation "
+                         "datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL "
+                         "Antibodies, Wound Fluids); no accession stated"),
+    (273, "Table S13"): (None, "the six held-out biological validation "
+                         "datasets (GluC, S Brodae, Snake Venoms, Hela QC, TPL "
+                         "Antibodies, Wound Fluids); no accession stated"),
     (30, "TABLE I"): ("De novo sequencing of DIA data",
                       "MSV000082368: UTI, OC and plasma (206,477 / 203,780 / "
                       "1,097,400 spectra), each split randomly 0.9 / 0.05 / 0.05 "
