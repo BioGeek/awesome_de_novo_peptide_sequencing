@@ -351,7 +351,19 @@ def numeric(tok: str) -> tuple[float, float | None] | None:
     # differences as '−0.4', which read as text left those rows one value
     # short and refused the table as ragged.
     tok = tok.strip().replace("\u2212", "-")
+    # A PRECURSOR CHARGE ('2+', '3+') is a label, not a number: pi-PrimeNovo's
+    # Table 10 reports recall per charge, and reading '2+' as 2 turned its label
+    # column into a data column headed 'Charge'. Only a single digit with a
+    # plus; '0.664+' is a value with a footnote marker and stays one.
+    if re.fullmatch(r"[1-9]\+", tok):
+        return None
     m = PM.match(tok)
+    if m:
+        return float(m.group(1)), float(m.group(2))
+    # 'value(sd)': Pairwise Attention prints its PA column as '0.463(0.004)',
+    # the mean of three seeds with the standard deviation in brackets. Unread,
+    # the whole column vanished and BASE and PA merged into one.
+    m = re.fullmatch(r"(-?\d*\.\d+)\((\d*\.\d+)\)", tok)
     if m:
         return float(m.group(1)), float(m.group(2))
     m = NUM.match(tok)
@@ -427,7 +439,9 @@ SPECIES_COMMON = {
     "c bacteria": "Candidatus Thiodiazotropha endoloripes",
     "bacillus": "Bacillus subtilis",
 }
-AGGREGATE = re.compile(r"(?i)^\s*(average|avg\.?|mean|overall)\s*$")
+# 'Weighted Average' (Prime-DiffNovo) is an aggregate too, and a different
+# one: weighted by spectra, so it keeps its own name, like Average and Mean.
+AGGREGATE = re.compile(r"(?i)^\s*(weighted\s*average|average|avg\.?|mean|overall)\s*$")
 _SPECIES_CACHE: dict | None = None
 
 
@@ -456,7 +470,9 @@ def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None,
     # are unified -- 'Average', 'AVERAGE', 'Avg.'.
     ma = AGGREGATE.match(printed)
     if ma:
-        word = ma.group(1).lower().rstrip(".")
+        word = re.sub(r"\s+", " ", ma.group(1).lower().rstrip("."))
+        if word.startswith("weighted"):
+            return "Weighted average", None
         return {"average": "Average", "avg": "Average",
                 "mean": "Mean", "overall": "Overall"}[word], None
     species = species_index(con)
@@ -633,23 +649,45 @@ def column_edges(rows: list[list[dict]], lo: int, hi: int) -> list[tuple[float, 
     centred over six columns of ContraNovo's Table 1, reached columns 2 and 3
     and left the other four with no metric at all.
     """
-    centres: list[float] = []
-    for r in rows[lo:hi + 1]:
+    pts: list[tuple[float, int]] = []
+    for ri, r in enumerate(rows[lo:hi + 1]):
         for w in r:
             if numeric(w["text"]):
-                centres.append((w["x0"] + w["x1"]) / 2)
-    if not centres:
+                pts.append(((w["x0"] + w["x1"]) / 2, ri))
+    if not pts:
         return []
-    centres.sort()
+    pts.sort()
     # Single-linkage on the gaps. 9 pt is wider than the inter-digit spacing
     # inside one number and narrower than any inter-column gutter seen here.
-    groups: list[list[float]] = [[centres[0]]]
-    for c in centres[1:]:
-        if c - groups[-1][-1] <= 9.0:
-            groups[-1].append(c)
+    groups: list[list[tuple[float, int]]] = [[pts[0]]]
+    for p in pts[1:]:
+        if p[0] - groups[-1][-1][0] <= 9.0:
+            groups[-1].append(p)
         else:
-            groups.append([c])
-    mids = [sum(g) / len(g) for g in groups]
+            groups.append([p])
+    # A COLUMN IS SUPPORTED BY MORE THAN ONE ROW. A table set in one page
+    # column shares its rows with the other column's prose, and a number in
+    # that prose makes a column of its own: ContraNovo's Table 2 picked up
+    # '0.46 Da' and '0.33' from the paragraph beside it and was refused as a
+    # five-column ragged grid. In a block of four or more numeric rows, a group
+    # that only one row supports is not a column.
+    # ...and only when that one number sits AMONG WORDS, which is what prose
+    # looks like. Dropping every single-row group moved real numbers into a
+    # neighbouring column's widened interval and broke PhysNovo's page 8, whose
+    # stacked tables put isolated values in rows of their own.
+    n_rows = len({ri for _x, ri in pts})
+    if n_rows >= 4:
+        def prose_stray(g) -> bool:
+            if len({ri for _x, ri in g}) != 1:
+                return False
+            x, ri = g[0]
+            near = [w for w in rows[lo + ri]
+                    if abs((w["x0"] + w["x1"]) / 2 - x) <= 60
+                    and sum(ch.isalpha() for ch in w["text"]) >= 2]
+            return len(near) >= 2
+        kept = [g for g in groups if not prose_stray(g)]
+        groups = kept or groups
+    mids = [sum(x for x, _r in g) / len(g) for g in groups]
     if len(mids) == 1:
         half = 12.0
         return [(mids[0] - half, mids[0] + half)]
@@ -695,6 +733,26 @@ def column_groups(edges: list[tuple[float, float]]) -> list[list[int]]:
             cur.append(i + 1)
     out.append(cur)
     return [g for g in out if len(g) >= 2] or [list(range(len(edges)))]
+
+
+def spanner_phrases(row: list[dict], gap: float = 3.0) -> list[dict]:
+    """Phrases for a SPANNER row: words a normal space apart are one phrase.
+
+    phrases() merges only a shredded row, so on an ordinary row every word is
+    its own phrase, and a spanner row (fewer phrases than columns) was then
+    distributed word by word: Prime-DiffNovo's 'Nine-species MSV000081382'
+    went 'Nine-species' to two columns and the accession to the next two, and
+    the version cue reached only half of each dataset. A normal space is 2-3
+    pt; separate spanners are far wider apart. Own-header rows keep the word
+    level reading, which tightly set column headers need (AdaNovo).
+    """
+    out: list[dict] = []
+    for w in sorted(phrases(row), key=lambda w: w["x0"]):
+        if out and 0 <= w["x0"] - out[-1]["x1"] <= gap:
+            out[-1] = {**out[-1], "text": out[-1]["text"] + " " + w["text"], "x1": w["x1"]}
+        else:
+            out.append(dict(w))
+    return out
 
 
 def phrases(row: list[dict], gap: float = 6.0) -> list[dict]:
@@ -1070,6 +1128,12 @@ def header_model(rows: list[list[dict]], lo: int,
         # carries no function words; two or more of them make it a sentence.
         if sum(1 for w in rr if w["text"].lower().strip(".,;:") in FUNCTION_WORDS) >= 2:
             break
+        # ...and a line that ENDS A SENTENCE is caption prose too: Prime-
+        # DiffNovo's caption closes 'across nine species on two benchmark
+        # datasets.', one function word short of the test above, and its words
+        # were read in as spanners ('species', 'two', 'benchmark').
+        if len(rr) >= 4 and rr[-1]["text"].rstrip().endswith("."):
+            break
         if header_like(j):
             floor = j                 # keep descending: a STUB row may sit
                                       # between the spanner and the header, as
@@ -1141,7 +1205,7 @@ def header_model(rows: list[list[dict]], lo: int,
         # inside/outside split below still work; only the spanner path drops
         # prose, since that is the path a stray line of body text can corrupt.
         ph = (phrases(r) if is_own_row
-              else [q for q in phrases(r) if not prosey(q["text"])])
+              else [q for q in spanner_phrases(r) if not prosey(q["text"])])
         if not is_own_row and not ph:
             # Nothing but prose on this line, from the other column of a
             # two-column page. Skipped rather than ending the walk: LIPNovo's
@@ -1211,7 +1275,15 @@ def header_model(rows: list[list[dict]], lo: int,
             # WIDER than a column by construction.
             own_wide = []
             row_own = collections.defaultdict(list)
-            for q in sorted(inside, key=lambda q: q["x0"]):
+            # ...UNLESS THE ROW IS A ROW OF METRIC SPANNERS. Glued text makes a
+            # spanner narrow: pi-PrimeNovo's 'Aminoacidprecision' and
+            # 'Peptiderecall' each fit inside one column, so 'Peptiderecall'
+            # became the CasanovoV2 column's own header and that column could
+            # not resolve. Two or more phrases that are ALL metric or level
+            # names are spanners, however narrow.
+            metric_row = len(inside) >= 2 and all(
+                metric_of(q["text"]) or level_of(q["text"]) for q in inside)
+            for q in sorted(inside, key=lambda q: q["x0"]) if not metric_row else []:
                 k = assign(q, edges)
                 fits = (k is not None and edges[k][0] - 1 <= q["x0"]
                         and q["x1"] <= edges[k][1] + 1)
@@ -1227,7 +1299,7 @@ def header_model(rows: list[list[dict]], lo: int,
                     own_wide.append(q)
             for k, ws in row_own.items():
                 own[k][0:0] = ws
-            inside = own_wide
+            inside = own_wide if not metric_row else inside
             if not inside:
                 taken += 1
                 if taken >= max_rows:
@@ -2452,8 +2524,10 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                     re.search(r"(?i)\bspeed\b|spectra/s|throughput|latency"
                               r"|\btime\b|\(ms\)|\(s\)"
                               # an ERROR RATE is outside the metric vocabulary:
-                              # InstaNovo's results table leads with one
-                              r"|error\s*rate", head) or
+                              # InstaNovo's results table leads with one; so is
+                              # a LOSS (PLMNovo's 'Classification Loss (↓)'),
+                              # where lower is better and nothing compares
+                              r"|error\s*rate|\bloss\b", head) or
                     (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
                 year_cols.append(k)
         not_recorded_cols: list[dict] = []
@@ -2464,6 +2538,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                     "x": (edges[k][0] + edges[k][1]) / 2, "header": head_k,
                     "why": "year" if (re.fullmatch(r"(?i)years?", head_k) or not head_k)
                            else "error rate" if re.search(r"(?i)error\s*rate", head_k)
+                           else "loss" if re.search(r"(?i)\bloss\b", head_k)
                            else "speed or time",
                     "cells": {r["top"]: r["cells"][k]["printed"]
                               for r in body if k in r["cells"]}})
@@ -2689,7 +2764,10 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
     if not raw:
         raise Reject("N1 empty header")
     # A curated per-paper label wins over every general rule.
-    pa = PAPER_LABEL_ALIASES.get((pub_id, norm(raw))) if pub_id else None
+    # A '+'-KEEPING KEY FIRST: norm() drops the '+', so Prime-DiffNovo's 'IN
+    # v1.1' and 'IN+ v1.1' (InstaNovo and InstaNovo+) shared one key.
+    pa = (PAPER_LABEL_ALIASES.get((pub_id, re.sub(r"[^a-z0-9+]", "", raw.lower())))
+          or PAPER_LABEL_ALIASES.get((pub_id, norm(raw)))) if pub_id else None
     if pa:
         got = plus_match(pa[0], index.get(norm(pa[0]), []))
         if got:
@@ -2826,8 +2904,19 @@ VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"(?i)ProteoBench"), "ProteoBench selection"),
         (re.compile(r"(?i)9-?species-?v1|nine-?species-?v1|original (?:nine-species )?(?:benchmark|dataset)|"
                     r"DeepNovo(?:'s)? (?:original )?(?:benchmark|dataset)"), "original (DeepNovo, 2017)"),
+        # The ACCESSION is the most reliable cue of all: Prime-DiffNovo heads
+        # its columns 'Nine-species MSV000081382' and 'Revised Nine-species
+        # MSV000090982'. Listed after the phrases, so a stated phrase wins.
+        (re.compile(r"MSV000090982"), "revised (main)"),
+        (re.compile(r"MSV000081382"), "original (DeepNovo, 2017)"),
     ],
 }
+
+# A version-split part ('Nine-species · revised (main)', see split_by_dataset)
+# is pinned to that version of its dataset.
+for _cue, (_ds, _v) in list(DATASET_TARGETS.items()):
+    for _rx, _ver in VERSION_LEXICON.get(_ds, []):
+        DATASET_TARGETS.setdefault(f"{_cue} \u00b7 {_ver}", (_ds, _ver))
 
 
 def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
@@ -3369,6 +3458,11 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     #                     Casanovo Prec. | Casanovo Prec.@Cov=1
     (49, "Table2"): ["DeepNovo", "PointNovo", "Casanovo", "Casanovo", "Casanovo",
                      "DeepNovo", "PointNovo", "Casanovo", "Casanovo"],
+    # Pairwise Attention, Table 2: 'BASE | PA | CASANOVO' under each of
+    # 'NINE-SPECIES V1' and 'NINE-SPECIES V2'. The table splits by version
+    # (split_by_dataset), and each part's three columns are these methods; the
+    # stub's 'TESTSET MODEL' kept the reader from committing to the row.
+    (4, "Table2"): ["BASE", "PA", "CASANOVO"],
     # DiffNovo, Tables 1 and 2. The header rows are shredded: 'Cascadia' sits a
     # row above its group and 'DeepNovo-DIAPepNet' arrives as one token, so no
     # reading of the page recovers which column is which.
@@ -3442,6 +3536,11 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # and our reproduced results ... We refer to the reproduced version as
     # the 'baseline' throughout the paper and in the result tables."
     (354, "baseline"): ("LIPNovo", "reproduced"),
+    # Prime-DiffNovo, Table 1: 'IN v1.1' and 'IN+ v1.1' are InstaNovo and
+    # InstaNovo+ at version 1.1, as its prose says ("For the InstaNovo
+    # framework, IN+ v1.1 uniformly outperforms IN v1.1").
+    (255, "inv11"): ("InstaNovo", "v1.1"),
+    (255, "in+v11"): ("InstaNovo+", "v1.1"),
     # LIPNovo+. "we retrain CasaNovo with the same data splits and
     # training/inference configurations as our methods (reported as
     # Baseline)" -- the same reading as LIPNovo's own tables, above.
@@ -3637,6 +3736,23 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # The paper gives no accession, so the antibody is recorded as printed.
     (9, "Table6"): (None, "WIgG1-Mouse antibody (CrossNovo); no accession stated"),
     (9, "Table7"): (None, "IgG1-Human antibody (CrossNovo); no accession stated"),
+    # pi-PrimeNovo's preprint, Supplementary Table 3: "Peptide recall on the
+    # nine-species benchmark dataset" -- the original, by its caption; its
+    # Supplementary Table 5 is the one "on the revised nine-species benchmark",
+    # and that caption, on a page nearby, leaked 'revised' into this table's
+    # version. The same table in the published supplement resolves with no
+    # version, which is what the caption supports.
+    (107, "Supplementary Table 3"): ("Nine-species benchmark",
+                                     "the nine-species benchmark dataset"),
+    # pi-PrimeNovo, Supplementary Table 10 (both versions): "Peptide recall on
+    # the Pepnet test dataset under zero-shot setting". The catalog holds no
+    # PepNet test set, so it is recorded as printed.
+    **{(pid, "SupplementaryTable10"): (None, "the PepNet test dataset, zero-shot; "
+                                             "no accession stated") for pid in (21, 107)},
+    # ReNovo, Table 8: every row's test set is a filtered nine-species split,
+    # 'Nine-species Dataset (Original)', '(>3)' and '(>5)'.
+    (22, "Table8"): ("Nine-species benchmark", "Nine-species, original and two "
+                     "filtered test sets (>3, >5)"),
     (283, "Table 2"): ("De novo sequencing of DIA data",
                        "MSV000082368: OC, UTI and plasma"),
     # InstaNovo-FM, Tables S12 and S13: "the six held-out biological
@@ -3911,6 +4027,23 @@ def split_by_dataset(tb) -> dict[str, list[int]] | None:
         sp = " ".join(tb["span"].get(k, [])) + " " + " ".join(tb["own"].get(k, []))
         hits = {nm for rx, nm in DATASET_CUES if rx.search(sp)}
         groups.setdefault(hits.pop() if len(hits) == 1 else None, []).append(k)
+    # ONE DATASET, SEVERAL VERSIONS. Pairwise's Table 2 sets 'NINE-SPECIES V1'
+    # and 'NINE-SPECIES V2' over the same three methods: one dataset to the
+    # cue scan, so no split, and two measurements per method and species to G6.
+    # When every column names the same dataset and the spanners name two or
+    # more of its VERSIONS (the per-dataset lexicon decides), the split is on
+    # the version, and each part is pinned to it through DATASET_TARGETS.
+    if None not in groups and len(groups) == 1:
+        (name,) = groups
+        target = DATASET_TARGETS.get(name, (name, None))[0]
+        lex = VERSION_LEXICON.get(target) or []
+        by_ver: dict[str | None, list[int]] = {}
+        for k in range(len(tb["edges"])):
+            sp = " ".join(tb["span"].get(k, [])) + " " + " ".join(tb["own"].get(k, []))
+            ver = next((v for rx, v in lex if rx.search(sp)), None)
+            by_ver.setdefault(ver, []).append(k)
+        if None not in by_ver and len(by_ver) >= 2:
+            return {f"{name} \u00b7 {ver}": cols for ver, cols in by_ver.items()}
     if None in groups or len(groups) < 2:
         return None
     return {k: v for k, v in groups.items() if k}
@@ -4509,7 +4642,24 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 if txt and not metric_of(txt) and not level_of(txt):
                     own_lab[ri] = txt
             tops = [r.get("top") for r in body_]
-            if len(own_lab) >= 2 and all(t is not None for t in tops):
+            # A SUBSET COLUMN: every method row carries its own leftover label,
+            # because the table prints the test set in a column of its own.
+            # ReNovo's Table 8 lists ReNovo and AdaNovo on 'Nine-species Dataset
+            # (Original)', '(>3)' and '(>5)', and without this all three of a
+            # method's rows were one measurement (G6).
+            # Only where the COLUMNS carry no subset, and every leftover reads
+            # as a test set: MemNovo's Table 2 prints a 'Backbone' column
+            # (CNN-LSTM, Transformer) beside species columns, and taking that
+            # for a subset collapsed every species into one measurement.
+            method_rows = [ri for ri in range(len(body_)) if methods.get(ri)]
+            if len(method_rows) >= 2 and all(ri in own_lab for ri in method_rows) and \
+                    len({own_lab[ri] for ri in method_rows}) >= 2 and \
+                    not any(subsets.values()) and all(
+                        re.search(r"(?i)dataset|test|species|\bset\b", own_lab[ri])
+                        for ri in method_rows):
+                for ri in method_rows:
+                    row_subset[ri] = own_lab[ri]
+            elif len(own_lab) >= 2 and all(t is not None for t in tops):
                 gaps = [b - a for a, b in zip(tops, tops[1:])]
                 cut = 1.3 * statistics.median(gaps)
                 groups, curg = [], [0]
