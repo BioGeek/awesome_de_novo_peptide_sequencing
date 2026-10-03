@@ -370,10 +370,15 @@ def ranking(rec: dict) -> dict:
         if len(cells) < 2:
             continue
         distinct = sorted({v for v, _i, _k in cells}, reverse=True)
+        # A RUNNER-UP NEEDS AT LEAST THREE VALUES to mean anything. With two,
+        # whichever is not bold is underlined by elimination, so every cell is
+        # marked and the underline says nothing: MemNovo's Table 6 compares
+        # InstaNovo with MemNovo-on-InstaNovo only, and the grid was solid
+        # emphasis. Bold still says which of the two won.
         for v, i, k in cells:
             if v == distinct[0]:
                 out[(i, k)] = "best"
-            elif len(distinct) > 1 and v == distinct[1]:
+            elif len(cells) >= 3 and len(distinct) > 1 and v == distinct[1]:
                 out[(i, k)] = "second"
     return out
 
@@ -492,15 +497,19 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         best = {c for c in cells if rk.get(c) == "best"}
         second = {c for c in cells if rk.get(c) == "second"}
         bold_off = bool(bolds) and not bolds <= best
-        under_off = uses_underline and bool(unders) and not unders <= second
+        # ...and with two values there is no runner-up of ours to compare a
+        # paper's underline against, so it is not checked there either.
+        n_vals = sum(1 for c in cells if _value(rec, c) is not None)
+        under_off = (uses_underline and n_vals >= 3 and bool(unders)
+                     and not unders <= second)
         # A TIE MARKED ONLY IN PART is a difference too, of a milder kind: the
         # paper is right about the cells it marked and silent about the one it
         # tied with. LIPNovo's Table 1 underlines pi-HelixNovo at 0.765 for
         # amino-acid precision and not pi-HelixNovo-dagger, also at 0.765; we
         # underline both, and the footnote says which one we added.
         bold_part = bool(bolds) and not bold_off and bolds < best
-        under_part = (uses_underline and bool(unders) and not under_off
-                      and unders < second)
+        under_part = (uses_underline and n_vals >= 3 and bool(unders)
+                      and not under_off and unders < second)
         if not (bold_off or under_off or bold_part or under_part):
             continue
         cell = lambda c: f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
