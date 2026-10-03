@@ -1964,6 +1964,45 @@ name. That last one read 174 when first registered: left empty, a
 standardised table built from the view lost its dataset column. A basis set by a
 cell's legend marker cites that marker.
 
+### Supplements, Extended Data, and a paper's own results
+
+Many of the field's most-cited methods print no comparison table in the main
+text at all: DeepNovo, PointNovo, InstaNovo, DeepNovo-DIA, pi-PrimeNovo, PepNet
+and GraphNovo keep their headline results in figures and their tables in a
+supplement. Three changes reach them:
+
+- **Labels may carry a prefix.** `LABEL_ROW` accepts `Extended Data Table N`,
+  `Supplementary Table N` and `Table SN`, glued or spaced. Before, a label had
+  to START with 'Table', so InstaNovo's Extended Data tables were never read as
+  captions. The page locator also takes a page with a table caption, one known
+  method and six decimals, because a paper's own-results table names nothing
+  else.
+- **Supplementary PDFs are fetched and read.** `build_pdf_library.py
+  supplements --ids ...` takes what a Springer Nature article page lists as
+  Supplementary Information / Results / Tables / Data, skipping the Reporting
+  Summary, peer-review file and source data, and files it in `supplements/`
+  as `<paper's library name> - Supplementary N.pdf`. The SUBFOLDER is the
+  point: `pdfs()` reads only the root, so coverage, rename and dedupe can never
+  mistake a supplement for its paper and rename it onto, or deduplicate it
+  against, the main PDF. Both the miner and the review page read a paper's
+  main PDF and then each supplement, and a supplement table's id carries its
+  source (`p21-si1-pg26-...`), because page numbers restart. PNAS and OUP answer
+  scripted requests with 403 and are reported, not worked around.
+- **A paper's own results are a kind of their own.** InstaNovo's results tables
+  are datasets down the side and metrics across, with the method named only in
+  the caption. `orientation()` accepts such a table as `kind = 'own_results'`
+  when neither axis names a method, the caption names exactly one catalog
+  method (longest name first, so 'InstaNovo+' is not 'InstaNovo') and the paper
+  describes it. Own results feed the measurement view, and are kept OUT of the
+  method pages' Reported comparisons, because they compare nothing.
+
+What still cannot be read is the TABLE THAT IS AN IMAGE. InstaNovo's published
+Extended Data tables carry a caption and a footnote in the text layer and
+nothing between them; DeepNovo-DIA's supplementary tables have almost no text
+layer at all. The preprint's text versions stand in for InstaNovo's. Reading
+images would mean letting `build_table_vlm.py` be the source of a number, which
+its own docstring forbids, so it is a decision rather than a fix.
+
 ### On the algorithm pages
 
 **22 methods carry a `## Reported comparisons` section**, placed after

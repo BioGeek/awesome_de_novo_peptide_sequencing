@@ -67,6 +67,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import glob
 import csv
 import datetime
 import hashlib
@@ -359,6 +360,96 @@ def coverage(pubs: list[dict], root: Path) -> dict[int, list[Path]]:
         if pub:
             out[pub["id"]].append(f)
     return out
+
+
+# --------------------------------------------------------------------------
+# Supplementary files
+# --------------------------------------------------------------------------
+#
+# A paper's SUPPLEMENT is where its tables often are: Nature-family papers put
+# their comparison tables in a Supplementary Information PDF and keep the main
+# text to figures (DiffNovo-DIA, pi-PrimeNovo, PepNet, GraphNovo, InstaNovo).
+#
+# They live in a SUBFOLDER on purpose. pdfs() reads only the library root, so
+# coverage(), rename and dedupe never see a supplement: a supplement filed in
+# the root would be identified as its paper by title and then renamed onto, or
+# deduplicated against, the main PDF. Each is named after its paper,
+# '<zotero name> - Supplementary N.pdf', which is how supplement_files() finds
+# them again.
+
+SUPP_DIR = "supplements"
+
+
+def supplement_files(pub: dict, root: Path) -> list[Path]:
+    """The supplementary PDFs filed for this publication, in order."""
+    stem = zotero_name(pub)[:-4]
+    d = root / SUPP_DIR
+    if not d.is_dir():
+        return []
+    return sorted(d.glob(glob.escape(stem) + " - Supplementary *.pdf"),
+                  key=lambda f: int(re.search(r"(\d+)\.pdf$", f.name).group(1)))
+
+
+# What a supplement link is labelled on a Springer Nature article page. Only
+# these are taken: the Reporting Summary, the peer-review file and Source Data
+# are supplementary files too, and none of them holds a results table.
+SUPP_LABEL = re.compile(r"(?i)^supplementary (information|results|tables?|data|notes?|materials?)\b")
+
+
+def supplement_links(doi: str) -> tuple[list[tuple[str, str]], str]:
+    """[(label, pdf_url)] for a paper's supplementary PDFs, and a note.
+
+    Springer Nature article pages list each supplement as a
+    data-test="supp-info-link" anchor with its own label, which is what makes
+    choosing among them possible. PNAS and OUP answer a scripted request with
+    403, so those are reported rather than worked around.
+    """
+    if not doi.lower().startswith("10.1038/"):
+        return [], "publisher not supported (only Springer Nature pages list supplements)"
+    ok, body = fetch(f"https://doi.org/{doi}")
+    if not ok:
+        return [], f"landing page: {body}"
+    html_text = body.decode("utf-8", "replace")
+    out = []
+    for a in re.finditer(r'<a [^>]*data-test="supp-info-link"[^>]*>', html_text):
+        tag = a.group(0)
+        label = re.search(r'data-track-label="([^"]*)"', tag)
+        href = re.search(r'href="([^"]*)"', tag)
+        if not (label and href):
+            continue
+        url = href.group(1)
+        if url.lower().endswith(".pdf") and SUPP_LABEL.match(label.group(1)):
+            out.append((label.group(1), "https:" + url if url.startswith("//") else url))
+    return out, "" if out else "no supplementary PDF listed"
+
+
+def cmd_supplements(args, conn, pubs, root):
+    by_id = {p["id"]: p for p in pubs}
+    ids = [int(x) for x in args.ids.split(",")]
+    d = root / SUPP_DIR
+    d.mkdir(exist_ok=True)
+    for pid in ids:
+        pub = by_id.get(pid)
+        if not pub or not pub["doi"]:
+            print(f"  p{pid}: no DOI")
+            continue
+        links, note = supplement_links(pub["doi"])
+        if not links:
+            print(f"  p{pid}: {note}")
+            continue
+        stem = zotero_name(pub)[:-4]
+        for n, (label, url) in enumerate(links, start=1):
+            dest = d / f"{stem} - Supplementary {n}.pdf"
+            if dest.exists():
+                print(f"  p{pid}: have {dest.name}")
+                continue
+            ok, body = fetch(url)
+            if not ok or not body.startswith(b"%PDF"):
+                print(f"  p{pid}: {label}: {body if not ok else 'not a PDF'}")
+                continue
+            dest.write_bytes(body)
+            print(f"  p{pid}: {label} -> {dest.name} ({len(body) // 1024} KB)")
+    return 0
 
 
 # --------------------------------------------------------------------------
@@ -886,12 +977,16 @@ def main() -> int:
             ("fetch", cmd_fetch, "download everything a source says is free"),
             ("rename", cmd_rename, "re-derive every filename from the catalog"),
             ("dedupe", cmd_dedupe, "drop byte-identical copies"),
-            ("ingest", cmd_ingest, "file hand-downloaded PDFs from a folder")):
+            ("ingest", cmd_ingest, "file hand-downloaded PDFs from a folder"),
+            ("supplements", cmd_supplements,
+             "fetch the supplementary PDFs a publisher lists for these papers")):
         p = sub.add_parser(name, help=helptext)
         p.set_defaults(fn=fn)
         if name in ("rename", "dedupe", "ingest"):
             p.add_argument("--apply", action="store_true",
                            help="actually change files (default: dry run)")
+        if name == "supplements":
+            p.add_argument("--ids", required=True, help="comma-separated publication ids")
         if name == "fetch":
             p.add_argument("--ids", help="comma-separated publication ids")
             p.add_argument("--limit", type=int)

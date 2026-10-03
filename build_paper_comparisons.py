@@ -191,7 +191,11 @@ COUNT_ROW = re.compile(r"(?i)^\s*#|\b(psms?|spectra|counts?|size|num\.?)\b|numbe
 # a count row. BiATNovo's preprint follows its precision and recall rows with
 # 'Position-BLEU' and 'Alignment score', which no catalog metric means; with
 # them in, no metric could be read down the rows and the table was refused.
-UNRECORDED_METRIC_ROW = re.compile(r"(?i)\bbleu\b|alignment\s*score")
+UNRECORDED_METRIC_ROW = re.compile(
+    r"(?i)\bbleu\b|alignment\s*score"
+    # ...and a row of SPREAD, which is not a measurement: InstaNovo's
+    # results table closes on 'mean' (kept, an aggregate) and 'std' (not).
+    r"|^\s*(?:std\.?|s\.?d\.?|standard\s*deviation)\s*$")
 NOT_RUN = {"-", "–", "—", "n/a", "na", "--", "nan", "none", "x"}
 
 CAPTION = re.compile(r"(?i)\b(Tab(?:le|\.)\s*(?:S?\d{1,2}|[IVX]{1,4}))\s*(?:[.:]|\||–|—)?\s*(.{0,300})", re.S)
@@ -1372,8 +1376,14 @@ def level_of(text: str) -> str | None:
 # badge a reader quotes named a table the thesis does not have. The optional
 # '.N' cannot swallow an ordinary 'Table 1. Comparison', because a digit has to
 # follow the dot.
+# ...WITH AN OPTIONAL 'Extended Data' / 'Supplementary' PREFIX. Nature-family
+# papers keep their tables as 'Extended Data Table 2 |' and preprints bundle
+# 'Supplementary Table 3.', and requiring the line to START with 'Table' meant
+# InstaNovo's three Extended Data tables were never read as captions at all.
+# The prefix may be glued on ('SupplementaryTable1'), as text layers drop spaces.
 LABEL_ROW = re.compile(
-    r"(?i)^\s*Tab(?:le|\.)\s*(S?\d{1,2}(?:\.\d{1,2})?|[IVX]{1,4})\s*"
+    r"(?i)^\s*(?:(?:Extended\s*Data|Supplementary|Supplemental)\s*)?"
+    r"Tab(?:le|\.)\s*(S?\d{1,2}(?:\.\d{1,2})?|[IVX]{1,4})\s*"
     r"(?=$|[.:|\u2013\u2014]|\s)")
 
 
@@ -2440,7 +2450,10 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
             # others; an all-runtime table is C3's to refuse.
             if (re.fullmatch(r"(?i)years?", head) or
                     re.search(r"(?i)\bspeed\b|spectra/s|throughput|latency"
-                              r"|\btime\b|\(ms\)|\(s\)", head) or
+                              r"|\btime\b|\(ms\)|\(s\)"
+                              # an ERROR RATE is outside the metric vocabulary:
+                              # InstaNovo's results table leads with one
+                              r"|error\s*rate", head) or
                     (vals and all(re.fullmatch(r"(19|20)\d\d", v) for v in vals))):
                 year_cols.append(k)
         not_recorded_cols: list[dict] = []
@@ -2450,6 +2463,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                 not_recorded_cols.append({
                     "x": (edges[k][0] + edges[k][1]) / 2, "header": head_k,
                     "why": "year" if (re.fullmatch(r"(?i)years?", head_k) or not head_k)
+                           else "error rate" if re.search(r"(?i)error\s*rate", head_k)
                            else "speed or time",
                     "cells": {r["top"]: r["cells"][k]["printed"]
                               for r in body if k in r["cells"]}})
@@ -3133,14 +3147,21 @@ def candidate_pages(pages_text: list[str], rx: re.Pattern,
                     min_methods: int = 3, min_decimals: int = 6) -> list[int]:
     out = []
     for i, t in enumerate(pages_text):
-        if len({m.group(0).lower() for m in rx.finditer(t)}) >= min_methods \
-           and len(DEC.findall(t)) >= min_decimals:
+        n_methods = len({m.group(0).lower() for m in rx.finditer(t)})
+        n_dec = len(DEC.findall(t))
+        # A page that PRINTS A TABLE CAPTION needs only one method: a paper's
+        # table of its own results names nothing else. InstaNovo's Extended
+        # Data Tables 2 and 3 report InstaNovo alone, per dataset, and the
+        # three-method bar never let the miner look at those pages.
+        has_caption = any(LABEL_ROW.match(line) for line in t.splitlines())
+        if n_dec >= min_decimals and (n_methods >= min_methods
+                                      or (has_caption and n_methods >= 1)):
             out.append(i)
     return out
 
 
 AUDIT_COLUMNS = [
-    "publication_id", "title", "pdf_file", "pdf_page", "table_label", "verdict",
+    "publication_id", "title", "pdf_file", "source", "pdf_page", "table_label", "verdict",
     "reason", "caption", "subject_method", "subject_resolved",
     "n_columns", "n_data_rows", "n_cells", "dropped_rows",
     "methods_printed", "methods_resolved", "methods_unresolved",
@@ -3199,57 +3220,74 @@ def main() -> int:
             continue
         if args.limit and seen_papers >= args.limit:
             break
-        path = paths[0]
-        try:
-            pdf = pdfplumber.open(path)
-        except Exception as exc:
-            tally[f"paper: PDF would not open ({type(exc).__name__})"] += 1
-            continue
-        with pdf:
-            pages_text = [(pg.extract_text() or "") for pg in pdf.pages]
-            cands = candidate_pages(pages_text, rx)
-            if not cands:
-                tally["paper: no candidate results page"] += 1
+        # The main PDF, then each supplement: see review_comparisons.py, which
+        # reads the same sources in the same order.
+        pub_rec = next((q for q in pubs if q["id"] == pub["id"]), None)
+        sources = [("", paths[0])] + (
+            [(f"si{n}", sp) for n, sp in
+             enumerate(bpl.supplement_files(pub_rec, LIBRARY), start=1)]
+            if pub_rec else [])
+        whole_parts = []
+        for _src, _p in sources:
+            try:
+                with pdfplumber.open(_p) as _pdf:
+                    whole_parts.append("\n".join((pg.extract_text() or "") for pg in _pdf.pages))
+            except Exception:
+                pass
+        whole_all = "\n".join(whole_parts)
+        for src, path in sources:
+            try:
+                pdf = pdfplumber.open(path)
+            except Exception as exc:
+                tally[f"paper: PDF would not open ({type(exc).__name__})"] += 1
                 continue
-            seen_papers += 1
-            whole = "\n".join(pages_text)
-            vocab = paper_vocabulary(whole, con)
-            subject = con.execute("""
-                SELECT a.id, a.name FROM algorithm a
-                  JOIN publication_algorithm pa ON pa.algorithm_id = a.id
-                 WHERE pa.publication_id = ? AND pa.role = 'describes'
-                 ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
+            with pdf:
+                pages_text = [(pg.extract_text() or "") for pg in pdf.pages]
+                cands = candidate_pages(pages_text, rx)
+                if not cands:
+                    if not src:
+                        tally["paper: no candidate results page"] += 1
+                    continue
+                seen_papers += 0 if src else 1
+                whole = whole_all
+                vocab = paper_vocabulary(whole, con)
+                subject = con.execute("""
+                    SELECT a.id, a.name FROM algorithm a
+                      JOIN publication_algorithm pa ON pa.algorithm_id = a.id
+                     WHERE pa.publication_id = ? AND pa.role = 'describes'
+                     ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
 
-            for pno in cands:
-                page = pdf.pages[pno]
-                near = "\n".join(pages_text[max(0, pno - 1):pno + 2])
-                base = {c: "" for c in AUDIT_COLUMNS}
-                base.update({
-                    "publication_id": pub["id"], "title": pub["title"][:110],
-                    "pdf_file": path.name, "pdf_page": pno + 1,
-                    "subject_method": subject["name"] if subject else "",
-                    "paper_vocabulary": "|".join(
-                        sorted(n for vs in vocab.values() for _, n in vs)),
-                })
-                tables, vetoed, uncap = extract(page, pub["id"])
-                tally["block: uncaptioned, treated as a figure"] += uncap
-                for v in vetoed:
-                    tally[f"rejected: {v['reason'].split('(')[0].strip()}"] += 1
-                    audit.append({**base, "verdict": "rejected",
-                                  "reason": v["reason"],
-                                  "table_label": v["table_label"],
-                                  "caption": v["caption"][:260]})
-                for tb in tables:
-                    row = {**base, "table_label": tb["table_label"],
-                           "caption": tb["caption"][:260]}
-                    try:
-                        accepted_tables += emit(
-                            con, row, tb, vocab, index, subject, near, whole,
-                            audit, tally, args.show)
-                    except Reject as exc:
-                        reason = str(exc)
-                        tally[f"rejected: {reason.split('(')[0].strip()}"] += 1
-                        audit.append({**row, "verdict": "rejected", "reason": reason})
+                for pno in cands:
+                    page = pdf.pages[pno]
+                    near = "\n".join(pages_text[max(0, pno - 1):pno + 2])
+                    base = {c: "" for c in AUDIT_COLUMNS}
+                    base.update({
+                        "publication_id": pub["id"], "title": pub["title"][:110],
+                        "pdf_file": path.name, "pdf_page": pno + 1,
+                        "source": src or "main",
+                        "subject_method": subject["name"] if subject else "",
+                        "paper_vocabulary": "|".join(
+                            sorted(n for vs in vocab.values() for _, n in vs)),
+                    })
+                    tables, vetoed, uncap = extract(page, pub["id"])
+                    tally["block: uncaptioned, treated as a figure"] += uncap
+                    for v in vetoed:
+                        tally[f"rejected: {v['reason'].split('(')[0].strip()}"] += 1
+                        audit.append({**base, "verdict": "rejected",
+                                      "reason": v["reason"],
+                                      "table_label": v["table_label"],
+                                      "caption": v["caption"][:260]})
+                    for tb in tables:
+                        row = {**base, "table_label": tb["table_label"],
+                               "caption": tb["caption"][:260]}
+                        try:
+                            accepted_tables += emit(
+                                con, row, tb, vocab, index, subject, near, whole,
+                                audit, tally, args.show)
+                        except Reject as exc:
+                            reason = str(exc)
+                            tally[f"rejected: {reason.split('(')[0].strip()}"] += 1
+                            audit.append({**row, "verdict": "rejected", "reason": reason})
 
     with AUDIT.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=AUDIT_COLUMNS)
@@ -3819,6 +3857,29 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
         raise Reject(f"N1 the method names are in a spanner whose grouping no "
                      f"rule states, so columns {sorted(amb)} are undecidable; "
                      f"not guessed")
+    # A TABLE OF THE PAPER'S OWN RESULTS has no method axis at all: InstaNovo's
+    # Supplementary Table 2 is datasets down the side and metrics across, and
+    # names its method only in the caption ("InstaNovo evaluation results on
+    # all datasets"). It compares nothing, so it is accepted as a different
+    # KIND -- own results -- and only when the caption names exactly ONE
+    # catalog method (longest name first, so 'InstaNovo+' is not 'InstaNovo')
+    # and the paper itself describes that method.
+    if n_col == 0 and n_row == 0 and tb.get("own_methods"):
+        cap = tb.get("caption") or ""
+        found, taken = [], []
+        for aid, name in sorted(tb.get("catalog_names") or [], key=lambda t: -len(t[1])):
+            for m in re.finditer(r"(?<![\w+])" + re.escape(name) + r"(?![\w+])", cap):
+                if not any(a <= m.start() < b for a, b in taken):
+                    found.append((aid, name))
+                    taken.append((m.start(), m.end()))
+        ids = {aid for aid, _ in found}
+        own = dict(tb["own_methods"])
+        if len(ids) == 1 and next(iter(ids)) in own:
+            aid = next(iter(ids))
+            tb["kind"] = "own_results"
+            printed = next(nm for a, nm in found if a == aid)
+            return ("columns", {k: (aid, own[aid], None) for k in range(n)}, {},
+                    {k: printed for k in range(n)})
     raise Reject(f"N1 neither axis carries >=2 methods "
                  f"(columns {n_col}, rows {n_row}); "
                  f"headers {[' '.join(tb['own'].get(k, [])) or '?' for k in range(n)]}")
@@ -3953,6 +4014,15 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                         "page": part.get("page")})
             return ok
     edges, own, span = tb["edges"], tb["own"], tb["span"]
+    # For orientation()'s own-results case: the methods this paper describes,
+    # and every catalog name (with aliases) a caption could name.
+    tb["own_methods"] = [tuple(r) for r in con.execute(
+        "SELECT a.id, a.name FROM publication_algorithm pa JOIN algorithm a "
+        "ON a.id = pa.algorithm_id WHERE pa.publication_id = ? AND pa.role = 'describes'",
+        (base.get("publication_id"),))]
+    tb["catalog_names"] = [(aid, nm.strip()) for aid, name, aliases in con.execute(
+        "SELECT id, name, COALESCE(aliases, '') FROM algorithm")
+        for nm in [name] + aliases.split(",") if len(nm.strip()) >= 4]
     axis, resolved_axis, leftovers, printed_of = orientation(
         tb, vocab, index, subject, base.get("publication_id"))
     col_head = [" ".join(own.get(k, [])).strip() or "?" for k in range(len(edges))]
@@ -3993,7 +4063,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             base["dropped_rows"] = tb["dropped_rows"]
     if unresolved:
         raise Reject(f"N1 unresolved on the method axis ({axis}): {unresolved}")
-    if subject and not any(v[0] == subject["id"] for v in methods.values()):
+    # ANY method the paper describes counts as its own, not just the first:
+    # InstaNovo's preprint describes InstaNovo and InstaNovo+, and its
+    # InstaNovo+ results table was refused for lacking an InstaNovo column.
+    own_ids = {aid for aid, _n in tb.get("own_methods") or []} or (
+        {subject["id"]} if subject else set())
+    if own_ids and not any(v[0] in own_ids for v in methods.values()):
         raise Reject("N2 no self column")
     # AN ABLATION BY STRUCTURE, whatever its caption says. C2 reads the
     # caption, and CausalNovo's Table 12 is captioned "Experiment results on
@@ -4726,7 +4801,12 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     if collect is not None:
         # The resolved structure, so a review page can show the parse beside a
         # picture of the printed table without reimplementing any of this.
+        if tb.get("kind") == "own_results" and not tb.get("design_note"):
+            tb["design_note"] = ("A table of the paper's OWN results: it names one "
+                                 "method and compares nothing, so it is recorded as own "
+                                 "results rather than as a comparison.")
         collect.append({
+            "kind": tb.get("kind") or "comparison",
             "grid": build_grid(),
             "verdict": "accepted", "reason": "",
             "table_label": tb["table_label"], "caption": tb["caption"],

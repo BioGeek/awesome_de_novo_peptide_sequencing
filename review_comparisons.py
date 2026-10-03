@@ -64,7 +64,7 @@ MANIFEST = OUT / "crops.json"
 ITEMS = OUT / "items.json"
 
 
-def table_tid(pub: int, page: int, label: str, taken: set) -> str:
+def table_tid(pub: int, page: int, label: str, taken: set, src: str = "") -> str:
     """A table's identifier, from WHAT it is rather than where it falls.
 
     It used to be 'p202-pg10-0': the n-th item on the page, in an order that
@@ -84,7 +84,10 @@ def table_tid(pub: int, page: int, label: str, taken: set) -> str:
         slug = "t" + num + (f"-{rest}" if rest else "")
     else:
         slug = re.sub(r"[^a-z0-9]+", "-", lab.lower()).strip("-") or "x"
-    tid = f"p{pub}-pg{page}-{slug}"
+    # A SUPPLEMENT'S TABLE carries its source ('si1'), because its page
+    # numbers restart: page 5 of a Supplementary Information PDF is not page 5
+    # of the paper. Tables in the main PDF keep their ids unchanged.
+    tid = f"p{pub}-{src + '-' if src else ''}pg{page}-{slug}"
     base, n = tid, 2
     while tid in taken:
         tid, n = f"{base}-{n}", n + 1
@@ -785,6 +788,11 @@ CREATE TABLE IF NOT EXISTS paper_comparison (
     review_id          TEXT NOT NULL UNIQUE,   -- the sign-off key, p64-pg6-t3
     table_label        TEXT NOT NULL,          -- as printed, 'Table3'
     part               TEXT,                   -- dataset part of a split table
+    kind               TEXT NOT NULL DEFAULT 'comparison'
+                       CHECK (kind IN ('comparison','own_results')),
+                                               -- own_results: one method, no
+                                               -- baselines (InstaNovo's results
+                                               -- tables); never a comparison
     pdf_page           INTEGER NOT NULL,       -- 1-based
     pdf_file           TEXT NOT NULL,          -- library filename
     bbox               TEXT,                   -- 'x0,y0,x1,y1' in PDF points
@@ -893,7 +901,7 @@ SELECT r.id                AS result_id,
        c.review_id,
        c.publication_id    AS reported_by,
        p.publication_date  AS reported_on,
-       c.table_label, c.part, c.pdf_page,
+       c.table_label, c.part, c.kind, c.pdf_page,
        r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
        r.algorithm_printed, r.is_self,
        r.metric, r.level,
@@ -961,11 +969,12 @@ def write_db(items: list[dict], approved: dict) -> None:
         verified = state == "approved"
         cur = con.execute(
             "INSERT INTO paper_comparison (publication_id, review_id, table_label,"
-            " part, pdf_page, pdf_file, bbox, caption, footnote, design_note,"
+            " part, kind, pdf_page, pdf_file, bbox, caption, footnote, design_note,"
             " methods_along, metrics_along, unit_printed, dataset_id,"
             " dataset_version_id, dataset_printed, review_status, reject_reason,"
-            " reviewed_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            (rec["pub"], rec["tid"], label, part, rec["pdf_page"], rec["pdf_name"],
+            " reviewed_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (rec["pub"], rec["tid"], label, part, rec.get("kind") or "comparison",
+             rec["pdf_page"], rec["pdf_name"],
              ",".join(f"{x:.1f}" for x in rec["bbox"]) if rec.get("bbox") else None,
              rec["caption"] or "", rec.get("footnote") or None,
              rec.get("design_note") or None,
@@ -1056,6 +1065,7 @@ def main() -> int:
     con = sqlite3.connect(B.DB)
     con.row_factory = sqlite3.Row
     pubs = bpl.load_publications(con)
+    pubs_by_id = {p["id"]: p for p in pubs}
     cov = bpl.coverage(pubs, B.LIBRARY)
     rx = B.locator(con)
     index = B.algorithm_index(con)
@@ -1146,103 +1156,125 @@ def main() -> int:
         print(f"  [{done:>3}/{len(todo)}] {int(took)}s elapsed, "
               f"~{int(eta)}s left  p{pub['id']}", flush=True)
         progress_banner(done - 1, len(todo), started, f"p{pub['id']}")
-        path = paths[0]
-        try:
-            pdf = pdfplumber.open(path)
-        except Exception:
-            continue
-        with pdf:
-            pages_text = [(pg.extract_text() or "") for pg in pdf.pages]
-            cands = B.candidate_pages(pages_text, rx)
-            if not cands:
+        # THE MAIN PDF, THEN EACH SUPPLEMENT. A Nature-family paper keeps its
+        # tables in a Supplementary Information PDF (see build_pdf_library's
+        # supplement_files), so reading the main PDF alone found nothing for
+        # DeepNovo-DIA, pi-PrimeNovo, PepNet or GraphNovo. `whole`, the text the
+        # basis search reads, spans every file: a supplement table's legend is
+        # often explained only in the main text.
+        pub_rec = pubs_by_id.get(pub["id"])
+        sources = [("", paths[0])] + (
+            [(f"si{n}", sp) for n, sp in
+             enumerate(bpl.supplement_files(pub_rec, B.LIBRARY), start=1)]
+            if pub_rec else [])
+        texts: dict[str, list[str] | None] = {}
+        for src, path in sources:
+            try:
+                with pdfplumber.open(path) as _pdf:
+                    texts[src] = [(pg.extract_text() or "") for pg in _pdf.pages]
+            except Exception:
+                texts[src] = None
+        whole_all = "\n".join("\n".join(t) for t in texts.values() if t)
+        for src, path in sources:
+            if texts.get(src) is None:
                 continue
-            whole = "\n".join(pages_text)
-            vocab = B.paper_vocabulary(whole, con)
-            subject = con.execute("""
-                SELECT a.id, a.name FROM algorithm a
-                  JOIN publication_algorithm pa ON pa.algorithm_id = a.id
-                 WHERE pa.publication_id = ? AND pa.role='describes'
-                 ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
-            for pno in cands:
-                page = pdf.pages[pno]
-                near = "\n".join(pages_text[max(0, pno - 1):pno + 2])
-                tables, vetoed, _ = B.extract(page, pub["id"])
-                found: list[dict] = []
-                for v in vetoed:
-                    found.append({**v, "verdict": "rejected"})
-                for tb in tables:
-                    collected: list[dict] = []
-                    base = {c: "" for c in B.AUDIT_COLUMNS}
-                    base.update({"publication_id": pub["id"], "pdf_page": pno + 1})
-                    try:
-                        B.emit(con, base, tb, vocab, index, subject, near, whole,
-                               [], collections.Counter(), False, collect=collected)
-                    except B.Reject as exc:
-                        collected.append({"verdict": "rejected", "reason": str(exc),
-                                          "table_label": tb["table_label"],
-                                          "caption": tb["caption"],
-                                          "bbox": tb.get("bbox"),
-                                          "page": tb.get("page")})
-                    found.extend(collected)
-                taken_ids: set = set()
-                for n, rec in enumerate(found):
-                    if args.rejected_only and rec["verdict"] != "rejected":
-                        continue
-                    if args.accepted_only and rec["verdict"] != "accepted":
-                        continue
-                    # A STABLE IDENTIFIER PER TABLE, so a person can say which
-                    # one they mean; see table_tid(). It is also the crop's
-                    # stem and the HTML anchor, so the chip links to itself.
-                    tid = table_tid(pub["id"], rec.get("page") or (pno + 1),
-                                    rec.get("table_label") or "", taken_ids)
-                    name = f"{tid}.png"
-                    dest = OUT / name
-                    bb = rec.get("bbox") or []
-                    crop_key = "|".join([path.name, str(rec.get("page") or (pno + 1)),
-                                         f"{path.stat().st_mtime_ns}",
-                                         ",".join(f"{x:.1f}" for x in bb)])
-                    was = prev_crops.get(tid) or {}
-                    # A manifest written before this cache existed has no key.
-                    # Its crops were made by the run that wrote it, so they are
-                    # current and are trusted once; from then on the key
-                    # decides. --recrop overrides either way.
-                    fresh = dest.exists() and not args.recrop and (
-                        was.get("crop_key") == crop_key
-                        or ("crop_key" not in was and tid in prev_crops))
-                    if fresh:
-                        ok, reused = True, reused + 1
-                    elif args.keep_crops and dest.exists():
-                        ok, reused = True, reused + 1
-                    else:
-                        ok = render(path, rec.get("page") or (pno + 1),
-                                    rec.get("bbox"), dest) or dest.exists()
-                        rendered += 1
-                    rec["crop_key"] = crop_key
-                    # A link straight to the PDF this crop came from, at the
-                    # page it came from. Browsers' built-in viewers honour
-                    # '#page=N', and the path needs quoting because the library
-                    # folder has spaces in its name.
-                    rec.update({"pdf_url": "file://" + urllib.parse.quote(str(path)),
-                                "pdf_name": path.name,
-                                "tid": tid, "pub": pub["id"], "title": pub["title"],
-                                "year": str(pub["publication_date"] or "")[:4],
-                                "img": name if ok else None,
-                                "pdf_page": rec.get("page") or (pno + 1)})
-                    rec["base_verdict"] = rec["verdict"]
-                    seen_before = approved.get(tid)
-                    if seen_before:
-                        # An entry with no state predates the dismissed state
-                        # and meant approved.
-                        # NOT named `want`: that is the publication-id filter
-                        # in this same function, and shadowing it made every
-                        # paper fail an `int in str` test.
-                        state = seen_before.get("state", "approved")
-                        if state == "approved" and rec["verdict"] == "accepted":
-                            rec["verdict"] = "approved"
-                        elif state == "dismissed" and rec["verdict"] == "rejected":
-                            rec["verdict"] = "dismissed"
-                    items.append(rec)
-                    tally[rec["verdict"]] += 1
+            try:
+                pdf = pdfplumber.open(path)
+            except Exception:
+                continue
+            with pdf:
+                pages_text = texts[src]
+                cands = B.candidate_pages(pages_text, rx)
+                if not cands:
+                    continue
+                whole = whole_all
+                vocab = B.paper_vocabulary(whole, con)
+                subject = con.execute("""
+                    SELECT a.id, a.name FROM algorithm a
+                      JOIN publication_algorithm pa ON pa.algorithm_id = a.id
+                     WHERE pa.publication_id = ? AND pa.role='describes'
+                     ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
+                for pno in cands:
+                    page = pdf.pages[pno]
+                    near = "\n".join(pages_text[max(0, pno - 1):pno + 2])
+                    tables, vetoed, _ = B.extract(page, pub["id"])
+                    found: list[dict] = []
+                    for v in vetoed:
+                        found.append({**v, "verdict": "rejected"})
+                    for tb in tables:
+                        collected: list[dict] = []
+                        base = {c: "" for c in B.AUDIT_COLUMNS}
+                        base.update({"publication_id": pub["id"], "pdf_page": pno + 1})
+                        try:
+                            B.emit(con, base, tb, vocab, index, subject, near, whole,
+                                   [], collections.Counter(), False, collect=collected)
+                        except B.Reject as exc:
+                            collected.append({"verdict": "rejected", "reason": str(exc),
+                                              "table_label": tb["table_label"],
+                                              "caption": tb["caption"],
+                                              "bbox": tb.get("bbox"),
+                                              "page": tb.get("page")})
+                        found.extend(collected)
+                    taken_ids: set = set()
+                    for n, rec in enumerate(found):
+                        if args.rejected_only and rec["verdict"] != "rejected":
+                            continue
+                        if args.accepted_only and rec["verdict"] != "accepted":
+                            continue
+                        # A STABLE IDENTIFIER PER TABLE, so a person can say which
+                        # one they mean; see table_tid(). It is also the crop's
+                        # stem and the HTML anchor, so the chip links to itself.
+                        tid = table_tid(pub["id"], rec.get("page") or (pno + 1),
+                                        rec.get("table_label") or "", taken_ids, src)
+                        name = f"{tid}.png"
+                        dest = OUT / name
+                        bb = rec.get("bbox") or []
+                        crop_key = "|".join([path.name, str(rec.get("page") or (pno + 1)),
+                                             f"{path.stat().st_mtime_ns}",
+                                             ",".join(f"{x:.1f}" for x in bb)])
+                        was = prev_crops.get(tid) or {}
+                        # A manifest written before this cache existed has no key.
+                        # Its crops were made by the run that wrote it, so they are
+                        # current and are trusted once; from then on the key
+                        # decides. --recrop overrides either way.
+                        fresh = dest.exists() and not args.recrop and (
+                            was.get("crop_key") == crop_key
+                            or ("crop_key" not in was and tid in prev_crops))
+                        if fresh:
+                            ok, reused = True, reused + 1
+                        elif args.keep_crops and dest.exists():
+                            ok, reused = True, reused + 1
+                        else:
+                            ok = render(path, rec.get("page") or (pno + 1),
+                                        rec.get("bbox"), dest) or dest.exists()
+                            rendered += 1
+                        rec["crop_key"] = crop_key
+                        # A link straight to the PDF this crop came from, at the
+                        # page it came from. Browsers' built-in viewers honour
+                        # '#page=N', and the path needs quoting because the library
+                        # folder has spaces in its name.
+                        rec.update({"pdf_url": "file://" + urllib.parse.quote(str(path)),
+                                    "pdf_name": path.name,
+                                    "tid": tid, "pub": pub["id"], "title": pub["title"],
+                                    "source": src or "main",
+                                    "year": str(pub["publication_date"] or "")[:4],
+                                    "img": name if ok else None,
+                                    "pdf_page": rec.get("page") or (pno + 1)})
+                        rec["base_verdict"] = rec["verdict"]
+                        seen_before = approved.get(tid)
+                        if seen_before:
+                            # An entry with no state predates the dismissed state
+                            # and meant approved.
+                            # NOT named `want`: that is the publication-id filter
+                            # in this same function, and shadowing it made every
+                            # paper fail an `int in str` test.
+                            state = seen_before.get("state", "approved")
+                            if state == "approved" and rec["verdict"] == "accepted":
+                                rec["verdict"] = "approved"
+                            elif state == "dismissed" and rec["verdict"] == "rejected":
+                                rec["verdict"] = "dismissed"
+                        items.append(rec)
+                        tally[rec["verdict"]] += 1
         print(f"  p{pub['id']:<4} {len([i for i in items if i['pub']==pub['id']]):>3} "
               f"table(s)  {pub['title'][:52]}", flush=True)
 
