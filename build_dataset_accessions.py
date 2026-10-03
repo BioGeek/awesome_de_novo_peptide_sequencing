@@ -81,8 +81,10 @@ NOT_DATA = [
 DOI_LIKE = re.compile(r"^10\.\d{4,9}/")
 
 
-def datacite_title(doi: str, cache: pathlib.Path) -> str:
-    """Zenodo and figshare DOIs are DataCite, not Crossref; Crossref answers 404."""
+def datacite_attributes(doi: str, cache: pathlib.Path) -> dict:
+    """The DataCite record's attributes, cached; {} when there is none.
+
+    Zenodo and figshare DOIs are DataCite, not Crossref; Crossref answers 404."""
     cache.mkdir(parents=True, exist_ok=True)
     key = cache / (re.sub(r"[^\w.-]", "_", doi) + ".json")
     if key.exists():
@@ -98,7 +100,14 @@ def datacite_title(doi: str, cache: pathlib.Path) -> str:
             payload = {}
         key.write_text(json.dumps(payload))
     try:
-        return payload["data"]["attributes"]["titles"][0]["title"]
+        return payload["data"]["attributes"] or {}
+    except (KeyError, TypeError):
+        return {}
+
+
+def datacite_title(doi: str, cache: pathlib.Path) -> str:
+    try:
+        return datacite_attributes(doi, cache)["titles"][0]["title"]
     except (KeyError, IndexError, TypeError):
         return ""
 
@@ -106,6 +115,14 @@ def datacite_title(doi: str, cache: pathlib.Path) -> str:
 def not_data(doi: str, cache: pathlib.Path) -> tuple[str, str] | None:
     """Return (title, reason) when this DOI is demonstrably not a data deposit."""
     title = datacite_title(doi, cache)
+    # THE REPOSITORY'S OWN TYPE comes first. A title need not say software:
+    # 'Fine-Tuning Scheduler', a PyTorch Lightning extension on Zenodo, reads
+    # like nothing in particular, passed every title pattern below, and became
+    # a dataset with its own page. DataCite records it as Software.
+    rtype = ((datacite_attributes(doi, cache).get("types") or {})
+             .get("resourceTypeGeneral") or "")
+    if rtype.lower() == "software":
+        return title, "software (DataCite resourceTypeGeneral), not data"
     if not title:
         return None          # unknown is not the same as excluded
     for rx, reason in NOT_DATA:

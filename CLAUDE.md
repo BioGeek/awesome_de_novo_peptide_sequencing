@@ -1125,7 +1125,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**382 datasets, 410 versions, 442 addresses, 616 publication links over 131 papers.**
+**374 datasets, 402 versions, 433 addresses, 606 publication links over 131 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1152,7 +1152,9 @@ distinguishable by number, which is the only reliable way:
   "Benchmarking the identification of a single degraded protein to explore
   optimal search strategies for ancient proteins" (publications 341 and 342).
   They were briefly attached to the revised benchmark by misreading a two-line
-  report where the title prints under the NEXT accession.
+  report where the title prints under the NEXT accession. They are not in the
+  catalog at all now: both are GitHub releases of the paper's analysis code,
+  which DataCite types as Software.
 - **InstaNovo split** is parquet with a fixed 499,402 / 28,572 / 111,312
   train/validation/test split and its own DOI (`10.57967/hf/3821`), which makes
   it the only version reproducible by citation alone. Its 499,402 training
@@ -1212,7 +1214,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 410 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 402 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
@@ -1458,7 +1460,20 @@ Two traps, both hit while writing it:
   title says software release, supplementary material or code, with the count
   and the reason PRINTED rather than filtered away silently, since that count comes
   from the lookups and not from the database. An unknown title is never an
-  exclusion. One verdict is worth knowing about:
+  exclusion. **The repository's own TYPE is checked before the title**:
+  DataCite's `resourceTypeGeneral` says `Software` for every Zenodo GitHub
+  release whatever it is called, and a title need not sound like code.
+  "Fine-Tuning Scheduler", a PyTorch Lightning extension, passed every title
+  pattern and was a dataset with its own page until a reader spotted it. An
+  audit of every DOI address by type then removed seven more rows:
+  - TensorFlow, InstaNovo's and Casanovo's code releases, and PPbenchmark's
+    analysis release, which are all software;
+  - DiNovo's code release, recorded under a DOI misread with two trailing
+    digits too many, so no record existed to flag it;
+  - Casanovo's nine-species weights, already checkpoint 5;
+  - Winnow's hold-one-out calibrators, which are now a checkpoint row.
+
+  One verdict is worth knowing about:
   `Noble-Lab/multi-species-benchmark: Revised benchmark` is excluded as a repo
   snapshot, correctly, even though that repository is how the revised
   nine-species benchmark was built. It is code, so it is not an address of the
@@ -1615,7 +1630,7 @@ The pages print the date that matches the verdict: `verified_at` for a verified
 row, `last_checked` for everything else. One date for both would conflate "we
 have this file" with "this link answered".
 
-Measured over the 26 recorded checkpoints: 15 live, 10 verified, 1 gated.
+Measured over the 27 recorded checkpoints: 16 live, 10 verified, 1 gated.
 
 **A gated checkpoint can still be backed up, and DeepNovo now is.** Its weights
 were retrieved from a signed-in session and mirrored, so the backup is the only
