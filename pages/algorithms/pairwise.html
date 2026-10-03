@@ -206,9 +206,395 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
-<section id="reported-comparison" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
-<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="reported-comparisons-3" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table2-nine-species-original-deepnovo-2017" class="level3">
+<h3 class="anchored" data-anchor-id="table2-nine-species-original-deepnovo-2017">Table2 (Nine-species · original (DeepNovo, 2017))</h3>
+<p><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a>, page 7: <em>Peptide precision at 100% coverage as measured on the V1 and V2 of the nine-species dataset. Here, Base denotes our implementation of a standard transformer, i.e.&nbsp;without pairwise features. PA is our implementation of pairwise attention, and Casanovo is the reported numbers for Casanovo bm in the original publication7. For PA we report the average of 3 runs at seeds 0, 10, and 20, with standard deviation in parentheses.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="1">
+Apis mellifera
+</th>
+<th colspan="1">
+Bacillus subtilis
+</th>
+<th colspan="1">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="1">
+Homo sapiens
+</th>
+<th colspan="1">
+Methanosarcina mazei
+</th>
+<th colspan="1">
+Mus musculus
+</th>
+<th colspan="1">
+Solanum lycopersicum
+</th>
+<th colspan="1">
+Saccharomyces cerevisiae
+</th>
+<th colspan="1">
+Vigna mungo
+</th>
+<th colspan="1">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pairwise.html">Pairwise</a> <small>base</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.390
+</td>
+<td>
+0.536
+</td>
+<td>
+0.357
+</td>
+<td>
+0.340
+</td>
+<td>
+0.503
+</td>
+<td>
+<u>0.433</u>
+</td>
+<td>
+0.509
+</td>
+<td>
+0.537
+</td>
+<td>
+<u>0.570</u>
+</td>
+<td>
+0.464
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pairwise.html">Pairwise</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.463</strong>
+</td>
+<td>
+<strong>0.612</strong>
+</td>
+<td>
+<strong>0.409</strong>
+</td>
+<td>
+<strong>0.391</strong>
+</td>
+<td>
+<strong>0.554</strong>
+</td>
+<td>
+<strong>0.472</strong>
+</td>
+<td>
+<strong>0.590</strong>
+</td>
+<td>
+<strong>0.612</strong>
+</td>
+<td>
+<strong>0.625</strong>
+</td>
+<td>
+<strong>0.523</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+<u>0.433</u>
+</td>
+<td>
+<u>0.573</u>
+</td>
+<td>
+<u>0.390</u>
+</td>
+<td>
+<u>0.383</u>
+</td>
+<td>
+<u>0.515</u>
+</td>
+<td>
+0.431
+</td>
+<td>
+<u>0.522</u>
+</td>
+<td>
+<u>0.580</u>
+</td>
+<td>
+0.552
+</td>
+<td>
+<u>0.487</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table2-nine-species-revised-main" class="level3">
+<h3 class="anchored" data-anchor-id="table2-nine-species-revised-main">Table2 (Nine-species · revised (main))</h3>
+<p><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a>, page 7: <em>Peptide precision at 100% coverage as measured on the V1 and V2 of the nine-species dataset. Here, Base denotes our implementation of a standard transformer, i.e.&nbsp;without pairwise features. PA is our implementation of pairwise attention, and Casanovo is the reported numbers for Casanovo bm in the original publication7. For PA we report the average of 3 runs at seeds 0, 10, and 20, with standard deviation in parentheses.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="1">
+Apis mellifera
+</th>
+<th colspan="1">
+Bacillus subtilis
+</th>
+<th colspan="1">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="1">
+Homo sapiens
+</th>
+<th colspan="1">
+Methanosarcina mazei
+</th>
+<th colspan="1">
+Mus musculus
+</th>
+<th colspan="1">
+Solanum lycopersicum
+</th>
+<th colspan="1">
+Saccharomyces cerevisiae
+</th>
+<th colspan="1">
+Vigna mungo
+</th>
+<th colspan="1">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pairwise.html">Pairwise</a> <small>base</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.390
+</td>
+<td>
+0.494
+</td>
+<td>
+0.356
+</td>
+<td>
+0.451
+</td>
+<td>
+0.509
+</td>
+<td>
+<u>0.410</u>
+</td>
+<td>
+0.543
+</td>
+<td>
+0.558
+</td>
+<td>
+<u>0.525</u>
+</td>
+<td>
+0.471
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pairwise.html">Pairwise</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.446</u>
+</td>
+<td>
+<strong>0.583</strong>
+</td>
+<td>
+<u>0.425</u>
+</td>
+<td>
+<u>0.521</u>
+</td>
+<td>
+<strong>0.579</strong>
+</td>
+<td>
+<strong>0.435</strong>
+</td>
+<td>
+<strong>0.623</strong>
+</td>
+<td>
+<strong>0.631</strong>
+</td>
+<td>
+<strong>0.598</strong>
+</td>
+<td>
+<strong>0.538</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+<strong>0.456</strong>
+</td>
+<td>
+<u>0.538</u>
+</td>
+<td>
+<strong>0.468</strong>
+</td>
+<td>
+<strong>0.533</strong>
+</td>
+<td>
+<u>0.529</u>
+</td>
+<td>
+0.395
+</td>
+<td>
+<u>0.608</u>
+</td>
+<td>
+<u>0.561</u>
+</td>
+<td>
+0.428
+</td>
+<td>
+<u>0.502</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="table3" class="level3">
 <h3 class="anchored" data-anchor-id="table3">Table3</h3>
 <p><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a>, page 8: <em>Performance after training the models on the MassIVE-KB set. Here we tested on each of the species in the nine-species dataset and report peptide precision at 100% coverage. The models tested are Base and PA, alongside Casanovo’s reported numbers7.</em></p>

@@ -227,8 +227,8 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>A host marked <em>archival</em> has a DOI and keeps what it is given. The others can move or disappear, which is why they are checked rather than merely listed. <strong>verified</strong> means the bytes were fetched and hashed on the date shown; <strong>live</strong> means only that the host answered when last asked. Where a <em>copy</em> is linked, it is a backup of someone else’s weights kept in case the original link goes stale; the original is the link to cite and to prefer.</p>
 </section>
-<section id="reported-comparisons-4" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparisons-4">Reported comparisons (4)</h2>
+<section id="reported-comparisons-5" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-5">Reported comparisons (5)</h2>
 <p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1" class="level3">
 <h3 class="anchored" data-anchor-id="table1">Table1</h3>
@@ -882,6 +882,322 @@ Recall<br><small>peptide</small>
 </tbody>
 </table>
 </div>
+</section>
+<section id="table2" class="level3">
+<h3 class="anchored" data-anchor-id="table2">Table2</h3>
+<p><a href="../publications/curriculum-learning-for-biological-sequence-prediction-the-case-of-de-novo.html">Curriculum Learning for Biological Sequence Prediction: The Case of De Novo Peptide Sequencing</a>, page 9: <em>Comparison of the performance on the 9-species-V2 benchmark datasets. AT stands for Autoregressive Transformer and NAT stands for non-autoregressive Transformer.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="2">
+Mus musculus
+</th>
+<th colspan="2">
+Homo sapiens
+</th>
+<th colspan="2">
+Saccharomyces cerevisiae
+</th>
+<th colspan="2">
+Methanosarcina mazei
+</th>
+<th colspan="2">
+Apis mellifera
+</th>
+<th colspan="2">
+Solanum lycopersicum
+</th>
+<th colspan="2">
+Vigna mungo
+</th>
+<th colspan="2">
+Bacillus subtilis
+</th>
+<th colspan="2">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="2">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.813
+</td>
+<td>
+0.555
+</td>
+<td>
+0.872
+</td>
+<td>
+0.712
+</td>
+<td>
+0.915
+</td>
+<td>
+0.837
+</td>
+<td>
+0.877
+</td>
+<td>
+0.754
+</td>
+<td>
+0.823
+</td>
+<td>
+0.669
+</td>
+<td>
+0.891
+</td>
+<td>
+0.783
+</td>
+<td>
+<u>0.891</u>
+</td>
+<td>
+0.772
+</td>
+<td>
+0.888
+</td>
+<td>
+0.793
+</td>
+<td>
+0.791
+</td>
+<td>
+0.558
+</td>
+<td>
+0.862
+</td>
+<td>
+0.714
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.839</u>
+</td>
+<td>
+<u>0.627</u>
+</td>
+<td>
+<u>0.893</u>
+</td>
+<td>
+<u>0.795</u>
+</td>
+<td>
+<u>0.932</u>
+</td>
+<td>
+<u>0.884</u>
+</td>
+<td>
+<u>0.908</u>
+</td>
+<td>
+<u>0.812</u>
+</td>
+<td>
+<u>0.862</u>
+</td>
+<td>
+<u>0.742</u>
+</td>
+<td>
+<u>0.909</u>
+</td>
+<td>
+<u>0.824</u>
+</td>
+<td>
+<strong>0.931</strong>
+</td>
+<td>
+<u>0.837</u>
+</td>
+<td>
+<u>0.921</u>
+</td>
+<td>
+<u>0.849</u>
+</td>
+<td>
+<u>0.827</u>
+</td>
+<td>
+<u>0.626</u>
+</td>
+<td>
+<u>0.891</u>
+</td>
+<td>
+<u>0.777</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="refinenovo.html">RefineNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.850</strong>
+</td>
+<td>
+<strong>0.637</strong>
+</td>
+<td>
+<strong>0.921</strong>
+</td>
+<td>
+<strong>0.805</strong>
+</td>
+<td>
+<strong>0.941</strong>
+</td>
+<td>
+<strong>0.895</strong>
+</td>
+<td>
+<strong>0.921</strong>
+</td>
+<td>
+<strong>0.827</strong>
+</td>
+<td>
+<strong>0.879</strong>
+</td>
+<td>
+<strong>0.762</strong>
+</td>
+<td>
+<strong>0.916</strong>
+</td>
+<td>
+<strong>0.829</strong>
+</td>
+<td>
+<strong>0.931</strong>
+</td>
+<td>
+<strong>0.862</strong>
+</td>
+<td>
+<strong>0.942</strong>
+</td>
+<td>
+<strong>0.856</strong>
+</td>
+<td>
+<strong>0.841</strong>
+</td>
+<td>
+<strong>0.637</strong>
+</td>
+<td>
+<strong>0.907</strong>
+</td>
+<td>
+<strong>0.790</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: Ricebean / precision / amino acid: the original table only bolded Ours (0.931); Prime. (Zhang et al., 2025) (0.931) ties with it and is bolded here too.</small>
+</p>
 </section>
 <section id="table6-hc-pt" class="level3">
 <h3 class="anchored" data-anchor-id="table6-hc-pt">Table6 (HC-PT)</h3>

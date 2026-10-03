@@ -235,6 +235,75 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
+<section id="reported-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
+<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-1" class="level3">
+<h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
+<p><a href="../publications/protein-identification-with-deep-learning-from-abc-to-xyz.html">Protein identification with deep learning: from abc to xyz</a>, page 10: <em>The recall of PEAKS and DeepNovo at the amino acid level and the peptide level.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2">
+S. cerevisiae proteome of Hebert et al.&nbsp;2014 (The one hour yeast proteome), Orbitrap Fusion HCD; no accession
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a> <small>de novo</small>
+</th>
+<td>
+<small>released</small>
+</td>
+<td>
+0.574
+</td>
+<td>
+0.257
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a> <small>de novo</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.743</u>
+</td>
+<td>
+<u>0.617</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a> <small>database search</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.899</strong>
+</td>
+<td>
+<strong>0.898</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>

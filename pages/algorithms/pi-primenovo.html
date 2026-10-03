@@ -187,6 +187,10 @@ ul.task-list li input[type="checkbox"] {
 <td>DDA</td>
 </tr>
 <tr class="even">
+<td>Also known as</td>
+<td>PrimeNovo</td>
+</tr>
+<tr class="odd">
 <td>Family</td>
 <td><a href="../families/transformer-nar.html">Transformer (NAR)</a></td>
 </tr>
@@ -243,6 +247,1215 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>ProteoBench</strong>: peptide-level AUC <strong>0.773</strong>; precision 0.682 at 88% coverage; amino-acid AUC 0.839 (version 1.0, beam search + PMC [1 Da], submitted 2026-08-07).</li>
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
+</section>
+<section id="reported-comparisons-5" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-5">Reported comparisons (5)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="supplementarytable5" class="level3">
+<h3 class="anchored" data-anchor-id="supplementarytable5">SupplementaryTable5</h3>
+<p><a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-preprint.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a>, page 33: <em>Peptide recall on the revised nine-species benchmark dataset. Note: the bold text indicates the highest performance in each row.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="1">
+Apis mellifera
+</th>
+<th colspan="1">
+Bacillus subtilis
+</th>
+<th colspan="1">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="1">
+Homo sapiens
+</th>
+<th colspan="1">
+Methanosarcina mazei
+</th>
+<th colspan="1">
+Mus musculus
+</th>
+<th colspan="1">
+Saccharomyces cerevisiae
+</th>
+<th colspan="1">
+Solanum lycopersicum
+</th>
+<th colspan="1">
+Vigna mungo
+</th>
+<th colspan="1">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.3578
+</td>
+<td>
+0.4637
+</td>
+<td>
+0.3055
+</td>
+<td>
+0.4468
+</td>
+<td>
+0.4927
+</td>
+<td>
+0.4063
+</td>
+<td>
+0.4657
+</td>
+<td>
+0.4354
+</td>
+<td>
+0.3977
+</td>
+<td>
+0.4191
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.57</u>
+</td>
+<td>
+<u>0.71</u>
+</td>
+<td>
+<u>0.51</u>
+</td>
+<td>
+<u>0.65</u>
+</td>
+<td>
+<u>0.68</u>
+</td>
+<td>
+<u>0.52</u>
+</td>
+<td>
+<u>0.73</u>
+</td>
+<td>
+<u>0.69</u>
+</td>
+<td>
+<u>0.7</u>
+</td>
+<td>
+<u>0.64</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.70</strong>
+</td>
+<td>
+<strong>0.80</strong>
+</td>
+<td>
+<strong>0.59</strong>
+</td>
+<td>
+<strong>0.75</strong>
+</td>
+<td>
+<strong>0.78</strong>
+</td>
+<td>
+<strong>0.60</strong>
+</td>
+<td>
+<strong>0.83</strong>
+</td>
+<td>
+<strong>0.78</strong>
+</td>
+<td>
+<strong>0.84</strong>
+</td>
+<td>
+<strong>0.74</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="supplementary-table-3" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-table-3">Supplementary Table 3</h3>
+<p><a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-learning-model.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a>, page 26: <em>Peptide recall on the nine-species benchmark dataset. Note: the bold text indicates the highest performance in each row.</em></p>
+<p>The same table is also printed in <a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-preprint.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a> (Supplementary Table 3, page 31).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1">
+Apis mellifera
+</th>
+<th colspan="1">
+Bacillus subtilis
+</th>
+<th colspan="1">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="1">
+Homo sapiens
+</th>
+<th colspan="1">
+Methanosarcina mazei
+</th>
+<th colspan="1">
+Mus musculus
+</th>
+<th colspan="1">
+Saccharomyces cerevisiae
+</th>
+<th colspan="1">
+Solanum lycopersicum
+</th>
+<th colspan="1">
+Vigna mungo
+</th>
+<th colspan="1">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.29
+</td>
+<td>
+0.39
+</td>
+<td>
+0.20
+</td>
+<td>
+0.28
+</td>
+<td>
+0.36
+</td>
+<td>
+0.20
+</td>
+<td>
+0.43
+</td>
+<td>
+0.40
+</td>
+<td>
+0.36
+</td>
+<td>
+0.32
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pepnet.html">PepNet</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.28
+</td>
+<td>
+0.42
+</td>
+<td>
+0.24
+</td>
+<td>
+0.23
+</td>
+<td>
+0.38
+</td>
+<td>
+0.28
+</td>
+<td>
+0.37
+</td>
+<td>
+0.43
+</td>
+<td>
+0.32
+</td>
+<td>
+0.33
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.33
+</td>
+<td>
+0.45
+</td>
+<td>
+0.25
+</td>
+<td>
+0.29
+</td>
+<td>
+0.42
+</td>
+<td>
+0.29
+</td>
+<td>
+0.46
+</td>
+<td>
+0.45
+</td>
+<td>
+0.44
+</td>
+<td>
+0.38
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.40
+</td>
+<td>
+0.52
+</td>
+<td>
+0.30
+</td>
+<td>
+0.35
+</td>
+<td>
+0.48
+</td>
+<td>
+0.36
+</td>
+<td>
+0.53
+</td>
+<td>
+0.51
+</td>
+<td>
+0.51
+</td>
+<td>
+0.44
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.41
+</td>
+<td>
+0.54
+</td>
+<td>
+0.33
+</td>
+<td>
+0.34
+</td>
+<td>
+0.48
+</td>
+<td>
+0.43
+</td>
+<td>
+0.49
+</td>
+<td>
+0.52
+</td>
+<td>
+0.51
+</td>
+<td>
+0.45
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.49</u>
+</td>
+<td>
+<u>0.62</u>
+</td>
+<td>
+<u>0.45</u>
+</td>
+<td>
+<u>0.45</u>
+</td>
+<td>
+<u>0.56</u>
+</td>
+<td>
+<u>0.48</u>
+</td>
+<td>
+<u>0.60</u>
+</td>
+<td>
+<u>0.62</u>
+</td>
+<td>
+<u>0.59</u>
+</td>
+<td>
+<u>0.54</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.60</strong>
+</td>
+<td>
+<strong>0.72</strong>
+</td>
+<td>
+<strong>0.53</strong>
+</td>
+<td>
+<strong>0.57</strong>
+</td>
+<td>
+<strong>0.65</strong>
+</td>
+<td>
+<strong>0.57</strong>
+</td>
+<td>
+<strong>0.70</strong>
+</td>
+<td>
+<strong>0.70</strong>
+</td>
+<td>
+<strong>0.70</strong>
+</td>
+<td>
+<strong>0.64</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="supplementarytable4" class="level3">
+<h3 class="anchored" data-anchor-id="supplementarytable4">SupplementaryTable4</h3>
+<p><a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-learning-model.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a>, page 27: <em>Amino acid precision on the nine-species benchmark dataset. Note: the bold text indicates the highest performance in each row.</em></p>
+<p>The same table is also printed in <a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-preprint.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a> (SupplementaryTable4, page 33).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1">
+Apis mellifera
+</th>
+<th colspan="1">
+Bacillus subtilis
+</th>
+<th colspan="1">
+Candidatus Thiodiazotropha endoloripes
+</th>
+<th colspan="1">
+Homo sapiens
+</th>
+<th colspan="1">
+Methanosarcina mazei
+</th>
+<th colspan="1">
+Mus musculus
+</th>
+<th colspan="1">
+Saccharomyces cerevisiae
+</th>
+<th colspan="1">
+Solanum lycopersicum
+</th>
+<th colspan="1">
+Vigna mungo
+</th>
+<th colspan="1">
+Average
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.63
+</td>
+<td>
+0.72
+</td>
+<td>
+0.59
+</td>
+<td>
+0.64
+</td>
+<td>
+0.67
+</td>
+<td>
+0.60
+</td>
+<td>
+0.75
+</td>
+<td>
+0.73
+</td>
+<td>
+0.64
+</td>
+<td>
+0.66
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.63
+</td>
+<td>
+0.74
+</td>
+<td>
+0.60
+</td>
+<td>
+0.61
+</td>
+<td>
+0.69
+</td>
+<td>
+0.62
+</td>
+<td>
+0.75
+</td>
+<td>
+0.73
+</td>
+<td>
+0.68
+</td>
+<td>
+0.67
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.64
+</td>
+<td>
+0.77
+</td>
+<td>
+0.59
+</td>
+<td>
+0.61
+</td>
+<td>
+0.71
+</td>
+<td>
+0.63
+</td>
+<td>
+<u>0.78</u>
+</td>
+<td>
+0.73
+</td>
+<td>
+0.73
+</td>
+<td>
+0.69
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.63
+</td>
+<td>
+0.75
+</td>
+<td>
+0.60
+</td>
+<td>
+0.59
+</td>
+<td>
+0.68
+</td>
+<td>
+0.69
+</td>
+<td>
+0.68
+</td>
+<td>
+0.72
+</td>
+<td>
+0.67
+</td>
+<td>
+0.67
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.71</u>
+</td>
+<td>
+<u>0.79</u>
+</td>
+<td>
+<u>0.68</u>
+</td>
+<td>
+<u>0.68</u>
+</td>
+<td>
+<u>0.76</u>
+</td>
+<td>
+<u>0.76</u>
+</td>
+<td>
+0.75
+</td>
+<td>
+<u>0.79</u>
+</td>
+<td>
+<u>0.75</u>
+</td>
+<td>
+<u>0.74</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.76</strong>
+</td>
+<td>
+<strong>0.84</strong>
+</td>
+<td>
+<strong>0.72</strong>
+</td>
+<td>
+<strong>0.72</strong>
+</td>
+<td>
+<strong>0.80</strong>
+</td>
+<td>
+<strong>0.78</strong>
+</td>
+<td>
+<strong>0.80</strong>
+</td>
+<td>
+<strong>0.82</strong>
+</td>
+<td>
+<strong>0.82</strong>
+</td>
+<td>
+<strong>0.79</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="supplementarytable6" class="level3">
+<h3 class="anchored" data-anchor-id="supplementarytable6">SupplementaryTable6</h3>
+<p><a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-learning-model.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a>, page 29: <em>The average performance of PrimeNovo compared to Casanovo and Casanovo V2 across four distinct large-scale MS/MS datasets.</em></p>
+<p>The same table is also printed in <a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-preprint.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a> (SupplementaryTable6, page 35).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+one per row (Data availability)
+</th>
+<th colspan="2">
+HCC
+</th>
+<th colspan="2">
+IgG1-Human-HC
+</th>
+<th colspan="2">
+PT
+</th>
+<th colspan="2">
+Three-species
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.0908
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.34465
+</td>
+<td>
+0.1154
+</td>
+<td>
+0.4443
+</td>
+<td>
+0.2873
+</td>
+<td>
+0.5633
+</td>
+<td>
+0.5037
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.4968</u>
+</td>
+<td>
+<u>0.161</u>
+</td>
+<td>
+<u>0.605917000</u>
+</td>
+<td>
+<u>0.4065</u>
+</td>
+<td>
+<u>0.6284</u>
+</td>
+<td>
+<u>0.4543</u>
+</td>
+<td>
+<u>0.8167</u>
+</td>
+<td>
+<u>0.6873</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.5793</strong>
+</td>
+<td>
+<strong>0.3817</strong>
+</td>
+<td>
+<strong>0.693133000</strong>
+</td>
+<td>
+<strong>0.5416</strong>
+</td>
+<td>
+<strong>0.7307</strong>
+</td>
+<td>
+<strong>0.5857</strong>
+</td>
+<td>
+<strong>0.8767</strong>
+</td>
+<td>
+<strong>0.7867</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="supplementarytable7" class="level3">
+<h3 class="anchored" data-anchor-id="supplementarytable7">SupplementaryTable7</h3>
+<p><a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-learning-model.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a>, page 30: <em>The performance of PrimeNovo compared to Casanovo and Casanovo V2 on six different proteolytic enzymes in the IgG1-Human-HC dataset.</em></p>
+<p>The same table is also printed in <a href="../publications/pi-primenovo-an-accurate-and-efficient-non-autoregressive-deep-preprint.html">π-PrimeNovo: an accurate and efficient non-autoregressive deep learning model for de novo peptide sequencing</a> (SupplementaryTable7, page 36).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+<a href="../datasets/monoclonal-antibody-de-novo-assembly.html">Monoclonal antibody de novo assembly</a>
+</th>
+<th colspan="2">
+HC AspN
+</th>
+<th colspan="2">
+HC Chymotrypsin
+</th>
+<th colspan="2">
+HC GluC
+</th>
+<th colspan="2">
+HC LysC
+</th>
+<th colspan="2">
+HC Proteinase K
+</th>
+<th colspan="2">
+HC Trypsin
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+0.3089
+</td>
+<td>
+0.0726
+</td>
+<td>
+0.2114
+</td>
+<td>
+0.0298
+</td>
+<td>
+0.2878
+</td>
+<td>
+0.0686
+</td>
+<td>
+0.4359
+</td>
+<td>
+0.2108
+</td>
+<td>
+0.3844
+</td>
+<td>
+0.089
+</td>
+<td>
+0.4395
+</td>
+<td>
+0.1703
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<u>0.5236</u>
+</td>
+<td>
+<u>0.2611</u>
+</td>
+<td>
+<u>0.4794</u>
+</td>
+<td>
+<u>0.2493</u>
+</td>
+<td>
+<u>0.5214</u>
+</td>
+<td>
+<u>0.3133</u>
+</td>
+<td>
+<u>0.7002</u>
+</td>
+<td>
+<u>0.5224</u>
+</td>
+<td>
+<u>0.6735</u>
+</td>
+<td>
+<u>0.4568</u>
+</td>
+<td>
+<u>0.7374</u>
+</td>
+<td>
+<u>0.5483</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<small>unclear</small>
+</td>
+<td>
+<strong>0.6059</strong>
+</td>
+<td>
+<strong>0.3593</strong>
+</td>
+<td>
+<strong>0.6227</strong>
+</td>
+<td>
+<strong>0.446</strong>
+</td>
+<td>
+<strong>0.6427</strong>
+</td>
+<td>
+<strong>0.4625</strong>
+</td>
+<td>
+<strong>0.749</strong>
+</td>
+<td>
+<strong>0.6204</strong>
+</td>
+<td>
+<strong>0.7567</strong>
+</td>
+<td>
+<strong>0.5972</strong>
+</td>
+<td>
+<strong>0.7818</strong>
+</td>
+<td>
+<strong>0.6649</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>

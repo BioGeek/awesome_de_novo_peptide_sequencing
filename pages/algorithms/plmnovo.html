@@ -192,9 +192,133 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<section id="reported-comparison" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparison">Reported comparison</h2>
-<p>The comparison table this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="reported-comparisons-2" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-2">Reported comparisons (2)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, species and metric across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. The <em>basis</em> column says which where the paper states it, and in most papers it does not. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table-1" class="level3">
+<h3 class="anchored" data-anchor-id="table-1">Table 1</h3>
+<p><a href="../publications/protein-language-model-aligned-spectra-embeddings-for-de-novo-peptide-sequencing.html">Protein Language Model-Aligned Spectra Embeddings for De Novo Peptide Sequencing</a>, page 6: <em>Amino acid-level and peptide-level performance comparison on the MSKB and multi-enzyme test sets [32]. Numbers in bold represent the best result under each (metric, dataset) combination.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th colspan="2" rowspan="2">
+one per row group (MassIVE-KB; Zenodo 12587317)
+</th>
+<th colspan="3">
+MSKB (tryptic)
+</th>
+<th colspan="3">
+Multi-enzyme (non-tryptic)
+</th>
+</tr>
+<tr>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+<th>
+Precision<br><small>amino acid</small>
+</th>
+<th>
+Recall<br><small>amino acid</small>
+</th>
+<th>
+Precision<br><small>peptide</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>v4.2</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+0.8919
+</td>
+<td>
+0.8884
+</td>
+<td>
+0.7381
+</td>
+<td>
+0.5200
+</td>
+<td>
+0.5211
+</td>
+<td>
+<u>0.2467</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="plmnovo.html">PLMNovo</a> <small>ESM-2 8M</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+<u>0.8973</u>
+</td>
+<td>
+<strong>0.8921</strong>
+</td>
+<td>
+<strong>0.7411</strong>
+</td>
+<td>
+<u>0.5249</u>
+</td>
+<td>
+<u>0.5283</u>
+</td>
+<td>
+0.2410
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="plmnovo.html">PLMNovo</a> <small>ESM-2 650M</small>
+</th>
+<td>
+<small>retrained</small>
+</td>
+<td>
+<strong>0.8976</strong>
+</td>
+<td>
+<u>0.8915</u>
+</td>
+<td>
+<u>0.7400</u>
+</td>
+<td>
+<strong>0.5356</strong>
+</td>
+<td>
+<strong>0.5323</strong>
+</td>
+<td>
+<strong>0.2483</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>MSKB is MassIVE-KB, under the train/test split (200,000 tryptic test spectra) published with Melendez et al.'s enzyme-bias data on Zenodo 12587317, the paper's reference [32]; that split mixes MassIVE-KB v1 and v2.0.15, so no version is recorded. The multi-enzyme rows are the held-out non-tryptic set from the same deposit.</small>
+</p>
+</section>
 <section id="table-2" class="level3">
 <h3 class="anchored" data-anchor-id="table-2">Table 2</h3>
 <p><a href="../publications/protein-language-model-aligned-spectra-embeddings-for-de-novo-peptide-sequencing.html">Protein Language Model-Aligned Spectra Embeddings for De Novo Peptide Sequencing</a>, page 7: <em>Performance comparison results in terms of amino acid precision and peptide recall on the ninespecies dataset [55]. The performance of the baseline methods, except for Casanovo v4.2, is reported from [65]. Bolded and underlined results represent the first and second best performance per species (or averaged across species in the last column), respectively.</em></p>
@@ -710,7 +834,7 @@ Recall<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="plmnovo.html">PLMNovo</a> <small>ESM-28M</small>
+<a href="plmnovo.html">PLMNovo</a> <small>ESM-2 8M</small>
 </th>
 <td>
 <small>retrained</small>
@@ -778,7 +902,7 @@ Recall<br><small>peptide</small>
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="plmnovo.html">PLMNovo</a> <small>ESM-2650M</small>
+<a href="plmnovo.html">PLMNovo</a> <small>ESM-2 650M</small>
 </th>
 <td>
 <small>retrained</small>
