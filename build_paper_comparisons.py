@@ -3348,6 +3348,10 @@ CAPTION_OVERRIDE: dict[tuple[int, str], str] = {
 # not a cross-method comparison. Each entry carries the reason, which is
 # printed as the refusal.
 CAPTION_VETO_ADD: dict[tuple[int, str], str] = {
+    # ReNovo, Table 8: its unfiltered rows repeat Table 1's nine-species
+    # numbers exactly, and its two filtered test sets exist in no other paper,
+    # so it adds nothing a comparison can use (reviewer's call).
+    (22, "Table8"): "repeats Table 1 on the unfiltered set; filtered sets unique to this paper",
     # pi-PrimeNovo's Supplementary Table 10 (both versions): PrimeNovo against
     # PepNet split by precursor charge, which the reviewer reads as an
     # ablation over charge states rather than a comparison on a dataset.
@@ -4049,6 +4053,14 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (53, "Fig. 3"): ("The data are the nine-species benchmark's yeast submission "
+                     "(PXD003868, the paper's reference [33]), but NOT under the "
+                     "benchmark's protocol: all 277,077 spectra were re-searched with "
+                     "PEAKS DB and split at random 90/5/5, so the models were trained and "
+                     "tested on the same species, very likely with shared peptides. That "
+                     "is why peptide accuracy reaches 0.91 here against roughly 0.5 for "
+                     "yeast held out of nine-species training. These numbers are not "
+                     "comparable with leave-one-species-out results on the benchmark."),
     (22, "Table8"): ("The filtered test sets are defined on p. 14: the authors computed, "
                      "for each nine-species test peptide, the minimum Levenshtein distance "
                      "to any training peptide, and 'filtered out test sequences with a "
@@ -4153,8 +4165,14 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # Deep Novo A+, Fig. 3: "the high-resolution Saccharomyces Cerevisiae
     # (Baker's yeast) dataset ... 5 raw files and 277,077 spectra acquired from
     # the Thermo Scientific Q-Exactive", split at random 90/5/5. No accession.
-    (53, "Fig. 3"): (None, "Saccharomyces cerevisiae HCD dataset (5 raw files, "
-                     "277,077 spectra, Q-Exactive), random 90/5/5 split; no accession"),
+    # Its reference [33] is Seidel et al., the yeast PBP1 study, i.e. PXD003868,
+    # the nine-species benchmark's own yeast provenance submission. So it is
+    # the benchmark at NO KNOWN VERSION (the pNovo 3 rule): the raw files were
+    # re-searched with PEAKS DB and split at random, which is none of the
+    # curated versions.
+    (53, "Fig. 3"): ("Nine-species benchmark",
+                     "yeast only, from PXD003868 (Seidel et al.), 5 raw files and 277,077 "
+                     "spectra re-searched with PEAKS DB, random 90/5/5 split"),
     # InstaNovo's results tables: one dataset PER ROW, from ROW_DATASET.
     (1, "Supplementary Table 2"): (None, "one per row (Data availability)"),
     (1, "Supplementary Table 3"): (None, "one per row (Data availability)"),

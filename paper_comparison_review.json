@@ -398,6 +398,13 @@
   "pub": 22,
   "state": "dismissed"
  },
+ "p22-pg14-t8": {
+  "cells": 0,
+  "label": "Table8",
+  "on": "2026-10-03",
+  "pub": 22,
+  "state": "dismissed"
+ },
  "p22-pg16-t9": {
   "cells": 0,
   "label": "Table9",
