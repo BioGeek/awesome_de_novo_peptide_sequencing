@@ -202,6 +202,17 @@ def unsquash_name(text: str) -> str:
     # 'DeepNovo' and 'AdaNovo' are names in it and stay whole, 'PeaksNovo' is
     # not one and becomes 'Peaks Novo'.
     head = t.split(" (")[0]
+    # A '+' BETWEEN TWO NAMES IS TWO NAMES. MemNovo writes its plug-in glued
+    # to the base, 'InstaNovo+MemNovo', which as a whole is no catalog name,
+    # so the camel split cut it into 'Insta Novo+Mem Novo'. Each side is
+    # checked on its own and the two are joined as 'InstaNovo + MemNovo'. A
+    # LEADING '+' ('+CausalNovo') is a plug-in marker, not a join, and stays.
+    mp = re.match(r"^\s*([^\s+][^+]*?)\s*\+\s*([^+\s][^+]*)$", head)
+    if mp:
+        rest = t[len(head):]
+        return (unsquash_name(mp.group(1)) + " + " + unsquash_name(mp.group(2))
+                + unsquash_name(rest) if rest.strip() else
+                unsquash_name(mp.group(1)) + " + " + unsquash_name(mp.group(2)))
     # A LEADING 'vs' COMES OFF TOO, and goes back on with its space. A
     # difference row prints 'vsCasaNovo', and with the prefix glued on the
     # name looked unknown and came out 'vs Casa Novo'.
@@ -213,23 +224,36 @@ def unsquash_name(text: str) -> str:
     # A FOOTNOTE MARKER AND A VARIANT SUFFIX COME OFF FIRST. 'PrimeNovo-CV*'
     # is not a catalog name as printed and split into 'Prime Novo-CV*', while
     # 'PrimeNovo' is one; the same for 'Casanovo-pretrained'.
-    stems = [head]
-    bare = re.sub(r"[*\u2217+\u2020\u2021]+$", "", head)
-    # A trailing CITATION and VERSION too: PLMNovo's table prints
-    # 'PointNovo[43]' and 'Casanovov4.2[33]', which looked unknown with the
-    # bracket on and came out 'Point Novo[43]'.
-    bare = re.sub(r"\s*\[\d+(?:\s*[,\u2013-]\s*\d+)*\]\s*$", "", bare)
-    stems.append(bare)
-    stems.append(re.sub(r"\s*v?\d+(?:\.\d+)*$", "", bare))
-    stems.append(re.sub(r"[-_][A-Za-z0-9]{1,12}$", "", bare))
+    def stems_of(tok: str) -> list[str]:
+        st = [tok]
+        bare = re.sub(r"[*\u2217+\u2020\u2021]+$", "", tok)
+        # A trailing CITATION and VERSION too: PLMNovo's table prints
+        # 'PointNovo[43]' and 'Casanovov4.2[33]', which looked unknown with the
+        # bracket on and came out 'Point Novo[43]'.
+        bare = re.sub(r"\s*\[\d+(?:\s*[,\u2013-]\s*\d+)*\]\s*$", "", bare)
+        st.append(bare)
+        st.append(re.sub(r"\s*v?\d+(?:\.\d+)*$", "", bare))
+        st.append(re.sub(r"[-_][A-Za-z0-9]{1,12}$", "", bare))
+        return st
+
+    def known(tok: str) -> bool:
+        st = stems_of(tok)
+        return any(_norm(x) in KNOWN_NAMES for x in st if x) or _near_known(st)
+
+    # WORD BY WORD, so a known name followed by another word stays whole: a
+    # MemNovo label carries its backbone column glued on ('MemNovo
+    # Transformer'), and judged as a whole that looked unknown and split.
     # With no catalog loaded the split is OFF, which is the safe direction:
-    # the condition below is a negation, so an empty set would otherwise make
-    # every glued name look unknown and split 'DiffuNovo' into 'Diffu Novo'.
-    if head and KNOWN_NAMES and not any(_norm(x) in KNOWN_NAMES for x in stems if x) \
-            and not _near_known(stems):
-        split = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", head)
-        if _norm(split.replace(" ", "")) == _norm(head):
-            t = split + t[len(head):]
+    # the test is a negation, so an empty set would otherwise make every
+    # glued name look unknown and split 'DiffuNovo' into 'Diffu Novo'.
+    if head and KNOWN_NAMES and not known(head):
+        toks = []
+        for tok in head.split(" "):
+            if tok and not known(tok):
+                sp = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", tok)
+                tok = sp if _norm(sp.replace(" ", "")) == _norm(tok) else tok
+            toks.append(tok)
+        t = " ".join(toks) + t[len(head):]
     t = re.sub(r"(?i)(?<=[a-z])et\s*al\s*\.?", " et al.", t)  # 'Maetal.' -> 'Ma et al.'
     t = re.sub(r",(?=\S)", ", ", t)                           # space after a comma
     t = re.sub(r";(?=\S)", "; ", t)
