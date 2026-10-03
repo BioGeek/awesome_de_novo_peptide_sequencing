@@ -1887,6 +1887,15 @@ AUC is '-'. Measured over
 the whole library: 11 footnotes -- six on DiffuNovo's best-competitor
 underlines, one on the Tomato cell, and four on ties marked in part.
 
+**Margin line numbers are not the regular face.** The regular face is the
+commonest numeric face on the page, and on CausalNovo's page 16 the review
+template's 54 margin line numbers, set in `NimbusSanL-Bold`, outnumbered the
+table's own faces. So every cell read as bold, and the page reported the
+paper bolding its own Casanovo rows. Line numbers are now stripped before
+counting, and a face named bold, black, heavy, medium or semibold is never
+taken as the regular face while a plainer face exists. Over the whole library
+that changed one table's marks, and no other.
+
 The marks are still READ, because checking needs them. The underline is exact
 -- a thin rect spanning x 355.0-377.4 under a word spanning 355.0-377.4 -- and
 bold is the face that is not the page's commonest numeric face, because LaTeX
@@ -1964,7 +1973,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**94 verified tables from 28 papers, 4042 measurements.** The 95 refusals the
+**99 verified tables from 29 papers, 4262 measurements.** The 98 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 

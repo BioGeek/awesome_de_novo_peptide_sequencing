@@ -1007,9 +1007,18 @@ def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
     # every producer names its faces differently. The regular face is simply the
     # commonest one over the page's numeric cells; anything else, barring an
     # italic, is emphasis.
-    nums = [w for w in words if numeric(w["text"])]
+    # MARGIN LINE NUMBERS ARE NOT CELLS. A review template numbers every line
+    # in the margin, and on CausalNovo's page 16 those 54 numbers, set in
+    # 'NimbusSanL-Bold', outnumbered the table's own regular face (25) and
+    # bold face (24): the line-number font became 'regular' and every cell in
+    # the table, plain or bold, read as emphasis.
+    nums = [w for w in strip_line_numbers(words) if numeric(w["text"])]
     faces = collections.Counter((w.get("fontname") or "") for w in nums)
-    regular = faces.most_common(1)[0][0] if faces else ""
+    # And a face whose NAME says bold is never the regular one while a plainer
+    # face exists: the count decides only among faces that could be regular.
+    heavy = re.compile(r"(?i)bold|black|heavy|semi|demi|-medi")
+    plain = [(f, n) for f, n in faces.most_common() if not heavy.search(f)]
+    regular = (plain[0][0] if plain else faces.most_common(1)[0][0]) if faces else ""
     bold = [w for w in nums
             if (w.get("fontname") or "") != regular
             and not re.search(r"(?i)italic|oblique|-it\b", w.get("fontname") or "")]
