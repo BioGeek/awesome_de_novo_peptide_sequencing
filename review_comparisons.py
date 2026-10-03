@@ -1448,6 +1448,12 @@ def main() -> int:
             ok = render(path, spec["page"], spec["bbox"], dest) or dest.exists()
             recs = []
             try:
+                # A VETOED entry stays in the registry as the record of how the
+                # figure reads and why it was refused; it yields a refusal, like
+                # a curated table veto, and no measurements.
+                if spec.get("veto"):
+                    raise B.Reject("C1 not a cross-method comparison (curated): "
+                                   + spec["veto"])
                 with pdfplumber.open(path) as fpdf:
                     grid = B.bar_figure_grid(fpdf.pages[pno], spec)
                 tb = IT.grid_table(grid, flabel, spec["caption"], spec["bbox"], spec["page"])

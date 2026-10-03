@@ -4109,6 +4109,11 @@ FIGURE_TABLES: dict[tuple[int, str], dict] = {
         "categories": r"^(train|test_length\(\d+\))$",
         "drop": ["train"],
         "bbox": (60.0, 50.0, 585.0, 262.0),
+        # Read, then refused at the reviewer's call: the yeast data were split
+        # at random rather than held out (see its TABLE_NOTE), so the only
+        # thing it supports is DeepNovo against Deep Novo A+ inside this paper.
+        "veto": ("random within-yeast split; supports only DeepNovo against "
+                 "Deep Novo A+ inside this paper"),
     },
 }
 

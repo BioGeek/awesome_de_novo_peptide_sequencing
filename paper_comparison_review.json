@@ -1133,6 +1133,13 @@
   "pub": 52,
   "state": "dismissed"
  },
+ "p53-pg5-fig-3": {
+  "cells": 0,
+  "label": "Fig. 3",
+  "on": "2026-10-03",
+  "pub": 53,
+  "state": "dismissed"
+ },
  "p58-pg5-t1": {
   "cells": 0,
   "label": "Table1",
@@ -1159,6 +1166,13 @@
   "label": "Table2 [QE_HF_X2]",
   "on": "2026-10-03",
   "pub": 58,
+  "state": "approved"
+ },
+ "p64-pg16-t8": {
+  "cells": 12,
+  "label": "Table8",
+  "on": "2026-10-03",
+  "pub": 64,
   "state": "approved"
  },
  "p64-pg18-t10": {

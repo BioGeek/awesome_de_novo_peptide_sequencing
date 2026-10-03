@@ -1973,7 +1973,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**100 verified tables from 29 papers, 4280 measurements.** The 99 refusals the
+**101 verified tables from 29 papers, 4328 measurements.** The 100 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2197,6 +2197,13 @@ One entry so far: Deep Novo A+'s Fig. 3, which compares DeepNovo, DeepNovo
 with each of A+'s two changes alone, and A+ itself, on three test-length
 splits. Its 'train' category is accuracy on the training set and is left out.
 It is opt-in per figure because most charts print no values.
+
+That entry is also the worked example of a `veto`. Its data are the
+nine-species benchmark's yeast submission (PXD003868), split at random rather
+than held out, so the reviewer refused it: it supports only DeepNovo against
+Deep Novo A+ inside that paper. A vetoed entry stays in the registry, so the
+reading and the reason are both on record, and yields a refusal with no
+measurements.
 
 What still cannot be read is the TABLE THAT IS AN IMAGE WITH NO CAPTION IN THE
 TEXT LAYER. DeepNovo-DIA's supplementary
