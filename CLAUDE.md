@@ -1767,6 +1767,20 @@ library, and `uv run --with pdfplumber python3 review_comparisons.py`. A full
 run takes about 8 minutes and should end on `0 accepted, 0 rejected`, meaning
 every table is signed off; anything else is a table whose parse changed.
 
+**Three caption traps, all from sub- and superscripts the text layer sets on
+lines of their own.** An unmapped glyph (`(cid:100)`, InstaNovo's ŝe_B hats)
+and a short sub/superscript fragment (Pairwise's 'Casanovo_bm') each sit alone,
+indented, and read as a header row that ended the caption a sentence early. The
+walk now steps over both. An unmapped glyph in the caption text becomes `�`
+rather than vanishing, since deleting one turned "The ▲ denotes" into "The
+denotes"; `CAPTION_OVERRIDE` holds the captions only a person can restore.
+Labels the text layer glues are re-spaced by one shared rule set,
+`unglue_label()` ('HeLasingle-shot', 'S.Brodae', 'Exc.Yeast',
+'Candidatus“Scalindua'), with `PROTECTED_CASE` names such as 'HeLa' never
+split. And the page's ranking reads a cell with the miner's own `numeric()`:
+stripping non-digits read '0.463(0.004)' and '0.609±0.007' as non-numbers, so
+every cell printing its spread fell out of the bold/underline ranking.
+
 **Re-rendering is incremental, at three speeds.** Almost all of a full
 render's ~8 minutes is parsing PDFs, so the page stores what it parsed in
 `items.json` and the cheaper paths reuse it:

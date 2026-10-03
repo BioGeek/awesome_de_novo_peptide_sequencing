@@ -142,7 +142,7 @@ def main() -> int:
     CACHE.mkdir(exist_ok=True)
     pending = [t for t in todo if args.force
                or not (CACHE / f"{t['tid']}.{args.reader}.txt").exists()]
-    print(f"{len(todo)} image table(s), {len(pending)} to read with {args.reader}")
+    print(f"{len(todo)} image table(s), {len(pending)} to read with {args.reader}", flush=True)
     if not pending:
         return 0
     from PIL import Image
@@ -151,7 +151,7 @@ def main() -> int:
         img = Image.open(CROPS / t["img"]).convert("RGB")
         text = read(args.reader, model, proc, img)
         (CACHE / f"{t['tid']}.{args.reader}.txt").write_text(text)
-        print(f"  {t['tid']}: {len(text)} chars")
+        print(f"  {t['tid']}: {len(text)} chars", flush=True)
     return 0
 
 

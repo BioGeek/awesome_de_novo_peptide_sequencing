@@ -1341,6 +1341,40 @@ def header_model(rows: list[list[dict]], lo: int,
     return own, span, " ".join(stub).strip(), ambiguous - grouped
 
 
+# Mixed-case NAMES that a camelCase split would break: 'HeLa' is a cell line,
+# not 'He La'. Add to it when another one is met.
+PROTECTED_CASE = ("HeLa",)
+
+
+def unglue_label(text: str) -> str:
+    """Re-space a label the text layer glued, for display and storage.
+
+    Shared by the miner's subsets and the review page, so the two never
+    disagree. InstaNovo's results table reads 'HeLasingle-shot', 'S.Brodae',
+    'HeLadegradome' and 'Exc.Yeast' off the text layer.
+    """
+    keep = {}
+    for i, name in enumerate(PROTECTED_CASE):
+        # a protected name followed by a glued lowercase word gets its space,
+        # and is shielded from the camelCase split by a placeholder
+        text = re.sub(re.escape(name) + r"(?=[a-z])", name + " ", text)
+        token = f"\x00{i}\x00"
+        keep[token] = name
+        text = text.replace(name, token)
+    out = re.sub(r"(?<=[a-z0-9])(?=[A-Z][A-Za-z])", " ", text)
+    out = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", out)
+    # 'S.Brodae' -> 'S. Brodae' (an initial), 'Exc.Yeast' -> 'Exc. Yeast' (an
+    # abbreviated word); 'Casa.V2' is untouched, since a digit follows the V.
+    out = re.sub(r"(?<![A-Za-z])([A-Z])\.(?=[A-Za-z])", r"\1. ", out)
+    out = re.sub(r"(?<=[a-z])\.(?=[A-Z][a-z])", ". ", out)
+    # An OPENING quote glued to the word before it: InstaNovo's
+    # 'Candidatus“Scalindua brodae”'. A closing quote stays attached.
+    out = re.sub(r"(?<=[A-Za-z])(?=[\u201c\u2018])", " ", out)
+    for token, name in keep.items():
+        out = out.replace(token, name)
+    return re.sub(r"\s+", " ", out).strip()
+
+
 def unsquash_label(text: str) -> str:
     """Put the spaces back into a row or column LABEL for display and storage.
 
@@ -1362,8 +1396,7 @@ def unsquash_label(text: str) -> str:
     # For a label it may split before a capital only when a letter follows:
     # 'ApisMellifera' and 'HelaQC' split, while a protease written 'GluC',
     # 'AspN' or 'LysC' keeps its trailing capital ('Glu C' was wrong).
-    out = re.sub(r"(?<=[a-z0-9])(?=[A-Z][A-Za-z])", " ", text)
-    out = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", out)
+    out = unglue_label(text)
     # An abbreviated genus loses the space after its initial too:
     # 'C.bacteria' -> 'C. bacteria', 'M.mazei' -> 'M. mazei'. Only after a
     # SINGLE capital, so 'Chymo.' and 'Prec.' are untouched.
@@ -1749,6 +1782,9 @@ def assemble_lines(band: list[dict]) -> str:
     return out.replace("\x00", "-").strip()
 
 
+CID = re.compile(r"\(cid:\d+\)")
+
+
 def caption_text(rows: list[list[dict]], paired: tuple | None,
                  blocks: list[tuple[int, int]],
                  fine: list[dict] | None = None,
@@ -1854,8 +1890,19 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # wrong: publication 4's caption line is two glued words, 'MassIVE-KB
         # set.' and 'Here we tested on each of the species in the', and both
         # begin with a capital, so the caption lost its last two sentences.
-        mine = sorted((w for w in nxt if lx0 - 6 <= w["x0"] <= right),
+        # An UNMAPPED GLYPH ('(cid:100)') is not a word of the line: InstaNovo's
+        # caption sets the hats of two 'ŝe_B's on a line of their own, at x 183
+        # and 225, and that line read as an indented header row and ended the
+        # caption one sentence early.
+        mine = sorted((w for w in nxt if lx0 - 6 <= w["x0"] <= right
+                       and not CID.fullmatch(w["text"].strip())),
                       key=lambda w: w["x0"])
+        # A SUB- OR SUPERSCRIPT ON A LINE OF ITS OWN is stepped over, not taken
+        # for an indented header row: Pairwise's caption reads 'Casanovo_bm',
+        # and the 'bm' sits alone at x 184, which ended the caption before its
+        # last sentence. At most two words of at most three characters each.
+        if mine and len(mine) <= 2 and all(len(w["text"].strip()) <= 3 for w in mine):
+            continue
         if mine:
             # Measured over the caption's OWN lines only: a row carrying just
             # the other column's text has to be stepped over and says nothing
@@ -1924,6 +1971,12 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
     # by the exact string.
     cap = LABEL_ROW.sub("", cap, count=1)
     cap = re.sub(r"^\s*[.:|\u2013\u2014]\s*", "", cap).strip()
+    # An UNMAPPED GLYPH becomes '\ufffd', the replacement character: what it
+    # stood for cannot be recovered here, but deleting it lost meaning --
+    # pi-HelixNovo's 'The (cid:78) denotes deterioration ratio' read 'The
+    # denotes ...' -- so the caption says visibly that a symbol was there.
+    # CAPTION_OVERRIDE holds captions corrected by hand.
+    cap = re.sub(r"\s{2,}", " ", CID.sub("\ufffd", cap)).strip()
     return label, cap, last
 
 
@@ -2233,6 +2286,7 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
         table_label, caption, cap_end = caption_text(
             rows, paired.get((lo, hi, edges[0][0])), blocks, fine,
             float(page.width))
+        caption = CAPTION_OVERRIDE.get((pub_id, (table_label or "").strip()), caption)
         if not table_label:
             uncaptioned += 1
             continue
@@ -3169,6 +3223,21 @@ LAYOUT_OVERRIDE: dict[tuple[int, str], dict] = {
              "AspN", "LysC"])]],
         "row_groups": [(0, 2, "Amino Acid Precision"), (3, 5, "Peptide Recall")],
         "row_labels": ["Casa.V2", "Contra.", "Ours"] * 2},
+}
+
+
+# A CAPTION CORRECTED BY HAND, where the text layer cannot give it back.
+# InstaNovo's preprint sets a bootstrap standard error as 'se' with a hat and a
+# subscript B; the hat is an unmapped glyph on a line of its own, so the text
+# layer reads 's (cid:100) eB'. The wording is the reviewer's, against the page.
+_INSTANOVO_CI = ("Confidence intervals are calculated as ±1.96 × se_B where se_B is a "
+                 "bootstrap standard error estimated from 10,000 replicates.*We do not "
+                 "calculate bootstrap standard errors for the ProteomeTools datasets "
+                 "because their size makes it prohibitively costly but also implies "
+                 "the standard errors would be very small.")
+CAPTION_OVERRIDE: dict[tuple[int, str], str] = {
+    (1, "Supplementary Table 2"): "InstaNovo evaluation results on all datasets. " + _INSTANOVO_CI,
+    (1, "Supplementary Table 3"): "InstaNovo+ evaluation results on all datasets. " + _INSTANOVO_CI,
 }
 
 

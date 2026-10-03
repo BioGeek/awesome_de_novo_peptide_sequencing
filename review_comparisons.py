@@ -283,13 +283,10 @@ def unsquash(text: str) -> str:
     # 'Precision_AAid(%)'; splitting it gave 'Precision_A Aid(%)'.
     if "_" in text:
         return text.strip()
-    # 'M.mazei' -> 'M. mazei': an abbreviated genus keeps its space. The miner
-    # already does this for subsets; row labels came through raw.
-    text = re.sub(r"\b([A-Z])\.(?=[a-z])", r"\1. ", text)
-    # Only before a capital FOLLOWED BY A LETTER, so 'GluC', 'AspN' and
-    # 'LysC' keep their trailing capital; see unsquash_label in the miner.
-    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z][A-Za-z])", " ", text)
-    return re.sub(r"\s+", " ", re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)).strip()
+    # One rule set with the miner (B.unglue_label): 'M.mazei' -> 'M. mazei',
+    # 'S.Brodae' -> 'S. Brodae', 'Exc.Yeast' -> 'Exc. Yeast',
+    # 'HeLasingle-shot' -> 'HeLa single-shot', and 'GluC' / 'AspN' kept whole.
+    return B.unglue_label(text)
 
 
 def printed_emphasis(rec: dict) -> dict | None:
@@ -374,6 +371,18 @@ def _subset(rec: dict, i: int, k) -> str:
     return (rs.get(i) or rs.get(str(i)) or rec["subsets"].get(k) or "")
 
 
+def _parse_value(printed: str) -> float:
+    """A cell's value, read by the miner's own numeric().
+
+    Stripping everything but digits read '0.463(0.004)' as '0.4630.004' and
+    '0.609±0.007' as '0.6090.007', neither a number, so a cell with its spread
+    printed dropped out of the ranking: Pairwise's PA column lost its bold to
+    Casanovo's lower 0.433. The first number of a '/'-joined cell is its own.
+    """
+    got = B.numeric((printed or "").split("/")[0].strip())
+    return got[0] if got else float("nan")
+
+
 def ranking(rec: dict) -> dict:
     """(row, col) -> 'best' or 'second', within each measurement.
 
@@ -393,7 +402,7 @@ def ranking(rec: dict) -> dict:
             key = (rec["metrics"].get(j), rec["levels"].get(j),
                    _subset(rec, i, k))
             try:
-                v = float(re.sub(r"[^0-9.\-]", "", printed.split("/")[0]) or "nan")
+                v = _parse_value(printed)
             except ValueError:
                 continue
             if v != v:                                  # NaN
@@ -455,7 +464,7 @@ def _absent_peers(rec: dict, key) -> list[str]:
 def _value(rec: dict, c) -> float | None:
     try:
         v = rec["body"][c[0]]["cells"][c[1]]
-        return float(re.sub(r"[^0-9.\-]", "", v.split("/")[0]) or "nan")
+        return _parse_value(v)
     except (KeyError, ValueError):
         return None
 
