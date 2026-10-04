@@ -504,14 +504,39 @@ def _value(rec: dict, c) -> float | None:
 
 
 def _who(rec: dict, c) -> str:
-    """The cell's method as the paper prints it, for a footnote."""
+    """The cell's method by its CATALOG name, for a footnote.
+
+    The paper's own abbreviation ('Contra.', 'Prime.', 'HelixNovo') means
+    nothing beside the standardised table, whose rows carry catalog names, so
+    the note uses the same: 'pi-HelixNovo', with its variant where it has one.
+    Only where two rows of the table would then read the same (pi-HelixNovo
+    beside pi-HelixNovo-dagger) is the printed form added to tell them apart.
+    """
     i, k = c
     j = i if rec["axis"] == "rows" else k
     m = rec["methods"].get(j) or rec["methods"].get(str(j))
     if not m:
         return "?"
-    printed = m[2] if len(m) > 2 else ""
-    return unsquash_name(printed) or m[0]
+    name = m[0] + (f" {m[1]}" if len(m) > 1 and m[1] else "")
+    printed = unsquash_name(m[2] if len(m) > 2 else "") or ""
+    same = [mm for mm in rec["methods"].values()
+            if mm and mm[0] == m[0] and (mm[1] if len(mm) > 1 else "") == (m[1] if len(m) > 1 else "")]
+    return f"{name} ({printed})" if len(same) > 1 and printed and printed != name else name
+
+
+def _column(key) -> str:
+    """'column amino acid precision', or '... recall, Mouse': measure first.
+
+    The same order as the standardised table's header, level before metric,
+    with the species after it, so a note reads like the column it is about.
+    """
+    metric, level, subset = key[0], key[1], key[2]
+    lab = {"precision@cov1": "precision at coverage 1", "auc": "AUC",
+           "ptm-precision": "PTM precision", "ptm-recall": "PTM recall",
+           "accuracy-filtered": "filtered accuracy",
+           "positional-accuracy": "positional accuracy"}.get(metric, metric)
+    measure = lab if metric.startswith("ptm") or not level or level == "?" else f"{level} {lab}"
+    return "column " + measure + (f", {subset}" if subset and subset != "?" else "")
 
 
 def _method(rec: dict, c) -> str:
@@ -570,7 +595,7 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
             # required because a lone value can also mean the parse lost the
             # rest, in which case a footnote about the paper would be false.
             if bolds and _absent_peers(rec, key):
-                notes.append(f"{' / '.join(x for x in (key[2], key[0], key[1]) if x and x != '?')}"
+                notes.append(f"{_column(key)}"
                              f": the original table bolded "
                              f"{', '.join(_who(rec, c) + ' (' + rec['body'][c[0]]['cells'][c[1]] + ')' for c in sorted(bolds))}"
                              f", the only value, since "
@@ -597,7 +622,7 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
         if not (bold_off or under_off or bold_part or under_part):
             continue
         cell = lambda c: f"{_who(rec, c)} ({rec['body'][c[0]]['cells'][c[1]]})"
-        name = " / ".join(x for x in (key[2], key[0], key[1]) if x and x != "?")
+        name = _column(key)
         said, tied = [], []
         if bold_off:
             said.append("bolded " + ", ".join(cell(c) for c in sorted(bolds)))
@@ -1240,6 +1265,10 @@ def main() -> int:
             except Exception:
                 texts[src] = None
         whole_all = "\n".join("\n".join(t) for t in texts.values() if t)
+        # What the BASIS search reads: the same files in reading order, with
+        # their spaces (B.reading_text). Method and dataset resolution keep
+        # whole_all.
+        basis_all = "\n".join(B.reading_text(p) for _s, p in sources) or whole_all
         for src, path in sources:
             if texts.get(src) is None:
                 continue
@@ -1252,8 +1281,8 @@ def main() -> int:
                 cands = B.candidate_pages(pages_text, rx)
                 if not cands:
                     continue
-                whole = whole_all
-                vocab = B.paper_vocabulary(whole, con)
+                whole = basis_all
+                vocab = B.paper_vocabulary(whole_all, con)
                 subject = con.execute("""
                     SELECT a.id, a.name FROM algorithm a
                       JOIN publication_algorithm pa ON pa.algorithm_id = a.id
@@ -1410,7 +1439,7 @@ def main() -> int:
                                 try:
                                     B.emit(con, base, tb, img_vocab, index, img_subject,
                                            "\n".join(texts[src][max(0, pno - 1):pno + 2]),
-                                           whole_all, [], collections.Counter(), False,
+                                           basis_all, [], collections.Counter(), False,
                                            collect=recs)
                                 except B.Reject as exc:
                                     recs.append({"verdict": "rejected", "reason": str(exc),
@@ -1472,7 +1501,7 @@ def main() -> int:
                 base = {c: "" for c in B.AUDIT_COLUMNS}
                 base.update({"publication_id": pub["id"], "pdf_page": spec["page"]})
                 B.emit(con, base, tb, fvocab, index, fsubject,
-                       "\n".join(texts[""][max(0, pno - 1):pno + 2]), whole_all,
+                       "\n".join(texts[""][max(0, pno - 1):pno + 2]), basis_all,
                        [], collections.Counter(), False, collect=recs)
             except B.Reject as exc:
                 recs.append({"verdict": "rejected", "reason": str(exc),

@@ -3360,6 +3360,27 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
     return did, name, vid, printed
 
 
+def reading_text(path) -> str:
+    """The PDF's text in READING ORDER, for the basis search.
+
+    pdfplumber's page text drops narrow word spaces and reads straight across a
+    two-column page, so the sentence the basis search quoted arrived as
+    'TheNine-speciesdataset,themost 6 LIPNovo:ANewComputational...' -- glued,
+    interleaved with the other column and the running head -- and the page
+    showed it as a tooltip. pdftotext's default mode follows the columns and
+    keeps the spaces. Only the basis search reads this; method and dataset
+    resolution keep their own text, so their results cannot move. Empty when
+    pdftotext fails, and the caller falls back.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(["pdftotext", "-enc", "UTF-8", str(path), "-"],
+                             capture_output=True, text=True, timeout=120)
+        return out.stdout if out.returncode == 0 else ""
+    except Exception:
+        return ""
+
+
 def find_basis(text: str, method: str) -> tuple[str, str | None, bool]:
     """(basis, the sentence that licensed it, whether cues conflicted).
 
@@ -3658,6 +3679,8 @@ def main() -> int:
             except Exception:
                 pass
         whole_all = "\n".join(whole_parts)
+        # The basis search reads text in reading order (reading_text).
+        basis_all = "\n".join(reading_text(p) for _s, p in sources) or whole_all
         for src, path in sources:
             try:
                 pdf = pdfplumber.open(path)
@@ -3672,8 +3695,8 @@ def main() -> int:
                         tally["paper: no candidate results page"] += 1
                     continue
                 seen_papers += 0 if src else 1
-                whole = whole_all
-                vocab = paper_vocabulary(whole, con)
+                vocab = paper_vocabulary(whole_all, con)
+                whole = basis_all
                 subject = con.execute("""
                     SELECT a.id, a.name FROM algorithm a
                       JOIN publication_algorithm pa ON pa.algorithm_id = a.id
@@ -4016,6 +4039,41 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # AdaNovo, every table: "We reproduce the results of Casanovo with the
+    # settings and hypermeters of the original paper and report the published
+    # results of DeepNovo and PointNovo as their pretrained weights are
+    # unavailable." The basis search read 'published' as released weights and
+    # gave all three 'released'. Casanovo's variants (re-weight, focal loss)
+    # are AdaNovo's own ablations on Casanovo, retrained with it.
+    **{(32, t): {"Casanovo": ("retrained", "We reproduce the results of Casanovo with the "
+                                           "settings and hypermeters of the original paper"),
+                 "DeepNovo": ("quoted", "report the published results of DeepNovo and "
+                                        "PointNovo as their pretrained weights are unavailable"),
+                 "PointNovo": ("quoted", "report the published results of DeepNovo and "
+                                         "PointNovo as their pretrained weights are unavailable")}
+       for t in ("Table1", "Table2", "Table3", "Table4", "Table5")},
+    # Casanovo (2022 preprint), Table 2: "we rely on the pre-trained weights of
+    # the former [DeepNovo] and the published results of the latter
+    # [PointNovo]".
+    (49, "Table2"): {
+        "DeepNovo": ("released", "we rely on the pre-trained weights of the former"),
+        "PointNovo": ("quoted", "and the published results of the latter (Qiao et al., "
+                                "2021), since neither PointNovo's pre-trained weights nor "
+                                "its predictions for the benchmark data set are available"),
+    },
+    # RefineNovo: "For a direct and equitable comparison with PrimeNovo ... we
+    # utilized its publicly available weights", which the search missed.
+    **{(16, t): {"π-PrimeNovo": ("released", "For a direct and equitable comparison with "
+                                             "PrimeNovo ... we utilized its publicly "
+                                             "available weights.")}
+       for t in ("Table1", "Table2")},
+    # Pairwise Attention, Tables 2 and 3: the caption says what the Casanovo
+    # column is. The basis search, reading garbled text, had made it
+    # 'released' from an unrelated sentence; with clean text its cues
+    # conflict. The caption settles it.
+    **{(4, t): {"Casanovo": ("quoted", "Casanovo is the reported numbers for "
+                                       "Casanovo_bm in the original publication")}
+       for t in ("Table 2", "Table2", "Table 3", "Table3")},
     # 'From abc to xyz', Table 1: the authors ran PEAKS beside DeepNovo.
     (225, "Table 1"): {
         "PEAKS": ("released", "We also included the de novo sequencing results of PEAKS."),

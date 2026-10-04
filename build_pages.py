@@ -658,30 +658,35 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
             return lab
         lab = lab if lab[:2].isupper() else lab[0].lower() + lab[1:]
         return f"{lev[0].upper()}{lev[1:]} {lab}"
+    # A WIDE TABLE IS STACKED. Casanovo's Table 2 prints five measures over nine
+    # species, 45 columns, and scrolled for a screen and a half. Past
+    # MAX_COLS the columns are split at MEASURE boundaries into tables stacked
+    # one above the other, each with the same rows and corner, so one measure
+    # is never split across two tables; a single measure wider than MAX_COLS
+    # is split on its own. The ranking is per column, so nothing moves.
+    MAX_COLS = 12
+    groups: list[list[tuple]] = []
+    for ck in cols:
+        if groups and groups[-1][-1][1:] == ck[1:]:
+            groups[-1].append(ck)
+        else:
+            groups.append([ck])
+    chunks: list[list[tuple]] = []
+    for g in groups:
+        for k0 in range(0, len(g), MAX_COLS):
+            piece = g[k0:k0 + MAX_COLS]
+            if chunks and len(chunks[-1]) + len(piece) <= MAX_COLS and len(cols) > MAX_COLS:
+                chunks[-1] += piece
+            elif chunks and len(cols) <= MAX_COLS:
+                chunks[-1] += piece
+            else:
+                chunks.append(list(piece))
+    out = []
+    derived = False
     # Bootstrap's own classes, not new CSS: custom.scss is in the publish's
     # global render key, so styling these in it would force a full render of
     # every page for a section on 22 of them. `table-responsive` lets a wide
     # table (MemNovo's runs to 21 columns) scroll instead of overflowing.
-    out = ['<div class="table-responsive">',
-           '<table class="table table-sm table-hover comparison" '
-           'style="font-size:0.85em; width:auto">', "<thead>"]
-    # Top row: the measure, one merged cell over all its adjacent columns.
-    out.append(f'<tr><th rowspan="2">{ds}</th>' if two_rows else f'<tr><th>{ds}</th>')
-    i = 0
-    while i < len(cols):
-        j = i
-        while j + 1 < len(cols) and cols[j + 1][1:] == cols[i][1:]:
-            j += 1
-        out.append(f'<th colspan="{j - i + 1}" style="text-align:center">'
-                   f'{html.escape(measure(cols[i][1], cols[i][2]))}</th>')
-        i = j + 1
-    out.append("</tr>")
-    # Second row: the species or test set under each measure.
-    if two_rows:
-        out.append("<tr>" + "".join(f"<th><small>{html.escape(sub)}</small></th>"
-                                    for sub in subsets) + "</tr>")
-    out.append("</thead><tbody>")
-    derived = False
     # THE BASIS IS NOT A COLUMN. It is our reading of the paper's prose, not
     # part of the printed table, and as a column of its own it sat there with
     # no header, mostly reading 'unclear'. Where the paper does say how a
@@ -694,37 +699,77 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
         rk = (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "", x["basis"])
         if x.get("basis_cue") and rk not in cue_of:
             cue_of[rk] = x["basis_cue"]
-    for rk in rows:
+
+    def row_head(rk) -> str:
         aid, name, variant, basis = rk
         cell = a("algorithms", aid, name)
         if variant:
             cell += f" <small>{html.escape(variant)}</small>"
-        if basis and basis != "unclear":
+        # A BASIS IS ABOUT A BASELINE: how the paper got a number it did not
+        # produce with its own method. On the paper's own method it said
+        # nothing true -- 'LIPNovo · retrained' quoted a sentence about
+        # retraining Casanovo -- so it is shown on baselines only.
+        own_row = any(x["is_self"] for x in res
+                      if (x["algorithm_id"], x["algorithm"], x["variant_printed"] or "",
+                          x["basis"]) == rk)
+        if basis and basis != "unclear" and not own_row:
             tip = cue_of.get(rk, "")
             cell += (f' <small class="text-muted" title="{html.escape(tip, quote=True)}">'
                      f"&middot; <em>{html.escape(basis)}</em></small>")
-        # nowrap: in a wide table the browser otherwise breaks a method name
-        # mid-word ('DeepNov o') to save a column's width.
-        out.append(f'<tr><th style="white-space:nowrap">{cell}</th>')
-        for ck in cols:
-            x = val.get((rk, ck))
-            if not x:
-                out.append("<td></td>")
-                continue
-            # THE PRINTED PRECISION: '0.530' stays '0.530', not '0.53'. A
-            # percentage table moved to 0-1 gains two decimals (68.12 -> 0.6812).
-            nums = re.findall(r"\d+(?:\.(\d*))?", x["text_printed"] or "")
-            dec = len(nums[x["part_index"]]) if x["part_index"] < len(nums) else 3
-            dec += 2 if c["unit_printed"] == "0-100" else 0
-            t = f"{x['value']:.{max(dec, 1)}f}"
-            if x["derived_from"]:
-                t += "&#8225;"
-                derived = True
-            m = mark.get((rk, ck))
-            t = f"<strong>{t}</strong>" if m == "best" else f"<u>{t}</u>" if m == "second" else t
-            out.append(f"<td>{t}</td>")
+        return cell
+
+    for chunk in chunks:
+        sub_c = [ck[0] for ck in chunk]
+        two = any(sub_c)
+        # Bootstrap's own classes, not new CSS: custom.scss is in the publish's
+        # global render key, so styling these in it would force a full render
+        # of every page for a section on a few dozen of them.
+        out += ['<div class="table-responsive">',
+                '<table class="table table-sm table-hover comparison" '
+                'style="font-size:0.85em; width:auto">', "<thead>"]
+        # Top row: the measure, one merged cell over all its adjacent columns.
+        out.append(f'<tr><th rowspan="2">{ds}</th>' if two else f'<tr><th>{ds}</th>')
+        i = 0
+        while i < len(chunk):
+            j = i
+            while j + 1 < len(chunk) and chunk[j + 1][1:] == chunk[i][1:]:
+                j += 1
+            out.append(f'<th colspan="{j - i + 1}" style="text-align:center">'
+                       f'{html.escape(measure(chunk[i][1], chunk[i][2]))}</th>')
+            i = j + 1
         out.append("</tr>")
-    out += ["</tbody></table>", "</div>"]
+        # Second row: the species or test set under each measure.
+        if two:
+            out.append("<tr>" + "".join(f"<th><small>{html.escape(sub)}</small></th>"
+                                        for sub in sub_c) + "</tr>")
+        out.append("</thead><tbody>")
+        for rk in rows:
+            # A row with nothing in this part of a stacked table is left out of
+            # it, rather than printed empty.
+            if not any((rk, ck) in val for ck in chunk):
+                continue
+            # nowrap: in a wide table the browser otherwise breaks a method
+            # name mid-word ('DeepNov o') to save a column's width.
+            out.append(f'<tr><th style="white-space:nowrap">{row_head(rk)}</th>')
+            for ck in chunk:
+                x = val.get((rk, ck))
+                if not x:
+                    out.append("<td></td>")
+                    continue
+                # THE PRINTED PRECISION: '0.530' stays '0.530', not '0.53'. A
+                # percentage table moved to 0-1 gains two decimals.
+                nums = re.findall(r"\d+(?:\.(\d*))?", x["text_printed"] or "")
+                dec = len(nums[x["part_index"]]) if x["part_index"] < len(nums) else 3
+                dec += 2 if c["unit_printed"] == "0-100" else 0
+                t = f"{x['value']:.{max(dec, 1)}f}"
+                if x["derived_from"]:
+                    t += "&#8225;"
+                    derived = True
+                m = mark.get((rk, ck))
+                t = f"<strong>{t}</strong>" if m == "best" else f"<u>{t}</u>" if m == "second" else t
+                out.append(f"<td>{t}</td>")
+            out.append("</tr>")
+        out += ["</tbody></table>", "</div>"]
     notes = []
     if derived:
         notes.append("&#8225; Not printed in the paper: computed from the "

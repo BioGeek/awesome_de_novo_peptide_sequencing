@@ -2145,6 +2145,18 @@ result depends on the PDFs, the code and that file, and nothing else. These
 tables are deliberately NOT in `.github/actions/commit-refreshed-db`: there
 is no PDF library on a runner, and a sign-off is a human's.
 
+**The basis search reads the PDF in reading order** (`reading_text`, via
+pdftotext), not pdfplumber's page text. That text dropped narrow spaces and
+read straight across two columns, so the cited sentences arrived as
+'TheNine-speciesdataset,themost 6 LIPNovo:...' and appeared that way as page
+tooltips. Clean text also exposed wrong bases. 'published results' had matched
+the *released* rule, giving AdaNovo's quoted DeepNovo and PointNovo, and its
+reproduced Casanovo, all 'released'. Pairwise's Casanovo got 'released' from
+an unrelated sentence where its caption says the numbers are quoted. Those
+are pinned in `TABLE_BASIS` from the paper's own words. Only the basis search
+reads this text; method and dataset resolution keep theirs, and a full
+re-parse changed no value, layout or verdict.
+
 **The basis follows the paper, and every non-`unclear` basis cites its
 sentence.** Invariants that must read zero, registered in `check_counts.py`:
 0 verified tables without a result for the paper's own method, 0 duplicate
@@ -2292,6 +2304,20 @@ other. Three rules worth knowing:
   over all of its columns. The species sit in the row beneath, in the paper's
   order. Measures follow where each first appears in the printed table.
   Grouping by species first had split one measure across the whole width.
+- **A wide table is stacked.** Past 12 data columns, the columns are split at
+  measure boundaries into tables stacked one above another, with the same
+  rows and corner. A single measure wider than 12 is split on its own.
+  Casanovo's Table 2, five measures over nine species and 45 columns, is five
+  tables of nine. A row with no value in a part is left out of that part.
+- **The paper's marks are named in the table's own terms.** A note reads
+  'column amino acid precision: the original table underlined pi-HelixNovo
+  (0.765)', with the measure as in the header and the method by its catalog
+  name. Before, it was 'precision / amino acid' and the paper's abbreviation
+  ('HelixNovo'). The printed form is added only where two rows would
+  otherwise read the same.
+- **A basis is shown on baselines only.** It says how a paper got a number
+  it did not produce. On the paper's own method it said nothing true:
+  'LIPNovo · retrained' quoted a sentence about retraining Casanovo.
 - **Escape an asterisk in a note.** The page is Markdown around this HTML,
   and Pandoc read the footnote markers in '0.491 / 0.725*' and '* Indicates
   ...' as emphasis: they paired up, vanished, and italicised the text
