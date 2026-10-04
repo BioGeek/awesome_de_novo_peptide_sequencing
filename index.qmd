@@ -77,7 +77,7 @@ pubs = pd.read_sql(
            -- names. `models` above stays the full list, because the table and
            -- the BibTeX are about what a paper involved; the author-to-model
            -- graph needs the narrower one, or every venomics author becomes a
-           -- PEAKS author. 53 of 572 publication_algorithm links are 'uses',
+           -- PEAKS author. 165 of 1027 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
            (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
@@ -1107,8 +1107,8 @@ page_link = (type, key, label) => {
 // A repo can back two algorithms, so `model` reads "A / B"; link the first.
 algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
 
-// Where a family label should go. 27 of 52 families have a page of their own;
-// the other 25 hold exactly one method, so their page would have carried that
+// Where a family label should go. 33 of 52 families have a page of their own;
+// the other 19 hold exactly one method, so their page would have carried that
 // method's papers, authors and dates and nothing else. Rather than leave a
 // lane label dead, a singleton family links straight to its one method: every
 // label in the swim lane is clickable, and
