@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Homology search</h1>
-<p class="subtitle lead">4 methods · 2001–2009</p>
+<p class="subtitle lead">5 methods · 2001–2025</p>
 </div>
 
 <div>
@@ -172,58 +172,60 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>De novo sequences, errors and all, used as the query in an error-tolerant search against known proteins, so a protein that is in no database can still be identified through its relatives.</p>
-<p>The earliest of its 4 methods is <a href="../algorithms/ms-blast.html">MS BLAST</a> (2001); 3 more have followed.</p>
+<p>The earliest of its 5 methods is <a href="../algorithms/ms-blast.html">MS BLAST</a> (2001); 4 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>4</td>
+<td>5</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>5</td>
+<td>6</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>19</td>
+<td>24</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2001-05-01 to 2009-09-01</td>
+<td>2001-05-01 to 2025-06-02</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (3), algorithm</td>
+<td>adjacent (3), algorithm (2)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (4)</td>
+<td>DDA (4), DIA</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-4" class="level2">
-<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
+<section id="methods-5" class="level2">
+<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/ms-blast.html">MS BLAST</a> (2001): Homology search of error-tolerant de novo sequences against a protein database, introduced for charting the proteomes of organisms with unsequenced genomes and later used to validate borderline identifications.</li>
 <li><a href="../algorithms/spider.html">SPIDER</a> (2005): Protein identification from sequence tags while accounting for de novo sequencing error.</li>
 <li><a href="../algorithms/layered-sequence-similarity-proteomics.html">Layered sequence-similarity proteomics</a> (2007): Identifies proteins in organisms with unsequenced genomes by layering the search: a stringent database search first, then automated de novo sequencing of what it leaves behind, then sequence-similarity searching of those de novo reads against related species.</li>
 <li><a href="../algorithms/champs.html">Champs</a> (2009): Sequences a complete novel protein by de novo sequencing its peptides and then assembling them against a HOMOLOGOUS database rather than an exact one, reaching near-full coverage and accuracy where neither approach alone would.</li>
+<li><a href="../algorithms/diavariant.html">DIAVariant</a> (2025): Identifies peptide sequence variants directly from DIA spectra by de novo sequencing-assisted homology search, with rigorous FDR control, so variant peptides outside the database can be found without a DDA library.</li>
 </ul>
 </section>
-<section id="papers-describing-them-5" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-5">Papers describing them (5)</h2>
+<section id="papers-describing-them-6" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
 <ul>
 <li><a href="../publications/charting-the-proteomes-of-organisms-with-unsequenced-genomes-by-maldi.html">Charting the Proteomes of Organisms with Unsequenced Genomes by MALDI-Quadrupole Time-of-Flight Mass Spectrometry and BLAST Homology Searching</a> (2001, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/spider-software-for-protein-identification-from-sequence-tags-with-de-novo.html">SPIDER: software for protein identification from sequence tags with de novo sequencing error</a> (2005, Journal of Bioinformatics and Computational Biology, peer-reviewed)</li>
 <li><a href="../publications/rapid-validation-of-protein-identifications-with-the-borderline-statistical.html">Rapid Validation of Protein Identifications with the Borderline Statistical Confidence via De Novo Sequencing and MS BLAST Searches</a> (2006, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/sequence-similarity-driven-proteomics-in-organisms-with-unknown-genomes-by-lc.html">Sequence similarity‐driven proteomics in organisms with unknown genomes by LC‐MS/MS and automated &lt;b&gt;&lt;i&gt;de novo&lt;/i&gt;&lt;/b&gt; sequencing</a> (2007, PROTEOMICS, peer-reviewed)</li>
 <li><a href="../publications/automated-protein-re-sequencing-with-ms-ms-and-a-homologous-database-yields.html">Automated protein (re)sequencing with MS/MS and a homologous database yields almost full coverage and accuracy</a> (2009, Bioinformatics, peer-reviewed)</li>
+<li><a href="../publications/de-novo-sequencing-assisted-homology-search-for-dia-data-analysis-enables-low.html">De Novo sequencing-assisted homology search for DIA data analysis enables low abundance peptide variants discovery</a> (2025, bioRxiv, preprint)</li>
 </ul>
 </section>
-<section id="authors-19" class="level2">
-<h2 class="anchored" data-anchor-id="authors-19">Authors (19)</h2>
-<p><a href="../authors/alexander-loboda.html">Alexander Loboda</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/denis-yuen.html">Denis Yuen</a>, <a href="../authors/henrik-thomas.html">Henrik Thomas</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/kenneth-g-standing.html">Kenneth G. Standing</a>, <a href="../authors/natalie-wielsch.html">Natalie Wielsch</a>, <a href="../authors/patrice-waridel.html">Patrice Waridel</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/pavel-pevzner.html">Pavel Pevzner</a>, <a href="../authors/peer-bork.html">Peer Bork</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/vineeth-surendranath.html">Vineeth Surendranath</a>, <a href="../authors/werner-ens.html">Werner Ens</a>, <a href="../authors/xiaowen-liu.html">Xiaowen Liu</a>, <a href="../authors/yonghua-han.html">Yonghua Han</a></p>
+<section id="authors-24" class="level2">
+<h2 class="anchored" data-anchor-id="authors-24">Authors (24)</h2>
+<p><a href="../authors/alexander-loboda.html">Alexander Loboda</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/denis-yuen.html">Denis Yuen</a>, <a href="../authors/haibo-bian.html">Haibo Bian</a>, <a href="../authors/hechen-li.html">Hechen Li</a>, <a href="../authors/henrik-thomas.html">Henrik Thomas</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/kenneth-g-standing.html">Kenneth G. Standing</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/natalie-wielsch.html">Natalie Wielsch</a>, <a href="../authors/patrice-waridel.html">Patrice Waridel</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/pavel-pevzner.html">Pavel Pevzner</a>, <a href="../authors/peer-bork.html">Peer Bork</a>, <a href="../authors/rui-qiao.html">Rui Qiao</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/vineeth-surendranath.html">Vineeth Surendranath</a>, <a href="../authors/werner-ens.html">Werner Ens</a>, <a href="../authors/xiaowen-liu.html">Xiaowen Liu</a>, <a href="../authors/yonghua-han.html">Yonghua Han</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

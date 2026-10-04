@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">CNN</h1>
-<p class="subtitle lead">3 methods · 2022–2024</p>
+<p class="subtitle lead">4 methods · 2020–2024</p>
 </div>
 
 <div>
@@ -172,43 +172,44 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Convolutional networks without a recurrent decoder, reading the spectrum as a signal over the m/z axis. Used where the output is a score or a local call rather than a sequence emitted left to right.</p>
-<p>The earliest of its 3 methods is <a href="../algorithms/pepnet.html">PepNet</a> (2022); 2 more have followed.</p>
+<p>The earliest of its 4 methods is <a href="../algorithms/ranovo.html">RANovo</a> (2020); 3 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>3</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>5</td>
+<td>6</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>21</td>
+<td>23</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2022-02-09 to 2024-01-02</td>
+<td>2020-12-13 to 2024-01-02</td>
 </tr>
 <tr class="odd">
 <td>Deep learning</td>
-<td>3 of 3</td>
+<td>4 of 4</td>
 </tr>
 <tr class="even">
 <td>Kinds</td>
-<td>adjacent, algorithm, post-processor</td>
+<td>algorithm (2), adjacent, post-processor</td>
 </tr>
 <tr class="odd">
 <td>Acquisition</td>
-<td>DDA (3)</td>
+<td>DDA (4)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-3" class="level2">
-<h2 class="anchored" data-anchor-id="methods-3">Methods (3)</h2>
+<section id="methods-4" class="level2">
+<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/ranovo.html">RANovo</a> (2020): A residual network with an attention mechanism for de novo peptide sequencing.</li>
 <li><a href="../algorithms/pepnet.html">PepNet</a> (2022): Temporal convolutional network</li>
 <li><a href="../algorithms/spectralis.html">Spectralis</a> (2023): AA-gapped convolutional layer</li>
 <li><a href="../algorithms/glycanfinder.html">GlycanFinder</a> (2023): Glycopeptide sequencing</li>
@@ -216,16 +217,17 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="how-they-score" class="level2">
 <h2 class="anchored" data-anchor-id="how-they-score">How they score</h2>
-<p>2 of the 3 have been run on <a href="../../index.html#how-they-score">denovo_benchmarks</a>, which ranks 17 tools over 84 datasets. The family’s best median rank is <strong>8</strong>.</p>
+<p>2 of the 4 have been run on <a href="../../index.html#how-they-score">denovo_benchmarks</a>, which ranks 17 tools over 84 datasets. The family’s best median rank is <strong>8</strong>.</p>
 <ul>
 <li><a href="../algorithms/spectralis.html">Spectralis</a>: median peptide-level average precision <strong>0.725</strong>, median rank <strong>8</strong> of 17</li>
 <li><a href="../algorithms/pepnet.html">PepNet</a>: median peptide-level average precision <strong>0.604</strong>, median rank <strong>11</strong> of 17</li>
 </ul>
 <p>Read these next to the rest of the field, not on their own: <a href="../../index.html#how-they-score">what the numbers mean</a>.</p>
 </section>
-<section id="papers-describing-them-5" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-5">Papers describing them (5)</h2>
+<section id="papers-describing-them-6" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
 <ul>
+<li><a href="../publications/a-residual-network-for-de-novo-peptide-sequencing-with-attention-mechanism.html">A residual network for de novo peptide sequencing with attention mechanism</a> (2020, 2020 16th International Conference on Control, Automation, Robotics and Vision (ICARCV), peer-reviewed)</li>
 <li><a href="../publications/pepnet-a-fully-convolutional-neural-network-for-de-novo-peptide-sequencing.html">PepNet: A Fully Convolutional Neural Network for De novo Peptide Sequencing</a> (2022, Research Square, preprint)</li>
 <li><a href="../publications/deep-learning-driven-fragment-ion-series-classification-enables-highly-preprint.html">Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo peptide sequencing</a> (2023, bioRxiv, preprint)</li>
 <li><a href="../publications/glycopeptide-database-search-and-de-novo-sequencing-with-peaks-glycanfinder.html">Glycopeptide database search and de novo sequencing with PEAKS GlycanFinder enable highly sensitive glycoproteomics</a> (2023, Nature Communications, peer-reviewed)</li>
@@ -233,9 +235,9 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/deep-learning-driven-fragment-ion-series-classification-enables-highly-precise.html">Deep learning-driven fragment ion series classification enables highly precise and sensitive de novo peptide sequencing</a> (2024, Nature Communications, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-21" class="level2">
-<h2 class="anchored" data-anchor-id="authors-21">Authors (21)</h2>
-<p><a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/chao-peng.html">Chao Peng</a>, <a href="../authors/daniela-klaproth-andrade.html">Daniela Klaproth-Andrade</a>, <a href="../authors/haixu-tang.html">Haixu Tang</a>, <a href="../authors/jakob-trauble.html">Jakob Träuble</a>, <a href="../authors/johannes-hingerl.html">Johannes Hingerl</a>, <a href="../authors/julien-gagneur.html">Julien Gagneur</a>, <a href="../authors/jun-ma.html">Jun Ma</a>, <a href="../authors/kaiyuan-liu.html">Kaiyuan Liu</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/m-ziaur-rahman.html">M. Ziaur Rahman</a>, <a href="../authors/mathias-wilhelm.html">Mathias Wilhelm</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ngoc-hieu-tran.html">Ngoc Hieu Tran</a>, <a href="../authors/nicholas-h-smith.html">Nicholas H. Smith</a>, <a href="../authors/qianqiu-zhang.html">Qianqiu Zhang</a>, <a href="../authors/sujun-li.html">Sujun Li</a>, <a href="../authors/weiping-sun.html">Weiping Sun</a>, <a href="../authors/xiyue-zhang.html">Xiyue Zhang</a>, <a href="../authors/yuzhen-ye.html">Yuzhen Ye</a>, <a href="../authors/zheng-chen.html">Zheng Chen</a></p>
+<section id="authors-23" class="level2">
+<h2 class="anchored" data-anchor-id="authors-23">Authors (23)</h2>
+<p><a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/chao-peng.html">Chao Peng</a>, <a href="../authors/chunhui-zhao.html">Chunhui Zhao</a>, <a href="../authors/daniela-klaproth-andrade.html">Daniela Klaproth-Andrade</a>, <a href="../authors/haixu-tang.html">Haixu Tang</a>, <a href="../authors/jakob-trauble.html">Jakob Träuble</a>, <a href="../authors/johannes-hingerl.html">Johannes Hingerl</a>, <a href="../authors/julien-gagneur.html">Julien Gagneur</a>, <a href="../authors/jun-ma.html">Jun Ma</a>, <a href="../authors/kaiyuan-liu.html">Kaiyuan Liu</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/m-ziaur-rahman.html">M. Ziaur Rahman</a>, <a href="../authors/mathias-wilhelm.html">Mathias Wilhelm</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ngoc-hieu-tran.html">Ngoc Hieu Tran</a>, <a href="../authors/nicholas-h-smith.html">Nicholas H. Smith</a>, <a href="../authors/qianqiu-zhang.html">Qianqiu Zhang</a>, <a href="../authors/sujun-li.html">Sujun Li</a>, <a href="../authors/weiping-sun.html">Weiping Sun</a>, <a href="../authors/xiyue-zhang.html">Xiyue Zhang</a>, <a href="../authors/yuzhen-ye.html">Yuzhen Ye</a>, <a href="../authors/zheng-chen.html">Zheng Chen</a>, <a href="../authors/zihang-liu.html">Zihang Liu</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

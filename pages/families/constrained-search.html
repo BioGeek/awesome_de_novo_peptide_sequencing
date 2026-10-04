@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Constrained search</h1>
-<p class="subtitle lead">4 methods · 1999–2012</p>
+<p class="subtitle lead">6 methods · 1999–2020</p>
 </div>
 
 <div>
@@ -172,57 +172,61 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Replace the database with the set of sequences the measurement itself allows. An accurate precursor mass, a determined composition or a known peptide family bounds the candidate set tightly enough to enumerate it outright.</p>
-<p>The earliest of its 4 methods is <a href="../algorithms/accurate-mass-constrained-de-novo-interpretation.html">Accurate-mass constrained de novo interpretation</a> (1999); 3 more have followed.</p>
+<p>The earliest of its 6 methods is <a href="../algorithms/accurate-mass-constrained-de-novo-interpretation.html">Accurate-mass constrained de novo interpretation</a> (1999); 5 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>4</td>
+<td>6</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>4</td>
+<td>6</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>20</td>
+<td>29</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>1999-07-01 to 2012-08-03</td>
+<td>1999-07-01 to 2020-07-01</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (3), adjacent</td>
+<td>algorithm (5), adjacent</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (4)</td>
+<td>DDA (6)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-4" class="level2">
-<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
+<section id="methods-6" class="level2">
+<h2 class="anchored" data-anchor-id="methods-6">Methods (6)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/accurate-mass-constrained-de-novo-interpretation.html">Accurate-mass constrained de novo interpretation</a> (1999): Uses 10 ppm parent-mass accuracy plus immonium-ion composition to replace the database with the set of sequence permutations the mass allows, then feeds the resulting de novo sequences into a similarity search. An early statement of the hybrid de novo plus homology strategy.</li>
 <li><a href="../algorithms/composition-based-sequencing.html">Composition-based sequencing</a> (2004): Two-step database-free strategy enabled by FT-ICR mass accuracy: determine the peptide’s amino acid COMPOSITION first, then score only the permutations that composition allows, which is a far smaller search space than conventional de novo sequencing explores.</li>
 <li><a href="../algorithms/tvnovo.html">TVNovo</a> (2010): Turns de novo sequencing into a search problem by generating a VIRTUAL database per spectrum, enumerating the candidate sequences the precursor mass allows, then scoring them as a database search would. Built for high-resolution LTQ-FT data.</li>
 <li><a href="../algorithms/conovo.html">Conovo</a> (2012): Constrained de novo sequencing algorithm for peptide families such as conotoxins.</li>
+<li><a href="../algorithms/constrained-neo-epitope-de-novo-sequencing.html">Constrained neo-epitope de novo sequencing</a> (2018): Constrained de novo sequencing of MHC-I neoepitope peptides, which differ from a reference peptide by a mutation, from immunopeptidomic MS/MS.</li>
+<li><a href="../algorithms/presnovo.html">PRESnovo</a> (2020): Prescreens neuropeptide precursors for a conserved family motif before de novo sequencing, so only the variable part of the sequence has to be read.</li>
 </ul>
 </section>
-<section id="papers-describing-them-4" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-4">Papers describing them (4)</h2>
+<section id="papers-describing-them-6" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
 <ul>
 <li><a href="../publications/role-of-accurate-mass-measurement-10-ppm-in-protein-identification-strategies.html">Role of Accurate Mass Measurement (±10 ppm) in Protein Identification Strategies Employing MS or MS/MS and Database Searching</a> (1999, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-peptide-composition-analysis-and-composition-based.html">De novo sequencing, peptide composition analysis, and composition-based sequencing: A new strategy employing accurate mass determination by Fourier transform ion cyclotron resonance mass spectrometry</a> (2004, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/tvnovo-de-novo-peptide-sequencing-for-high-resolution-ltq-ft-mass-spectrometry.html">TVNovo: De novo peptide sequencing for high resolution LTQ-FT mass spectrometry using virtual database searching</a> (2010, 2010 3rd International Conference on Biomedical Engineering and Informatics, peer-reviewed)</li>
 <li><a href="../publications/constrained-de-novo-sequencing-of-conotoxins.html">Constrained De Novo Sequencing of Conotoxins</a> (2012, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/constrained-de-novo-sequencing-of-neo-epitope-peptides-using-tandem-mass.html">Constrained De Novo Sequencing of neo-Epitope Peptides Using Tandem Mass Spectrometry</a> (2018, Lecture Notes in Computer Science, peer-reviewed)</li>
+<li><a href="../publications/presnovo-prescreening-prior-to-de-novo-sequencing-to-improve-accuracy-and.html">PRESnovo: Prescreening Prior to de novo Sequencing to Improve Accuracy and Sensitivity of Neuropeptide Identification</a> (2020, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-20" class="level2">
-<h2 class="anchored" data-anchor-id="authors-20">Authors (20)</h2>
-<p><a href="../authors/alma-l-burlingame.html">Alma L. Burlingame</a>, <a href="../authors/beatrix-ueberheide.html">Beatrix Ueberheide</a>, <a href="../authors/bernhard-spengler.html">Bernhard Spengler</a>, <a href="../authors/bingwen-lu.html">Bingwen Lu</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/chang-ming-xu.html">Chang-Ming Xu</a>, <a href="../authors/hai-bin-ma.html">Hai-Bin Ma</a>, <a href="../authors/han-chang-sun.html">Han-Chang Sun</a>, <a href="../authors/hong-wei-xie.html">Hong-Wei Xie</a>, <a href="../authors/hui-liu.html">Hui Liu</a>, <a href="../authors/ji-yang-zhang.html">Ji-Yang Zhang</a>, <a href="../authors/john-r-yates-iii.html">John R. Yates III</a>, <a href="../authors/karl-r-clauser.html">Karl R. Clauser</a>, <a href="../authors/lemmuel-l-tayo.html">Lemmuel L. Tayo</a>, <a href="../authors/lourdes-j-cruz.html">Lourdes J. Cruz</a>, <a href="../authors/marshall-bern.html">Marshall Bern</a>, <a href="../authors/peter-baker.html">Peter Baker</a>, <a href="../authors/swapnil-bhatia.html">Swapnil Bhatia</a>, <a href="../authors/wei-zhang-changsha.html">Wei Zhang (Changsha)</a>, <a href="../authors/yong-j-kil.html">Yong J. Kil</a></p>
+<section id="authors-29" class="level2">
+<h2 class="anchored" data-anchor-id="authors-29">Authors (29)</h2>
+<p><a href="../authors/alex-decourcy.html">Alex DeCourcy</a>, <a href="../authors/alma-l-burlingame.html">Alma L. Burlingame</a>, <a href="../authors/beatrix-ueberheide.html">Beatrix Ueberheide</a>, <a href="../authors/bernhard-spengler.html">Bernhard Spengler</a>, <a href="../authors/bingwen-lu.html">Bingwen Lu</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/chang-ming-xu.html">Chang-Ming Xu</a>, <a href="../authors/hai-bin-ma.html">Hai-Bin Ma</a>, <a href="../authors/haixu-tang.html">Haixu Tang</a>, <a href="../authors/han-chang-sun.html">Han-Chang Sun</a>, <a href="../authors/hong-wei-xie.html">Hong-Wei Xie</a>, <a href="../authors/hui-liu.html">Hui Liu</a>, <a href="../authors/ji-yang-zhang.html">Ji-Yang Zhang</a>, <a href="../authors/john-r-yates-iii.html">John R. Yates III</a>, <a href="../authors/karl-r-clauser.html">Karl R. Clauser</a>, <a href="../authors/kellen-delaney.html">Kellen DeLaney</a>, <a href="../authors/lemmuel-l-tayo.html">Lemmuel L. Tayo</a>, <a href="../authors/lingjun-li.html">Lingjun Li</a>, <a href="../authors/lourdes-j-cruz.html">Lourdes J. Cruz</a>, <a href="../authors/marshall-bern.html">Marshall Bern</a>, <a href="../authors/mingming-ma.html">Mingming Ma</a>, <a href="../authors/peter-baker.html">Peter Baker</a>, <a href="../authors/sujun-li.html">Sujun Li</a>, <a href="../authors/swapnil-bhatia.html">Swapnil Bhatia</a>, <a href="../authors/wei-zhang-changsha.html">Wei Zhang (Changsha)</a>, <a href="../authors/weifeng-cao.html">Weifeng Cao</a>, <a href="../authors/yadi-ma.html">Yadi Ma</a>, <a href="../authors/yong-j-kil.html">Yong J. Kil</a>, <a href="../authors/yuzhuo-zhang.html">Yuzhuo Zhang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
