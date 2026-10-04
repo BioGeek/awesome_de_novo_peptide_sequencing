@@ -27,6 +27,20 @@
   "pub": 10,
   "state": "dismissed"
  },
+ "p102-pg6-t2": {
+  "cells": 9,
+  "label": "Table2",
+  "on": "2026-10-03",
+  "pub": 102,
+  "state": "approved"
+ },
+ "p102-pg7-t3": {
+  "cells": 0,
+  "label": "Table3",
+  "on": "2026-10-03",
+  "pub": 102,
+  "state": "dismissed"
+ },
  "p107-pg31-supplementary-table-3": {
   "cells": 10,
   "label": "Supplementary Table 3",
@@ -1306,20 +1320,6 @@
   "label": "Table 4",
   "on": "2026-10-03",
   "pub": 45,
-  "state": "dismissed"
- },
- "p49-pg6-t2": {
-  "cells": 9,
-  "label": "Table2",
-  "on": "2026-10-03",
-  "pub": 49,
-  "state": "approved"
- },
- "p49-pg7-t3": {
-  "cells": 0,
-  "label": "Table3",
-  "on": "2026-10-03",
-  "pub": 49,
   "state": "dismissed"
  },
  "p52-pg7-t1": {

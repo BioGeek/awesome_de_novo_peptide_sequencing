@@ -1288,7 +1288,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**372 datasets, 400 versions, 431 addresses, 616 publication links over 134 papers.**
+**372 datasets, 400 versions, 431 addresses, 728 publication links over 170 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1332,9 +1332,9 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 47 papers use the
-nine-species benchmark; 17 name the original, 12 the revised, 3 the InstaNovo
-split, and **15 print only a per-species provenance accession**, which does not
+**A NULL `dataset_version_id` is the finding, not a gap.** 57 papers use the
+nine-species benchmark; 20 name the original, 14 the revised, 3 the InstaNovo
+split, and **20 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
 
@@ -1393,8 +1393,7 @@ PXD005025, PXD004948, PXD004325, PXD003868 and PXD004467 are five of the
 nine-species benchmark's OWN provenance submissions, already in
 `dataset_address`. Going to those submissions directly does not say which
 curated version was used, so those columns resolve the dataset and leave the
-version NULL. That is why the count of papers naming no version is 15 rather
-than 14.
+version NULL, and the paper is counted among those naming no version.
 
 The other two columns, QE_HF_X1 and QE_HF_X2, are two HeLa runs on a Q Exactive
 HF that share ONE PRIDE submission, PXD006932, and differ only in how much of

@@ -3451,7 +3451,7 @@ LAYOUT_OVERRIDE: dict[tuple[int, str], dict] = {
         (1, 1, 6, 6, "BiATNovo")]},
     # Casanovo, Table 2: level spanners, then method names (Casanovo over
     # three of its own columns), then the measure.
-    (49, "Table2"): {"header": [
+    (102, "Table2"): {"header": [
         (0, 0, 0, 4, "Peptide-level performance"),
         (0, 0, 5, 8, "Amino acid-level performance"),
         (1, 1, 0, 0, "DeepNovo"), (1, 1, 1, 1, "PointNovo"),
@@ -3813,7 +3813,7 @@ SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
     #                     Casanovo Prec. | Casanovo Cov. | Casanovo Prec.@Cov=1
     #   amino-acid-level: DeepNovo Prec. | PointNovo Prec. |
     #                     Casanovo Prec. | Casanovo Prec.@Cov=1
-    (49, "Table2"): ["DeepNovo", "PointNovo", "Casanovo", "Casanovo", "Casanovo",
+    (102, "Table2"): ["DeepNovo", "PointNovo", "Casanovo", "Casanovo", "Casanovo",
                      "DeepNovo", "PointNovo", "Casanovo", "Casanovo"],
     # Pairwise Attention, Table 2: 'BASE | PA | CASANOVO' under each of
     # 'NINE-SPECIES V1' and 'NINE-SPECIES V2'. The table splits by version
@@ -4057,7 +4057,7 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
     # Casanovo (2022 preprint), Table 2: "we rely on the pre-trained weights of
     # the former [DeepNovo] and the published results of the latter
     # [PointNovo]".
-    (49, "Table2"): {
+    (102, "Table2"): {
         "DeepNovo": ("released", "we rely on the pre-trained weights of the former"),
         "PointNovo": ("quoted", "and the published results of the latter (Qiao et al., "
                                 "2021), since neither PointNovo's pre-trained weights nor "
