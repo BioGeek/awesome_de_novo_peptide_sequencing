@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 382 `algorithm` rows has at least one linked publication, because
+Every one of the 386 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -101,6 +101,13 @@ submitted to a de novo benchmark implies it is one. Do not assume the repo and
 the PR describe the same model.
 
 ## Considered, not added
+
+- **"Correction to: Introducing π-HelixNovo for practical large-scale de novo
+  peptide sequencing"** (`10.1093/bib/bbae134`, Briefings in Bioinformatics,
+  March 2024). An erratum to publication 34, surfaced by the denovo-radar
+  harvest of 2026-10-04. A correction notice is not a paper: it has no byline
+  in Europe PMC and no abstract, and its content belongs to the article it
+  corrects, which is already here. Recorded so the radar stops proposing it.
 
 - **"Artificial intelligence integration into biological sciences: Applications,
   opportunities and challenges"** (`10.56612/ijaaeb.v6i1.259`, Int J Applied and
