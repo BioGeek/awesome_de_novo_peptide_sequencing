@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 386 `algorithm` rows has at least one linked publication, because
+Every one of the 436 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -102,6 +102,22 @@ the PR describe the same model.
 
 ## Considered, not added
 
+- **"Label-free amino acid identification for de novo protein sequencing via
+  tRNA charging and current blockade in a nanopore"** (`10.1101/2020.06.25.170803`,
+  bioRxiv 2020). A theoretical, partly simulated procedure that identifies a
+  cleaved terminal residue by charging its cognate tRNA and reading the
+  released AMP through a nanopore. Out on the boundary already recorded below:
+  the catalog holds no non-MS primary sequencing platform, and admitting one
+  sets that precedent for the whole adjacent field. Surfaced by the ten-year
+  denovo-radar harvest of 2026-10-04.
+
+- **"Batch-processing of imaging or liquid-chromatography mass spectrometry
+  datasets and De Novo sequencing of polyketide siderophores"**
+  (`10.1016/j.bbapap.2016.12.003`, BBA Proteins and Proteomics 2017). CycloBranch
+  dereplication of microbial siderophores from imaging and LC-MS data. The
+  analyte is a polyketide, not a peptide, so the *de novo* sequencing here is of
+  a different molecule class. Same harvest.
+
 - **"Correction to: Introducing π-HelixNovo for practical large-scale de novo
   peptide sequencing"** (`10.1093/bib/bbae134`, Briefings in Bioinformatics,
   March 2024). An erratum to publication 34, surfaced by the denovo-radar
@@ -176,7 +192,7 @@ the PR describe the same model.
   acid composition and order through the analysis of fragmentation patterns."
 
   This one also fixes the bar for `kind='review'`, which until now was only
-  implicit in the rows themselves. **All 30 existing review entries have de novo
+  implicit in the rows themselves. **All 36 existing review entries have de novo
   sequencing as their subject, or as the method underpinning the body of work
   being reviewed**: that holds even for the domain-flavoured ones, which is why
   the snake venom proteomes review ("assembled largely via de novo sequencing")

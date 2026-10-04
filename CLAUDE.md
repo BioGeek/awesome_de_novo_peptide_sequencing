@@ -212,11 +212,11 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**41 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1174 of 1743 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**41 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1380 of 1916 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (323), `'preprint'` (82), `'thesis'` (17), `'ML conference'` (12), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (3) and `'presentation'` (1). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (369), `'preprint'` (93), `'thesis'` (21), `'ML conference'` (12), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (9) and `'presentation'` (1). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -259,7 +259,7 @@ proceedings were not yet published on 2026-10-04, so it is still the arXiv row.
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 53 of the 503 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 53 of the 572 are `'uses'`, and they are concentrated rather than
 spread: 20 of PEAKS's 23 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -589,7 +589,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 446 against 445 publications today --
+a deleted row does not give its id back -- 513 against 512 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -696,8 +696,8 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 151 rows use day
-  `01` and 140 of those are in non-January months, so a first-of-the-month date is
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 181 rows use day
+  `01` and 166 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
 **The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
@@ -788,11 +788,11 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 419/445, of which 5 came from the PDFs themselves via
+Coverage is 476/512, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.
-The 26 without one are mostly theses, conference pages and records with no DOI,
+The 36 without one are mostly theses, conference pages and records with no DOI,
 where neither an API nor the PDF yields a clean abstract.
 
 **`build_pdf_abstracts.py` rejects more than it accepts, 13 of 18, and the
@@ -1206,6 +1206,23 @@ And one in this repo: the publish step's deliberate `exit 7` ("only the date
 moved") ran under GitHub's `bash -e`, so the step died before `rc=$?` and a
 quiet week failed the workflow. It is caught on the same line now,
 `python3 - <<'PY' || rc=$?`.
+
+**The ten-year backlog was curated once, on 2026-10-04.** A `--since 3650`
+harvest kept 259 papers, 83 of them not in the catalog. 67 went in as
+publications 447 to 513, under 50 new or existing method rows. Seven of them
+are preprints of papers already here or added in the same pass, linked
+through `publication_version`. 16 stayed out:
+- 11 Wiley open-review records of publication 419;
+- two IUPAC Gold Book entries;
+- a nanopore genome assembly and its Research Square twin;
+- the nanopore amino-acid paper (the non-MS boundary) and a polyketide
+  siderophore paper, both recorded in WATCHLIST.md.
+
+The first three shapes are now dropped by the harvest itself. Authors were
+matched by ORCID, then OpenAlex id, then exact name only where nothing
+contradicted it, and every same-name reuse and near-miss spelling was
+read before writing. Eleven spellings of people already catalogued were
+pinned to their rows ("A.T. Lebedev", "Koen C.A.P. Giesbers").
 
 **No code from the upstream Space is used.** It publishes no licence, so it is
 all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
@@ -2740,10 +2757,10 @@ better default and the repository is still what someone downloading wants.
 ### A family page needs two methods
 
 `build_pages.py` generates a page per architecture family, but only for the
-**26 of 52** families that hold two or more methods. The other **26** hold
+**27 of 52** families that hold two or more methods. The other **25** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **201** of the **227**
+already exists, on a permanent indexed URL. Those cover **219** of the **244**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
@@ -2783,7 +2800,7 @@ the URL is still `MIN(id)`, so a note cannot invent a family or move its page.
 
 All 26 families with a page have a note. The two ways that can rot are
 registered in `check_counts.py` as invariants that must read zero, the same
-shape as the `subdomain` pair: 0 pages without a note, 0 notes without a page.
+shape as the `subdomain` pair: 1 pages without a note, 0 notes without a page.
 A missing note is otherwise invisible, because the page simply falls back to the
 generated sentence.
 
