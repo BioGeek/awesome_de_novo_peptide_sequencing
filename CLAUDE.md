@@ -526,6 +526,15 @@ The 17 methods with benchmark results carry a `## Benchmarks` section on their
 page: median AP and median rank over the 84 datasets, plus the ProteoBench AUC
 and precision for the 7 that have a submission.
 
+**Each benchmark line names its data and links to it.** "over 84 datasets"
+links to a list of all 84 on the page of denovo_benchmarks' own deposit
+(MSV000096182, dataset *De novo peptide sequencing tools benchmark*), section
+`#denovo-benchmarks-datasets`, built from `benchmark_dataset`. The ProteoBench
+line says it runs on the nine-species benchmark and links to that dataset's
+*ProteoBench selection* version (`#proteobench-selection`). The main page's
+*How they score* intro links the same two places, with the dataset count read
+from the data rather than written in.
+
 These ARE baked into the pages, unlike repository stars. The rule is how often
 the number moves: stars change daily, so putting them on a page would rewrite
 the whole page set nightly for nothing, whereas benchmark results change when an

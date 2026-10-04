@@ -1963,16 +1963,36 @@ Everything above is what the methods ARE. This is how they do, on the field's tw
 public benchmarks. Neither is a leaderboard someone can game by reporting their
 own numbers: both run the tools themselves and publish the results as data.
 
-[**denovo_benchmarks**](https://github.com/bittremieuxlab/denovo_benchmarks) runs
-every tool in its own container over 84 datasets, against the same ground-truth
+```{ojs}
+//| echo: false
+// The two benchmarks' DATA link to their dataset pages: denovo_benchmarks'
+// evaluation sets are listed on the page of its own deposit, and ProteoBench's
+// selection is a version on the nine-species page.
+bench_ds_href = page_href("datasets", "De novo peptide sequencing tools benchmark")
+```
+
+```{ojs}
+//| echo: false
+nine_ds_href = page_href("datasets", "Nine-species benchmark")
+```
+
+```{ojs}
+//| echo: false
+md`[**denovo_benchmarks**](https://github.com/bittremieuxlab/denovo_benchmarks) runs
+every tool in its own container over ${bench_ds_href
+  ? `[${bench_n_datasets} datasets](${bench_ds_href}#denovo-benchmarks-datasets)`
+  : `${bench_n_datasets} datasets`}, against the same ground-truth
 PSMs and the same metric code, and asks how a method holds up across
 instruments, organisms, digests and modifications. That is the first four charts
 here.
 
 [**ProteoBench**](https://proteobench.cubimed.rub.de/denovo_DDA_HCD) takes one
-dataset, the published nine-species benchmark, and accepts submitted runs with
+dataset, the published ${nine_ds_href
+  ? `[nine-species benchmark](${nine_ds_href}) in its own [selection](${nine_ds_href}#proteobench-selection)`
+  : "nine-species benchmark"}, and accepts submitted runs with
 their parameters recorded. That is the last two. It answers a different
-question: with these settings, on this data, where does the tool land.
+question: with these settings, on this data, where does the tool land.`
+```
 
 ```{ojs}
 //| echo: false
@@ -2772,9 +2792,10 @@ whole benchmark rather than performance on each method's own supported domain.`
 
 ```{ojs}
 //| echo: false
-md`[ProteoBench](${pb_src.module_url}) asks a narrower question than the 84-dataset
+md`[ProteoBench](${pb_src.module_url}) asks a narrower question than the ${bench_n_datasets}-dataset
 sweep above, and answers it in more detail. One dataset, the published
-nine-species benchmark of ${(+pb_t[0].n_spectra).toLocaleString("en-US")} spectra;
+${nine_ds_href ? `[nine-species benchmark](${nine_ds_href}#proteobench-selection)` : "nine-species benchmark"}
+of ${(+pb_t[0].n_spectra).toLocaleString("en-US")} spectra;
 one point per **submitted run**, with the parameters that produced it recorded
 alongside the numbers. ${pb_subs.length} runs so far, all
 ${pb_subs.filter(d => d.algorithm_id != null).length} of them methods in this

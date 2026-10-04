@@ -938,7 +938,11 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         if b:
             L.append(
                 "- **denovo_benchmarks**: median peptide-level average precision "
-                f"**{b['median_ap']:.3f}** over {b['n_datasets']} datasets, median "
+                f"**{b['median_ap']:.3f}** over "
+                + (f"[{b['n_datasets']} datasets]({site.href('datasets', ctx['bench_ds_id'], from_kind=K)}"
+                   "#denovo-benchmarks-datasets)" if ctx.get("bench_ds_id")
+                   else f"{b['n_datasets']} datasets")
+                + ", median "
                 f"rank **{b['median_rank']:g}** of {b['of']}"
                 + (f" (version {md_escape(str(b['version']))})" if b["version"] else "")
                 + ".")
@@ -953,7 +957,13 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                 f"version {md_escape(str(pb['version']))}" if pb["version"] else None,
                 md_escape(pb["decoding"]) if pb["decoding"] else None,
                 f"submitted {pb['submitted']}" if pb["submitted"] else None) if x)
-            L.append("- **ProteoBench**: " + "; ".join(bits)
+            # ON WHICH DATA: ProteoBench scores one dataset, its own selection
+            # of the nine-species benchmark, which the catalog holds as a
+            # version of that dataset; the line links straight to it.
+            nine = (f"on the [nine-species benchmark]({site.href('datasets', ctx['nine_ds_id'], from_kind=K)}), "
+                    f"[ProteoBench selection]({site.href('datasets', ctx['nine_ds_id'], from_kind=K)}"
+                    "#proteobench-selection): " if ctx.get("nine_ds_id") else "")
+            L.append("- **ProteoBench**, " + nine + "; ".join(bits)
                      + (f" ({detail})" if detail else "") + ".")
         L += ["", "Both are mass-based matches on the tool's most recent run. "
               f"[What these numbers mean]({site.home('benchmarks')}).", ""]
@@ -1216,6 +1226,24 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         if not direct and not prov:
             L += ["No public address: this version is named in the literature but "
                   "cannot be downloaded.", ""]
+
+    # ---- denovo_benchmarks' evaluation sets, on the page of its own deposit.
+    # The method pages say "over 84 datasets" and link here, so the 84 are
+    # nameable rather than a bare count.
+    if ctx.get("bench_list"):
+        bl = ctx["bench_list"]
+        L += [f"## The {len(bl)} datasets denovo_benchmarks evaluates on "
+              "{#denovo-benchmarks-datasets}", "",
+              "Every dataset the living benchmark scores each tool on, as its "
+              "repository names them, with the group used for the heatmap on the "
+              f"[main page]({site.home('benchmarks')}) and how many tools have a "
+              "result there. Most tools ran on all of them; a partial one is left "
+              "out of the cross-dataset ranking.", "",
+              "| Dataset | Category | Group | Tools |", "|---|---|---|---:|"]
+        for r in bl:
+            L.append(f"| {md_escape(r['name'])} | {md_escape(r['category'] or '')} | "
+                     f"{md_escape(r['cat_group'] or '')} | {r['n_tools']} |")
+        L.append("")
 
     # ---- papers, split on what they did with it
     for heading, roles, blurb in (
@@ -1883,6 +1911,18 @@ def load(conn: sqlite3.Connection) -> dict:
             "of": n_ranked,
         }
 
+    # denovo_benchmarks' evaluation sets, listed on the page of the benchmark's
+    # own deposit (MSV000096182), which is where "over 84 datasets" links; and
+    # the nine-species benchmark, where ProteoBench's selection is a version.
+    d["bench_datasets"] = [dict(r) for r in q(
+        "SELECT name, category, cat_group, n_tools FROM benchmark_dataset "
+        "ORDER BY cat_group, category, name")]
+    _b = q("SELECT v.dataset_id FROM dataset_address a JOIN dataset_version v "
+           "ON v.id = a.dataset_version_id WHERE a.accession = 'MSV000096182' LIMIT 1")
+    d["bench_ds_id"] = (list(_b) or [[None]])[0][0]
+    _n = q("SELECT id FROM dataset WHERE name = 'Nine-species benchmark'")
+    d["nine_ds_id"] = (list(_n) or [[None]])[0][0]
+
     d["proteobench"] = {}
     for r in q(
             "SELECT s.algorithm_id AS aid, s.version, s.decoding, s.submitted,"
@@ -2239,6 +2279,7 @@ def main() -> int:
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),
                 "bench": d["bench"].get(gid),
                 "proteobench": d["proteobench"].get(gid),
+                "bench_ds_id": d["bench_ds_id"], "nine_ds_id": d["nine_ds_id"],
                 "comparisons": d["comparisons"].get(gid, []),
                 "subdomain": d["subdomain_by_name"].get(row["subdomain"]),
                 "family_key": d["family_key"].get(row["algorithm_family"]),
@@ -2281,6 +2322,7 @@ def main() -> int:
                 "methods": d["ds_methods"].get(did, []),
                 "checkpoints": d["ds_checkpoints"].get(did, []),
                 "pub_titles": pub_titles,
+                "bench_list": d["bench_datasets"] if did == d["bench_ds_id"] else [],
             }
             body, mtime = render_dataset(site, row, ctx)
             emit("datasets", site.slugs["datasets"][did], body, mtime)
