@@ -1182,6 +1182,14 @@ how many are not from this week. Verified end to end against the real catalog
 and watch list: 45 in, 44 out, 1 dropped as already rejected, 20 carried over,
 44 of 44 catalogued, 0 new.
 
+**The Space's refresh button is a link, not an API call.** "Run a new fetch on
+GitHub" opens this workflow's page, where GitHub already limits **Run workflow**
+to people with write access. Dispatching from the Space itself would need a
+GitHub token stored there plus a Hugging Face login gate to keep visitors from
+starting runs. The Space's date reads "List last changed", not "Generated":
+the workflow commits nothing when the papers are unchanged, so the date only
+moves when the list does.
+
 **No code from the upstream Space is used.** It publishes no licence, so it is
 all rights reserved and cannot be redistributed; `BioGeek/denovo-radar` is an
 independent implementation, MIT licensed, crediting the original as the idea.
