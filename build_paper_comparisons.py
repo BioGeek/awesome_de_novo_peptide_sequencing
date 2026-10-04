@@ -2095,7 +2095,7 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
         # A CAPTION'S EXTENT IS SET BY ITS OWN LINES. A row holding only the
         # OTHER column's text has to be walked over, since the two columns
         # interleave, but it must not extend the caption's bottom: publication
-        # 7's Table 3 caption ends at y 409, the walk crossed two right-column
+        # 222's Table 3 caption ends at y 409, the walk crossed two right-column
         # rows to y 437, and the band that wide then swept in a figure's axis
         # tick, so the caption ended '...respectively. 12000'.
         if mine:
@@ -3872,6 +3872,8 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # AdaNovo and the first alternative can help improve Casanovo's ability".
     (32, "reweight"): ("Casanovo", "re-weight"),
     (32, "focalloss"): ("Casanovo", "focal loss"),
+    # The NeurIPS version (its Table 4) names the re-weighting scheme.
+    (440, "reweightupsampling"): ("Casanovo", "re-weight"),
     # MemNovo. A plug-in like CausalNovo, written glued to its base:
     # 'Casanovo+MemNovo' is MemNovo applied to Casanovo, which its captions
     # state ("results with MemNovo applied").
@@ -4079,7 +4081,7 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
         "PEAKS": ("released", "We also included the de novo sequencing results of PEAKS."),
     },
     # GA-Novo, Table 5: the authors ran the PEAKS software themselves.
-    (152, "Table 5"): {
+    (224, "Table 5"): {
         "PEAKS": ("released", "For each spectrum, the top scored sequence is taken as "
                               "the output of de novo sequencing by PEAKS. PEAKS was run "
                               "with an error tolerance of 0.5 Da and tryptic digestion."),
@@ -4408,7 +4410,7 @@ NOT_RECORDED_COLUMNS: dict[tuple[int, str], dict[int, str]] = {
     # matches' and 'avg. len. of predicted sequences', lengths in residues.
     # Their two-line headers interleave, so 'avg. len.' attaches to the wrong
     # column and the header rule caught only one of them.
-    (152, "Table 5"): {3: "length", 4: "length"},
+    (224, "Table 5"): {3: "length", 4: "length"},
 }
 
 
@@ -4451,7 +4453,7 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
     # GA-Novo, Table 5: "120 MS/MS spectra" of "the comprehensive full
     # factorial LC-MS/MS benchmark dataset ... 50 protein samples extracted
     # from Escherichia coli K12" (Wessels et al. 2012), which is not catalogued.
-    (152, "Table 5"): (None, "120 spectra of the Wessels et al. 2012 full factorial "
+    (224, "Table 5"): (None, "120 spectra of the Wessels et al. 2012 full factorial "
                        "LC-MS/MS benchmark (E. coli K12, LTQ-FT); no accession"),
     # 'From abc to xyz', Table 1: "a dataset of Saccharomyces cerevisiae
     # proteome [18]" -- Hebert et al. 2014, The one hour yeast proteome --
@@ -4553,7 +4555,7 @@ TABLE_METRIC: dict[tuple[int, str],
     # "measure the accuracy of the results in amino acid level"; the third
     # column is equation 9, recall "in peptide level". The split header
     # 'recall / pep. level' had lent its level to Precision too.
-    (152, "Table 5"): [("precision", "amino acid"), ("recall", "amino acid"),
+    (224, "Table 5"): [("precision", "amino acid"), ("recall", "amino acid"),
                        ("recall", "peptide")],
     # RefineNovo, Table 6. Its caption says only "Performance comparison on
     # the NovoBench benchmark (yeast test species)". The metric is NovoBench's
@@ -5835,6 +5837,42 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 f"{r['cells'][k]['printed'][:10]:>11}" if k in r["cells"] else f"{'':>11}"
                 for k in range(len(edges))))
     return 1
+
+
+# A VERSION OF RECORD INHERITS ITS PREPRINT'S REGISTRY ENTRIES. The ICML and
+# NeurIPS proceedings rows (publications 438-440) print the same tables as the
+# arXiv preprints that every entry above was written against, so each entry
+# keyed on the preprint is copied to the proceedings row unless that row has
+# one of its own. The label map is needed where the proceedings renumber:
+# AdaNovo's NeurIPS paper drops the preprint's PTM Table 2, so the preprint's
+# Tables 3-5 are its Tables 2-4. With a map, a label outside it is NOT copied,
+# because the same number then names a different table. None means identical
+# numbering.
+PROCEEDINGS_OF: dict[int, tuple[int, dict[str, str] | None]] = {
+    438: (16, None),   # RefineNovo, ICML 2025
+    439: (17, None),   # LIPNovo, ICML 2025
+    440: (32, {"Table1": "Table1", "Table3": "Table2",
+               "Table4": "Table3", "Table5": "Table4"}),   # AdaNovo, NeurIPS 2024
+}
+
+
+def _inherit_preprint_entries() -> None:
+    for reg in [v for v in list(globals().values()) if isinstance(v, dict)]:
+        keys = [k for k in reg if isinstance(k, tuple) and len(k) == 2
+                and isinstance(k[0], int) and isinstance(k[1], str)]
+        for tgt, (src, labels) in PROCEEDINGS_OF.items():
+            for k in [k for k in keys if k[0] == src]:
+                key = k[1]
+                if re.match(r"(?i)table\s*\d", key):
+                    if labels is not None:
+                        new = labels.get(key.replace(" ", ""))
+                        if new is None:
+                            continue
+                        key = new if " " not in k[1] else new.replace("Table", "Table ")
+                reg.setdefault((tgt, key), reg[k])
+
+
+_inherit_preprint_entries()
 
 
 if __name__ == "__main__":

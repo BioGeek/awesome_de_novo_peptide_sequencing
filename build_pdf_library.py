@@ -70,6 +70,7 @@ import collections
 import glob
 import csv
 import datetime
+import functools
 import hashlib
 import json
 import re
@@ -249,6 +250,15 @@ def load_publications(conn: sqlite3.Connection) -> list[dict]:
           FROM publication p ORDER BY p.id""")]
     for r in rows:
         r["n"] = norm(r["title"])
+    # TWINS: a preprint and its version of record with the same title, year and
+    # first author would get the SAME filename, and `fetch` wrote one over the
+    # other -- LIPNovo's arXiv preprint was replaced by its ICML proceedings PDF.
+    # The preprint side is marked, as the URL policy in slugs.py marks it.
+    from collections import Counter
+    key = lambda r: (r["n"], str(r["publication_date"])[:4], r["first_author"])
+    seen = Counter(key(r) for r in rows)
+    for r in rows:
+        r["twin"] = seen[key(r)] > 1
     return rows
 
 
@@ -285,10 +295,27 @@ def zotero_name(p: dict) -> str:
     while len(title.encode()) > budget:
         title = title[:title.rstrip().rfind(" ")].rstrip() if " " in title.strip() \
             else title[:-1]
+    if p.get("twin") and p.get("publication_type") in ("preprint", "postprint"):
+        title += f" ({p['publication_type']})"
     return f"{stem}{title}.pdf".replace("/", "-")
 
 
-def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, str]:
+PREPRINT_BANNER = re.compile(
+    r"bioRxiv preprint|medRxiv preprint|This is a preprint|chemrxiv|arXiv:\d{4}\.\d{4,5}v\d+ \["
+    r"|Research Square|SSRN Electronic Journal", re.I)
+
+
+@functools.lru_cache(maxsize=None)
+def first_pages(path: str) -> str:
+    try:
+        return subprocess.run(["pdftotext", "-f", "1", "-l", "2", path, "-"],
+                              capture_output=True, text=True, timeout=60).stdout
+    except Exception:
+        return ""
+
+
+def identify(pubs: list[dict], stem: str, text: str = "",
+             path: Path | None = None) -> tuple[dict | None, str]:
     """Which publication is this file? By DOI in its text, else by title."""
     by_doi = {(p["doi"] or "").lower(): p for p in pubs if p["doi"]}
     for d in (x.rstrip(".,);") for x in
@@ -311,6 +338,18 @@ def identify(pubs: list[dict], stem: str, text: str = "") -> tuple[dict | None, 
     scored = sorted(((title_score(p["n"], tail), p) for p in pubs),
                     key=lambda t: -t[0])
     top = [(s, p) for s, p in scored if s >= 90]
+    if len(top) > 1 and any(p.get("twin") for _s, p in top):
+        # A TWIN PAIR shares title, year and author, so only the filename's
+        # marker can decide: '(preprint)' is the preprint, no marker the
+        # version of record. See load_publications.
+        marked = bool(re.search(r"\((preprint|postprint)\)\s*$", m.group(3) if m else stem))
+        # No marker is not proof of a version of record: a preprint filed before
+        # its journal twin existed carries none. Its first page says what it is
+        # (bioRxiv's banner, arXiv's margin stamp), so ask the PDF.
+        if not marked and path is not None:
+            marked = bool(PREPRINT_BANNER.search(text or first_pages(str(path))))
+        top = [(sc, p) for sc, p in top
+               if (p.get("publication_type") in ("preprint", "postprint")) == marked] or top
     if year and len(top) > 1:
         # A preprint and its version of record share a title; the year decides.
         top = [(s, p) for s, p in top
@@ -356,7 +395,7 @@ def coverage(pubs: list[dict], root: Path) -> dict[int, list[Path]]:
     """publication id -> the local files that are it. The FOLDER is the truth."""
     out: dict[int, list[Path]] = collections.defaultdict(list)
     for f in pdfs(root):
-        pub, _how = identify(pubs, f.stem)
+        pub, _how = identify(pubs, f.stem, path=f)
         if pub:
             out[pub["id"]].append(f)
     return out
@@ -651,6 +690,12 @@ def cmd_fetch(args, conn, pubs, root):
             ok, body = fetch(url)
             if ok and body.startswith(b"%PDF"):
                 dest = out / zotero_name(p)
+                # NEVER OVERWRITE. A file of this name already belongs to some
+                # publication; writing over it lost LIPNovo's preprint once.
+                if dest.exists():
+                    status, src, detail, fname = ("have", source, "name already taken; "
+                                                  "not overwritten", dest.name)
+                    break
                 dest.write_bytes(body)
                 status, src, detail, fname = ("have", source,
                                               f"{len(body)//1024} KB", dest.name)
@@ -708,7 +753,7 @@ def merge_status(root: Path, rows: list[dict]) -> list[dict]:
 def cmd_rename(args, conn, pubs, root):
     n = same = 0
     for f in pdfs(root):
-        pub, _how = identify(pubs, f.stem)
+        pub, _how = identify(pubs, f.stem, path=f)
         if not pub:
             print(f"  UNMATCHED {f.name}")
             continue

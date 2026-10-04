@@ -212,11 +212,11 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**41 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1722 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
+**41 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 1171 of 1724 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers, so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (318), `'preprint'` (81), `'thesis'` (17), `'ML conference'` (9), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (3) and `'presentation'` (1). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (318), `'preprint'` (82), `'thesis'` (17), `'ML conference'` (12), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (3) and `'presentation'` (1). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -235,10 +235,31 @@ own method describes it, and a survey talk uses what it surveys.
 
 `'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. Two cases so far. Publication 30 is an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Publication 352 is RankNovo's arXiv posting, `10.48550/arXiv.2505.17552`, dated 2025-05-23, which is AFTER ICLR 2025 in April; the conference version is publication 24, from OpenReview. Note the arXiv title differs from the conference one ("Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing" against "RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing"), so unlike publication 30 it needs no slug suffix, and it is deliberately NOT linked through `publication_version`. **The arXiv id is the tell: a `25xx` id on a paper whose version of record predates it is a postprint, however the submitter labels it.** Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
+**An ML preprint and its proceedings paper are two rows**, typed `'preprint'`
+and `'ML conference'` and linked through `publication_version` with source
+`'manual'`, the same shape as a bioRxiv preprint and its journal article. Four
+pairs so far: RefineNovo (16 to 438) and LIPNovo (17 to 439) in PMLR v267 for
+ICML 2025, AdaNovo (32 to 440) and NovoBench (78 to 441) in the NeurIPS 2024
+proceedings, the last in the Datasets and Benchmarks track. The preprint rows
+used to carry the conference as their `journal` while pointing at arXiv; they
+now say `arXiv`, and the conference row holds the proceedings URL and, for
+NeurIPS, its `10.52202` DOI. Two traps: AdaNovo's old label said ICML 2024,
+which was wrong, and its NeurIPS title differs ("Towards Robust De Novo Peptide
+Sequencing in Proteomics against Data Biases"). The proceedings row inherits
+the preprint's `publication_dataset` links, since it evaluates on the same data.
+
+**An OpenReview forum page is not a proceedings paper.** Publications 20 and 64
+had ICLR venues on the strength of an OpenReview URL; the forum pages say
+"Submitted to ICLR 2025 ... Decision: Reject" and "ICLR 2026 Conference
+Withdrawn Submission", so both are `journal = 'OpenReview'`, still preprints.
+OpenReview answers scripted requests, its API included, with a challenge page;
+a headful browser reads it. CrossNovo (9) is a NeurIPS 2025 paper whose
+proceedings were not yet published on 2026-10-04, so it is still the arXiv row.
+
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 53 of the 494 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 53 of the 498 are `'uses'`, and they are concentrated rather than
 spread: 20 of PEAKS's 23 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -568,7 +589,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 437 against 436 publications today --
+a deleted row does not give its id back -- 441 against 440 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -767,8 +788,10 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 410/436, of which 5 came from the PDFs themselves via
-`build_pdf_abstracts.py` (`abstract_source = 'pdf'`).
+Coverage is 414/440, of which 5 came from the PDFs themselves via
+`build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
+`abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
+abstracts were copied from the proceedings page itself.
 The 26 without one are mostly theses, conference pages and records with no DOI,
 where neither an API nor the PDF yields a clean abstract.
 
@@ -906,6 +929,25 @@ information on 154 of 359 papers; the longest full name this catalog can
 produce is 223 bytes, well inside the 255-byte `NAME_MAX`, so the length guard
 in `zotero_name()` is for a hypothetical future title and fires on nothing
 here. Renaming the library to full titles touched 103 of 231 files.
+
+**A twin pair gets a `(preprint)` suffix.** A preprint and its version of
+record with the same normalised title, year and first author produce the same
+filename, and that cost a real file: fetching LIPNovo's ICML PDF overwrote the
+arXiv one already in the library. So `load_publications` flags such pairs as
+`twin`, `zotero_name` appends ` (preprint)` (or ` (postprint)`) to that side,
+`identify` honours the marker, and `fetch` never overwrites an existing name.
+**An unmarked file is not proof of the version of record**: a preprint filed
+before its twin existed carries no marker, and the first version of this rule
+proposed renaming four bioRxiv and ChemRxiv files onto their journal twins'
+names. `identify` now reads the first two pages for a preprint banner
+(bioRxiv's, ChemRxiv's, arXiv's `arXiv:2602.20209v1 [q-bio.QM]` margin stamp,
+which unlike a bare arXiv id cannot come from a reference list).
+
+That re-attributed two papers' mined tables. GA-Novo's and the
+regressor-guided diffusion paper's comparison tables had been read from their
+arXiv files while carrying the journal rows' ids (152, 7); neither journal row
+has a PDF of its own, so the 11 sign-offs were re-keyed to the preprint rows,
+224 and 222, along with GA-Novo's registry entries.
 
 **Two tie-breaks, and the first one was wrong.** Where two rows differ only in
 a title's capitalisation or punctuation -- publication 108's "NovoBoard: a
@@ -1156,7 +1198,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**372 datasets, 400 versions, 431 addresses, 608 publication links over 131 papers.**
+**372 datasets, 400 versions, 431 addresses, 616 publication links over 134 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1200,8 +1242,8 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 45 papers use the
-nine-species benchmark; 16 name the original, 11 the revised, 3 the InstaNovo
+**A NULL `dataset_version_id` is the finding, not a gap.** 47 papers use the
+nine-species benchmark; 17 name the original, 12 the revised, 3 the InstaNovo
 split, and **15 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
@@ -2183,6 +2225,16 @@ a species (OC, UTI, a pNovo run) keeps its printed form as its canonical
 name. That last one read 174 when first registered: left empty, a
 standardised table built from the view lost its dataset column. A basis set by a
 cell's legend marker cites that marker.
+
+**A proceedings paper inherits its preprint's registry entries.**
+`PROCEEDINGS_OF` in `build_paper_comparisons.py` maps 438, 439 and 440 to
+their arXiv rows, and every entry keyed on the preprint (aliases, bases,
+metric layouts, veto overrides) is copied to the proceedings row unless that
+row has its own. Where the proceedings renumber, a label map says how, and a
+label outside it is not copied: AdaNovo's NeurIPS paper drops the preprint's
+PTM Table 2, so the preprint's Tables 3 to 5 are its Tables 2 to 4. The ICML
+tables come out identical, cell for cell, to the preprints' approved ones;
+AdaNovo's NeurIPS tables do not, since they add two baselines and ± spreads.
 
 ### Supplements, Extended Data, and a paper's own results
 
