@@ -678,7 +678,11 @@ for (aid, tool, metric), vals in _dvb.items():
     alg = conn.execute("SELECT name FROM algorithm WHERE id = ?", (aid,)).fetchone()[0]
     base = {"panel": "nine", "metric": metric, "algorithm_id": aid, "algorithm": alg,
             "variant": "", "family": _family.get(aid) or "", "date": _firsts.get(aid),
-            "source": "denovo_benchmarks", "version": "", "basis": "released",
+            # denovo_benchmarks' 9_species_* sets are the REVISED benchmark:
+            # its datasets_info.py calls them "De novo nine-species benchmark
+            # (MSV000090982)", the revised deposit. Recorded so the version
+            # filter can keep them off the original version's points.
+            "source": "denovo_benchmarks", "version": "revised (main)", "basis": "released",
             "n_papers": 0}
     for sp, version, v in vals:
         _rows.append({**base, "subset": sp, "value": v, "detail": json.dumps(
@@ -704,7 +708,8 @@ for sid, name, version, aid, decoding, ckpt, submitted, level, prec, rec, auc_ i
         _rows.append({"panel": "nine", "subset": "Average", "metric": metric,
                       "algorithm_id": aid, "algorithm": alg, "variant": version or "",
                       "family": _family.get(aid) or "", "date": _firsts.get(aid),
-                      "value": v, "source": "ProteoBench", "version": "", "basis": "released",
+                      "value": v, "source": "ProteoBench", "version": "ProteoBench selection",
+                      "basis": "released",
                       "n_papers": 0, "detail": json.dumps(
                           {"tool": name, "version": version, "decoding": decoding,
                            "checkpoint": ckpt, "submitted": submitted, "id": sid})})
@@ -3144,6 +3149,13 @@ outlined: **denovo_benchmarks**, the living proteomics benchmark, per species
 and as the mean of the nine, and **ProteoBench**, on the pooled nine-species
 selection and so only under *Average*.
 
+Nine-species is several datasets under one name, so the chart shows **one
+version at a time** by default, the original 2017 release most papers report.
+Tick others to add them. denovo_benchmarks runs on the *revised* benchmark and
+ProteoBench on its own selection, so each appears when its version is ticked.
+Mixing versions brings up a warning, because a gap between two versions can be
+the data rather than the method.
+
 ```{ojs}
 //| echo: false
 perf_all = transpose(perf_points).map(d => ({
@@ -3209,8 +3221,50 @@ viewof perf_subset = Inputs.select(perf_subset_options, {label: "Species / set"}
 
 ```{ojs}
 //| echo: false
+// ONE NINE-SPECIES VERSION AT A TIME, by default. "Nine-species" is four
+// different collections of spectra (see The data underneath), and a number on
+// the original 2017 release is not the same claim as one on the revised
+// benchmark, whose test peptides no longer leak into training. So the chart
+// opens on the version most papers report, original, and the others are a
+// tick away. The benchmarks carry their own versions -- denovo_benchmarks the
+// revised one, ProteoBench its own selection -- so they appear when theirs is
+// ticked. Only nine-species has several versions; the other datasets show no
+// control.
+perf_versions_all = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
+                     "ProteoBench selection", "version not stated"]
+```
+
+```{ojs}
+//| echo: false
+viewof perf_versions = perf_panel === "nine"
+  ? Inputs.checkbox(perf_versions_all.filter(v => perf_all.some(d => d.panel === "nine" && d.version === v)),
+                    {label: "Nine-species version", value: ["original (DeepNovo, 2017)"]})
+  : Object.assign(html`<span></span>`, {value: perf_versions_all})
+```
+
+```{ojs}
+//| echo: false
 perf_sel = perf_all.filter(d => d.panel === perf_panel && d.metric === perf_metric
-                                && d.subset === perf_subset)
+                                && d.subset === perf_subset
+                                && (perf_panel !== "nine" || perf_versions.includes(d.version)))
+```
+
+```{ojs}
+//| echo: false
+// The caveat appears whenever what is on screen spans more than one version.
+perf_version_note = {
+  const shown = [...new Set(perf_sel.map(d => d.version))]
+  return perf_panel === "nine" && shown.length > 1
+    ? html`<div class="callout callout-style-default callout-warning callout-titled" style="margin:0.5rem 0">
+        <div class="callout-header"><div class="callout-title-container">Comparing across versions</div></div>
+        <div class="callout-body-container callout-body"><p>These points come from
+        ${shown.length} different versions of the nine-species benchmark
+        (${shown.join(", ")}). They are different collections of spectra, so a
+        gap between two of them can be the data rather than the method: take any
+        comparison across versions with a grain of salt. The shape of a paper's
+        point says which version it is on.</p></div></div>`
+    : html``
+}
 ```
 
 ```{ojs}
@@ -3316,7 +3370,7 @@ perf_chart = {
     const x = d.detail
     return html`<div>${head}
       <div class="map-tooltip-meta" style="margin-top:6px">${d.source === "denovo_benchmarks"
-        ? `denovo_benchmarks: ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
+        ? `denovo_benchmarks, on the revised nine-species benchmark (MSV000090982): ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
         : `ProteoBench: ${x.tool}${x.version ? ` ${x.version}` : ""}${x.decoding ? `, ${x.decoding}` : ""}${x.checkpoint ? `, checkpoint ${x.checkpoint}` : ""}; submitted ${x.submitted}; pooled nine-species selection`}</div>
     </div>`
   }

@@ -472,6 +472,14 @@ the axis stopped being time. Its heading keeps the old anchor,
 whose peer-reviewed results paper is not out yet -- is laid over it per species
 and as the mean of the nine; ProteoBench as one pooled point under *Average*.
 
+- **One nine-species version at a time.** A "Nine-species version" checkbox
+  list defaults to *original (DeepNovo, 2017)*, where most papers report.
+  Benchmark points carry their own versions: denovo_benchmarks is *revised
+  (main)*, because its `datasets_info.py` names MSV000090982, the revised
+  deposit; ProteoBench is *ProteoBench selection*. Each shows when its version
+  is ticked. A "Comparing across versions" warning appears whenever the
+  visible points span more than one. Measured: 12 points by default; 40
+  paper, 17 denovo_benchmarks and 7 ProteoBench with everything ticked.
 - **A number several papers print is one point**, its tooltip listing every
   paper, table and page it was seen in. Seven-species' 371 printed values are
   143 points: most are NovoBench's, quoted again.
