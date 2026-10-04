@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Spectra pair</h1>
-<p class="subtitle lead">5 methods · 2009–2020</p>
+<p class="subtitle lead">8 methods · 2005–2020</p>
 </div>
 
 <div>
@@ -172,59 +172,65 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Two spectra of the same peptide, from complementary fragmentation or from a paired digest, interpreted together so that one ion series fills the gaps in the other.</p>
-<p>The earliest of its 5 methods is <a href="../algorithms/compnovo.html">CompNovo</a> (2009); 4 more have followed.</p>
+<p>The earliest of its 8 methods is <a href="../algorithms/icatcher.html">ICATcher</a> (2005); 7 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>5</td>
+<td>8</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>5</td>
+<td>8</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>35</td>
+<td>47</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2009-11-01 to 2020-02-15</td>
+<td>2005-03-25 to 2020-02-15</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (4), adjacent</td>
+<td>algorithm (6), adjacent (2)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (5)</td>
+<td>DDA (8)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-5" class="level2">
-<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
+<section id="methods-8" class="level2">
+<h2 class="anchored" data-anchor-id="methods-8">Methods (8)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/icatcher.html">ICATcher</a> (2005): Open-source algorithm that finds pairs of light and heavy isotope-tagged MS/MS spectra without a sequence database, as a basis for de novo sequencing and PTM discovery.</li>
 <li><a href="../algorithms/compnovo.html">CompNovo</a> (2009): De novo sequencing algorithm combining complementary CID and ETD tandem MS spectra.</li>
 <li><a href="../algorithms/adepts.html">ADEPTS</a> (2010): Advanced peptide de novo sequencing framework using a pair of tandem mass spectra.</li>
+<li><a href="../algorithms/novopair.html">NovoPair</a> (2014): Extends the authors’ spectrum graph model to pairs of CID or HCD and ECD or ETD spectra of the same peptide, using the ion types of both to improve full-length de novo sequencing accuracy over pNovo+.</li>
+<li><a href="../algorithms/paired-lys-n-lys-c-transposed-de-novo-sequencing.html">Paired Lys-N/Lys-C transposed de novo sequencing</a> (2015): Pairs spectra from Lys-N and Lys-C digests whose sequences are single-residue transposed and solves them together as one de novo problem, with residue-level confidence.</li>
 <li><a href="../algorithms/lys-c-lys-n-ft-icr-de-novo-sequencing.html">Lys-C/Lys-N FT-ICR de novo sequencing</a> (2017): Pairs Lys-C and Lys-N digests, whose peptides share mass and retention time but fragment differently, with ultrahigh-resolution FT-ICR MS/MS for de novo amino acid sequencing.</li>
 <li><a href="../algorithms/pnovom.html">pNovoM</a> (2019): De novo sequencing from mirror spectrum pairs: digesting the same sample with Ac-LysargiNase and with trypsin yields two spectra whose b and y ion series complement each other, which pins down the sequence far more confidently than either alone.</li>
 <li><a href="../algorithms/lys-sequencer.html">Lys-Sequencer</a> (2020): Database-independent de novo sequencing from paired Lys-C and Lys-N digests, whose single-residue-transposed peptides yield complementary high-resolution spectra, with residue-level confidence reported per call.</li>
 </ul>
 </section>
-<section id="papers-describing-them-5" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-5">Papers describing them (5)</h2>
+<section id="papers-describing-them-8" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-8">Papers describing them (8)</h2>
 <ul>
+<li><a href="../publications/database-independent-detection-of-isotopically-labeled-ms-ms-spectrum-peptide.html">Database independent detection of isotopically labeled MS/MS spectrum peptide pairs</a> (2005, Journal of Chromatography B, peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-by-tandem-ms-using-complementary-cid-and-electron.html">De novo peptide sequencing by tandem MS using complementary CID and electron transfer dissociation</a> (2009, Electrophoresis, peer-reviewed)</li>
 <li><a href="../publications/adepts-advanced-peptide-de-novo-sequencing-with-a-pair-of-tandem-mass-spectra.html">ADEPTS: Advanced peptide de novo sequencing with a pair of tandem mass spectra</a> (2010, Journal of Bioinformatics and Computational Biology, peer-reviewed)</li>
+<li><a href="../publications/novopair-de-novo-peptide-sequencing-for-tandem-mass-spectra-pair.html">NovoPair: De novo peptide sequencing for tandem mass spectra pair</a> (2014, 2014 IEEE International Conference on Bioinformatics and Biomedicine (BIBM), peer-reviewed)</li>
+<li><a href="../publications/paired-single-residue-transposed-lys-n-and-lys-c-digestions-for-label-free.html">Paired single residue‐transposed Lys‐N and Lys‐C digestions for label‐free identification of N‐terminal and C‐terminal MS/MS peptide product ions: ultrahigh resolution Fourier transform ion cyclotron resonance mass spectrometry and tandem mass spectrometry for peptide de novo sequencing</a> (2015, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/ultrahigh-resolution-fourier-transform-ion-cyclotron-resonance-mass.html">Ultrahigh‐resolution Fourier transform ion cyclotron resonance mass spectrometry and tandem mass spectrometry for peptide de novo amino acid sequencing for a seven‐protein mixture by paired single‐residue transposed Lys‐N and Lys‐C digestion</a> (2017, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/precision-de-novo-peptide-sequencing-using-mirror-proteases-of-ac-lysarginase.html">Precision De Novo Peptide Sequencing Using Mirror Proteases of Ac-LysargiNase and Trypsin for Large-scale Proteomics</a> (2019, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
 <li><a href="../publications/lys-sequencer-an-algorithm-for-de-novo-sequencing-of-peptides-by-paired-single.html">Lys-Sequencer: An algorithm for de novo sequencing of peptides by paired single residue transposed Lys-C and Lys-N digestion coupled with high-resolution mass spectrometry</a> (2020, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-35" class="level2">
-<h2 class="anchored" data-anchor-id="authors-35">Authors (35)</h2>
-<p><a href="../authors/alan-g-marshall.html">Alan G. Marshall</a>, <a href="../authors/andreas-bertsch.html">Andreas Bertsch</a>, <a href="../authors/andreas-leinenbach.html">Andreas Leinenbach</a>, <a href="../authors/anton-pervukhin.html">Anton Pervukhin</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carsten-baessmann.html">Carsten Baessmann</a>, <a href="../authors/christian-g-huber.html">Christian G. Huber</a>, <a href="../authors/christopher-m-overall.html">Christopher M. Overall</a>, <a href="../authors/fei-lin-wu.html">Fei-Lin Wu</a>, <a href="../authors/feng-xu.html">Feng Xu</a>, <a href="../authors/fu-qiang-wang.html">Fu-Qiang Wang</a>, <a href="../authors/hao-chi.html">Hao Chi</a>, <a href="../authors/hao-yang.html">Hao Yang</a>, <a href="../authors/jun-ling-zhang.html">Jun-Ling Zhang</a>, <a href="../authors/lin-he.html">Lin He</a>, <a href="../authors/markus-lubeck.html">Markus Lubeck</a>, <a href="../authors/ming-zhi-zhao.html">Ming-Zhi Zhao</a>, <a href="../authors/naomi-c-brownstein.html">Naomi C. Brownstein</a>, <a href="../authors/nicolas-l-young.html">Nicolas L. Young</a>, <a href="../authors/ning-li-tarrytown.html">Ning Li (Tarrytown)</a>, <a href="../authors/oliver-kohlbacher.html">Oliver Kohlbacher</a>, <a href="../authors/ping-xu.html">Ping Xu</a>, <a href="../authors/ralf-hartmer.html">Ralf Hartmer</a>, <a href="../authors/rolf-muller.html">Rolf Müller</a>, <a href="../authors/sebastian-bocker.html">Sebastian Böcker</a>, <a href="../authors/si-min-he.html">Si-Min He</a>, <a href="../authors/thomas-j-daly.html">Thomas J. Daly</a>, <a href="../authors/wei-di-xiao.html">Wei-Di Xiao</a>, <a href="../authors/wen-feng-zeng.html">Wen-Feng Zeng</a>, <a href="../authors/xi-wang.html">Xi Wang</a>, <a href="../authors/xiaoyan-guan.html">Xiaoyan Guan</a>, <a href="../authors/yanchang-li.html">Yanchang Li</a>, <a href="../authors/yasser-a-elnakady.html">Yasser A. Elnakady</a>, <a href="../authors/yi-hao-wang.html">Yi-Hao Wang</a>, <a href="../authors/yuan-mao.html">Yuan Mao</a></p>
+<section id="authors-47" class="level2">
+<h2 class="anchored" data-anchor-id="authors-47">Authors (47)</h2>
+<p><a href="../authors/alan-g-marshall.html">Alan G. Marshall</a>, <a href="../authors/andreas-bertsch.html">Andreas Bertsch</a>, <a href="../authors/andreas-leinenbach.html">Andreas Leinenbach</a>, <a href="../authors/anthony-j-kusalik.html">Anthony J. Kusalik</a>, <a href="../authors/anton-pervukhin.html">Anton Pervukhin</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carsten-baessmann.html">Carsten Baessmann</a>, <a href="../authors/christian-g-huber.html">Christian G. Huber</a>, <a href="../authors/christopher-m-overall.html">Christopher M. Overall</a>, <a href="../authors/dorothea-rutishauser.html">Dorothea Rutishauser</a>, <a href="../authors/fang-xiang-wu.html">Fang-Xiang Wu</a>, <a href="../authors/fei-lin-wu.html">Fei-Lin Wu</a>, <a href="../authors/feng-xu.html">Feng Xu</a>, <a href="../authors/frank-potthast.html">Frank Potthast</a>, <a href="../authors/fu-qiang-wang.html">Fu-Qiang Wang</a>, <a href="../authors/hao-chi.html">Hao Chi</a>, <a href="../authors/hao-yang.html">Hao Yang</a>, <a href="../authors/jiri-ocenasek.html">Jiri Ocenasek</a>, <a href="../authors/jun-ling-zhang.html">Jun-Ling Zhang</a>, <a href="../authors/lichao-zhang.html">Lichao Zhang</a>, <a href="../authors/lin-he.html">Lin He</a>, <a href="../authors/markus-lubeck.html">Markus Lubeck</a>, <a href="../authors/martin-pelikan.html">Martin Pelikan</a>, <a href="../authors/ming-zhi-zhao.html">Ming-Zhi Zhao</a>, <a href="../authors/naomi-c-brownstein.html">Naomi C. Brownstein</a>, <a href="../authors/nicolas-l-young.html">Nicolas L. Young</a>, <a href="../authors/ning-li-tarrytown.html">Ning Li (Tarrytown)</a>, <a href="../authors/oliver-kohlbacher.html">Oliver Kohlbacher</a>, <a href="../authors/peter-a-dimaggio.html">Peter A. DiMaggio</a>, <a href="../authors/ping-xu.html">Ping Xu</a>, <a href="../authors/qian-zhang.html">Qian Zhang</a>, <a href="../authors/qiangwei-xia.html">Qiangwei Xia</a>, <a href="../authors/ralf-hartmer.html">Ralf Hartmer</a>, <a href="../authors/ralph-schlapbach.html">Ralph Schlapbach</a>, <a href="../authors/rolf-muller.html">Rolf Müller</a>, <a href="../authors/sebastian-bocker.html">Sebastian Böcker</a>, <a href="../authors/si-min-he.html">Si-Min He</a>, <a href="../authors/thomas-j-daly.html">Thomas J. Daly</a>, <a href="../authors/wei-di-xiao.html">Wei-Di Xiao</a>, <a href="../authors/wen-feng-zeng.html">Wen-Feng Zeng</a>, <a href="../authors/xi-wang.html">Xi Wang</a>, <a href="../authors/xiaoyan-guan.html">Xiaoyan Guan</a>, <a href="../authors/yan-yan.html">Yan Yan</a>, <a href="../authors/yanchang-li.html">Yanchang Li</a>, <a href="../authors/yasser-a-elnakady.html">Yasser A. Elnakady</a>, <a href="../authors/yi-hao-wang.html">Yi-Hao Wang</a>, <a href="../authors/yuan-mao.html">Yuan Mao</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

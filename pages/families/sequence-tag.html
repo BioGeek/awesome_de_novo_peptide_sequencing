@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Sequence tag</h1>
-<p class="subtitle lead">7 methods · 1994–2021</p>
+<p class="subtitle lead">15 methods · 1994–2021</p>
 </div>
 
 <div>
@@ -172,20 +172,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Short, high-confidence stretches of sequence read straight off the spectrum and used as a filter or a query rather than as the final answer. A tag plus its flanking masses can identify a peptide on its own.</p>
-<p>The earliest of its 7 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 6 more have followed.</p>
+<p>The earliest of its 15 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 14 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>7</td>
+<td>15</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>7</td>
+<td>17</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>29</td>
+<td>66</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -193,42 +193,60 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (5), algorithm, post-processor</td>
+<td>adjacent (13), algorithm, post-processor</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (7)</td>
+<td>DDA (15)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-7" class="level2">
-<h2 class="anchored" data-anchor-id="methods-7">Methods (7)</h2>
+<section id="methods-15" class="level2">
+<h2 class="anchored" data-anchor-id="methods-15">Methods (15)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994): Error-tolerant peptide identification using short de novo sequence tags and flanking masses.</li>
 <li><a href="../algorithms/multitag.html">MultiTag</a> (2003): Searches several error-tolerant peptide sequence tags at once, so a protein can be identified across species by sequence similarity even when no tag is individually correct. Tolerating errors in the tags is what lets de novo output drive a homology search.</li>
 <li><a href="../algorithms/gutentag.html">GutenTag</a> (2003): High-throughput sequence tagging using an empirically derived fragmentation model.</li>
+<li><a href="../algorithms/gapped-sequence-tag-automata-matching.html">Gapped sequence tag automata matching</a> (2005): An automaton-based algorithm that matches gapped de novo sequence tags, where mass gaps stand for unresolved residues, against a protein database.</li>
 <li><a href="../algorithms/inspect.html">InsPecT</a> (2005): Uses peptide sequence tags derived from the spectrum as a database filter, discarding the vast majority of candidate peptides before scoring, which makes blind searches for post-translational modifications tractable.</li>
+<li><a href="../algorithms/sequence-tag-filtration-for-database-search.html">Sequence-tag filtration for database search</a> (2005): Generates short de novo sequence tags to filter the database BLAST-style, dramatically speeding searches for modified peptides.</li>
+<li><a href="../algorithms/modi.html">MODi</a> (2006): Error-tolerant search for multiple unrestricted PTMs that chains de novo sequence tags into tag chains to localise modified regions, also offered as a web server.</li>
 <li><a href="../algorithms/directag.html">DirecTag</a> (2008): Open-source statistical scoring algorithm for accurate sequence tags from peptide MS/MS spectra.</li>
 <li><a href="../algorithms/unique-sequence-tags-for-ptm-discovery.html">Unique sequence tags for PTM discovery</a> (2008): Reads short, uniquely assignable sequence tags de novo and uses them to find post-translational modifications, trading the full-length sequence for the reliability that made early de novo output hard to trust in routine proteomics.</li>
+<li><a href="../algorithms/graph-search-sequence-tag-generation.html">Graph-search sequence tag generation</a> (2011): Generates peptide sequence tags from MS/MS spectra by graph search, aiming for fast and accurate tags for identification.</li>
+<li><a href="../algorithms/scanranker.html">ScanRanker</a> (2011): Ranks MS/MS spectra by sequence-tag quality to find high-quality unidentified spectra for de novo or cross-link analysis.</li>
+<li><a href="../algorithms/b2-ion-n-terminal-sequence-tagging.html">b2-ion N-terminal sequence tagging</a> (2014): Shows that b2 ions in HCD spectra can be assigned with over 97% certainty when a2 and the complementary y ion are present, and uses the resulting two-residue N-terminal tags to filter PSMs and deconvolute co-fragmented spectra.</li>
+<li><a href="../algorithms/jump.html">JUMP</a> (2014): Hybrid tag-based database search that derives amino acid tags as short as one residue and combines tag and pattern-matching scores to rank PSMs.</li>
+<li><a href="../algorithms/tagger.html">Tagger</a> (2017): Uses Novor de novo sequence tags for approximate matching against protein databases to accelerate database search.</li>
 <li><a href="../algorithms/bottom-up-tag-convolution.html">Bottom-up tag convolution</a> (2021): Tells a correct spectrum interpretation from its plausible alternatives by convolving the set of length-k sequence tags a candidate implies, attacking the step de novo sequencing is weakest at: not producing a sequence but choosing between the ones it produced.</li>
 </ul>
 </section>
-<section id="papers-describing-them-7" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-7">Papers describing them (7)</h2>
+<section id="papers-describing-them-17" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-17">Papers describing them (17)</h2>
 <ul>
 <li><a href="../publications/error-tolerant-identification-of-peptides-in-sequence-databases-by-peptide.html">Error-Tolerant Identification of Peptides in Sequence Databases by Peptide Sequence Tags</a> (1994, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/multitag-multiple-error-tolerant-sequence-tag-search-for-the-sequence.html">MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry</a> (2003, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/gutentag-high-throughput-sequence-tagging-via-an-empirically-derived.html">GutenTag: High-Throughput Sequence Tagging via an Empirically Derived Fragmentation Model</a> (2003, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/an-automata-approach-to-match-gapped-sequence-tags-against-protein-database.html">AN AUTOMATA APPROACH TO MATCH GAPPED SEQUENCE TAGS AGAINST PROTEIN DATABASE</a> (2005, International Journal of Foundations of Computer Science, peer-reviewed)</li>
 <li><a href="../publications/inspect-identification-of-posttranslationally-modified-peptides-from-tandem.html">InsPecT: Identification of Posttranslationally Modified Peptides from Tandem Mass Spectra</a> (2005, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/peptide-sequence-tags-for-fast-database-search-in-mass-spectrometry.html">Peptide Sequence Tags for Fast Database Search in Mass-Spectrometry</a> (2005, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/modi-a-powerful-and-convenient-web-server-for-identifying-multiple-post.html">MODi : a powerful and convenient web server for identifying multiple post-translational peptide modifications from tandem mass spectra</a> (2006, Nucleic Acids Research, peer-reviewed)</li>
 <li><a href="../publications/directag-accurate-sequence-tags-from-peptide-ms-ms-through-statistical-scoring.html">DirecTag: Accurate Sequence Tags from Peptide MS/MS through Statistical Scoring</a> (2008, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-unique-sequence-tags-for-discovery-of-post-translational.html">De Novo Sequencing of Unique Sequence Tags for Discovery of Post-Translational Modifications of Proteins</a> (2008, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/unrestrictive-identification-of-multiple-post-translational-modifications-from.html">Unrestrictive Identification of Multiple Post-translational Modifications from Tandem Mass Spectrometry Using an Error-tolerant Algorithm Based on an Extended Sequence Tag Approach</a> (2008, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
+<li><a href="../publications/an-automata-approach-to-match-gapped-sequence-tags-against-protein-database-585.html">An Automata Approach to Match Gapped Sequence Tags Against Protein Database</a> (2010, Lecture Notes in Computer Science, peer-reviewed)</li>
+<li><a href="../publications/rapid-and-accurate-generation-of-peptide-sequence-tags-with-a-graph-search.html">Rapid and Accurate Generation of Peptide Sequence Tags with a Graph Search Approach</a> (2011, Lecture Notes in Computer Science, peer-reviewed)</li>
+<li><a href="../publications/scanranker-quality-assessment-of-tandem-mass-spectra-via-sequence-tagging.html">ScanRanker: Quality Assessment of Tandem Mass Spectra via Sequence Tagging</a> (2011, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/n-terminal-sequence-tagging-using-reliably-determined-b2-ions-a-useful-approach.html">N-terminal sequence tagging using reliably determined b2 ions: A useful approach to deconvolute tandem mass spectra of co-fragmented peptides in proteomics</a> (2014, Journal of Proteomics, peer-reviewed)</li>
+<li><a href="../publications/jump-a-tag-based-database-search-tool-for-peptide-identification-with-high.html">JUMP: A Tag-based Database Search Tool for Peptide Identification with High Sensitivity and Accuracy</a> (2014, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
+<li><a href="../publications/tagger-enhance-database-search-tools-with-de-novo-sequencing-tags.html">Tagger: Enhance Database Search Tools with De Novo Sequencing Tags</a> (2017, thesis)</li>
 <li><a href="../publications/validation-of-de-novo-peptide-sequences-with-bottom-up-tag-convolution.html">Validation of De Novo Peptide Sequences with Bottom-Up Tag Convolution</a> (2021, Proteomes, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-29" class="level2">
-<h2 class="anchored" data-anchor-id="authors-29">Authors (29)</h2>
-<p><a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a></p>
+<section id="authors-66" class="level2">
+<h2 class="anchored" data-anchor-id="authors-66">Authors (66)</h2>
+<p><a href="../authors/aaron-w-miller.html">Aaron W. Miller</a>, <a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/birgit-schilling.html">Birgit Schilling</a>, <a href="../authors/chunmei-liu.html">Chunmei Liu</a>, <a href="../authors/corbin-w-whitwell.html">Corbin W. Whitwell</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/eunok-paek.html">Eunok Paek</a>, <a href="../authors/fedor-kryuchkov.html">Fedor Kryuchkov</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/h-kim.html">H. Kim</a>, <a href="../authors/h-park.html">H. Park</a>, <a href="../authors/haiyan-tan.html">Haiyan Tan</a>, <a href="../authors/hans-rudolf-aerni.html">Hans-Rudolf Aerni</a>, <a href="../authors/heejin-park.html">Heejin Park</a>, <a href="../authors/hong-wang.html">Hong Wang</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/hui-li.html">Hui Li</a>, <a href="../authors/j-jeong.html">J. Jeong</a>, <a href="../authors/j-seo.html">J. Seo</a>, <a href="../authors/j-w-sim.html">J. W. Sim</a>, <a href="../authors/jaeho-jeong.html">Jaeho Jeong</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/junmin-peng.html">Junmin Peng</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/kong-joo-lee.html">Kong-Joo Lee</a>, <a href="../authors/kristin-l-cheek.html">Kristin L. Cheek</a>, <a href="../authors/lauren-scott.html">Lauren Scott</a>, <a href="../authors/legand-burge.html">Legand Burge</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/mugizi-rwebangira.html">Mugizi Rwebangira</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/qi-tang.html">Qi Tang</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/richard-m-caprioli.html">Richard M. Caprioli</a>, <a href="../authors/s-kim.html">S. Kim</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/seungjin-na.html">Seungjin Na</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/thiago-verano-braga.html">Thiago Verano-Braga</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/william-southerland.html">William Southerland</a>, <a href="../authors/xusheng-wang.html">Xusheng Wang</a>, <a href="../authors/y-seo.html">Y. Seo</a>, <a href="../authors/yonghua-han.html">Yonghua Han</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/yuxin-li.html">Yuxin Li</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a>, <a href="../authors/zhiping-wu.html">Zhiping Wu</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

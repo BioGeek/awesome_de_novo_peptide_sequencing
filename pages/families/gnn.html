@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">GNN</h1>
-<p class="subtitle lead">2 methods · 2023</p>
+<p class="subtitle lead">3 methods · 2023</p>
 </div>
 
 <div>
@@ -172,66 +172,68 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Graph neural networks over the spectrum graph: they learn the path-scoring function that dynamic programming had to hand-code, which is what lets a path cross a fragment that was never observed.</p>
-<p>The earliest of its 2 methods is <a href="../algorithms/denovo-gcn.html">Denovo-GCN</a> (2023).</p>
+<p>The earliest of its 3 methods is <a href="../algorithms/hybrid-cnn-gnn-peptide-ion-encoder.html">Hybrid CNN-GNN peptide ion encoder</a> (2023); 2 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>2</td>
+<td>3</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>2</td>
+<td>3</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>8</td>
+<td>11</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2023-04-05 to 2023-10-19</td>
+<td>2023-02-03 to 2023-10-19</td>
 </tr>
 <tr class="odd">
 <td>Deep learning</td>
-<td>2 of 2</td>
+<td>3 of 3</td>
 </tr>
 <tr class="even">
 <td>Kinds</td>
-<td>algorithm (2)</td>
+<td>algorithm (2), adjacent</td>
 </tr>
 <tr class="odd">
 <td>Acquisition</td>
-<td>DDA (2)</td>
+<td>DDA (3)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-2" class="level2">
-<h2 class="anchored" data-anchor-id="methods-2">Methods (2)</h2>
+<section id="methods-3" class="level2">
+<h2 class="anchored" data-anchor-id="methods-3">Methods (3)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/hybrid-cnn-gnn-peptide-ion-encoder.html">Hybrid CNN-GNN peptide ion encoder</a> (2023): Convolutional plus graph neural network module that encodes fragment peaks to identify b- and y-ions, outperforming encoders taken from existing de novo sequencers under noise and missing peaks.</li>
 <li><a href="../algorithms/denovo-gcn.html">Denovo-GCN</a> (2023): GCN on spectrum graph</li>
 <li><a href="../algorithms/graphnovo.html">GraphNovo</a> (2023): Missing fragments</li>
 </ul>
 </section>
 <section id="how-they-score" class="level2">
 <h2 class="anchored" data-anchor-id="how-they-score">How they score</h2>
-<p>2 of the 2 have been run on <a href="../../index.html#how-they-score">denovo_benchmarks</a>, which ranks 17 tools over 84 datasets. The family’s best median rank is <strong>9</strong>.</p>
+<p>2 of the 3 have been run on <a href="../../index.html#how-they-score">denovo_benchmarks</a>, which ranks 17 tools over 84 datasets. The family’s best median rank is <strong>9</strong>.</p>
 <ul>
 <li><a href="../algorithms/graphnovo.html">GraphNovo</a>: median peptide-level average precision <strong>0.671</strong>, median rank <strong>9</strong> of 17</li>
 <li><a href="../algorithms/denovo-gcn.html">Denovo-GCN</a>: median peptide-level average precision <strong>0.538</strong>, median rank <strong>13</strong> of 17</li>
 </ul>
 <p>Read these next to the rest of the field, not on their own: <a href="../../index.html#how-they-score">what the numbers mean</a>.</p>
 </section>
-<section id="papers-describing-them-2" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-2">Papers describing them (2)</h2>
+<section id="papers-describing-them-3" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-3">Papers describing them (3)</h2>
 <ul>
+<li><a href="../publications/application-of-a-novel-hybrid-cnn-gnn-for-peptide-ion-encoding.html">Application of a Novel Hybrid CNN-GNN for Peptide Ion Encoding</a> (2023, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/denovo-gcn-de-novo-peptide-sequencing-by-graph-convolutional-neural-networks.html">Denovo-GCN: De Novo Peptide Sequencing by Graph Convolutional Neural Networks</a> (2023, Applied Sciences (MDPI), peer-reviewed)</li>
 <li><a href="../publications/mitigating-the-missing-fragmentation-problem-in-de-novo-peptide-sequencing-with.html">Mitigating the missing-fragmentation problem in de novo peptide sequencing with a two-stage graph-based deep learning model</a> (2023, Nature Machine Intelligence, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-8" class="level2">
-<h2 class="anchored" data-anchor-id="authors-8">Authors (8)</h2>
-<p><a href="../authors/haipeng-wang.html">Haipeng Wang</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ruitao-wu.html">Ruitao Wu</a>, <a href="../authors/ruixue-zhang.html">Ruixue Zhang</a>, <a href="../authors/runtao-wang.html">Runtao Wang</a>, <a href="../authors/xiang-zhang-shandong.html">Xiang Zhang (Shandong)</a>, <a href="../authors/zeping-mao.html">Zeping Mao</a></p>
+<section id="authors-11" class="level2">
+<h2 class="anchored" data-anchor-id="authors-11">Authors (11)</h2>
+<p><a href="../authors/enda-howley.html">Enda Howley</a>, <a href="../authors/florence-abram.html">Florence Abram</a>, <a href="../authors/haipeng-wang.html">Haipeng Wang</a>, <a href="../authors/kevin-mcdonnell.html">Kevin McDonnell</a>, <a href="../authors/lei-xin.html">Lei Xin</a>, <a href="../authors/ming-li.html">Ming Li</a>, <a href="../authors/ruitao-wu.html">Ruitao Wu</a>, <a href="../authors/ruixue-zhang.html">Ruixue Zhang</a>, <a href="../authors/runtao-wang.html">Runtao Wang</a>, <a href="../authors/xiang-zhang-shandong.html">Xiang Zhang (Shandong)</a>, <a href="../authors/zeping-mao.html">Zeping Mao</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

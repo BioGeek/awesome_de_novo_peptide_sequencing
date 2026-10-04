@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Fragment ion analysis</h1>
-<p class="subtitle lead">5 methods · 2007–2026</p>
+<p class="subtitle lead">12 methods · 2007–2026</p>
 </div>
 
 <div>
@@ -172,59 +172,73 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Work on the fragment ions themselves before any sequence is proposed: charge state, isotope pattern and series assignment, which is what a sequencing algorithm downstream has to assume it already has.</p>
-<p>The earliest of its 5 methods is <a href="../algorithms/pfia.html">PFIA</a> (2007); 4 more have followed.</p>
+<p>The earliest of its 12 methods is <a href="../algorithms/neutral-loss-specificity-for-de-novo.html">Neutral-loss specificity for de novo</a> (2007); 11 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>5</td>
+<td>12</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>5</td>
+<td>12</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>16</td>
+<td>45</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2007-09-30 to 2026-01-27</td>
+<td>2007-07-01 to 2026-01-27</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (3), adjacent (2)</td>
+<td>adjacent (9), algorithm (3)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (5)</td>
+<td>DDA (12)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-5" class="level2">
-<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
+<section id="methods-12" class="level2">
+<h2 class="anchored" data-anchor-id="methods-12">Methods (12)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/neutral-loss-specificity-for-de-novo.html">Neutral-loss specificity for de novo</a> (2007): Shows from 20,000 high-resolution spectra that ammonia loss from b ions reliably flags Q, N, H, K and R, a constraint for de novo sequencing.</li>
 <li><a href="../algorithms/pfia.html">PFIA</a> (2007): Peptide Fragment Ion Analyser for interpreting tandem MS data and de novo peptide sequencing.</li>
+<li><a href="../algorithms/ion-trap-spectrum-sequence-information-analysis.html">Ion trap spectrum sequence information analysis</a> (2008): Measures from 400,000 identified spectra how many complementary b/y ions and how much sequence an LTQ spectrum carries for de novo sequencing.</li>
+<li><a href="../algorithms/pxles.html">PXleS</a> (2014): Predictor for Xle Sites: combines leucine aminopeptidase and chymotrypsin selectivity experiments with germline frequencies in a logistic regression that calls Leu or Ile at ambiguous sites in de novo sequenced mAbs, at 96% accuracy.</li>
 <li><a href="../algorithms/ms3-w-ion-leu-ile-discrimination.html">MS3 w-ion Leu/Ile discrimination</a> (2014): Separates the isomeric residues leucine and isoleucine during de novo sequencing by instrument rather than by inference: multistage ETD isolates the primary odd-electron z-dot ions and HCD then drives radical-site fragmentation into w-ions, whose masses differ between the two isomers and which come out as the most intense peaks in the spectrum. Demonstrated on six natural non-tryptic peptides of 15 to 37 residues from Rana ridibunda frog skin secretion, resolving all 22 Leu/Ile positions.</li>
+<li><a href="../algorithms/cid-vs-hcd-for-natural-peptide-de-novo.html">CID vs HCD for natural peptide de novo</a> (2014): Compares low-energy CID and HCD for de novo sequencing of natural non-tryptic peptides with disulfide bonds and proline residues.</li>
+<li><a href="../algorithms/nanoflow-lcmsn-leu-ile-discrimination.html">Nanoflow LCMSn Leu/Ile discrimination</a> (2017): Uses multistage fragmentation on nanoflow LC to distinguish leucine from isoleucine in mAb peptides online, for de novo antibody sequencing.</li>
+<li><a href="../algorithms/adjacent-y-ion-intensity-ratio-scoring-feature.html">Adjacent y-ion intensity-ratio scoring feature</a> (2017): A scoring feature from intensity ratios of adjacent y-ions, learned from the NIST library, that improved Novor and X!Tandem.</li>
 <li><a href="../algorithms/hydrogen-atom-attachment-phosphopeptide-sequencing.html">Hydrogen atom attachment phosphopeptide sequencing</a> (2018): Radical fragmentation by hydrogen atom attachment on a MALDI instrument, which keeps the labile phosphate in place while cleaving the backbone, so tryptic phosphopeptides can be sequenced de novo and their phosphosites located.</li>
 <li><a href="../algorithms/sodiated-amide-peptide-dissociation.html">Sodiated amide peptide dissociation</a> (2020): Studies how sodiated C-terminally amidated peptides fragment under CID and PSD, as a basis for de novo sequencing of small natural peptides.</li>
+<li><a href="../algorithms/continuous-digestion-ms3-leu-ile-discrimination.html">Continuous digestion MS3 Leu/Ile discrimination</a> (2022): Combines continuous enzymatic digestion, to expose Leu/Ile at peptide N-termini, with a combined verification score over multiple MS3 spectra, resolving 67 of 68 Leu/Ile sites in trastuzumab.</li>
 <li><a href="../algorithms/log-transformed-mass-domain-de-novo-sequencing.html">Log-transformed mass domain de novo sequencing</a> (2026): Bypasses averagine-based deconvolution by working directly in natural log-transformed m/z space, where charge-state spacing is mass-invariant and therefore supplies an intrinsic internal-calibration reference on both FT-ICR and Orbitrap. Isotopologue pairing in that domain then supports de novo sequencing of intact proteins.</li>
 </ul>
 </section>
-<section id="papers-describing-them-5" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-5">Papers describing them (5)</h2>
+<section id="papers-describing-them-12" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-12">Papers describing them (12)</h2>
 <ul>
+<li><a href="../publications/relative-specificities-of-water-and-ammonia-losses-from-backbone-fragments-in.html">Relative Specificities of Water and Ammonia Losses from Backbone Fragments in Collision-Activated Dissociation</a> (2007, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/peptide-fragment-ion-analyser-pfia-a-simple-and-versatile-tool-for-the.html">Peptide Fragment Ion Analyser (PFIA): a simple and versatile tool for the interpretation of tandem mass spectrometric data and de novo sequencing of peptides</a> (2007, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/how-much-peptide-sequence-information-is-contained-in-ion-trap-tandem-mass.html">How much peptide sequence information is contained in ion trap tandem mass spectra?</a> (2008, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/a-quantitative-tool-to-distinguish-isobaric-leucine-and-isoleucine-residues-for.html">A Quantitative Tool to Distinguish Isobaric Leucine and Isoleucine Residues for Mass Spectrometry-Based De Novo Monoclonal Antibody Sequencing</a> (2014, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/discrimination-of-leucine-and-isoleucine-in-peptides-sequencing-with-orbitrap.html">Discrimination of Leucine and Isoleucine in Peptides Sequencing with Orbitrap Fusion Mass Spectrometer</a> (2014, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/mass-spectrometric-de-novo-sequencing-of-natural-non-tryptic-peptides-comparing.html">Mass spectrometric de novo sequencing of natural non‐tryptic peptides: comparing peculiarities of collision‐induced dissociation (CID) and high energy collision dissociation (HCD)</a> (2014, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/rapid-distinction-of-leucine-and-isoleucine-in-monoclonal-antibodies-using.html">Rapid Distinction of Leucine and Isoleucine in Monoclonal Antibodies Using Nanoflow LCMSn</a> (2017, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/discovery-of-new-features-for-peptide-sequencing-with-mass-spectrometry.html">Discovery of New Features for Peptide Sequencing with Mass Spectrometry</a> (2017, thesis)</li>
 <li><a href="../publications/de-novo-sequencing-of-tryptic-phosphopeptides-using-matrix-assisted-laser.html">De Novo Sequencing of Tryptic Phosphopeptides Using Matrix-Assisted Laser Desorption/Ionization Based Tandem Mass Spectrometry with Hydrogen Atom Attachment</a> (2018, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/dissociation-pattern-of-sodiated-amide-peptides-as-a-tool-for-de-novo-sequencing.html">Dissociation Pattern of Sodiated Amide Peptides as a Tool for De Novo Sequencing</a> (2020, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/accurate-discrimination-of-leucine-and-isoleucine-residues-by-combining.html">Accurate discrimination of leucine and isoleucine residues by combining continuous digestion with multiple MS3 spectra integration in protein sequence</a> (2022, Talanta, peer-reviewed)</li>
 <li><a href="../publications/mass-invariant-natural-log-transformed-mass-spectra-enable-internal-calibration.html">Mass-Invariant Natural Log-Transformed Mass Spectra Enable Internal Calibration and De Novo Sequencing of Intact Proteins</a> (2026, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-16" class="level2">
-<h2 class="anchored" data-anchor-id="authors-16">Authors (16)</h2>
-<p><a href="../authors/albert-t-lebedev.html">Albert T. Lebedev</a>, <a href="../authors/alexander-makarov.html">Alexander Makarov</a>, <a href="../authors/christine-enjalbal.html">Christine Enjalbal</a>, <a href="../authors/daiki-asakawa.html">Daiki Asakawa</a>, <a href="../authors/elodie-logerot.html">Elodie Logerot</a>, <a href="../authors/eugen-damoc.html">Eugen Damoc</a>, <a href="../authors/hidenori-takahashi.html">Hidenori Takahashi</a>, <a href="../authors/jagannath-swaminathan.html">Jagannath Swaminathan</a>, <a href="../authors/koichi-tanaka.html">Koichi Tanaka</a>, <a href="../authors/krishna-saketh-kamadana.html">Krishna Saketh Kamadana</a>, <a href="../authors/lissa-c-anderson.html">Lissa C. Anderson</a>, <a href="../authors/nathan-k-kaiser.html">Nathan K. Kaiser</a>, <a href="../authors/shinichi-iwamoto.html">Shinichi Iwamoto</a>, <a href="../authors/tatiana-yu-samgina.html">Tatiana Yu. Samgina</a>, <a href="../authors/varatharajan-sabareesh.html">Varatharajan Sabareesh</a>, <a href="../authors/xian-mallory.html">Xian Mallory</a></p>
+<section id="authors-45" class="level2">
+<h2 class="anchored" data-anchor-id="authors-45">Authors (45)</h2>
+<p><a href="../authors/albert-t-lebedev.html">Albert T. Lebedev</a>, <a href="../authors/alexander-makarov.html">Alexander Makarov</a>, <a href="../authors/chao-yang.html">Chao Yang</a>, <a href="../authors/chloe-n-poston.html">Chloe N. Poston</a>, <a href="../authors/christine-enjalbal.html">Christine Enjalbal</a>, <a href="../authors/daiki-asakawa.html">Daiki Asakawa</a>, <a href="../authors/dhanashri-bagal.html">Dhanashri Bagal</a>, <a href="../authors/eddie-kast.html">Eddie Kast</a>, <a href="../authors/egor-a-vorontsov.html">Egor A. Vorontsov</a>, <a href="../authors/elodie-logerot.html">Elodie Logerot</a>, <a href="../authors/eugen-damoc.html">Eugen Damoc</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/hidenori-takahashi.html">Hidenori Takahashi</a>, <a href="../authors/jagannath-swaminathan.html">Jagannath Swaminathan</a>, <a href="../authors/jesus-a-gutierrez.html">Jesus A. Gutierrez</a>, <a href="../authors/jianhui-liu.html">Jianhui Liu</a>, <a href="../authors/jinsam-you.html">Jinsam You</a>, <a href="../authors/john-e-hale.html">John E. Hale</a>, <a href="../authors/jurgen-cox.html">Jürgen Cox</a>, <a href="../authors/koichi-tanaka.html">Koichi Tanaka</a>, <a href="../authors/konstantin-a-artemenko.html">Konstantin A. Artemenko</a>, <a href="../authors/krishna-saketh-kamadana.html">Krishna Saketh Kamadana</a>, <a href="../authors/lihua-zhang.html">Lihua Zhang</a>, <a href="../authors/lissa-c-anderson.html">Lissa C. Anderson</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/michael-d-knierman.html">Michael D. Knierman</a>, <a href="../authors/michael-l-nielsen.html">Michael L. Nielsen</a>, <a href="../authors/mikhail-m-savitski.html">Mikhail M. Savitski</a>, <a href="../authors/nathan-k-kaiser.html">Nathan K. Kaiser</a>, <a href="../authors/nina-c-hubner.html">Nina C. Hubner</a>, <a href="../authors/ping-cao.html">Ping Cao</a>, <a href="../authors/richard-e-higgs.html">Richard E. Higgs</a>, <a href="../authors/robert-siegel.html">Robert Siegel</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/shinichi-iwamoto.html">Shinichi Iwamoto</a>, <a href="../authors/tatiana-yu-samgina.html">Tatiana Yu. Samgina</a>, <a href="../authors/tiancong-wang.html">Tiancong Wang</a>, <a href="../authors/valentina-gelfanova.html">Valentina Gelfanova</a>, <a href="../authors/varatharajan-sabareesh.html">Varatharajan Sabareesh</a>, <a href="../authors/vladimir-gorshkov.html">Vladimir Gorshkov</a>, <a href="../authors/weijie-zhang.html">Weijie Zhang</a>, <a href="../authors/xian-mallory.html">Xian Mallory</a>, <a href="../authors/yichu-shan.html">Yichu Shan</a>, <a href="../authors/yukui-zhang.html">Yukui Zhang</a>, <a href="../authors/zhen-liang.html">Zhen Liang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

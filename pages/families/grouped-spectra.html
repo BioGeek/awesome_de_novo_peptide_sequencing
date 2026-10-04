@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Grouped spectra</h1>
-<p class="subtitle lead">4 methods · 2009–2025</p>
+<p class="subtitle lead">5 methods · 2008–2025</p>
 </div>
 
 <div>
@@ -172,49 +172,52 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Several spectra of the same peptide, from repeated injections, charge states or labeling channels, scored as one body of evidence instead of one spectrum at a time.</p>
-<p>The earliest of its 4 methods is <a href="../algorithms/spectrum-fusion.html">Spectrum Fusion</a> (2009); 3 more have followed.</p>
+<p>The earliest of its 5 methods is <a href="../algorithms/multistage-ms-multi-spectra-sequencing.html">Multistage MS multi-spectra sequencing</a> (2008); 4 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>4</td>
+<td>5</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>6</td>
+<td>8</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>20</td>
+<td>24</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2009-08-01 to 2025-06-01</td>
+<td>2008-07-01 to 2025-06-01</td>
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (4)</td>
+<td>algorithm (5)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (4)</td>
+<td>DDA (5)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-4" class="level2">
-<h2 class="anchored" data-anchor-id="methods-4">Methods (4)</h2>
+<section id="methods-5" class="level2">
+<h2 class="anchored" data-anchor-id="methods-5">Methods (5)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
+<li><a href="../algorithms/multistage-ms-multi-spectra-sequencing.html">Multistage MS multi-spectra sequencing</a> (2008): A probabilistic framework that combines spectra of overlapping peptides, applied to MS2 plus MS3 spectra for accurate de novo sequencing.</li>
 <li><a href="../algorithms/spectrum-fusion.html">Spectrum Fusion</a> (2009): Combines several tandem mass spectra of the same peptide, acquired under different conditions or charge states, into one fused spectrum before de novo sequencing, which raises the success rate over sequencing any single spectrum.</li>
-<li><a href="../algorithms/de-novo-assisted-mixture-spectrum-characterization.html">De novo assisted mixture spectrum characterization</a> (2016): Attacks the low identification rate caused by MIXTURE spectra, where more than one peptide co-fragments, by using de novo interpretation to characterize what the spectrum actually contains.</li>
+<li><a href="../algorithms/de-novo-assisted-mixture-spectrum-characterization.html">De novo assisted mixture spectrum characterization</a> (2015): Attacks the low identification rate caused by MIXTURE spectra, where more than one peptide co-fragments, by using de novo interpretation to characterize what the spectrum actually contains.</li>
 <li><a href="../algorithms/silac-group-de-novo.html">SILAC group de novo</a> (2022): Algorithm for peptide de novo sequencing from a group of SILAC-labeled MS/MS spectra.</li>
 <li><a href="../algorithms/cumulative-ms-score-cms.html">Cumulative MS score (cMS)</a> (2025): Scoring framework that accumulates evidence for a residue across repeated injections rather than scoring one spectrum at a time, to make de novo annotation robust enough to read VH/VL and CDR sequences out of a POLYCLONAL antibody mixture.</li>
 </ul>
 </section>
-<section id="papers-describing-them-6" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-6">Papers describing them (6)</h2>
+<section id="papers-describing-them-8" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-8">Papers describing them (8)</h2>
 <ul>
+<li><a href="../publications/multi-spectra-peptide-sequencing-and-its-applications-to-multistage-mass.html">Multi-spectra peptide sequencing and its applications to multistage mass spectrometry</a> (2008, Bioinformatics, peer-reviewed)</li>
 <li><a href="../publications/spectrum-fusion-using-multiple-mass-spectra-for-de-novo-peptide-sequencing.html">Spectrum Fusion: Using Multiple Mass Spectra for De Novo Peptide Sequencing</a> (2009, Journal of Computational Biology, peer-reviewed)</li>
+<li><a href="../publications/an-approach-for-matching-mixture-ms-ms-spectra-with-a-pair-of-peptide-sequences.html">An Approach for Matching Mixture MS/MS Spectra with a Pair of Peptide Sequences in a Protein Database</a> (2015, Lecture Notes in Computer Science, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-assisted-approach-for-characterizing-mixture-ms-ms-spectra.html">De Novo Sequencing Assisted Approach for Characterizing Mixture MS/MS Spectra</a> (2016, IEEE Transactions on NanoBioscience, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-multiple-silac-based-tandem-mass-spectra.html">De novo sequencing of multiple SILAC-based tandem mass spectra</a> (2022, 2022 IEEE 21st International Conference on Cognitive Informatics &amp; Cognitive Computing (ICCI*CC), peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-multiple-tandem-mass-spectra-of-peptide-containing-silac.html">De novo sequencing of multiple tandem mass spectra of peptide containing SILAC labeling</a> (2023, thesis)</li>
@@ -222,9 +225,9 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/an-algorithm-for-peptide-de-novo-sequencing-from-a-group-of-silac-labeled-ms-ms.html">An algorithm for peptide de novo sequencing from a group of SILAC labeled MS/MS spectra</a> (2025, Journal of Bioinformatics and Computational Biology, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-20" class="level2">
-<h2 class="anchored" data-anchor-id="authors-20">Authors (20)</h2>
-<p><a href="../authors/alejandro-gomez-toledo.html">Alejandro Gomez Toledo</a>, <a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carlos-gueto-tettay.html">Carlos Gueto-Tettay</a>, <a href="../authors/di-tang.html">Di Tang</a>, <a href="../authors/fang-han.html">Fang Han</a>, <a href="../authors/gilles-lajoie.html">Gilles Lajoie</a>, <a href="../authors/hamed-khakzad.html">Hamed Khakzad</a>, <a href="../authors/joel-strobaek.html">Joel Ströbaek</a>, <a href="../authors/johan-malmstrom.html">Johan Malmström</a>, <a href="../authors/julius-john.html">Julius John</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/lars-malmstrom.html">Lars Malmström</a>, <a href="../authors/marshall-bern.html">Marshall Bern</a>, <a href="../authors/ritendra-datta.html">Ritendra Datta</a>, <a href="../authors/weiping-sun.html">Weiping Sun</a>, <a href="../authors/yasaman-karami.html">Yasaman Karami</a>, <a href="../authors/yi-liu.html">Yi Liu</a>, <a href="../authors/yi-liu-beijing.html">Yi Liu (Beijing)</a>, <a href="../authors/yi-liu-western-ontario.html">Yi Liu (Western Ontario)</a></p>
+<section id="authors-24" class="level2">
+<h2 class="anchored" data-anchor-id="authors-24">Authors (24)</h2>
+<p><a href="../authors/alejandro-gomez-toledo.html">Alejandro Gomez Toledo</a>, <a href="../authors/baozhen-shan.html">Baozhen Shan</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/carlos-gueto-tettay.html">Carlos Gueto-Tettay</a>, <a href="../authors/di-tang.html">Di Tang</a>, <a href="../authors/fang-han.html">Fang Han</a>, <a href="../authors/gilles-lajoie.html">Gilles Lajoie</a>, <a href="../authors/hamed-khakzad.html">Hamed Khakzad</a>, <a href="../authors/jesper-v-olsen.html">Jesper V. Olsen</a>, <a href="../authors/joel-strobaek.html">Joel Ströbaek</a>, <a href="../authors/johan-malmstrom.html">Johan Malmström</a>, <a href="../authors/julius-john.html">Julius John</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/lars-malmstrom.html">Lars Malmström</a>, <a href="../authors/marshall-bern.html">Marshall Bern</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/nuno-bandeira.html">Nuno Bandeira</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/ritendra-datta.html">Ritendra Datta</a>, <a href="../authors/weiping-sun.html">Weiping Sun</a>, <a href="../authors/yasaman-karami.html">Yasaman Karami</a>, <a href="../authors/yi-liu.html">Yi Liu</a>, <a href="../authors/yi-liu-beijing.html">Yi Liu (Beijing)</a>, <a href="../authors/yi-liu-western-ontario.html">Yi Liu (Western Ontario)</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

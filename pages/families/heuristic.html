@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Heuristic</h1>
-<p class="subtitle lead">18 methods · 1981–2021</p>
+<p class="subtitle lead">21 methods · 1981–2021</p>
 </div>
 
 <div>
@@ -172,20 +172,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Hand-engineered interpretation rules rather than one global optimisation: extend a sequence peak by peak, enumerate the compositions that fit the mass, score what survives. The oldest approach here, and the closest to reading by hand.</p>
-<p>The earliest of its 18 methods is <a href="../algorithms/paas.html">PAAS</a> (1981); 17 more have followed.</p>
+<p>The earliest of its 21 methods is <a href="../algorithms/paas.html">PAAS</a> (1981); 20 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>18</td>
+<td>21</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>20</td>
+<td>29</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>62</td>
+<td>82</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -193,16 +193,16 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>algorithm (18)</td>
+<td>algorithm (21)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (18)</td>
+<td>DDA (20)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-18" class="level2">
-<h2 class="anchored" data-anchor-id="methods-18">Methods (18)</h2>
+<section id="methods-21" class="level2">
+<h2 class="anchored" data-anchor-id="methods-21">Methods (21)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/paas.html">PAAS</a> (1981): The 1981 original, and the earliest de novo peptide sequencing program in this catalog: a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.</li>
@@ -213,20 +213,23 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/seqms.html">SeqMS</a> (2000): Software aid for automated interpretation of low-energy CID spectra for de novo sequencing by tandem MS.</li>
 <li><a href="../algorithms/2d-fragment-correlation.html">2D Fragment Correlation</a> (2000): 2D fragment correlation MS</li>
 <li><a href="../algorithms/pepseq.html">PepSeq</a> (2001): Interactive de novo peptide sequencing application in BioLynx, the biopolymer analysis component of the MassLynx suite. The manual is explicit that it is user-driven rather than automatic: PepSeq “has been designed as an interactive program that allows the user to make decisions at each step in deducing the sequence of a peptide”. It scores and annotates spectra on the a, b, y and z ions, and takes input either from a MassLynx data file or as a plain mass and intensity list. Three modes: typing a candidate sequence to see its theoretical fragments annotated against the spectrum; FindTag, which builds a set of sub-sequences whose series ions best match the spectrum and extends them step or leap-wise until the molecular weight matches the user-supplied precursor; and MassSeq, a separately purchased option that performs the sequencing automatically from the precursor mass, modifications and a mass-accuracy estimate. There is no methods paper: the method is documented only in the vendor manual, which is catalogued here as the accompanying resource. Provenance runs Micromass UK Ltd to Waters Corporation, and the Version 4.0 guide catches the handover in progress, carrying a Waters part number and a Micromass part number side by side over a 1993-2002 Micromass UK Ltd copyright.</li>
+<li><a href="../algorithms/sequence-pattern-correlation.html">Sequence pattern correlation</a> (2002): Deduces peptide sequences without a database by cross-correlating an experimental CID spectrum with predicted sequence patterns from y and non-y fragmentation, claimed insensitive to mass tolerance.</li>
 <li><a href="../algorithms/maldi-tof-tof-de-novo-sequencing.html">MALDI/TOF-TOF de novo sequencing</a> (2002): Sequence-extension approach for de novo sequencing from MALDI TOF-TOF spectra.</li>
 <li><a href="../algorithms/maldi-qit-de-novo-sequencing.html">MALDI-QIT de novo sequencing</a> (2003): Preliminary MALDI-QIT de novo</li>
 <li><a href="../algorithms/sequit.html">Sequit</a> (2004): Software for de novo peptide sequencing by MALDI post-source decay mass spectrometry.</li>
 <li><a href="../algorithms/multi-pass-cid-spectrum-interpretation.html">Multi-pass CID spectrum interpretation</a> (2005): Interprets low-energy CID product ion spectra from an ion trap in several passes, extracting the data rigorously and then building the sequence, rather than scoring candidate paths in one sweep.</li>
 <li><a href="../algorithms/proteomics-grade-de-novo-sequencing.html">Proteomics-grade de novo sequencing</a> (2005): Proteomics-grade de novo sequencing approach for large MS/MS data sets.</li>
+<li><a href="../algorithms/adaptive-ga-for-tandem-ms-peptide-sequencing.html">Adaptive GA for tandem-MS peptide sequencing</a> (2006): Adaptive genetic algorithm for protein sequencing from tandem MS. Represents peptides as GA individuals, evolves them against the observed spectrum; the adaptive component tunes mutation / crossover rates on the fly.</li>
 <li><a href="../algorithms/enpc.html">ENPC</a> (2006): Exhaustive composition enumeration</li>
-<li><a href="../algorithms/adaptive-ga-for-tandem-ms-peptide-sequencing.html">Adaptive GA for tandem-MS peptide sequencing</a> (2008): Adaptive genetic algorithm for protein sequencing from tandem MS. Represents peptides as GA individuals, evolves them against the observed spectrum; the adaptive component tunes mutation / crossover rates on the fly.</li>
 <li><a href="../algorithms/157-nm-photodissociation-de-novo-sequencing.html">157 nm photodissociation de novo sequencing</a> (2010): De novo sequencing algorithm written for 157 nm photodissociation spectra, which yield clean x-ion series rather than the mixed b/y ions of CID. Reports per-residue accuracy and distinguishes leucine from isoleucine, which equal-mass residues normally make impossible.</li>
+<li><a href="../algorithms/lysndenovo.html">LysNDeNovo</a> (2010): Heuristic de novo sequencing for Lys-N peptides fragmented by ETD, exploiting their long c-ion series.</li>
 <li><a href="../algorithms/positive-charge-derivatization-de-novo-sequencing.html">Positive charge derivatization de novo sequencing</a> (2013): Positive charge derivatization + spectra merging</li>
+<li><a href="../algorithms/cycloant.html">CycloAnt</a> (2017): Hybrid ant colony optimisation with local search that reconstructs cyclic peptide sequences from distorted mass spectra.</li>
 <li><a href="../algorithms/robust-fl-sequencing.html">Robust FL-Sequencing</a> (2021): Full-length protein sequencing</li>
 </ul>
 </section>
-<section id="papers-describing-them-20" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-20">Papers describing them (20)</h2>
+<section id="papers-describing-them-29" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-29">Papers describing them (29)</h2>
 <ul>
 <li><a href="../publications/computer-program-paas-for-the-estimation-of-possible-amino-acid-sequence-of.html">Computer program PAAS for the estimation of possible amino acid sequence of peptides</a> (1981, Biological Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/improved-paas-a-computer-program-to-determine-possible-amino-acid-sequences-of.html">Improved PAAS, a computer program to determine possible amino acid sequences of peptides</a> (1983, Biological Mass Spectrometry, peer-reviewed)</li>
@@ -237,22 +240,31 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/de-novo-peptide-sequencing-by-two-dimensional-fragment-correlation-mass.html">De Novo Peptide Sequencing by Two-Dimensional Fragment Correlation Mass Spectrometry</a> (2000, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/implementation-and-uses-of-automated-de-novo-peptide-sequencing-by-tandem-mass.html">Implementation and Uses of Automated de Novo Peptide Sequencing by Tandem Mass Spectrometry</a> (2001, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/masslynx-nt-biolynx-proteinlynx-guide.html">MassLynx NT BioLynx &amp; ProteinLynx Guide</a> (2001, resource)</li>
+<li><a href="../publications/sequence-pattern-correlation-of-amino-acid-in-collision-induced-dissociation.html">Sequence Pattern Correlation of Amino Acid in Collision‐induced Dissociation Electrospray Ionization Mass Spectrometry</a> (2002, Chinese Journal of Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-peptides-using-maldi-tof-tof.html">De novo sequencing of peptides using MALDI/TOF-TOF</a> (2002, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/searching-sequence-databases-via-de-novo-peptide-sequencing-by-tandem-mass.html">Searching Sequence Databases via De Novo Peptide Sequencing by Tandem Mass Spectrometry</a> (2002, Molecular Biotechnology, peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-by-maldi-quadrupole-ion-trap-mass-spectrometry-a.html">“De novo” peptide sequencing by MALDI-quadrupole-ion trap mass spectrometry: A preliminary study</a> (2003, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/sequit-software-for-de-novo-peptide-sequencing-by-matrix-assisted-laser.html">Sequit: software for de novo peptide sequencing by matrix-assisted laser desorption/ionization post-source decay mass spectrometry</a> (2004, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/an-algorithm-for-interpretation-of-low-energy-collision-induced-dissociation.html">An algorithm for interpretation of low‐energy collision‐induced dissociation product ion spectra for &lt;i&gt;de novo&lt;/i&gt; sequencing of peptides</a> (2005, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/proteomics-grade-de-novo-sequencing-approach.html">Proteomics-Grade de Novo Sequencing Approach</a> (2005, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/a-preliminary-work-on-evolutionary-identification-of-protein-variants-and-new.html">A preliminary work on evolutionary identification of protein variants and new proteins on grids</a> (2006, 20th International Conference on Advanced Information Networking and Applications - Volume 1 (AINA’06), peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-using-exhaustive-enumeration-of-peptide-composition.html">De novo peptide sequencing using exhaustive enumeration of peptide composition</a> (2006, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/characterization-of-polypeptides-by-tandem-mass-spectrometry-using.html">Characterization of Polypeptides by Tandem Mass Spectrometry Using Complementary Fragmentation Techniques</a> (2006, thesis)</li>
 <li><a href="../publications/protein-sequencing-with-an-adaptive-genetic-algorithm-from-tandem-mass.html">Protein Sequencing with an Adaptive Genetic Algorithm from Tandem Mass Spectrometry</a> (2008, arXiv, preprint)</li>
+<li><a href="../publications/a-preliminary-work-on-evolutionary-identification-of-protein-variants-postprint.html">A Preliminary Work on Evolutionary Identification of Protein Variants and New Proteins on Grids</a> (2008, arXiv, postprint)</li>
 <li><a href="../publications/peptide-de-novo-sequencing-using-157-nm-photodissociation-in-a-tandem-time-of.html">Peptide de Novo Sequencing Using 157 nm Photodissociation in a Tandem Time-of-Flight Mass Spectrometer</a> (2010, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/lysndenovo-an-algorithm-enabling-de-novo-sequencing-of-lys-n-generated-peptides.html">LysNDeNovo: An algorithm enabling de novo sequencing of Lys‐N generated peptides fragmented by electron transfer dissociation</a> (2010, PROTEOMICS, peer-reviewed)</li>
+<li><a href="../publications/de-novosequencing-of-tryptic-peptides-derived-fromdeinococcus.html">De NovoSequencing of Tryptic Peptides Derived fromDeinococcus radioduransRibosomal Proteins Using 157 nm Photodissociation MALDI TOF/TOF Mass Spectrometry</a> (2010, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/metaheuristics-based-de-novo-protein-sequencing-a-new-approach.html">Metaheuristics based de novo protein sequencing: A new approach</a> (2011, Applied Soft Computing, peer-reviewed)</li>
+<li><a href="../publications/investigation-of-vuv-photodissociation-propensities-using-peptide-libraries.html">Investigation of VUV photodissociation propensities using peptide libraries</a> (2011, International Journal of Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/high-confidence-de-novo-peptide-sequencing-using-positive-charge-derivatization.html">High-Confidence de Novo Peptide Sequencing Using Positive Charge Derivatization and Tandem MS Spectra Merging</a> (2013, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/cycloant.html">CycloAnt</a> (2017, Proceedings of the Genetic and Evolutionary Computation Conference, peer-reviewed)</li>
 <li><a href="../publications/highly-robust-de-novo-full-length-protein-sequencing.html">Highly Robust de Novo Full-Length Protein Sequencing</a> (2021, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-62" class="level2">
-<h2 class="anchored" data-anchor-id="authors-62">Authors (62)</h2>
-<p><a href="../authors/alfred-l-yergey.html">Alfred L. Yergey</a>, <a href="../authors/andrew-n-krutchinsky.html">Andrew N. Krutchinsky</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/christian-rolando.html">Christian Rolando</a>, <a href="../authors/dacheng-he.html">Dacheng He</a>, <a href="../authors/el-ghazali-talbi.html">El-Ghazali Talbi</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gabriel-padron.html">Gabriel Padrón</a>, <a href="../authors/glen-a-humphrey.html">Glen A. Humphrey</a>, <a href="../authors/gong-zhang.html">Gong Zhang</a>, <a href="../authors/h-matsuda.html">H. Matsuda</a>, <a href="../authors/h-wollnik.html">H. Wollnik</a>, <a href="../authors/hong-yan-shen.html">Hong-Yan Shen</a>, <a href="../authors/hongying-zhong.html">Hongying Zhong</a>, <a href="../authors/i-katakuse.html">I. Katakuse</a>, <a href="../authors/j-alex-taylor.html">J. Alex Taylor</a>, <a href="../authors/james-p-reilly.html">James P. Reilly</a>, <a href="../authors/james-s-mcelvain.html">James S. McElvain</a>, <a href="../authors/jean-charles-boisson.html">Jean-Charles Boisson</a>, <a href="../authors/jennifer-m-campbell.html">Jennifer M. Campbell</a>, <a href="../authors/jens-r-coorssen.html">Jens R. Coorssen</a>, <a href="../authors/jianguo-ji.html">Jianguo Ji</a>, <a href="../authors/jing-wu.html">Jing Wu</a>, <a href="../authors/jonathan-a-epstein.html">Jonathan A. Epstein</a>, <a href="../authors/jorge-fernandez-de-cossio.html">Jorge Fernández-de-Cossío</a>, <a href="../authors/joshua-zimmerberg.html">Joshua Zimmerberg</a>, <a href="../authors/klaus-biemann.html">Klaus Biemann</a>, <a href="../authors/laetitia-jourdan.html">Laetitia Jourdan</a>, <a href="../authors/li-ming-xu.html">Li-Ming Xu</a>, <a href="../authors/liang-li.html">Liang Li</a>, <a href="../authors/liangyi-zhang.html">Liangyi Zhang</a>, <a href="../authors/luis-javier-gonzalez.html">Luis Javier González</a>, <a href="../authors/lazaro-betancourt.html">Lázaro Betancourt</a>, <a href="../authors/marvin-l-vestal.html">Marvin L. Vestal</a>, <a href="../authors/matthew-t-olson.html">Matthew T. Olson</a>, <a href="../authors/michael-l-nielsen.html">Michael L. Nielsen</a>, <a href="../authors/micromass-uk-ltd.html">Micromass UK Ltd</a>, <a href="../authors/mikhail-m-savitski.html">Mikhail M. Savitski</a>, <a href="../authors/mingrui-an.html">Mingrui An</a>, <a href="../authors/nobuaki-okumura.html">Nobuaki Okumura</a>, <a href="../authors/paul-s-blank.html">Paul S. Blank</a>, <a href="../authors/peter-s-backlund.html">Peter S. Backlund</a>, <a href="../authors/peter-walden.html">Peter Walden</a>, <a href="../authors/qing-yu-he.html">Qing-Yu He</a>, <a href="../authors/qingsong-wang.html">Qingsong Wang</a>, <a href="../authors/richard-s-johnson.html">Richard S. Johnson</a>, <a href="../authors/rodion-demine.html">Rodion Demine</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/t-matsuo.html">T. Matsuo</a>, <a href="../authors/t-sakurai.html">T. Sakurai</a>, <a href="../authors/takaki-shima.html">Takaki Shima</a>, <a href="../authors/toshifumi-takao.html">Toshifumi Takao</a>, <a href="../authors/vladimir-besada.html">Vladimir Besada</a>, <a href="../authors/wenzhu-zhang.html">Wenzhu Zhang</a>, <a href="../authors/xiao-zou.html">Xiao Zou</a>, <a href="../authors/xueyuan-xiao.html">Xueyuan Xiao</a>, <a href="../authors/xuyang-zhao.html">Xuyang Zhao</a>, <a href="../authors/yasutsugu-shimonishi.html">Yasutsugu Shimonishi</a>, <a href="../authors/yoshinori-satomi.html">Yoshinori Satomi</a>, <a href="../authors/zhi-biao-mai.html">Zhi-Biao Mai</a>, <a href="../authors/zhong-hua-zhou.html">Zhong-Hua Zhou</a>, <a href="../authors/zhongqi-zhang.html">Zhongqi Zhang</a></p>
+<section id="authors-82" class="level2">
+<h2 class="anchored" data-anchor-id="authors-82">Authors (82)</h2>
+<p><a href="../authors/albert-j-r-heck.html">Albert J. R. Heck</a>, <a href="../authors/alexandros-georgiou.html">Alexandros Georgiou</a>, <a href="../authors/alfred-l-yergey.html">Alfred L. Yergey</a>, <a href="../authors/andrew-n-krutchinsky.html">Andrew N. Krutchinsky</a>, <a href="../authors/bas-van-breukelen.html">Bas van Breukelen</a>, <a href="../authors/brian-c-bohrer.html">Brian C. Bohrer</a>, <a href="../authors/brian-t-chait.html">Brian T. Chait</a>, <a href="../authors/christian-rolando.html">Christian Rolando</a>, <a href="../authors/dacheng-he.html">Dacheng He</a>, <a href="../authors/el-ghazali-talbi.html">El-Ghazali Talbi</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gabriel-padron.html">Gabriel Padrón</a>, <a href="../authors/glen-a-humphrey.html">Glen A. Humphrey</a>, <a href="../authors/gong-zhang.html">Gong Zhang</a>, <a href="../authors/gui-hua-yue.html">Gui‐Hua Yue</a>, <a href="../authors/h-matsuda.html">H. Matsuda</a>, <a href="../authors/h-wollnik.html">H. Wollnik</a>, <a href="../authors/haixu-tang.html">Haixu Tang</a>, <a href="../authors/hao-wei-song.html">Hao‐Wei Song</a>, <a href="../authors/hong-yan-shen.html">Hong-Yan Shen</a>, <a href="../authors/hongying-zhong.html">Hongying Zhong</a>, <a href="../authors/hong-hai-wang.html">Hong‐Hai Wang</a>, <a href="../authors/i-katakuse.html">I. Katakuse</a>, <a href="../authors/j-alex-taylor.html">J. Alex Taylor</a>, <a href="../authors/james-p-reilly.html">James P. Reilly</a>, <a href="../authors/james-s-mcelvain.html">James S. McElvain</a>, <a href="../authors/jean-charles-boisson.html">Jean-Charles Boisson</a>, <a href="../authors/jennifer-m-campbell.html">Jennifer M. Campbell</a>, <a href="../authors/jens-r-coorssen.html">Jens R. Coorssen</a>, <a href="../authors/jianguo-ji.html">Jianguo Ji</a>, <a href="../authors/jing-wu.html">Jing Wu</a>, <a href="../authors/jonathan-a-epstein.html">Jonathan A. Epstein</a>, <a href="../authors/jorge-fernandez-de-cossio.html">Jorge Fernández-de-Cossío</a>, <a href="../authors/joshua-zimmerberg.html">Joshua Zimmerberg</a>, <a href="../authors/klaus-biemann.html">Klaus Biemann</a>, <a href="../authors/laetitia-jourdan.html">Laetitia Jourdan</a>, <a href="../authors/li-ming-xu.html">Li-Ming Xu</a>, <a href="../authors/liang-li.html">Liang Li</a>, <a href="../authors/liangyi-zhang.html">Liangyi Zhang</a>, <a href="../authors/luis-javier-gonzalez.html">Luis Javier González</a>, <a href="../authors/lazaro-betancourt.html">Lázaro Betancourt</a>, <a href="../authors/madalina-m-drugan.html">Madalina M. Drugan</a>, <a href="../authors/mahmood-a-rashid.html">Mahmood A Rashid</a>, <a href="../authors/marvin-l-vestal.html">Marvin L. Vestal</a>, <a href="../authors/matthew-t-olson.html">Matthew T. Olson</a>, <a href="../authors/michael-l-nielsen.html">Michael L. Nielsen</a>, <a href="../authors/micromass-uk-ltd.html">Micromass UK Ltd</a>, <a href="../authors/mikhail-m-savitski.html">Mikhail M. Savitski</a>, <a href="../authors/mingrui-an.html">Mingrui An</a>, <a href="../authors/nadia-taouatas.html">Nadia Taouatas</a>, <a href="../authors/nobuaki-okumura.html">Nobuaki Okumura</a>, <a href="../authors/paul-s-blank.html">Paul S. Blank</a>, <a href="../authors/peng-yuan-yang.html">Peng‐Yuan Yang</a>, <a href="../authors/peter-s-backlund.html">Peter S. Backlund</a>, <a href="../authors/peter-walden.html">Peter Walden</a>, <a href="../authors/predrag-radivojac.html">Predrag Radivojac</a>, <a href="../authors/qing-yu-he.html">Qing-Yu He</a>, <a href="../authors/qingsong-wang.html">Qingsong Wang</a>, <a href="../authors/randy-j-arnold.html">Randy J. Arnold</a>, <a href="../authors/richard-s-johnson.html">Richard S. Johnson</a>, <a href="../authors/rodion-demine.html">Rodion Demine</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/shabaz-mohammed.html">Shabaz Mohammed</a>, <a href="../authors/sujata-baral.html">Sujata Baral</a>, <a href="../authors/swakkhar-shatabda.html">Swakkhar Shatabda</a>, <a href="../authors/t-matsuo.html">T. Matsuo</a>, <a href="../authors/t-sakurai.html">T. Sakurai</a>, <a href="../authors/takaki-shima.html">Takaki Shima</a>, <a href="../authors/toshifumi-takao.html">Toshifumi Takao</a>, <a href="../authors/vladimir-besada.html">Vladimir Besada</a>, <a href="../authors/wenzhu-zhang.html">Wenzhu Zhang</a>, <a href="../authors/xiao-zou.html">Xiao Zou</a>, <a href="../authors/xiaohui-liu.html">Xiaohui Liu</a>, <a href="../authors/xueyuan-xiao.html">Xueyuan Xiao</a>, <a href="../authors/xuyang-zhao.html">Xuyang Zhao</a>, <a href="../authors/yasutsugu-shimonishi.html">Yasutsugu Shimonishi</a>, <a href="../authors/yong-fuga-li.html">Yong Fuga Li</a>, <a href="../authors/yoshinori-satomi.html">Yoshinori Satomi</a>, <a href="../authors/yu-lu.html">Yu Lu</a>, <a href="../authors/zhi-biao-mai.html">Zhi-Biao Mai</a>, <a href="../authors/zhong-hua-zhou.html">Zhong-Hua Zhou</a>, <a href="../authors/zhongqi-zhang.html">Zhongqi Zhang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>

@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Chemical labeling assisted</h1>
-<p class="subtitle lead">10 methods · 1997–2024</p>
+<p class="subtitle lead">16 methods · 1997–2024</p>
 </div>
 
 <div>
@@ -172,20 +172,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Isotopic or mass-coded labels introduced before the mass spectrometer, so one ion series can be told from the other by a known mass shift instead of by inference. The problem is eased in the sample, not the algorithm.</p>
-<p>The earliest of its 10 methods is <a href="../algorithms/rapid-qtof-de-novo-sequencing.html">Rapid QTOF de novo sequencing</a> (1997); 9 more have followed.</p>
+<p>The earliest of its 16 methods is <a href="../algorithms/rapid-qtof-de-novo-sequencing.html">Rapid QTOF de novo sequencing</a> (1997); 15 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>10</td>
+<td>16</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>10</td>
+<td>19</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>48</td>
+<td>90</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -193,48 +193,63 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (8), algorithm (2)</td>
+<td>adjacent (14), algorithm (2)</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (10)</td>
+<td>DDA (16)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-10" class="level2">
-<h2 class="anchored" data-anchor-id="methods-10">Methods (10)</h2>
+<section id="methods-16" class="level2">
+<h2 class="anchored" data-anchor-id="methods-16">Methods (16)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/rapid-qtof-de-novo-sequencing.html">Rapid QTOF de novo sequencing</a> (1997): Nanoelectrospray, isotopic-labeling, and quadrupole/time-of-flight workflow for rapid de novo peptide sequencing.</li>
 <li><a href="../algorithms/18o-ion-trap-de-novo-sequencing.html">18O ion trap de novo sequencing</a> (1998): Ion-trap de novo peptide sequencing method using 18O labeling to distinguish fragment ion series.</li>
 <li><a href="../algorithms/isotopic-n-terminal-labeling-de-novo-sequencing.html">Isotopic N-terminal labeling de novo sequencing</a> (2000): Isotopic N-terminal labeling with a fragmentation-directing moiety for protein quantitation and facilitated de novo sequencing.</li>
+<li><a href="../algorithms/differential-methyl-esterification-labeling.html">Differential methyl esterification labeling</a> (2001): Labels peptide carboxyl groups with d0- or d3-methanol so that mixed samples give quantitation and isotope-paired fragment ions that support automated de novo sequencing.</li>
 <li><a href="../algorithms/mcat.html">MCAT</a> (2002): Mass-coded abundance tagging strategy for de novo peptide sequencing and quantitative profiling of complex protein mixtures.</li>
-<li><a href="../algorithms/amino-acid-coded-mass-tagging.html">Amino acid-coded mass tagging</a> (2005): Codes amino acids by mass before MALDI TOF/TOF so that incomplete CID of singly and doubly charged precursors still yields assignable series, recovering spectra that would otherwise go unidentified and making the instrument’s throughput usable for de novo work.</li>
+<li><a href="../algorithms/amino-acid-coded-mass-tagging.html">Amino acid-coded mass tagging</a> (2002): Codes amino acids by mass before MALDI TOF/TOF so that incomplete CID of singly and doubly charged precursors still yields assignable series, recovering spectra that would otherwise go unidentified and making the instrument’s throughput usable for de novo work.</li>
+<li><a href="../algorithms/15n-labeled-2d-mass-spectra.html">15N-labeled 2D mass spectra</a> (2004): Overlays spectra of 15N-labeled and unlabeled peptides so each ion carries its nitrogen count, adding discriminating power for identification and de novo interpretation.</li>
+<li><a href="../algorithms/dual-labeling-guanidination-amidination-de-novo-sequencing.html">Dual-labeling (guanidination/amidination) de novo sequencing</a> (2005): Derivatizes peptides by guanidination and amidination so mass-coded labels distinguish N- and C-terminal fragment ions and promote informative fragmentation for de novo sequencing.</li>
 <li><a href="../algorithms/reductive-methylation-de-novo-sequencing.html">Reductive methylation de novo sequencing</a> (2005): Reductive isotopic methylation strategy for de novo sequencing of neuropeptides.</li>
+<li><a href="../algorithms/validator-18o-pair-picking.html">Validator (18O pair picking)</a> (2009): Finds 16O/18O-labeled peptide pairs and compares their fragmentation, validating Mascot results and, in Validator 3, deriving peptides from labeled y-ion pairs independently of the search engine.</li>
 <li><a href="../algorithms/dimethyl-isotope-labeling-de-novo-sequencing.html">Dimethyl isotope labeling de novo sequencing</a> (2010): Dimethyl isotope labeling-assisted workflow for de novo peptide sequencing.</li>
+<li><a href="../algorithms/asp-pro-linker-18o-oboc-peptide-sequencing.html">Asp-Pro linker 18O OBOC peptide sequencing</a> (2012): Releases one-bead-one-compound hexapeptides through an acid-labile Asp-Pro linker in partly 18O water, so N- and C-terminal ions can be told apart during de novo sequencing.</li>
 <li><a href="../algorithms/neucode-y-ion-annotation.html">NeuCode y-ion annotation</a> (2013): Two lysine isotopologues differing by 36 mDa are embedded metabolically, so every C-terminal fragment appears as a resolvable doublet and N-terminal ones do not. An algorithm reads that signature to label y-type ions at 93.2% accuracy, which among other uses lifts correct de novo identifications with PepNovo+ by 34%.</li>
+<li><a href="../algorithms/simplified-18o-labeling-de-novo-sequencing.html">Simplified 18O labeling de novo sequencing</a> (2014): Adds H2 18O and trypsin directly to the digest so 18O is incorporated at peptide C-termini, marking y-ions to ease de novo sequencing without extra drying steps.</li>
 <li><a href="../algorithms/niptl-novo.html">NIPTL-Novo</a> (2017): Non-isobaric peptide termini labeling assisted peptide de novo sequencing.</li>
 <li><a href="../algorithms/r-met-c-terminal-labeling-de-novo-sequencing.html">R-met C-terminal labeling de novo sequencing</a> (2024): Labels the peptide C-terminus and Asp/Glu carboxyl groups with arginine methyl ester so non-tryptic peptides fragment well, and EThcD then resolves isobaric ambiguities for bottom-up de novo protein sequencing.</li>
 </ul>
 </section>
-<section id="papers-describing-them-10" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-10">Papers describing them (10)</h2>
+<section id="papers-describing-them-19" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-19">Papers describing them (19)</h2>
 <ul>
 <li><a href="../publications/rapid-de-novo-peptide-sequencing-by-a-combination-of-nanoelectrospray-isotopic.html">Rapid de novo peptide sequencing by a combination of nanoelectrospray, isotopic labeling and a quadrupole/time-of-flight mass spectrometer</a> (1997, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-in-an-ion-trap-mass-spectrometer-with-18o-labeling.html">De novo peptide sequencing in an ion trap mass spectrometer with 18O labeling</a> (1998, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/quantitation-and-facilitated-de-novo-sequencing-of-proteins-by-isotopic-n.html">Quantitation and Facilitated de Novo Sequencing of Proteins by Isotopic N-Terminal Labeling of Peptides with a Fragmentation-Directing Moiety</a> (2000, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/differential-stable-isotope-labeling-of-peptides-for-quantitation-and-de-novo.html">Differential stable isotope labeling of peptides for quantitation and de novo sequence derivation</a> (2001, Rapid Communications in Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-and-quantitative-profiling-of-complex-protein.html">De novo peptide sequencing and quantitative profiling of complex protein mixtures using mass-coded abundance tagging</a> (2002, Nature Biotechnology, peer-reviewed)</li>
+<li><a href="../publications/use-of-deuterium-labeled-lysine-for-efficient-protein-identification-and.html">Use of Deuterium-Labeled Lysine for Efficient Protein Identification and Peptide de Novo Sequencing</a> (2002, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/precise-peptide-sequencing-and-protein-quantification-in-the-human-proteome.html">Precise peptide sequencing and protein quantification in the human proteome through in vivo lysine-specific mass tagging</a> (2003, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/de-novo-sequencing-of-peptides-recovered-from-in-gel-digested-proteins-by.html">“De Novo” Sequencing of Peptides Recovered from In-Gel Digested Proteins by Nanoelectrospray Tandem Mass Spectrometry</a> (2003, Molecular Biotechnology, peer-reviewed)</li>
+<li><a href="../publications/two-dimensional-mass-spectra-generated-from-the-analysis-of-15n-labeled-and.html">Two-Dimensional Mass Spectra Generated from the Analysis of 15N-Labeled and Unlabeled Peptides for Efficient Protein Identification and de novo Peptide Sequencing</a> (2004, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/enhancing-tof-tof-based-de-novo-sequencing-capability-for-high-throughput.html">Enhancing TOF/TOF-based de Novo Sequencing Capability for High Throughput Protein Identification with Amino Acid-Coded Mass Tagging</a> (2005, Journal of Proteome Research, peer-reviewed)</li>
+<li><a href="../publications/peptide-de-novo-sequencing-facilitated-by-a-dual-labeling-strategy.html">Peptide de Novo Sequencing Facilitated by a Dual-Labeling Strategy</a> (2005, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-sequencing-of-neuropeptides-using-reductive-isotopic-methylation-and.html">De Novo Sequencing of Neuropeptides Using Reductive Isotopic Methylation and Investigation of ESI QTOF MS/MS Fragmentation Pattern of Neuropeptides with N-Terminal Dimethylation</a> (2005, Analytical Chemistry, peer-reviewed)</li>
+<li><a href="../publications/rapid-validation-of-mascot-search-results-via-stable-isotope-labeling-pair.html">Rapid Validation of Mascot Search Results via Stable Isotope Labeling, Pair Picking, and Deconvolution of Fragmentation Patterns</a> (2009, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
 <li><a href="../publications/dimethyl-isotope-labeling-assisted-de-novo-peptide-sequencing.html">Dimethyl isotope labeling assisted de novo peptide sequencing</a> (2010, Journal of the American Society for Mass Spectrometry, peer-reviewed)</li>
+<li><a href="../publications/introducing-an-asp-pro-linker-in-the-synthesis-of-random-one-bead-one-compound.html">Introducing an Asp-Pro Linker in the Synthesis of Random One-Bead-One-Compound Hexapeptide Libraries Compatible with ESI-MS Analysis</a> (2012, ACS Combinatorial Science, peer-reviewed)</li>
 <li><a href="../publications/neutron-encoded-signatures-enable-product-ion-annotation-from-tandem-mass.html">Neutron-encoded Signatures Enable Product Ion Annotation From Tandem Mass Spectra</a> (2013, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
+<li><a href="../publications/a-simplified-method-for-peptide-de-novo-sequencing-using-18-o-labeling.html">A Simplified Method for Peptide De Novo Sequencing Using 18 O Labeling</a> (2014, European Journal of Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/niptl-novo-non-isobaric-peptide-termini-labeling-assisted-peptide-de-novo.html">NIPTL-Novo: Non-isobaric peptide termini labeling assisted peptide de novo sequencing</a> (2017, Journal of Proteomics, peer-reviewed)</li>
 <li><a href="../publications/enhancing-de-novo-protein-sequencing-through-the-c-terminal-labeling-strategy.html">Enhancing De Novo Protein Sequencing through the C-Terminal Labeling Strategy: Resolving Isobaric Ambiguities by Electron-Transfer/Higher Energy Collision Dissociation (EThcD)</a> (2024, Analytical Chemistry, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-48" class="level2">
-<h2 class="anchored" data-anchor-id="authors-48">Authors (48)</h2>
-<p><a href="../authors/a-f-maarten-altelaar.html">A. F. Maarten Altelaar</a>, <a href="../authors/adrian-guthals.html">Adrian Guthals</a>, <a href="../authors/albert-j-r-heck.html">Albert J. R. Heck</a>, <a href="../authors/alicia-l-richards.html">Alicia L. Richards</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/andrew-emili.html">Andrew Emili</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/bruce-a-thomson.html">Bruce A. Thomson</a>, <a href="../authors/catherine-e-vincent.html">Catherine E. Vincent</a>, <a href="../authors/christopher-j-herring.html">Christopher J. Herring</a>, <a href="../authors/christopher-m-rose.html">Christopher M. Rose</a>, <a href="../authors/gerard-cagney.html">Gerard Cagney</a>, <a href="../authors/giovanni-miotto.html">Giovanni Miotto</a>, <a href="../authors/huimin-bao.html">Huimin Bao</a>, <a href="../authors/huizhi-fan.html">Huizhi Fan</a>, <a href="../authors/igor-v-chernushevich.html">Igor V. Chernushevich</a>, <a href="../authors/joshua-j-coon.html">Joshua J. Coon</a>, <a href="../authors/jun-qin.html">Jun Qin</a>, <a href="../authors/kenneth-g-standing.html">Kenneth G. Standing</a>, <a href="../authors/konrad-r-celejewski.html">Konrad R. Celejewski</a>, <a href="../authors/lihua-zhang.html">Lihua Zhang</a>, <a href="../authors/lingjun-li.html">Lingjun Li</a>, <a href="../authors/manfredo-quadroni.html">Manfredo Quadroni</a>, <a href="../authors/marco-l-hennrich.html">Marco L. Hennrich</a>, <a href="../authors/martin-munchbach.html">Martin Münchbach</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/michael-s-westphall.html">Michael S. Westphall</a>, <a href="../authors/nuno-bandeira.html">Nuno Bandeira</a>, <a href="../authors/pengyuan-yang.html">Pengyuan Yang</a>, <a href="../authors/peter-james.html">Peter James</a>, <a href="../authors/qiang-fu.html">Qiang Fu</a>, <a href="../authors/qixin-liu.html">Qixin Liu</a>, <a href="../authors/shabaz-mohammed.html">Shabaz Mohammed</a>, <a href="../authors/shen-zhang.html">Shen Zhang</a>, <a href="../authors/shufang-liang.html">Shufang Liang</a>, <a href="../authors/shurong-zhang.html">Shurong Zhang</a>, <a href="../authors/thierry-le-bihan.html">Thierry Le Bihan</a>, <a href="../authors/wenqing-shui.html">Wenqing Shui</a>, <a href="../authors/werner-ens.html">Werner Ens</a>, <a href="../authors/xian-chen.html">Xian Chen</a>, <a href="../authors/xiaolong-zhang.html">Xiaolong Zhang</a>, <a href="../authors/yichu-shan.html">Yichu Shan</a>, <a href="../authors/yinkun-liu.html">Yinkun Liu</a>, <a href="../authors/yukui-zhang.html">Yukui Zhang</a>, <a href="../authors/zac-mcdonald.html">Zac McDonald</a>, <a href="../authors/zhen-liang.html">Zhen Liang</a>, <a href="../authors/zhigang-sui.html">Zhigang Sui</a></p>
+<section id="authors-90" class="level2">
+<h2 class="anchored" data-anchor-id="authors-90">Authors (90)</h2>
+<p><a href="../authors/a-f-maarten-altelaar.html">A. F. Maarten Altelaar</a>, <a href="../authors/adrian-guthals.html">Adrian Guthals</a>, <a href="../authors/albert-j-r-heck.html">Albert J. R. Heck</a>, <a href="../authors/ales-vorac.html">Aleš Voráč</a>, <a href="../authors/alicia-l-richards.html">Alicia L. Richards</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/andrew-emili.html">Andrew Emili</a>, <a href="../authors/andrew-keller.html">Andrew Keller</a>, <a href="../authors/ania-cabrales.html">Ania Cabrales</a>, <a href="../authors/aniel-sanchez.html">Aniel Sánchez</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/bruce-a-thomson.html">Bruce A. Thomson</a>, <a href="../authors/catherine-e-vincent.html">Catherine E. Vincent</a>, <a href="../authors/christopher-j-herring.html">Christopher J. Herring</a>, <a href="../authors/christopher-m-rose.html">Christopher M. Rose</a>, <a href="../authors/david-r-goodlett.html">David R. Goodlett</a>, <a href="../authors/donald-wolfgeher.html">Donald Wolfgeher</a>, <a href="../authors/e-morton-bradbury.html">E. Morton Bradbury</a>, <a href="../authors/eugene-c-yi.html">Eugene C. Yi</a>, <a href="../authors/eugene-kolker.html">Eugene Kolker</a>, <a href="../authors/fernando-albericio.html">Fernando Albericio</a>, <a href="../authors/gerard-cagney.html">Gerard Cagney</a>, <a href="../authors/giovanni-miotto.html">Giovanni Miotto</a>, <a href="../authors/hilda-elisa-garay.html">Hilda Elisa Garay</a>, <a href="../authors/hongqian-yang.html">Hongqian Yang</a>, <a href="../authors/hongying-zhong.html">Hongying Zhong</a>, <a href="../authors/huimin-bao.html">Huimin Bao</a>, <a href="../authors/huizhi-fan.html">Huizhi Fan</a>, <a href="../authors/igor-v-chernushevich.html">Igor V. Chernushevich</a>, <a href="../authors/james-p-reilly.html">James P. Reilly</a>, <a href="../authors/jan-havlis.html">Jan Havliš</a>, <a href="../authors/jeovanis-gil.html">Jeovanis Gil</a>, <a href="../authors/jimmy-k-eng.html">Jimmy K. Eng</a>, <a href="../authors/jorge-fernandez-de-cossio.html">Jorge Fernández-de-Cossío</a>, <a href="../authors/joshua-j-coon.html">Joshua J. Coon</a>, <a href="../authors/julian-d-watts.html">Julian D. Watts</a>, <a href="../authors/jun-qin.html">Jun Qin</a>, <a href="../authors/kenneth-g-standing.html">Kenneth G. Standing</a>, <a href="../authors/kolbrun-kristjansdottir.html">Kolbrun Kristjansdottir</a>, <a href="../authors/konrad-r-celejewski.html">Konrad R. Celejewski</a>, <a href="../authors/laura-a-sharon.html">Laura A. Sharon</a>, <a href="../authors/liang-li.html">Liang Li</a>, <a href="../authors/lihua-zhang.html">Lihua Zhang</a>, <a href="../authors/lingjun-li.html">Lingjun Li</a>, <a href="../authors/luis-javier-gonzalez.html">Luis Javier González</a>, <a href="../authors/lazaro-betancourt.html">Lázaro Betancourt</a>, <a href="../authors/manfredo-quadroni.html">Manfredo Quadroni</a>, <a href="../authors/marco-l-hennrich.html">Marco L. Hennrich</a>, <a href="../authors/martin-munchbach.html">Martin Münchbach</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/michael-s-westphall.html">Michael S. Westphall</a>, <a href="../authors/nuno-bandeira.html">Nuno Bandeira</a>, <a href="../authors/ondrej-sedo.html">Ondrej Šedo</a>, <a href="../authors/osvaldo-reyes-acosta.html">Osvaldo Reyes Acosta</a>, <a href="../authors/pengyuan-yang.html">Pengyuan Yang</a>, <a href="../authors/peter-james.html">Peter James</a>, <a href="../authors/priska-von-haller.html">Priska von Haller</a>, <a href="../authors/qiang-fu.html">Qiang Fu</a>, <a href="../authors/qixin-liu.html">Qixin Liu</a>, <a href="../authors/richard-l-beardsley.html">Richard L. Beardsley</a>, <a href="../authors/richard-newitt.html">Richard Newitt</a>, <a href="../authors/roman-a-zubarev.html">Roman A. Zubarev</a>, <a href="../authors/ruedi-aebersold.html">Ruedi Aebersold</a>, <a href="../authors/samuel-l-volchenboum.html">Samuel L. Volchenboum</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/sandra-l-marcus.html">Sandra L. Marcus</a>, <a href="../authors/shabaz-mohammed.html">Shabaz Mohammed</a>, <a href="../authors/shen-zhang.html">Shen Zhang</a>, <a href="../authors/sheng-gu.html">Sheng Gu</a>, <a href="../authors/shufang-liang.html">Shufang Liang</a>, <a href="../authors/shurong-zhang.html">Shurong Zhang</a>, <a href="../authors/songqin-pan.html">Songqin Pan</a>, <a href="../authors/stephen-j-kron.html">Stephen J. Kron</a>, <a href="../authors/thierry-le-bihan.html">Thierry Le Bihan</a>, <a href="../authors/vladimir-besada.html">Vladimir Besada</a>, <a href="../authors/wenqing-shui.html">Wenqing Shui</a>, <a href="../authors/werner-ens.html">Werner Ens</a>, <a href="../authors/xian-chen.html">Xian Chen</a>, <a href="../authors/xiaolong-zhang.html">Xiaolong Zhang</a>, <a href="../authors/yasset-perez-riverol.html">Yasset Perez-Riverol</a>, <a href="../authors/yichu-shan.html">Yichu Shan</a>, <a href="../authors/yinkun-liu.html">Yinkun Liu</a>, <a href="../authors/yordanka-masforrol.html">Yordanka Masforrol</a>, <a href="../authors/yukui-zhang.html">Yukui Zhang</a>, <a href="../authors/zac-mcdonald.html">Zac McDonald</a>, <a href="../authors/zbynek-zdrahal.html">Zbyněk Zdráhal</a>, <a href="../authors/zhen-liang.html">Zhen Liang</a>, <a href="../authors/zhigang-sui.html">Zhigang Sui</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
