@@ -22221,6 +22221,7 @@ INSERT INTO family_note VALUES('Transformer (encoder-only)','Transformer spectru
 INSERT INTO family_note VALUES('Diffusion','Iterative denoising: start from noise over the residue positions and refine repeatedly, so the precursor-mass constraint and the consistency of the whole sequence can be enforced at every step rather than only at the end.');
 INSERT INTO family_note VALUES('Latent imputation','Treats missing fragmentation as something to reconstruct rather than tolerate: latent representations of the theoretical peaks a peptide should have produced are imputed before the sequence is predicted.');
 INSERT INTO family_note VALUES('Spectral alignment / assembly','Reads a peptide from the relationships between spectra rather than from one spectrum alone, aligning or assembling overlapping acquisitions so that evidence missing from any single fragmentation is supplied by another.');
+INSERT INTO family_note VALUES('Protease strategy','Choosing and combining proteases so that overlapping peptides cover a whole protein, and so that each peptide fragments well enough to read de novo. The method is in the digestion, not the sequencing algorithm, which is why antibody sequencing leans on it.');
 CREATE TABLE dataset (
     id                INTEGER PRIMARY KEY,
     name              TEXT NOT NULL UNIQUE,

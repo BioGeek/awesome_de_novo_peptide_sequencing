@@ -2798,9 +2798,9 @@ repeat it on all 37 Transformer (AR) rows with nothing keeping the copies equal.
 It holds nothing but prose on purpose: membership is still the HAVING clause and
 the URL is still `MIN(id)`, so a note cannot invent a family or move its page.
 
-All 26 families with a page have a note. The two ways that can rot are
+All 27 families with a page have a note. The two ways that can rot are
 registered in `check_counts.py` as invariants that must read zero, the same
-shape as the `subdomain` pair: 1 pages without a note, 0 notes without a page.
+shape as the `subdomain` pair: 0 pages without a note, 0 notes without a page.
 A missing note is otherwise invisible, because the page simply falls back to the
 generated sentence.
 
