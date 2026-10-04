@@ -418,6 +418,25 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
 ]
 
+# INVARIANTS: claims whose prose states the value the data MUST have, always
+# zero. --fix rewrites an ordinary count to match the data; doing that to an
+# invariant turns a failing guard into a passing sentence, and it did: the
+# Protease strategy family gained a page with no note, and --fix rewrote
+# "0 pages without a note" to "1" in the same commit. So a violated invariant
+# is never rewritten. It prints VIOLATED and fails the run, --fix or not,
+# which fails the pre-commit hook. The fix is to the DATA.
+INVARIANTS = frozenset({
+    "unregistered application areas",
+    "registered but unused application areas",
+    "family pages without a note",
+    "notes without a family page",
+    "versions with several introducing works",
+    "verified tables without the paper's own method",
+    "duplicate measurements",
+    "results with a subset but no canonical subset",
+    "quoted results without a cue",
+})
+
 # publication_type is one sentence listing every type with its count.
 CLAIMS += [
     ("CLAUDE.md", f"publication_type {t!r}",
@@ -450,9 +469,16 @@ def main() -> int:
         return 2
     db = sqlite3.connect(DB_PATH)
 
+    # A renamed label would silently drop its claim out of the invariant set.
+    unknown = INVARIANTS - {c[1] for c in CLAIMS}
+    if unknown:
+        print(f"error: INVARIANTS names no claim: {sorted(unknown)}", file=sys.stderr)
+        return 2
+
     texts: dict[str, str] = {}
     stale: list[tuple[str, str, str, str]] = []
     missing: list[tuple[str, str]] = []
+    violated: list[tuple[str, str, str]] = []
 
     for fname, label, pattern, query in CLAIMS:
         path = Path(__file__).parent / fname
@@ -467,6 +493,9 @@ def main() -> int:
             continue
         m = found[0]
         actual = str(query(db) if callable(query) else db.execute(query).fetchone()[0])
+        if label in INVARIANTS and actual != "0":
+            violated.append((fname, label, actual))
+            continue
         if m.group(1) != actual:
             stale.append((fname, label, m.group(1), actual))
             if args.fix:
@@ -475,6 +504,9 @@ def main() -> int:
 
     for name, why in missing:
         print(f"  UNMATCHED  {name}: {why}")
+    for fname, label, now in violated:
+        print(f"  VIOLATED   {fname}: {label} must be 0, data says {now} "
+              f"(fix the data; the prose is not rewritten)")
     for fname, label, was, now in stale:
         verb = "updated" if args.fix else "STALE  "
         print(f"  {verb}    {fname}: {label}: {was} -> {now}")
@@ -484,16 +516,16 @@ def main() -> int:
             (Path(__file__).parent / fname).write_text(texts[fname], encoding="utf-8")
         print(f"fixed {len(stale)} of {len(CLAIMS)} counts in "
               f"{len({f for f, _, _, _ in stale})} file(s)")
-        return 1 if missing else 0
+        return 1 if missing or violated else 0
 
-    if not stale and not missing:
+    if not stale and not missing and not violated:
         if not args.quiet:
             print(f"all {len(CLAIMS)} documented counts agree with denovo.db")
         return 0
 
     if not args.fix:
-        print(f"\n{len(stale)} stale, {len(missing)} unmatched, of "
-              f"{len(CLAIMS)} documented counts.")
+        print(f"\n{len(stale)} stale, {len(missing)} unmatched, "
+              f"{len(violated)} violated, of {len(CLAIMS)} documented counts.")
         print("Run `uv run python check_counts.py --fix` to update them.")
     return 1
 

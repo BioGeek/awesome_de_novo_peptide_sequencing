@@ -1836,6 +1836,16 @@ of it. The registry entry then checks nothing and nobody hears about it until
 CI goes red; two commits went out that way. The auto-fix and the re-staging
 still run first, so a refused commit keeps the numbers `--fix` just corrected.
 
+**A VIOLATED invariant fails the commit too, and is never rewritten.** Some
+claims state the value the data must have, always zero (family pages with
+no note, for one), and `INVARIANTS` in `check_counts.py` names them. `--fix`
+used to treat them like any count, so when the Protease strategy family gained
+a page with no note it rewrote that guard from zero to one in the same commit,
+and the check passed. Now a nonzero invariant prints `VIOLATED`, leaves the prose
+alone and exits 1 under `--fix` as well, so the remedy has to be to the data.
+A label in `INVARIANTS` that names no claim is an error, so a renamed claim
+cannot drop out of the set unnoticed.
+
 A **new** URL is recorded automatically by the hook, right after `--check`
 passes. That is safe precisely because the dangerous cases already failed by
 then, and the alternative is worse: `--check` passes on additions, so the lock
