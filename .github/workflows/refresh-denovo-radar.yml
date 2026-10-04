@@ -28,7 +28,7 @@ on:
   workflow_dispatch:
     inputs:
       since:
-        description: 'Earliest publication date (default: 400 days ago)'
+        description: 'Earliest publication date, YYYY-MM-DD, or a number of days back (default: 400)'
         required: false
 
 permissions:
@@ -79,7 +79,11 @@ jobs:
           if git diff --quiet -- data/papers.json; then
             echo "No change to data/papers.json."; exit 0
           fi
-          python3 - <<'PY'
+          # The step runs under bash -e, so the check's deliberate exit 7 has to
+          # be caught on the same line: a bare `rc=$?` after it never runs, and
+          # a week where only the date moved failed the whole workflow.
+          rc=0
+          python3 - <<'PY' || rc=$?
           import json, pathlib, subprocess
           old = json.loads(subprocess.run(
               ["git", "show", "HEAD:data/papers.json"],
@@ -93,9 +97,8 @@ jobs:
           pathlib.Path("../added.txt").write_text("\n".join(sorted(map(str, added))))
           print(f"{len(added)} paper(s) new since the last run")
           PY
-          rc=$?
-          [ $rc -eq 7 ] && exit 0
-          [ $rc -ne 0 ] && exit $rc
+          if [ $rc -eq 7 ]; then exit 0; fi
+          if [ $rc -ne 0 ]; then exit $rc; fi
           git -c user.name="denovo-radar bot" \
               -c user.email="j.vangoey@instadeep.com" \
               commit -q -am "Refresh the paper list" 
