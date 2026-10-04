@@ -20,9 +20,13 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    # The Crossref + Semantic Scholar walk takes ~30 minutes for a full catalog
-    # pass; give the job 60 minutes to absorb transient rate-limit retries.
-    timeout-minutes: 60
+    # The Crossref + Semantic Scholar walk is paced by Semantic Scholar's
+    # public rate limit, at least 1.5 s per publication and 15 s when it is
+    # throttling, and the script writes NOTHING until the walk ends, so a
+    # timeout loses the whole run. ~30 minutes at 512 publications; at 855 a
+    # throttled pass measured ~3.5 hours locally. 240 leaves room for that
+    # within GitHub's 360-minute cap.
+    timeout-minutes: 240
 
     steps:
       - name: Check out repo
