@@ -6,7 +6,8 @@ fetches the ones that are legally free, names every file the same way, and lists
 what is left so a human can go and get it.
 
 OFFLINE AND LOCAL, and the only script here that is both. It touches a folder
-OUTSIDE the repository (`--dir`, default ~/Documents/De novo peptide sequencing),
+OUTSIDE the repository (`--dir`, default ~/Documents/de_novo_peptide_sequencing,
+the PDFs themselves in its `pdfs/` subfolder),
 fetches a few hundred URLs, and writes nothing into denovo.db. It must never run
 in CI: there is no library there to update.
 
@@ -88,7 +89,18 @@ from rapidfuzz import fuzz
 
 HERE = Path(__file__).parent
 DB_PATH = HERE / "denovo.db"
-DEFAULT_DIR = Path.home() / "Documents" / "De novo peptide sequencing"
+DEFAULT_DIR = Path.home() / "Documents" / "de_novo_peptide_sequencing"
+# The PDFs live in their own subfolder, so the root holds only the working
+# folders beside them (manual/, missing/, supplements/, comparison-review/,
+# citation-sweep/) and pdf_status.csv. Every reader goes through pdfs() and
+# every writer through pdf_dir(), so no script globs the root for PDFs.
+PDF_SUBDIR = "pdfs"
+
+
+def pdf_dir(root: Path) -> Path:
+    d = root / PDF_SUBDIR
+    d.mkdir(parents=True, exist_ok=True)
+    return d
 MAILTO = "j.vangoey@instadeep.com"          # same contact the other builders send
 UA = ("awesome_de_novo_peptide_sequencing/1.0 "
       "(https://github.com/BioGeek/awesome_de_novo_peptide_sequencing; "
@@ -401,13 +413,15 @@ def identify(pubs: list[dict], stem: str, text: str = "",
 def pdfs(root: Path) -> list[Path]:
     """Every PDF in the library.
 
-    The library is ONE flat folder. `retrieved/` is still read so an older
-    layout keeps working, but nothing is written there any more: it existed to
-    keep downloads away from the owner's curated filenames, and once the same
-    generator named every file it only served to hide half the library from
-    `rename` and `dedupe`, which looked in one folder each.
+    The PDFs are ONE flat folder, `pdfs/` under the root. The root itself and
+    `retrieved/` are still read so an older layout keeps working, but nothing
+    is written to either: `retrieved/` existed to keep downloads away from the
+    owner's curated filenames, and once the same generator named every file it
+    only served to hide half the library from `rename` and `dedupe`, which
+    looked in one folder each.
     """
-    return sorted(list(root.glob("*.pdf")) + list((root / "retrieved").glob("*.pdf")))
+    return sorted(list((root / PDF_SUBDIR).glob("*.pdf")) + list(root.glob("*.pdf"))
+                  + list((root / "retrieved").glob("*.pdf")))
 
 
 def coverage(pubs: list[dict], root: Path) -> dict[int, list[Path]]:
@@ -683,7 +697,7 @@ def pdf_from_landing(url: str) -> str | None:
 
 def cmd_fetch(args, conn, pubs, root):
     cache = HERE / ".cache" / "pdfs"
-    out = root
+    out = pdf_dir(root)
     have = coverage(pubs, root)
     todo = [p for p in pubs if p["id"] not in have]
     if args.ids:
@@ -831,7 +845,7 @@ def cmd_ingest(args, conn, pubs, root):
               + (f" pages {rng[0]}-{rng[1]}" if rng else ""))
         n += 1
         if args.apply:
-            dest = root / want
+            dest = pdf_dir(root) / want
             if rng:
                 # pypdf, not pdfseparate+pdfunite: the latter copies the
                 # volume's shared fonts onto every page and turned a 9-page

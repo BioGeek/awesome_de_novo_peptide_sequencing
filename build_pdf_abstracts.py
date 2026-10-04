@@ -102,7 +102,7 @@ import importlib.util
 spec = importlib.util.spec_from_file_location(
     "lib", "/home/j-vangoey/code/awesome_de_novo_peptide_sequencing/build_pdf_library.py")
 lib = importlib.util.module_from_spec(spec); spec.loader.exec_module(lib)
-BASE = Path("/home/j-vangoey/Documents/De novo peptide sequencing")
+BASE = lib.DEFAULT_DIR
 conn = sqlite3.connect("/home/j-vangoey/code/awesome_de_novo_peptide_sequencing/denovo.db")
 pubs = lib.load_publications(conn)
 have = lib.coverage(pubs, BASE)

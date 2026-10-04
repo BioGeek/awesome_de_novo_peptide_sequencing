@@ -44,7 +44,7 @@ import subprocess
 import sys
 
 DB = pathlib.Path(__file__).with_name("denovo.db")
-DEFAULT_DIR = pathlib.Path.home() / "Documents" / "De novo peptide sequencing"
+DEFAULT_DIR = pathlib.Path.home() / "Documents" / "de_novo_peptide_sequencing"  # = build_pdf_library.DEFAULT_DIR
 CANDIDATES = pathlib.Path(__file__).with_name("dataset_candidates.csv")
 
 # Keep these anchored on the identifier's own shape. A looser pattern picks up
@@ -170,7 +170,9 @@ def file_to_publication(con: sqlite3.Connection, library: pathlib.Path) -> dict[
 
 
 def scan(library: pathlib.Path, only: set[int] | None, pub_of: dict[str, int]):
-    pdfs = sorted(p for p in library.glob("*.pdf"))
+    import build_pdf_library as bpl
+
+    pdfs = bpl.pdfs(library)
     hits: dict[tuple[str, str], set[int]] = collections.defaultdict(set)
     for n, pdf in enumerate(pdfs, 1):
         pid = pub_of.get(pdf.name)

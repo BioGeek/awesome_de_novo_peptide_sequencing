@@ -67,7 +67,7 @@ import build_pdf_library as bpl
 
 HERE = pathlib.Path(__file__).parent
 DB = HERE / "denovo.db"
-LIBRARY = pathlib.Path.home() / "Documents" / "De novo peptide sequencing"
+LIBRARY = bpl.DEFAULT_DIR
 AUDIT = HERE / "paper_comparison_audit.csv"
 
 

@@ -971,6 +971,14 @@ publication they resolve to, and that group is REPORTED rather than deleted: a
 preprint and its version of record legitimately give one paper two files under
 two rows, and choosing between two copies of one row is a human's call.
 
+**The library lives at `~/Documents/de_novo_peptide_sequencing`, its PDFs in
+`pdfs/`.** The root holds only the working folders beside them (`manual/`,
+`missing/`, `supplements/`, `comparison-review/`, `citation-sweep/`) and
+`pdf_status.csv`. Every script takes the root from
+`build_pdf_library.DEFAULT_DIR` and finds PDFs through `pdfs()`, which still
+reads a PDF left at the root or in `retrieved/`, and every writer goes through
+`pdf_dir()`. Three scripts used to hard-code the old path with spaces in it.
+
 **The library is ONE flat folder.** There used to be a `retrieved/`
 subdirectory separating downloads from the owner's own Zotero exports. Once the
 same generator named every file and `pdf_status.csv` recorded the provenance,
