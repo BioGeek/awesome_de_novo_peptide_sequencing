@@ -24,7 +24,11 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A full render costs about 0.4 s per generated page. At 6282 pages that
+    # is ~42 minutes, and the old 30-minute cap cancelled run 37236776725 at
+    # page 4370. 90 leaves room for the catalog to keep growing; a partial or
+    # index render still finishes in a few minutes.
+    timeout-minutes: 90
 
     steps:
       - name: Check out repo

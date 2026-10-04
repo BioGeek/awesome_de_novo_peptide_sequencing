@@ -656,6 +656,14 @@ comes from:
 the full render. Break-even is nearer 160 files; the cap stays at 100 because a
 change that size is rare and the margin is worth more than the minutes.
 
+**The full render grows with the catalog, and the job's timeout has to grow
+with it.** At about 0.4 s per page the 17 minutes above was for 2521 pages;
+the citation sweep took the site to 6282, about 42 minutes, and the job's old
+`timeout-minutes: 30` cancelled run 37236776725 at page 4370, leaving the
+live site on the previous publish. It is 90 now. Re-check it whenever a bulk
+import adds pages: the slug count `slugs.py --check` prints is the number to
+multiply by 0.4 s.
+
 A **full** project render empties `_site` and repopulates it at the end, so the
 directory is bare for the whole 17 minutes; a partial render writes into
 whatever is already there. The restore step therefore matters only to the two
