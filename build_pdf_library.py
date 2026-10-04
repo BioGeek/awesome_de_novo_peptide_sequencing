@@ -127,6 +127,25 @@ EMBARGOED: dict[int, tuple[str, str]] = {
 }
 
 
+# Papers a PERSON has checked, so the scripts stop chasing them. Two verdicts:
+#   no-pdf     no full text exists or ever will: a code deposit, a record that
+#              is an abstract and nothing more
+#   paywalled  the publisher sells it and no free copy was found by hand either
+# Without this a paper the owner already looked at is re-tried on every fetch
+# and reshuffled between buckets by whatever the APIs say that day, and the
+# missing/ lists never shrink to the work that is actually left. `fetch` skips
+# these and `report` files them before reading any stored verdict. Checked
+# 2026-10-05 from the owner's list; publication 700 was on it as paywalled and
+# turned out to have an author copy on HAL, so it is filed, not listed here.
+CHECKED: dict[int, tuple[str, str]] = {
+    216: ("no-pdf", "this catalog's own Zenodo record: a code deposit"),
+    355: ("no-pdf", "JSSR record is an abstract only, no galley"),
+    356: ("no-pdf", "JSSR record is an abstract only, no galley"),
+    **{i: ("paywalled", "checked by hand 2026-10-05")
+       for i in (262, 289, 357, 502, 527, 621, 647, 662, 762, 817, 855)},
+}
+
+
 def embargoed(pub_id: int, today: str | None = None) -> tuple[str, str] | None:
     """The embargo still in force for this publication, or None."""
     entry = EMBARGOED.get(pub_id)
@@ -676,6 +695,11 @@ def cmd_fetch(args, conn, pubs, root):
         for p in held:
             until, why = EMBARGOED[p["id"]]
             print(f"  skipping {p['id']}: embargoed until {until} ({why})")
+    checked = [p for p in todo if p["id"] in CHECKED]
+    if checked:
+        todo = [p for p in todo if p["id"] not in CHECKED]
+        print(f"  skipping {len(checked)} checked by hand: "
+              + ", ".join(f"{p['id']} ({CHECKED[p['id']][0]})" for p in checked))
     if args.limit:
         todo = todo[:args.limit]
     print(f"{len(have)} of {len(pubs)} already local, {len(todo)} to try", flush=True)
@@ -873,6 +897,7 @@ def cmd_dedupe(args, conn, pubs, root):
 REPORT_BUCKETS = """\
 paywalled.txt
     No source reports any free full text: neither OpenAlex nor Europe PMC.
+    Includes the papers checked by hand and confirmed paywalled (CHECKED).
 
 blocked-but-open-in-pmc.txt
     Open access with a PMC copy, listed as a PMC link. START HERE: every
@@ -889,6 +914,10 @@ blocked-openreview.txt
 
 no-doi-and-not-indexed.txt
     No DOI and no index entry. Mostly records that are not papers at all.
+
+no-pdf-exists.txt
+    Checked by hand: no full text exists or ever will (a code deposit, an
+    abstract-only record). Nothing to find. See CHECKED in build_pdf_library.py.
 
 embargoed.txt
     NOT retrievable yet, by the publisher's own statement, with a release date
@@ -973,7 +1002,10 @@ def cmd_report(args, conn, pubs, root):
         r = status.get(p["id"])
         host = re.match(r"https?://([^/]+)", (r or {}).get("detail") or "")
         host = host.group(1) if host else "-"
-        if embargoed(p["id"]):
+        if p["id"] in CHECKED:
+            # A person's verdict outranks any stored or inferred one.
+            key = {"no-pdf": "no-pdf-exists", "paywalled": "paywalled"}[CHECKED[p["id"]][0]]
+        elif embargoed(p["id"]):
             # Checked BEFORE the stored verdict, because a previous run
             # recorded this as paywalled, which is the wrong word: the text is
             # not for sale either.

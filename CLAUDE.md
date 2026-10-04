@@ -1080,6 +1080,18 @@ PMC deposit, embargoed to 2027-08-10, which the Europe-PMC-wins rule above
 already handles because Europe PMC reports it; a repository embargo has no
 such API to ask, so it is recorded here by hand.
 
+**A paper a person has checked stays checked.** `CHECKED` in the builder
+maps a publication id to a verdict, `no-pdf` (no full text exists or ever
+will: this catalog's own Zenodo code deposit, the two abstract-only JSSR
+records) or `paywalled` (sold, and no free copy found by hand). `fetch` skips
+them and `report` files them before any stored verdict, `no-pdf` in its own
+`no-pdf-exists.txt`, so the missing lists shrink to the work actually left
+instead of re-proposing what the owner already looked at. The first hand
+check also paid for itself the other way: publication 700, listed as
+paywalled at IEEE, has the authors' own copy on HAL (`inria-00270867`), and
+is filed rather than recorded. Check an open repository before writing a
+paper off.
+
 **Do not bucket on the last host tried.** Doing that produced a
 `blocked-doi-resolver` list of 31 which the README then recommended as the
 largest recoverable group, on the theory that OpenAlex had offered `doi.org` as
