@@ -96,7 +96,12 @@ TRANSLITERATE = {
 # duplicate (name variants sharing co-authors or an institution, and three
 # same-name splits the evidence contradicted). Each retired author URL points
 # at the surviving row's page.
-REDIRECTS: dict[str, dict[str, str]] = {'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
+#
+# 2026-10-05: "GenomicPeptideFinder de novo genomic mining" (2006) and
+# "Genomic Peptide Finder" (2011) were one tool from one lab entered twice; the
+# 2006 row was folded into the 2011 one, which carries the repository.
+REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
+ 'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
              'd-dutta': 'debojyoti-dutta',
              'e-mori': 'elisa-mori',

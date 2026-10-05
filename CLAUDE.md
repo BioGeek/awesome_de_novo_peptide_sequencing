@@ -1642,7 +1642,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 104 of 811 methods have a row, 52 of the 71 deep-learning
+incomplete: 104 of 810 methods have a row, 52 of the 71 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -2959,7 +2959,7 @@ better default and the repository is still what someone downloading wants.
 **33 of 50** families that hold two or more methods. The other **17** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **335** of the **352**
+already exists, on a permanent indexed URL. Those cover **334** of the **351**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.

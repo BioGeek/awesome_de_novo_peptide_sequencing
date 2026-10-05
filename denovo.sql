@@ -11678,7 +11678,6 @@ INSERT INTO algorithm VALUES(500,'Nepenthes pitcher fluid proteome',NULL,NULL,NU
 INSERT INTO algorithm VALUES(501,'Olive pomace ACE-inhibitory peptides',NULL,NULL,NULL,'Finds low molecular weight peptides with predicted ACE-inhibitory activity in olive pomace, several of them sequenced de novo by PEAKS.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(502,'Tityus serrulatus venom PTM toxins',NULL,NULL,NULL,'Characterises Tityus serrulatus scorpion venom, including phospho- and glycoproteome, combining database search with de novo sequencing to reveal modified toxins.','downstream-application',0,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(503,'Cyclopeptide beltway reconstruction',NULL,NULL,NULL,'Reduces cyclic peptide sequencing from mass spectra to the beltway problem and solves it with an algorithm that restores sequences of up to 160 residues.','algorithm',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(504,'GenomicPeptideFinder de novo genomic mining',NULL,NULL,'Hybrid de novo + database search','Pairs de novo amino acid sequencing with the error-tolerant GenomicPeptideFinder search of genomic DNA to find intron-split and alternatively spliced peptides, applied to Chlamydomonas thylakoids.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(505,'Leuconostoc antifungal peptides',NULL,NULL,NULL,'Isolates five novel antifungal peptides from Leuconostoc mesenteroides DU15 sequenced de novo with PEAKS, active against Aspergillus niger.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(506,'JUMP',NULL,NULL,'Sequence tag','Hybrid tag-based database search that derives amino acid tags as short as one residue and combines tag and pattern-matching scores to rank PSMs.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(507,'Beta-casein peptic digestion peptides',NULL,NULL,NULL,'Follows simulated gastric digestion of bovine beta-casein, identifying peptides by combined de novo interpretation and database search and finding an amino acid variant.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
@@ -11716,7 +11715,7 @@ INSERT INTO algorithm VALUES(538,'Greater weever multifunctional peptides',NULL,
 INSERT INTO algorithm VALUES(539,'Graph-theoretic b/y ion separation',NULL,NULL,NULL,'Separates b ions from y ions in MS/MS spectra by partitioning a graph of same-type and different-type peak relations, as a foundation for de novo sequencing.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(540,'Graph-search sequence tag generation',NULL,NULL,'Sequence tag','Generates peptide sequence tags from MS/MS spectra by graph search, aiming for fast and accurate tags for identification.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(541,'GP-based MS/MS peak preprocessing for de novo',NULL,NULL,NULL,'Uses genetic programming to classify MS/MS peaks as signal or noise before de novo sequencing, improving PEAKS identification over intensity thresholding.','adjacent',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(542,'Genomic Peptide Finder',NULL,NULL,'Homology search','Aligns de novo sequenced peptides directly to a genome, tolerating sequencing errors and introns, to provide proteogenomic evidence for gene annotation.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(542,'Genomic Peptide Finder',NULL,NULL,'Homology search','Aligns de novo sequenced peptides directly to a genome, tolerating sequencing errors and introns, to provide proteogenomic evidence for gene annotation.','adjacent',0,'DDA','GenomicPeptideFinder, GPF',NULL);
 INSERT INTO algorithm VALUES(543,'Proteasome-spliced HLA ligand discovery',NULL,NULL,NULL,'De novo sequencing of HLA class I ligands from a colorectal cancer line found genome-untemplated proteasome-spliced peptides that CD8+ T cells recognise.','downstream-application',NULL,'DDA',NULL,'immunopeptidomics');
 INSERT INTO algorithm VALUES(544,'Cancer borealis hemolymph feeding neuropeptides',NULL,NULL,NULL,'Profiles circulating neuropeptides in crab hemolymph over feeding and reports 96 putative new neuropeptide sequences found by de novo sequencing.','downstream-application',NULL,'DIA',NULL,'neuropeptidomics');
 INSERT INTO algorithm VALUES(545,'RSV postfusion F antibody 131-2a sequencing',NULL,NULL,NULL,'De novo MS sequencing of the widely used anti-RSV-F antibody 131-2a enabled a recombinant version and a structure explaining its postfusion specificity.','downstream-application',NULL,'DDA',NULL,'antibodyomics');
@@ -13184,22 +13183,6 @@ INSERT INTO publication_author VALUES(20,74,5);
 INSERT INTO publication_author VALUES(20,60,6);
 INSERT INTO publication_author VALUES(20,75,7);
 INSERT INTO publication_author VALUES(20,73,8);
-INSERT INTO publication_author VALUES(21,62,1);
-INSERT INTO publication_author VALUES(21,143,2);
-INSERT INTO publication_author VALUES(21,74,3);
-INSERT INTO publication_author VALUES(21,63,4);
-INSERT INTO publication_author VALUES(21,60,5);
-INSERT INTO publication_author VALUES(21,144,6);
-INSERT INTO publication_author VALUES(21,67,7);
-INSERT INTO publication_author VALUES(21,75,8);
-INSERT INTO publication_author VALUES(21,145,9);
-INSERT INTO publication_author VALUES(21,146,10);
-INSERT INTO publication_author VALUES(21,147,11);
-INSERT INTO publication_author VALUES(21,148,12);
-INSERT INTO publication_author VALUES(21,149,13);
-INSERT INTO publication_author VALUES(21,150,14);
-INSERT INTO publication_author VALUES(21,151,15);
-INSERT INTO publication_author VALUES(21,73,16);
 INSERT INTO publication_author VALUES(22,55,1);
 INSERT INTO publication_author VALUES(22,57,2);
 INSERT INTO publication_author VALUES(22,56,3);
@@ -19234,6 +19217,24 @@ INSERT INTO publication_author VALUES(979,67,3);
 INSERT INTO publication_author VALUES(979,73,8);
 INSERT INTO publication_author VALUES(979,74,5);
 INSERT INTO publication_author VALUES(979,75,7);
+INSERT INTO publication_author VALUES(21,62,1);
+INSERT INTO publication_author VALUES(21,143,2);
+INSERT INTO publication_author VALUES(21,74,3);
+INSERT INTO publication_author VALUES(21,63,4);
+INSERT INTO publication_author VALUES(21,60,5);
+INSERT INTO publication_author VALUES(21,144,6);
+INSERT INTO publication_author VALUES(21,67,7);
+INSERT INTO publication_author VALUES(21,66,8);
+INSERT INTO publication_author VALUES(21,75,9);
+INSERT INTO publication_author VALUES(21,145,10);
+INSERT INTO publication_author VALUES(21,146,11);
+INSERT INTO publication_author VALUES(21,147,12);
+INSERT INTO publication_author VALUES(21,148,13);
+INSERT INTO publication_author VALUES(21,149,14);
+INSERT INTO publication_author VALUES(21,188,15);
+INSERT INTO publication_author VALUES(21,150,16);
+INSERT INTO publication_author VALUES(21,151,17);
+INSERT INTO publication_author VALUES(21,73,18);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -19339,7 +19340,7 @@ INSERT INTO algorithm_repository VALUES(16,'https://github.com/BEAM-Labs/denovo/
 INSERT INTO algorithm_repository VALUES(17,'https://github.com/usr922/LIPNovo',0);
 INSERT INTO algorithm_repository VALUES(18,'https://github.com/qiyueliuhuo8/TSARseqNovo',0);
 INSERT INTO algorithm_repository VALUES(19,'https://github.com/biocc/SP-MEGD_Fusion',0);
-INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',0);
+INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',2);
 INSERT INTO algorithm_repository VALUES(22,'https://github.com/hearthewind/dianovo',0);
 INSERT INTO algorithm_repository VALUES(24,'https://github.com/PHOENIXcenter/pi-xNovo',0);
 INSERT INTO algorithm_repository VALUES(25,'https://github.com/ThatMatin/TransNovo',0);
@@ -19429,6 +19430,8 @@ INSERT INTO algorithm_repository VALUES(43,'https://github.com/yangshu729/biatNo
 INSERT INTO algorithm_repository VALUES(87,'https://github.com/dumbgoos/AbNovoBench',0);
 INSERT INTO algorithm_repository VALUES(23,'https://github.com/BEAM-Labs/denovo/tree/main/RankNovo',0);
 INSERT INTO algorithm_repository VALUES(8,'https://github.com/BEAM-Labs/denovo/tree/main/OmniNovo',0);
+INSERT INTO algorithm_repository VALUES(20,'https://github.com/PHOENIXcenter/pi-PrimeNovo',0);
+INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/pi-PrimeNovo',1);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -27869,7 +27872,7 @@ INSERT INTO publication_algorithm VALUES(597,195,'describes');
 INSERT INTO publication_algorithm VALUES(597,62,'uses');
 INSERT INTO publication_algorithm VALUES(598,503,'describes');
 INSERT INTO publication_algorithm VALUES(599,68,'describes');
-INSERT INTO publication_algorithm VALUES(600,504,'describes');
+INSERT INTO publication_algorithm VALUES(600,542,'describes');
 INSERT INTO publication_algorithm VALUES(601,505,'describes');
 INSERT INTO publication_algorithm VALUES(601,62,'uses');
 INSERT INTO publication_algorithm VALUES(602,506,'describes');
