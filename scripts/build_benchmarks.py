@@ -49,9 +49,9 @@ was drawn over 29 datasets and this runs over the 84 now in the repository, with
 newer tool versions. The site quotes the commit it was built from for that
 reason.
 
-    python3 build_benchmarks.py            # skip if the upstream HEAD is unchanged
-    python3 build_benchmarks.py --force    # rebuild anyway
-    python3 build_benchmarks.py --dry-run  # fetch and report, write nothing
+    python3 scripts/build_benchmarks.py            # skip if the upstream HEAD is unchanged
+    python3 scripts/build_benchmarks.py --force    # rebuild anyway
+    python3 scripts/build_benchmarks.py --dry-run  # fetch and report, write nothing
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 CACHE = HERE / ".cache" / "benchmarks"
 

@@ -1,5 +1,5 @@
 # slugs.lock -- the published URL of every generated entity page.
-# Written by `python3 slugs.py --write`, checked by `--check`.
+# Written by `python3 scripts/slugs.py --write`, checked by `--check`.
 # A diff here is a URL change: every line is a live, indexed address.
 # Format: type<TAB>entity id<TAB>slug
 algorithms	1	instanovo

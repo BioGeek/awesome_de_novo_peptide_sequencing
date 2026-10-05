@@ -42,8 +42,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uv run python build_benchmarks.py ${{ inputs.force && '--force' || '' }}
-          uv run python build_proteobench.py ${{ inputs.force && '--force' || '' }}
+          uv run python scripts/build_benchmarks.py ${{ inputs.force && '--force' || '' }}
+          uv run python scripts/build_proteobench.py ${{ inputs.force && '--force' || '' }}
           sqlite3 denovo.db .dump > denovo.sql
 
       - name: Commit if the benchmark results changed

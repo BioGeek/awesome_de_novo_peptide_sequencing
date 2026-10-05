@@ -49,10 +49,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # build_candidates.py is stdlib-only: no uv sync, no lockfile, no deps.
+      # scripts/build_candidates.py is stdlib-only: no uv sync, no lockfile, no deps.
       - name: Harvest candidates from OpenAlex
         run: |
-          python3 build_candidates.py \
+          python3 scripts/build_candidates.py \
             --direction "${{ github.event.inputs.direction || 'both' }}" \
             --min-links "${{ github.event.inputs.min_links || '3' }}" \
             --out candidates.csv

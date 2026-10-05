@@ -29,7 +29,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent
 SITEMAP = ROOT / "_site" / "sitemap.xml"
 SEARCH = ROOT / "_site" / "search.json"
 PAGES = ROOT / "pages"

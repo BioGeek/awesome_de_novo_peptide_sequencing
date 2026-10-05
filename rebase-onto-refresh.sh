@@ -111,7 +111,7 @@ say "verified: 0 upstream rows missing, $extra row(s) only yours (rows their ref
 # before it is staged, or the dump and the binary disagree.
 git reset --mixed origin/main >/dev/null
 sqlite3 denovo.db .dump > denovo.sql
-[ -f check_counts.py ] && python3 check_counts.py --fix --quiet || true
+[ -f scripts/check_counts.py ] && python3 scripts/check_counts.py --fix --quiet || true
 git add -A
 
 echo

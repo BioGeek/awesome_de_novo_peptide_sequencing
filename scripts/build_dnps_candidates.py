@@ -60,7 +60,7 @@ from urllib.parse import quote
 
 from rapidfuzz import fuzz
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 CACHE = HERE / ".cache" / "dnps"
 OUT = HERE / "dnps_candidates.csv"

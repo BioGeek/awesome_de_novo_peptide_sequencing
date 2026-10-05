@@ -10,9 +10,9 @@ It also renders the tables the miner REFUSED, with the reason, which is the
 half worth looking at: a rejection is either a correct refusal or a gap, and
 only a person reading the printed table can say which.
 
-    uv run --with pdfplumber python3 review_comparisons.py              # all
-    uv run --with pdfplumber python3 review_comparisons.py --ids 49,58   # some
-    uv run --with pdfplumber python3 review_comparisons.py --rejected-only
+    uv run --with pdfplumber python3 scripts/review_comparisons.py              # all
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --ids 49,58   # some
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --rejected-only
 
 **IT WRITES OUTSIDE THE REPOSITORY AND IS NEVER PUBLISHED.** The output is a
 folder of PNGs and one HTML file under the PDF library, the same place
@@ -55,7 +55,7 @@ CACHE = OUT / ".pages"
 # APPROVED for a parse confirmed correct, DISMISSED for a refusal confirmed to
 # be the right refusal. Both collapse, because the page is a worklist and the
 # point is to shrink it.
-APPROVED = pathlib.Path(__file__).with_name("paper_comparison_review.json")
+APPROVED = (pathlib.Path(__file__).resolve().parent.parent / "paper_comparison_review.json")
 LEGACY_APPROVED = OUT / "approved.json"
 # What each crop actually shows, written for the cross-checker. Without it
 # build_table_vlm.py had to guess from the audit CSV and compared a crop

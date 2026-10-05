@@ -52,7 +52,7 @@ jobs:
         with:
           version: 1.9.38
 
-      # Render and publish are SEPARATE steps, and postrender.py runs between
+      # Render and publish are SEPARATE steps, and scripts/postrender.py runs between
       # them rather than as a Quarto `post-render` hook.
       #
       # Quarto hands a post-render script the full list of output files in the
@@ -63,7 +63,7 @@ jobs:
       # "Failed to spawn '/usr/bin/python3': Argument list too long". It would
       # have broken locally too within a couple of pages.
       #
-      # Splitting them also matches the reasoning above for build_pages.py: an
+      # Splitting them also matches the reasoning above for scripts/build_pages.py: an
       # explicit step fails the build loudly instead of failing inside a hook.
       # Restore the previous build. gh-pages IS the last published _site, so it
       # is a free and always-exact cache, and it makes _site complete before
@@ -82,10 +82,10 @@ jobs:
           fi
 
       - name: Generate entity pages
-        run: uv run python build_pages.py
+        run: uv run python scripts/build_pages.py
 
       # A full render is ~17 minutes and ~98.7% of this job. Almost every push
-      # does not need it: build_pages.py keeps volatile metrics out of the
+      # does not need it: scripts/build_pages.py keeps volatile metrics out of the
       # pages, so the DAILY refresh-repo-metrics commit changes zero of them,
       # and a commit that changes a handful -- a new paper, or the weekly
       # benchmark refresh touching the 17 method pages that carry a benchmark
@@ -94,7 +94,7 @@ jobs:
         id: scope
         env:
           FULL_RENDER: ${{ inputs.full_render }}
-        run: python3 render_scope.py
+        run: python3 scripts/render_scope.py
 
       - name: Render everything
         if: steps.scope.outputs.mode == 'full'
@@ -103,7 +103,7 @@ jobs:
           QUARTO_PYTHON: .venv/bin/python
 
       # One `quarto render` per file, because `quarto render a.qmd b.qmd`
-      # silently renders only the first input. render_scope.py caps the list at
+      # silently renders only the first input. scripts/render_scope.py caps the list at
       # 60 files and asks for a full render past that.
       - name: Render index.qmd and the changed pages
         if: steps.scope.outputs.mode == 'partial'
@@ -128,10 +128,10 @@ jobs:
           QUARTO_PYTHON: .venv/bin/python
 
       - name: Record what _site now contains
-        run: python3 render_scope.py --record
+        run: python3 scripts/render_scope.py --record
 
       - name: Fix the home page's sitemap entry
-        run: python3 postrender.py
+        run: python3 scripts/postrender.py
 
       - name: Publish to gh-pages
         uses: quarto-dev/quarto-actions/publish@v2

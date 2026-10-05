@@ -47,7 +47,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "denovo.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 
 HAS_ID = ("COALESCE(orcid,'')<>'' OR COALESCE(openalex_id,'')<>'' "
           "OR COALESCE(scholar_id,'')<>'' OR COALESCE(sciprofiles_id,'')<>''")
@@ -165,23 +165,23 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      r"~(\d+) pages at once", _generated_pages),
     ("_quarto.yml", "entity pages (navbar)",
      r"the ~(\d+) generated entity pages", _generated_pages),
-    ("build_pages.py", "entity pages (search.json)",
+    ("scripts/build_pages.py", "entity pages (search.json)",
      r"keeps ~(\d+) thin pages out of", _generated_pages),
-    ("build_pages.py", "algorithms with exactly one paper",
+    ("scripts/build_pages.py", "algorithms with exactly one paper",
      r"(\d+) of \d+ algorithms have exactly",
      "SELECT COUNT(*) FROM (SELECT algorithm_id FROM publication_algorithm "
      "GROUP BY algorithm_id HAVING COUNT(*)=1)"),
-    ("build_pages.py", "algorithms total",
+    ("scripts/build_pages.py", "algorithms total",
      r"\d+ of (\d+) algorithms have exactly", "SELECT COUNT(*) FROM algorithm"),
-    ("slugs.py", "affiliation rows",
+    ("scripts/slugs.py", "affiliation rows",
      r"(\d+) affiliation rows", "SELECT COUNT(*) FROM affiliation"),
-    ("slugs.py", "distinct institutions",
+    ("scripts/slugs.py", "distinct institutions",
      r"collapse to (\d+) institutions",
      "SELECT COUNT(DISTINCT name) FROM affiliation"),
-    ("build_candidates.py", "publication_citation rows",
+    ("scripts/build_candidates.py", "publication_citation rows",
      r"0 of its (\d+) rows point outside",
      "SELECT COUNT(*) FROM publication_citation"),
-    ("build_candidates.py", "publications scored against",
+    ("scripts/build_candidates.py", "publications scored against",
      r"our (\d+) publications link", "SELECT COUNT(*) FROM publication"),
     ("CLAUDE.md", "publication_algorithm 'uses' links",
      r"(\d+) of the \d+ are `'uses'`",
@@ -203,10 +203,10 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("index.qmd", "publication_algorithm links total",
      r"\d+ of (\d+) publication_algorithm links are 'uses'",
      "SELECT COUNT(*) FROM publication_algorithm"),
-    ("build_pages.py", "publication_algorithm 'uses' links",
+    ("scripts/build_pages.py", "publication_algorithm 'uses' links",
      r"(\d+) of \d+ links are 'uses'",
      "SELECT COUNT(*) FROM publication_algorithm WHERE role='uses'"),
-    ("build_pages.py", "publication_algorithm links total",
+    ("scripts/build_pages.py", "publication_algorithm links total",
      r"\d+ of (\d+) links are 'uses'",
      "SELECT COUNT(*) FROM publication_algorithm"),
     # Public benchmarks. These move whenever the upstream repository adds a
@@ -319,12 +319,12 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "HAVING COUNT(*) >= 2)"),
     # The same threshold argued in three source comments, because each of the
     # three files repeats the HAVING clause and each comment says why.
-    ("slugs.py", "single-method families",
+    ("scripts/slugs.py", "single-method families",
      r"(\d+) of \d+ families hold exactly one method",
      "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' "
      "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
-    ("slugs.py", "families in all",
+    ("scripts/slugs.py", "families in all",
      r"\d+ of (\d+) families hold exactly one method",
      "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> ''"),
@@ -418,6 +418,35 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
 ]
 
+# scripts/README.md describes every script in this folder under a heading that
+# is its filename. Not a database count: these read the folder itself, so a
+# script added without an entry, or an entry left behind by a deleted script,
+# fails the commit like any stale number would.
+_SCRIPTS = Path(__file__).resolve().parent
+
+
+def _script_files(_conn) -> set[str]:
+    return {p.name for p in _SCRIPTS.glob("*.py")}
+
+
+def _readme_entries(_conn) -> set[str]:
+    text = (_SCRIPTS / "README.md").read_text(encoding="utf-8")
+    return set(re.findall(r"^### `([^`]+\.py)`", text, flags=re.M))
+
+
+CLAIMS += [
+    ("scripts/README.md", "scripts in the folder",
+     r"This folder\s+holds \*\*(\d+) scripts\*\*",
+     lambda c: len(_script_files(c))),
+    ("scripts/README.md", "scripts without a README entry",
+     r"\*\*(\d+) scripts\*\* lack an entry below",
+     lambda c: len(_script_files(c) - _readme_entries(c))),
+    ("scripts/README.md", "README entries naming no script",
+     r"\*\*(\d+) entries\*\* name a script that does not\s+exist",
+     lambda c: len(_readme_entries(c) - _script_files(c))),
+]
+
+
 # INVARIANTS: claims whose prose states the value the data MUST have, always
 # zero. --fix rewrites an ordinary count to match the data; doing that to an
 # invariant turns a failing guard into a passing sentence, and it did: the
@@ -435,6 +464,8 @@ INVARIANTS = frozenset({
     "duplicate measurements",
     "results with a subset but no canonical subset",
     "quoted results without a cue",
+    "scripts without a README entry",
+    "README entries naming no script",
 })
 
 # publication_type is one sentence listing every type with its count.
@@ -481,7 +512,7 @@ def main() -> int:
     violated: list[tuple[str, str, str]] = []
 
     for fname, label, pattern, query in CLAIMS:
-        path = Path(__file__).parent / fname
+        path = Path(__file__).resolve().parent.parent / fname
         if fname not in texts:
             texts[fname] = path.read_text(encoding="utf-8")
         found = list(re.finditer(pattern, texts[fname]))
@@ -513,7 +544,7 @@ def main() -> int:
 
     if args.fix and stale:
         for fname in {f for f, _, _, _ in stale}:
-            (Path(__file__).parent / fname).write_text(texts[fname], encoding="utf-8")
+            (Path(__file__).resolve().parent.parent / fname).write_text(texts[fname], encoding="utf-8")
         print(f"fixed {len(stale)} of {len(CLAIMS)} counts in "
               f"{len({f for f, _, _, _ in stale})} file(s)")
         return 1 if missing or violated else 0
@@ -526,7 +557,7 @@ def main() -> int:
     if not args.fix:
         print(f"\n{len(stale)} stale, {len(missing)} unmatched, "
               f"{len(violated)} violated, of {len(CLAIMS)} documented counts.")
-        print("Run `uv run python check_counts.py --fix` to update them.")
+        print("Run `uv run python scripts/check_counts.py --fix` to update them.")
     return 1
 
 

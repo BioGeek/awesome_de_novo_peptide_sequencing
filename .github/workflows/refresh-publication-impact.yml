@@ -31,7 +31,7 @@ jobs:
 
       - name: Refresh publication citation impact
         run: |
-          uv run python build_publication_impact.py
+          uv run python scripts/build_publication_impact.py
           sqlite3 denovo.db .dump > denovo.sql
 
       - name: Commit if cited_by_count changed

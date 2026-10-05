@@ -19,9 +19,9 @@ PHASE 0: this script is REPORT-ONLY and writes NOTHING but the audit CSV. The
 after reading the rejection tally this produces, which is the point of doing it
 in this order.
 
-    uv run --with pdfplumber python3 build_paper_comparisons.py
-    uv run --with pdfplumber python3 build_paper_comparisons.py --ids 38,21
-    uv run --with pdfplumber python3 build_paper_comparisons.py --ids 38 --show
+    uv run --with pdfplumber python3 scripts/build_paper_comparisons.py
+    uv run --with pdfplumber python3 scripts/build_paper_comparisons.py --ids 38,21
+    uv run --with pdfplumber python3 scripts/build_paper_comparisons.py --ids 38 --show
 
 It needs `pdfplumber`, which is deliberately NOT a project dependency, for the
 same reason `pypdf` is not: CI would install it for a script CI never runs.
@@ -65,7 +65,7 @@ import sys
 
 import build_pdf_library as bpl
 
-HERE = pathlib.Path(__file__).parent
+HERE = pathlib.Path(__file__).resolve().parent.parent
 DB = HERE / "denovo.db"
 LIBRARY = bpl.DEFAULT_DIR
 AUDIT = HERE / "paper_comparison_audit.csv"
@@ -3633,7 +3633,7 @@ def main() -> int:
         import pdfplumber
     except ModuleNotFoundError:
         print("pdfplumber is needed and is deliberately not a project dependency.\n"
-              "Run: uv run --with pdfplumber python3 build_paper_comparisons.py",
+              "Run: uv run --with pdfplumber python3 scripts/build_paper_comparisons.py",
               file=sys.stderr)
         return 2
 

@@ -29,10 +29,10 @@ jobs:
 
       - name: Refresh repository metrics
         env:
-          # build_repo_metrics.py shells out to `gh api`; gh reads GH_TOKEN.
+          # scripts/build_repo_metrics.py shells out to `gh api`; gh reads GH_TOKEN.
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uv run python build_repo_metrics.py
+          uv run python scripts/build_repo_metrics.py
           sqlite3 denovo.db .dump > denovo.sql
 
       - name: Commit if metrics changed

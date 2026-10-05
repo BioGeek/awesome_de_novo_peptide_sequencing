@@ -97,13 +97,13 @@ ap.add_argument("--apply", action="store_true")
 ap.add_argument("--ids")
 a = ap.parse_args()
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[0]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import importlib.util
 spec = importlib.util.spec_from_file_location(
-    "lib", "/home/j-vangoey/code/awesome_de_novo_peptide_sequencing/build_pdf_library.py")
+    "lib", str(Path(__file__).resolve().parent / "build_pdf_library.py"))
 lib = importlib.util.module_from_spec(spec); spec.loader.exec_module(lib)
 BASE = lib.DEFAULT_DIR
-conn = sqlite3.connect("/home/j-vangoey/code/awesome_de_novo_peptide_sequencing/denovo.db")
+conn = sqlite3.connect(str(Path(__file__).resolve().parent.parent / "denovo.db"))
 pubs = lib.load_publications(conn)
 have = lib.coverage(pubs, BASE)
 want = {int(i) for i in a.ids.split(",")} if a.ids else None

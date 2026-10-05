@@ -51,12 +51,12 @@ from pathlib import Path
 
 from slugs import REDIRECTS, all_slugs
 
-DB_PATH = Path(__file__).parent / "denovo.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 
 
 def _site_url() -> str:
     """Read site-url from _quarto.yml so the two cannot drift apart."""
-    text = (Path(__file__).parent / "_quarto.yml").read_text(encoding="utf-8")
+    text = (Path(__file__).resolve().parent.parent / "_quarto.yml").read_text(encoding="utf-8")
     m = re.search(r"^\s*site-url:\s*(\S+)\s*$", text, re.M)
     if not m:
         raise SystemExit("build_pages: no site-url in _quarto.yml")
@@ -64,7 +64,7 @@ def _site_url() -> str:
 
 
 SITE_URL = _site_url()
-OUT_ROOT = Path(__file__).parent / "pages"
+OUT_ROOT = Path(__file__).resolve().parent.parent / "pages"
 
 KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
          "subdomains", "families", "datasets")

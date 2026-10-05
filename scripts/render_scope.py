@@ -77,7 +77,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 PAGES = HERE / "pages"
 SITE = HERE / "_site"
 # Lives inside _site on purpose: gh-pages carries it to the next run, which is

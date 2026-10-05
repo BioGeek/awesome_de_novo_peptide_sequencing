@@ -23,7 +23,7 @@ environment:
         --with "transformers>=5,<6" --with accelerate --with pillow --with einops \\
         --index-strategy unsafe-best-match \\
         --extra-index-url https://download.pytorch.org/whl/cu128 \\
-        python3 read_table_images.py --reader glm
+        python3 scripts/read_table_images.py --reader glm
 
     # PaddleOCR-VL: ships its own code, written for transformers 4.x
     uv run --python 3.12 --with "torch==2.8.*" --with "torchvision==0.23.*" \\
@@ -31,7 +31,7 @@ environment:
         --with einops --with protobuf --with sentencepiece \\
         --index-strategy unsafe-best-match \\
         --extra-index-url https://download.pytorch.org/whl/cu128 \\
-        python3 read_table_images.py --reader paddle
+        python3 scripts/read_table_images.py --reader paddle
 
 **PaddleOCR-VL needs a one-line patch, applied to an overlay, never to the
 clone.** Its modeling file calls `create_causal_mask(inputs_embeds=...)`, the

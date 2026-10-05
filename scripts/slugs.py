@@ -8,7 +8,7 @@ that does not exist.
 
 Run this file directly to audit the whole catalog:
 
-    python3 slugs.py
+    python3 scripts/slugs.py
 
 It prints one line per entity type and exits non-zero if any slug had to fall
 back to an id suffix, which is the signal that either the disambiguation policy
@@ -22,8 +22,8 @@ algorithm's name -- so an innocuous edit silently rewrites a URL, 404s the old
 one and throws away whatever search equity it had. That is invisible at commit
 time and expensive months later.
 
-    python3 slugs.py --check     # fail if any existing URL changed or vanished
-    python3 slugs.py --write     # accept the current slugs as the new baseline
+    python3 scripts/slugs.py --check     # fail if any existing URL changed or vanished
+    python3 scripts/slugs.py --write     # accept the current slugs as the new baseline
 
 `slugs.lock` is a committed record of every (type, id) -> slug. `--check` is a
 backstop in CI and in the pre-commit hook; `--write` is deliberate and manual.
@@ -44,8 +44,8 @@ import sys
 import unicodedata
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "denovo.db"
-LOCK_PATH = Path(__file__).parent / "slugs.lock"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
+LOCK_PATH = Path(__file__).resolve().parent.parent / "slugs.lock"
 
 MAX_SLUG_CHARS = 80
 
@@ -341,7 +341,7 @@ def all_slugs(conn: sqlite3.Connection) -> dict[str, dict[int, str]]:
 
 LOCK_HEADER = (
     "# slugs.lock -- the published URL of every generated entity page.\n"
-    "# Written by `python3 slugs.py --write`, checked by `--check`.\n"
+    "# Written by `python3 scripts/slugs.py --write`, checked by `--check`.\n"
     "# A diff here is a URL change: every line is a live, indexed address.\n"
     "# Format: type<TAB>entity id<TAB>slug\n"
 )
@@ -377,7 +377,7 @@ def check_lock(slugs: dict[str, dict[int, str]], quiet: bool = False) -> int:
     """
     if not LOCK_PATH.exists():
         print(f"{LOCK_PATH.name} does not exist. Create it with "
-              f"`python3 slugs.py --write`.")
+              f"`python3 scripts/slugs.py --write`.")
         return 1
 
     was = read_lock()
@@ -403,7 +403,7 @@ def check_lock(slugs: dict[str, dict[int, str]], quiet: bool = False) -> int:
         print(f"\n{len(changed)} changed, {len(removed)} removed, "
               f"{len(added)} added.")
         print("Each one breaks a published, probably-indexed URL.")
-        print("If the rename is intended, run `python3 slugs.py --write` and "
+        print("If the rename is intended, run `python3 scripts/slugs.py --write` and "
               "commit the lock diff alongside it.")
         return 1
 

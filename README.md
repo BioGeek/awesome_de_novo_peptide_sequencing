@@ -20,13 +20,17 @@ The repository tracks the *de novo* peptide sequencing field broadly. Every cata
 
 - **`denovo.db`**: SQLite database of papers, models, authors, affiliations, cities, countries, and venues. **The source of truth.**
 - **`denovo.sql`**: committed SQL dump of `denovo.db` so diffs are reviewable in git.
-- **`index.qmd` + `_quarto.yml`**: the Quarto site. `index.qmd` is the interactive overview, charts powered by Observable JS; `pages/` holds a generated detail page for every publication, author, algorithm, institution, venue, application area and multi-method architecture family, written by `build_pages.py` at build time and not committed.
-- **Offline refresh scripts**, each rebuilding one slice of the database from an external API: `build_citations.py` (citation graph), `build_publication_impact.py` (OpenAlex citation counts), `build_journal_metrics.py` (venue metrics), `build_repo_metrics.py` (GitHub activity), `build_benchmarks.py` and `build_proteobench.py` (public-benchmark results, from [bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) and [ProteoBench](https://proteobench.cubimed.rub.de/denovo_DDA_HCD)), `build_author_ids.py` (ORCID / OpenAlex ids), `build_abstracts.py` (abstracts), `build_versions.py` (preprint-to-published links). The first five also run on a cron; see `.github/workflows/`.
-- **`build_pages.py` + `slugs.py`**: generate the per-entity detail pages and their URLs.
-- **`build_candidates.py`**: looks for papers the catalog is missing, by asking OpenAlex what our publications cite and what cites them. Writes `candidates.csv` for review and never edits the database.
-- **`check_counts.py`**: verifies that the row counts quoted in the documentation still match `denovo.db`.
+- **`index.qmd` + `_quarto.yml`**: the Quarto site. `index.qmd` is the interactive overview, charts powered by Observable JS; `pages/` holds a generated detail page for every publication, author, algorithm, institution, venue, application area and multi-method architecture family, written by `scripts/build_pages.py` at build time and not committed.
+- **`scripts/`**: every script that builds, refreshes, mines or checks the catalog, each described in [`scripts/README.md`](scripts/README.md). In short:
+  - **scheduled refreshes** that each own a slice of the database and run on a cron in `.github/workflows/`: citation graph, OpenAlex citation counts, venue metrics, GitHub activity, and the two public benchmarks ([bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) and [ProteoBench](https://proteobench.cubimed.rub.de/denovo_DDA_HCD));
+  - **curation tools** that fill abstracts, author identifiers, affiliations and preprint links, and that propose papers, datasets and code repositories the catalog is missing, for a person to accept;
+  - **the PDF library and its miners**, local only: a folder of paper PDFs kept in step with the catalog, from which repository accessions and the papers' own comparison tables are read;
+  - **the site**: `build_pages.py` writes a page per entity and `slugs.py` keeps every published URL stable;
+  - **checks**: `check_counts.py` keeps every number quoted in the docs equal to the database, and `check_chart_overlap.py` fails on a colliding chart label.
+- **Curated judgement**, committed beside the data because it cannot be re-derived: `paper_comparison_review.json` (which mined comparison tables a person signed off), `screening_decisions.tsv` (papers screened and rejected or held, so they are not proposed again) and `slugs.lock` (every published URL).
 - **`BENCHMARKS.md`**: which public benchmarks of the field exist, which two the site charts and why, and the retrained-versus-released trap that makes three of them look comparable when they are not.
 - **`WATCHLIST.md`**: methods that belong in the catalog but have nothing citable yet, plus things deliberately left out and why.
+- **[BioGeek/denovo-radar](https://huggingface.co/spaces/BioGeek/denovo-radar)**: a Hugging Face Space listing recent *de novo* peptide sequencing papers, each marked against this catalog; refreshed weekly by `.github/workflows/refresh-denovo-radar.yml`.
 - **`plots.ipynb`**: Jupyter notebook for offline exploration / sanity checks (static matplotlib figures, not published).
 
 ## Contributing
@@ -66,7 +70,7 @@ uv run quarto preview
 Dual-licensed so the data and the code each get the convention of their own community:
 
 - **Curated catalog + prose** (`denovo.db`, `denovo.sql`, `index.qmd`, README and other docs) → [**CC BY 4.0**](LICENSE). Use it for anything, commercial or otherwise; the only ask is appropriate credit (see [Citation](#citation)).
-- **Python scripts** (every `.py` file in the repository root: the `build_*.py` refreshers, `check_counts.py`, `slugs.py`) → [**MIT**](LICENSE-CODE). Standard permissive terms; copyright notice must be preserved when redistributing.
+- **Python scripts** (every `.py` file in [`scripts/`](scripts/)) → [**MIT**](LICENSE-CODE). Standard permissive terms; copyright notice must be preserved when redistributing.
 
 The Zenodo deposit is archived under CC BY 4.0 (the umbrella that covers the bulk of the artefact). The MIT terms on the helper scripts ride along for anyone who wants to lift the scripts into a permissively-licensed downstream tool.
 

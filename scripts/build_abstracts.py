@@ -46,7 +46,7 @@ import requests
 
 import openalex_key
 
-DB_PATH = Path(__file__).parent / "denovo.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 
 USER_AGENT = (
     "awesome-de-novo-peptide-sequencing/0.1 "

@@ -18,7 +18,7 @@ subsequence keeps the column order, so a value in the wrong cell still fails,
 and a parsed value with no partner is reported beside whatever the model read
 in the gap it should have filled.
 
-    python3 crosscheck_tables.py            # report, writes table_crosscheck.csv
+    python3 scripts/crosscheck_tables.py            # report, writes table_crosscheck.csv
 
 Verdicts per table:
 
@@ -45,7 +45,7 @@ import image_tables as IT
 
 CROPS = bpl.DEFAULT_DIR / "comparison-review"
 CACHE = CROPS / "vlm-cache"
-OUT = pathlib.Path(__file__).with_name("table_crosscheck.csv")
+OUT = (pathlib.Path(__file__).resolve().parent.parent / "table_crosscheck.csv")
 NUM = re.compile(r"\d*\.\d+|\d+")
 
 

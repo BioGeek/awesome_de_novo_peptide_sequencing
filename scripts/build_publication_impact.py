@@ -23,7 +23,7 @@ from rapidfuzz import fuzz
 
 import openalex_key
 
-DB_PATH = Path(__file__).parent / "denovo.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 OPENALEX_BASE = "https://api.openalex.org/works"
 USER_AGENT = (
     "awesome-de-novo-peptide-sequencing/0.1 "

@@ -31,6 +31,8 @@ from pathlib import Path
 
 # Same module build_pages.py uses, so a link written here and the page written
 # there can never disagree about a URL.
+import sys
+sys.path.insert(0, str(Path('scripts').resolve()))  # the build scripts live in scripts/
 from slugs import all_slugs
 
 DB = Path(__file__).parent / "denovo.db" if "__file__" in dir() else Path("denovo.db")
@@ -6539,7 +6541,7 @@ Edges resolved from **Crossref** (by DOI) and **Semantic Scholar** (by DOI or ti
 citation_arcs = {
   if (!citations_t.length) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
-      No citation edges yet. Run <code>uv run python build_citations.py</code> to populate the graph.
+      No citation edges yet. Run <code>uv run python scripts/build_citations.py</code> to populate the graph.
     </p>`
   }
 

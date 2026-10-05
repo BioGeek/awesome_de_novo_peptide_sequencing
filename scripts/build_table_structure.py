@@ -11,8 +11,8 @@ LaTeX says it exactly. `\\multicolumn{3}{c}{Casanovo}` is the grouping, with no
 geometry and no guessing, so where a paper ships its source this is the right
 place to get it.
 
-    uv run python3 build_table_structure.py                 # every arXiv paper
-    uv run python3 build_table_structure.py --ids 16,17
+    uv run python3 scripts/build_table_structure.py                 # every arXiv paper
+    uv run python3 scripts/build_table_structure.py --ids 16,17
 
 **REPORT ONLY.** It writes `table_structure_candidates.csv` and prints
 proposed `SPANNER_OVERRIDE` entries for review. It inserts nothing and edits
@@ -50,7 +50,7 @@ import tempfile
 import build_pdf_library as bpl
 import build_paper_comparisons as B
 
-HERE = pathlib.Path(__file__).parent
+HERE = pathlib.Path(__file__).resolve().parent.parent
 CACHE = HERE / ".cache" / "arxiv-src"
 OUT = HERE / "table_structure_candidates.csv"
 UA = "awesome-de-novo (mailto:j.vangoey@instadeep.com)"

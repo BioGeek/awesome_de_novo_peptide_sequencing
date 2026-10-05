@@ -8,6 +8,7 @@ A curated knowledge base covering the *de novo* peptide sequencing field: algori
 
 - `denovo.db`: SQLite database (the source of truth) holding publications, algorithms, authors, affiliations, cities, countries, and the join tables that link them.
 - `denovo.sql`: full SQL dump of `denovo.db`, committed alongside the binary so diffs are reviewable in git. Treat `denovo.sql` as the canonical, human-readable representation; regenerate it after any DB write.
+- `scripts/`: every builder, miner and check, each described under its own heading in `scripts/README.md`. Run them from the repository root (`uv run python scripts/build_pages.py`): they anchor `denovo.db`, the audit CSVs and `.cache/` on the root, not on their own folder. `scripts/check_counts.py` fails the commit when a script has no README entry or an entry names a script that is gone.
 - `plots.ipynb`: Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only, not published).
 - `index.qmd` + `_quarto.yml`: the Quarto site that renders interactive charts straight from `denovo.db`.
 - `WATCHLIST.md`: tools that belong in the catalog but have no citable manuscript yet, plus things deliberately left out. Check it before concluding a tool is simply missing, and add to it rather than adding a method with no publication.
@@ -36,102 +37,102 @@ sqlite3 denovo.db ".tables"
 sqlite3 denovo.db "SELECT name, algorithm_family FROM algorithm ORDER BY name;"
 
 # Rebuild the citation graph from Crossref + Semantic Scholar (offline, ~30 min)
-uv run python build_citations.py
+uv run python scripts/build_citations.py
 
 # Refresh GitHub stars / issues / PRs / last-pushed for every repo in algorithm_repository
 # (offline, ~15 min, uses the `gh` CLI for auth, run `gh auth login` first if needed)
-uv run python build_repo_metrics.py
+uv run python scripts/build_repo_metrics.py
 
 # Refresh OpenAlex cited_by_count per publication (~5 min)
-uv run python build_publication_impact.py
+uv run python scripts/build_publication_impact.py
 
 # Refresh OpenAlex 2-year mean citedness per peer-reviewed venue (~5 min)
-uv run python build_journal_metrics.py
+uv run python scripts/build_journal_metrics.py
 
 # Fill author ORCID + OpenAlex ids from OpenAlex, matched PER PUBLICATION
 # (offline, ~1 min). Refuses to write anything ambiguous; conflicts go to
 # author_id_audit.csv and are usually duplicate or merged author rows.
-uv run python build_author_ids.py
+uv run python scripts/build_author_ids.py
 
 # Look for papers that belong in the catalog but are not in it, by asking
 # OpenAlex what our publications cite and what cites them (offline, ~10 min).
 # Writes candidates.csv and NEVER touches denovo.db: deciding what belongs is a
 # judgement call, not something a citation count can automate.
-python3 build_candidates.py                        # both directions, >=3 links
-python3 build_candidates.py --direction citations   # only work that cites us
-python3 build_candidates.py --min-links 6           # tighter, less noise
+python3 scripts/build_candidates.py                        # both directions, >=3 links
+python3 scripts/build_candidates.py --direction citations   # only work that cites us
+python3 scripts/build_candidates.py --min-links 6           # tighter, less noise
 
 # Check (or refresh) the counts quoted in CLAUDE.md and WATCHLIST.md against
 # denovo.db. Stdlib only, no network, instant. The pre-commit hook runs --fix
 # automatically on every commit, and check-counts.yml runs the
 # bare check in CI, so you rarely need to call this by hand.
-python3 check_counts.py           # report stale counts, exit 1 if any
-python3 check_counts.py --fix     # rewrite them in place
+python3 scripts/check_counts.py           # report stale counts, exit 1 if any
+python3 scripts/check_counts.py --fix     # rewrite them in place
 
 # Fill affiliations, departments, city coordinates and country ISO codes from
 # OpenAlex, matched PER BYLINE (offline, ~10 min, responses cached in .cache/).
 # REPORT-ONLY by default: writes nothing until --write, and never overwrites a
 # hand-curated value. Everything it declines to write goes to
 # affiliation_audit.csv.
-python3 build_affiliations.py                  # report only
-python3 build_affiliations.py --write          # apply
-python3 build_affiliations.py --only-new        # just the papers added since last time
+python3 scripts/build_affiliations.py                  # report only
+python3 scripts/build_affiliations.py --write          # apply
+python3 scripts/build_affiliations.py --only-new        # just the papers added since last time
 
 # Refresh the public-benchmark results from bittremieuxlab/denovo_benchmarks
 # (offline, ~2 min, responses cached in .cache/benchmarks/). Exits early when
 # the upstream commit is the one already recorded, so a quiet week costs one API
 # call. --dry-run prints the per-tool table and writes nothing.
-uv run python build_benchmarks.py
-uv run python build_benchmarks.py --force
+uv run python scripts/build_benchmarks.py
+uv run python scripts/build_benchmarks.py --force
 
 # Refresh the ProteoBench de-novo DDA-HCD submissions (offline, ~1 min). Same
 # early exit on an unchanged upstream commit.
-uv run python build_proteobench.py
+uv run python scripts/build_proteobench.py
 
 # Fail if any chart on the rendered site has a colliding or clipped label.
 # Measures the real glyph boxes in headless Chrome, so it needs a rendered
 # _site and google-chrome (~1 min). Not in CI for that reason.
 uv run quarto render index.qmd
-uv run --with websockets python3 check_chart_overlap.py
+uv run --with websockets python3 scripts/check_chart_overlap.py
 
 # Check that no generated page's URL changed. Every slug in slugs.lock is a
 # live, indexed address. Run --write ONLY when a rename is intended.
-python3 slugs.py --check
-python3 slugs.py --write
+python3 scripts/slugs.py --check
+python3 scripts/slugs.py --write
 
 # Keep a LOCAL folder of paper PDFs in step with the catalog: report what is
 # missing, fetch what is legally free, name every file the same way. Offline,
 # and the only script here that writes OUTSIDE the repository (--dir). Never in
 # CI: there is no library there. See 'The local PDF library' below.
-python3 build_pdf_library.py report              # coverage + missing/*.txt
-python3 build_pdf_library.py fetch               # download what is free (~20 min)
-python3 build_pdf_library.py rename --apply      # re-derive every filename
-python3 build_pdf_library.py dedupe --apply      # drop byte-identical copies
+python3 scripts/build_pdf_library.py report              # coverage + missing/*.txt
+python3 scripts/build_pdf_library.py fetch               # download what is free (~20 min)
+python3 scripts/build_pdf_library.py rename --apply      # re-derive every filename
+python3 scripts/build_pdf_library.py dedupe --apply      # drop byte-identical copies
 # Filing hand-downloaded PDFs, including slicing one chapter out of a
 # proceedings volume. Slicing needs pypdf, which is deliberately NOT a project
 # dependency -- CI would install it for a script CI never runs.
-uv run --with pypdf python3 build_pdf_library.py ingest manual/ --apply \
+uv run --with pypdf python3 scripts/build_pdf_library.py ingest manual/ --apply \
     --map 978-3-031-94039-2.pdf=13:106-114
 
 # Mine the DNPS-DR daily report (publication 272, a Hugging Face Space) for
 # papers the catalog is missing. Writes dnps_candidates.csv and NEVER touches
 # denovo.db, exactly like build_candidates.py. Exits early when the Space has
 # not changed. See 'Mining the DNPS-DR feed' below.
-uv run python build_dnps_candidates.py
-uv run python build_dnps_candidates.py --force --summary dnps_summary.md
+uv run python scripts/build_dnps_candidates.py
+uv run python scripts/build_dnps_candidates.py --force --summary dnps_summary.md
 
 # Mine the LOCAL PDF library for repository accessions (PXD / MSV / iProX /
 # Zenodo / figshare / Hugging Face) and link them to datasets. Never in CI: it
 # needs the PDF library. Creates no dataset rows, only publication_dataset
 # links, and only for accessions already recorded. See 'Datasets' below.
-uv run python build_dataset_accessions.py                 # report only
-uv run python build_dataset_accessions.py --write         # link known accessions
-uv run python build_dataset_accessions.py --min-papers 3  # tighter candidate list
+uv run python scripts/build_dataset_accessions.py                 # report only
+uv run python scripts/build_dataset_accessions.py --write         # link known accessions
+uv run python scripts/build_dataset_accessions.py --min-papers 3  # tighter candidate list
 
 # Backfill publication abstracts from bioRxiv / arXiv / OpenAlex / Crossref
 # (offline, ~10 min). Skips publications that already have one, so it never
 # overwrites hand-curated text; pass --force only if you mean to.
-uv run python build_abstracts.py
+uv run python scripts/build_abstracts.py
 ```
 
 ### Scheduled refreshes (GitHub Actions)
@@ -953,7 +954,7 @@ touches no table.
 
 **ADDING A PAPER INCLUDES FETCHING ITS PDF.** After the insert, run
 
-    python3 build_pdf_library.py fetch --ids <the new publication id>
+    python3 scripts/build_pdf_library.py fetch --ids <the new publication id>
 
 which writes the file straight into the library root, Zotero-named. When
 nothing free can be fetched, run `report`: the paper lands in whichever
@@ -1896,7 +1897,7 @@ reports the candidates and what blocks each one.
 
 `slugs.lock` records the published URL of every generated page. A slug is
 derived from mutable data, so editing a title or a name silently rewrites a URL,
-404s the old one and discards its search equity. `python3 slugs.py --check`
+404s the old one and discards its search equity. `python3 scripts/slugs.py --check`
 fails on a CHANGED or REMOVED entry and passes on an ADDED one; it runs in
 `.githooks/pre-commit` and in `check-slugs.yml`.
 
@@ -1993,9 +1994,9 @@ a picture of the printed one, cropped out of the PDF, with the refused tables
 and their reasons in the same list. Checking an extraction from a CSV is
 hopeless, because what needs checking is whether the grid matches the page.
 
-    uv run --with pdfplumber python3 review_comparisons.py
-    uv run --with pdfplumber python3 review_comparisons.py --ids 49,58
-    uv run --with pdfplumber python3 review_comparisons.py --rejected-only
+    uv run --with pdfplumber python3 scripts/review_comparisons.py
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --ids 49,58
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --rejected-only
 
 **It writes OUTSIDE the repository and is never published**, into
 `comparison-review/` beside the PDF library, for the same reason
@@ -2023,7 +2024,7 @@ only, nothing copied from a paper, which is why it can be committed when the
 crops cannot. It used to live beside the crops as `approved.json`; the script
 copies that across on first run if the repository file is missing.
 Reproducing the page needs three things: this repository, the local PDF
-library, and `uv run --with pdfplumber python3 review_comparisons.py`. A full
+library, and `uv run --with pdfplumber python3 scripts/review_comparisons.py`. A full
 run takes about 8 minutes and should end on `0 accepted, 0 rejected`, meaning
 every table is signed off; anything else is a table whose parse changed.
 
@@ -2555,8 +2556,8 @@ other. Three rules worth knowing:
   global render key, so styling the tables there would force a full render of
   every page for a section on 22 of them.
 
-    uv run --with pdfplumber python3 review_comparisons.py --write-db            # full re-parse, ~8 min
-    uv run --with pdfplumber python3 review_comparisons.py --rewrite --write-db  # from stored items, seconds
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --write-db            # full re-parse, ~8 min
+    uv run --with pdfplumber python3 scripts/review_comparisons.py --rewrite --write-db  # from stored items, seconds
 
 ## Finding papers the catalog is missing
 
@@ -2980,7 +2981,7 @@ any chart change:
 
 ```bash
 uv run quarto render index.qmd          # it measures _site, so render first
-uv run --with websockets python3 check_chart_overlap.py
+uv run --with websockets python3 scripts/check_chart_overlap.py
 ```
 
 It is deliberately NOT in the pre-commit hook or CI: it needs a browser and a

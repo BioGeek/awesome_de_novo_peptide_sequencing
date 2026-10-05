@@ -10,7 +10,7 @@
 # Only the dump step depends on denovo.db being staged. The count refresh and
 # the URL guard below run on EVERY commit, because both can be invalidated by a
 # commit that does not touch the database at all: adding an entity type to
-# slugs.py added 24 published URLs with the .db untouched, and the hook exited
+# scripts/slugs.py added 24 published URLs with the .db untouched, and the hook exited
 # before the guard ever saw them, which left slugs.lock an incomplete
 # inventory -- the exact failure it exists to prevent. Both are stdlib-only and
 # instant, so an unrelated commit pays milliseconds.
@@ -43,24 +43,24 @@ if [ -n "$DB_STAGED" ]; then
 fi
 
 # Same idea for the counts quoted in CLAUDE.md and WATCHLIST.md, which argue
-# from numbers that go stale the moment a paper is added. check_counts.py is
+# from numbers that go stale the moment a paper is added. scripts/check_counts.py is
 # stdlib-only on purpose so the hook needs no uv and no virtualenv.
-if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
+if [ -f scripts/check_counts.py ] && command -v python3 >/dev/null 2>&1; then
   # The exit status is KEPT, not discarded. --fix rewrites a stale number and
   # returns 0, but it cannot repair a claim whose PATTERN no longer matches the
   # prose, and for that it returns 1. That case was invisible here: the hook
   # said `|| true`, so rewording a sentence in CLAUDE.md -- which is an
-  # ordinary thing to do, and which check_counts.py --fix does itself -- could
+  # ordinary thing to do, and which scripts/check_counts.py --fix does itself -- could
   # silently unmatch the pattern that reads a number out of it. The registry
   # entry then checks nothing, and the first anyone hears of it is CI going
   # red. Two commits went out that way.
   counts_rc=0
-  python3 check_counts.py --fix --quiet || counts_rc=$?
+  python3 scripts/check_counts.py --fix --quiet || counts_rc=$?
   # Claims live in config and source comments too, not just the two docs, so
   # re-stage every file the registry can touch rather than a hardcoded pair.
   # Done BEFORE the failure below, so a refused commit still keeps the numbers
   # --fix just corrected.
-  for doc in $(python3 check_counts.py --list-files); do
+  for doc in $(python3 scripts/check_counts.py --list-files); do
     if ! git diff --quiet -- "$doc" 2>/dev/null; then
       git add "$doc"
       echo "pre-commit: refreshed documented counts in $doc."
@@ -70,8 +70,8 @@ if [ -f check_counts.py ] && command -v python3 >/dev/null 2>&1; then
     echo "pre-commit: refusing this commit, a documented count no longer matches." >&2
     echo "  An UNMATCHED claim means its regex found nothing: the prose was" >&2
     echo "  reworded and that registry entry now checks nothing at all." >&2
-    echo "  Fix the wording, or fix the pattern in check_counts.py, then:" >&2
-    echo "    python3 check_counts.py" >&2
+    echo "  Fix the wording, or fix the pattern in scripts/check_counts.py, then:" >&2
+    echo "    python3 scripts/check_counts.py" >&2
     exit 1
   fi
 fi
@@ -85,11 +85,11 @@ fi
 # those IS the failure being guarded against. An ADDED URL is recorded
 # automatically, because a new page cannot break an old one and an incomplete
 # lock guards nothing.
-if [ -f slugs.py ] && command -v python3 >/dev/null 2>&1; then
-  if ! python3 slugs.py --check --quiet; then
+if [ -f scripts/slugs.py ] && command -v python3 >/dev/null 2>&1; then
+  if ! python3 scripts/slugs.py --check --quiet; then
     echo "pre-commit: refusing this commit, it would change a published URL." >&2
     echo "  If the rename is intended:" >&2
-    echo "    python3 slugs.py --write && git add slugs.lock" >&2
+    echo "    python3 scripts/slugs.py --write && git add slugs.lock" >&2
     exit 1
   fi
   # The check passed, so the only possible difference is ADDED entries: a
@@ -99,7 +99,7 @@ if [ -f slugs.py ] && command -v python3 >/dev/null 2>&1; then
   # and in the sitemap while absent from the lock, so a later rename of it
   # would not have been caught. Refreshing here is safe precisely BECAUSE the
   # dangerous cases already failed.
-  python3 slugs.py --write >/dev/null
+  python3 scripts/slugs.py --write >/dev/null
   if ! git diff --quiet -- slugs.lock 2>/dev/null; then
     git add slugs.lock
     echo "pre-commit: recorded new page URLs in slugs.lock."

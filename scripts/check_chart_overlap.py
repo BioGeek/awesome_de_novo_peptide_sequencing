@@ -23,7 +23,7 @@ screen, so the only honest check is to measure the glyphs.
 
 Needs a rendered _site (quarto render) and google-chrome. Run it with
 
-    uv run --with websockets python3 check_chart_overlap.py
+    uv run --with websockets python3 scripts/check_chart_overlap.py
 
 Exits 1 if anything collides, listing the worst offenders per chart.
 """
@@ -34,7 +34,7 @@ from websockets.sync.client import connect
 import tempfile
 from pathlib import Path
 
-SITE = str(Path(__file__).parent / "_site")
+SITE = str(Path(__file__).resolve().parent.parent / "_site")
 CHROME = (shutil.which("google-chrome") or shutil.which("chromium")
           or shutil.which("chromium-browser"))
 if not CHROME:

@@ -23,7 +23,7 @@ import os
 import re
 from pathlib import Path
 
-_ENV = Path(__file__).parent / ".env"
+_ENV = Path(__file__).resolve().parent.parent / ".env"
 _UNSET = object()
 _cache: object = _UNSET
 

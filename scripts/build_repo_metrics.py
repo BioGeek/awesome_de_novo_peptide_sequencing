@@ -42,7 +42,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "denovo.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 
 GH_URL_RE = re.compile(r"https?://github\.com/([^/\s]+)/([^/\s#?]+)")
 REPO_DELAY   = 0.5  # delay between /repos calls (5000/hr quota)

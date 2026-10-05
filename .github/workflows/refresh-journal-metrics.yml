@@ -33,7 +33,7 @@ jobs:
 
       - name: Refresh OpenAlex venue metrics
         run: |
-          uv run python build_journal_metrics.py
+          uv run python scripts/build_journal_metrics.py
           sqlite3 denovo.db .dump > denovo.sql
 
       - name: Commit if metrics changed

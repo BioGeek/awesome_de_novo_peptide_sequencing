@@ -31,9 +31,9 @@ definitions: `mass`, where a residue counts as correct when its mass is within
 0.1 Da (so I/L are indistinguishable), and `exact`, which requires the sequence
 itself. The 80-point precision-coverage curve behind each AUC is stored too.
 
-    python3 build_proteobench.py            # skip if the upstream HEAD is unchanged
-    python3 build_proteobench.py --force    # rebuild anyway
-    python3 build_proteobench.py --dry-run  # fetch and report, write nothing
+    python3 scripts/build_proteobench.py            # skip if the upstream HEAD is unchanged
+    python3 scripts/build_proteobench.py --force    # rebuild anyway
+    python3 scripts/build_proteobench.py --dry-run  # fetch and report, write nothing
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ from pathlib import Path
 
 from build_benchmarks import http_get, resolve_tools
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 
 REPO = "Proteobench/Results_denovo_lfq_DDA_HCD"

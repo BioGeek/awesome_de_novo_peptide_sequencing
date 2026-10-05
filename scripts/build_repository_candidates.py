@@ -21,8 +21,8 @@ writes repository_candidates.csv and never touches denovo.db. Deciding that a
 URL is a method's own code is a judgement, because a paper's PDF is full of
 other people's repositories.
 
-    uv run python build_repository_candidates.py
-    uv run python build_repository_candidates.py --ids 512,513   # algorithm ids
+    uv run python scripts/build_repository_candidates.py
+    uv run python scripts/build_repository_candidates.py --ids 512,513   # algorithm ids
 
 Never in CI: it needs the PDF library. It imports build_pdf_library for the
 audited filename matcher and rapidfuzz, so run it under `uv run`.
@@ -40,7 +40,7 @@ from rapidfuzz import fuzz
 
 import build_pdf_library as bpl
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 OUT = HERE / "repository_candidates.csv"
 
 HOSTS = r"(?:github\.com|gitlab\.com|bitbucket\.org|codeberg\.org|sourceforge\.net/projects|gitee\.com)"

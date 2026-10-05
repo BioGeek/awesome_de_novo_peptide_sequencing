@@ -27,8 +27,8 @@ from pathlib import Path
 import requests
 from rapidfuzz import fuzz
 
-DB_PATH    = Path(__file__).parent / "denovo.db"
-AUDIT_PATH = Path(__file__).parent / "citation_audit.csv"
+DB_PATH    = Path(__file__).resolve().parent.parent / "denovo.db"
+AUDIT_PATH = Path(__file__).resolve().parent.parent / "citation_audit.csv"
 
 USER_AGENT     = "awesome-de-novo-peptide-sequencing/0.1 (https://github.com/BioGeek/awesome_de_novo_peptide_sequencing; mailto:j.vangoey@instadeep.com)"
 CROSSREF_BASE  = "https://api.crossref.org/works"

@@ -18,9 +18,9 @@ availability statement and resolving it to a method is a judgement call, so rows
 are added by hand (see 'Checkpoints' in CLAUDE.md); this fills in status,
 http_code and last_checked, and with --mirror copies the at-risk ones.
 
-    uv run python build_checkpoints.py                # check liveness
-    uv run python build_checkpoints.py --write        # ... and record it
-    uv run python build_checkpoints.py --mirror       # ... and mirror at-risk ones
+    uv run python scripts/build_checkpoints.py                # check liveness
+    uv run python scripts/build_checkpoints.py --write        # ... and record it
+    uv run python scripts/build_checkpoints.py --mirror       # ... and mirror at-risk ones
 
 **The status vocabulary**, in descending order of what it tells you:
 
@@ -59,7 +59,7 @@ import subprocess
 import sys
 from datetime import date
 
-DB = pathlib.Path(__file__).with_name("denovo.db")
+DB = (pathlib.Path(__file__).resolve().parent.parent / "denovo.db")
 UA = "awesome-de-novo (mailto:j.vangoey@instadeep.com)"
 
 # Hosts where a 200 means the bytes are there, because the host is an archive

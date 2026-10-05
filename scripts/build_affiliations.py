@@ -98,9 +98,9 @@ from build_author_ids import same_person, tokens  # noqa: F401  (tokens re-expor
 
 import openalex_key
 
-DB_PATH = Path(__file__).parent / "denovo.db"
-AUDIT_PATH = Path(__file__).parent / "affiliation_audit.csv"
-CACHE_DIR = Path(__file__).parent / ".cache" / "openalex"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
+AUDIT_PATH = Path(__file__).resolve().parent.parent / "affiliation_audit.csv"
+CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "openalex"
 
 USER_AGENT = (
     "awesome-de-novo-peptide-sequencing/0.1 "

@@ -11,10 +11,10 @@ the PDFs themselves in its `pdfs/` subfolder),
 fetches a few hundred URLs, and writes nothing into denovo.db. It must never run
 in CI: there is no library there to update.
 
-    python3 build_pdf_library.py report                 # what is missing, and why
-    python3 build_pdf_library.py fetch                  # download what is free
-    python3 build_pdf_library.py rename                 # re-derive every filename
-    uv run --with pypdf python3 build_pdf_library.py \\
+    python3 scripts/build_pdf_library.py report                 # what is missing, and why
+    python3 scripts/build_pdf_library.py fetch                  # download what is free
+    python3 scripts/build_pdf_library.py rename                 # re-derive every filename
+    uv run --with pypdf python3 scripts/build_pdf_library.py \\
         ingest manual/ --map 978-3-031-94039-2.pdf=13:106-114
 
 WHAT COUNTS AS FREE. Only a location that arXiv, bioRxiv, Europe PMC, OpenAlex
@@ -87,7 +87,7 @@ from urllib.parse import quote
 
 from rapidfuzz import fuzz
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 DEFAULT_DIR = Path.home() / "Documents" / "de_novo_peptide_sequencing"
 # The PDFs live in their own subfolder, so the root holds only the working
@@ -854,7 +854,7 @@ def cmd_ingest(args, conn, pubs, root):
                     from pypdf import PdfReader, PdfWriter
                 except ImportError:
                     sys.exit("slicing needs pypdf: rerun with "
-                             "`uv run --with pypdf python3 build_pdf_library.py ...`")
+                             "`uv run --with pypdf python3 scripts/build_pdf_library.py ...`")
                 r, w = PdfReader(str(f)), PdfWriter()
                 for i in range(rng[0] - 1, rng[1]):
                     w.add_page(r.pages[i])

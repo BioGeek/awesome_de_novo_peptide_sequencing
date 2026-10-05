@@ -27,9 +27,9 @@ several hundred are deposits cited once, by the paper that made them. That split
 is what `dataset.kind` records, and the tail is correctly NOT worth a dataset row
 each.
 
-    uv run python build_dataset_accessions.py                # report only
-    uv run python build_dataset_accessions.py --write        # link known accessions
-    uv run python build_dataset_accessions.py --min-papers 3 # tighter candidate list
+    uv run python scripts/build_dataset_accessions.py                # report only
+    uv run python scripts/build_dataset_accessions.py --write        # link known accessions
+    uv run python scripts/build_dataset_accessions.py --min-papers 3 # tighter candidate list
 """
 from __future__ import annotations
 
@@ -43,9 +43,9 @@ import sqlite3
 import subprocess
 import sys
 
-DB = pathlib.Path(__file__).with_name("denovo.db")
+DB = (pathlib.Path(__file__).resolve().parent.parent / "denovo.db")
 DEFAULT_DIR = pathlib.Path.home() / "Documents" / "de_novo_peptide_sequencing"  # = build_pdf_library.DEFAULT_DIR
-CANDIDATES = pathlib.Path(__file__).with_name("dataset_candidates.csv")
+CANDIDATES = (pathlib.Path(__file__).resolve().parent.parent / "dataset_candidates.csv")
 
 # Keep these anchored on the identifier's own shape. A looser pattern picks up
 # figure labels and reference numbers, and an accession that is not real cannot
@@ -285,7 +285,7 @@ def main() -> int:
     # Drop the DOIs a repository's own title shows are software or supplementary
     # material. Done here rather than during the scan so it costs one lookup per
     # unknown DOI instead of one per mention, and only for DOI-shaped ids.
-    cache = pathlib.Path(__file__).with_name(".cache") / "datacite"
+    cache = (pathlib.Path(__file__).resolve().parent.parent / ".cache") / "datacite"
     excluded: list[tuple[int, str, str, str]] = []
     surviving = []
     for papers, repo, acc, example in unknown:

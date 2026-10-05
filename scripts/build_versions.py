@@ -43,8 +43,8 @@ from pathlib import Path
 import requests
 from rapidfuzz import fuzz
 
-DB_PATH = Path(__file__).parent / "denovo.db"
-AUDIT_PATH = Path(__file__).parent / "version_audit.csv"
+DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
+AUDIT_PATH = Path(__file__).resolve().parent.parent / "version_audit.csv"
 
 USER_AGENT = (
     "awesome-de-novo-peptide-sequencing/0.1 "

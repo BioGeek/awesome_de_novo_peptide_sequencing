@@ -45,7 +45,7 @@ import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 WATCHLIST = HERE / "WATCHLIST.md"
 DECISIONS = HERE / "screening_decisions.tsv"

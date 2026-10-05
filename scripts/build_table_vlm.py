@@ -28,7 +28,7 @@ page is the place to look.
         --with "transformers>=5,<6" --with accelerate --with pillow --with einops \\
         --index-strategy unsafe-best-match \\
         --extra-index-url https://download.pytorch.org/whl/cu128 \\
-        python3 build_table_vlm.py --ids 49,58
+        python3 scripts/build_table_vlm.py --ids 49,58
 
 **Report only, and never in CI**: it needs a GPU, a 2 GB local model and the
 PDF library. The model is loaded from a LOCAL CLONE, because the Hugging Face
@@ -65,7 +65,7 @@ import build_paper_comparisons as B
 # natively with no remote code, so there is no version window to hit.
 MODEL = pathlib.Path.home() / "code" / "GLM-OCR"
 CROPS = bpl.DEFAULT_DIR / "comparison-review"
-OUT = pathlib.Path(__file__).with_name("table_vlm_candidates.csv")
+OUT = (pathlib.Path(__file__).resolve().parent.parent / "table_vlm_candidates.csv")
 PROMPT = ("Convert the table in this image to HTML. Use colspan and rowspan to "
           "reproduce merged header cells exactly. Output only the HTML table.")
 
