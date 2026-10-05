@@ -101,6 +101,7 @@ TRANSLITERATE = {
 # "Genomic Peptide Finder" (2011) were one tool from one lab entered twice; the
 # 2006 row was folded into the 2011 one, which carries the repository.
 # Yi Liu (Western Ontario) was the same person as the ORCID Yi Liu row.
+# "Liu Yang" was SSRN's reversed spelling of PeposX-Exhaust's 6th author, Yang Liu.
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
@@ -113,6 +114,7 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'j-seo': 'jangho-seo',
              'j-v-olsen': 'jesper-v-olsen',
              'jonathan-krieger': 'jonathan-r-krieger',
+             'liu-yang': 'yang-liu',
              'nan-liu': 'nan-liu-shandong-jianzhu-university',
              'natalie-e-castellana': 'natalie-castellana',
              'pavel-a-pevzner-1448': 'pavel-a-pevzner',
