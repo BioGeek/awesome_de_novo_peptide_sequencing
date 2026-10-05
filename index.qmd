@@ -77,7 +77,7 @@ pubs = pd.read_sql(
            -- names. `models` above stays the full list, because the table and
            -- the BibTeX are about what a paper involved; the author-to-model
            -- graph needs the narrower one, or every venomics author becomes a
-           -- PEAKS author. 165 of 1027 publication_algorithm links are 'uses',
+           -- PEAKS author. 167 of 1035 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
            (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
