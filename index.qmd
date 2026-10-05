@@ -237,6 +237,18 @@ coauth_edges = pd.read_sql(
     conn,
 )
 
+# Papers per prolific author, so both network charts can raise the >= 3 floor
+# reactively with a slider instead of baking a higher cut into this query. The
+# query floor stays at 3, the slider's minimum.
+author_papers = pd.read_sql(
+    """
+    SELECT a.display_name AS name, COUNT(*) AS publications
+    FROM author_display a JOIN publication_author pa ON a.id = pa.author_id
+    GROUP BY a.id HAVING COUNT(*) >= 3
+    """,
+    conn,
+)
+
 author_affs = pd.read_sql(
     """
     SELECT a.display_name AS author, aff.name AS affiliation
@@ -724,6 +736,7 @@ ojs_define(
     institutions=institutions,
     pub_authorship=pub_authorship,
     coauth_edges=coauth_edges,
+    author_papers=author_papers,
     author_affs=author_affs,
     algorithms=algorithms,
     venues=venues,
@@ -1039,6 +1052,7 @@ coauth_strength = (max_authors = Infinity) => {
   })
 }
 
+// (author_papers_map lives in its own cell below: one definition per cell.)
 // All prolific authors, regardless of the network's reactive filters — used by
 // the bipartite author↔model chart so its node set stays stable.
 coauth_all_authors = new Set(coauth_edges_t.flatMap(e => [e.source, e.target]))
@@ -1272,6 +1286,12 @@ kinds_present     = Array.from(new Set(algorithms_t.map(a => a.kind).filter(Bool
 acq_modes_present = Array.from(new Set(algorithms_t.map(a => a.acquisition).filter(Boolean))).sort()
 kind_counts = kinds_present.map(k => ({ kind: k, n: algorithms_t.filter(a => a.kind === k).length }))
 acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filter(a => a.acquisition === m).length }))
+```
+
+```{ojs}
+//| echo: false
+// display name -> papers, for the "Min papers" sliders on both network charts.
+author_papers_map = new Map(transpose(author_papers).map(r => [r.name, +r.publications]))
 ```
 
 ```{ojs}
@@ -5662,7 +5682,7 @@ The chart below shows the twenty most-published authors.
 
 ### The collaboration network
 
-The network below shows how authors with **≥ 3 papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood.
+The network below shows how authors with **≥ ${coauth_min_papers} papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood. **Min papers per author** sets that floor; lower it to bring in the long tail, at the cost of a denser picture.
 
 Edge thickness is **Newman fractional collaboration strength**: a pair sharing an *n*-author paper earns 1/(*n*−1), summed over every paper they share. So an intimate two-author collaboration scores a full 1.0 while each pair in a 53-author consortium scores ~0.02. Without this correction one community benchmark paper alone contributes a 33-node clique that swamps the whole graph. Use **min strength** to peel away weak ties and expose the dense research groups, and **max authors/paper** to drop mega-author papers outright.
 
@@ -5681,6 +5701,16 @@ viewof coauth_min_strength = Inputs.range([0, 2], {
 // fractional weighting does the work by default and this is an explore control.
 viewof coauth_max_authors = Inputs.range([2, 60], {
   value: 60, step: 1, label: "Max authors/paper"
+})
+```
+
+```{ojs}
+//| echo: false
+// Default 5, not the query's floor of 3. After the backlog and the citation
+// sweep the >= 3 set grew to 382 authors and the layout became one ball; at 5
+// it is 147, at 8 it is 59.
+viewof coauth_min_papers = Inputs.range([3, 15], {
+  value: 5, step: 1, label: "Min papers per author"
 })
 ```
 
@@ -5707,13 +5737,15 @@ network_chart = {
   // filtered to edges at or above the min-strength threshold. Nodes are derived
   // from the SURVIVING edges, so authors whose only ties were weak consortium
   // co-signatures drop off the canvas instead of floating as isolates.
+  const enough = a => (author_papers_map.get(a) ?? 0) >= coauth_min_papers
   const links = coauth_strength(coauth_max_authors)
-    .filter(e => e.weight >= coauth_min_strength)
+    .filter(e => e.weight >= coauth_min_strength && enough(e.source) && enough(e.target))
 
   if (!links.length) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
       No collaborations at min strength ≥ ${coauth_min_strength.toFixed(2)}
-      with ≤ ${coauth_max_authors} authors/paper. Lower the threshold to see edges.
+      with ≤ ${coauth_max_authors} authors/paper among authors with
+      ≥ ${coauth_min_papers} papers. Lower a threshold to see edges.
     </p>`
   }
 
@@ -6046,7 +6078,16 @@ network_chart = {
 
 ### Models and the authors behind them
 
-This second view rewires the same network as a **bipartite** graph: every prolific author (≥ 3 papers) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
+
+```{ojs}
+//| echo: false
+// Its own slider, defaulting to 5 like the collaboration network's: the two
+// charts are a section apart, so one shared control would be off screen.
+viewof bip_min_papers = Inputs.range([3, 15], {
+  value: 5, step: 1, label: "Min papers per author"
+})
+```
 
 ```{ojs}
 //| echo: false
@@ -6069,7 +6110,8 @@ author_algo_network = {
   // Same prolific-author filter as the co-auth network (authors with ≥ 3 papers).
   // Filter-independent: the co-auth network above has reactive strength/size
   // filters, but this chart should always show every prolific author.
-  const prolific = coauth_all_authors
+  const prolific = new Set([...coauth_all_authors]
+    .filter(a => (author_papers_map.get(a) ?? 0) >= bip_min_papers))
 
   // Author → algorithm edges, weighted by number of papers connecting them.
   // When a publication carries a version tag (Casanovo v1/v2/v5), the edge
