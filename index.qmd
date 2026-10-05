@@ -5684,6 +5684,8 @@ The chart below shows the twenty most-published authors.
 
 The network below shows how authors with **≥ ${coauth_min_papers} papers** are connected through co-authorship; drag a node to reshape the layout, or hover to highlight a neighborhood. **Min papers per author** sets that floor; lower it to bring in the long tail, at the cost of a denser picture.
 
+The three controls act in order and combine. **Min papers per author** decides who qualifies, **max authors/paper** drops consortium papers before any tie is counted, and **min strength** then removes weak ties. Only authors with a tie left are drawn, so an author with eight papers can disappear when every one of their ties is weak or comes from a large consortium: the count on screen is "qualifying authors with at least one surviving tie", not every author above the floor.
+
 Edge thickness is **Newman fractional collaboration strength**: a pair sharing an *n*-author paper earns 1/(*n*−1), summed over every paper they share. So an intimate two-author collaboration scores a full 1.0 while each pair in a 53-author consortium scores ~0.02. Without this correction one community benchmark paper alone contributes a 33-node clique that swamps the whole graph. Use **min strength** to peel away weak ties and expose the dense research groups, and **max authors/paper** to drop mega-author papers outright.
 
 ```{ojs}
@@ -5697,10 +5699,19 @@ viewof coauth_min_strength = Inputs.range([0, 2], {
 
 ```{ojs}
 //| echo: false
-// Default 60 = no cutoff (largest paper in the catalog has 53 authors), so the
-// fractional weighting does the work by default and this is an explore control.
-viewof coauth_max_authors = Inputs.range([2, 60], {
-  value: 60, step: 1, label: "Max authors/paper"
+// The largest byline in the catalog, so a "Max authors/paper" slider defaults
+// to no cutoff. It was a constant, 60, written when the largest paper had 53
+// authors; the 2026 imports brought 62- and 66-author papers, and the default
+// silently dropped them.
+max_paper_authors = d3.max(pubs_t, p => String(p.authors ?? "").split(",").filter(s => s.trim()).length)
+```
+
+```{ojs}
+//| echo: false
+// Default = no cutoff, so the fractional weighting does the work by default
+// and this is an explore control.
+viewof coauth_max_authors = Inputs.range([2, max_paper_authors], {
+  value: max_paper_authors, step: 1, label: "Max authors/paper"
 })
 ```
 
@@ -6078,7 +6089,7 @@ network_chart = {
 
 ### Models and the authors behind them
 
-This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. **Max authors/paper** drops consortium papers, each of which would otherwise link all of its authors to one model. There is no min strength here: that measures ties between co-authors, and this chart has none. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
 
 ```{ojs}
 //| echo: false
@@ -6086,6 +6097,20 @@ This second view rewires the same network as a **bipartite** graph: every prolif
 // charts are a section apart, so one shared control would be off screen.
 viewof bip_min_papers = Inputs.range([3, 15], {
   value: 5, step: 1, label: "Min papers per author"
+})
+```
+
+```{ojs}
+//| echo: false
+// The collaboration network's control, for the same reason: one consortium
+// paper links every one of its authors to one model and draws a star. At the
+// default of 5 papers, 58 of 892 author-model edges exist only through papers
+// with more than 20 authors (the 66-author plasma study, the 62-author AI
+// proteomics review, the 53-author living benchmark). Default = no cutoff.
+// No Min strength here: that measures author-author ties, which this chart
+// does not have.
+viewof bip_max_authors = Inputs.range([2, max_paper_authors], {
+  value: max_paper_authors, step: 1, label: "Max authors/paper"
 })
 ```
 
@@ -6125,6 +6150,7 @@ author_algo_network = {
   for (const p of pubs_t) {
     if (!p.authors || !p.models_described) continue
     const authors = String(p.authors).split(",").map(s => s.trim()).filter(Boolean)
+    if (authors.length > bip_max_authors) continue
     const models  = String(p.models_described).split(",").map(s => s.trim()).filter(Boolean)
     for (const a of authors) {
       if (!prolific.has(a)) continue

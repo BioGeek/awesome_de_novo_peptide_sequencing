@@ -2629,6 +2629,16 @@ Chrome: 180 and 147 circles at the default, 415 and 376 at 3, 54 and 36 at 10,
 0 OJS errors. They are two sliders rather than one shared control because the
 charts are a section apart.
 
+The author-to-model graph also has **Max authors/paper**, because one
+consortium paper links all its authors to one model: at the default it removes
+exactly the 58 of 907 links that exist only through papers of more than 20
+authors (verified, 907 to 849 lines). It has no **Min strength**, which
+measures ties between co-authors, and that graph has none. Both Max sliders
+range up to `max_paper_authors`, the largest byline, computed from the data.
+That was a constant, 60, written when the largest paper had 53 authors, so
+once 62- and 66-author papers arrived the collaboration network's "no cutoff"
+default was silently dropping them.
+
 ### OJS source is public, Python chunk source is not
 
 `echo: false` hides a cell's source from the rendered *page*, but Quarto still
