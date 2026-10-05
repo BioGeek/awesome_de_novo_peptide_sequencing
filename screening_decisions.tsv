@@ -1,0 +1,505 @@
+# Screening decisions on candidate papers, so a rejected or held paper is not
+# proposed again. Read by build_candidates.py and by the denovo-radar harvest,
+# exactly like the DOIs in WATCHLIST.md. 'held' = in scope possibly, low
+# confidence, waiting for a person; 'rejected' = fails the inclusion bar.
+# A paper later added to the catalog is simply catalogued; delete its row.
+doi	decision	reason	screened
+10.1002/047001153x.g405207	rejected	passing-mention: Encyclopedia entry reviewing database search and de novo tools in general; de novo is not the subject.	citation sweep 2026-10-04
+10.1002/1097-0231(20010115)15:1<50::aid-rcm191>3.0.co;2-v	held	Automated nanoLC-QTOF analysis gave de novo sequences of tryptic peptides that identified Shewanella putrefaciens proteins by similarity search.	citation sweep 2026-10-04
+10.1002/2211-5463.12286	rejected	passing-mention: Mussel shell protein MSP22.8 characterised with PEAKS/Sequest/MaxQuant; no de novo-derived findings in abstract.	PRIDE search 2026-10-05
+10.1002/9780470369630.ch9	rejected	other: General chapter on MS proteomics bioinformatics; de novo is one section beside database search.	citation sweep 2026-10-04
+10.1002/ange.200503787	rejected	other: German-language parallel edition (Angewandte Chemie) of the same article as W2006869524 in this batch; a duplicate record, not a separate paper.	citation sweep 2026-10-04
+10.1002/anie.201500342	rejected	passing-mention: Myristoylation reagents; PEAKS default de novo before database search.	PRIDE search 2026-10-05
+10.1002/ece3.5959	rejected	passing-mention: Coral venom toxin quantification; spectra matched to a related species transcriptome, de novo only the PEAKS step.	PRIDE search 2026-10-05
+10.1002/elps.201800025	rejected	passing-mention: Breast cancer milk 2D-PAGE; de novo only used to pick up a few extra protein identifications.	PRIDE search 2026-10-05
+10.1002/elps.202300040	rejected	passing-mention: Breast milk 2D-PAGE biomarker proteomics; Mascot database search.	PRIDE search 2026-10-05
+10.1002/jev2.70337	rejected	passing-mention: Oviduct EV proteomics; database search.	PRIDE search 2026-10-05
+10.1002/jms.3314	rejected	passing-mention: A live Linux distribution bundling mass spectrometry software; de novo tools are only among the packaged programs.	citation sweep 2026-10-04
+10.1002/jms.4367	rejected	not-de-novo-sequencing: pacMASS predicts elemental composition from a single mass; it does not sequence peptides.	citation sweep 2026-10-04
+10.1002/mas.20042	rejected	passing-mention: Review of phosphoproteomics; derivatization for de novo is mentioned as background.	citation sweep 2026-10-04
+10.1002/path.70020	rejected	passing-mention: Dupuytren's metabolic labelling proteomics; PEAKS de novo + DB as routine identification.	PRIDE search 2026-10-05
+10.1002/pmic.200300402	held	Popitam scores database peptides against a de novo style spectrum graph parsed by ant colony optimisation, aimed at modified or mutated peptides; a hybrid spectrum-graph search.	citation sweep 2026-10-04
+10.1002/pmic.200300620	rejected	passing-mention: De novo sequencing served only as the reference to validate EST database search results.	citation sweep 2026-10-04
+10.1002/pmic.200400869	rejected	passing-mention: General review of challenges in MS-based proteomics; de novo is not its subject.	citation sweep 2026-10-04
+10.1002/pmic.200402091	held	Review and performance comparison of core identification algorithms, with de novo sequencing as one of its four main subjects.	citation sweep 2026-10-04
+10.1002/pmic.200500928	held	MS Cleaner deconvolutes multiply charged peaks, removes isotope replicates and noise from MS/MS spectra, motivated by and evaluated for de novo sequencing errors.	citation sweep 2026-10-04
+10.1002/pmic.201300415	held	MSDA suite runs database and de novo searches on a computing grid within an integrated proteomics pipeline.	citation sweep 2026-10-04
+10.1002/pmic.201400560	held	Metaproteomics workflow evaluation that applied de novo sequencing as a complementary approach and recommends it for result reliability.	citation sweep 2026-10-04
+10.1002/pmic.201500420	rejected	database-search-only: Morpheus spectral counter for label-free quantification; database search only.	PRIDE search 2026-10-05
+10.1002/pmic.202100243	rejected	database-search-only: 29-plex TMT quantification method; de novo tags appear only inside the JUMP database search engine.	PRIDE search 2026-10-05
+10.1002/pmic.202200132	rejected	passing-mention: Review of proteases in proteomics; de novo is not the subject.	citation sweep 2026-10-04
+10.1002/prca.70018	rejected	passing-mention: Review of AI in immunopeptidomics; de novo sequencing is one stage among many.	citation sweep 2026-10-04
+10.1002/rcm.2349	held	Shows protonated and sodiated adducts of N/C-blocked peptides fragment complementarily, proposed for de novo sequencing of peptaibols.	citation sweep 2026-10-04
+10.1002/rcm.2595	rejected	database-search-only: Acquisition scheme that uses real-time de novo only to trigger MS3, with identification by Mascot database search.	citation sweep 2026-10-04
+10.1002/rcm.2631	rejected	passing-mention: Cross-species EST search evaluation where de novo sequencing was only manual validation of Mascot hits.	citation sweep 2026-10-04
+10.1002/rcm.9523	rejected	passing-mention: Schistosome tissue preservation protocol; PEAKS routine.	PRIDE search 2026-10-05
+10.1007/11508069_51	rejected	not-de-novo-sequencing: Maps spectra and sequences to feature vectors for matching; a scoring method with no clear de novo component.	citation sweep 2026-10-04
+10.1007/11691730_2	rejected	database-search-only: Database search algorithm for multiply charged spectra.	citation sweep 2026-10-04
+10.1007/978-1-0716-3299-4_24	rejected	passing-mention: Methods chapter on plant peptidomics where de novo is one of two identification routes; not clearly the subject.	citation sweep 2026-10-04
+10.1007/978-1-0716-5264-0_7	rejected	false-friend: Chapter on enzyme discovery; de novo here means protein design.	citation sweep 2026-10-04
+10.1007/978-1-4939-2864-4_286	rejected	other: Later edition of the same Encyclopedia of Algorithms entry (W4210557309).	citation sweep 2026-10-04
+10.1007/978-1-4939-6740-7_11	rejected	passing-mention: Protocol chapter on phylogenetics from protein MS; de novo sequencing is one of three approaches and not the subject.	citation sweep 2026-10-04
+10.1007/978-1-59259-719-2_12	held	Book chapter (Carr group) on de novo sequencing of small gene products and PTM characterization when no database applies.	citation sweep 2026-10-04
+10.1007/978-1-59745-562-6_16	rejected	passing-mention: Methods chapter on shotgun proteomics in neuroproteomics, focused on database search; de novo is one section among many.	citation sweep 2026-10-04
+10.1007/978-1-60761-157-8_15	rejected	other: Chapter on shotgun proteomics computation focused on database searching; de novo is one topic.	citation sweep 2026-10-04
+10.1007/978-1-84628-288-1_34	rejected	passing-mention: Book chapter on statistical methods for biomarker discovery and peptide identification; de novo not the subject.	citation sweep 2026-10-04
+10.1007/978-3-540-39763-2_34	rejected	false-friend: DNA de novo sequencing by MS (conference version), a different analyte.	citation sweep 2026-10-04
+10.1007/978-3-540-78839-3_14	rejected	database-search-only: Fragmentation-event model used to validate and filter SEQUEST/Mascot peptide-spectrum matches, not for de novo sequencing.	citation sweep 2026-10-04
+10.1007/978-3-642-27848-8_286-2	rejected	other: Later edition of the same Encyclopedia of Algorithms entry (W4210557309).	citation sweep 2026-10-04
+10.1007/978-981-19-3955-6_17	rejected	passing-mention: Book chapter on sugarcane proteogenomics; no abstract and no sign de novo sequencing produced a result.	citation sweep 2026-10-04
+10.1007/978-981-95-3459-3_7	rejected	false-friend: Casanovo adapted to small-molecule structure generation; not peptide sequencing.	citation sweep 2026-10-04
+10.1007/978-981-97-5087-0_3	held	Probabilistic and machine-learning models for filling gaps in protein scaffolds, the assembly step of de novo protein sequencing from MS peptides (abstract unavailable; judged from title and authors).	citation sweep 2026-10-04
+10.1007/s00216-023-04934-x	rejected	passing-mention: Proteoglycan glycoproteomics by HCD/EThcD; de novo peptides only as supplementary output.	PRIDE search 2026-10-05
+10.1007/s00216-025-06074-w	rejected	passing-mention: VDAC3 disulfide mapping by database search.	PRIDE search 2026-10-05
+10.1007/s00216-026-06577-0	rejected	passing-mention: De novo sequences were only searched against an 18-entry legumin/vicilin database; results are database-driven proteoform characterization.	PRIDE search 2026-10-05
+10.1007/s00401-021-02336-w	rejected	passing-mention: Cryo-EM of Tau filaments; PEAKS used for PTM/mutation mapping of database hits.	PRIDE search 2026-10-05
+10.1007/s00401-022-02461-0	rejected	passing-mention: Prion filament cryo-EM; PEAKS PTM/SPIDER routine.	PRIDE search 2026-10-05
+10.1007/s00726-015-1933-1	held	Protein spots of the unsequenced yeast Pichia fermentans were identified by PepNovo de novo interpretation of MS/MS spectra, visually confirmed; abstract does not say so explicitly.	PRIDE search 2026-10-05
+10.1007/s00726-021-02946-4	rejected	passing-mention: Pottery residue palaeoproteomics; database-search identifications with no reported de novo-derived findings.	PRIDE search 2026-10-05
+10.1007/s10532-009-9261-3	held	Anoxic benzene-degrading sediment metaproteome where database search and de novo sequencing identified proteins such as enoyl-CoA hydratase.	citation sweep 2026-10-04
+10.1007/s10816-024-09641-0	rejected	passing-mention: Waterfowl eggshell taxonomic ID for palaeoenvironment; abstract gives no de novo-derived result, PEAKS used with ALC filter.	PRIDE search 2026-10-05
+10.1007/s10822-025-00710-4	rejected	passing-mention: Review of AI for antimicrobial resistance; DeepNovo and Casanovo named in passing.	citation sweep 2026-10-04
+10.1007/s10989-006-9026-3	held	Compares three chemical derivatisation methods compatible with MALDI MS/MS de novo sequencing on tammar wallaby whey proteins and recommends SPITC sulfonation (abstract not available; judged from summary).	citation sweep 2026-10-04
+10.1007/s11120-020-00746-7	rejected	passing-mention: Phycocyanin sequence checked against crystallographic density with two search engines; the abstract attributes the discrepancy to other genes, not to de novo sequencing.	PRIDE search 2026-10-05
+10.1007/s11390-025-4973-3	held	Algorithms (probabilistic and ML) for filling gaps of known size and mass in protein scaffolds assembled from de novo sequencing data, by a group with catalogued de novo work.	citation sweep 2026-10-04
+10.1007/s11738-011-0774-0	rejected	false-friend: Plant allelopathy study; 'de novo' refers to synthesis of metabolites.	citation sweep 2026-10-04
+10.1007/s12031-026-02523-y	rejected	passing-mention: Glioblastoma nAChR biology; PEAKS used for routine database search and LFQ.	PRIDE search 2026-10-05
+10.1007/s12035-016-0172-0	held	Porcine retina proteome where de novo sequencing documented new non-annotated peptides beyond database hits.	citation sweep 2026-10-04
+10.1007/s12602-025-10823-9	rejected	passing-mention: Bacteriocin identified via genome sequencing and cell-free synthesis; PEAKS de novo only a routine step.	PRIDE search 2026-10-05
+10.1007/s13361-013-0591-3	held	Tests how removing scrambled ions changes results of five identification tools including the de novo sequencers Lutefisk and PepNovo, finding the de novo tools most sensitive.	citation sweep 2026-10-04
+10.1007/s13361-018-1969-z	rejected	false-friend: De novo interpretation of glycosaminoglycan tandem spectra; a different analyte.	citation sweep 2026-10-04
+10.1007/s42976-025-00676-x	rejected	passing-mention: Targeted LC-MS/MS of wheat glutenins; PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.1016/b978-0-12-800168-4.00001-9	rejected	passing-mention: General book chapter on bioinformatics tools for protein identification and quantification; de novo is not the subject.	citation sweep 2026-10-04
+10.1016/b978-0-323-95502-7.00178-0	rejected	not-a-paper: Encyclopedia reference entry on proteome informatics; no sign de novo is its subject.	citation sweep 2026-10-04
+10.1016/b978-044451980-1.50011-2	held	Book chapter by the Yergey group (ENPC authors) whose subject is de novo peptide sequencing.	citation sweep 2026-10-04
+10.1016/j.aquatox.2009.07.014	held	Two cadmium-altered clam proteins (ALDH, MCAD) were identified by de novo sequencing.	citation sweep 2026-10-04
+10.1016/j.biochi.2023.06.005	rejected	passing-mention: Venom gland subcellular proteome by PEAKS de novo + DB search against databases; no de novo-derived sequences reported.	PRIDE search 2026-10-05
+10.1016/j.cell.2022.01.021	rejected	false-friend: 'de novo' refers to de novo genetic variants; MaxQuant interactome.	PRIDE search 2026-10-05
+10.1016/j.cell.2023.08.027	rejected	passing-mention: Placozoan cell-type evolution; PEAKS DeepNovo/DB pipeline incidental to the findings.	PRIDE search 2026-10-05
+10.1016/j.celrep.2013.10.041	rejected	passing-mention: Rat liver proteogenomics; PEAKS de novo re-analysis of unassigned spectra is a minor step with no de novo finding in the abstract.	PRIDE search 2026-10-05
+10.1016/j.celrep.2017.12.031	rejected	passing-mention: Translation/hypoxia study; PEAKS de novo+DB was simply the search pipeline.	PRIDE search 2026-10-05
+10.1016/j.celrep.2019.12.060	rejected	false-friend: 'de novo' refers to de novo H3K27me3 establishment; MaxQuant/Skyline.	PRIDE search 2026-10-05
+10.1016/j.celrep.2021.110047	rejected	passing-mention: Pediatric cancer immuno-transcriptomics; immunopeptidomics by PEAKS database search, de novo only selected as an option.	PRIDE search 2026-10-05
+10.1016/j.celrep.2023.113529	rejected	passing-mention: Microautophagy biology; standard PEAKS DB pipeline.	PRIDE search 2026-10-05
+10.1016/j.celrep.2024.114311	rejected	passing-mention: Lymph peptidome; 'de novo sequenced and assigned protein ID' is the standard PEAKS DB pipeline.	PRIDE search 2026-10-05
+10.1016/j.chroma.2019.460501	rejected	passing-mention: Review classifying LC-MS techniques for traditional medicine quality control; de novo identification here concerns small molecules.	citation sweep 2026-10-04
+10.1016/j.compbiolchem.2019.03.015	rejected	false-friend: De novo glycan structure identification, a different analyte.	citation sweep 2026-10-04
+10.1016/j.copbio.2012.10.013	rejected	passing-mention: Review of peptide and protein identification algorithms in general; de novo is one of several topics, not the subject.	citation sweep 2026-10-04
+10.1016/j.drudis.2006.05.011	rejected	other: General review of peptide identification software; de novo is one category beside database search.	citation sweep 2026-10-04
+10.1016/j.ejmech.2025.117793	rejected	passing-mention: Degrader pharmacology; JUMP tag scoring database search.	PRIDE search 2026-10-05
+10.1016/j.envres.2021.110885	rejected	passing-mention: Polychaete heatwave proteomics; de novo-assisted database search was routine identification.	PRIDE search 2026-10-05
+10.1016/j.enzmictec.2023.110365	rejected	passing-mention: Fungal exoproteome by PEAKS DB/Q.	PRIDE search 2026-10-05
+10.1016/j.foodchem.2009.10.043	rejected	passing-mention: Lupin protein processing study; de novo sequencing used only occasionally as a supporting identification step.	citation sweep 2026-10-04
+10.1016/j.gca.2023.11.016	rejected	passing-mention: Dinosaur eggshell paper concerns endogenous amino acids; de novo peptides were only searched against a reptile/bird database with no reported de novo finding.	PRIDE search 2026-10-05
+10.1016/j.ijbiomac.2015.11.068	held	A potato hemagglutinating protein was identified as a Kunitz-type serine protease inhibitor by de novo sequencing and MS/MS.	citation sweep 2026-10-04
+10.1016/j.ijms.2021.116723	held	Searches the complete sequence space of a combinatorial peptide library with probabilistic prior knowledge, a constrained sequence-from-spectrum identification closely tied to de novo sequencing and compared with de novo tools.	citation sweep 2026-10-04
+10.1016/j.ijms.2025.117532	rejected	database-search-only: Single amino acid variant identification from a database-search group; no evidence in the record that de novo produced results (abstract unavailable).	citation sweep 2026-10-04
+10.1016/j.immuni.2021.02.019	rejected	passing-mention: MHCII immunopeptidome PTMs identified by PEAKS 8 database assignment; no de novo-derived results.	PRIDE search 2026-10-05
+10.1016/j.isci.2021.102389	rejected	passing-mention: Frameshift neoepitope immunopeptidomics; de novo only selected unmatched spectra that were then searched against frameshift databases, so identifications came from database search.	PRIDE search 2026-10-05
+10.1016/j.isci.2021.102868	rejected	passing-mention: Ndr2 transgenic mouse interactome; PEAKS used for routine identification.	PRIDE search 2026-10-05
+10.1016/j.isci.2021.102985	rejected	passing-mention: tmRNA substrate proteomics; PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.1016/j.isci.2023.107542	rejected	passing-mention: Plasma intracellular peptide quantification; PEAKS de novo was only part of identification.	PRIDE search 2026-10-05
+10.1016/j.isci.2024.110093	held	The species-level metaproteomics database (290 taxa) was built from PEAKS de novo peptides (ALC>=80) mapped with ProteoClade, so de novo determined the community composition searched.	PRIDE search 2026-10-05
+10.1016/j.isci.2024.110289	rejected	database-search-only: Pancreatic cancer organoid screen; de novo tags only inside JUMP database search.	PRIDE search 2026-10-05
+10.1016/j.isci.2025.112972	rejected	passing-mention: Uveal melanoma pharmacology; PEAKS routine.	PRIDE search 2026-10-05
+10.1016/j.isci.2025.113182	rejected	passing-mention: Concretion palaeoproteomics; Novor only used as a cross-check, abstract reports no de novo findings.	PRIDE search 2026-10-05
+10.1016/j.isci.2026.116775	rejected	passing-mention: Plant p53 model system; PEAKS database search.	PRIDE search 2026-10-05
+10.1016/j.jas.2019.104996	rejected	passing-mention: Archaeological fibre species identification with Mascot and PEAKS against a restrained database; no de novo-derived findings evident.	PRIDE search 2026-10-05
+10.1016/j.jasms.2004.12.018	rejected	not-de-novo-sequencing: Optimizes a MALDI TOF-TOF for intact protein fragmentation; de novo sequencing is only named as a possible use of the improved fragment yield.	citation sweep 2026-10-04
+10.1016/j.jasms.2006.09.008	rejected	not-de-novo-sequencing: Fundamental study of hydrogen rearrangement in ECD fragments; de novo sequencing is only named as a future beneficiary.	citation sweep 2026-10-04
+10.1016/j.jasms.2008.03.007	held	Zubarev critical analysis arguing de novo sequencing needs combined ExD and CxD fragmentation; de novo is the subject.	citation sweep 2026-10-04
+10.1016/j.jasms.2009.02.015	rejected	not-de-novo-sequencing: Study of periodic ECD product ion abundance in amphipathic peptides; not about de novo sequencing.	citation sweep 2026-10-04
+10.1016/j.jasrep.2019.01.010	rejected	passing-mention: Zooarchaeology of birds of prey; PEAKS de novo only as a score threshold.	PRIDE search 2026-10-05
+10.1016/j.jbc.2021.100639	rejected	passing-mention: Phage endolysin domain biochemistry; PEAKS for cleavage-site identification by database search.	PRIDE search 2026-10-05
+10.1016/j.jbc.2022.101570	rejected	passing-mention: FeS cluster biogenesis cross-linking; PEAKS standard pipeline.	PRIDE search 2026-10-05
+10.1016/j.jbc.2022.101638	rejected	passing-mention: DNA glycosylase method; PEAKS de novo only in protein QC.	PRIDE search 2026-10-05
+10.1016/j.jchromb.2021.122818	held	De novo peptides from PEAKS were identified and quantified to monitor residual plant proteins in Chinese medicine injections.	citation sweep 2026-10-04
+10.1016/j.jff.2015.01.011	rejected	passing-mention: Oil palm antioxidant peptides; no abstract was available and nothing found indicates de novo produced the sequences.	citation sweep 2026-10-04
+10.1016/j.jff.2016.08.048	rejected	passing-mention: ACE-inhibitory cupuassu peptides; no abstract was available and nothing found indicates de novo produced the sequences.	citation sweep 2026-10-04
+10.1016/j.jhepr.2022.100576	rejected	passing-mention: Hepatocyte HLA-I peptidome by PEAKS de novo + DB; findings are database-matched HBV/TAA peptides.	PRIDE search 2026-10-05
+10.1016/j.jinorgbio.2011.01.010	held	Peptides from a palladium artificial-protease digest were identified by de novo sequencing matched to the bovine genome.	citation sweep 2026-10-04
+10.1016/j.jmb.2023.168283	rejected	passing-mention: Hsp70 complex study; PEAKS database search, no de novo result.	PRIDE search 2026-10-05
+10.1016/j.jpba.2020.113725	rejected	passing-mention: Serum peptidome biomarkers identified by combined database search and PEAKS de novo; no sign de novo produced distinct results.	citation sweep 2026-10-04
+10.1016/j.jprot.2009.01.017	rejected	passing-mention: Hymenoptera venom allergy review; de novo sequencing is mentioned only as an option.	citation sweep 2026-10-04
+10.1016/j.jprot.2016.03.003	held	SEQUEST plus de novo sequencing with annotation pipelines characterized the UV-responsive nuclear proteome of non-model Pinus radiata.	citation sweep 2026-10-04
+10.1016/j.jprot.2016.10.007	rejected	passing-mention: Sheep whey proteome by PEAKS DB/SPIDER; no de novo-derived findings reported.	PRIDE search 2026-10-05
+10.1016/j.jprot.2018.08.002	held	Proteome of the venomous apparatus and skin mucus of the scorpionfish Scorpaena plumieri, where de novo sequences with no database match were similarity-searched to extend identifications in this poorly sequenced species.	PRIDE search 2026-10-05
+10.1016/j.jprot.2019.103530	rejected	passing-mention: Old vs modern wheat qualitative proteomics; PEAKS de novo named but identification was database search.	PRIDE search 2026-10-05
+10.1016/j.jprot.2022.104576	rejected	passing-mention: Yeast sample preparation comparison using database and unrestricted modification search.	citation sweep 2026-10-04
+10.1016/j.jprot.2023.104853	rejected	passing-mention: DiagnoMass clusters discriminative spectra and hands them to other tools; de novo only named among paradigms.	citation sweep 2026-10-04
+10.1016/j.jprot.2025.105410	rejected	passing-mention: Mosquito seminal fluid proteins by PEAKS de novo + DB as routine identification.	PRIDE search 2026-10-05
+10.1016/j.jprot.2026.105676	rejected	passing-mention: Abstract reports 681 wasp venom peptides but gives no sign they were de novo-derived; protocol only states that a PEAKS de novo workflow ran.	PRIDE search 2026-10-05
+10.1016/j.kjs.2026.100659	held	De novo peptide sequencing of a new Agave RIP-like protein found no full homology to known proteins, supporting its novelty.	citation sweep 2026-10-04
+10.1016/j.lwt.2020.110206	held	Antifungal peptides from fermented palm kernel cake were sequenced by LC-MS/MS, including three de novo peptides not from the substrate proteins.	citation sweep 2026-10-04
+10.1016/j.mcpro.2021.100100	rejected	passing-mention: Conopeptide identification relied on a transcriptome-derived database; de novo approaches are only mentioned as a complement.	citation sweep 2026-10-04
+10.1016/j.mcpro.2021.100156	rejected	passing-mention: Drosophila reproductive tract proteome by PEAKS; de novo only as a score threshold.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2022.100197	rejected	passing-mention: UC fecal metaproteomics by large database search; de novo used only to estimate the unidentified peptide space.	citation sweep 2026-10-04
+10.1016/j.mcpro.2022.100204	rejected	passing-mention: DO:DM ratio MHC-II immunopeptidomes; de novo used only to support high-confidence database identifications.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2022.100265	rejected	passing-mention: Salmonella temperature proteome by PEAKS de novo + DB search; ordinary database-search proteomics.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2022.100479	rejected	passing-mention: Targeted neuropeptidomics of nematodes; neuropeptides identified by PEAKS DB against predicted precursors.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2024.100712	rejected	passing-mention: Broad DIA survey where de novo is one of five analysis strategies, not the subject.	citation sweep 2026-10-04
+10.1016/j.mcpro.2024.100879	rejected	false-friend: De novo protein synthesis measured by pSILAC; PEAKS DB routine.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2025.100926	rejected	passing-mention: Kinase-client peptide library assay; PEAKS DB identification.	PRIDE search 2026-10-05
+10.1016/j.mcpro.2025.101040	held	De novo sequencing uncovered immunoglobulin light-chain components in unresolved samples, enabling AL-amyloidosis subtype diagnosis.	citation sweep 2026-10-04
+10.1016/j.mcpro.2025.101049	rejected	passing-mention: EThcD on a new Orbitrap improves HLA peptide database identification; de novo sequencing is only foreseen as a future benefit.	PRIDE search 2026-10-05
+10.1016/j.micpath.2020.104614	rejected	passing-mention: Candida biofilm proteome; PEAKS de novo was part of standard identification, no de novo findings.	PRIDE search 2026-10-05
+10.1016/j.micres.2020.126649	rejected	passing-mention: Algal plastid proteome; PEAKS de novo step not reported as producing findings.	PRIDE search 2026-10-05
+10.1016/j.molcel.2023.02.009	rejected	false-friend: De novo H3.3K9me3 deposition.	PRIDE search 2026-10-05
+10.1016/j.molcel.2024.06.002	rejected	false-friend: De novo protein folding.	PRIDE search 2026-10-05
+10.1016/j.molcel.2025.06.009	rejected	false-friend: De novo telomere DNA synthesis; not peptide sequencing.	PRIDE search 2026-10-05
+10.1016/j.molcel.2026.01.004	rejected	passing-mention: Phage defence biology; PEAKS used routinely.	PRIDE search 2026-10-05
+10.1016/j.molimm.2017.08.014	rejected	passing-mention: Antibody variable regions come from PCR and DNA sequencing; MS/MS only verifies coverage of the DNA-predicted sequence.	citation sweep 2026-10-04
+10.1016/j.mtbio.2021.100146	rejected	passing-mention: Myelin nanovesicle characterisation; PEAKS de novo software named only as the identification tool.	PRIDE search 2026-10-05
+10.1016/j.procbio.2012.09.020	held	De novo peptide homology analysis of two fibrinolytic proteinases from Virgibacillus halodenitrificans found no match to known serine proteinases, marking them as novel (judged from summary).	citation sweep 2026-10-04
+10.1016/j.procbio.2018.09.010	rejected	passing-mention: Uricase production optimization and structure modelling; no sign that de novo sequencing produced a result.	citation sweep 2026-10-04
+10.1016/j.redox.2022.102597	rejected	passing-mention: MAPT neuron proteome; PEAKS used routinely.	PRIDE search 2026-10-05
+10.1016/j.redox.2023.102792	rejected	passing-mention: Thiol redox proteomics; PEAKS DB routine.	PRIDE search 2026-10-05
+10.1016/j.redox.2025.103854	rejected	passing-mention: Anti-IgLON5 disease proteomics; PEAKS routine.	PRIDE search 2026-10-05
+10.1016/j.scitotenv.2019.04.005	rejected	passing-mention: Sea urchin immune cell proteomics with MaxQuant; de novo only appears in the PRIDE protocol, no de novo-derived result.	PRIDE search 2026-10-05
+10.1016/j.str.2025.06.007	rejected	false-friend: De novo structure identification by cryoEM; not MS de novo sequencing.	PRIDE search 2026-10-05
+10.1016/j.toxcx.2022.100117	rejected	passing-mention: Bee venom proteo-transcriptomics; identifications come from transcriptome, PEAKS de novo only corrected sequences.	PRIDE search 2026-10-05
+10.1016/j.watres.2023.120700	rejected	passing-mention: Granular sludge metaproteomics against metagenome databases; de novo sequencing used only as quality control.	PRIDE search 2026-10-05
+10.1016/j.xcrm.2025.102478	rejected	passing-mention: TNBC mitochondrial clearance biology; PEAKS DB de novo-assisted search only.	PRIDE search 2026-10-05
+10.1016/s0065-2458(06)68006-6	rejected	passing-mention: General book chapter on peptide identification by MS/MS; no evidence de novo is its subject.	citation sweep 2026-10-04
+10.1016/s0165-9936(98)00060-0	rejected	passing-mention: General 1998 review of MALDI-MS of biomacromolecules; no sign de novo sequencing is its subject.	citation sweep 2026-10-04
+10.1016/s1044-0305(03)00207-1	rejected	passing-mention: 18O exchange for comparative quantification across instruments; paired y-ions are a side benefit, not the subject.	citation sweep 2026-10-04
+10.1016/s1872-2040(14)60752-0	rejected	not-de-novo-sequencing: Study of immonium ion fragmentation in MALDI-TOF/TOF for peptide identification; no abstract available and no sign it targets de novo sequencing.	citation sweep 2026-10-04
+10.1021/ac049774e	held	Divinyl sulfone derivatization enhances the a1 ion, revealing the N-terminal residue, which the authors note helps de novo sequencing.	citation sweep 2026-10-04
+10.1021/ac0619332	held	Shows ECD side-chain losses (w ions) distinguish Leu from Ile with >97% reliability and are useful for de novo sequencing.	citation sweep 2026-10-04
+10.1021/ac070488n	held	Statistical models of fragment peak intensities for scoring in database search or de novo peptide sequencing.	citation sweep 2026-10-04
+10.1021/ac800944u	held	Systematic study of specific neutral losses from charge-reduced ECD species, shown to distinguish isomeric N vs GG sequences and argued to improve de novo sequencing as well as database search.	citation sweep 2026-10-04
+10.1021/ac802452p	rejected	false-friend: De novo sequencing of modified oligonucleotides, a different analyte.	citation sweep 2026-10-04
+10.1021/ac802532j	held	Zubarev group visualization method for the hundreds of peptides produced by proteomics-grade de novo sequencing of frog skin secretions, grouping them into families by mass defect.	citation sweep 2026-10-04
+10.1021/ac902892j	rejected	database-search-only: Decoy-free confidence estimation for database search; de novo mentioned only as a case where decoys do not apply.	citation sweep 2026-10-04
+10.1021/acs.analchem.2c02056	rejected	database-search-only: Ion mobility SIFT proteogenomics; variants found via PEAKS/SPIDER DB search correlated with transcriptomes.	PRIDE search 2026-10-05
+10.1021/acs.analchem.2c02198	rejected	passing-mention: RAM-SPE sample prep for MHC peptides; de novo pipeline only for identification, no de novo-specific result.	PRIDE search 2026-10-05
+10.1021/acs.analchem.2c03505	rejected	false-friend: Lipid structural annotation tool; different analyte.	citation sweep 2026-10-04
+10.1021/acs.analchem.3c00676	rejected	passing-mention: Small-protein proteogenomics in P. stutzeri; identifications are database/proteogenomic, 'de novo genes' is a false friend.	PRIDE search 2026-10-05
+10.1021/acs.analchem.3c01461	rejected	passing-mention: Proteomics of Vlad III documents by database search; de novo only the PEAKS pipeline.	PRIDE search 2026-10-05
+10.1021/acs.analchem.4c01639	rejected	passing-mention: Broad review of deep learning for spectrum-structure correlation across molecules; de novo peptide sequencing is incidental.	citation sweep 2026-10-04
+10.1021/acs.analchem.5c05374	rejected	false-friend: Spectrum-to-structure diffusion for small molecules, a different analyte.	citation sweep 2026-10-04
+10.1021/acs.analchem.8b00600	rejected	passing-mention: Sample preparation bias study; PEAKS PTM/SPIDER run with a de novo ALC threshold, no de novo-derived findings.	PRIDE search 2026-10-05
+10.1021/acs.analchem.8b03828	rejected	passing-mention: ACE-processed plasma peptides; de novo with ALC filter used only for data refinement within PEAKS.	PRIDE search 2026-10-05
+10.1021/acs.biochem.2c00256	rejected	database-search-only: TMT chemoproteomics drug screen; de novo tags only inside JUMP database search scoring.	PRIDE search 2026-10-05
+10.1021/acs.jafc.5c05871	rejected	passing-mention: Ara h 1 trypsin cleavage at modified sites by PEAKS DB/PTM; de novo only the pipeline step.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.0c00102	rejected	passing-mention: Exploded hair proteomics for genetically variant peptides; de novo was only the PEAKS step before database matching.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.0c00337	rejected	passing-mention: Bothrops bilineatus venomics where manual de novo interpretation is listed as one of three routine identification routes; the abstract reports protein-family composition with no de novo-derived findings singled out.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.0c00355	rejected	passing-mention: P-VIS validates PSMs with synthetic internal standards; de novo is only mentioned.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.1c00009	rejected	passing-mention: Repurposed datasets searched for N-terminal methylation with PEAKS; no de novo-derived findings reported.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.2c00593	rejected	passing-mention: Spider venom multiomics where toxins are identified by searching against the transcriptome; abstract reports no de novo-derived findings.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.3c00005	rejected	database-search-only: ProteomeGenerator2 proteogenomic database construction; 'de novo' refers to transcripts.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.3c00099	rejected	not-a-paper: Short JPR editorial on MS data interpretation progress.	citation sweep 2026-10-04
+10.1021/acs.jproteome.4c00083	rejected	passing-mention: Tape-disc bone sampling with PEAKS collagen database search.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.4c00093	rejected	passing-mention: Saliva LiP-MS; PEAKS de novo + DB routine.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.4c00804	held	De novo peptide sequencing revealed a trityl adduct modification on GAPDH in pesticide-treated neurospheroids.	citation sweep 2026-10-04
+10.1021/acs.jproteome.5c00219	rejected	passing-mention: Bos/Bison teeth taxonomy and sexing by PEAKS database search on known proteins.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.5c00222	rejected	passing-mention: Tardigrade osmobiosis proteomics; 'de novo gene expression' and PEAKS routine.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.5c00933	rejected	passing-mention: Bothrops venomics where manual de novo interpretation is a standard methods line; abstract reports compositional/functional profiles with no de novo-derived findings.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.5c01284	rejected	passing-mention: NetMHCIIphosPan is an HLA-II binding predictor; PEAKS is only used to reprocess training data.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.6c00088	rejected	passing-mention: Venom variation by PEAKS de novo+DB with LFQ; abstract reports only database-based toxin family abundances.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.7b00427	rejected	not-de-novo-sequencing: Benchmark of spectrum clustering algorithms; de novo only mentioned in the project description.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.7b00632	rejected	passing-mention: Rat salivary top-down/bottom-up proteome; manual de novo used to help identify a few proteins, not a reported de novo result in the abstract.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.8b00295	rejected	false-friend: Proteogenomic database construction from de novo transcriptome assembly.	citation sweep 2026-10-04
+10.1021/acs.jproteome.8b00933	rejected	passing-mention: Canine ligament ECM proteomics with PEAKS de novo + DB as standard pipeline.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.9b00026	held	Multifaceted MS of blue crab neuropeptides under water acidification, with PEAKS de novo sequencing contributing two novel hemolymph peptide sequences linked to stress regulation.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.9b00169	rejected	database-search-only: Pipeline for PfEMP1 variants searching spectra against a custom database with the LAX alignment; de novo peptides only exported by PEAKS.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.9b00216	rejected	false-friend: Alphabet discovery for de novo analysis of small molecules and glycans, not peptides.	citation sweep 2026-10-04
+10.1021/acs.jproteome.9b00525	held	PEAKS was used to generate de novo sequences for neuropeptide discovery, yielding 91 novel putative crustacean neuropeptides alongside the first glycosylated neuropeptides.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.9b00531	rejected	passing-mention: Schistosome oesophagus proteomics; de novo-assisted database search routine.	PRIDE search 2026-10-05
+10.1021/acs.jproteome.9b00787	rejected	passing-mention: Crab neuropeptide hypoxia quantification against a known neuropeptide database; de novo only part of PEAKS.	PRIDE search 2026-10-05
+10.1021/acsomega.4c09451	rejected	passing-mention: Amniotic fluid proteome; PEAKS DB routine.	PRIDE search 2026-10-05
+10.1021/ja7099985	held	Establishes the valence parity rule so c- and z-type ETD fragment ions can be assigned by mass alone, explicitly offered as a basis for composition determination and de novo sequence analysis.	citation sweep 2026-10-04
+10.1021/jasms.3c00027	rejected	passing-mention: Rat neuropeptidome under stress; neuropeptides identified by PEAKS database search, no reported de novo findings.	PRIDE search 2026-10-05
+10.1021/jasms.4c00033	rejected	passing-mention: VDAC2 disulfide mapping by database search.	PRIDE search 2026-10-05
+10.1021/np500370c	rejected	database-search-only: NRPquest matches spectra against nonribosomal peptides predicted by genome mining, a mutation-tolerant database search rather than de novo sequencing.	citation sweep 2026-10-04
+10.1021/pr050195f	held	Proteome response of an unsequenced halophilic yeast analysed by 2D-DIGE with identification by de novo sequencing (a stated keyword of the study).	citation sweep 2026-10-04
+10.1021/pr100645z	rejected	false-friend: Phosphoproteomics of tubeworm larvae; the abstract's de novo refers to protein synthesis, with no sign of de novo sequencing.	citation sweep 2026-10-04
+10.1021/pr3000046	rejected	false-friend: Maize embryo proteomics where 'de novo' refers to protein synthesis; spots were identified by standard MS/MS.	citation sweep 2026-10-04
+10.1038/nature14249	held	Collagen I sequences of Toxodon and Macrauchenia (about 90% coverage) were reconstructed from MS/MS with PEAKS de novo-assisted and homology searches, plus MS-derived sequences for reference taxa, resolving their phylogeny.	PRIDE search 2026-10-05
+10.1038/nature21433	rejected	passing-mention: Lymphoma neoantigens came from database search against exome data; PEAKS de novo only improved identification.	PRIDE search 2026-10-05
+10.1038/nature22033	rejected	passing-mention: Crown-of-thorns genome paper; plume peptides matched to the genome by PEAKS database search.	PRIDE search 2026-10-05
+10.1038/ncomms14920	rejected	false-friend: 'de novo' refers to de novo drug resistance; Mascot/MaxQuant.	PRIDE search 2026-10-05
+10.1038/nmeth0607-470b	rejected	not-a-paper: Nature Methods research highlight summarizing spectral networks; no original content.	citation sweep 2026-10-04
+10.1038/s41375-024-02400-w	rejected	false-friend: 'De novo generated' leukemia models; small-molecule screen.	PRIDE search 2026-10-05
+10.1038/s41420-022-01122-1	rejected	passing-mention: Platelet proteome in COVID-19; PEAKS de novo + DB routine.	PRIDE search 2026-10-05
+10.1038/s41420-025-02382-3	rejected	passing-mention: PDAC pharmacology; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s41467-019-10585-3	rejected	passing-mention: CAPRI RNA-binding regions; PEAKS mentioned only as software.	PRIDE search 2026-10-05
+10.1038/s41467-020-16504-1	rejected	passing-mention: RBP translation study; PEAKS de novo+DB was simply the search pipeline.	PRIDE search 2026-10-05
+10.1038/s41467-020-17037-3	rejected	passing-mention: Quandenser clusters quantification data; de novo search is an optional downstream identification step, not the method.	citation sweep 2026-10-04
+10.1038/s41467-021-23900-8	rejected	passing-mention: Tick extracellular vesicle proteomics with PEAKS 8; no de novo findings.	PRIDE search 2026-10-05
+10.1038/s41467-021-24532-8	rejected	passing-mention: Histone methylation biology; PEAKS de novo + DB ran as standard pipeline only.	PRIDE search 2026-10-05
+10.1038/s41467-021-24785-3	rejected	passing-mention: Immunology paper; PEAKS 8 database assignment in a supporting proteomics experiment.	PRIDE search 2026-10-05
+10.1038/s41467-021-25474-x	rejected	passing-mention: Parkinson appendix DNA methylation; proteomics with PEAKS was routine.	PRIDE search 2026-10-05
+10.1038/s41467-021-27038-5	rejected	passing-mention: IRF5 phosphorylation; PEAKS de novo+PTM pipeline only.	PRIDE search 2026-10-05
+10.1038/s41467-022-30318-3	rejected	passing-mention: Cryo-EM structure of p97-p47; PEAKS only used for routine proteomics support.	PRIDE search 2026-10-05
+10.1038/s41467-022-30363-y	rejected	false-friend: 'de novo' refers to de novo serine synthesis; MaxQuant database search proteomics.	PRIDE search 2026-10-05
+10.1038/s41467-022-31264-w	rejected	passing-mention: Gephyrin splice isoforms; PEAKS de novo plus database search was just the identification pipeline.	PRIDE search 2026-10-05
+10.1038/s41467-023-36405-3	rejected	passing-mention: Elephant bird eggshell study driven by mitogenomes; protein analysis gives no de novo-derived result in abstract.	PRIDE search 2026-10-05
+10.1038/s41467-023-39751-4	rejected	false-friend: De novo DNA methylation.	PRIDE search 2026-10-05
+10.1038/s41467-023-41907-1	rejected	false-friend: De novo design/discovery of tryptophan zipper peptides.	PRIDE search 2026-10-05
+10.1038/s41467-023-44304-w	rejected	passing-mention: Mast cell RA biology; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s41467-024-45022-7	rejected	passing-mention: Theileria host autophagy biology; PEAKS de novo run as routine step.	PRIDE search 2026-10-05
+10.1038/s41467-024-45851-6	rejected	passing-mention: Tauopathy drug screen; PEAKS Online routine.	PRIDE search 2026-10-05
+10.1038/s41467-024-45852-5	rejected	false-friend: 'De novo' refers to de novo pyrimidine synthesis.	PRIDE search 2026-10-05
+10.1038/s41467-024-51835-3	rejected	passing-mention: Cdc48 cryo-EM; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s41467-024-52099-7	rejected	false-friend: pGlycoNovo performs de novo identification of the glycan part of intact glycopeptides, a different analyte from peptide sequence.	citation sweep 2026-10-04
+10.1038/s41467-024-52619-5	rejected	passing-mention: Crinophagic granule MHC-II epitopes found by PEAKS database, HIP-database and SPIDER searches; de novo is only the PEAKS pipeline step.	PRIDE search 2026-10-05
+10.1038/s41467-025-56853-3	rejected	passing-mention: Alzheimer proteomics; JUMP tag scoring database search.	PRIDE search 2026-10-05
+10.1038/s41467-025-58142-5	rejected	passing-mention: ANXA11 condensate biology; PEAKS used as routine search.	PRIDE search 2026-10-05
+10.1038/s41467-025-63131-9	rejected	passing-mention: Astrocyte proximity proteomics; PEAKS Online de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.1038/s41467-025-64773-5	rejected	passing-mention: PROTAC biology; JUMP tag scoring database search.	PRIDE search 2026-10-05
+10.1038/s41467-025-65472-x	rejected	false-friend: 'De novo' refers to a de novo missense genetic variant; PEAKS used for routine IP-MS.	PRIDE search 2026-10-05
+10.1038/s41467-025-66356-w	rejected	passing-mention: Neuronal AKAP11 multi-omics; JUMP tag scoring in a database search.	PRIDE search 2026-10-05
+10.1038/s41467-026-71958-z	rejected	false-friend: De novo genome sequencing of Clusia.	PRIDE search 2026-10-05
+10.1038/s41467-026-74397-y	rejected	false-friend: 'De novo peptides' are newly synthesised (OPP-labelled) proteins, not de novo sequencing.	PRIDE search 2026-10-05
+10.1038/s41467-026-74987-w	rejected	false-friend: 'De novo' refers to de novo genetic variants in patients.	PRIDE search 2026-10-05
+10.1038/s41467-026-75845-5	rejected	database-search-only: Benchmark of PASEF acquisition modes for metaproteomics with FragPipe/DIA-NN database search; de novo only cited.	PRIDE search 2026-10-05
+10.1038/s41467-026-76853-1	rejected	passing-mention: AML immunopeptidomics with standard PEAKS de novo-then-DB pipeline; no de novo-derived findings in abstract.	PRIDE search 2026-10-05
+10.1038/s41538-020-00082-z	rejected	database-search-only: Dietary protein digestion LC-MS with MaxQuant/Progenesis; no de novo sequencing.	PRIDE search 2026-10-05
+10.1038/s41551-019-0493-1	rejected	passing-mention: Lymphatic remodelling biology; PEAKS 8 standard pipeline in supporting proteomics.	PRIDE search 2026-10-05
+10.1038/s41556-026-01936-6	rejected	passing-mention: HOIL-1 ribosome biology; JUMP tag scoring database search.	PRIDE search 2026-10-05
+10.1038/s41557-018-0039-2	rejected	passing-mention: NMT inhibitor paper; PEAKS default de novo before database search.	PRIDE search 2026-10-05
+10.1038/s41557-019-0237-6	rejected	passing-mention: Prenylation chemical proteomics; PEAKS default de novo before database search.	PRIDE search 2026-10-05
+10.1038/s41567-024-02716-5	rejected	passing-mention: Cell mechanics biology; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s41586-020-03082-x	rejected	passing-mention: Dire wolf genomics paper; protein analysis secondary, de novo only as a PEAKS score filter.	PRIDE search 2026-10-05
+10.1038/s41586-021-04336-y	rejected	false-friend: 'de novo' refers to de novo chromatin accessibility; MaxQuant proteomics.	PRIDE search 2026-10-05
+10.1038/s41586-024-07250-1	rejected	passing-mention: DCAF5 cancer biology; JUMP tag scoring database search.	PRIDE search 2026-10-05
+10.1038/s41586-025-09940-w	rejected	false-friend: De novo DNA methylation biology.	PRIDE search 2026-10-05
+10.1038/s41586-025-10071-5	rejected	passing-mention: RSV condensate biology; 'de novo' refers to condensate formation, MaxQuant proteomics.	PRIDE search 2026-10-05
+10.1038/s41592-024-02314-6	rejected	false-friend: CandyCrunch predicts glycan structures from MS/MS; different analyte.	citation sweep 2026-10-04
+10.1038/s41594-024-01468-3	rejected	passing-mention: HIV-1 ribosome profiling; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s41596-022-00690-x	rejected	passing-mention: Protocol for the general PatternLab V shotgun platform; de novo appears only through the PepExplorer module.	citation sweep 2026-10-04
+10.1038/s41597-021-00818-w	rejected	passing-mention: T. cruzi histone PTM map; PEAKS de novo-assisted database search routine.	PRIDE search 2026-10-05
+10.1038/s41597-025-06187-y	rejected	passing-mention: Leishmania histone PTM map from PEAKS de novo-assisted database search; no de novo-derived findings.	PRIDE search 2026-10-05
+10.1038/s41598-017-08288-0	rejected	passing-mention: Salusin-beta identification by PEAKS de novo-assisted database search; no de novo-derived result.	PRIDE search 2026-10-05
+10.1038/s41598-018-29656-4	rejected	passing-mention: Jug r 6 was identified by PEAKS database search against a transcriptome-derived sequence, not by de novo sequencing.	PRIDE search 2026-10-05
+10.1038/s41598-019-44007-7	rejected	passing-mention: Hair proteome GVP detection; de novo only the PEAKS step before database matching.	PRIDE search 2026-10-05
+10.1038/s41598-020-73542-x	rejected	passing-mention: Cave hyena collagen sequences from PEAKS DB/SPIDER against a custom collagen database; de novo only as a threshold.	PRIDE search 2026-10-05
+10.1038/s41598-021-85756-8	rejected	passing-mention: ZooMS species identification; PEAKS de novo/DB/SPIDER run but no de novo-derived findings reported.	PRIDE search 2026-10-05
+10.1038/s41598-022-22545-x	rejected	passing-mention: TurboID proximity labelling in Sordaria; the protocol match is only a cited reference title, MaxQuant database search.	PRIDE search 2026-10-05
+10.1038/s41598-023-39250-y	rejected	passing-mention: Neolithic burial bioarchaeology; calculus proteomics with PEAKS is minor.	PRIDE search 2026-10-05
+10.1038/s41598-024-76224-0	rejected	passing-mention: Protein degradation kinetics; PEAKS used to check eGFP N-terminal modification.	PRIDE search 2026-10-05
+10.1038/s41598-025-08588-w	rejected	passing-mention: Cave lion bone identification by PEAKS search against a collagen database.	PRIDE search 2026-10-05
+10.1038/s41598-025-96877-9	rejected	passing-mention: Ewing sarcoma antigen LOXHD1; PEAKS de novo-then-DB immunopeptidomics routine.	PRIDE search 2026-10-05
+10.1038/s41598-026-59030-8	rejected	passing-mention: Fungal interaction proteomics; PEAKS de novo-assisted interpretation only.	PRIDE search 2026-10-05
+10.1038/s42003-019-0394-6	rejected	passing-mention: Collagen hydroxyproline mapping by MALDI and Mascot against bovine/human sequences; no de novo result.	PRIDE search 2026-10-05
+10.1038/s42003-020-01378-2	rejected	passing-mention: Bat liver proteomics by PEAKS; de novo only as a score threshold.	PRIDE search 2026-10-05
+10.1038/s42003-021-02366-w	rejected	passing-mention: Schistosome cercaria multiomics; PEAKS de novo then database search against WormBase, no de novo finding.	PRIDE search 2026-10-05
+10.1038/s42003-023-05180-8	rejected	passing-mention: Wolbachia mosquito physiology; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/s42003-025-07565-3	rejected	passing-mention: RNR DOPA modification; PEAKS de novo-assisted quantification only.	PRIDE search 2026-10-05
+10.1038/s42003-025-08007-w	rejected	passing-mention: Brine biosignature preservation; PEAKS de novo-assisted DB search of a sequenced organism.	PRIDE search 2026-10-05
+10.1038/s42004-023-00932-3	rejected	false-friend: Spec2Mol generates small-molecule structures from spectra, a different analyte.	citation sweep 2026-10-04
+10.1038/s42255-021-00385-9	rejected	false-friend: 'de novo' refers to de novo nucleotide synthesis; MaxQuant proteomics.	PRIDE search 2026-10-05
+10.1038/s44319-024-00070-4	rejected	passing-mention: lncRNA micropeptide immunology; PEAKS routine.	PRIDE search 2026-10-05
+10.1038/srep27401	rejected	passing-mention: RNA Pol II interactome; de novo appears only as a cited methods reference.	PRIDE search 2026-10-05
+10.1039/b503916a	held	Education article by the Chen group on stable isotope labeling (their amino acid-coded mass tagging) to aid identification and de novo sequencing.	citation sweep 2026-10-04
+10.1039/c3mb70177h	rejected	passing-mention: FFPE TMT proteomics study; no sign de novo produced results.	citation sweep 2026-10-04
+10.1039/c5np00050e	held	Review of peptidic natural product identification including de novo sequencing of cyclic and nonribosomal peptides by spectral networks.	citation sweep 2026-10-04
+10.1039/d1ay00153a	rejected	passing-mention: Review of MS-based protein phylogenetics; de novo sequencing is one of three approaches and is used only as an input to alignment.	citation sweep 2026-10-04
+10.1039/d1cb00095k	rejected	passing-mention: Histone methyltransferase inhibitor screen; PEAKS routine.	PRIDE search 2026-10-05
+10.1039/d4mo00170b	rejected	passing-mention: iTRAQ proteomics/metabolomics of a bacterium; PEAKS Q only.	PRIDE search 2026-10-05
+10.1042/bcj20220474	rejected	passing-mention: Pseudokinase PSKH2 biology; PEAKS PTM search routine.	PRIDE search 2026-10-05
+10.1042/bcj20250372	rejected	false-friend: Cryo-EM and cross-linking of biotin carboxylase; 'de novo' refers to fatty acid synthesis and PEAKS routine.	PRIDE search 2026-10-05
+10.1073/pnas.1715182115	rejected	false-friend: 'de novo' refers to de novo perfused microvessels; PEAKS database search.	PRIDE search 2026-10-05
+10.1073/pnas.2109326119	rejected	passing-mention: Eggshell protein sequences were reconstructed as consensus of PEAKS DB/SPIDER hits against reference sequences; de novo is only a score threshold in the protocol.	PRIDE search 2026-10-05
+10.1073/pnas.2114420119	rejected	passing-mention: Nectar pigment biochemistry; PEAKS only identified nectar enzymes by database search.	PRIDE search 2026-10-05
+10.1073/pnas.2119899119	rejected	passing-mention: Drosophila sperm proteome; PEAKS standard pipeline.	PRIDE search 2026-10-05
+10.1073/pnas.2218823120	rejected	passing-mention: Plasma membrane proteomics with PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.1074/mcp.m111.014167	rejected	database-search-only: BICEPS is an error-tolerant database search against a related organism's proteome; de novo is mentioned only as the alternative it improves on.	citation sweep 2026-10-04
+10.1074/mcp.m113.035873	rejected	passing-mention: Phytophthora secretome by database search; PEAKS de novo was part of the pipeline only.	PRIDE search 2026-10-05
+10.1074/mcp.m114.037697	rejected	passing-mention: Senescence proteomics; PEAKS de novo + DB search against UniProt as standard pipeline.	PRIDE search 2026-10-05
+10.1074/mcp.m114.039560	rejected	false-friend: HS-SEQ is de novo sequencing of heparan sulfate saccharides, a different analyte.	citation sweep 2026-10-04
+10.1074/mcp.o112.025940	rejected	false-friend: SweetSEQer filters and annotates glycoconjugate spectra and infers glycan graphs, a different analyte.	citation sweep 2026-10-04
+10.1074/mcp.ra117.000154	rejected	passing-mention: Glioblastoma hypoxia proteome; de novo-assisted database search only.	PRIDE search 2026-10-05
+10.1074/mcp.ra119.001797	rejected	passing-mention: Antimalarial mode-of-action multiomics; de novo-assisted PEAKS DB search routine.	PRIDE search 2026-10-05
+10.1074/mcp.ra120.002227	rejected	passing-mention: Saliva peptidomics in oral cancer; PEAKS de novo-assisted database search was routine.	PRIDE search 2026-10-05
+10.1074/mcp.t600050-mcp200	rejected	database-search-only: Paragon database search engine.	citation sweep 2026-10-04
+10.1080/07391102.2023.2232045	held	In silico docking of peptides from a Salvia hispanica protein fraction that the title calls de novo peptides, implying they were sequenced de novo, though identification may come from earlier work.	citation sweep 2026-10-04
+10.1080/08927014.2022.2049256	rejected	passing-mention: Pearl oyster byssus proteotranscriptomics; proteins identified against the transcriptome, de novo only as the PEAKS pipeline step.	PRIDE search 2026-10-05
+10.1080/10739149.2015.1004080	held	The primary sequence of bacitracin A in a pharmaceutical bacitracin zinc sample was analyzed by MALDI-TOF/TOF de novo interpretation, though the sequence was already known.	citation sweep 2026-10-04
+10.1080/14789450.2021.2020654	rejected	passing-mention: Review of deep learning for DIA analysis broadly; de novo sequencing is one of several sub-topics.	citation sweep 2026-10-04
+10.1080/14789450.2024.2394190	rejected	passing-mention: Review of DIA metaproteomics; de novo appears only as a future direction.	citation sweep 2026-10-04
+10.1080/2162402x.2024.2407532	rejected	passing-mention: Oncolytic adenovirus immunopeptidomics; standard PEAKS pipeline.	PRIDE search 2026-10-05
+10.1083/jcb.202202011	rejected	passing-mention: CD8 T cell biology; Novor run inside a search pipeline only.	PRIDE search 2026-10-05
+10.1084/jem.20202530	rejected	passing-mention: Blood leukocyte MHC-II peptidome; PEAKS de novo plus database search routine, peptides identified against databases.	PRIDE search 2026-10-05
+10.1089/cmb.2004.11.1110	rejected	false-friend: DNA de novo sequencing by base-specific cleavage and MS, a different analyte.	citation sweep 2026-10-04
+10.1093/bib/bbae338	rejected	false-friend: Survey of generative AI for de novo drug and protein design.	citation sweep 2026-10-04
+10.1093/bib/bbw115	held	Framework visualising agreement between database search, spectral library and PepNovo de novo results.	citation sweep 2026-10-04
+10.1093/bioinformatics/bth947	rejected	passing-mention: Spectrum quality filter tuned to SEQUEST; de novo appears only as a downstream option for filtered spectra.	citation sweep 2026-10-04
+10.1093/bioinformatics/btn270	rejected	false-friend: De novo molecular formula identification of metabolites from MS/MS, a different analyte.	citation sweep 2026-10-04
+10.1093/bioinformatics/btt298	rejected	database-search-only: PIUS genome-wide database search that explicitly avoids relying on de novo reconstructions.	citation sweep 2026-10-04
+10.1093/bioinformatics/bty770	rejected	other: General proteomics data viewer that can display de novo results among many formats; not a de novo method.	citation sweep 2026-10-04
+10.1093/gbe/evaf007	rejected	passing-mention: Simulation of enamel protein phylogenetics; de novo only a setting.	PRIDE search 2026-10-05
+10.1093/gigascience/giaf030	rejected	passing-mention: Genome paper; venom proteomics de novo sequencing only supports toxin gene annotation, not a reported result.	PRIDE search 2026-10-05
+10.1093/gigascience/giz152	rejected	passing-mention: Giant squid genome; proteome used to support annotation, PEAKS de novo listed in processing but no de novo-derived result reported.	PRIDE search 2026-10-05
+10.1093/molbev/msaf202	rejected	passing-mention: Sediment metaproteomics identified with pFind; Novor only used to corroborate the results.	PRIDE search 2026-10-05
+10.1093/nar/gkab461	rejected	passing-mention: tRNA inosine study; de novo/homology search for mistranslation is a side check with no de novo finding in the abstract.	PRIDE search 2026-10-05
+10.1093/nar/gkac1162	rejected	passing-mention: Rhs toxin ADP-ribosylation site mapping; de novo data searched against database.	PRIDE search 2026-10-05
+10.1093/nar/gkz1157	rejected	false-friend: 'de novo' refers to de novo heterochromatin establishment; Mascot proteomics.	PRIDE search 2026-10-05
+10.1093/ndt/gfn058	rejected	passing-mention: Editorial-style review of urinary exosomes; no de novo sequencing.	citation sweep 2026-10-04
+10.1093/procel/pwaf114	rejected	passing-mention: Chromatin remodeling biology; PEAKS used for routine identification.	PRIDE search 2026-10-05
+10.1098/rsif.2019.0775	rejected	passing-mention: Ancient brain proteins matched to known sequences by database search; de novo only in the PEAKS pipeline.	PRIDE search 2026-10-05
+10.1098/rsos.260385	held	Archaeological ceramic residue proteins were identified with Orthrus, whose de novo step ran Casanovo's non-enzymatic model, so de novo sequencing produced the protein evidence for food sources.	PRIDE search 2026-10-05
+10.1101/2020.11.11.378836	rejected	passing-mention: Preprint of the UC metaproteomics study; de novo only estimates the dark peptidome size.	citation sweep 2026-10-04
+10.1101/2022.01.17.476533	rejected	passing-mention: Yeast sample preparation comparison using database and unrestricted modification search.	citation sweep 2026-10-04
+10.1101/2023.06.13.544793	rejected	false-friend: Preprint of CandyCrunch, glycan structure prediction; different analyte.	citation sweep 2026-10-04
+10.1101/2024.03.22.586291	rejected	false-friend: De novo chromatin assembly.	PRIDE search 2026-10-05
+10.1101/2024.10.02.616386	rejected	passing-mention: Mtb MHC-II immunopeptidomics; de novo only used to rule out alternative sequences for database hits.	PRIDE search 2026-10-05
+10.1101/236844	rejected	false-friend: Preprint of ProteomeGenerator; proteogenomic database construction from de novo transcriptome assembly.	citation sweep 2026-10-04
+10.1101/397257	held	MSCypher integrates database searching with peptide de novo sequencing to surface variants and high-intensity unassigned spectra.	citation sweep 2026-10-04
+10.1101/468181	rejected	false-friend: Proteogenomic annotation where 'de novo' refers to gene prediction; peptides were identified by database search.	citation sweep 2026-10-04
+10.1101/488015	rejected	passing-mention: Preprint of Quandenser; de novo search is an optional downstream step.	citation sweep 2026-10-04
+10.1109/bibe.2017.00-27	held	Proposes a fragmentation-intensity model integrated into both database and de novo peptide identification.	citation sweep 2026-10-04
+10.1109/csb.2004.130	rejected	other: Duplicate record of the CSB 2004 PPM-chain paper (W4234238712) under a second DOI.	citation sweep 2026-10-04
+10.1109/iccabs.2012.6182634	held	Conference version of the orthogonal-polynomial filtering paper, evaluated with a de novo method.	citation sweep 2026-10-04
+10.1109/isaect.2018.8618795	rejected	other: Review of database search and de novo strategies for FDR control; de novo is one of two topics, not the subject.	citation sweep 2026-10-04
+10.1109/saahpc.2012.9	rejected	other: FPGA acceleration of an isotope pattern calculator; hardware for a subroutine, not a de novo method.	citation sweep 2026-10-04
+10.1109/tcbb.2005.43	held	FFP predicts fragment-ion molecular formulas from isotope patterns, stated as a way to improve de novo reliability.	citation sweep 2026-10-04
+10.1109/tcbb.2010.129	rejected	false-friend: Glycan structure determination, a different analyte.	citation sweep 2026-10-04
+10.1109/tcbb.2015.2430317	rejected	false-friend: De novo sequencing of glycans; different analyte.	citation sweep 2026-10-04
+10.1111/acel.13979	rejected	passing-mention: Cartilage redox PTMs; standard PEAKS DB pipeline.	PRIDE search 2026-10-05
+10.1111/all.70025	rejected	passing-mention: Penicillin-modified HLA ligands found by PEAKS de novo-assisted DB/PTM search; no de novo-derived sequences reported as findings.	PRIDE search 2026-10-05
+10.1111/imm.13471	rejected	passing-mention: EV HLA class I ligandome identified with PEAKS Studio X; no de novo-derived findings.	PRIDE search 2026-10-05
+10.1111/jnc.15654	rejected	passing-mention: Cestode neuropeptidome validating predicted precursor genes via PEAKS DB; no de novo-only discoveries stated.	PRIDE search 2026-10-05
+10.1111/pbi.14581	rejected	passing-mention: Chlamydomonas lipid engineering; 'de novo fatty acid synthesis' and PEAKS routine.	PRIDE search 2026-10-05
+10.1111/plb.70029	rejected	passing-mention: Carnivorous plant digestive enzymes; PEAKS de novo/DB/SPIDER pipeline only.	PRIDE search 2026-10-05
+10.1126/sciadv.aaz2590	rejected	passing-mention: SirT7 ADP-ribosylation; PEAKS default de novo before database search.	PRIDE search 2026-10-05
+10.1126/sciadv.adn2831	rejected	passing-mention: Mesenchymal tissue atlas; PEAKS routine.	PRIDE search 2026-10-05
+10.1126/science.adf1354	rejected	passing-mention: Abiotic peptide encoding of small-molecule libraries; de novo in the abstract means de novo ligand discovery, and any MS decoding is not described there.	citation sweep 2026-10-04
+10.1126/sciimmunol.abl3795	rejected	passing-mention: MHCII immunopeptidome identified by PEAKS DB search against Swiss-Prot; no de novo-derived peptides reported.	PRIDE search 2026-10-05
+10.1126/scisignal.abf6685	rejected	passing-mention: HIF PTM mapping; PEAKS PTM run with a de novo score threshold only.	PRIDE search 2026-10-05
+10.1128/aem.00124-07	rejected	passing-mention: The 'de novo' in the abstract is protein synthesis; no sign de novo sequencing produced identifications.	citation sweep 2026-10-04
+10.1128/aem.02498-25	rejected	passing-mention: Yeast optogenetics proteome; PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.1128/msystems.00245-23	held	Database search plus database-independent de novo sequencing identified smORF-encoded peptides in Streptomyces.	citation sweep 2026-10-04
+10.1128/msystems.00310-21	rejected	passing-mention: Review of immunopeptidomics in infectious disease; de novo not the subject.	PRIDE search 2026-10-05
+10.1140/epje/s10189-022-00246-7	rejected	non-MS: Theoretical tRNA-based binary amino-acid identification with Edman degradation; non-MS.	citation sweep 2026-10-04
+10.1142/9781860947995_0032	rejected	false-friend: Glycan structure de novo sequencing, a different analyte.	citation sweep 2026-10-04
+10.1142/s0219720007002643	rejected	not-de-novo-sequencing: Fragmentation intensity modelling for theoretical spectra; de novo is only named as a possible beneficiary.	citation sweep 2026-10-04
+10.1142/s0219720008003291	rejected	false-friend: Glycan de novo sequencing, a different analyte.	citation sweep 2026-10-04
+10.1145/3314074.3314078	rejected	passing-mention: Short conference review of database search and de novo identification strategies focused on FDR; de novo is not the subject and nothing new is taught about it.	citation sweep 2026-10-04
+10.1145/3809986.3810018	held	DBond-AF predicts peptide bond cleavage for mirror-image peptide data storage, to select easy-to-sequence peptides and so improve de novo sequencing quality.	citation sweep 2026-10-04
+10.1152/ajprenal.00322.2021	rejected	passing-mention: Uromodulin C-terminus mapped by PEAKS DB/PTM/SPIDER; no de novo-derived finding claimed.	PRIDE search 2026-10-05
+10.1158/2159-8290.cd-24-0168	rejected	passing-mention: TCR therapy paper; PEAKS used for routine immunopeptidome identification.	PRIDE search 2026-10-05
+10.1158/2326-6066.c.6626538	rejected	not-a-paper: Figshare data record accompanying the Cancer Immunology Research article.	citation sweep 2026-10-04
+10.1158/2326-6066.c.6626538.v1	rejected	not-a-paper: Figshare data record accompanying the Cancer Immunology Research article.	citation sweep 2026-10-04
+10.1158/2326-6066.c.6626538.v2	rejected	not-a-paper: Figshare data record (version 2) accompanying the Cancer Immunology Research article.	citation sweep 2026-10-04
+10.1158/2767-9764.crc-23-0327	rejected	passing-mention: MUC16 nanopore long-read sequencing with proteomic validation by PEAKS DB search.	PRIDE search 2026-10-05
+10.1161/circresaha.120.316966	rejected	false-friend: 'de novo' refers to a de novo genetic variant; Mascot/MaxQuant proteomics.	PRIDE search 2026-10-05
+10.1172/jci182555	rejected	passing-mention: CSF TMT proteomics; 'de novo sequenced and assigned protein ID' is the standard PEAKS DB pipeline.	PRIDE search 2026-10-05
+10.1172/jci190851	rejected	passing-mention: Colitis macrophage biology; PEAKS used as ordinary search engine.	PRIDE search 2026-10-05
+10.1177/14690667211066725	rejected	database-search-only: Bayesian peptide detection evaluated by complete search of a synthetic KRAS library; a reference-guided search framework, not de novo sequencing.	citation sweep 2026-10-04
+10.1182/blood-2018-06-845156	rejected	passing-mention: B-cell lymphoma immunoglobulin neoantigens found against personalised proteome databases; de novo only supported identification.	PRIDE search 2026-10-05
+10.1182/blood.2024027335	rejected	passing-mention: HSC biology; PEAKS routine database search.	PRIDE search 2026-10-05
+10.1186/1471-2105-12-432	rejected	not-de-novo-sequencing: Parallel enumeration of all amino acid compositions for mass distributions; de novo sequencing is one of several listed uses and is not addressed.	citation sweep 2026-10-04
+10.1186/1471-2105-8-352	rejected	not-de-novo-sequencing: Spectrum quality assessment by self-convolution, generic to any identification method; de novo only motivates it.	citation sweep 2026-10-04
+10.1186/1471-2105-9-s6-s13	rejected	not-de-novo-sequencing: Spectral quality assessment filter for any downstream interpretation, not a de novo method.	citation sweep 2026-10-04
+10.1186/1471-213x-7-94	held	Bullfrog tadpole tail fin proteome; iTRAQ protein identification relied on de novo sequencing plus homology search for a species without a genome.	citation sweep 2026-10-04
+10.1186/1471-2164-12-268	rejected	false-friend: 'De novo' refers to cysteine and methionine biosynthesis; no de novo peptide sequencing result.	citation sweep 2026-10-04
+10.1186/1471-2164-14-s7-s2	held	Noise-filtering method evaluated by de novo sequencing accuracy using the authors' de novo algorithm.	citation sweep 2026-10-04
+10.1186/1477-5956-9-s1-s17	rejected	passing-mention: Review of graph theory in protein structure identification; de novo spectrum graphs are one minor section.	citation sweep 2026-10-04
+10.1186/1745-6150-2-26	rejected	database-search-only: Statistical calibration of E-values demonstrated only on database search engines; de novo is mentioned as a possible use.	citation sweep 2026-10-04
+10.1186/1746-1448-4-1	rejected	passing-mention: Review of cyanobacterial salt-stress proteomics.	citation sweep 2026-10-04
+10.1186/1758-2946-5-12	rejected	not-de-novo-sequencing: Review of small-molecule identification from MS; peptide de novo sequencing is only touched on.	citation sweep 2026-10-04
+10.1186/1759-4499-3-3	rejected	passing-mention: A peer-to-peer workflow platform for protein identification experiments; de novo tools are not the subject.	citation sweep 2026-10-04
+10.1186/s12859-017-1514-2	rejected	not-de-novo-sequencing: DISMS2 computes proteome distances directly from spectra without identification; de novo is only background.	PRIDE search 2026-10-05
+10.1186/s12860-020-00288-9	rejected	passing-mention: Chondrocyte surfaceome by PEAKS 8 de novo + DB as standard pipeline.	PRIDE search 2026-10-05
+10.1186/s12870-016-0751-2	rejected	passing-mention: Red clover 2D-DIGE proteomics; de novo used only for occasional spot confirmation.	PRIDE search 2026-10-05
+10.1186/s12870-022-03510-2	rejected	passing-mention: Rice lses1 transcriptome/proteome integration; PEAKS ran de novo plus database search routinely.	PRIDE search 2026-10-05
+10.1186/s12906-024-04495-1	rejected	passing-mention: Cuscuta proteins identified by database search; no de novo result.	PRIDE search 2026-10-05
+10.1186/s12934-025-02824-8	rejected	passing-mention: Chlamydomonas lipid engineering; PEAKS routine.	PRIDE search 2026-10-05
+10.1186/s12953-018-0139-3	rejected	false-friend: 'de novo' refers to transcriptome assembly; shell proteome identified with MaxQuant against the assembly.	PRIDE search 2026-10-05
+10.1186/s13071-019-3708-0	rejected	passing-mention: Snail excretory-secretory proteins; PEAKS de novo plus database search routine.	PRIDE search 2026-10-05
+10.1186/s40168-025-02066-1	held	Fungal taxonomy in the female genital tract was obtained by searching a MetaNovo database built from de novo sequence tags (DeNovoGUI, DirecTag) mapped to UniProtKB.	PRIDE search 2026-10-05
+10.1186/s40364-025-00758-2	rejected	false-friend: AI in drug discovery review; 'de novo' refers to drug design.	citation sweep 2026-10-04
+10.1201/b11768-7	rejected	passing-mention: Book chapter on food proteins as foaming agents.	citation sweep 2026-10-04
+10.1371/journal.pbio.3001408	rejected	passing-mention: Myristoylation study; PEAKS default de novo before database search.	PRIDE search 2026-10-05
+10.1371/journal.pntd.0012057	rejected	passing-mention: Naja mossambica venom proteomics with Mascot; Novor only via SearchGUI/PeptideShaker, no de novo-derived findings.	PRIDE search 2026-10-05
+10.1371/journal.pone.0017754	rejected	passing-mention: De novo interpretation was only used to validate single-peptide database hits in a rat tissue proteome.	citation sweep 2026-10-04
+10.1371/journal.pone.0027173	rejected	passing-mention: Metaproteomics benchmark of database strategies with matched metagenomes; de novo sequencing is a minor side comparison.	citation sweep 2026-10-04
+10.1371/journal.pone.0126243	held	Compared de novo sequencing with SEQUEST and universal databases to choose the optimal workflow for the poorly annotated rhesus monkey, then profiled 12 organs.	citation sweep 2026-10-04
+10.1371/journal.pone.0182395	rejected	passing-mention: Cryptosporidium glycopeptide and lipid PTMs via PEAKS de novo + DB as standard pipeline.	PRIDE search 2026-10-05
+10.1371/journal.pone.0216679	rejected	passing-mention: Camel hypothalamic neuropeptides identified by PEAKS database search against the dromedary database.	PRIDE search 2026-10-05
+10.1371/journal.pone.0219547	rejected	passing-mention: AML immunopeptidome mutated NPM1 ligands found by database search; de novo only supported high-confidence identification.	PRIDE search 2026-10-05
+10.1371/journal.pone.0253741	rejected	false-friend: 'de novo' refers to Trinity transcriptome assembly; Mascot/Proteome Discoverer proteomics.	PRIDE search 2026-10-05
+10.1371/journal.pone.0288075	rejected	passing-mention: Neolithic necklace reconstruction; shell proteomics against transcriptomes, no de novo-derived result in abstract.	PRIDE search 2026-10-05
+10.1371/journal.pone.0318572	rejected	passing-mention: Oesophageal adenocarcinoma proteomics; PEAKS DB routine.	PRIDE search 2026-10-05
+10.1371/journal.ppat.1009211	rejected	passing-mention: Toxoplasma Complex III proteomics; PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.15252/embj.2019103812	rejected	false-friend: 'de novo' refers to de novo lipid synthesis; PEAKS database search.	PRIDE search 2026-10-05
+10.15252/embj.2022110777	rejected	passing-mention: Membrane proteomics with PEAKS de novo+DB pipeline only.	PRIDE search 2026-10-05
+10.15252/emmm.201910880	rejected	passing-mention: TFCP2L1 phosphorylation biology; Novor and DirecTag in a SearchGUI-style search, no de novo findings.	PRIDE search 2026-10-05
+10.2116/analsci.19.3	rejected	passing-mention: 2003 overview article on biomedical and biological MS; no evidence de novo sequencing is the subject.	citation sweep 2026-10-04
+10.21203/rs.3.rs-10484307/v1	rejected	false-friend: Small-molecule structure generation from MS/MS (SiTGen); not peptide sequencing.	citation sweep 2026-10-04
+10.21203/rs.3.rs-1662223/v1	rejected	false-friend: Metabolomics annotation review; 'de novo' refers to small-molecule structure.	citation sweep 2026-10-04
+10.2174/0109298665436241260327111926	rejected	passing-mention: Review of peptidomics in microbiome research; AI-assisted de novo sequencing is mentioned in passing.	citation sweep 2026-10-04
+10.2174/157489307779314285	rejected	other: General review of MS data analysis; de novo is one approach among many.	citation sweep 2026-10-04
+10.2210/pdb6ilf/pdb	rejected	not-a-paper: Protein Data Bank structure entry, a data deposit.	citation sweep 2026-10-04
+10.26434/chemrxiv-2021-6rdh6	rejected	false-friend: Spec2Mol preprint, small-molecule structure generation.	citation sweep 2026-10-04
+10.3103/s0027131415050028	rejected	other: Brief review of popular database search and de novo software; de novo is not the subject.	citation sweep 2026-10-04
+10.3233/jad-190652	rejected	passing-mention: Amyloid plaque PTM profiling by PEAKS DB/PTM/SPIDER; findings are database-based.	PRIDE search 2026-10-05
+10.33774/chemrxiv-2021-6rdh6	rejected	false-friend: Duplicate Spec2Mol preprint record, small-molecule structure generation.	citation sweep 2026-10-04
+10.3389/fbioe.2025.1578467	rejected	passing-mention: Decellularized brain matrisome proteomics; PEAKS DB routine.	PRIDE search 2026-10-05
+10.3389/fcell.2020.00676	rejected	passing-mention: Caerin peptide effects on HeLa cells; TMT proteomics with PEAKS routine.	PRIDE search 2026-10-05
+10.3389/fcell.2024.1504098	rejected	passing-mention: Top-down 2DE proteoform analysis of albumin; de novo peptides only fed a PTM search.	PRIDE search 2026-10-05
+10.3389/fcimb.2022.858979	rejected	passing-mention: Mannose-binding proteins in Acanthamoeba and macrophages; PEAKS de novo output passed through PepExplorer against the same database only complemented identifications, no de novo-derived result reported.	PRIDE search 2026-10-05
+10.3389/fendo.2018.00816	rejected	passing-mention: Pig OBP phosphorylation and O-GlcNAc mapping by database search; de novo only within PEAKS.	PRIDE search 2026-10-05
+10.3389/fendo.2023.1020368	rejected	passing-mention: Oyster TCAP physiology; PEAKS routine.	PRIDE search 2026-10-05
+10.3389/fevo.2017.00142	rejected	passing-mention: Odorant-binding protein PTMs from PEAKS-selected spectra analysed manually; abstract gives no de novo-derived result.	PRIDE search 2026-10-05
+10.3389/fimmu.2021.662443	rejected	passing-mention: IFN-gamma neoantigen immunopeptidomics; de novo used only to support database identifications.	PRIDE search 2026-10-05
+10.3389/fimmu.2022.1032716	rejected	database-search-only: HBV proteogenomic patient-specific databases with PEAKS de novo-assisted DB search.	PRIDE search 2026-10-05
+10.3389/fimmu.2022.954282	rejected	passing-mention: Snail-conditioned water proteomics for miracidia attractants; PEAKS de novo was only part of standard database identification.	PRIDE search 2026-10-05
+10.3389/fimmu.2023.1258518	rejected	false-friend: De novo sequencing here refers to N-glycan structures (PGC-LC CID), a different analyte.	PRIDE search 2026-10-05
+10.3389/fmicb.2022.1075274	rejected	passing-mention: Halobacterium proteomics; PEAKS routine.	PRIDE search 2026-10-05
+10.3389/fmolb.2021.645856	rejected	passing-mention: Curcumin analog proteomics in glioblastoma cells; PEAKS de novo plus database search routine.	PRIDE search 2026-10-05
+10.3389/fmolb.2022.1051471	rejected	passing-mention: COVID-19 plasma protease activity profiling; PEAKS routine.	PRIDE search 2026-10-05
+10.3389/fmolb.2025.1593708	rejected	false-friend: IgG N-glycan analysis by xCGE-LIF; glycan, not peptide, sequencing.	PRIDE search 2026-10-05
+10.3389/fnagi.2020.587989	rejected	passing-mention: Extracellular vesicle proteomics with PEAKS database search.	PRIDE search 2026-10-05
+10.3389/fphar.2020.01075	rejected	passing-mention: Spider venom toxins identified by PEAKS search of de novo peptides against the venom-gland transcriptome; sequences come from transcript matching rather than de novo results.	PRIDE search 2026-10-05
+10.3389/fphar.2025.1678606	rejected	passing-mention: Scorpion venom fractionation and SARS-CoV-2 inhibitor screening; de novo was used only for 'certain peptides' with no reported de novo findings.	PRIDE search 2026-10-05
+10.3389/fpls.2022.974881	rejected	passing-mention: Wheat ATI quantitation by several tools including PEAKS.	PRIDE search 2026-10-05
+10.3390/antiox10030369	rejected	passing-mention: Carbonylation workflow with PEAKS DB/PTM; de novo only the pipeline step.	PRIDE search 2026-10-05
+10.3390/antiox9121218	rejected	passing-mention: VDAC1 PTM mapping; PEAKS de novo was used alongside Mascot to increase database identification coverage.	PRIDE search 2026-10-05
+10.3390/app11083393	rejected	passing-mention: Review of forensic proteomics for human samples; de novo is not the subject.	citation sweep 2026-10-04
+10.3390/biology12020167	rejected	false-friend: Seaweed proteome against genome/de novo transcriptome databases.	PRIDE search 2026-10-05
+10.3390/biom13030451	rejected	passing-mention: Wine haze protein peptidomics by database search.	PRIDE search 2026-10-05
+10.3390/cells15060525	rejected	passing-mention: Transcriptome and proteome profiling of e-cigarette exposure; PEAKS used for ordinary DB/PTM search.	PRIDE search 2026-10-05
+10.3390/foods11142155	rejected	passing-mention: Oilseed marker peptides in meat by database search and MRM.	PRIDE search 2026-10-05
+10.3390/foods12132524	rejected	database-search-only: Effect of database search parameters on gelatine peptide identification; de novo identifications explicitly excluded.	PRIDE search 2026-10-05
+10.3390/foods12152974	rejected	passing-mention: Kefir peptidomics identified via PEAKS against Ovis aries databases; no de novo-only peptides reported.	PRIDE search 2026-10-05
+10.3390/foods13060887	rejected	passing-mention: Chickpea SDS-PAGE characterization by database searching.	PRIDE search 2026-10-05
+10.3390/ijms231710105	rejected	passing-mention: Cottonseed protein isolate proteomics; PEAKS de novo plus database matching was routine identification.	PRIDE search 2026-10-05
+10.3390/ijms232315248	rejected	passing-mention: Bacterial exoproteome searched against six-frame genome databases; PEAKS de novo peptides were only BLASTed as a side step, with no de novo-derived finding reported.	PRIDE search 2026-10-05
+10.3390/ijms232415853	rejected	passing-mention: VDAC3 PTMs by database search.	PRIDE search 2026-10-05
+10.3390/ijms25168799	rejected	passing-mention: Salivary gland tumour peptidome biomarkers via PEAKS; abstract gives no de novo-derived findings.	PRIDE search 2026-10-05
+10.3390/ijms25179564	rejected	passing-mention: Immunopeptidomics workflow evaluation score; PEAKS de novo ALC filter is routine.	PRIDE search 2026-10-05
+10.3390/ijms262110514	rejected	passing-mention: Sacha inchi husk extract on cancer cells; PEAKS used as routine search.	PRIDE search 2026-10-05
+10.3390/ijms27010234	rejected	passing-mention: Sacha inchi extract on colon cancer cells; PEAKS used as routine search.	PRIDE search 2026-10-05
+10.3390/ijms27052314	rejected	passing-mention: EV biomarker proteomics; PEAKS DB with de novo assist, no de novo-derived findings.	PRIDE search 2026-10-05
+10.3390/molecules26092596	rejected	passing-mention: Old vs modern wheat label-free quantification; PEAKS de novo named but identification was database search.	PRIDE search 2026-10-05
+10.3390/molecules27010047	rejected	false-friend: De novo here is transcriptome assembly; venom proteins were characterised by transcriptomics and bioassay, not de novo peptide sequencing.	citation sweep 2026-10-04
+10.3390/molecules28020648	rejected	passing-mention: Tear N-glycoprotein enrichment; PEAKS de novo-assisted database search.	PRIDE search 2026-10-05
+10.3390/nu13113718	held	Cecal metaproteomics of piglets fed human milk or formula, where PEAKS de novo peptides above 80% ALC were submitted to Unipept for the taxonomic profile of the gut community.	PRIDE search 2026-10-05
+10.3390/nu14245377	rejected	passing-mention: Curated wheat protein database.	PRIDE search 2026-10-05
+10.3390/proteomes14010013	rejected	passing-mention: DMSO mobile-phase additive for immunopeptidomics evaluated by identification counts; de novo is just the PEAKS pipeline step.	PRIDE search 2026-10-05
+10.3390/proteomes9020024	rejected	passing-mention: L-DOPA incorporation proof of concept; PEAKS de novo was only part of the PTM database search.	PRIDE search 2026-10-05
+10.3390/toxins12110669	held	Proteomics of Naja naja and Naja oxiana venoms in which spectra unmatched by the king cobra database search were de novo sequenced with Novor via DeNovoGUI and BLASTed against Serpentes to extend the identifications.	PRIDE search 2026-10-05
+10.3390/toxins13110764	rejected	passing-mention: Plasma degradome of a snake venom metalloproteinase; PEAKS de novo plus database search identified cleavage products by database matching.	PRIDE search 2026-10-05
+10.36227/techrxiv.19318145	rejected	non-MS: tRNA-based binary amino-acid detection combined with Edman degradation; not mass-spectrometry de novo sequencing.	citation sweep 2026-10-04
+10.36227/techrxiv.19318145.v2	rejected	non-MS: tRNA-based binary amino-acid detection combined with Edman degradation; not mass-spectrometry de novo sequencing.	citation sweep 2026-10-04
+10.36227/techrxiv.19318145.v3	rejected	non-MS: tRNA-based binary amino-acid detection combined with Edman degradation; not mass-spectrometry de novo sequencing.	citation sweep 2026-10-04
+10.36227/techrxiv.19318145.v4	rejected	non-MS: tRNA-based binary amino-acid detection combined with Edman degradation; not mass-spectrometry de novo sequencing.	citation sweep 2026-10-04
+10.4049/jimmunol.2001409	rejected	passing-mention: BoLA-DR immunopeptidomics by PEAKS de novo-assisted database search; ordinary identification.	PRIDE search 2026-10-05
+10.4155/bio-2023-0102	rejected	passing-mention: Broad review of computational peptidomics; de novo is one listed tool category.	citation sweep 2026-10-04
+10.4172/1948-5948.1000055	held	Claims a de novo sequencing strategy to identify the purified L-asparaginase from an unsequenced Streptomyces.	citation sweep 2026-10-04
+10.4310/sii.2012.v5.n1.a3	rejected	other: Theoretical Bayesian framework for peptide and protein identification in general, with no de novo method implemented or evaluated.	citation sweep 2026-10-04
+10.47328/ufvbbt.2021.211	rejected	passing-mention: Wound-healing study of tilapia skin hydrolysate; no sign de novo sequencing produced a result.	citation sweep 2026-10-04
+10.47328/ufvbbt.2024.217	rejected	passing-mention: Serum protein profiling of green turtles by SDS-PAGE; no sign de novo produced results.	citation sweep 2026-10-04
+10.5355/jast.2010.78	rejected	passing-mention: Membrane proteome DDA/MSE comparison; no evidence de novo produced results (abstract unavailable).	citation sweep 2026-10-04
+10.6019/pxd067661	rejected	not-a-paper: ProteomeXchange dataset record, not a paper.	PRIDE search 2026-10-05
+10.6019/pxd070911	rejected	not-a-paper: ProteomeXchange dataset record, not a paper.	PRIDE search 2026-10-05
+10.6084/m9.figshare.1039379.v1	rejected	passing-mention: Figshare repost of a genome-annotation-by-proteomics paper; de novo appears as gene discovery and spectral interpretation is not shown to be de novo.	citation sweep 2026-10-04
+10.64898/2025.12.19.695360	rejected	false-friend: De novo here refers to orphan genes emerging de novo from non-coding DNA, not peptide sequencing.	citation sweep 2026-10-04
+10.70675/5c243ff4zeefcz458eza9e0zd09339d08188	held	Hornet venom thesis in which two elastase-interacting venom peptides were partially sequenced de novo.	citation sweep 2026-10-04
+10.7554/elife.85560	rejected	passing-mention: HCMV US10 HLA-I ligandome used a PEAKS de novo/transcriptome pipeline only for identification; no de novo-specific findings reported.	PRIDE search 2026-10-05
+10.7554/elife.90525	rejected	passing-mention: Fission yeast heterochromatin; PEAKS routine.	PRIDE search 2026-10-05
+10.7554/elife.92536	rejected	passing-mention: Kinase redox regulation; PEAKS PTM search routine.	PRIDE search 2026-10-05
+10.7554/elife.97896	rejected	passing-mention: Fission yeast APC/C regulation; PEAKS routine.	PRIDE search 2026-10-05

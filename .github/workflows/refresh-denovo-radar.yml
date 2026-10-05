@@ -65,6 +65,7 @@ jobs:
           # --catalog marks what has been added, --watchlist drops what has been
           # rejected so the Space stops re-proposing it.
           python3 harvest.py --catalog ../denovo.db --watchlist ../WATCHLIST.md \
+            --decisions ../screening_decisions.tsv \
             ${{ inputs.since && format('--since {0}', inputs.since) || '' }} \
             | tee ../harvest.out
 

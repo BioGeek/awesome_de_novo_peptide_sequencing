@@ -2553,7 +2553,18 @@ must be the subject; for an application paper, *de novo* must have produced part
 of the result.
 
 Already-rejected papers do not come back: the script excludes every DOI in
-`WATCHLIST.md` as well as everything already in the catalog.
+`WATCHLIST.md` and in `screening_decisions.tsv`, as well as everything already
+in the catalog.
+
+**`screening_decisions.tsv` is the bulk screenings' rejection list**, one DOI
+per row, `rejected` or `held`, with the screener's reason and which screening
+it came from (the 2026-10-04 citation sweep, the 2026-10-05 PRIDE search).
+WATCHLIST.md argues about a paper in prose, which suits a dozen hand-made
+calls and not 499. Without the file both tools re-proposed every sweep
+rejection: `build_candidates.py` monthly, and the denovo-radar harvest, which
+takes it as `--decisions`. `held` rows are excluded too, since they already
+sit in a person's review queue; a held paper later added to the catalog is
+simply catalogued, and its row can go.
 
 ## Mining the DNPS-DR feed
 
