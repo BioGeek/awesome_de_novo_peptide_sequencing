@@ -2896,10 +2896,10 @@ better default and the repository is still what someone downloading wants.
 ### A family page needs two methods
 
 `build_pages.py` generates a page per architecture family, but only for the
-**33 of 52** families that hold two or more methods. The other **19** hold
+**33 of 50** families that hold two or more methods. The other **17** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **333** of the **352**
+already exists, on a permanent indexed URL. Those cover **335** of the **352**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.

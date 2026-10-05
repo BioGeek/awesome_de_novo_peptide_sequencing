@@ -290,7 +290,7 @@ ENTITY_QUERIES: dict[str, str] = {
     # a method.
     #
     # HAVING COUNT(*) >= 2 is the whole page policy, in SQL, on purpose.
-    # 19 of 52 families hold exactly one method, and a page for one of those
+    # 17 of 50 families hold exactly one method, and a page for one of those
     # would carry that method's papers, that method's authors and its dates:
     # a duplicate of a page that already exists. A family earns a page when it
     # has something to aggregate. The threshold is derived rather than curated,
