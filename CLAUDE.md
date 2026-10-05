@@ -3082,9 +3082,15 @@ Four classes of defect turned up, and each has its own remedy in `index.qmd`:
 **Data growth breaks a clean audit, so re-run it after a bulk import.** The
 radar backfill left five charts colliding with no chart code touched. The
 application-to-sequencer flow had passed 100 sequencers against a 1200 px cap,
-83 overlapping labels: it now keeps the 39 busiest and folds the rest into one
-"N more sequencers" node, last, unlinked, its ribbons at their true counts and
-its hover naming every member. The dataset network measures each label with a
+83 overlapping labels. Folding the tail into one "N more sequencers" node fixed
+the audit and hid the long tail the Cites view exists to show, so it was
+undone: every sequencer has its own row, heights stay proportional to traffic,
+and a node too thin for its label gets white space below it rather than
+height. Cites draws 106 sequencers in 1700 px, Uses 20 in 530 px, both with 0
+overlaps, measured in each view since the audit only sees the default. The
+"Either" signal is gone too: it put a curated "ran PEAKS" and a bare citation
+of the PEAKS paper into one ribbon of one width, and answered neither
+question. The dataset network measures each label with a
 canvas instead of 5.8 px per character, and keeps 2 px clear of every dot. The
 lifecycle bars needed 285 px of left margin, not 270. 41 charts, 0 collisions.
 

@@ -4844,11 +4844,15 @@ Which sequencing tools does each application community actually reach for? Two s
 - **Uses**: the paper has a curated `publication_algorithm` link to the tool — usually because the methods section names it explicitly. These are the links whose `role` is `uses`, plus the rare case of an application paper that also introduces a tool.
 - **Cites**: the paper's Crossref reference list contains a publication *describing* the tool — a weaker signal (the tool might just be mentioned as prior art). Rebuilt monthly by `build_citations.py`.
 
-Use the toggle to switch between them, or view the union of both. An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper satisfies the selected signal. Edge thickness is the paper count.
+Use the toggle to switch between them. They are kept apart on purpose: a union of the two would mix the strong signal with the weak one in a single ribbon, and say less than either. An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper satisfies the selected signal. Edge thickness is the paper count.
 
 ```{ojs}
 //| echo: false
-viewof sankey_signal = Inputs.radio(["Uses", "Cites", "Either"], { label: "Signal", value: "Either" })
+// No "Either": the union put a curated "this paper ran PEAKS" and a bare
+// citation of the PEAKS paper into one ribbon of one width, so the default
+// view answered neither question. Uses is the default because it is the
+// strong signal.
+viewof sankey_signal = Inputs.radio(["Uses", "Cites"], { label: "Signal", value: "Uses" })
 ```
 
 ```{ojs}
@@ -4880,13 +4884,12 @@ application_sankey = {
     if (app_alg) pub_subdomain.set(p.id, app_alg.subdomain)
   }
 
-  // Aggregate: (subdomain, sequencer) → number of downstream-app papers.
-  // TWO signals are unioned so a paper counts once per sequencer regardless
-  // of which surfaced the edge:
+  // Aggregate: (subdomain, sequencer) → number of downstream-app papers, from
+  // ONE of two signals, chosen by the radio:
   //   1. Direct publication_algorithm links (curator-asserted "uses tool X").
   //   2. Citation edges to papers describing tool X (via publication_citation).
-  // The seen_edges dedup key is (paper, subdomain, tool), so a paper that both
-  // uses and cites the same tool contributes just once to the flow count.
+  // The seen_edges dedup key is (paper, subdomain, tool), so a paper that cites
+  // two papers describing the same tool still counts once.
   const flow = new Map()
   const sd_totals   = new Map()
   const seq_totals  = new Map()
@@ -4901,16 +4904,16 @@ application_sankey = {
     sd_totals.set(sd,     (sd_totals.get(sd)     ?? 0) + 1)
     seq_totals.set(a.model,(seq_totals.get(a.model)?? 0) + 1)
   }
-  // Signal 1: curated tool-usage. Included when the radio is 'Uses' or 'Either'.
-  if (sankey_signal !== "Cites") {
+  // Signal 1: curated tool-usage.
+  if (sankey_signal === "Uses") {
     for (const p of pubs_t) {
       const sd = pub_subdomain.get(p.id)
       if (!sd) continue
       for (const a of pub_algs.get(p.id) || []) record(p.id, sd, a)
     }
   }
-  // Signal 2: intra-catalog citation graph. Included when the radio is 'Cites' or 'Either'.
-  if (sankey_signal !== "Uses") {
+  // Signal 2: intra-catalog citation graph.
+  if (sankey_signal === "Cites") {
     for (const e of citations_t) {
       const sd = pub_subdomain.get(e.citing_id)
       if (!sd) continue
@@ -4921,37 +4924,10 @@ application_sankey = {
   if (flow.size === 0) {
     return html`<p style="color:#57606a; font-style:italic; padding:1rem;">
       No subdomain→sequencer flows for signal <b>${sankey_signal}</b>. Try
-      switching the radio above to <i>Either</i> to combine curated tool-usage
-      with the citation graph.
+      the other signal with the radio above.
     </p>`
   }
 
-  // FOLD THE TAIL. Since the backfill the right side holds over a hundred
-  // sequencers, 37 of them with a single paper, and the 1200 px cap left each
-  // about 11 px: 83 labels overlapped. Raising the cap would need ~2600 px for
-  // a chart whose story is the handful of tools applications reach for. So
-  // the busiest MAX_SEQ - 1 keep a node each and the rest share one, whose
-  // ribbons still carry their true counts and whose hover names every member.
-  // Ties at the cut break on the name, so the set is stable between renders.
-  const MAX_SEQ = 40
-  const by_traffic = Array.from(seq_totals.entries())
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-  const folded = by_traffic.length > MAX_SEQ ? by_traffic.slice(MAX_SEQ - 1).map(d => d[0]) : []
-  const OTHER = `${folded.length} more sequencers`
-  if (folded.length) {
-    const fold_set = new Set(folded)
-    for (const [key, count] of Array.from(flow.entries())) {
-      const [sd, seq] = key.split("|")
-      if (!fold_set.has(seq)) continue
-      flow.delete(key)
-      const k2 = `${sd}|${OTHER}`
-      flow.set(k2, (flow.get(k2) ?? 0) + count)
-    }
-    let other_total = 0
-    for (const seq of folded) { other_total += seq_totals.get(seq); seq_totals.delete(seq) }
-    seq_totals.set(OTHER, other_total)
-  }
-  const is_other = id => folded.length > 0 && id === OTHER
   // A label wider than the right margin is cut, with the full name on hover.
   const MAX_LABEL_CHARS = 44
   const short = name => name.length > MAX_LABEL_CHARS ? name.slice(0, MAX_LABEL_CHARS - 1) + "…" : name
@@ -4967,22 +4943,43 @@ application_sankey = {
   // vertical budget per node; 34 leaves an 11px label clear of its neighbours.
   // The chart now grows as sequencers are added instead of squeezing them.
   // HEIGHT SCALES WITH THE NUMBER OF NODES ON THE BUSIER SIDE. The default
-  // signal is "Either", which unions curated tool usage with the citation
-  // graph and puts 36 sequencers on the right; at the old fixed 480px their
+  // signal was once "Either", which unioned curated tool usage with the
+  // citation graph and put 36 sequencers on the right; at the old fixed 480px their
   // labels shared about 430px of inner height, roughly 12px each including
   // padding, which is where the right-hand crowding came from. "Uses" alone has
   // only 10 and was never the problem.
   //
   // Sizing by each node's SHARE of the flow was tried and is wrong: shares are
-  // so skewed (the smallest is 1/109 of the total under "Either") that
+  // so skewed (the smallest was 1/109 of the total under the old "Either") that
   // guaranteeing a label for the thinnest ribbon would demand a 2700px chart.
   // Node count is the constraint that actually binds, and the thinnest ribbons
   // stay thin, which is honest about how little traffic they carry.
   const PAD_Y = 8
   const ROW_PX = 24
+  // EVERY SEQUENCER GETS ITS OWN ROW, however many there are. Under "Cites"
+  // that is over a hundred, most with one or two papers. A 1200 px cap left
+  // each about 11 px and overlapped 83 labels; folding the tail into one
+  // "N more sequencers" node hid exactly the long tail the Cites view exists
+  // to show. So the chart grows instead, by as little as it can: node heights
+  // stay proportional to traffic on one scale per side, and a node too thin
+  // to carry a label gets extra white space below it, never extra height, so
+  // no ribbon is drawn wider than its paper count. Scaling every node until
+  // the thinnest cleared a label was tried first and made the Cites view
+  // 4808 px tall.
+  const MIN_STEP_PX = 14      // neighbouring label centres at least this far apart
+  const BASE_ROW_PX = 12      // proportional budget per node before the floor
   const n_rows = Math.max(sd_totals.size, seq_totals.size)
   const width = 1100
-  const height = Math.min(1200, Math.max(480, 50 + n_rows * ROW_PX))
+  const base_inner = Math.max(430, n_rows * BASE_ROW_PX)
+  const stack = totals => {
+    const v = Array.from(totals.values())
+    const k = (base_inner - PAD_Y * (v.length - 1)) / d3.sum(v)
+    let y = 0
+    for (const t of v) { const h = t * k; y += Math.max(h + PAD_Y, MIN_STEP_PX) }
+    return { k, extent: y - PAD_Y }
+  }
+  const stack_left = stack(sd_totals), stack_right = stack(seq_totals)
+  const height = Math.max(480, 50 + Math.max(stack_left.extent, stack_right.extent))
   // right 285: the longest sequencer name, 'PSD MALDI high-sensitivity de novo
   // sequencing', ran 6 px past the frame at 260.
   // right 325: the same long sequencer name that overflowed the swim lane ran
@@ -4995,36 +4992,28 @@ application_sankey = {
   const left_nodes = Array.from(sd_totals.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([sd, total]) => ({ id: sd, kind: "subdomain", total }))
-  // The folded node goes last whatever its size: it is a remainder, not a tool.
   const right_nodes = Array.from(seq_totals.entries())
-    .sort((a, b) => is_other(a[0]) - is_other(b[0]) || b[1] - a[1] || a[0].localeCompare(b[0]))
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([seq, total]) => ({ id: seq, kind: "sequencer", total }))
 
   // Palette + labels come from the shared subdomain_color / subdomain_label
   // cells defined above (next to the timeline chart) so the two charts can't
   // drift out of sync.
 
-  // Assign Y positions (stacked, proportional to traffic + a small padding).
-  const pad_y = PAD_Y
-  const total_left  = d3.sum(left_nodes,  d => d.total)
-  const total_right = d3.sum(right_nodes, d => d.total)
-  const avail_left  = inner_h - pad_y * (left_nodes.length  - 1)
-  const avail_right = inner_h - pad_y * (right_nodes.length - 1)
-
-  let y_cursor = 0
-  for (const n of left_nodes) {
-    n.h = (n.total / total_left) * avail_left
-    n.y0 = y_cursor
-    n.y1 = y_cursor + n.h
-    y_cursor += n.h + pad_y
+  // Assign Y positions: proportional heights, and a step of at least
+  // MIN_STEP_PX from one node's top to the next, so a thin node's label clears
+  // its neighbour's.
+  const place = (nodes, k) => {
+    let y = 0
+    for (const n of nodes) {
+      n.h = n.total * k
+      n.y0 = y
+      n.y1 = y + n.h
+      y += Math.max(n.h + PAD_Y, MIN_STEP_PX)
+    }
   }
-  y_cursor = 0
-  for (const n of right_nodes) {
-    n.h = (n.total / total_right) * avail_right
-    n.y0 = y_cursor
-    n.y1 = y_cursor + n.h
-    y_cursor += n.h + pad_y
-  }
+  place(left_nodes, stack_left.k)
+  place(right_nodes, stack_right.k)
 
   const left_by_id  = new Map(left_nodes.map(n => [n.id, n]))
   const right_by_id = new Map(right_nodes.map(n => [n.id, n]))
@@ -5091,7 +5080,6 @@ application_sankey = {
       sankey_tooltip.replaceChildren(html`<div>
         <div class="map-tooltip-title">${subdomain_label.get(d.subdomain) ?? d.subdomain} → ${d.sequencer}</div>
         <div class="map-tooltip-meta">${d.count} paper${d.count === 1 ? "" : "s"}</div>
-        ${is_other(d.sequencer) ? html`<div class="map-tooltip-meta">${folded.join(", ")}</div>` : ""}
         <div class="map-tooltip-row">
           <span class="map-tooltip-swatch" style=${`background:${d.color}`}></span>
           <span>${subdomain_label.get(d.subdomain) ?? d.subdomain}</span>
@@ -5132,24 +5120,22 @@ application_sankey = {
     .join("rect")
     .attr("x", inner_w).attr("y", d => d.y0)
     .attr("width", 8).attr("height", d => d.y1 - d.y0)
-    .attr("fill", d => is_other(d.id) ? "#8c959f" : "#1f6feb")
+    .attr("fill", "#1f6feb")
   const right_labels = g.append("g")
     .selectAll("text")
     .data(right_nodes)
     .join("text")
     .attr("x", inner_w + 14).attr("y", d => (d.y0 + d.y1) / 2 + 4)
     .attr("text-anchor", "start")
-    .attr("fill", d => is_other(d.id) ? "#57606a" : "#1d2330")
-    .attr("font-style", d => is_other(d.id) ? "italic" : null)
+    .attr("fill", "#1d2330")
     .text(d => `${short(d.id)}  (${d.total})`)
-  right_labels.append("title").text(d => is_other(d.id) ? folded.join(", ") : d.id)
+  right_labels.append("title").text(d => d.id)
 
   // Both ends link now. The right-hand nodes are sequencers and go to their
   // algorithm page; the left-hand nodes are application areas and go to theirs,
   // which they did not have when this chart was written.
-  // The folded node is not a method, so it gets no link.
-  svg_link_wrap(right_rects, d => is_other(d.id) ? null : algo_href(d.id))
-  svg_link_wrap(right_labels, d => is_other(d.id) ? null : algo_href(d.id))
+  svg_link_wrap(right_rects, d => algo_href(d.id))
+  svg_link_wrap(right_labels, d => algo_href(d.id))
   svg_link_wrap(left_rects, d => page_href("subdomains", d.id))
   svg_link_wrap(left_labels, d => page_href("subdomains", d.id))
 
