@@ -926,7 +926,7 @@ INSERT INTO author VALUES(944,'Carmela Maria Montone',NULL,NULL,NULL,NULL,'0000-
 INSERT INTO author VALUES(945,'Susy Piovesana',NULL,NULL,NULL,NULL,'0000-0001-7134-7421','A5021055674');
 INSERT INTO author VALUES(946,'Riccardo Zenezini Chiozzi',NULL,NULL,NULL,NULL,'0000-0003-3904-5532','A5054213080');
 INSERT INTO author VALUES(947,'Anna Laura Capriotti',NULL,NULL,NULL,NULL,'0000-0003-1017-9625','A5051147546');
-INSERT INTO author VALUES(948,'Celso Vitor A. Q. Calomeno',NULL,NULL,NULL,NULL,NULL,'A5119922637');
+INSERT INTO author VALUES(948,'Celso Vitor A. Q. Calomeno',NULL,NULL,NULL,NULL,'0000-0001-6451-9483','A5119922637');
 INSERT INTO author VALUES(949,'Hulyana Brum',NULL,NULL,NULL,NULL,NULL,'A5083576963');
 INSERT INTO author VALUES(950,'Rodrigo S. C. Brant',NULL,NULL,NULL,NULL,NULL,'A5030460385');
 INSERT INTO author VALUES(951,'Marlon D. M. Santos',NULL,NULL,NULL,NULL,'0000-0002-1178-1266','A5035051817');
@@ -1731,7 +1731,6 @@ INSERT INTO author VALUES(1824,'Jian-Lin Wu',NULL,NULL,NULL,NULL,'0000-0002-3875
 INSERT INTO author VALUES(1825,'Na Li',NULL,NULL,NULL,NULL,'0000-0002-0404-6431','A5100368060');
 INSERT INTO author VALUES(1826,'Hechen Li',NULL,NULL,NULL,NULL,'0000-0003-4907-429X','A5050937761');
 INSERT INTO author VALUES(1827,'Haibo Bian',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(1828,'Calomeno, Celso Vitor Alves Queiroz',NULL,NULL,NULL,NULL,'0000-0001-6451-9483','A5005642570');
 INSERT INTO author VALUES(1829,'Kyle Annibale',NULL,NULL,NULL,NULL,NULL,'A5114520834');
 INSERT INTO author VALUES(1830,'Zac McDonald',NULL,NULL,NULL,NULL,'0000-0003-1969-1123','A5029948841');
 INSERT INTO author VALUES(1831,'Konrad R. Celejewski',NULL,NULL,NULL,NULL,NULL,'A5116868519');
@@ -1781,7 +1780,7 @@ INSERT INTO author VALUES(1874,'Fan Zhang',NULL,NULL,NULL,NULL,'0000-0003-4275-4
 INSERT INTO author VALUES(1875,'Shang Guo',NULL,NULL,NULL,NULL,'0000-0003-2135-3078','A5014165527');
 INSERT INTO author VALUES(1876,'Qun Shen',NULL,NULL,NULL,NULL,'0000-0002-2154-6104','A5044947288');
 INSERT INTO author VALUES(1877,'A. Yu Kozhevnikov',NULL,NULL,NULL,NULL,'0000-0002-3453-9229','A5020509696');
-INSERT INTO author VALUES(1878,'Warren, René L.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1878,'René L. Warren',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1879,'E Chasanah',NULL,NULL,NULL,NULL,'0000-0002-5974-0690','A5064094082');
 INSERT INTO author VALUES(1880,'P Martosuyono',NULL,NULL,NULL,NULL,'0000-0002-6189-0284','A5023511593');
 INSERT INTO author VALUES(1881,'S Budiari',NULL,NULL,NULL,NULL,NULL,'A5073081109');
@@ -2259,7 +2258,7 @@ INSERT INTO author VALUES(2355,'Chelsea L. McIntosh',NULL,NULL,NULL,NULL,'0000-0
 INSERT INTO author VALUES(2356,'Jason W. Schultz',NULL,NULL,NULL,NULL,'0000-0002-4691-3556','A5063092113');
 INSERT INTO author VALUES(2357,'Liviu M. Mirica',NULL,NULL,NULL,NULL,'0000-0003-0584-9508','A5021486550');
 INSERT INTO author VALUES(2358,'Robert E. Blankenship',NULL,NULL,NULL,NULL,'0000-0003-0879-9489','A5084019740');
-INSERT INTO author VALUES(2359,'Moeke, Cassidy',NULL,NULL,NULL,NULL,NULL,'A5009644698');
+INSERT INTO author VALUES(2359,'Cassidy Moeke',NULL,NULL,NULL,NULL,NULL,'A5009644698');
 INSERT INTO author VALUES(2360,'Andrés Ritter',NULL,NULL,NULL,NULL,'0000-0001-7011-6824','A5061081321');
 INSERT INTO author VALUES(2361,'Emmanuelle Com',NULL,NULL,NULL,NULL,'0000-0002-7401-817X','A5018419481');
 INSERT INTO author VALUES(2362,'Alexis Bazire',NULL,NULL,NULL,NULL,'0000-0003-2166-9830','A5087983541');
@@ -2517,8 +2516,7 @@ INSERT INTO author VALUES(2614,'Huan Liu',NULL,NULL,NULL,NULL,'0000-0002-5519-73
 INSERT INTO author VALUES(2615,'Jing Zhang',NULL,NULL,'China Academy of Chinese Medical Sciences',NULL,'0000-0002-4530-6754','A5100345391');
 INSERT INTO author VALUES(2616,'Yiming Zhang',NULL,NULL,NULL,NULL,'0000-0003-1000-9108','A5100395385');
 INSERT INTO author VALUES(2617,'Rong Wang',NULL,NULL,NULL,NULL,'0000-0001-7342-5278','A5030758712');
-INSERT INTO author VALUES(2618,'Zomaya, Albert Y',NULL,NULL,NULL,NULL,'0000-0002-3090-1059','A5015993565');
-INSERT INTO author VALUES(2619,'Wilson, Susan',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(2618,'Albert Y. Zomaya',NULL,NULL,NULL,NULL,'0000-0002-3090-1059','A5015993565');
 INSERT INTO author VALUES(2620,'Zhexue Wei',NULL,NULL,NULL,NULL,'0000-0002-4419-0198','A5029415046');
 INSERT INTO author VALUES(2621,'Daming Zhu',NULL,NULL,NULL,NULL,'0000-0001-9395-7247','A5101769221');
 INSERT INTO author VALUES(2622,'Qi Tang',NULL,NULL,NULL,NULL,'0000-0001-5677-912X','A5013223229');
@@ -2565,7 +2563,6 @@ INSERT INTO author VALUES(2662,'V.G. Zgoda',NULL,NULL,NULL,NULL,'0000-0002-4532-
 INSERT INTO author VALUES(2663,'Danny Navarro',NULL,NULL,NULL,NULL,NULL,'A5023158421');
 INSERT INTO author VALUES(2664,'Jos Boekhorst',NULL,NULL,NULL,NULL,'0000-0002-4807-7838','A5089395125');
 INSERT INTO author VALUES(2665,'Berend Snel',NULL,NULL,NULL,NULL,'0000-0002-5804-8547','A5023718551');
-INSERT INTO author VALUES(2666,'Darville-Bowleg, Lancia Nadinia Fallen',NULL,NULL,NULL,NULL,NULL,'A5057015113');
 INSERT INTO author VALUES(2667,'Yinglei Song',NULL,NULL,NULL,NULL,'0000-0003-3982-7657','A5017041136');
 INSERT INTO author VALUES(2668,'Kristin L. Cheek',NULL,NULL,NULL,NULL,NULL,'A5031552324');
 INSERT INTO author VALUES(2669,'Corbin W. Whitwell',NULL,NULL,NULL,NULL,NULL,'A5110821784');
@@ -2644,9 +2641,8 @@ INSERT INTO author VALUES(2741,'Jimmy K. Eng',NULL,NULL,NULL,NULL,'0000-0001-635
 INSERT INTO author VALUES(2742,'Priska von Haller',NULL,NULL,NULL,NULL,NULL,'A5061349330');
 INSERT INTO author VALUES(2743,'Eugene Kolker',NULL,NULL,NULL,NULL,NULL,'A5087861388');
 INSERT INTO author VALUES(2744,'Nathan Edwards',NULL,NULL,NULL,NULL,'0000-0001-5168-3196','A5072196170');
-INSERT INTO author VALUES(2745,'Kleffmann, Torsten',NULL,NULL,NULL,NULL,'0000-0001-9305-5980','A5047888506');
-INSERT INTO author VALUES(2746,'Müller, Matthias',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(2747,'Penna, Paolo',NULL,NULL,NULL,NULL,'0000-0002-5959-2421','A5054420804');
+INSERT INTO author VALUES(2745,'Torsten Kleffmann',NULL,NULL,NULL,NULL,'0000-0001-9305-5980','A5047888506');
+INSERT INTO author VALUES(2747,'Paolo Penna',NULL,NULL,NULL,NULL,'0000-0002-5959-2421','A5054420804');
 INSERT INTO author VALUES(2748,'K.D. Jarman',NULL,NULL,NULL,NULL,'0000-0002-4396-9212','A5067779820');
 INSERT INTO author VALUES(2749,'W.R. Cannon',NULL,NULL,NULL,NULL,'0000-0003-3789-7889','A5058577320');
 INSERT INTO author VALUES(2750,'A. Heredia-Langner',NULL,NULL,NULL,NULL,'0000-0003-4477-0472','A5049744051');
@@ -9046,7 +9042,6 @@ INSERT INTO author_affiliation VALUES(2276,911);
 INSERT INTO author_affiliation VALUES(2277,911);
 INSERT INTO author_affiliation VALUES(565,964);
 INSERT INTO author_affiliation VALUES(2618,440);
-INSERT INTO author_affiliation VALUES(2619,160);
 INSERT INTO author_affiliation VALUES(818,1015);
 INSERT INTO author_affiliation VALUES(818,1016);
 INSERT INTO author_affiliation VALUES(819,1015);
@@ -9105,7 +9100,6 @@ INSERT INTO author_affiliation VALUES(2663,89);
 INSERT INTO author_affiliation VALUES(2663,263);
 INSERT INTO author_affiliation VALUES(2664,89);
 INSERT INTO author_affiliation VALUES(2665,89);
-INSERT INTO author_affiliation VALUES(2666,877);
 INSERT INTO author_affiliation VALUES(818,1032);
 INSERT INTO author_affiliation VALUES(818,1033);
 INSERT INTO author_affiliation VALUES(819,1032);
@@ -11170,6 +11164,7 @@ INSERT INTO author_affiliation VALUES(287,79);
 INSERT INTO author_affiliation VALUES(1479,1190);
 INSERT INTO author_affiliation VALUES(1479,1191);
 INSERT INTO author_affiliation VALUES(1490,131);
+INSERT INTO author_affiliation VALUES(566,160);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -11232,7 +11227,7 @@ INSERT INTO algorithm VALUES(54,'pNovo 3',NULL,NULL,'Learning-to-rank','Learning
 INSERT INTO algorithm VALUES(55,'DeepNovo V2',NULL,NULL,'CNN + RNN','Improved CNN+LSTM model','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(56,'DeepNovo-DIA',NULL,NULL,'CNN + RNN','First de novo for DIA','algorithm',1,'DIA',NULL,NULL);
 INSERT INTO algorithm VALUES(57,'PostNovo',NULL,NULL,'Random Forest','FDR-controlled ensembling','post-processor',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(58,'DeepNovo',NULL,NULL,'CNN + RNN','First DL model (CNN+LSTM)','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(58,'DeepNovo',NULL,NULL,'CNN + RNN','The model that started the deep-learning wave (CNN+LSTM)','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(59,'CausalNovo',NULL,NULL,'Transformer (AR)','Causality-informed framework','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(60,'Lutefisk',NULL,'https://www.proteomesoftware.com/','Heuristic','First widely-used heuristic de novo tool','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(61,'Sherenga',NULL,NULL,'Graph / DP','Graph-theoretic de novo (foundational)','algorithm',0,'DDA',NULL,NULL);
@@ -12058,7 +12053,7 @@ INSERT INTO publication VALUES(58,'pNovo 3: precise de novo peptide sequencing u
 INSERT INTO publication VALUES(59,'DeepNovoV2: Better de novo peptide sequencing with deep learning','2019-04-17','10.48550/arXiv.1904.08514','arXiv','Personalized cancer vaccines are envisioned as the next generation rational cancer immunotherapy. The key step in developing personalized therapeutic cancer vaccines is to identify tumor-specific neoantigens that are on the surface of tumor cells. A promising method for this is through de novo peptide sequencing from mass spectrometry data. In this paper we introduce DeepNovoV2, the state-of-the-art model for peptide sequencing. In DeepNovoV2, a spectrum is directly represented as a set of (m/z, intensity) pairs, therefore it does not suffer from the accuracy-speed/memory trade-off problem. The model combines an order invariant network structure (T-Net) and recurrent neural networks and provides a complete end-to-end training and prediction framework to sequence patterns of peptides. Our experiments on a wide variety of data from different species show that DeepNovoV2 outperforms previous state-of-the-art methods, achieving 13.01-23.95\% higher accuracy at the peptide level.','https://arxiv.org/abs/1904.08514','arXiv','preprint',NULL,'arxiv');
 INSERT INTO publication VALUES(60,'Deep learning enables de novo peptide sequencing from data-independent-acquisition mass spectrometry','2018-12-20','10.1038/s41592-018-0260-3','Springer Science and Business Media LLC','We present DeepNovo-DIA, a de novo peptide-sequencing method for data-independent acquisition (DIA) mass spectrometry data. We use neural networks to capture precursor and fragment ions across m/z, retention-time, and intensity dimensions. They are then further integrated with peptide sequence patterns to address the problem of highly multiplexed spectra. DIA coupled with de novo sequencing allowed us to identify novel peptides in human antibodies and antigens.','https://doi.org/10.1038/s41592-018-0260-3','Nature Methods','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(61,'Postnovo: Postprocessing Enables Accurate and FDR-Controlled de Novo Peptide Sequencing','2018-10-02','10.1021/acs.jproteome.8b00278','American Chemical Society (ACS)','De novo sequencing offers an alternative to database search methods for peptide identification from mass spectra. Since it does not rely on a predetermined database of expected or potential sequences in the sample, de novo sequencing is particularly appropriate for samples lacking a well-defined or comprehensive reference database. However, the low accuracy of many de novo sequence predictions has prevented the widespread use of the variety of sequencing tools currently available. Here, we present a new open-source tool, Postnovo, that postprocesses de novo sequence predictions to find high-accuracy results. Postnovo uses a predictive model to rescore and rerank candidate sequences in a manner akin to database search postprocessing tools such as Percolator. Postnovo leverages the output from multiple de novo sequencing tools in its own analyses, producing many times the length of amino acid sequence information (including both full- and partial-length peptide sequences) at an equivalent false discovery rate (FDR) compared to any individual tool. We present a methodology to reliably screen the sequence predictions to a desired FDR given the Postnovo sequence score. We validate Postnovo with multiple data sets and demonstrate its ability to identify proteins that are missed by database search even in samples with paired reference databases.','https://doi.org/10.1021/acs.jproteome.8b00278','Journal of Proteome Research','peer-reviewed',NULL,'openalex');
-INSERT INTO publication VALUES(62,'De novo peptide sequencing by deep learning','2017-07-18','10.1073/pnas.1705691114','National Academy of Sciences','De novo peptide sequencing from tandem MS data is the key technology in proteomics for the characterization of proteins, especially for new sequences, such as mAbs. In this study, we propose a deep neural network model, DeepNovo, for de novo peptide sequencing. DeepNovo architecture combines recent advances in convolutional neural networks and recurrent neural networks to learn features of tandem mass spectra, fragment ions, and sequence patterns of peptides. The networks are further integrated with local dynamic programming to solve the complex optimization task of de novo sequencing. We evaluated the method on a wide variety of species and found that DeepNovo considerably outperformed state of the art methods, achieving 7.7-22.9% higher accuracy at the amino acid level and 38.1-64.0% higher accuracy at the peptide level. We further used DeepNovo to automatically reconstruct the complete sequences of antibody light and heavy chains of mouse, achieving 97.5-100% coverage and 97.2-99.5% accuracy, without assisting databases. Moreover, DeepNovo is retrainable to adapt to any sources of data and provides a complete end-to-end training and prediction solution to the de novo sequencing problem. Not only does our study extend the deep learning revolution to a new field, but it also shows an innovative approach in solving optimization problems by using deep learning and dynamic programming.','https://doi.org/10.1073/pnas.1705691114','PNAS','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(62,'De novo peptide sequencing by deep learning','2017-07-18','10.1073/pnas.1705691114','National Academy of Sciences','De novo peptide sequencing from tandem MS data is the key technology in proteomics for the characterization of proteins, especially for new sequences, such as mAbs. In this study, we propose a deep neural network model, DeepNovo, for de novo peptide sequencing. DeepNovo architecture combines recent advances in convolutional neural networks and recurrent neural networks to learn features of tandem mass spectra, fragment ions, and sequence patterns of peptides. The networks are further integrated with local dynamic programming to solve the complex optimization task of de novo sequencing. We evaluated the method on a wide variety of species and found that DeepNovo considerably outperformed state of the art methods, achieving 7.7-22.9% higher accuracy at the amino acid level and 38.1-64.0% higher accuracy at the peptide level. We further used DeepNovo to automatically reconstruct the complete sequences of antibody light and heavy chains of mouse, achieving 97.5-100% coverage and 97.2-99.5% accuracy, without assisting databases. Moreover, DeepNovo is retrainable to adapt to any sources of data and provides a complete end-to-end training and prediction solution to the de novo sequencing problem. Not only does our study extend the deep learning revolution to a new field, but it also shows an innovative approach in solving optimization problems by using deep learning and dynamic programming.','https://doi.org/10.1073/pnas.1705691114','Proceedings of the National Academy of Sciences','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(64,'CausalNovo: Advancing De Novo Peptide Sequencing via a Causality-Informed Framework','2026-02-14',NULL,'OpenReview',NULL,'https://openreview.net/forum?id=55GsILa8c9','OpenReview','preprint',NULL,NULL);
 INSERT INTO publication VALUES(65,'Sequence database searches via de novo peptide sequencing by tandem mass spectrometry','1997-06-15','10.1002/(SICI)1097-0231(19970615)11:9<1067::AID-RCM953>3.0.CO;2-L','Wiley','A method is described for searching protein sequence databases using tandem mass spectra of tryptic peptides. The approach uses a de novo sequencing algorithm to derive a short list of possible sequence candidates which serve as query sequences in a subsequent homology-based database search routine. The sequencing algorithm employs a graph theory approach similar to previously described sequencing programs. In addition, amino acid composition, peptide sequence tags and incomplete or ambiguous Edman sequence data can be used to aid in the sequence determinations. Although sequencing of peptides from tandem mass spectra is possible, one of the frequently encountered difficulties is that several alternative sequences can be deduced from one spectrum. Most of the alternative sequences, however, are sufficiently similar for a homology-based sequence database search to be possible. Unfortunately, the available protein sequence database search algorithms (e.g. Blast or FASTA) require a single unambiguous sequence as input. Here we describe how the publicly available FASTA computer program was modified in order to search protein databases more effectively in spite of the ambiguities intrinsic in de novo peptide sequencing algorithms.','https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291097-0231%2819970615%2911%3A9%3C1067%3A%3AAID-RCM953%3E3.0.CO%3B2-L','Rapid Communications in Mass Spectrometry','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(66,'De novo peptide sequencing via tandem mass spectrometry','1999-10-01','10.1089/106652799318300','Mary Ann Liebert','Peptide sequencing via tandem mass spectrometry (MS/MS) is one of the most powerful tools in proteomics for identifying proteins. Because complete genome sequences are accumulating rapidly, the recent trend in interpretation of MS/MS spectra has been database search. However, de novo MS/MS spectral interpretation remains an open problem typically involving manual interpretation by expert mass spectrometrists. We have developed a new algorithm, SHERENGA, for de novo interpretation that automatically learns fragment ion types and intensity thresholds from a collection of test spectra generated from any type of mass spectrometer. The test data are used to construct optimal path scoring in the graph representations of MS/MS spectra. A ranked list of high scoring paths corresponds to potential peptide sequences. SHERENGA is most useful for interpreting sequences of peptides resulting from unknown proteins and for validating the results of database search algorithms in fully automated, high-throughput peptide sequencing.','https://www.liebertpub.com/doi/abs/10.1089/106652799318300','Journal of Computational Biology','peer-reviewed',NULL,'openalex');
@@ -15891,7 +15886,7 @@ INSERT INTO publication_author VALUES(449,1172,4);
 INSERT INTO publication_author VALUES(449,1169,5);
 INSERT INTO publication_author VALUES(449,1175,6);
 INSERT INTO publication_author VALUES(449,1176,7);
-INSERT INTO publication_author VALUES(450,1828,1);
+INSERT INTO publication_author VALUES(450,948,1);
 INSERT INTO publication_author VALUES(451,1155,1);
 INSERT INTO publication_author VALUES(451,234,2);
 INSERT INTO publication_author VALUES(451,1829,3);
@@ -17185,7 +17180,7 @@ INSERT INTO publication_author VALUES(678,579,1);
 INSERT INTO publication_author VALUES(679,2617,1);
 INSERT INTO publication_author VALUES(680,565,1);
 INSERT INTO publication_author VALUES(680,2618,2);
-INSERT INTO publication_author VALUES(680,2619,3);
+INSERT INTO publication_author VALUES(680,566,3);
 INSERT INTO publication_author VALUES(681,818,1);
 INSERT INTO publication_author VALUES(681,819,2);
 INSERT INTO publication_author VALUES(681,820,3);
@@ -17253,7 +17248,7 @@ INSERT INTO publication_author VALUES(697,2066,4);
 INSERT INTO publication_author VALUES(697,2665,5);
 INSERT INTO publication_author VALUES(697,585,6);
 INSERT INTO publication_author VALUES(697,584,7);
-INSERT INTO publication_author VALUES(698,2666,1);
+INSERT INTO publication_author VALUES(698,2177,1);
 INSERT INTO publication_author VALUES(699,2392,1);
 INSERT INTO publication_author VALUES(700,818,1);
 INSERT INTO publication_author VALUES(700,819,2);
@@ -17375,7 +17370,7 @@ INSERT INTO publication_author VALUES(726,469,2);
 INSERT INTO publication_author VALUES(726,284,3);
 INSERT INTO publication_author VALUES(726,2745,4);
 INSERT INTO publication_author VALUES(726,470,5);
-INSERT INTO publication_author VALUES(726,2746,6);
+INSERT INTO publication_author VALUES(726,472,6);
 INSERT INTO publication_author VALUES(726,2747,7);
 INSERT INTO publication_author VALUES(727,2748,1);
 INSERT INTO publication_author VALUES(727,2749,2);
@@ -24477,7 +24472,7 @@ INSERT INTO publication_author_affiliation VALUES(677,2277,913,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(677,2278,912,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(677,2278,911,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(680,565,964,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(680,2619,160,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(680,566,160,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(681,818,1015,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(681,818,1016,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(681,819,1015,0,'openalex');
@@ -57287,6 +57282,35 @@ INSERT INTO sqlite_sequence VALUES('affiliation',1408);
 INSERT INTO sqlite_sequence VALUES('author',3876);
 INSERT INTO sqlite_sequence VALUES('algorithm',814);
 INSERT INTO sqlite_sequence VALUES('publication',979);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -57313,11 +57337,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -57333,12 +57352,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -57353,15 +57366,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -57390,6 +57394,20 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -57397,27 +57415,4 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;

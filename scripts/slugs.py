@@ -102,10 +102,14 @@ TRANSLITERATE = {
 # 2006 row was folded into the 2011 one, which carries the repository.
 # Yi Liu (Western Ontario) was the same person as the ORCID Yi Liu row.
 # "Liu Yang" was SSRN's reversed spelling of PeposX-Exhaust's 6th author, Yang Liu.
+# "PNAS" was one paper's spelling of a venue eight others give in full.
+# Nine author names were stored "Surname, Given"; four were people already here.
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
+             'calomeno-celso-vitor-alves-queiroz': 'celso-vitor-a-q-calomeno',
              'd-dutta': 'debojyoti-dutta',
+             'darville-bowleg-lancia-nadinia-fallen': 'lancia-n-f-darville',
              'e-mori': 'elisa-mori',
              'e-v-grishin': 'eugene-v-grishin',
              'fanny-guzman-2964': 'fanny-guzman',
@@ -114,11 +118,15 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'j-seo': 'jangho-seo',
              'j-v-olsen': 'jesper-v-olsen',
              'jonathan-krieger': 'jonathan-r-krieger',
+             'kleffmann-torsten': 'torsten-kleffmann',
              'liu-yang': 'yang-liu',
+             'moeke-cassidy': 'cassidy-moeke',
+             'muller-matthias': 'matthias-muller',
              'nan-liu': 'nan-liu-shandong-jianzhu-university',
              'natalie-e-castellana': 'natalie-castellana',
              'pavel-a-pevzner-1448': 'pavel-a-pevzner',
              'pavel-pevzner': 'pavel-a-pevzner',
+             'penna-paolo': 'paolo-penna',
              'pieter-c-dorrestein-1453': 'pieter-c-dorrestein',
              'polonca-trebse-1667': 'polonca-trebse',
              'r-a-zubarev': 'roman-a-zubarev',
@@ -127,11 +135,14 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'tatiana-y-samgina': 'tatiana-yu-samgina',
              'victoria-c-pham': 'victoria-pham',
              'vladimir-havlicek-3200': 'vladimir-havlicek',
+             'warren-rene-l': 'rene-l-warren',
              'wen-ting-li': 'wenting-li',
              'wendy-n-sandoval': 'wendy-sandoval',
              'wilfred-tang': 'wilfred-h-tang',
+             'wilson-susan': 'susan-r-wilson',
              'yi-liu-western-ontario': 'yi-liu',
-             'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang'},
+             'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang',
+             'zomaya-albert-y': 'albert-y-zomaya'},
  'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
                   'an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup': 'an-improved-method-for-de-novo-sequencing-of-arginine-containing-n-tris-2-4-6',
                   'analysis-of-root-plasma-membrane-aquaporins-from-i-brassica-oleracea-i-post': 'analysis-of-root-plasma-membrane-aquaporins-from-brassica-oleracea-post',
@@ -152,6 +163,7 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
                   'top-down-analysis-of-protein-samples-by-i-de-novo-i-sequencing-techniques': 'top-down-analysis-of-protein-samples-by-de-novo-sequencing-techniques',
                   'top-down-i-de-novo-i-protein-sequencing-of-a-13-6-kda-camelid-single-heavy': 'top-down-de-novo-protein-sequencing-of-a-13-6-kda-camelid-single-heavy-chain'},
  'venues': {'molecular-amp-cellular-proteomics': 'molecular-cellular-proteomics',
+            'pnas': 'proceedings-of-the-national-academy-of-sciences',
             'protein-amp-peptide-letters': 'protein-peptide-letters'}}
 
 

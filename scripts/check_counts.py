@@ -418,6 +418,14 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
 ]
 
+# A name stored "Surname, Given" prints backwards everywhere and splits in two
+# wherever a byline is a comma-joined string, which is how the page counted
+# 3770 authors over 3761 rows. Nine came in from thesis repositories.
+CLAIMS += [
+    ("CLAUDE.md", "author names stored surname first",
+     r"(\d+) author names are stored", "SELECT COUNT(*) FROM author WHERE name LIKE '%,%'"),
+]
+
 # One position on a byline holds one author. Publication 382 once held three
 # Yi Liu rows in position 1, which no other check could see.
 CLAIMS += [
@@ -491,6 +499,7 @@ INVARIANTS = frozenset({
     "quoted results without a cue",
     "scripts without a README entry",
     "bylines with two authors in one position",
+    "author names stored surname first",
     "README entries naming no script",
 })
 

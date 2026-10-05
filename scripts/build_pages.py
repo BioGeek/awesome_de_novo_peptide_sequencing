@@ -433,7 +433,7 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         for name, kind, version, addrs, _role in rows:
             line = f"- **{md_escape(name)}**"
             if version:
-                line += f" — {md_escape(version)}"
+                line += f" <small>({md_escape(version)})</small>"
             else:
                 # The honest state for a paper that names a dataset without
                 # saying which version it ran on.
@@ -928,7 +928,8 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         for cp in ctx["checkpoints"]:
             ver = cp["tool_version"] or cp["label"] or "—"
             size = (f"{cp['size_bytes'] / 1e9:.1f} GB" if cp["size_bytes"] and cp["size_bytes"] >= 1e9
-                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] else "—")
+                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] and cp["size_bytes"] >= 1e6
+                    else f"{cp['size_bytes'] / 1e3:.0f} KB" if cp["size_bytes"] else "—")
             host = f"[{md_escape(cp['host'])}]({cp['url']})"
             if cp["archival"]:
                 host += " <small>archival</small>"
@@ -1257,7 +1258,7 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             for a in prov:
                 line = f"- [{md_escape(a['accession'])}]({a['url']})"
                 if a["part"]:
-                    line += f" — {md_escape(a['part'])}"
+                    line += f": {md_escape(a['part'])}"
                 L.append(line)
             L.append("")
         if not direct and not prov:
@@ -1341,7 +1342,8 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         for cp in ctx["checkpoints"]:
             ver = cp["tool_version"] or cp["label"] or "—"
             size = (f"{cp['size_bytes'] / 1e9:.1f} GB" if cp["size_bytes"] and cp["size_bytes"] >= 1e9
-                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] else "—")
+                    else f"{cp['size_bytes'] / 1e6:.0f} MB" if cp["size_bytes"] and cp["size_bytes"] >= 1e6
+                    else f"{cp['size_bytes'] / 1e3:.0f} KB" if cp["size_bytes"] else "—")
             # "not stated" is the honest cell: these records name the dataset
             # and not which of its versions, which is the same ambiguity the
             # Versions list above exists to expose.
@@ -2159,7 +2161,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~7470 thin pages out of
+    # committed under pages/. search: false keeps ~7465 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.

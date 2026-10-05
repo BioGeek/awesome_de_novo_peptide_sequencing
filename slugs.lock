@@ -2538,7 +2538,6 @@ authors	1824	jian-lin-wu
 authors	1825	na-li
 authors	1826	hechen-li
 authors	1827	haibo-bian
-authors	1828	calomeno-celso-vitor-alves-queiroz
 authors	1829	kyle-annibale
 authors	1830	zac-mcdonald
 authors	1831	konrad-r-celejewski
@@ -2588,7 +2587,7 @@ authors	1874	fan-zhang
 authors	1875	shang-guo
 authors	1876	qun-shen
 authors	1877	a-yu-kozhevnikov
-authors	1878	warren-rene-l
+authors	1878	rene-l-warren
 authors	1879	e-chasanah
 authors	1880	p-martosuyono
 authors	1881	s-budiari
@@ -3066,7 +3065,7 @@ authors	2355	chelsea-l-mcintosh
 authors	2356	jason-w-schultz
 authors	2357	liviu-m-mirica
 authors	2358	robert-e-blankenship
-authors	2359	moeke-cassidy
+authors	2359	cassidy-moeke
 authors	2360	andres-ritter
 authors	2361	emmanuelle-com
 authors	2362	alexis-bazire
@@ -3324,8 +3323,7 @@ authors	2614	huan-liu
 authors	2615	jing-zhang-china-academy-of-chinese-medical-sciences
 authors	2616	yiming-zhang
 authors	2617	rong-wang
-authors	2618	zomaya-albert-y
-authors	2619	wilson-susan
+authors	2618	albert-y-zomaya
 authors	2620	zhexue-wei
 authors	2621	daming-zhu
 authors	2622	qi-tang
@@ -3372,7 +3370,6 @@ authors	2662	v-g-zgoda
 authors	2663	danny-navarro
 authors	2664	jos-boekhorst
 authors	2665	berend-snel
-authors	2666	darville-bowleg-lancia-nadinia-fallen
 authors	2667	yinglei-song
 authors	2668	kristin-l-cheek
 authors	2669	corbin-w-whitwell
@@ -3451,9 +3448,8 @@ authors	2741	jimmy-k-eng
 authors	2742	priska-von-haller
 authors	2743	eugene-kolker
 authors	2744	nathan-edwards
-authors	2745	kleffmann-torsten
-authors	2746	muller-matthias
-authors	2747	penna-paolo
+authors	2745	torsten-kleffmann
+authors	2747	paolo-penna
 authors	2748	k-d-jarman
 authors	2749	w-r-cannon
 authors	2750	a-heredia-langner
@@ -7193,7 +7189,7 @@ venues	50	journal-of-proteome-research
 venues	53	current-bioinformatics
 venues	56	cell-systems
 venues	58	bioinformatics
-venues	62	pnas
+venues	62	proceedings-of-the-national-academy-of-sciences
 venues	65	rapid-communications-in-mass-spectrometry
 venues	66	journal-of-computational-biology
 venues	68	analytical-chemistry
@@ -7223,7 +7219,6 @@ venues	160	biological-mass-spectrometry
 venues	162	electrophoresis
 venues	169	proteome-science
 venues	174	current-opinion-in-structural-biology
-venues	179	proceedings-of-the-national-academy-of-sciences
 venues	183	current-protocols-in-protein-science
 venues	184	molecular-biotechnology
 venues	185	proceedings-of-the-ieee

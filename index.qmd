@@ -1315,7 +1315,7 @@ author_papers_map = new Map(transpose(author_papers).map(r => [r.name, +r.public
   </a>`
   return html`<div class="hero-grid">
     ${stat(n_papers,    "papers",    "#every-paper",            "Browse all papers")}
-    ${stat(n_models,    "methods",   "#the-architectures",      "See every method on the architectures timeline")}
+    ${stat(n_models,    "entries",   "#the-architectures",      "Catalog entries: algorithms, post-processors, applications, adjacent tools, benchmarks and reviews. See them on the architectures timeline")}
     ${stat(n_authors,   "authors",   "#browse-all-authors",     "Browse all authors")}
     ${stat(n_datasets,  "datasets",  "#the-data-underneath",    "See what the field runs on")}
   </div>`
@@ -1457,7 +1457,25 @@ breakdown_apply = {
 
 ```{ojs}
 //| echo: false
-md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}** methods for *de novo* peptide sequencing, written by **${n_authors}** authors across **${n_countries}** countries. Of those papers, **${n_preprints}** are preprints and **${n_peer_reviewed}** are peer-reviewed. A snapshot of a field where the conversation moves faster than the journals.`
+{
+  // An "entry" is any algorithm row, and most are not sequencers: the kinds
+  // are listed rather than calling all of them methods. The paper types are
+  // listed in full so the counts add up to the total.
+  const kind_noun = {"algorithm": "algorithms", "post-processor": "post-processors",
+    "adjacent": "adjacent tools", "downstream-application": "downstream applications",
+    "benchmark": "benchmarks", "review": "reviews", "meta": "other entries"}
+  const kinds = ["algorithm", "post-processor", "adjacent", "downstream-application", "benchmark", "review", "meta"]
+    .map(k => [k, kind_counts.find(c => c.kind === k)?.n ?? 0]).filter(([, n]) => n > 0)
+  const type_noun = {"thesis": ["thesis", "theses"], "ML conference": ["ML-conference paper", "ML-conference papers"],
+    "abstract": ["meeting abstract", "meeting abstracts"], "resource": ["resource", "resources"],
+    "postprint": ["postprint", "postprints"], "presentation": ["presentation", "presentations"],
+    "commentary": ["commentary", "commentaries"]}
+  const noun = (t, n) => (type_noun[t] ?? [t, t])[n === 1 ? 0 : 1]
+  const others = d3.rollups(pubs_t.filter(p => p.type !== "peer-reviewed" && p.type !== "preprint"), v => v.length, p => p.type)
+    .sort((a, b) => b[1] - a[1])
+  const list = xs => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1]
+  return md`Since **${first_year}**, the catalog links **${n_papers}** papers to **${n_models}** entries: ${list(kinds.map(([k, n]) => `**${n}** ${kind_noun[k]}`))}. They were written by **${n_authors}** authors across **${n_countries}** countries. Of the papers, **${n_peer_reviewed}** are peer-reviewed, **${n_preprints}** are preprints, and the other ${d3.sum(others, d => d[1])} are ${list(others.map(([t, n]) => `${n} ${noun(t, n)}`))}.`
+}
 ```
 
 ::: {.scope-banner}
@@ -1466,7 +1484,7 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 
 ::::: {.sticky-filters .collapsed-on-mobile}
 ::: {.sticky-filters-header role="button" tabindex="0" aria-expanded="false" aria-controls="sticky-filter-body"}
-🎚️ **Filters** · Kind · Approach · Acquisition · Code. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
+🎚️ **Filters** · Kind · Approach · Acquisition · Code. Apply to the wave, the architectures, the map, institutions and author rankings, citation counts, venues, the publication lifecycle and the paper and author tables; the benchmarks, datasets, applications, networks and code activity always show everything. Pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
 :::
 
 :::: {#sticky-filter-body .sticky-filters-body}
@@ -1513,6 +1531,9 @@ n_papers_filtered = pubs_filtered.length
 
 ```{=html}
 <style>
+/* The front matter's description is the page's <meta name="description">,
+   and Quarto also prints it under the subtitle, saying the same thing twice. */
+#title-block-header .description { display: none; }
 .sticky-filters {
   position: sticky;
   top: 0;
@@ -1591,7 +1612,19 @@ n_papers_filtered = pubs_filtered.length
 
 ```{ojs}
 //| echo: false
-md`The earliest paper tracked here appeared in **${first_year}**; the first deep-learning method shows up in **${first_dl_year}**. Activity has accelerated sharply since. **${n_peer_reviewed}** papers have made it through peer review, alongside **${n_preprints}** preprints still in the publication pipeline.`
+{
+  // is_deep_learning covers any neural network, so the first flagged paper is
+  // a 1995 network and calling that "the first deep-learning method" put it
+  // at odds with DeepNovo's page. The WAVE is the first year from which every
+  // year has a neural-network paper, and the methods introduced that year.
+  const dl_years = new Set(pubs_t.filter(p => Number.isFinite(p.year)
+    && (p.models ?? "").split(",").map(s => s.trim()).some(m => dl_algo_names.has(m))).map(p => p.year))
+  let wave = last_year
+  while (dl_years.has(wave - 1)) wave--
+  const firsts = algorithms_t.filter(a => a.is_dl === true && a.kind === "algorithm" && a.first_pub
+    && a.first_pub.getFullYear() === wave).sort((a, b) => a.first_pub - b.first_pub).map(a => a.model)
+  return md`The earliest paper tracked here appeared in **${first_year}**. A neural-network method first appears in **${first_dl_year}**, but the deep-learning wave starts in **${wave}**${firsts.length ? `, with ${firsts[0]}` : ""}, and every year since has added to it. Of all the papers, **${n_peer_reviewed}** are peer-reviewed and **${n_preprints}** are preprints.`
+}
 ```
 
 ```{ojs}
@@ -2275,7 +2308,7 @@ bench_rank_counts = {
 }
 ```
 
-### Which of those differences are real
+### Which differences the test can detect {#which-of-those-differences-are-real}
 
 ```{ojs}
 //| echo: false
@@ -2285,14 +2318,13 @@ diagram**, the standard way to compare many methods over many datasets
 evidence does **not** separate them.
 
 Read it in three steps. **The axis is average rank**, best on the left, so
-position alone is the ranking. **The bars are the finding**: any two methods
-joined by one are statistically indistinguishable over these
-${bench_n_datasets} datasets, at the conventional 5% error rate (α = 0.05),
-meaning the test tolerates a one-in-twenty chance of calling a difference real
-when it is not. And **the width of a bar is the
-critical difference**, here ${bench_cd.cd.toFixed(2)} rank positions: two
-methods whose average ranks differ by less than that could have swapped places
-by chance.`
+position alone is the ranking. **The black bars are the finding**: the test
+(Nemenyi, α = 0.05) did not detect a difference between any two methods one bar
+joins, over these ${bench_n_datasets} datasets. That is a failure to separate
+them, not evidence that they are equally good. And **the red segment under the
+axis is the critical difference**, ${bench_cd.cd.toFixed(2)} rank positions:
+two methods whose average ranks differ by less than that are not separated by
+the test.`
 ```
 
 ```{ojs}
@@ -2496,9 +2528,9 @@ They are not equally good, so asking which pairs differ is a fair question.
 
 **What a bar does and does not say.** A bar means the test did not find a
 difference; it does not mean the two methods are equally good. With
-${bench_cd.N} datasets the test is sensitive enough that a surviving bar is a
-genuine statement about similarity, but the reverse reading, "not significantly
-different therefore the same", is the one mistake this diagram invites. The
+${bench_cd.N} datasets a difference the test misses is probably small in rank
+terms, but reading "not significantly different" as "the same" is the one
+mistake this diagram invites. The
 other is to forget that a rank throws away the size of a difference: a method
 that loses every dataset by 0.001 AP ranks last as decisively as one that loses
 by 0.3.
@@ -3564,10 +3596,10 @@ Inputs.table(perf_table, {
 
 ## The data underneath
 
-Every number on this page was produced by running software over spectra, and the
-spectra have versions. "Trained on nine-species" names four different objects,
-and a third of the papers that say it do not say which. These two charts are
-about that.
+Every benchmark score above was produced by running software over spectra,
+and the spectra have versions. "Trained on nine-species" names four different
+objects, and many of the papers that say it do not say which. The charts in
+this section are about that.
 
 ```{ojs}
 //| echo: false
@@ -3637,7 +3669,7 @@ Of the <b>${dataset_versions_t.length}</b> dataset versions the catalog records,
 naming is genuinely ambiguous for only
 <b>${d3.group(version_ambiguity_rows, d => d.dataset).size}</b> datasets: the
 rest are cited by one paper, or have one version, or are always pinned. Those
-three carry <b>${version_unstated_share.total}</b> uses, of which
+datasets carry <b>${version_unstated_share.total}</b> uses, of which
 <b>${version_unstated_share.unstated}</b> (<b>${version_unstated_share.pct}%</b>)
 name no version. The amber segment is that: a citation that does not identify
 which curated object was run.</p>`
@@ -4140,7 +4172,8 @@ Inputs.table(checkpoint_search, {
         r.archival ? html` <small>archival</small>` : ""}` : h
     },
     size_bytes: n => n == null ? "" : n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB`
-                                               : `${Math.round(n / 1e6)} MB`,
+                                    : n >= 1e6 ? `${Math.round(n / 1e6)} MB`
+                                               : `${Math.round(n / 1e3)} KB`,
     // The date is part of the answer, and which date depends on the verdict:
     // `verified` carries the day the bytes were hashed, the rest the day the
     // link was last probed.
@@ -4841,8 +4874,8 @@ application_timeline = {
 
 Which sequencing tools does each application community actually reach for? Two signals can drive the Sankey and they're different strengths:
 
-- **Uses**: the paper has a curated `publication_algorithm` link to the tool — usually because the methods section names it explicitly. These are the links whose `role` is `uses`, plus the rare case of an application paper that also introduces a tool.
-- **Cites**: the paper's Crossref reference list contains a publication *describing* the tool — a weaker signal (the tool might just be mentioned as prior art). Rebuilt monthly by `build_citations.py`.
+- **Uses**: the paper has a curated `publication_algorithm` link to the tool, usually because the methods section names it explicitly. These are the links whose `role` is `uses`, plus the rare case of an application paper that also introduces a tool.
+- **Cites**: the paper's Crossref reference list contains a publication *describing* the tool. That is a weaker signal: the tool might just be mentioned as prior art. Rebuilt monthly by `build_citations.py`.
 
 Use the toggle to switch between them. They are kept apart on purpose: a union of the two would mix the strong signal with the weak one in a single ribbon, and say less than either. An edge from *metaproteomics* to *PEAKS* means at least one metaproteomics-tagged paper satisfies the selected signal. Edge thickness is the paper count.
 
@@ -6140,7 +6173,7 @@ network_chart = {
 
 ### Models and the authors behind them
 
-This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. **Max authors/paper** drops consortium papers, each of which would otherwise link all of its authors to one model. There is no min strength here: that measures ties between co-authors, and this chart has none. Algorithm nodes are diamonds colored by their architecture family, so you can see which research groups own which slice of the architectural landscape.
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. **Max authors/paper** drops consortium papers, each of which would otherwise link all of its authors to one model. There is no min strength here: that measures ties between co-authors, and this chart has none. Algorithm nodes are diamonds colored by their architecture family, so you can see which architecture families each group of authors has published in.
 
 ```{ojs}
 //| echo: false
@@ -7334,7 +7367,7 @@ Plot popularity (★, log scale) against staleness (months since last push). Vib
 
 ## Where it appears
 
-Most papers in this space appear first on bioRxiv or arXiv. Toggle preprints vs. peer-reviewed to see how the venue distribution shifts.
+bioRxiv and arXiv are where this field's preprints appear. Toggle preprints vs. peer-reviewed to see how the venue distribution shifts.
 
 ```{ojs}
 //| echo: false
@@ -7447,7 +7480,7 @@ viewof venue_if_search = Inputs.search(journal_impact_t, {
 
 ## Publication lifecycle
 
-How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv's own record of where a preprint was published, Crossref's preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as "post-preprint". **Show status** picks which rows to list: **paired** (lifecycle complete, the default), **preprint-only** (still in flight), or **peer-reviewed-only** (published without a preprint we have on file). A Status column appears once more than one is ticked.
+How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv's own record of where a preprint was published, Crossref's preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as "post-preprint". **Show status** picks which rows to list: **paired** (lifecycle complete, the default), **preprint-only** (no later version recorded in the catalog), or **peer-reviewed-only** (published without a preprint we have on file). A Status column appears once more than one is ticked.
 
 ```{ojs}
 //| echo: false
@@ -7713,7 +7746,7 @@ html`<ol class="recent-list" start="1">${recent_pubs.map(d => {
         title="Publisher / DOI" style="text-decoration:none">↗</a>` : ""}
     <span class="recent-meta">${[fmt_day(d.date), d.journal, d.type]
       .filter(Boolean).join(" · ")}</span>
-    ${models.length ? htl.html`<span class="recent-meta"> — ${models.map((m, i) =>
+    ${models.length ? htl.html`<span class="recent-meta"> · ${models.map((m, i) =>
         htl.html`${i ? ", " : ""}${page_link("algorithms", m, m)}`)}</span>` : ""}
   </li>`
 })}</ol>`
