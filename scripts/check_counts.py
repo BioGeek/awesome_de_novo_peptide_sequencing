@@ -418,6 +418,15 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
 ]
 
+# One position on a byline holds one author. Publication 382 once held three
+# Yi Liu rows in position 1, which no other check could see.
+CLAIMS += [
+    ("CLAUDE.md", "bylines with two authors in one position",
+     r"So a byline is checked for the shape directly now: (\d+) bylines put two",
+     "SELECT COUNT(*) FROM (SELECT publication_id, author_order FROM publication_author "
+     "GROUP BY 1, 2 HAVING COUNT(*) > 1)"),
+]
+
 # The Code filter's caveat quotes how incomplete algorithm_repository is.
 CLAIMS += [
     ("CLAUDE.md", "methods with a repository",
@@ -481,6 +490,7 @@ INVARIANTS = frozenset({
     "results with a subset but no canonical subset",
     "quoted results without a cue",
     "scripts without a README entry",
+    "bylines with two authors in one position",
     "README entries naming no script",
 })
 

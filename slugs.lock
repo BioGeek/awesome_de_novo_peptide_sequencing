@@ -2020,7 +2020,6 @@ authors	1231	thomas-j-daly
 authors	1232	ning-li-tarrytown
 authors	1233	enda-howley
 authors	1234	florence-abram
-authors	1235	yi-liu-western-ontario
 authors	1236	bernhard-spengler
 authors	1237	han-chang-sun
 authors	1238	ji-yang-zhang
@@ -4574,6 +4573,7 @@ authors	3872	hector-h-f-koolen
 authors	3873	afonso-d-l-de-souza
 authors	3874	carlos-bloch-jr
 authors	3875	xiang-gao-tsinghua-university
+authors	3876	yang-liu-wuyi-university
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb

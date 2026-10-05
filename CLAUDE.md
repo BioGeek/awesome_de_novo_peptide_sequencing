@@ -224,7 +224,7 @@ arriving as "Pavel A Pevzner", "Pavel Pevzner" and "Pavel A. Pevzner", or as
 every two rows whose names reduce to the same surname and compatible
 initials, and merged the 28 pairs that also shared a co-author or an
 institution. It kept apart every pair with two different ORCIDs (20), every
-pair on the same paper (3, e.g. the two Yi Liu), and every common name with
+pair on the same paper (3), and every common name with
 nothing linking the two rows (Hong, Xin and Wei Zhang, Bin Ma, the Korean
 "H. Kim" and "S. Kim"). Two different OpenAlex ids do NOT block a merge:
 OpenAlex splits one person across ids often, which is what Elisa Mori and
@@ -232,6 +232,14 @@ Fanny Guzmán had. A merge moves `publication_author`,
 `author_affiliation`, `publication_author_affiliation` and
 `thesis_supervisor`, copies any external id the survivor lacks, and gives
 the retired URL a `REDIRECTS` entry in `slugs.py`.
+
+**"On the same paper" is not proof of two people.** Two of those three pairs
+were the Yi Liu rows on publication 382, and a Crossref byline check showed
+the paper has ONE Yi Liu: three rows sat in author position 1, one of them a
+Beijing Yi Liu attached by an import, the other two one Waterloo student
+entered twice (1235, with the 2015 thesis, merged into 1490, the ORCID row).
+So a byline is checked for the shape directly now: 0 bylines put two
+authors in one position, an invariant in `check_counts.py`.
 
 The same sweep undid three splits made during the imports with a
 `FORCE_NEW` list (Nan Liu, Binhai Zhu, Yuanliang Zhang): those had been

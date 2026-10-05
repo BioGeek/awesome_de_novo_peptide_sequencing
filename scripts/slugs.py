@@ -100,6 +100,7 @@ TRANSLITERATE = {
 # 2026-10-05: "GenomicPeptideFinder de novo genomic mining" (2006) and
 # "Genomic Peptide Finder" (2011) were one tool from one lab entered twice; the
 # 2006 row was folded into the 2011 one, which carries the repository.
+# Yi Liu (Western Ontario) was the same person as the ORCID Yi Liu row.
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
@@ -127,6 +128,7 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'wen-ting-li': 'wenting-li',
              'wendy-n-sandoval': 'wendy-sandoval',
              'wilfred-tang': 'wilfred-h-tang',
+             'yi-liu-western-ontario': 'yi-liu',
              'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang'},
  'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
                   'an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup': 'an-improved-method-for-de-novo-sequencing-of-arginine-containing-n-tris-2-4-6',
