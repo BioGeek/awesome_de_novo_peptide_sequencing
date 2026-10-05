@@ -49,3 +49,6 @@ table_vlm_candidates.csv
 table_crosscheck.csv
 repository_candidates.csv
 repository_search.csv
+
+# Backup rebase-onto-refresh.sh leaves beside the database; never commit it
+denovo.db.before-rebase

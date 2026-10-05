@@ -112,7 +112,13 @@ say "verified: 0 upstream rows missing, $extra row(s) only yours (rows their ref
 git reset --mixed origin/main >/dev/null
 sqlite3 denovo.db .dump > denovo.sql
 [ -f scripts/check_counts.py ] && python3 scripts/check_counts.py --fix --quiet || true
-git add -A
+# Stage what the replay and the count refresh touched, NOT `git add -A`: that
+# swept this script's own 7 MB backup, denovo.db.before-rebase, into a commit
+# that was then pushed. Files the local commit changed are restaged by name.
+git add denovo.db denovo.sql
+git diff --name-only ORIG_HEAD origin/main -- . ':!denovo.db' ':!denovo.sql' \
+  | while read -r f; do [ -e "$f" ] && git add -- "$f" || git rm -q --cached --ignore-unmatch -- "$f"; done
+for doc in $(python3 scripts/check_counts.py --list-files 2>/dev/null); do git add -- "$doc"; done
 
 echo
 say "Replayed and restaged on origin/main. Your commit message is preserved."
