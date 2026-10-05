@@ -503,3 +503,10 @@ doi	decision	reason	screened
 10.7554/elife.90525	rejected	passing-mention: Fission yeast heterochromatin; PEAKS routine.	PRIDE search 2026-10-05
 10.7554/elife.92536	rejected	passing-mention: Kinase redox regulation; PEAKS PTM search routine.	PRIDE search 2026-10-05
 10.7554/elife.97896	rejected	passing-mention: Fission yeast APC/C regulation; PEAKS routine.	PRIDE search 2026-10-05
+10.1002/(sici)1097-0231(19990130)13:2<138::aid-rcm477>3.0.co;2-6	rejected	not-a-paper: Erratum to the 1998 SeqMS paper; no content of its own.	radar backfill 2026-10-05
+10.1002/rcm.338	rejected	false-friend: Despite the title, the paper sequences oligonucleotides, a different analyte.	radar backfill 2026-10-05
+10.1007/springerreference_57805	rejected	SpringerReference online record of the Encyclopedia of Algorithms entry 'Peptide De Novo Sequencing with MS/MS' (Ma, Zhang, Liang), already catalogued from the print encyclopedia.	radar backfill 2026-10-05
+10.1021/ac0694876	rejected	not-a-paper: Analytical Currents news digest; one brief item mentions de novo algorithm evaluation.	radar backfill 2026-10-05
+10.1109/iccabs.2012.6182616	held	Pevzner keynote abstract at ICCABS 2012 on de novo sequencing of cyclic nonribosomal peptide antibiotics by MS/MS, covering the group's catalogued NRP sequencing work.	radar backfill 2026-10-05
+10.2174/157016407782194594	held	Method paper on micro-algal sample preparation for 2-DE combined with MALDI-TOF de novo peptide sequencing to identify proteins of an organism without a reference proteome.	radar backfill 2026-10-05
+10.2174/187438380701011083	rejected	other: Duplicate DOI record of the same PepTiger article (same authors, volume and pages) as the other PepTiger item in this batch.	radar backfill 2026-10-05
