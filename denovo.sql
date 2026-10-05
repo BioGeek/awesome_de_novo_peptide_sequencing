@@ -19396,6 +19396,20 @@ INSERT INTO algorithm_repository VALUES(496,'https://github.com/csi-greifflab/Sy
 INSERT INTO algorithm_repository VALUES(296,'https://github.com/instadeepai/database_search_scaling',0);
 INSERT INTO algorithm_repository VALUES(229,'https://github.com/bittremieux-lab/denovo_benchmarks',0);
 INSERT INTO algorithm_repository VALUES(636,'https://github.com/fburic/paradias',0);
+INSERT INTO algorithm_repository VALUES(42,'https://github.com/4chuanMcChicken/DpNovo',0);
+INSERT INTO algorithm_repository VALUES(57,'https://github.com/semiller10/postnovo',0);
+INSERT INTO algorithm_repository VALUES(128,'https://github.com/MyPhuongLe/2DMSMSPeptideSimulation',0);
+INSERT INTO algorithm_repository VALUES(176,'https://github.com/AIMS-Lab-HKUSTGZ/MemNovo',0);
+INSERT INTO algorithm_repository VALUES(294,'https://github.com/tschager/denovort',0);
+INSERT INTO algorithm_repository VALUES(382,'https://github.com/navid-naderi/PLMNovo',0);
+INSERT INTO algorithm_repository VALUES(442,'https://github.com/savastakan/DNML',0);
+INSERT INTO algorithm_repository VALUES(542,'https://github.com/specht/gpf',0);
+INSERT INTO algorithm_repository VALUES(548,'https://github.com/sb689/CycloAnt',0);
+INSERT INTO algorithm_repository VALUES(648,'https://github.com/LoserLus/DBond',0);
+INSERT INTO algorithm_repository VALUES(43,'https://github.com/yangshu729/biatNovo-DDA',0);
+INSERT INTO algorithm_repository VALUES(87,'https://github.com/dumbgoos/AbNovoBench',0);
+INSERT INTO algorithm_repository VALUES(23,'https://github.com/BEAM-Labs/denovo/tree/main/RankNovo',0);
+INSERT INTO algorithm_repository VALUES(8,'https://github.com/BEAM-Labs/denovo/tree/main/OmniNovo',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,

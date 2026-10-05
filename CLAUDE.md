@@ -1627,7 +1627,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 90 of 811 methods have a row, 47 of the 71 deep-learning
+incomplete: 104 of 811 methods have a row, 52 of the 71 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -2612,6 +2612,35 @@ rejection: `build_candidates.py` monthly, and the denovo-radar harvest, which
 takes it as `--decisions`. `held` rows are excluded too, since they already
 sit in a person's review queue; a held paper later added to the catalog is
 simply catalogued, and its row can go.
+
+## Finding code the catalog is missing
+
+Two report-only proposers, and neither writes `algorithm_repository`:
+`build_repository_candidates.py` reads the URLs a method's own PDF prints,
+and `build_repository_search.py` asks GitHub (by method name and paper
+title) and GitLab (by name) for the methods that still have none.
+
+**A forge search is evidence of nothing until the README says so.** The
+first full run examined 641 repositories for 333 methods. A name match
+alone brings in a Flutter app called ReNovo, a Cleveland tech blog, forks,
+and four releases of JUMPt, the Peng lab's protein-turnover tool, under
+the JUMP sequencer's name. So a hit is `strong` only when its README cites
+the describing paper (DOI, arXiv id or title) AND it is named after the
+method or owned by an author. It is `probable` when it is named after the
+method, in the domain and owned by an author. An author match needs the
+surname AND the given name: with Yang, Li and Wang this common, a surname in
+a login means nothing.
+
+**Aggregators cite everything.** The trial run's two "strong" hits were an
+Awesome list and a paper-digest blog, each citing hundreds of papers, so a
+README citing five or more papers is discarded, as are forks.
+
+14 repositories went in from the first run, after reading each: DpNovo,
+PostNovo, MemNovo, PLMNovo, BiATNovo, AbNovoBench, DNML, CycloAnt, DBond,
+Genomic Peptide Finder, the 2D-MS network code, the retention-time
+extension, and RankNovo and OmniNovo as folders of `BEAM-Labs/denovo`.
+`REJECTED` in the script records the hits turned down, with the reason for
+each, so a re-run proposes only what is new.
 
 ## Mining the DNPS-DR feed
 

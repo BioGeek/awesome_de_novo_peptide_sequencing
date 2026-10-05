@@ -1,7 +1,7 @@
 # Scripts
 
 Everything that builds, refreshes, mines or checks the catalog. This folder
-holds **31 scripts**; every one has an entry below, under a heading that is its
+holds **32 scripts**; every one has an entry below, under a heading that is its
 filename, and `check_counts.py` fails the commit when the two drift apart:
 **0 scripts** lack an entry below, and **0 entries** name a script that does not
 exist.
@@ -95,6 +95,13 @@ unverifiable); `--mirror` reports what could be backed up and what blocks it.
 Proposes code repositories for methods that have none, from the URLs their own
 PDFs print, scored by name match and availability wording. Writes
 `repository_candidates.csv` only.
+
+### `build_repository_search.py`
+Asks GitHub and GitLab for the code of every method with no repository, by
+method name and by paper title, and scores each hit on its README: does it
+cite the describing paper, is it named after the method, is it owned by one
+of the paper's authors. Forks and aggregator READMEs (Awesome lists, paper
+digests) are never trusted. Writes `repository_search.csv` only.
 
 ## The PDF library and what is mined from it (local)
 
