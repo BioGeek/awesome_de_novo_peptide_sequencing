@@ -6185,7 +6185,7 @@ publications	5	dinovo-high-coverage-high-confidence-de-novo-peptide-sequencing-u
 publications	6	pepgo-a-deep-learning-and-tree-search-based-model-for-de-novo-peptide-sequencing
 publications	7	regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-explicit
 publications	8	accurate-de-novo-sequencing-of-the-modified-proteome-with-omninovo
-publications	9	bidirectional-representations-augmented-autoregressive-biological-sequence
+publications	9	bidirectional-representations-augmented-autoregressive-biological-preprint
 publications	10	modanovo-a-unified-model-for-post-translational-modification-aware-de-preprint
 publications	11	advancing-proteomic-analyses-with-graph-based-deep-learning-protein-inference
 publications	12	improvements-to-casanovo-a-deep-learning-de-novo-peptide-sequencer-preprint
@@ -6527,7 +6527,7 @@ publications	348	mass-spectrometry-based-profiling-of-personalized-immunopeptido
 publications	349	mass-invariant-natural-log-transformed-mass-spectra-enable-internal-calibration
 publications	350	precise-discovery-of-novel-n-terminal-proteoforms-beyond-the-limitations-of
 publications	351	high-accuracy-glycan-de-novo-prediction-for-n-and-o-linked-glycopeptides-across
-publications	352	universal-biological-sequence-reranking-for-improved-de-novo-peptide-sequencing
+publications	352	universal-biological-sequence-reranking-for-improved-de-novo-peptide-preprint
 publications	353	pi-mnovo-improves-de-novo-peptide-sequencing-through-microbial-domain
 publications	354	gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo
 publications	355	identification-of-antimicrobial-peptides-from-han-j6-hemp-seeds-using-mass
@@ -7153,6 +7153,8 @@ publications	974	de-novo-sequencing-of-disulphide-rich-peptides-using-tandem-mas
 publications	975	isotopic-differentiation-protocol-a-selective-extraction-of-c-and-n-terminal
 publications	976	de-novo-sequencing-and-peptide-characterization-via-ultraviolet
 publications	977	cinerascetins-new-peptides-fromhypsiboas-cinerascens-maldi-lift-tof-ms-msde
+publications	978	universal-biological-sequence-reranking-for-improved-de-novo-peptide-sequencing
+publications	979	bidirectional-representations-augmented-autoregressive-biological-sequence
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -7174,7 +7176,6 @@ venues	1	biorxiv
 venues	2	nature-machine-intelligence
 venues	7	aaai-2026
 venues	8	arxiv
-venues	9	neurips-2025
 venues	13	bioinformatics-and-computational-biology-bicob-2025
 venues	14	research-square
 venues	18	communications-biology
@@ -7472,3 +7473,4 @@ venues	960	phytochemistry
 venues	962	the-analyst
 venues	975	natural-products-chemistry-research
 venues	977	journal-of-the-brazilian-chemical-society
+venues	979	neurips-2025

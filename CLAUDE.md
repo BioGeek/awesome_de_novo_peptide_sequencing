@@ -239,7 +239,7 @@ forced apart on the assumption that a common Chinese name is two people,
 and the co-authors and institutions said one. Force a split only on a
 contradiction, such as a second ORCID or both rows on one byline.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (784), `'preprint'` (111), `'thesis'` (42), `'ML conference'` (12), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (3), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (784), `'preprint'` (113), `'thesis'` (42), `'ML conference'` (13), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -256,14 +256,15 @@ A talk still needs an `algorithm` link like any publication, and the honest one
 is the method the talk is ABOUT, with the usual role: a group presenting their
 own method describes it, and a survey talk uses what it surveys.
 
-`'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. Two cases so far. Publication 30 is an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. Publication 352 is RankNovo's arXiv posting, `10.48550/arXiv.2505.17552`, dated 2025-05-23, which is AFTER ICLR 2025 in April; the conference version is publication 24, from OpenReview. Note the arXiv title differs from the conference one ("Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing" against "RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing"), so unlike publication 30 it needs no slug suffix, and it is deliberately NOT linked through `publication_version`. **The arXiv id is the tell: a `25xx` id on a paper whose version of record predates it is a postprint, however the submitter labels it.** Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
+`'postprint'` exists for a record posted to a preprint server AFTER the version of record, which is not the same thing as a preprint and must not be counted as one. Publication 30 is the worked example: an arXiv posting whose own comment field cites the BIBE 2023 conference paper it came from. **The arXiv id is the tell: a `25xx` id on a paper whose version of record predates it is a postprint, however the submitter labels it.** But check that the version of record really is one first. Publication 352, RankNovo's arXiv posting (`10.48550/arXiv.2505.17552`, 2025-05-23), was typed a postprint of "ICLR 2025" from an OpenReview forum page (publication 24). That forum is a SUBMISSION. RankNovo is not in ICLR 2025's accepted list, which does hold ReNovo and SearchNovo. The paper was accepted at ICML 2025 instead, under the arXiv title, as PMLR 267:50672-50696 with its own forum `HtSdgubxsJ`. So 352 is that paper's preprint and is linked to the proceedings row, 978, and 24 is an OpenReview preprint like 20 and 64. The lab's own README said "RankNovo have been accepted by ICML'2025" all along. Typing it correctly keeps it out of both sides of the Publication lifecycle chart, which measures a preprint-to-journal gap that does not exist here, and out of `n_preprints`. Adding a type means touching four places besides this list: the wave chart's colour domain, the BibTeX `entry_type_of` map and its `note` field, and the slug suffix policy in `slugs.py` (publication 30 shares a title with 120, so without a semantic suffix its URL falls back to `-30`).
 
 **An ML preprint and its proceedings paper are two rows**, typed `'preprint'`
 and `'ML conference'` and linked through `publication_version` with source
-`'manual'`, the same shape as a bioRxiv preprint and its journal article. Four
-pairs so far: RefineNovo (16 to 438) and LIPNovo (17 to 439) in PMLR v267 for
-ICML 2025, AdaNovo (32 to 440) and NovoBench (78 to 441) in the NeurIPS 2024
-proceedings, the last in the Datasets and Benchmarks track. The preprint rows
+`'manual'`, the same shape as a bioRxiv preprint and its journal article. Six
+pairs so far: RefineNovo (16 to 438), LIPNovo (17 to 439) and RankNovo (352 to
+978) in PMLR v267 for ICML 2025, AdaNovo (32 to 440) and NovoBench (78 to 441) in the NeurIPS 2024
+proceedings, the last in the Datasets and Benchmarks track, and CrossNovo (9 to 979)
+in the NeurIPS 2025 proceedings. The preprint rows
 used to carry the conference as their `journal` while pointing at arXiv; they
 now say `arXiv`, and the conference row holds the proceedings URL and, for
 NeurIPS, its `10.52202` DOI. Two traps: AdaNovo's old label said ICML 2024,
@@ -275,14 +276,28 @@ the preprint's `publication_dataset` links, since it evaluates on the same data.
 had ICLR venues on the strength of an OpenReview URL; the forum pages say
 "Submitted to ICLR 2025 ... Decision: Reject" and "ICLR 2026 Conference
 Withdrawn Submission", so both are `journal = 'OpenReview'`, still preprints.
+Publication 24, RankNovo, was the third. Its forum could not be read from here,
+but ICLR's own accepted list (`iclr.cc/virtual/2025/papers.html`, 3896 papers)
+settles it without OpenReview: an absent title was not accepted.
 OpenReview answers scripted requests, its API included, with a challenge page;
-a headful browser reads it. CrossNovo (9) is a NeurIPS 2025 paper whose
-proceedings were not yet published on 2026-10-04, so it is still the arXiv row.
+a headful browser reads it. CrossNovo's NeurIPS 2025 proceedings appeared on
+`papers.nips.cc` by 2026-10-05 (`10.52202/085713-1721`, dated 2026-04-23 by the
+publisher; the row takes the conference's 2025-12-02, as 440 and 441 take
+NeurIPS 2024's opening day), so it is now row 979 and 9 is its arXiv preprint.
+
+**The proceedings row takes the clean URL.** When the preprint and the
+proceedings share a title, `slugs.py`'s suffix policy gives the preprint
+`-preprint`, so adding the proceedings row CHANGES the preprint's slug. The old
+address does not break, because it now serves the version of record, so no
+`REDIRECTS` entry is needed, and one would collide with that page. A venue
+whose lowest publication id moves (NeurIPS 2025, from 9 to 979) shows up in
+`--check` as one venue REMOVED and one ADDED under the same slug; that is a key
+moving, not a URL.
 
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 251 of the 1234 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 251 of the 1236 are `'uses'`, and they are concentrated rather than
 spread: 138 of PEAKS's 145 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -612,7 +627,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 977 against 976 publications today --
+a deleted row does not give its id back -- 979 against 978 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -828,7 +843,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 898/976, of which 5 came from the PDFs themselves via
+Coverage is 900/978, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.

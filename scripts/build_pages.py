@@ -1645,7 +1645,7 @@ def load(conn: sqlite3.Connection) -> dict:
     # 'describes' or 'uses'. It is carried through both directions here: an
     # algorithm page separates the papers that define it from the papers that
     # merely run it, and a publication page says which of its methods it
-    # introduces. 251 of 1234 links are 'uses', but they are concentrated: 18 of
+    # introduces. 251 of 1236 links are 'uses', but they are concentrated: 18 of
     # PEAKS's 21 papers are applications, and listing them as its papers also
     # credited all 107 of their authors as its authors.
     d["pub_algs"] = defaultdict(list)
@@ -2159,7 +2159,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~7470 thin pages out of
+    # committed under pages/. search: false keeps ~7472 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
