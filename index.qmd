@@ -4376,13 +4376,23 @@ dataset_paper_network = {
   // Same greedy pass as the other two force charts: six positions per name in
   // descending degree, hidden if none is free. Every node still answers a
   // hover, so the hidden ones are the least connected rather than lost.
-  const LABEL_CHAR_PX = 5.8
+  //
+  // Widths are MEASURED, not estimated. A flat 5.8 px per character put four
+  // labels 2 px over a neighbouring dot once longer paper names arrived
+  // ("De novo sequence-ambiguity benc…"): an estimate is an invisible licence
+  // to overlap. A canvas measures the font the SVG draws, once per node.
+  const measure_ctx = document.createElement("canvas").getContext("2d")
+  for (const d of nodes) {
+    measure_ctx.font = `${d.type === "dataset" ? 600 : 400} 10px sans-serif`
+    d.label_w = measure_ctx.measureText(d.name).width + 2
+  }
+  const DOT_CLEAR_PX = 2
   const SIDES = [[1, 0], [-1, 0], [1, -11], [-1, -11], [1, 11], [-1, 11]]
   const label_order = nodes.slice().sort((a, b) => d3.descending(a.degree, b.degree))
   const place_labels = () => {
     const shown = []
     for (const d of label_order) {
-      const w = d.name.length * LABEL_CHAR_PX
+      const w = d.label_w
       d.label_on = false
       for (const [side, dy] of SIDES) {
         const x0 = side > 0 ? d.x + NODE_R(d) + 3 : d.x - NODE_R(d) - 3 - w
@@ -4391,8 +4401,8 @@ dataset_paper_network = {
         if (box.x0 < 0 || box.x1 > width || box.y0 < TITLE_PX || box.y1 > PLOT_H) continue
         const clash =
           shown.some(o => box.x0 < o.x1 + 2 && box.x1 + 2 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0) ||
-          nodes.some(n => box.x0 < n.x + NODE_R(n) && box.x1 > n.x - NODE_R(n)
-                       && box.y0 < n.y + NODE_R(n) && box.y1 > n.y - NODE_R(n))
+          nodes.some(n => box.x0 < n.x + NODE_R(n) + DOT_CLEAR_PX && box.x1 > n.x - NODE_R(n) - DOT_CLEAR_PX
+                       && box.y0 < n.y + NODE_R(n) + DOT_CLEAR_PX && box.y1 > n.y - NODE_R(n) - DOT_CLEAR_PX)
         if (!clash) { d.label_on = true; d.label_side = side; d.label_dy = dy; shown.push(box); break }
       }
     }
@@ -4916,6 +4926,36 @@ application_sankey = {
     </p>`
   }
 
+  // FOLD THE TAIL. Since the backfill the right side holds over a hundred
+  // sequencers, 37 of them with a single paper, and the 1200 px cap left each
+  // about 11 px: 83 labels overlapped. Raising the cap would need ~2600 px for
+  // a chart whose story is the handful of tools applications reach for. So
+  // the busiest MAX_SEQ - 1 keep a node each and the rest share one, whose
+  // ribbons still carry their true counts and whose hover names every member.
+  // Ties at the cut break on the name, so the set is stable between renders.
+  const MAX_SEQ = 40
+  const by_traffic = Array.from(seq_totals.entries())
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  const folded = by_traffic.length > MAX_SEQ ? by_traffic.slice(MAX_SEQ - 1).map(d => d[0]) : []
+  const OTHER = `${folded.length} more sequencers`
+  if (folded.length) {
+    const fold_set = new Set(folded)
+    for (const [key, count] of Array.from(flow.entries())) {
+      const [sd, seq] = key.split("|")
+      if (!fold_set.has(seq)) continue
+      flow.delete(key)
+      const k2 = `${sd}|${OTHER}`
+      flow.set(k2, (flow.get(k2) ?? 0) + count)
+    }
+    let other_total = 0
+    for (const seq of folded) { other_total += seq_totals.get(seq); seq_totals.delete(seq) }
+    seq_totals.set(OTHER, other_total)
+  }
+  const is_other = id => folded.length > 0 && id === OTHER
+  // A label wider than the right margin is cut, with the full name on hover.
+  const MAX_LABEL_CHARS = 44
+  const short = name => name.length > MAX_LABEL_CHARS ? name.slice(0, MAX_LABEL_CHARS - 1) + "…" : name
+
   // Layout parameters.
   //
   // HEIGHT IS DERIVED, NOT FIXED. Node heights are proportional to traffic, so
@@ -4955,8 +4995,9 @@ application_sankey = {
   const left_nodes = Array.from(sd_totals.entries())
     .sort((a, b) => b[1] - a[1])
     .map(([sd, total]) => ({ id: sd, kind: "subdomain", total }))
+  // The folded node goes last whatever its size: it is a remainder, not a tool.
   const right_nodes = Array.from(seq_totals.entries())
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => is_other(a[0]) - is_other(b[0]) || b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([seq, total]) => ({ id: seq, kind: "sequencer", total }))
 
   // Palette + labels come from the shared subdomain_color / subdomain_label
@@ -5050,6 +5091,7 @@ application_sankey = {
       sankey_tooltip.replaceChildren(html`<div>
         <div class="map-tooltip-title">${subdomain_label.get(d.subdomain) ?? d.subdomain} → ${d.sequencer}</div>
         <div class="map-tooltip-meta">${d.count} paper${d.count === 1 ? "" : "s"}</div>
+        ${is_other(d.sequencer) ? html`<div class="map-tooltip-meta">${folded.join(", ")}</div>` : ""}
         <div class="map-tooltip-row">
           <span class="map-tooltip-swatch" style=${`background:${d.color}`}></span>
           <span>${subdomain_label.get(d.subdomain) ?? d.subdomain}</span>
@@ -5090,21 +5132,24 @@ application_sankey = {
     .join("rect")
     .attr("x", inner_w).attr("y", d => d.y0)
     .attr("width", 8).attr("height", d => d.y1 - d.y0)
-    .attr("fill", "#1f6feb")
+    .attr("fill", d => is_other(d.id) ? "#8c959f" : "#1f6feb")
   const right_labels = g.append("g")
     .selectAll("text")
     .data(right_nodes)
     .join("text")
     .attr("x", inner_w + 14).attr("y", d => (d.y0 + d.y1) / 2 + 4)
     .attr("text-anchor", "start")
-    .attr("fill", "#1d2330")
-    .text(d => `${d.id}  (${d.total})`)
+    .attr("fill", d => is_other(d.id) ? "#57606a" : "#1d2330")
+    .attr("font-style", d => is_other(d.id) ? "italic" : null)
+    .text(d => `${short(d.id)}  (${d.total})`)
+  right_labels.append("title").text(d => is_other(d.id) ? folded.join(", ") : d.id)
 
   // Both ends link now. The right-hand nodes are sequencers and go to their
   // algorithm page; the left-hand nodes are application areas and go to theirs,
   // which they did not have when this chart was written.
-  svg_link_wrap(right_rects, d => algo_href(d.id))
-  svg_link_wrap(right_labels, d => algo_href(d.id))
+  // The folded node is not a method, so it gets no link.
+  svg_link_wrap(right_rects, d => is_other(d.id) ? null : algo_href(d.id))
+  svg_link_wrap(right_labels, d => is_other(d.id) ? null : algo_href(d.id))
   svg_link_wrap(left_rects, d => page_href("subdomains", d.id))
   svg_link_wrap(left_labels, d => page_href("subdomains", d.id))
 
@@ -7603,7 +7648,7 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
   )
 
   const chart = Plot.plot({
-    marginLeft: 270,   // measured 64 px of method-label overflow
+    marginLeft: 285,   // measured 64 px of method-label overflow; 270 still clipped "Multi-protease dual-fragmentation anti…" by 2 px
     height: Math.max(220, paired.length * 20),
     marginBottom: 48,
     x: { label: "Preprint → peer-reviewed gap (months)", grid: true, labelOffset: 40 },

@@ -3018,6 +3018,15 @@ Four classes of defect turned up, and each has its own remedy in `index.qmd`:
    the estimate cannot drift far. If you add a label, re-run the audit rather
    than trusting the constant.
 
+**Data growth breaks a clean audit, so re-run it after a bulk import.** The
+radar backfill left five charts colliding with no chart code touched. The
+application-to-sequencer flow had passed 100 sequencers against a 1200 px cap,
+83 overlapping labels: it now keeps the 39 busiest and folds the rest into one
+"N more sequencers" node, last, unlinked, its ribbons at their true counts and
+its hover naming every member. The dataset network measures each label with a
+canvas instead of 5.8 px per character, and keeps 2 px clear of every dot. The
+lifecycle bars needed 285 px of left margin, not 270. 41 charts, 0 collisions.
+
 In the two force-directed charts every name cannot be shown at once: measured
 123 and 457 overlapping label pairs. A greedy pass in descending degree (model
 names first in the bipartite) tries six positions per name -- right of the dot,
