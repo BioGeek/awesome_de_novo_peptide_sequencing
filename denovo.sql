@@ -32437,6 +32437,32 @@ INSERT INTO dataset VALUES(397,'Characterization of the gila monster (Heloderma 
 INSERT INTO dataset VALUES(398,'Identification of novel peptide forms associated with seasonality and water restriction imposition in Eucalyptus grandis leaf proteome','Identification of novel peptide forms associated with seasonality and water restriction imposition in Eucalyptus grandis leaf proteome','deposit',NULL,'Eucalyptus grandis',NULL);
 INSERT INTO dataset VALUES(399,'T cells of colorectal cancer patients’ stimulated by neoantigenic and cryptic peptides better recognize autologous tumor cells','T cells of colorectal cancer patients’ stimulated by neoantigenic and cryptic peptides better recognize autologous tumor cells','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(400,'full length protein sequencing method based on less specific and unspecific hydrolysis strategies 2','full length protein sequencing method based on less specific and unspecific hydrolysis strategies 2','deposit',NULL,'Bos taurus (bovine); Equus caballus (horse); Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(401,'Deep Coverage and Extended Sequence Reads Obtained with a Single Archaeal Protease Expedite de novo Protein Sequencing by Mass Spectrometry','Deep Coverage and Extended Sequence Reads Obtained with a Single Archaeal Protease Expedite de novo Protein Sequencing by Mass Spectrometry','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(402,'De Novo Sequencing of Polyclonal Antibodies by Integrating Intact Mass, Top-Down and Bottom-Up Mass Spectrometry','De Novo Sequencing of Polyclonal Antibodies by Integrating Intact Mass, Top-Down and Bottom-Up Mass Spectrometry','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(403,'Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking','Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking','deposit',NULL,'Oryctolagus cuniculus (rabbit)',NULL);
+INSERT INTO dataset VALUES(404,'MS-based sequence of anti-RSV-F monoclonal antibody 131-2a','MS-based sequence of anti-RSV-F monoclonal antibody 131-2a','deposit',NULL,'Mus musculus (mouse)',NULL);
+INSERT INTO dataset VALUES(405,'Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking (PXD055077)','Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking','deposit',NULL,'Oryctolagus cuniculus (rabbit)',NULL);
+INSERT INTO dataset VALUES(406,'Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking (PXD055085)','Epitope and paratope mapping of a SUMO-remnant antibody using cross-linking mass spectrometry and molecular docking','deposit',NULL,'Oryctolagus sp. ''rabbit_od''',NULL);
+INSERT INTO dataset VALUES(407,'Proteomic analysis of the major alkali-soluble Sacha Inchi (Plukenetia volubilis) proteins','Proteomic analysis of the major alkali-soluble Sacha Inchi (Plukenetia volubilis) proteins','deposit',NULL,'Plukenetia volubilis',NULL);
+INSERT INTO dataset VALUES(408,'Evaluating sequence alignment for metaproteomics applications','Evaluating sequence alignment for metaproteomics applications','deposit',NULL,'Saccharomyces cerevisiae (baker''s yeast)',NULL);
+INSERT INTO dataset VALUES(409,'De novo sequencing of an unknown monoclonal antibody using BU-MS and elucidation of the neutralizing antibody-Streptolysin O complex via cross-linking and hydrogen-deuterium exchange mass spectrometry','De novo sequencing of an unknown monoclonal antibody using BU-MS and elucidation of the neutralizing antibody-Streptolysin O complex via cross-linking and hydrogen-deuterium exchange mass spectrometry','deposit',NULL,'Mus musculus (mouse); Streptococcus pyogenes mgas315',NULL);
+INSERT INTO dataset VALUES(410,'Improved detection of tryptic immunoglobulin variable region peptides by chromatographic and gas-phase fractionation techniques','Improved detection of tryptic immunoglobulin variable region peptides by chromatographic and gas-phase fractionation techniques','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(411,'HyPep: An Open-Source Software for Identification and Discovery of Neuropeptides using Sequence Homology Searching','HyPep: An Open-Source Software for Identification and Discovery of Neuropeptides using Sequence Homology Searching','deposit',NULL,'Drosophila melanogaster (fruit fly)',NULL);
+INSERT INTO dataset VALUES(412,'MetaNovo : an open-source pipeline for probabilistic peptide discovery in complex metaproteomic datasets','MetaNovo : an open-source pipeline for probabilistic peptide discovery in complex metaproteomic datasets','deposit',NULL,'Human gut metagenome',NULL);
+INSERT INTO dataset VALUES(413,'A novel C1q domain-containing protein isolated from the bivalve mollusk Modiolus kurilensis recognizing glycans enriched with acidic galactans','A novel C1q domain-containing protein isolated from the bivalve mollusk Modiolus kurilensis recognizing glycans enriched with acidic galactans','deposit',NULL,'Modiolus kurilensis',NULL);
+INSERT INTO dataset VALUES(414,'Peptidomes of MHC Class I Allotypes Illustrate the Peptide binding Plasticity Leading by Micropolymorphism','Peptidomes of MHC Class I Allotypes Illustrate the Peptide binding Plasticity Leading by Micropolymorphism','deposit',NULL,'Sus scrofa domesticus (domestic pig)',NULL);
+INSERT INTO dataset VALUES(415,'Proteomics of Hypnale hypnale (Hump-nosed pit viper) venom from the Western Ghats of India','Proteomics of Hypnale hypnale (Hump-nosed pit viper) venom from the Western Ghats of India','deposit',NULL,'Serpentes',NULL);
+INSERT INTO dataset VALUES(416,'Proteomics of venom from Trimeresurus malabaricus','Proteomics of venom from Trimeresurus malabaricus','deposit',NULL,'Serpentes',NULL);
+INSERT INTO dataset VALUES(417,'Quick and clean: Cracking E.coli’s code by LC-MS/MS, de novo sequencing, and dictionary search','Quick and clean: Cracking E.coli’s code by LC-MS/MS, de novo sequencing, and dictionary search','deposit',NULL,'Escherichia coli',NULL);
+INSERT INTO dataset VALUES(418,'Estimating the Contribution of Proteasomal Spliced Peptides to the HLA-I Ligandome','Estimating the Contribution of Proteasomal Spliced Peptides to the HLA-I Ligandome','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(419,'Multi-Enzymatic Limited Digestion - the Next-Generation Sequencing for Proteomics','Multi-Enzymatic Limited Digestion - the Next-Generation Sequencing for Proteomics','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(420,'Immune repertoire after immunization as seen by next generation sequencing and proteomics','Immune repertoire after immunization as seen by next generation sequencing and proteomics','deposit',NULL,'Rattus norvegicus (rat)',NULL);
+INSERT INTO dataset VALUES(421,'A multi-protease, multi-dissociation, bottom-up-to-top-down proteomic view of the Loxosceles intermedia venom','A multi-protease, multi-dissociation, bottom-up-to-top-down proteomic view of the Loxosceles intermedia venom','deposit',NULL,'Loxosceles intermedia',NULL);
+INSERT INTO dataset VALUES(422,'Venom proteomics of Indonesian king cobra','Venom proteomics of Indonesian king cobra','deposit',NULL,'Ophiophagus hannah (king cobra) (naja hannah)',NULL);
+INSERT INTO dataset VALUES(423,'Aquaporins -  Analysis of root plasma membrane aquaporins from Brassica oleracea: post-translational modifications, de novo sequencing and detection of isoforms by high resolution mass spectrometry','Aquaporins -  Analysis of root plasma membrane aquaporins from Brassica oleracea: post-translational modifications, de novo sequencing and detection of isoforms by high resolution mass spectrometry','deposit',NULL,'Brassica oleracea (wild cabbage)',NULL);
+INSERT INTO dataset VALUES(424,'Sequencing the anti-MUC1 hybridoma antibody 139H2','Sequencing the anti-MUC1 hybridoma antibody 139H2','deposit',NULL,'Mus musculus (mouse)',NULL);
+INSERT INTO dataset VALUES(425,'YPIC challenge 2018: A case study in characterizing an unknown protein  sample','YPIC challenge 2018: A case study in characterizing an unknown protein  sample','deposit',NULL,'Escherichia coli',NULL);
+INSERT INTO dataset VALUES(426,'Discovery of Non-Canonical Peptides Derived from Novel Small Open Reading Frames as MHC-I Epitopes','Discovery of Non-Canonical Peptides Derived from Novel Small Open Reading Frames as MHC-I Epitopes','deposit',NULL,'Homo sapiens (human)',NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -32867,6 +32893,32 @@ INSERT INTO dataset_version VALUES(425,397,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(426,398,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-03-25',NULL);
 INSERT INTO dataset_version VALUES(427,399,'as deposited',NULL,NULL,NULL,NULL,NULL,'2023-03-11',NULL);
 INSERT INTO dataset_version VALUES(428,400,'as deposited',NULL,NULL,NULL,NULL,NULL,'2022-02-15',NULL);
+INSERT INTO dataset_version VALUES(429,401,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-03-17',NULL);
+INSERT INTO dataset_version VALUES(430,402,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-10-31',NULL);
+INSERT INTO dataset_version VALUES(431,403,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-02-19',NULL);
+INSERT INTO dataset_version VALUES(432,404,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-07-22',NULL);
+INSERT INTO dataset_version VALUES(433,405,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-02-19',NULL);
+INSERT INTO dataset_version VALUES(434,406,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-02-19',NULL);
+INSERT INTO dataset_version VALUES(435,407,'as deposited',NULL,NULL,NULL,NULL,NULL,'2025-05-07',NULL);
+INSERT INTO dataset_version VALUES(436,408,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-10-09',NULL);
+INSERT INTO dataset_version VALUES(437,409,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-05-06',NULL);
+INSERT INTO dataset_version VALUES(438,410,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-08-09',NULL);
+INSERT INTO dataset_version VALUES(439,411,'as deposited',NULL,NULL,NULL,NULL,NULL,'2023-02-02',NULL);
+INSERT INTO dataset_version VALUES(440,412,'as deposited',NULL,NULL,NULL,NULL,NULL,'2023-05-16',NULL);
+INSERT INTO dataset_version VALUES(441,413,'as deposited',NULL,NULL,NULL,NULL,NULL,'2022-02-17',NULL);
+INSERT INTO dataset_version VALUES(442,414,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-09-09',NULL);
+INSERT INTO dataset_version VALUES(443,415,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-03-19',NULL);
+INSERT INTO dataset_version VALUES(444,416,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-01-24',NULL);
+INSERT INTO dataset_version VALUES(445,417,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-05-26',NULL);
+INSERT INTO dataset_version VALUES(446,418,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-09-03',NULL);
+INSERT INTO dataset_version VALUES(447,419,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-05-08',NULL);
+INSERT INTO dataset_version VALUES(448,420,'as deposited',NULL,NULL,NULL,NULL,NULL,'2017-10-04',NULL);
+INSERT INTO dataset_version VALUES(449,421,'as deposited',NULL,NULL,NULL,NULL,NULL,'2017-05-16',NULL);
+INSERT INTO dataset_version VALUES(450,422,'as deposited',NULL,NULL,NULL,NULL,NULL,'2015-08-20',NULL);
+INSERT INTO dataset_version VALUES(451,423,'as deposited',NULL,NULL,NULL,NULL,NULL,'2013-06-18',NULL);
+INSERT INTO dataset_version VALUES(452,424,'as deposited',NULL,NULL,NULL,NULL,NULL,'2024-03-18',NULL);
+INSERT INTO dataset_version VALUES(453,425,'as deposited',NULL,NULL,NULL,NULL,NULL,'2019-06-11',NULL);
+INSERT INTO dataset_version VALUES(454,426,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-11-03',NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -33325,6 +33377,32 @@ INSERT INTO dataset_address VALUES(458,425,'PRIDE','PXD001343','https://www.ebi.
 INSERT INTO dataset_address VALUES(459,426,'PRIDE','PXD031100','https://www.ebi.ac.uk/pride/archive/projects/PXD031100',NULL,0);
 INSERT INTO dataset_address VALUES(460,427,'PRIDE','PXD037587','https://www.ebi.ac.uk/pride/archive/projects/PXD037587',NULL,0);
 INSERT INTO dataset_address VALUES(461,428,'PRIDE','PXD030203','https://www.ebi.ac.uk/pride/archive/projects/PXD030203',NULL,0);
+INSERT INTO dataset_address VALUES(462,429,'PRIDE','PXD063988','https://www.ebi.ac.uk/pride/archive/projects/PXD063988',NULL,0);
+INSERT INTO dataset_address VALUES(463,430,'PRIDE','PXD063526','https://www.ebi.ac.uk/pride/archive/projects/PXD063526',NULL,0);
+INSERT INTO dataset_address VALUES(464,431,'PRIDE','PXD060724','https://www.ebi.ac.uk/pride/archive/projects/PXD060724',NULL,0);
+INSERT INTO dataset_address VALUES(465,432,'PRIDE','PXD059427','https://www.ebi.ac.uk/pride/archive/projects/PXD059427',NULL,0);
+INSERT INTO dataset_address VALUES(466,433,'PRIDE','PXD055077','https://www.ebi.ac.uk/pride/archive/projects/PXD055077',NULL,0);
+INSERT INTO dataset_address VALUES(467,434,'PRIDE','PXD055085','https://www.ebi.ac.uk/pride/archive/projects/PXD055085',NULL,0);
+INSERT INTO dataset_address VALUES(468,435,'PRIDE','PXD052665','https://www.ebi.ac.uk/pride/archive/projects/PXD052665',NULL,0);
+INSERT INTO dataset_address VALUES(469,436,'PRIDE','PXD050548','https://www.ebi.ac.uk/pride/archive/projects/PXD050548',NULL,0);
+INSERT INTO dataset_address VALUES(470,437,'PRIDE','PXD047461','https://www.ebi.ac.uk/pride/archive/projects/PXD047461',NULL,0);
+INSERT INTO dataset_address VALUES(471,438,'PRIDE','PXD046072','https://www.ebi.ac.uk/pride/archive/projects/PXD046072',NULL,0);
+INSERT INTO dataset_address VALUES(472,439,'PRIDE','PXD037058','https://www.ebi.ac.uk/pride/archive/projects/PXD037058',NULL,0);
+INSERT INTO dataset_address VALUES(473,440,'PRIDE','PXD030708','https://www.ebi.ac.uk/pride/archive/projects/PXD030708',NULL,0);
+INSERT INTO dataset_address VALUES(474,441,'PRIDE','PXD027507','https://www.ebi.ac.uk/pride/archive/projects/PXD027507',NULL,0);
+INSERT INTO dataset_address VALUES(475,442,'PRIDE','PXD019523','https://www.ebi.ac.uk/pride/archive/projects/PXD019523',NULL,0);
+INSERT INTO dataset_address VALUES(476,443,'PRIDE','PXD017592','https://www.ebi.ac.uk/pride/archive/projects/PXD017592',NULL,0);
+INSERT INTO dataset_address VALUES(477,444,'PRIDE','PXD011673','https://www.ebi.ac.uk/pride/archive/projects/PXD011673',NULL,0);
+INSERT INTO dataset_address VALUES(478,445,'PRIDE','PXD012015','https://www.ebi.ac.uk/pride/archive/projects/PXD012015',NULL,0);
+INSERT INTO dataset_address VALUES(479,446,'PRIDE','PXD010793','https://www.ebi.ac.uk/pride/archive/projects/PXD010793',NULL,0);
+INSERT INTO dataset_address VALUES(480,447,'PRIDE','PXD009800','https://www.ebi.ac.uk/pride/archive/projects/PXD009800',NULL,0);
+INSERT INTO dataset_address VALUES(481,448,'PRIDE','PXD006484','https://www.ebi.ac.uk/pride/archive/projects/PXD006484',NULL,0);
+INSERT INTO dataset_address VALUES(482,449,'PRIDE','PXD005523','https://www.ebi.ac.uk/pride/archive/projects/PXD005523',NULL,0);
+INSERT INTO dataset_address VALUES(483,450,'PRIDE','PXD001726','https://www.ebi.ac.uk/pride/archive/projects/PXD001726',NULL,0);
+INSERT INTO dataset_address VALUES(484,451,'PRIDE','PRD000114','https://www.ebi.ac.uk/pride/archive/projects/PRD000114',NULL,0);
+INSERT INTO dataset_address VALUES(485,452,'PRIDE','PXD043489','https://www.ebi.ac.uk/pride/archive/projects/PXD043489',NULL,0);
+INSERT INTO dataset_address VALUES(486,453,'PRIDE','PXD014003','https://www.ebi.ac.uk/pride/archive/projects/PXD014003',NULL,0);
+INSERT INTO dataset_address VALUES(487,454,'PRIDE','PXD024415','https://www.ebi.ac.uk/pride/archive/projects/PXD024415',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -34083,6 +34161,36 @@ INSERT INTO publication_dataset VALUES(763,861,398,426,'introduces');
 INSERT INTO publication_dataset VALUES(764,862,399,427,'introduces');
 INSERT INTO publication_dataset VALUES(765,568,400,428,'introduces');
 INSERT INTO publication_dataset VALUES(766,860,395,423,'introduces');
+INSERT INTO publication_dataset VALUES(767,430,401,429,'introduces');
+INSERT INTO publication_dataset VALUES(768,816,402,430,'introduces');
+INSERT INTO publication_dataset VALUES(769,819,403,431,'introduces');
+INSERT INTO publication_dataset VALUES(770,649,404,432,'introduces');
+INSERT INTO publication_dataset VALUES(771,819,405,433,'introduces');
+INSERT INTO publication_dataset VALUES(772,819,406,434,'introduces');
+INSERT INTO publication_dataset VALUES(773,659,407,435,'introduces');
+INSERT INTO publication_dataset VALUES(774,577,408,436,'introduces');
+INSERT INTO publication_dataset VALUES(775,201,409,437,'introduces');
+INSERT INTO publication_dataset VALUES(776,203,409,437,'introduces');
+INSERT INTO publication_dataset VALUES(777,588,410,438,'introduces');
+INSERT INTO publication_dataset VALUES(778,634,411,439,'introduces');
+INSERT INTO publication_dataset VALUES(779,844,412,440,'introduces');
+INSERT INTO publication_dataset VALUES(780,845,412,440,'introduces');
+INSERT INTO publication_dataset VALUES(781,820,413,441,'introduces');
+INSERT INTO publication_dataset VALUES(782,764,414,442,'introduces');
+INSERT INTO publication_dataset VALUES(783,236,415,443,'introduces');
+INSERT INTO publication_dataset VALUES(784,240,416,444,'introduces');
+INSERT INTO publication_dataset VALUES(785,495,417,445,'introduces');
+INSERT INTO publication_dataset VALUES(786,566,418,446,'introduces');
+INSERT INTO publication_dataset VALUES(787,574,418,446,'introduces');
+INSERT INTO publication_dataset VALUES(788,818,419,447,'introduces');
+INSERT INTO publication_dataset VALUES(789,287,420,448,'introduces');
+INSERT INTO publication_dataset VALUES(790,856,421,449,'introduces');
+INSERT INTO publication_dataset VALUES(791,785,422,450,'introduces');
+INSERT INTO publication_dataset VALUES(792,398,423,451,'introduces');
+INSERT INTO publication_dataset VALUES(793,423,424,452,'introduces');
+INSERT INTO publication_dataset VALUES(794,460,424,452,'introduces');
+INSERT INTO publication_dataset VALUES(795,786,425,453,'introduces');
+INSERT INTO publication_dataset VALUES(796,855,426,454,'introduces');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

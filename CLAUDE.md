@@ -1288,7 +1288,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**389 datasets, 417 versions, 448 addresses, 751 publication links over 187 papers.**
+**415 datasets, 443 versions, 474 addresses, 781 publication links over 212 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1377,7 +1377,7 @@ version with no address says exactly that, and is the reason the version table
 allows a version with no `dataset_address` row at all.
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 17 of 417 versions have none. Two shapes: ACFM, the InstaNovo-FM
+missing one.** 17 of 443 versions have none. Two shapes: ACFM, the InstaNovo-FM
 tier that is not published but is reproducible from the raw accessions its paper
 lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
