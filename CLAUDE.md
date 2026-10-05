@@ -1624,6 +1624,21 @@ after the anchor change by clicking in headless Chrome: the table goes 50 rows
 to 18, every row reads `benchmark`, one of seven kind checkboxes is checked, and
 the filter panel opens so the change is reversible.
 
+**The Code filter says "No repository recorded", never "closed source".**
+It is the fourth control in the sticky filter bar, beside Kind, Approach and
+Acquisition, and it reads `algorithm_repository`, which is curated and
+incomplete: 90 of 811 methods have a row, 47 of the 71 deep-learning
+algorithms. A method whose code exists but is not catalogued lands in the
+second bucket, so the label states what the catalog knows rather than a fact
+about the method. `repository_candidates.csv` is where the gap closes.
+
+A publication passes on its DESCRIBING links only (`has_code` in the Python
+chunk), not on `repo IS NOT NULL`: `repo` concatenates every linked method's
+repository, `'uses'` links included, so a venomics paper that ran Casanovo
+would have counted as open source. Measured in headless Chrome: 356 swim-lane
+dots split 68 with code and 288 without, and 976 papers split 135 and 841,
+0 OJS errors.
+
 ### build_dataset_accessions.py
 
 Mines the LOCAL PDF library for accessions and links them. It **never** creates

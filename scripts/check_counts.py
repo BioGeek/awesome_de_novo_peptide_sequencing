@@ -418,6 +418,22 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),
 ]
 
+# The Code filter's caveat quotes how incomplete algorithm_repository is.
+CLAIMS += [
+    ("CLAUDE.md", "methods with a repository",
+     r"incomplete: (\d+) of \d+ methods have a row",
+     "SELECT COUNT(DISTINCT algorithm_id) FROM algorithm_repository"),
+    ("CLAUDE.md", "methods (Code filter)",
+     r"incomplete: \d+ of (\d+) methods have a row", "SELECT COUNT(*) FROM algorithm"),
+    ("CLAUDE.md", "DL algorithms with a repository",
+     r"a row, (\d+) of the \d+ deep-learning\s+algorithms",
+     "SELECT COUNT(*) FROM algorithm a WHERE kind='algorithm' AND is_deep_learning=1 "
+     "AND EXISTS (SELECT 1 FROM algorithm_repository r WHERE r.algorithm_id=a.id)"),
+    ("CLAUDE.md", "DL algorithms",
+     r"a row, \d+ of the (\d+) deep-learning\s+algorithms",
+     "SELECT COUNT(*) FROM algorithm WHERE kind='algorithm' AND is_deep_learning=1"),
+]
+
 # scripts/README.md describes every script in this folder under a heading that
 # is its filename. Not a database count: these read the folder itself, so a
 # script added without an entry, or an entry left behind by a deleted script,

@@ -96,6 +96,12 @@ pubs = pd.read_sql(
               FROM publication_algorithm pal
               JOIN algorithm_repository ar ON ar.algorithm_id = pal.algorithm_id
               WHERE pal.publication_id = p.id) AS repo,
+           -- Whether a method this paper DESCRIBES has a recorded repository.
+           -- Not `repo IS NOT NULL`: that counts every 'uses' link, so a
+           -- venomics paper that ran Casanovo would pass the Code filter.
+           EXISTS (SELECT 1 FROM publication_algorithm pal
+                     JOIN algorithm_repository ar ON ar.algorithm_id = pal.algorithm_id
+                    WHERE pal.publication_id = p.id AND pal.role = 'describes') AS has_code,
            -- Resolve the paper's dominant kind / DL flag / acquisition mode from its
            -- linked algorithms. Papers linked to MULTIPLE kinds (e.g. a wildlife-
            -- proteomics workflow AND InstaNovo+) previously got 'algorithm' by
@@ -1455,12 +1461,12 @@ md`Since **${first_year}**, **${n_papers}** papers have introduced **${n_models}
 ```
 
 ::: {.scope-banner}
-**Scope.** A comprehensive map of *de novo* peptide sequencing covering core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), and paper kind. Want a paper added? See [Contributing](#contributing).
+**Scope.** A comprehensive map of *de novo* peptide sequencing covering core **algorithms**, **post-processors** (re-rankers / FDR / refinement), **downstream applications** (immunopeptidomics, metaproteomics, cyclopeptides), **adjacent** tools (database-search hybrids, glycopeptide pipelines), **reviews / surveys**, and **benchmarks**. Both **deep-learning** and **classical** methods are tracked; the filters below let you slice by approach, acquisition mode (DDA / DIA), paper kind, and whether the method's code is public. Want a paper added? See [Contributing](#contributing).
 :::
 
 ::::: {.sticky-filters .collapsed-on-mobile}
 ::: {.sticky-filters-header role="button" tabindex="0" aria-expanded="false" aria-controls="sticky-filter-body"}
-🎚️ **Filters** · Kind · Approach · Acquisition. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
+🎚️ **Filters** · Kind · Approach · Acquisition · Code. Apply across the whole page; pinned to the top while you scroll. [<span class="sticky-filters-chevron" aria-hidden="true">▸</span>]{.sticky-filters-toggle-hint}
 :::
 
 :::: {#sticky-filter-body .sticky-filters-body}
@@ -1478,6 +1484,14 @@ viewof dl_filter = Inputs.radio(["all", "DL only", "Classical only"], { label: "
 //| echo: false
 viewof acq_filter = Inputs.checkbox(acq_modes_present, { label: "Acquisition", value: acq_modes_present })
 ```
+
+```{ojs}
+//| echo: false
+// "No repository recorded", never "closed source": algorithm_repository is
+// curated and incomplete, so the absence of a row is not a finding about the
+// method. A method with code we have not catalogued sits in that bucket too.
+viewof code_filter = Inputs.radio(["all", "Has a code repository", "No repository recorded"], { label: "Code", value: "all" })
+```
 ::::
 :::::
 
@@ -1489,6 +1503,8 @@ pubs_matches_filter = p => {
   if (dl_filter === "DL only"        && !(p.is_dl === 1 || p.is_dl === true))  return false
   if (dl_filter === "Classical only" && !(p.is_dl === 0 || p.is_dl === false)) return false
   if (p.acquisition && !acq_filter.includes(p.acquisition)) return false
+  if (code_filter === "Has a code repository"  && !p.has_code) return false
+  if (code_filter === "No repository recorded" &&  p.has_code) return false
   return true
 }
 pubs_filtered = pubs_t.filter(pubs_matches_filter)
@@ -1669,7 +1685,7 @@ innovations_timeline = {
   const LABEL_GAP_PX = 8      // clear air between two labels sharing a row
   const PLOT_WIDTH_PX = 1130  // width 1400 minus marginLeft 210 and marginRight 60
 
-  // Apply every filter (family, kind, approach, acquisition) up front.
+  // Apply every filter (family, kind, approach, acquisition, code) up front.
   const matches_filters = a => {
     if (!a.first_pub || !a.family) return false
     if (!family_filter.includes(a.family)) return false
@@ -1677,6 +1693,8 @@ innovations_timeline = {
     if (dl_filter === "DL only"        && a.is_dl !== true)  return false
     if (dl_filter === "Classical only" && a.is_dl !== false) return false
     if (a.acquisition && !acq_filter.includes(a.acquisition)) return false
+    if (code_filter === "Has a code repository"  && !a.repo) return false
+    if (code_filter === "No repository recorded" &&  a.repo) return false
     return true
   }
 
