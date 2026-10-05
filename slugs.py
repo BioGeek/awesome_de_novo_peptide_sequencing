@@ -91,7 +91,39 @@ TRANSLITERATE = {
 # to "...-i-de-novo-i-...", and two journal names stored as "&amp;" had their
 # own venue pages. slugify() now strips markup and entities, and the two
 # journal names were decoded into the real venues.
-REDIRECTS: dict[str, dict[str, str]] = {'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
+#
+# 2026-10-05: a duplicate-author sweep merged 28 rows into the person they
+# duplicate (name variants sharing co-authors or an institution, and three
+# same-name splits the evidence contradicted). Each retired author URL points
+# at the surviving row's page.
+REDIRECTS: dict[str, dict[str, str]] = {'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
+             'binhai-zhu': 'binhai-zhu-montana-state-university',
+             'd-dutta': 'debojyoti-dutta',
+             'e-mori': 'elisa-mori',
+             'e-v-grishin': 'eugene-v-grishin',
+             'fanny-guzman-2964': 'fanny-guzman',
+             'h-park': 'heejin-park',
+             'j-jeong': 'jaeho-jeong',
+             'j-seo': 'jangho-seo',
+             'j-v-olsen': 'jesper-v-olsen',
+             'jonathan-krieger': 'jonathan-r-krieger',
+             'nan-liu': 'nan-liu-shandong-jianzhu-university',
+             'natalie-e-castellana': 'natalie-castellana',
+             'pavel-a-pevzner-1448': 'pavel-a-pevzner',
+             'pavel-pevzner': 'pavel-a-pevzner',
+             'pieter-c-dorrestein-1453': 'pieter-c-dorrestein',
+             'polonca-trebse-1667': 'polonca-trebse',
+             'r-a-zubarev': 'roman-a-zubarev',
+             'r-day': 'r-m-day',
+             't-a-egorov': 'tsezi-a-egorov',
+             'tatiana-y-samgina': 'tatiana-yu-samgina',
+             'victoria-c-pham': 'victoria-pham',
+             'vladimir-havlicek-3200': 'vladimir-havlicek',
+             'wen-ting-li': 'wenting-li',
+             'wendy-n-sandoval': 'wendy-sandoval',
+             'wilfred-tang': 'wilfred-h-tang',
+             'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang'},
+ 'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
                   'an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup': 'an-improved-method-for-de-novo-sequencing-of-arginine-containing-n-tris-2-4-6',
                   'analysis-of-root-plasma-membrane-aquaporins-from-i-brassica-oleracea-i-post': 'analysis-of-root-plasma-membrane-aquaporins-from-brassica-oleracea-post',
                   'development-of-a-host-blood-meal-database-i-de-novo-i-sequencing-of-hemoglobin': 'development-of-a-host-blood-meal-database-de-novo-sequencing-of-hemoglobin-from',
