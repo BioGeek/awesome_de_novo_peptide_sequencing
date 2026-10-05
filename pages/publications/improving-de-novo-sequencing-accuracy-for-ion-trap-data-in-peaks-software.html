@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="presentation · 2007. Denis Yuen et al.">
+<meta name="description" content="presentation · 2007. Denis Yuen et al.&nbsp;De novo sequencing programs typically require scoring functions that evaluates the fitness between a peptide…">
 
 <title>Improving de novo sequencing accuracy for Ion Trap data in PEAKS software – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="Improving de novo sequencing accuracy for Ion Trap data in PEAKS software – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="presentation · 2007. Denis Yuen et al.">
+<meta property="og:description" content="presentation · 2007. Denis Yuen et al.&nbsp;De novo sequencing programs typically require scoring functions that evaluates the fitness between a peptide…">
 <style>#title-block-header .description { display: none; }</style>
 <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/improving-de-novo-sequencing-accuracy-for-ion-trap-data-in-peaks-software.html">
 
@@ -154,7 +154,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    presentation · 2007. Denis Yuen et al.
+    presentation · 2007. Denis Yuen et al.&nbsp;De novo sequencing programs typically require scoring functions that evaluates the fitness between a peptide…
   </div>
 </div>
 
@@ -171,7 +171,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","author":[{"@type":"Person","name":"Denis Yuen"},{"@type":"Person","name":"Bin Ma"},{"@type":"Person","name":"Iain Rogers"}],"datePublished":"2007-01-01","headline":"Improving de novo sequencing accuracy for Ion Trap data in PEAKS software","name":"Improving de novo sequencing accuracy for Ion Trap data in PEAKS software"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"De novo sequencing programs typically require scoring functions that evaluates the fitness between a peptide sequence and the spectrum. Ma et al demonstrated that two scoring functions, used together, can improve de novo sequencing accuracy [1], but relative importance of each scoring function was not thoroughly evaluated. In this work, the optimal weighting between multiple de novo sequencing score components is trained on a large dataset, and is demonstrated to provide a significant accuracy...","author":[{"@type":"Person","name":"Denis Yuen"},{"@type":"Person","name":"Bin Ma"},{"@type":"Person","name":"Iain Rogers"}],"datePublished":"2007-01-01","headline":"Improving de novo sequencing accuracy for Ion Trap data in PEAKS software","name":"Improving de novo sequencing accuracy for Ion Trap data in PEAKS software"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -196,6 +196,10 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>De novo sequencing programs typically require scoring functions that evaluates the fitness between a peptide sequence and the spectrum. Ma et al demonstrated that two scoring functions, used together, can improve de novo sequencing accuracy [1], but relative importance of each scoring function was not thoroughly evaluated. In this work, the optimal weighting between multiple de novo sequencing score components is trained on a large dataset, and is demonstrated to provide a significant accuracy improvement in PEAKS Studio 2 . Methods Powell’s conjugate gradient algorithm, with a subset of the Wysocki data and corresponding correct answers for input, was used to train weighting constants for components of the original PEAKS score and new independent scores. De novo sequencing was run on all data before and after the improvements, and results were compared against the correct answers to gauge performance. Agreement between the known, correct sequence and the top de novo sequence result for a given spectrum was computed automatically. For this comparison, a number of metrics were used. Number of correct de novo sequences, and percentage of residues correct are easily computed, but don’t give a clear picture of how many errors are critical, and how many are due to simple transpositions, or equal mass substitutions. Since Leucine is equal in mass to Isoleucine, N=GG, TL=LT and Q=AG, any downstream analysis of de novo sequencing results must be tolerant of these, and other common substitutions. As such, a performance metric that considers equal mass substitutions should be used. For this purpose we adopted the Relative Sequence Distance (RSD) calculation proposed by Pevstov et. Al., setting the length of allowable substitutions to 1. RSD indicates the number incorrect residues, discounting those that can be corrected by making one equal mass substitution, expressed as a proportion of the peptide’s length – a number from 0 to 1, with 0 being the best. Finally, each measure was summed or averaged (as appropriate)across the whole data set to illustrate the net benefit of the new scoring framework.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">

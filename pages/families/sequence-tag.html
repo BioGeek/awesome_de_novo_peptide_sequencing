@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Sequence tag</h1>
-<p class="subtitle lead">15 methods · 1994–2021</p>
+<p class="subtitle lead">16 methods · 1994–2021</p>
 </div>
 
 <div>
@@ -172,20 +172,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Short, high-confidence stretches of sequence read straight off the spectrum and used as a filter or a query rather than as the final answer. A tag plus its flanking masses can identify a peptide on its own.</p>
-<p>The earliest of its 15 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 14 more have followed.</p>
+<p>The earliest of its 16 methods is <a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994); 15 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>15</td>
+<td>16</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>17</td>
+<td>19</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>66</td>
+<td>73</td>
 </tr>
 <tr class="even">
 <td>Active</td>
@@ -193,16 +193,16 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td>Kinds</td>
-<td>adjacent (13), algorithm, post-processor</td>
+<td>adjacent (14), algorithm, post-processor</td>
 </tr>
 <tr class="even">
 <td>Acquisition</td>
-<td>DDA (15)</td>
+<td>DDA (16)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-15" class="level2">
-<h2 class="anchored" data-anchor-id="methods-15">Methods (15)</h2>
+<section id="methods-16" class="level2">
+<h2 class="anchored" data-anchor-id="methods-16">Methods (16)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/peptide-sequence-tags.html">Peptide sequence tags</a> (1994): Error-tolerant peptide identification using short de novo sequence tags and flanking masses.</li>
@@ -219,11 +219,12 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/b2-ion-n-terminal-sequence-tagging.html">b2-ion N-terminal sequence tagging</a> (2014): Shows that b2 ions in HCD spectra can be assigned with over 97% certainty when a2 and the complementary y ion are present, and uses the resulting two-residue N-terminal tags to filter PSMs and deconvolute co-fragmented spectra.</li>
 <li><a href="../algorithms/jump.html">JUMP</a> (2014): Hybrid tag-based database search that derives amino acid tags as short as one residue and combines tag and pattern-matching scores to rank PSMs.</li>
 <li><a href="../algorithms/tagger.html">Tagger</a> (2017): Uses Novor de novo sequence tags for approximate matching against protein databases to accelerate database search.</li>
+<li><a href="../algorithms/taggraph.html">TagGraph</a> (2019): Matches de novo sequence tags against a proteome with an unrestricted string-based search and a probabilistic model, identifying thousands of modification types across large datasets.</li>
 <li><a href="../algorithms/bottom-up-tag-convolution.html">Bottom-up tag convolution</a> (2021): Tells a correct spectrum interpretation from its plausible alternatives by convolving the set of length-k sequence tags a candidate implies, attacking the step de novo sequencing is weakest at: not producing a sequence but choosing between the ones it produced.</li>
 </ul>
 </section>
-<section id="papers-describing-them-17" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-17">Papers describing them (17)</h2>
+<section id="papers-describing-them-19" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-19">Papers describing them (19)</h2>
 <ul>
 <li><a href="../publications/error-tolerant-identification-of-peptides-in-sequence-databases-by-peptide.html">Error-Tolerant Identification of Peptides in Sequence Databases by Peptide Sequence Tags</a> (1994, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/multitag-multiple-error-tolerant-sequence-tag-search-for-the-sequence.html">MultiTag: Multiple Error-Tolerant Sequence Tag Search for the Sequence-Similarity Identification of Proteins by Mass Spectrometry</a> (2003, Analytical Chemistry, peer-reviewed)</li>
@@ -236,17 +237,19 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/de-novo-sequencing-of-unique-sequence-tags-for-discovery-of-post-translational.html">De Novo Sequencing of Unique Sequence Tags for Discovery of Post-Translational Modifications of Proteins</a> (2008, Analytical Chemistry, peer-reviewed)</li>
 <li><a href="../publications/unrestrictive-identification-of-multiple-post-translational-modifications-from.html">Unrestrictive Identification of Multiple Post-translational Modifications from Tandem Mass Spectrometry Using an Error-tolerant Algorithm Based on an Extended Sequence Tag Approach</a> (2008, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
 <li><a href="../publications/an-automata-approach-to-match-gapped-sequence-tags-against-protein-database-585.html">An Automata Approach to Match Gapped Sequence Tags Against Protein Database</a> (2010, Lecture Notes in Computer Science, peer-reviewed)</li>
+<li><a href="../publications/identification-of-disulfide-bonds-in-protein-proteolytic-degradation-products.html">Identification of Disulfide Bonds in Protein Proteolytic Degradation Products Using de novo-Protein Unique Sequence Tags Approach</a> (2010, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/rapid-and-accurate-generation-of-peptide-sequence-tags-with-a-graph-search.html">Rapid and Accurate Generation of Peptide Sequence Tags with a Graph Search Approach</a> (2011, Lecture Notes in Computer Science, peer-reviewed)</li>
 <li><a href="../publications/scanranker-quality-assessment-of-tandem-mass-spectra-via-sequence-tagging.html">ScanRanker: Quality Assessment of Tandem Mass Spectra via Sequence Tagging</a> (2011, Journal of Proteome Research, peer-reviewed)</li>
 <li><a href="../publications/n-terminal-sequence-tagging-using-reliably-determined-b2-ions-a-useful-approach.html">N-terminal sequence tagging using reliably determined b2 ions: A useful approach to deconvolute tandem mass spectra of co-fragmented peptides in proteomics</a> (2014, Journal of Proteomics, peer-reviewed)</li>
 <li><a href="../publications/jump-a-tag-based-database-search-tool-for-peptide-identification-with-high.html">JUMP: A Tag-based Database Search Tool for Peptide Identification with High Sensitivity and Accuracy</a> (2014, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
 <li><a href="../publications/tagger-enhance-database-search-tools-with-de-novo-sequencing-tags.html">Tagger: Enhance Database Search Tools with De Novo Sequencing Tags</a> (2017, thesis)</li>
+<li><a href="../publications/taggraph-reveals-vast-protein-modification-landscapes-from-large-tandem-mass.html">TagGraph reveals vast protein modification landscapes from large tandem mass spectrometry datasets</a> (2019, Nature Biotechnology, peer-reviewed)</li>
 <li><a href="../publications/validation-of-de-novo-peptide-sequences-with-bottom-up-tag-convolution.html">Validation of De Novo Peptide Sequences with Bottom-Up Tag Convolution</a> (2021, Proteomes, peer-reviewed)</li>
 </ul>
 </section>
-<section id="authors-66" class="level2">
-<h2 class="anchored" data-anchor-id="authors-66">Authors (66)</h2>
-<p><a href="../authors/aaron-w-miller.html">Aaron W. Miller</a>, <a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/birgit-schilling.html">Birgit Schilling</a>, <a href="../authors/chunmei-liu.html">Chunmei Liu</a>, <a href="../authors/corbin-w-whitwell.html">Corbin W. Whitwell</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/eunok-paek.html">Eunok Paek</a>, <a href="../authors/fedor-kryuchkov.html">Fedor Kryuchkov</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/h-kim.html">H. Kim</a>, <a href="../authors/h-park.html">H. Park</a>, <a href="../authors/haiyan-tan.html">Haiyan Tan</a>, <a href="../authors/hans-rudolf-aerni.html">Hans-Rudolf Aerni</a>, <a href="../authors/heejin-park.html">Heejin Park</a>, <a href="../authors/hong-wang.html">Hong Wang</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/hui-li.html">Hui Li</a>, <a href="../authors/j-jeong.html">J. Jeong</a>, <a href="../authors/j-seo.html">J. Seo</a>, <a href="../authors/j-w-sim.html">J. W. Sim</a>, <a href="../authors/jaeho-jeong.html">Jaeho Jeong</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/junmin-peng.html">Junmin Peng</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/kong-joo-lee.html">Kong-Joo Lee</a>, <a href="../authors/kristin-l-cheek.html">Kristin L. Cheek</a>, <a href="../authors/lauren-scott.html">Lauren Scott</a>, <a href="../authors/legand-burge.html">Legand Burge</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/mugizi-rwebangira.html">Mugizi Rwebangira</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/qi-tang.html">Qi Tang</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/richard-m-caprioli.html">Richard M. Caprioli</a>, <a href="../authors/s-kim.html">S. Kim</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/seungjin-na.html">Seungjin Na</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/thiago-verano-braga.html">Thiago Verano-Braga</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/william-southerland.html">William Southerland</a>, <a href="../authors/xusheng-wang.html">Xusheng Wang</a>, <a href="../authors/y-seo.html">Y. Seo</a>, <a href="../authors/yonghua-han.html">Yonghua Han</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/yuxin-li.html">Yuxin Li</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a>, <a href="../authors/zhiping-wu.html">Zhiping Wu</a></p>
+<section id="authors-73" class="level2">
+<h2 class="anchored" data-anchor-id="authors-73">Authors (73)</h2>
+<p><a href="../authors/aaron-w-miller.html">Aaron W. Miller</a>, <a href="../authors/adam-j-liska.html">Adam J. Liska</a>, <a href="../authors/alexander-golod.html">Alexander Golod</a>, <a href="../authors/amy-joan-l-ham.html">Amy-Joan L. Ham</a>, <a href="../authors/andrej-shevchenko.html">Andrej Shevchenko</a>, <a href="../authors/anita-saraf.html">Anita Saraf</a>, <a href="../authors/anna-shevchenko.html">Anna Shevchenko</a>, <a href="../authors/ari-frank.html">Ari Frank</a>, <a href="../authors/arun-devabhaktuni.html">Arun Devabhaktuni</a>, <a href="../authors/bin-ma.html">Bin Ma</a>, <a href="../authors/birgit-schilling.html">Birgit Schilling</a>, <a href="../authors/carlos-g-gonzalez.html">Carlos G. Gonzalez</a>, <a href="../authors/chunmei-liu.html">Chunmei Liu</a>, <a href="../authors/corbin-w-whitwell.html">Corbin W. Whitwell</a>, <a href="../authors/daniel-b-martin.html">Daniel B. Martin</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/ebrahim-zandi.html">Ebrahim Zandi</a>, <a href="../authors/eunok-paek.html">Eunok Paek</a>, <a href="../authors/fedor-kryuchkov.html">Fedor Kryuchkov</a>, <a href="../authors/frank-kjeldsen.html">Frank Kjeldsen</a>, <a href="../authors/gordon-a-anderson.html">Gordon A. Anderson</a>, <a href="../authors/h-kim.html">H. Kim</a>, <a href="../authors/haiyan-tan.html">Haiyan Tan</a>, <a href="../authors/hans-rudolf-aerni.html">Hans-Rudolf Aerni</a>, <a href="../authors/heejin-park.html">Heejin Park</a>, <a href="../authors/hong-wang.html">Hong Wang</a>, <a href="../authors/hongjun-shu.html">Hongjun Shu</a>, <a href="../authors/hui-li.html">Hui Li</a>, <a href="../authors/j-w-sim.html">J. W. Sim</a>, <a href="../authors/jaeho-jeong.html">Jaeho Jeong</a>, <a href="../authors/jangho-seo.html">Jangho Seo</a>, <a href="../authors/john-r-yates.html">John R. Yates</a>, <a href="../authors/joshua-e-elias.html">Joshua E. Elias</a>, <a href="../authors/junmin-peng.html">Junmin Peng</a>, <a href="../authors/kaizhong-zhang.html">Kaizhong Zhang</a>, <a href="../authors/kavya-swaminathan.html">Kavya Swaminathan</a>, <a href="../authors/keith-rawson.html">Keith Rawson</a>, <a href="../authors/kim-k-hixson.html">Kim K. Hixson</a>, <a href="../authors/kira-vyatkina.html">Kira Vyatkina</a>, <a href="../authors/kong-joo-lee.html">Kong-Joo Lee</a>, <a href="../authors/kristin-l-cheek.html">Kristin L. Cheek</a>, <a href="../authors/lauren-scott.html">Lauren Scott</a>, <a href="../authors/legand-burge.html">Legand Burge</a>, <a href="../authors/lichao-zhang.html">Lichao Zhang</a>, <a href="../authors/ling-chi-wang.html">Ling-Chi Wang</a>, <a href="../authors/marc-mumby.html">Marc Mumby</a>, <a href="../authors/matthew-c-chambers.html">Matthew C. Chambers</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthias-wilm.html">Matthias Wilm</a>, <a href="../authors/mugizi-rwebangira.html">Mugizi Rwebangira</a>, <a href="../authors/niclas-olsson.html">Niclas Olsson</a>, <a href="../authors/nikola-tolic.html">Nikola Tolić</a>, <a href="../authors/pavel-a-pevzner.html">Pavel A. Pevzner</a>, <a href="../authors/qi-tang.html">Qi Tang</a>, <a href="../authors/richard-d-smith.html">Richard D. Smith</a>, <a href="../authors/richard-m-caprioli.html">Richard M. Caprioli</a>, <a href="../authors/s-kim.html">S. Kim</a>, <a href="../authors/samuel-m-pearlman.html">Samuel M. Pearlman</a>, <a href="../authors/samuel-o-purvine.html">Samuel O. Purvine</a>, <a href="../authors/sarah-lin.html">Sarah Lin</a>, <a href="../authors/seungjin-na.html">Seungjin Na</a>, <a href="../authors/shamil-sunyaev.html">Shamil Sunyaev</a>, <a href="../authors/stephen-tanner.html">Stephen Tanner</a>, <a href="../authors/thiago-verano-braga.html">Thiago Verano-Braga</a>, <a href="../authors/vineet-bafna.html">Vineet Bafna</a>, <a href="../authors/william-southerland.html">William Southerland</a>, <a href="../authors/xusheng-wang.html">Xusheng Wang</a>, <a href="../authors/y-seo.html">Y. Seo</a>, <a href="../authors/yonghua-han.html">Yonghua Han</a>, <a href="../authors/yufeng-shen.html">Yufeng Shen</a>, <a href="../authors/yuxin-li.html">Yuxin Li</a>, <a href="../authors/ze-qiang-ma.html">Ze-Qiang Ma</a>, <a href="../authors/zhiping-wu.html">Zhiping Wu</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
