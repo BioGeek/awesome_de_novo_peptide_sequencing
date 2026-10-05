@@ -844,6 +844,26 @@ ojs_define(
 
 ```{ojs}
 //| echo: false
+// A paper title as a DOM node, keeping the publisher's own inline markup
+// (<i>de novo</i>, cytochrome <i>c</i><sub>4</sub>, JATS <italic>) and
+// escaping everything else. htl.html escapes a string, so these titles showed
+// literal tags here while their own page rendered them in italics. Mirrors
+// title_md() in build_pages.py; the data is left as the publisher wrote it.
+title_html = {
+  const keep = {i: "i", em: "i", italic: "i", b: "b", strong: "b", bold: "b", sub: "sub", sup: "sup"}
+  return t => {
+    const esc = String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    const out = esc.replace(/&lt;(\/?)(\w+)[^&]*?&gt;/g,
+      (m, slash, tag) => keep[tag.toLowerCase()] ? `<${slash}${keep[tag.toLowerCase()]}>` : "")
+    const span = document.createElement("span")
+    span.innerHTML = out.replace(/\s+/g, " ").trim()
+    return span
+  }
+}
+```
+
+```{ojs}
+//| echo: false
 // Shared Plot-tip styling used across every Plot chart on the page. Matches
 // the .map-tooltip CSS palette (12-13 px, roomier padding, white background
 // with soft border) so the built-in Plot tip looks the same as our custom
@@ -3383,7 +3403,7 @@ perf_chart = {
         <div class="map-tooltip-meta">${d.version} · basis ${d.basis}</div>
         <div class="map-tooltip-meta" style="margin-top:6px">Seen in ${d.n_papers} paper${d.n_papers > 1 ? "s" : ""}:</div>
         ${seen.map(x => html`<div class="map-tooltip-meta" style="max-width:340px; white-space:normal; margin-top:3px">
-          · <i>${x.title}</i> (${x.year}, ${x.type}), ${x.table}, p. ${x.page}; printed as
+          · <i>${title_html(x.title)}</i> (${x.year}, ${x.type}), ${x.table}, p. ${x.page}; printed as
           “${x.printed}”${x.subset ? ` on ${x.subset}` : ""}; ${x.basis}${x.as ? `; ${x.as}` : ""}${x.derived ? "; not printed, derived" : ""}</div>`)}
         ${d.detail.length > 8 ? html`<div class="map-tooltip-meta">… and ${d.detail.length - 8} more</div>` : ""}
       </div>`
@@ -6641,7 +6661,7 @@ citation_arcs = {
   // Styled tooltip that follows the cursor (matches world-map / co-auth /
   // bipartite / Sankey). aria-label handles screen-reader accessibility.
   node.attr("aria-label", d =>
-    `${d.models || d.title}. ${d.year ?? ""}. ${d.kind}. Cited by ${d.in_deg}, cites ${d.out_deg}.`
+    `${d.models || title_html(d.title).textContent}. ${d.year ?? ""}. ${d.kind}. Cited by ${d.in_deg}, cites ${d.out_deg}.`
   )
   const arc_tooltip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
   const move_arc_tip = ev => {
@@ -6770,7 +6790,7 @@ citation_arcs = {
     // 1. Show styled tooltip
     arc_tooltip.replaceChildren(html`<div>
       <div class="map-tooltip-title">${focus.models || "(no model)"}</div>
-      <div class="map-tooltip-meta">${focus.title}</div>
+      <div class="map-tooltip-meta">${title_html(focus.title)}</div>
       <div class="map-tooltip-row">
         <span class="map-tooltip-swatch" style=${`background:${kind_color[focus.kind] ?? "#999"}`}></span>
         <span>${focus.kind}${focus.year ? ` · ${focus.year}` : ""}</span>
@@ -6878,7 +6898,7 @@ viewof impact_search = Inputs.search(impact_rows, {
         const row = impact_search[i]
         const internal = page_href("publications", row?.id)
         const external = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
-        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
+        const label = internal ? htl.html`<a href=${internal}>${title_html(t)}</a>` : title_html(t)
         return external
           ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
               title="Publisher / DOI" style="text-decoration:none">↗</a>`
@@ -7562,7 +7582,7 @@ fmt_day = d => d instanceof Date && !isNaN(d) ? d3.utcFormat("%Y-%m-%d")(d) : ""
 //| echo: false
 html`<ol class="recent-list" start="1">${recent_pubs.map(d => {
   const href = page_href("publications", d.id)
-  const title = href ? htl.html`<a href=${href}>${d.title}</a>` : d.title
+  const title = href ? htl.html`<a href=${href}>${title_html(d.title)}</a>` : title_html(d.title)
   const doi = d.url || (d.doi ? `https://doi.org/${d.doi}` : null)
   const models = String(d.models ?? "").split(",").map(x => x.trim()).filter(Boolean)
   return htl.html`<li><span class="recent-num">#${d.id}</span> ${title}
@@ -7629,7 +7649,7 @@ viewof selected_pubs = {
         const row = search_with_if[i]
         const internal = page_href("publications", row?.id)
         const external = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null)
-        const label = internal ? htl.html`<a href=${internal}>${t}</a>` : t
+        const label = internal ? htl.html`<a href=${internal}>${title_html(t)}</a>` : title_html(t)
         return external
           ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
               title="Publisher / DOI" style="text-decoration:none">↗</a>`

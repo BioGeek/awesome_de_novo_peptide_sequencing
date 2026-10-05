@@ -37,6 +37,7 @@ rename is intended, run --write and let the lock diff record it.
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sqlite3
 import sys
@@ -80,10 +81,46 @@ TRANSLITERATE = {
 }
 
 
+# RETIRED URLS, each redirecting to its successor. kind -> {old slug: new slug}.
+# A slug change is deliberate (slugs.py --write) but the old URL is published
+# and indexed, so build_pages.py gives the successor page a Quarto `aliases:`
+# entry, which writes a redirect page at the old address. Add to this, never
+# prune it: an old URL can be linked from anywhere for years.
+#
+# 2026-10-05: titles carrying publisher markup ("<i>de novo</i>") had slugged
+# to "...-i-de-novo-i-...", and two journal names stored as "&amp;" had their
+# own venue pages. slugify() now strips markup and entities, and the two
+# journal names were decoded into the real venues.
+REDIRECTS: dict[str, dict[str, str]] = {'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
+                  'an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup': 'an-improved-method-for-de-novo-sequencing-of-arginine-containing-n-tris-2-4-6',
+                  'analysis-of-root-plasma-membrane-aquaporins-from-i-brassica-oleracea-i-post': 'analysis-of-root-plasma-membrane-aquaporins-from-brassica-oleracea-post',
+                  'development-of-a-host-blood-meal-database-i-de-novo-i-sequencing-of-hemoglobin': 'development-of-a-host-blood-meal-database-de-novo-sequencing-of-hemoglobin-from',
+                  'extensive-i-de-novo-i-sequencing-of-new-parvalbumin-isoforms-using-a-novel': 'extensive-de-novo-sequencing-of-new-parvalbumin-isoforms-using-a-novel',
+                  'functional-peptidomics-analysis-of-italic-saccharomyces-pastorianus-italic': 'functional-peptidomics-analysis-of-saccharomyces-pastorianus-protein',
+                  'high-resolution-mass-spectrometry-and-partial-i-de-novo-i-sequencing-constitute': 'high-resolution-mass-spectrometry-and-partial-de-novo-sequencing-constitute-a',
+                  'i-de-novo-i-sequencing-and-characterization-of-a-novel-bowman-birk-inhibitor': 'de-novo-sequencing-and-characterization-of-a-novel-bowman-birk-inhibitor-from',
+                  'i-de-novo-i-sequencing-of-a-21-kda-cytochrome-i-c-i-sub-4-sub-from-i-thiocapsa': 'de-novo-sequencing-of-a-21-kda-cytochrome-c-4-from-thiocapsa-roseopersicina-by',
+                  'i-de-novo-i-sequencing-of-antimicrobial-peptides-isolated-from-the-venom-glands': 'de-novo-sequencing-of-antimicrobial-peptides-isolated-from-the-venom-glands-of',
+                  'i-de-novo-i-sequencing-of-novel-neuropeptides-directly-from-i-ascaris-suum-i': 'de-novo-sequencing-of-novel-neuropeptides-directly-from-ascaris-suum-tissue',
+                  'i-de-novo-i-sequencing-of-two-new-cyclic-i-i-defensins-from-baboon-i-papio': 'de-novo-sequencing-of-two-new-cyclic-defensins-from-baboon-papio-hamadryas',
+                  'identification-of-proteins-induced-by-polycyclic-aromatic-hydrocarbon-in-b-i': 'identification-of-proteins-induced-by-polycyclic-aromatic-hydrocarbon-in',
+                  'ltq-orbitrap-velos-in-routine-i-de-novo-i-sequencing-of-non-tryptic-skin': 'ltq-orbitrap-velos-in-routine-de-novo-sequencing-of-non-tryptic-skin-peptides',
+                  'lys-tag-an-easy-and-robust-chemical-modification-for-improved-i-de-novo-i': 'lys-tag-an-easy-and-robust-chemical-modification-for-improved-de-novo',
+                  'manual-mass-spectrometry-i-de-novo-i-sequencing-of-the-anionic-host-defense': 'manual-mass-spectrometry-de-novo-sequencing-of-the-anionic-host-defense',
+                  'mining-novel-allergens-from-coconut-pollen-employing-manual-i-de-novo-i': 'mining-novel-allergens-from-coconut-pollen-employing-manual-de-novo-sequencing',
+                  'top-down-analysis-of-protein-samples-by-i-de-novo-i-sequencing-techniques': 'top-down-analysis-of-protein-samples-by-de-novo-sequencing-techniques',
+                  'top-down-i-de-novo-i-protein-sequencing-of-a-13-6-kda-camelid-single-heavy': 'top-down-de-novo-protein-sequencing-of-a-13-6-kda-camelid-single-heavy-chain'},
+ 'venues': {'molecular-amp-cellular-proteomics': 'molecular-cellular-proteomics',
+            'protein-amp-peptide-letters': 'protein-peptide-letters'}}
+
+
 def slugify(text: str, maxlen: int = MAX_SLUG_CHARS) -> str:
     """ASCII kebab-case slug. Raises on input that cannot produce one."""
     if not text or not text.strip():
         raise ValueError("cannot slugify empty text")
+    # Publisher markup is typography, not words: "<i>de novo</i>" used to slug
+    # to "i-de-novo-i". Strip tags (and entities) before anything else.
+    text = html.unescape(re.sub(r"<[^>]+>", " ", html.unescape(text)))
     for src, dst in TRANSLITERATE.items():
         text = text.replace(src, dst)
     # Before stripping punctuation, so InstaNovo and InstaNovo+ stay distinct.

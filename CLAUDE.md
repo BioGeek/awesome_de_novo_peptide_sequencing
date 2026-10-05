@@ -1893,6 +1893,24 @@ alone and exits 1 under `--fix` as well, so the remedy has to be to the data.
 A label in `INVARIANTS` that names no claim is an error, so a renamed claim
 cannot drop out of the set unnoticed.
 
+**A renamed URL redirects; it is never just dropped.** `REDIRECTS` in
+`slugs.py` maps each retired slug to its successor, and `build_pages.py`
+gives the successor page a Quarto `aliases:` entry, which writes a redirect
+page at the old address. Add to it and never prune it. The first 21 came from
+publisher markup: 24 titles carry the paper's own `<i>`, `<sub>` or JATS
+`<italic>`, which slugged to `...-i-de-novo-i-...`, and two journal names
+stored as `&amp;` had venue pages of their own. `slugify()` now strips tags
+and entities, the two journal names were decoded into the real venues, and
+the lock was rewritten with `--write`.
+
+**The markup is kept in the data and rendered, not stripped.** It is the
+paper's own typography, and the publication page's heading already showed it
+in italics while every list escaped it into literal tags. `title_md()` in
+`build_pages.py` and the `title_html` OJS cell in `index.qmd` escape
+everything except `<i>`, `<b>`, `<sub>` and `<sup>` (JATS `<italic>` and
+`<bold>` normalised to those), and drop any other tag; JSON-LD gets the
+title as plain text.
+
 A **new** URL is recorded automatically by the hook, right after `--check`
 passes. That is safe precisely because the dangerous cases already failed by
 then, and the alternative is worse: `--check` passes on additions, so the lock

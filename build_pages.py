@@ -49,7 +49,7 @@ from statistics import median
 from datetime import datetime, timezone
 from pathlib import Path
 
-from slugs import all_slugs
+from slugs import REDIRECTS, all_slugs
 
 DB_PATH = Path(__file__).parent / "denovo.db"
 
@@ -117,6 +117,43 @@ def md_escape(text: str | None) -> str:
     return text.replace("\n", " ").strip()
 
 
+# The inline markup publishers put in titles, as Crossref and JATS deliver it:
+# "<i>de novo</i>", "cytochrome <i>c</i><sub>4</sub>", "<italic>Saccharomyces
+# pastorianus</italic>". It is the paper's own typography, so it is RENDERED,
+# not stripped from the data: 24 stored titles carry it, and their URL slugs
+# were derived with it, so cleaning the data would have rewritten 19 published
+# URLs. md_escape used to escape it on every list page while the publication
+# page's own heading (YAML title) rendered it, so one title showed in italics
+# on its page and as literal <i> tags in every list that linked to it.
+TITLE_TAGS = {"i": "i", "em": "i", "italic": "i", "b": "b", "strong": "b",
+              "bold": "b", "sub": "sub", "sup": "sup"}
+
+
+def title_md(text: str | None) -> str:
+    """A paper title for Markdown: escaped, except for the publisher's inline tags."""
+    out = md_escape(text)
+    def keep(m: re.Match) -> str:
+        tag = TITLE_TAGS.get(m.group(2).lower())
+        return f"<{m.group(1)}{tag}>" if tag else m.group(0)
+    out = re.sub(r"\\<(/?)(\w+)\\>", keep, out)
+    return re.sub(r"\s+", " ", out).strip()
+
+
+def title_tags(text: str | None) -> str:
+    """A title for a raw-HTML context (the page heading): tags normalised, others dropped."""
+    def keep(m: re.Match) -> str:
+        tag = TITLE_TAGS.get(m.group(2).lower())
+        return f"<{m.group(1)}{tag}>" if tag else ""
+    t = re.sub(r"<(/?)(\w+)[^>]*>", keep, text or "")
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def strip_markup(text: str | None) -> str:
+    """A title as plain text, for JSON-LD and anywhere tags would show literally."""
+    t = re.sub(r"<[^>]+>", "", text or "")
+    return re.sub(r"\s+", " ", t).strip()
+
+
 def yaml_quote(text: str | None) -> str:
     """Double-quoted YAML scalar, safe for titles containing colons and quotes."""
     if text is None:
@@ -155,7 +192,7 @@ class Site:
 
     def link(self, kind: str, entity_id: int | None, label: str, *, from_kind: str) -> str:
         href = self.href(kind, entity_id, from_kind=from_kind)
-        text = md_escape(label)
+        text = title_md(label) if kind == "publications" else md_escape(label)
         return f"[{text}]({href})" if href else text
 
     def home(self, anchor_key: str | None = None) -> str:
@@ -297,11 +334,11 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         desc_bits.append(author_names[0] + (" et al." if len(author_names) > 1 else ""))
     if row["abstract"]:
         desc_bits.append(clip(row["abstract"], 110))
-    L += front_matter(row["title"], " · ".join(bits),
+    L += front_matter(title_tags(row["title"]), " · ".join(bits),
                       clip(join_sentences(desc_bits), 250))
 
     ld = {"@context": "https://schema.org", "@type": "ScholarlyArticle",
-          "headline": row["title"], "name": row["title"]}
+          "headline": strip_markup(row["title"]), "name": strip_markup(row["title"])}
     if row["publication_date"]:
         ld["datePublished"] = str(row["publication_date"])
     if author_names:
@@ -2122,7 +2159,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~6281 thin pages out of
+    # committed under pages/. search: false keeps ~6279 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -2154,6 +2191,13 @@ def main() -> int:
         if args.dry_run:
             return
         body = with_canonical(body, f"{SITE_URL}pages/{kind}/{slug}.html")
+        # A retired URL redirects here: Quarto writes a redirect page at each
+        # alias, so a renamed slug costs nobody a 404. See REDIRECTS in slugs.py.
+        olds = sorted(o for o, n in REDIRECTS.get(kind, {}).items() if n == slug)
+        if olds:
+            end = body.index("\n---\n")
+            body = (body[:end] + "\naliases:\n"
+                    + "".join(f"  - {o}.html\n" for o in olds).rstrip("\n") + body[end:])
         path = args.out / kind / f"{slug}.qmd"
         produced.add(path)
         path.parent.mkdir(parents=True, exist_ok=True)
