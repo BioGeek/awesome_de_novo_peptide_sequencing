@@ -7396,7 +7396,7 @@ viewof venue_if_search = Inputs.search(journal_impact_t, {
 
 ## Publication lifecycle
 
-How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv's own record of where a preprint was published, Crossref's preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as "post-preprint". The Status column tells you whether each row is **paired** (lifecycle complete), **preprint-only** (still in flight), or **peer-reviewed-only** (published without a preprint we have on file).
+How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv's own record of where a preprint was published, Crossref's preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as "post-preprint". **Show status** picks which rows to list: **paired** (lifecycle complete, the default), **preprint-only** (still in flight), or **peer-reviewed-only** (published without a preprint we have on file). A Status column appears once more than one is ticked.
 
 ```{ojs}
 //| echo: false
@@ -7505,8 +7505,12 @@ viewof lifecycle_search = Inputs.search(lifecycle_visible_rows, {
 ```{ojs}
 //| echo: false
 {
+  // The Status column only says something when more than one status is
+  // ticked; under the default (paired only) it read "paired" on every row.
+  const show_status = lifecycle_status_filter.length > 1
   const table = Inputs.table(lifecycle_search, {
-    columns: ["method", "version", "status", "preprint_date", "peer_date", "gap_months"],
+    columns: ["method", "version", ...(show_status ? ["status"] : []),
+              "preprint_date", "peer_date", "gap_months"],
     header: {
       method:        "Method",
       version:       "Version",

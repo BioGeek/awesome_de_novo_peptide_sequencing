@@ -48,6 +48,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 DB_PATH = HERE / "denovo.db"
 WATCHLIST = HERE / "WATCHLIST.md"
+DECISIONS = HERE / "screening_decisions.tsv"
 API = "https://api.openalex.org/works"
 MAILTO = "j.vangoey@instadeep.com"
 BACKWARD_BATCH = 50      # ids per request when fetching our own works
@@ -102,6 +103,12 @@ def load_ours(db: sqlite3.Connection) -> tuple[list[str], set[str], set[str], se
     if WATCHLIST.exists():
         for m in re.findall(r"10\.\d{4,9}/[^\s`)>,]+", WATCHLIST.read_text(encoding="utf-8")):
             watch.add(norm_doi(m.rstrip(".,")))
+    # Screening decisions recorded by the bulk sweeps (rejected or held), the
+    # same contract as WATCHLIST.md but machine-written: one DOI per row.
+    if DECISIONS.exists():
+        for line in DECISIONS.read_text(encoding="utf-8").splitlines():
+            if line and not line.startswith("#") and not line.startswith("doi\t"):
+                watch.add(norm_doi(line.split("\t", 1)[0]))
     titles = {norm_title(r[0]) for r in db.execute("SELECT title FROM publication")}
     return sorted(set(ids)), dois - {""}, watch - {""}, titles - {""}
 
