@@ -5853,6 +5853,8 @@ PROCEEDINGS_OF: dict[int, tuple[int, dict[str, str] | None]] = {
     439: (17, None),   # LIPNovo, ICML 2025
     440: (32, {"Table1": "Table1", "Table3": "Table2",
                "Table4": "Table3", "Table5": "Table4"}),   # AdaNovo, NeurIPS 2024
+    978: (352, None),  # RankNovo, ICML 2025 (its arXiv row has no PDF of its own)
+    979: (9, None),    # CrossNovo, NeurIPS 2025
 }
 
 
