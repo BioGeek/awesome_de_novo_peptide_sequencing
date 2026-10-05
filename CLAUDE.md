@@ -678,8 +678,17 @@ through one.
   is already there, though. Delete it and an index-only render produces a
   sitemap with **one** URL, which is the second reason the workflow restores
   `_site` from gh-pages before rendering anything;
-- `search.json`, which never carried the generated pages anyway
-  (`search: false` in their metadata), so nothing there can go stale.
+- `search.json`, which `postrender.py` rewrites after EVERY render with one
+  compact record per generated page. Quarto itself never indexes the pages
+  (`search: false` in their metadata), because it would index each page's full
+  text and every visitor downloads the file before their first keystroke. The
+  record holds the page's title, its type ("Author", "Method", "Dataset"...)
+  and the one-line description written for its meta tag, plus a dataset's
+  accessions, so typing a name or `PXD003868` in the navbar search finds the
+  page: 7186 records when measured, 2.7 MB, about 0.5 MB compressed. Records under `pages/`
+  are replaced on each run, so a partial render cannot leave stale ones.
+  Verified in headless Chrome: "Pevzner", "Casanovo", "Karolinska",
+  "nine-species" and "PXD003868" each find their pages.
 
 **A removed page forces the full render**, and the reason is the sitemap rather
 than the page. Since Quarto merges into an existing `sitemap.xml`, neither fast
