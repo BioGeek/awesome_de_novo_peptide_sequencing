@@ -47,6 +47,37 @@ When a manuscript appears, the classification is already worked out:
 `kind='algorithm'`, `algorithm_family='Transformer (AR)'`, `is_deep_learning=1`,
 `acquisition_mode='DDA'` (NovoBench benchmarks are DDA), repo as above.
 
+### tims-Casanovo
+
+| | |
+|---|---|
+| Announced | 2026-06-01, Bruker's ASMS 2026 press release ("Bruker Announces Major Strides in 4D Proteomics Performance...") |
+| Collaborators | William Noble (University of Washington), Fabian Theis (Helmholtz Munich), Wout Bittremieux (University of Antwerp), and Bruker's software team |
+| Related release | Casanovo v5.2.0, 2026-06-02: timsTOF `.d` input and a `timstof` weights selector; `casanovo_timstof_v5-2-0.ckpt` is recorded as a Casanovo checkpoint |
+| Last checked | 2026-10-06 |
+
+A transformer *de novo* sequencer for timsTOF data, described by Bruker as
+translating "peaks in MS/MS spectra into amino acid sequences", with Noble
+quoted that it "expands the training datasets significantly" for
+immunopeptidomics, antibody characterization and incomplete reference
+databases. Trade coverage (Drug Discovery News, Separation Science) repeats the
+release and adds nothing.
+
+Searched 2026-10-06 with no manuscript, preprint or poster found: web search
+for "tims-Casanovo", the Noble-Lab/casanovo releases and discussions, and
+GitHub repository search. The press release names none either.
+
+Not a separate catalog row, and not a version label on Casanovo, until
+something citable says what it is. Two readings fit the evidence and the
+catalog should not pick one: tims-Casanovo may simply be Casanovo with the
+v5.2.0 timsTOF checkpoint, shipped inside Bruker's software (then it is a
+Casanovo checkpoint, already recorded), or a separately trained model whose
+paper is still to come (then it is a new `algorithm` row, `kind='algorithm'`,
+`algorithm_family='Transformer (AR)'`, `is_deep_learning=1`,
+`acquisition_mode='DDA'`, and the checkpoint row moves to it). The release
+landing the day after the announcement makes the first likely, not
+established.
+
 ### Hellbender antimicrobial peptides — ADDED 2026-09-29
 
 Promoted into the catalog as publication 357, once `publication_type`

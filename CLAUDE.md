@@ -1891,7 +1891,7 @@ The pages print the date that matches the verdict: `verified_at` for a verified
 row, `last_checked` for everything else. One date for both would conflate "we
 have this file" with "this link answered".
 
-Measured over the 27 recorded checkpoints: 16 live, 10 verified, 1 gated.
+Measured over the 28 recorded checkpoints: 16 live, 10 verified, 1 gated.
 
 **A gated checkpoint can still be backed up, and DeepNovo now is.** Its weights
 were retrieved from a signed-in session and mirrored, so the backup is the only
