@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 811 `algorithm` rows has at least one linked publication, because
+Every one of the 812 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -90,6 +90,20 @@ because the entry is the reason the type exists; see CLAUDE.md's schema
 section.
 
 ### bedrock (MS2 foundation model) and MDLMDec
+
+**Update 2026-10-08: the pair have published a foundation model.** "dIon:
+Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass
+Spectra" (arXiv 2610.06282, 2026-10-05; Nilsson, Lapin, Payne, Wilhelm, Käll)
+is now publication 981 and algorithm `dIon`, code at
+`statisticalbiotechnology/dIon`, checkpoints at `alfred-n/dIon`. It is very
+likely what `jlapin1/foundation` ("bedrock") was building toward: same two
+authors, a foundation encoder for MS2 spectra, and the Hugging Face release
+dated 2026-10-02, the same day bedrock was last pushed. Neither repository
+says so, so bedrock is not linked to it. MDLMDec is NOT dIon: dIon's
+sequencer is a Casanovo-style autoregressive decoder, MDLMDec's name says
+masked diffusion, and PR 87 is still open and unpublished. Keep this entry
+for MDLMDec.
+
 
 | | |
 |---|---|

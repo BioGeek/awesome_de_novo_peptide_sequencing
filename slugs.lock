@@ -813,6 +813,7 @@ algorithms	812	de-novo-sequencing-of-disulphide-rich-peptides-oslo-thesis
 algorithms	813	isotopic-differentiation-protocol-idp
 algorithms	814	hypsiboas-cinerascens-cinerascetins
 algorithms	815	conus-ateralbus-conotoxin-atvia
+algorithms	816	dion
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -7163,6 +7164,7 @@ publications	977	cinerascetins-new-peptides-fromhypsiboas-cinerascens-maldi-lift
 publications	978	universal-biological-sequence-reranking-for-improved-de-novo-peptide-sequencing
 publications	979	bidirectional-representations-augmented-autoregressive-biological-sequence
 publications	980	characterization-of-the-first-conotoxin-from-conus-ateralbus-a-vermivorous-cone
+publications	981	dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

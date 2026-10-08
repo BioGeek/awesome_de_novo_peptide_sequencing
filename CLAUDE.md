@@ -255,7 +255,7 @@ forced apart on the assumption that a common Chinese name is two people,
 and the co-authors and institutions said one. Force a split only on a
 contradiction, such as a second ORCID or both rows on one byline.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (785), `'preprint'` (113), `'thesis'` (42), `'ML conference'` (13), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (785), `'preprint'` (114), `'thesis'` (42), `'ML conference'` (13), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -313,7 +313,7 @@ moving, not a URL.
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 252 of the 1238 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 252 of the 1239 are `'uses'`, and they are concentrated rather than
 spread: 138 of PEAKS's 145 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -643,7 +643,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 980 against 979 publications today --
+a deleted row does not give its id back -- 981 against 980 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -868,7 +868,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 901/979, of which 5 came from the PDFs themselves via
+Coverage is 902/980, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.
@@ -1667,7 +1667,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 104 of 811 methods have a row, 52 of the 71 deep-learning
+incomplete: 105 of 812 methods have a row, 53 of the 72 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -1751,7 +1751,7 @@ downloaded, and this field keeps them in places with very different durability.
 The `checkpoint` table records where they are and whether that is still true:
 `(algorithm_id, label, tool_version, trained_on, host, url, accession, licence,
 size_bytes, archival, status, http_code, last_checked, mirror_url, notes)`.
-The 15 methods with a recorded checkpoint carry a **## Checkpoints** table on
+The 16 methods with a recorded checkpoint carry a **## Checkpoints** table on
 their page, listing version, training data, host, licence, size and when the
 link was last checked.
 
@@ -1891,7 +1891,7 @@ The pages print the date that matches the verdict: `verified_at` for a verified
 row, `last_checked` for everything else. One date for both would conflate "we
 have this file" with "this link answered".
 
-Measured over the 28 recorded checkpoints: 16 live, 10 verified, 1 gated.
+Measured over the 31 recorded checkpoints: 16 live, 10 verified, 1 gated.
 
 **A gated checkpoint can still be backed up, and DeepNovo now is.** Its weights
 were retrieved from a signed-in session and mirrored, so the backup is the only
@@ -2984,7 +2984,7 @@ better default and the repository is still what someone downloading wants.
 **33 of 50** families that hold two or more methods. The other **17** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **334** of the **351**
+already exists, on a permanent indexed URL. Those cover **335** of the **352**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
