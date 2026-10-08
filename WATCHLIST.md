@@ -91,26 +91,44 @@ section.
 
 ### bedrock (MS2 foundation model) and MDLMDec
 
-**Update 2026-10-08: the pair have published a foundation model.** "dIon:
-Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass
-Spectra" (arXiv 2610.06282, 2026-10-05; Nilsson, Lapin, Payne, Wilhelm, Käll)
-is now publication 981 and algorithm `dIon`, code at
-`statisticalbiotechnology/dIon`, checkpoints at `alfred-n/dIon`. It is very
-likely what `jlapin1/foundation` ("bedrock") was building toward: same two
-authors, a foundation encoder for MS2 spectra, and the Hugging Face release
-dated 2026-10-02, the same day bedrock was last pushed. Neither repository
-says so, so bedrock is not linked to it. MDLMDec is NOT dIon: dIon's
-sequencer is a Casanovo-style autoregressive decoder, MDLMDec's name says
-masked diffusion, and PR 87 is still open and unpublished. Keep this entry
-for MDLMDec.
+**Update 2026-10-08: the pair have published a foundation model, and it is
+NOT bedrock.** "dIon: Fragmentation-Based Invariance for Self-Supervised
+Learning of Tandem Mass Spectra" (arXiv 2610.06282, 2026-10-05; Nilsson,
+Lapin, Payne, Wilhelm, Käll) is now publication 981 and algorithm `dIon`,
+code at `statisticalbiotechnology/dIon` (one squashed "Initial commit" by
+Alfred-N, 2026-10-02), checkpoints at `alfred-n/dIon`. It is a different
+codebase and a different approach from the same people, with an overlapping
+lineage, so this entry stays for both bedrock and MDLMDec.
+
+Bedrock is Joel Lapin's long-running multi-task self-supervised sandbox: its
+commit history runs 2023-10-27 to 2026-10-02 (the GitHub repo was only
+created 2026-08-06, which is the date in the table below). Its `migratednv`
+branch has none of dIon's machinery: no DINO, Sinkhorn, prototypes,
+mixture/competing spectra or null-precursor views. What it has is a menu of
+tasks:
+- HiddenPeak, masked m/z classification over 0.1 Da bins with uniform 15%
+  masking: dIon's objective in naive form, without span masking or isotope
+  co-masking;
+- HiddenCharge and HiddenMass, which amount to dIon's mixture-free
+  precursor-inference ablation;
+- MassCompetition, NaryTask, Maldi, ResidualRegression, a VAE and a
+  diffusion decoder;
+- JEPA (2026-09-27, "Running but not performing yet") and Data2Vec with an
+  EMA target encoder (2026-09-30).
+
+The encoder also has a pairwise-attention option (`bias='pairwise'`) and
+optional charge/mass injection. So other objectives were still being tried
+there days before dIon was released, and bedrock remains unpublished. MDLMDec
+is not dIon either: dIon's sequencer is a Casanovo-style autoregressive
+decoder, MDLMDec's name says masked diffusion, and PR 87 is still open.
 
 
 | | |
 |---|---|
 | Repos | <https://github.com/jlapin1/foundation> (Apache-2.0, Python) and the MDLMDec submission at <https://github.com/bittremieuxlab/denovo_benchmarks/pull/87> |
 | Authors | Joel Lapin (author 31, TUM Computational Mass Spectrometry) and Alfred Nilsson (author 32, KTH Science for Life Laboratory) |
-| First released | 2026-08-06; still being pushed to on 2026-09-21 |
-| Last checked | 2026-09-22 |
+| First released | 2026-08-06 (history from 2023-10-27); last pushed 2026-10-02 |
+| Last checked | 2026-10-08 |
 
 Two artefacts from the same pair, tracked together because they appear to be one
 line of work. The repo is named `foundation`, described as "Foundational model
