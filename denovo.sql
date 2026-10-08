@@ -1475,7 +1475,7 @@ INSERT INTO author VALUES(1535,'Christopher B. Lietz',NULL,NULL,NULL,NULL,NULL,N
 INSERT INTO author VALUES(1536,'Craig M. Rive',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1537,'Csaba Bagyinka',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1539,'David D. Y. Chen',NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO author VALUES(1541,'David Morgenstern',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1541,'David Morgenstern',NULL,NULL,NULL,NULL,'0000-0002-9618-1656','A5001176337');
 INSERT INTO author VALUES(1543,'Dewei Shu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1544,'Dirk Wunderlich',NULL,NULL,NULL,NULL,'0000-0003-2810-9633',NULL);
 INSERT INTO author VALUES(1545,'Dominique Rainteau',NULL,NULL,NULL,NULL,NULL,NULL);
@@ -3762,6 +3762,15 @@ INSERT INTO author VALUES(3873,'Afonso D. L. de Souza',NULL,NULL,NULL,NULL,'0000
 INSERT INTO author VALUES(3874,'Carlos Bloch Jr.',NULL,NULL,NULL,NULL,'0000-0003-2799-6883','A5085434468');
 INSERT INTO author VALUES(3875,'Xiang Gao',NULL,NULL,'Tsinghua University',NULL,'0000-0002-3774-1852','A5015348295');
 INSERT INTO author VALUES(3876,'Yang Liu',NULL,NULL,'Wuyi University',NULL,NULL,NULL);
+INSERT INTO author VALUES(3877,'Jorge L. B. Neves',NULL,NULL,NULL,NULL,'0000-0002-8398-8004','A5011038357');
+INSERT INTO author VALUES(3878,'Julita S. Imperial',NULL,NULL,NULL,NULL,'0000-0003-2794-0820','A5043491172');
+INSERT INTO author VALUES(3879,'Joanna Gajewiak',NULL,NULL,NULL,NULL,'0000-0003-3608-9935','A5061587018');
+INSERT INTO author VALUES(3880,'Agostinho Antunes',NULL,NULL,NULL,NULL,'0000-0002-1328-1732','A5017842519');
+INSERT INTO author VALUES(3881,'Samuel D. Robinson',NULL,NULL,NULL,NULL,'0000-0002-3518-0377','A5072504942');
+INSERT INTO author VALUES(3882,'Samuel S. Espino',NULL,NULL,NULL,NULL,'0009-0000-8917-1057','A5051488627');
+INSERT INTO author VALUES(3883,'Maren Watkins',NULL,NULL,NULL,NULL,'0000-0002-4127-1961','A5030020858');
+INSERT INTO author VALUES(3884,'Vitor Vasconcelos',NULL,NULL,NULL,NULL,'0000-0003-3585-2417','A5060421147');
+INSERT INTO author VALUES(3885,'Baldomero M. Olivera',NULL,NULL,NULL,NULL,'0000-0003-4556-1410','A5002311801');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -3838,6 +3847,7 @@ INSERT INTO country VALUES(98,'Cameroon','CM');
 INSERT INTO country VALUES(99,'Kenya','KE');
 INSERT INTO country VALUES(100,'Namibia','NA');
 INSERT INTO country VALUES(101,'Serbia','RS');
+INSERT INTO country VALUES(102,'Cabo Verde','CV');
 CREATE TABLE city (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -4381,6 +4391,8 @@ INSERT INTO city VALUES(568,'Changchun',2,43.8800000000000025,125.32277999999999
 INSERT INTO city VALUES(569,'Belgrade',101,44.8040099999999981,20.4651299999999984,'openalex','openalex');
 INSERT INTO city VALUES(570,'Manaus',24,-3.10193999999999991,-60.0249999999999985,'openalex','openalex');
 INSERT INTO city VALUES(571,'Goiânia',24,-16.678609999999999,-49.2538899999999983,'openalex','openalex');
+INSERT INTO city VALUES(572,'Salt Lake City',8,40.7607799999999969,-111.891050000000007,'openalex','openalex');
+INSERT INTO city VALUES(573,'Praia',102,14.9116999999999997,-23.5260999999999995,'openalex','openalex');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5751,6 +5763,9 @@ INSERT INTO affiliation VALUES(1405,'Brazilian Agricultural Research Corporation
 INSERT INTO affiliation VALUES(1406,'Universidade Federal do Amazonas',NULL,24,570,'https://ror.org/02263ky35','Universidade Federal do Amazonas','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(1407,'Universidade de Brasília',NULL,24,343,'https://ror.org/02xfp8v59','Universidade de Brasília','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(1408,'Universidade Federal de Goiás',NULL,24,571,'https://ror.org/0039d5757','Universidade Federal de Goiás','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1409,'University of Utah',NULL,8,572,'https://ror.org/03r0ha626','University of Utah','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1410,'University of Cabo Verde',NULL,102,573,'https://ror.org/001fphc23','University of Cape Verde','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1411,'Interdisciplinary Centre of Marine and Environmental Research',NULL,74,246,'https://ror.org/05p7z7s64','Centro Interdisciplinar de Investigação Marinha e Ambiental','openalex',NULL,'openalex');
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11165,6 +11180,20 @@ INSERT INTO author_affiliation VALUES(1479,1190);
 INSERT INTO author_affiliation VALUES(1479,1191);
 INSERT INTO author_affiliation VALUES(1490,131);
 INSERT INTO author_affiliation VALUES(566,160);
+INSERT INTO author_affiliation VALUES(3877,1409);
+INSERT INTO author_affiliation VALUES(3877,1411);
+INSERT INTO author_affiliation VALUES(3877,1410);
+INSERT INTO author_affiliation VALUES(3878,1409);
+INSERT INTO author_affiliation VALUES(1541,291);
+INSERT INTO author_affiliation VALUES(3879,1409);
+INSERT INTO author_affiliation VALUES(3880,1411);
+INSERT INTO author_affiliation VALUES(3880,1324);
+INSERT INTO author_affiliation VALUES(3881,1409);
+INSERT INTO author_affiliation VALUES(3882,1409);
+INSERT INTO author_affiliation VALUES(3883,1409);
+INSERT INTO author_affiliation VALUES(3884,1411);
+INSERT INTO author_affiliation VALUES(3884,1324);
+INSERT INTO author_affiliation VALUES(3885,1409);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -11981,6 +12010,7 @@ INSERT INTO algorithm VALUES(811,'Odorrana schmackeri calcitonin-like peptides',
 INSERT INTO algorithm VALUES(812,'De novo sequencing of disulphide-rich peptides (Oslo thesis)',NULL,NULL,NULL,'Optimised collision energy for QTOF CID of peptides, assessed PEAKS de novo accuracy by peptide length, and de novo sequenced an unknown disulphide-rich bioactive peptide.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(813,'Isotopic differentiation protocol (IDP)',NULL,NULL,'Chemical labeling assisted','Forms light and deuterated methyl esters at the C-terminus or acetamides at the N-terminus so that mass shifts between isotopologues pick out C- and N-terminal ion series for de novo sequencing.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(814,'Hypsiboas cinerascens cinerascetins',NULL,NULL,NULL,'De novo MALDI-TOF/TOF sequencing of skin secretion peptides of the green-tree frog Hypsiboas cinerascens revealed five new hylaseptin-related peptides, cinerascetins, also mapped by MALDI imaging.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(815,'Conus ateralbus conotoxin AtVIA',NULL,NULL,NULL,'Isolates and manually de novo sequences AtVIA, the first conotoxin from the Cabo Verde endemic cone snail Conus ateralbus, a 30-residue delta-conotoxin-like peptide that excites mouse dorsal root ganglion neurons.','downstream-application',0,'DDA',NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -12970,6 +13000,7 @@ INSERT INTO publication VALUES(976,'De novo sequencing and peptide characterizat
 INSERT INTO publication VALUES(977,'Cinerascetins, New Peptides fromHypsiboas cinerascens: MALDI LIFT-TOF-MS/MSde novoSequence and Imaging Analysis','2015-08-28','10.5935/0103-5053.20150219','Sociedade Brasileira de Quimica (SBQ)','The continuous search for antimicrobial candidates pushes the pursuit of compounds in the most diverse organisms. Amphibians are known as a prolific source of antibacterial peptides. Based on the rich biodiversity of the Amazon region the unexplored green-tree frog (Hypsiboas cinerascens) was studied for its skin secretion peptide content. Chromatographic separations and established tandem mass spectrometry (MS/MS) methods were used for sequencing the primary structures of the purified compounds. De novo sequencing lead to the identification of five new peptides related to hylaseptin P1, displaying an aminated C-terminal. Sequencing of the complementary deoxyribonucleic acid (cDNA) analysis allowed the disambiguation of isobaric amino-acids for C-01. Matrix assisted laser desorption ionization (MALDI) was carried out, demonstrating the in situ co-occurrence of the identified peptides in the dorsal skin. The major peptide C-01 was synthesized and assayed against a selection of microorganisms displaying minimal inhibitory concentrations (MICs) ranging from 4 to 16 µM.','https://doi.org/10.5935/0103-5053.20150219','Journal of the Brazilian Chemical Society','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(978,'Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing','2025-07-13',NULL,'PMLR','De novo peptide sequencing is a critical task in proteomics. However, the performance of current deep learning-based methods is limited by the inherent complexity of mass spectrometry data and the heterogeneous distribution of noise signals, leading to data-specific biases. We present RankNovo, the first deep reranking framework that enhances de novo peptide sequencing by leveraging the complementary strengths of multiple sequencing models. RankNovo employs a list-wise reranking approach, modeling candidate peptides as multiple sequence alignments and utilizing axial attention to extract informative features across candidates. Additionally, we introduce two new metrics, PMD (Peptide Mass Deviation) and RMD (ResidualMass Deviation), which offer delicate supervision by quantifying mass differences between peptides at both the sequence and residue levels. Extensive experiments demonstrate that RankNovo not only surpasses its base models used to generate training candidates for reranking pre-training, but also sets a new state-of-the-art benchmark. Moreover, RankNovo exhibits strong zero-shot generalization to unseen models—those whose generations were not exposed during training, highlighting its robustness and potential as a universal reranking framework for peptide sequencing. Our work presents a novel reranking strategy that fundamentally challenges existing single-model paradigms and advances the frontier of accurate de novo sequencing. Our source code is provided on GitHub.','https://proceedings.mlr.press/v267/qiu25i.html','ICML 2025','ML conference',NULL,'proceedings');
 INSERT INTO publication VALUES(979,'Bidirectional Representations Augmented Autoregressive Biological Sequence Generation','2025-12-02','10.52202/085713-1721','Curran Associates','Autoregressive (AR) models, common in sequence generation, are limited in many biological tasks like de novo peptide sequencing and protein modeling by their unidirectional nature, failing to capture crucial global bidirectional token dependencies. Non-Autoregressive (NAR) models offer holistic, bidirectional representations but face challenges with generative coherence and scalability. To transcend this, we propose a hybrid framework enhancing AR generation by dynamically integrating rich contextual information from non-autoregressive mechanisms. Our approach couples a shared input encoder with two decoders: a non-autoregressive one learning latent bidirectional biological features, and an AR decoder synthesizing the biological sequence by leveraging these bidirectional features. A novel cross-decoder attention module enables the AR decoder to iteratively query and integrate these bidirectional features, enriching its predictions. This synergy is cultivated via a tailored training strategy with importance annealing for balanced objectives and cross-decoder gradient blocking for stable, focused learning. Evaluations on a demanding 9-species benchmark of de novo peptide sequencing task show our model substantially surpasses AR and NAR baselines. It uniquely harmonizes AR stability with NAR contextual awareness, delivering robust, superior performance on diverse downstream data. This research advances biological sequence modeling techniques and contributes a novel architectural paradigm for augmenting AR models with enhanced bidirectional understanding for complex sequence generation. Our code is available on GitHub: https://github.com/BEAM-Labs/denovo','https://papers.nips.cc/paper_files/paper/2025/hash/4a29e8bc94b4c5d21d58a4fffdff800b-Abstract-Conference.html','NeurIPS 2025','ML conference',NULL,'proceedings');
+INSERT INTO publication VALUES(980,'Characterization of the First Conotoxin from Conus ateralbus, a Vermivorous Cone Snail from the Cabo Verde Archipelago','2019-07-24','10.3390/md17080432','MDPI','Conus ateralbus is a cone snail endemic to the west side of the island of Sal, in the Cabo Verde Archipelago off West Africa. We describe the isolation and characterization of the first bioactive peptide from the venom of this species. This 30AA venom peptide is named conotoxin AtVIA (δ-conotoxin-like). An excitatory activity was manifested by the peptide on a majority of mouse lumbar dorsal root ganglion neurons. An analog of AtVIA with conservative changes on three amino acid residues at the C-terminal region was synthesized and this analog produced an identical effect on the mouse neurons. AtVIA has homology with δ-conotoxins from other worm-hunters, which include conserved sequence elements that are shared with δ-conotoxins from fish-hunting Conus . In contrast, there is no comparable sequence similarity with δ-conotoxins from the venoms of molluscivorous Conus species. A rationale for the potential presence of δ-conotoxins, that are potent in vertebrate systems in two different lineages of worm-hunting cone snails, is discussed.','https://doi.org/10.3390/md17080432','Marine Drugs','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19226,6 +19257,17 @@ INSERT INTO publication_author VALUES(633,2321,9);
 INSERT INTO publication_author VALUES(633,3876,10);
 INSERT INTO publication_author VALUES(633,2322,11);
 INSERT INTO publication_author VALUES(633,2323,12);
+INSERT INTO publication_author VALUES(980,3877,1);
+INSERT INTO publication_author VALUES(980,3878,2);
+INSERT INTO publication_author VALUES(980,1541,3);
+INSERT INTO publication_author VALUES(980,630,4);
+INSERT INTO publication_author VALUES(980,3879,5);
+INSERT INTO publication_author VALUES(980,3880,6);
+INSERT INTO publication_author VALUES(980,3881,7);
+INSERT INTO publication_author VALUES(980,3882,8);
+INSERT INTO publication_author VALUES(980,3883,9);
+INSERT INTO publication_author VALUES(980,3884,10);
+INSERT INTO publication_author VALUES(980,3885,11);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27139,6 +27181,21 @@ INSERT INTO publication_author_affiliation VALUES(977,3870,1408,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(977,3871,1406,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(977,3872,1406,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(977,3873,1406,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3877,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3877,1411,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3877,1410,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3878,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,1541,291,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,630,291,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3879,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3880,1411,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3880,1324,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3881,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3882,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3883,1409,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3884,1411,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3884,1324,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(980,3885,1409,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28398,6 +28455,8 @@ INSERT INTO publication_algorithm VALUES(977,814,'describes');
 INSERT INTO publication_algorithm VALUES(977,158,'uses');
 INSERT INTO publication_algorithm VALUES(978,23,'describes');
 INSERT INTO publication_algorithm VALUES(979,9,'describes');
+INSERT INTO publication_algorithm VALUES(980,815,'describes');
+INSERT INTO publication_algorithm VALUES(980,158,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -57277,12 +57336,41 @@ INSERT INTO paper_comparison_note VALUES(141,2,'emphasis','column amino acid rec
 INSERT INTO paper_comparison_note VALUES(208,0,'emphasis','column amino acid precision: the original table underlined LIPNovo (0.637).');
 INSERT INTO paper_comparison_note VALUES(211,0,'emphasis','column ptm recall: the original table underlined SearchNovo (0.772), LIPNovo (0.745).');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('country',101);
-INSERT INTO sqlite_sequence VALUES('city',571);
-INSERT INTO sqlite_sequence VALUES('affiliation',1408);
-INSERT INTO sqlite_sequence VALUES('author',3876);
-INSERT INTO sqlite_sequence VALUES('algorithm',814);
-INSERT INTO sqlite_sequence VALUES('publication',979);
+INSERT INTO sqlite_sequence VALUES('country',102);
+INSERT INTO sqlite_sequence VALUES('city',573);
+INSERT INTO sqlite_sequence VALUES('affiliation',1411);
+INSERT INTO sqlite_sequence VALUES('author',3885);
+INSERT INTO sqlite_sequence VALUES('algorithm',815);
+INSERT INTO sqlite_sequence VALUES('publication',980);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -57309,11 +57397,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -57329,12 +57412,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -57349,15 +57426,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -57386,6 +57454,20 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -57393,27 +57475,4 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;
