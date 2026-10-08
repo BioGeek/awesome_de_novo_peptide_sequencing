@@ -901,9 +901,19 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         if ctx["has_metrics"]:
             L += ["", "Live stars, open issues and last-push figures are on the "
                   f"[Code activity chart]({site.home('code')}).", ""]
+        elif any(re.match(r"https?://github\.com/", u) for u in ctx["repos"]):
+            # A GitHub link with no metrics row is one of two things the page
+            # cannot tell apart: added since the last daily refresh, or a
+            # repository the API no longer returns (pi-xNovo and RNovA's
+            # SeqFiller answer 404). Saying "not a public GitHub repository"
+            # was false for every method added since the last refresh.
+            L += ["", "Not on the Code activity chart: the GitHub API has "
+                  "returned no figures for this repository, either because it "
+                  "was added after the last daily refresh or because it is "
+                  "private, renamed or deleted.", ""]
         else:
             L += ["", "Not tracked on the Code activity chart: those figures come "
-                  "from the GitHub API, and this link is not a public GitHub "
+                  "from the GitHub API, and this link is not a GitHub "
                   "repository.", ""]
 
     # WHERE THE WEIGHTS ARE. A benchmark number is only reproducible if the
