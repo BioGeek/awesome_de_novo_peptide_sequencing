@@ -510,3 +510,4 @@ doi	decision	reason	screened
 10.1109/iccabs.2012.6182616	held	Pevzner keynote abstract at ICCABS 2012 on de novo sequencing of cyclic nonribosomal peptide antibiotics by MS/MS, covering the group's catalogued NRP sequencing work.	radar backfill 2026-10-05
 10.2174/157016407782194594	held	Method paper on micro-algal sample preparation for 2-DE combined with MALDI-TOF de novo peptide sequencing to identify proteins of an organism without a reference proteome.	radar backfill 2026-10-05
 10.2174/187438380701011083	rejected	other: Duplicate DOI record of the same PepTiger article (same authors, volume and pages) as the other PepTiger item in this batch.	radar backfill 2026-10-05
+10.1111/febs.70504	rejected	passing-mention: Degradomics review (FEBS J 2026); one paragraph on de novo sequencing, whose three citations (publications 340, 29, 2) are already catalogued. Its other "de novo" means hypothesis-free degradome mapping.	hand review 2026-10-08
