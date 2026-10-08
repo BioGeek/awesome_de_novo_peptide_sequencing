@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo">
+<meta name="description" content="dIon: algorithm · Transformer (AR). Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld…">
 
-<title>Lukas Käll – Awesome De Novo Peptide Sequencing</title>
+<title>dIon – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -79,10 +79,10 @@ ul.task-list li input[type="checkbox"] {
      instead. (No count here on purpose: the page total moves with
      the data, and nothing checks a number buried in an HTML
      comment.) -->
-<meta property="og:title" content="Lukas Käll – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo">
+<meta property="og:title" content="dIon – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="dIon: algorithm · Transformer (AR). Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld…">
 <style>#title-block-header .description { display: none; }</style>
-<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/lukas-kall.html">
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/dion.html">
 
 
 </head>
@@ -148,13 +148,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lukas Käll</h1>
-<p class="subtitle lead">6 papers in the catalog · Sweden</p>
+<h1 class="title">dIon</h1>
+<p class="subtitle lead">algorithm · Transformer (AR)</p>
 </div>
 
 <div>
   <div class="description">
-    Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo
+    dIon: algorithm · Transformer (AR). Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld…
   </div>
 </div>
 
@@ -171,85 +171,91 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","affiliation":[{"@type":"Organization","name":"KTH Royal Institute of Technology"}],"name":"Lukas Käll","sameAs":["https://orcid.org/0000-0001-5689-9797","https://openalex.org/A5036241287"]}</script>
-<section id="affiliations" class="level2">
-<h2 class="anchored" data-anchor-id="affiliations">Affiliations</h2>
+<p>Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld; initialising a Casanovo-style de novo sequencer from it raises peptide precision over training from scratch.</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Kind</td>
+<td>algorithm</td>
+</tr>
+<tr class="even">
+<td>Deep learning</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td>Acquisition</td>
+<td>DDA</td>
+</tr>
+<tr class="even">
+<td>Family</td>
+<td><a href="../families/transformer-ar.html">Transformer (AR)</a></td>
+</tr>
+</tbody>
+</table>
+<section id="code" class="level2">
+<h2 class="anchored" data-anchor-id="code">Code</h2>
 <ul>
-<li><a href="../institutions/kth-royal-institute-of-technology.html">KTH Royal Institute of Technology</a> · Science for Life Laboratory, Department of Gene Technology</li>
+<li><a href="https://github.com/statisticalbiotechnology/dIon" class="uri">https://github.com/statisticalbiotechnology/dIon</a></li>
+</ul>
+<p>Not tracked on the Code activity chart: those figures come from the GitHub API, and this link is not a public GitHub repository.</p>
+</section>
+<section id="checkpoints" class="level2">
+<h2 class="anchored" data-anchor-id="checkpoints">Checkpoints</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Version</th>
+<th>Trained on</th>
+<th>Host</th>
+<th>Licence</th>
+<th>Size</th>
+<th>Checked</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>v0.1.0</td>
+<td>bacterial PXD010000/PXD010613 pretraining corpus (unlabelled)</td>
+<td><a href="https://huggingface.co/alfred-n/dIon/resolve/main/checkpoints/dion-v0.1-foundation.ckpt">Hugging Face</a></td>
+<td>Apache-2.0</td>
+<td>2.3 GB</td>
+<td>live <small>2026-10-08</small></td>
+</tr>
+<tr class="even">
+<td>v0.1.0</td>
+<td>dIon-de-novo-labeled-v1 (DNLv1)</td>
+<td><a href="https://huggingface.co/alfred-n/dIon/resolve/main/checkpoints/dion-v0.1-denovo-200peaks.ckpt">Hugging Face</a></td>
+<td>Apache-2.0</td>
+<td>2.7 GB</td>
+<td>live <small>2026-10-08</small></td>
+</tr>
+<tr class="odd">
+<td>v0.1.0</td>
+<td>dIon-de-novo-labeled-v1 (DNLv1)</td>
+<td><a href="https://huggingface.co/alfred-n/dIon/resolve/main/checkpoints/dion-v0.1-denovo-1000peaks.ckpt">Hugging Face</a></td>
+<td>Apache-2.0</td>
+<td>2.7 GB</td>
+<td>live <small>2026-10-08</small></td>
+</tr>
+</tbody>
+</table>
+<p>A host marked <em>archival</em> has a DOI and keeps what it is given. The others can move or disappear, which is why they are checked rather than merely listed. <strong>verified</strong> means the bytes were fetched and hashed on the date shown; <strong>live</strong> means only that the host answered when last asked.</p>
+</section>
+<section id="paper-describing-it" class="level2">
+<h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
+<ul>
+<li><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a> (2026, arXiv, preprint)</li>
 </ul>
 </section>
-<section id="elsewhere" class="level2">
-<h2 class="anchored" data-anchor-id="elsewhere">Elsewhere</h2>
-<p><a href="https://orcid.org/0000-0001-5689-9797">ORCID 0000-0001-5689-9797</a> · <a href="https://openalex.org/A5036241287">OpenAlex</a></p>
-</section>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers</h2>
-<ul>
-<li><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a> (2026, arXiv)</li>
-<li><a href="../publications/reference-free-protein-sequencing-by-consensus-assembly-of-redundant-de-novo.html">Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads</a> (2026, bioRxiv)</li>
-<li><a href="../publications/a-living-proteomics-benchmark-for-comprehensive-evaluation-of-deep-learning.html">A living proteomics benchmark for comprehensive evaluation of deep learning-based de novo peptide sequencing tools</a> (2026, Nature Methods (Registered Report))</li>
-<li><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-sequencing-of.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025, Journal of Proteome Research)</li>
-<li><a href="../publications/simultaneous-polyclonal-antibody-sequencing-and-epitope-mapping-by-cryo.html">Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry</a> (2025, eLife)</li>
-<li><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025, bioRxiv)</li>
-</ul>
-</section>
-<section id="methods-and-tools" class="level2">
-<h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
-<p><a href="../algorithms/living-proteomics-benchmark.html">Living proteomics benchmark</a>, <a href="../algorithms/pairwise.html">Pairwise</a>, <a href="../algorithms/borgonovo.html">borgonovo</a>, <a href="../algorithms/cryoem-plus-ms-antibody-sequencing-workflow.html">cryoEM + MS antibody sequencing workflow</a>, <a href="../algorithms/dion.html">dIon</a></p>
-</section>
-<section id="co-authors-58" class="level2">
-<h2 class="anchored" data-anchor-id="co-authors-58">Co-authors (58)</h2>
-<p>Ranked by Newman fractional collaboration strength, so a pair on a two-author paper counts for more than a pair on a 50-author consortium paper.</p>
-<ul>
-<li><a href="alfred-nilsson.html">Alfred Nilsson</a> <small>strength 1.14, 5 shared</small></li>
-<li><a href="joel-lapin.html">Joel Lapin</a> <small>strength 0.94, 4 shared</small></li>
-<li><a href="mathias-wilhelm.html">Mathias Wilhelm</a> <small>strength 0.94, 4 shared</small></li>
-<li><a href="douwe-schulte.html">Douwe Schulte</a> <small>strength 0.53, 2 shared</small></li>
-<li><a href="joost-snijder.html">Joost Snijder</a> <small>strength 0.53, 2 shared</small></li>
-<li><a href="marta-siborova.html">Marta Šiborová</a> <small>strength 0.33, 1 shared</small></li>
-<li><a href="samuel-h-payne.html">Samuel H. Payne</a> <small>strength 0.25, 1 shared</small></li>
-<li><a href="emil-sporre.html">Emil Sporre</a> <small>strength 0.20, 1 shared</small></li>
-<li><a href="fredrik-edfors.html">Fredrik Edfors</a> <small>strength 0.20, 1 shared</small></li>
-<li><a href="baozhen-shan.html">Baozhen Shan</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="benjamin-a-neely.html">Benjamin A. Neely</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="bin-ma.html">Bin Ma</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ceder-dens.html">Ceder Dens</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="charlotte-adams.html">Charlotte Adams</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="cheng-chang.html">Cheng Chang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="cheng-ge.html">Cheng Ge</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="chenyu-yao.html">Chenyu Yao</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="christian-nix.html">Christian Nix</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="daniela-klaproth-andrade.html">Daniela Klaproth-Andrade</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="di-zhang.html">Di Zhang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ekapol-chuangsuwanich.html">Ekapol Chuangsuwanich</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="guillaume-deflandre.html">Guillaume Deflandre</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="haipeng-wang.html">Haipeng Wang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="haixu-tang.html">Haixu Tang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jeroen-van-goey.html">Jeroen Van Goey</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jingbo-zhou.html">Jingbo Zhou</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="julien-gagneur.html">Julien Gagneur</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jun-xia.html">Jun Xia</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="kaiyuan-liu.html">Kaiyuan Liu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="laurent-gatto.html">Laurent Gatto</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="lei-xin.html">Lei Xin</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="marina-pominova.html">Marina Pominova</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="melih-yilmaz.html">Melih Yilmaz</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="michael-r-shortreed.html">Michael R. Shortreed</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ming-li.html">Ming Li</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="qingyang-xiao.html">Qingyang Xiao</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="qixin-liu.html">Qixin Liu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ruitao-wu.html">Ruitao Wu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="shan-chang.html">Shan Chang</a> <small>strength 0.02, 1 shared</small></li>
-</ul>
+<section id="authors-5" class="level2">
+<h2 class="anchored" data-anchor-id="authors-5">Authors (5)</h2>
+<p><a href="../authors/alfred-nilsson.html">Alfred Nilsson</a>, <a href="../authors/joel-lapin.html">Joel Lapin</a>, <a href="../authors/samuel-h-payne.html">Samuel H. Payne</a>, <a href="../authors/mathias-wilhelm.html">Mathias Wilhelm</a>, <a href="../authors/lukas-kall.html">Lukas Käll</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#browse-all-authors">Browse all authors</a></li>
-<li><a href="../../index.html#the-collaboration-network">The collaboration network</a></li>
+<li><a href="../../index.html#the-architectures">The architectures</a></li>
 <li><a href="../../index.html#models-and-the-authors-behind-them">Models and the authors behind them</a></li>
-<li><a href="../../index.html#where-the-work-happens">Where the work happens</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 

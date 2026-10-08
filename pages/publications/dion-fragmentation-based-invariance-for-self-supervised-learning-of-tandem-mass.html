@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo">
+<meta name="description" content="preprint · arXiv · 2026. Alfred Nilsson et al.&nbsp;We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised…">
 
-<title>Lukas Käll – Awesome De Novo Peptide Sequencing</title>
+<title>dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra – Awesome De Novo Peptide Sequencing</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -79,10 +79,10 @@ ul.task-list li input[type="checkbox"] {
      instead. (No count here on purpose: the page total moves with
      the data, and nothing checks a number buried in an HTML
      comment.) -->
-<meta property="og:title" content="Lukas Käll – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo">
+<meta property="og:title" content="dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="preprint · arXiv · 2026. Alfred Nilsson et al.&nbsp;We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised…">
 <style>#title-block-header .description { display: none; }</style>
-<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/lukas-kall.html">
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">
 
 
 </head>
@@ -148,13 +148,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lukas Käll</h1>
-<p class="subtitle lead">6 papers in the catalog · Sweden</p>
+<h1 class="title">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</h1>
+<p class="subtitle lead">preprint · arXiv · 2026</p>
 </div>
 
 <div>
   <div class="description">
-    Lukas Käll: 6 papers in the catalog · Sweden · KTH Royal Institute of Technology · Works on Living proteomics benchmark, Pairwise, borgonovo
+    preprint · arXiv · 2026. Alfred Nilsson et al.&nbsp;We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised…
   </div>
 </div>
 
@@ -171,85 +171,59 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","affiliation":[{"@type":"Organization","name":"KTH Royal Institute of Technology"}],"name":"Lukas Käll","sameAs":["https://orcid.org/0000-0001-5689-9797","https://openalex.org/A5036241287"]}</script>
-<section id="affiliations" class="level2">
-<h2 class="anchored" data-anchor-id="affiliations">Affiliations</h2>
-<ul>
-<li><a href="../institutions/kth-royal-institute-of-technology.html">KTH Royal Institute of Technology</a> · Science for Life Laboratory, Department of Gene Technology</li>
-</ul>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised representation learning that improves de novo sequencing of peptides. This invariance exploits the physical relationship between precursor properties (mass and charge) and fragment-ion evidence, without requiring peptide sequence labels. We introduce dIon, which adapts the DINO framework with two latent prediction tasks, both recovering a clean teacher representation: one from a spectrum...","author":[{"@type":"Person","name":"Alfred Nilsson"},{"@type":"Person","name":"Joel Lapin"},{"@type":"Person","name":"Samuel H. Payne"},{"@type":"Person","name":"Mathias Wilhelm"},{"@type":"Person","name":"Lukas Käll"}],"datePublished":"2026-10-05","headline":"dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra","identifier":"https://doi.org/10.48550/arXiv.2610.06282","isPartOf":{"@type":"Periodical","name":"arXiv"},"name":"dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra","publisher":{"@type":"Organization","name":"arXiv"},"sameAs":"https://doi.org/10.48550/arXiv.2610.06282"}</script>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Date</td>
+<td>2026-10-05</td>
+</tr>
+<tr class="even">
+<td>Type</td>
+<td>preprint</td>
+</tr>
+<tr class="odd">
+<td>Venue</td>
+<td><a href="../venues/arxiv.html">arXiv</a></td>
+</tr>
+<tr class="even">
+<td>Publisher</td>
+<td>arXiv</td>
+</tr>
+<tr class="odd">
+<td>Contribution</td>
+<td>algorithm</td>
+</tr>
+<tr class="even">
+<td>DOI</td>
+<td><a href="https://doi.org/10.48550/arXiv.2610.06282">10.48550/arXiv.2610.06282</a></td>
+</tr>
+</tbody>
+</table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised representation learning that improves de novo sequencing of peptides. This invariance exploits the physical relationship between precursor properties (mass and charge) and fragment-ion evidence, without requiring peptide sequence labels. We introduce dIon, which adapts the DINO framework with two latent prediction tasks, both recovering a clean teacher representation: one from a spectrum mixture, using the precursor as a selection query, and one from a partial spectrum with the precursor withheld. The first associates precursor information with fragment-ion evidence; the second prevents representational collapse onto that information alone. Mechanistic probes support both effects, and ablations show that the full objective performs best. Under identical end-to-end training, dIon initialization improves de novo peptide precision over training from scratch by 5.5 and 8.4 percentage points on the held-out MassIVE-KB and Kingdoms test sets, and by 2.3 and 4.8 percentage points with a larger supervised training corpus. The resulting models surpass fully supervised state-of-the-art de novo sequencing models on the diverse, multi-species Kingdoms corpus under the same greedy-decoding protocol. Without peptide labels, dIon learns strong native peptide-similarity geometry compared with other learned models; with limited peptide-supervised adaptation, it achieves the best retrieval and pair-discrimination performance across all representation benchmarks.</p>
 </section>
-<section id="elsewhere" class="level2">
-<h2 class="anchored" data-anchor-id="elsewhere">Elsewhere</h2>
-<p><a href="https://orcid.org/0000-0001-5689-9797">ORCID 0000-0001-5689-9797</a> · <a href="https://openalex.org/A5036241287">OpenAlex</a></p>
-</section>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers</h2>
-<ul>
-<li><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a> (2026, arXiv)</li>
-<li><a href="../publications/reference-free-protein-sequencing-by-consensus-assembly-of-redundant-de-novo.html">Reference-free protein sequencing by consensus assembly of redundant de novo peptide reads</a> (2026, bioRxiv)</li>
-<li><a href="../publications/a-living-proteomics-benchmark-for-comprehensive-evaluation-of-deep-learning.html">A living proteomics benchmark for comprehensive evaluation of deep learning-based de novo peptide sequencing tools</a> (2026, Nature Methods (Registered Report))</li>
-<li><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-sequencing-of.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025, Journal of Proteome Research)</li>
-<li><a href="../publications/simultaneous-polyclonal-antibody-sequencing-and-epitope-mapping-by-cryo.html">Simultaneous polyclonal antibody sequencing and epitope mapping by cryo electron microscopy and mass spectrometry</a> (2025, eLife)</li>
-<li><a href="../publications/pairwise-attention-leveraging-mass-differences-to-enhance-de-novo-preprint.html">Pairwise Attention: Leveraging Mass Differences to Enhance De Novo Sequencing of Mass Spectra</a> (2025, bioRxiv)</li>
-</ul>
+<section id="authors" class="level2">
+<h2 class="anchored" data-anchor-id="authors">Authors</h2>
+<ol type="1">
+<li><a href="../authors/alfred-nilsson.html">Alfred Nilsson</a> · <a href="../institutions/kth-royal-institute-of-technology.html">KTH Royal Institute of Technology</a></li>
+<li><a href="../authors/joel-lapin.html">Joel Lapin</a> · <a href="../institutions/technical-university-of-munich.html">Technical University of Munich</a></li>
+<li><a href="../authors/samuel-h-payne.html">Samuel H. Payne</a> · <a href="../institutions/brigham-young-university.html">Brigham Young University</a></li>
+<li><a href="../authors/mathias-wilhelm.html">Mathias Wilhelm</a> · <a href="../institutions/technical-university-of-munich.html">Technical University of Munich</a></li>
+<li><a href="../authors/lukas-kall.html">Lukas Käll</a> · <a href="../institutions/kth-royal-institute-of-technology.html">KTH Royal Institute of Technology</a></li>
+</ol>
 </section>
 <section id="methods-and-tools" class="level2">
 <h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
-<p><a href="../algorithms/living-proteomics-benchmark.html">Living proteomics benchmark</a>, <a href="../algorithms/pairwise.html">Pairwise</a>, <a href="../algorithms/borgonovo.html">borgonovo</a>, <a href="../algorithms/cryoem-plus-ms-antibody-sequencing-workflow.html">cryoEM + MS antibody sequencing workflow</a>, <a href="../algorithms/dion.html">dIon</a></p>
-</section>
-<section id="co-authors-58" class="level2">
-<h2 class="anchored" data-anchor-id="co-authors-58">Co-authors (58)</h2>
-<p>Ranked by Newman fractional collaboration strength, so a pair on a two-author paper counts for more than a pair on a 50-author consortium paper.</p>
 <ul>
-<li><a href="alfred-nilsson.html">Alfred Nilsson</a> <small>strength 1.14, 5 shared</small></li>
-<li><a href="joel-lapin.html">Joel Lapin</a> <small>strength 0.94, 4 shared</small></li>
-<li><a href="mathias-wilhelm.html">Mathias Wilhelm</a> <small>strength 0.94, 4 shared</small></li>
-<li><a href="douwe-schulte.html">Douwe Schulte</a> <small>strength 0.53, 2 shared</small></li>
-<li><a href="joost-snijder.html">Joost Snijder</a> <small>strength 0.53, 2 shared</small></li>
-<li><a href="marta-siborova.html">Marta Šiborová</a> <small>strength 0.33, 1 shared</small></li>
-<li><a href="samuel-h-payne.html">Samuel H. Payne</a> <small>strength 0.25, 1 shared</small></li>
-<li><a href="emil-sporre.html">Emil Sporre</a> <small>strength 0.20, 1 shared</small></li>
-<li><a href="fredrik-edfors.html">Fredrik Edfors</a> <small>strength 0.20, 1 shared</small></li>
-<li><a href="baozhen-shan.html">Baozhen Shan</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="benjamin-a-neely.html">Benjamin A. Neely</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="bin-ma.html">Bin Ma</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ceder-dens.html">Ceder Dens</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="charlotte-adams.html">Charlotte Adams</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="cheng-chang.html">Cheng Chang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="cheng-ge.html">Cheng Ge</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="chenyu-yao.html">Chenyu Yao</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="christian-nix.html">Christian Nix</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="daniela-klaproth-andrade.html">Daniela Klaproth-Andrade</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="di-zhang.html">Di Zhang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ekapol-chuangsuwanich.html">Ekapol Chuangsuwanich</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="guillaume-deflandre.html">Guillaume Deflandre</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="haipeng-wang.html">Haipeng Wang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="haixu-tang.html">Haixu Tang</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jeroen-van-goey.html">Jeroen Van Goey</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jingbo-zhou.html">Jingbo Zhou</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="julien-gagneur.html">Julien Gagneur</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="jun-xia.html">Jun Xia</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="kaiyuan-liu.html">Kaiyuan Liu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="konstantinos-kalogeropoulos.html">Konstantinos Kalogeropoulos</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="laurent-gatto.html">Laurent Gatto</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="lei-xin.html">Lei Xin</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="marina-pominova.html">Marina Pominova</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="melih-yilmaz.html">Melih Yilmaz</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="michael-r-shortreed.html">Michael R. Shortreed</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ming-li.html">Ming Li</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="qingyang-xiao.html">Qingyang Xiao</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="qixin-liu.html">Qixin Liu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="ruitao-wu.html">Ruitao Wu</a> <small>strength 0.02, 1 shared</small></li>
-<li><a href="shan-chang.html">Shan Chang</a> <small>strength 0.02, 1 shared</small></li>
+<li><a href="../algorithms/dion.html">dIon</a>: Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld; initialising a Casanovo-style de novo sequencer from it raises peptide precision over training from scratch.</li>
 </ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
 <ul>
-<li><a href="../../index.html#browse-all-authors">Browse all authors</a></li>
-<li><a href="../../index.html#the-collaboration-network">The collaboration network</a></li>
-<li><a href="../../index.html#models-and-the-authors-behind-them">Models and the authors behind them</a></li>
-<li><a href="../../index.html#where-the-work-happens">Where the work happens</a></li>
+<li><a href="../../index.html#every-paper">Browse all papers</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 

@@ -5154,7 +5154,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/lukas-kall.html</loc>
-    <lastmod>2026-08-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/bradley-s-moore.html</loc>
@@ -12218,7 +12218,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/brigham-young-university.html</loc>
-    <lastmod>2026-07-28T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/hebei-geo-university.html</loc>
@@ -12414,7 +12414,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/technical-university-of-munich.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/universidad-nacional-agraria-la-molina.html</loc>
@@ -19062,7 +19062,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/kth-royal-institute-of-technology.html</loc>
-    <lastmod>2026-08-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/genome-et-transcriptome-plateforme-genomique.html</loc>
@@ -20714,7 +20714,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/joel-lapin.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/jian-hua-wang.html</loc>
@@ -22166,7 +22166,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/mathias-wilhelm.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/tingpeng-yang.html</loc>
@@ -22250,7 +22250,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/samuel-h-payne.html</loc>
-    <lastmod>2026-07-28T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/andrzej-dzionek.html</loc>
@@ -25810,7 +25810,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/alfred-nilsson.html</loc>
-    <lastmod>2026-08-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/gerard-cagney.html</loc>
@@ -27142,7 +27142,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/arxiv.html</loc>
-    <lastmod>2026-09-24T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/applied-soft-computing.html</loc>
@@ -29947,5 +29947,17 @@
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
     <lastmod>2026-10-08T12:41:28.816Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
+    <lastmod>2026-10-08T13:56:28.162Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/dion.html</loc>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html</loc>
+    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
   </url>
 </urlset>
