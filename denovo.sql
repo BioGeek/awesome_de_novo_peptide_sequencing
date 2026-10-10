@@ -3777,6 +3777,9 @@ INSERT INTO author VALUES(3888,'Siqi Wang',NULL,NULL,NULL,NULL,NULL,'A5157452724
 INSERT INTO author VALUES(3889,'Shouqi Zhang',NULL,NULL,NULL,NULL,NULL,'A5157429696');
 INSERT INTO author VALUES(3890,'Gan Luo',NULL,NULL,NULL,NULL,NULL,'A5157536643');
 INSERT INTO author VALUES(3891,'Xiaoyan Gao',NULL,NULL,NULL,NULL,NULL,'A5042732455');
+INSERT INTO author VALUES(3892,'Mariana S. Castro',NULL,NULL,NULL,NULL,'0000-0001-5143-152X','A5058201358');
+INSERT INTO author VALUES(3893,'Osmindo Rodrigues Pires Júnior',NULL,NULL,NULL,NULL,'0000-0002-9875-9407','A5042649462');
+INSERT INTO author VALUES(3894,'Wagner Fontes',NULL,NULL,NULL,NULL,'0000-0001-5140-8573','A5013615191');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -5772,6 +5775,8 @@ INSERT INTO affiliation VALUES(1408,'Universidade Federal de Goiás',NULL,24,571
 INSERT INTO affiliation VALUES(1409,'University of Utah',NULL,8,572,'https://ror.org/03r0ha626','University of Utah','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(1410,'University of Cabo Verde',NULL,102,573,'https://ror.org/001fphc23','University of Cape Verde','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(1411,'Interdisciplinary Centre of Marine and Environmental Research',NULL,74,246,'https://ror.org/05p7z7s64','Centro Interdisciplinar de Investigação Marinha e Ambiental','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1412,'Universidade de Brasília','Department of Cell Biology',NULL,343,'https://ror.org/02xfp8v59',NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1413,'Universidade de Brasília','Department of Physiological Sciences',NULL,343,'https://ror.org/02xfp8v59',NULL,NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11206,6 +11211,10 @@ INSERT INTO author_affiliation VALUES(3888,722);
 INSERT INTO author_affiliation VALUES(3889,722);
 INSERT INTO author_affiliation VALUES(3890,722);
 INSERT INTO author_affiliation VALUES(3891,722);
+INSERT INTO author_affiliation VALUES(3892,1412);
+INSERT INTO author_affiliation VALUES(3892,1413);
+INSERT INTO author_affiliation VALUES(3893,1413);
+INSERT INTO author_affiliation VALUES(3894,1412);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12025,6 +12034,7 @@ INSERT INTO algorithm VALUES(814,'Hypsiboas cinerascens cinerascetins',NULL,NULL
 INSERT INTO algorithm VALUES(815,'Conus ateralbus conotoxin AtVIA',NULL,NULL,NULL,'Isolates and manually de novo sequences AtVIA, the first conotoxin from the Cabo Verde endemic cone snail Conus ateralbus, a 30-residue delta-conotoxin-like peptide that excites mouse dorsal root ganglion neurons.','downstream-application',0,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(816,'dIon',NULL,NULL,'Transformer (AR)','Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld; initialising a Casanovo-style de novo sequencer from it raises peptide precision over training from scratch.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(817,'Asini Corii Colla bioactive peptides',NULL,NULL,NULL,'De novo sequences 4764 natural peptides from Asini Corii Colla (donkey-hide gelatin, Ejiao), a traditional Chinese medicine, then screens them in silico (Peptide Ranker, BIOPEP-UWM, docking) down to five candidate dual ACE and DPP-IV inhibitors.','downstream-application',NULL,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(818,'Physalaemus nattereri skin peptides',NULL,NULL,NULL,'Off-line LC MALDI MS/MS of the skin secretion of the Cuyaba dwarf frog Physalaemus nattereri, with the peptides sequenced de novo in PEAKS.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13017,6 +13027,7 @@ INSERT INTO publication VALUES(979,'Bidirectional Representations Augmented Auto
 INSERT INTO publication VALUES(980,'Characterization of the First Conotoxin from Conus ateralbus, a Vermivorous Cone Snail from the Cabo Verde Archipelago','2019-07-24','10.3390/md17080432','MDPI','Conus ateralbus is a cone snail endemic to the west side of the island of Sal, in the Cabo Verde Archipelago off West Africa. We describe the isolation and characterization of the first bioactive peptide from the venom of this species. This 30AA venom peptide is named conotoxin AtVIA (δ-conotoxin-like). An excitatory activity was manifested by the peptide on a majority of mouse lumbar dorsal root ganglion neurons. An analog of AtVIA with conservative changes on three amino acid residues at the C-terminal region was synthesized and this analog produced an identical effect on the mouse neurons. AtVIA has homology with δ-conotoxins from other worm-hunters, which include conserved sequence elements that are shared with δ-conotoxins from fish-hunting Conus . In contrast, there is no comparable sequence similarity with δ-conotoxins from the venoms of molluscivorous Conus species. A rationale for the potential presence of δ-conotoxins, that are potent in vertebrate systems in two different lineages of worm-hunting cone snails, is discussed.','https://doi.org/10.3390/md17080432','Marine Drugs','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(981,'dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra','2026-10-05','10.48550/arXiv.2610.06282','arXiv','We introduce a novel invariance for peptide tandem mass spectrometry data, unlocking self-supervised representation learning that improves de novo sequencing of peptides. This invariance exploits the physical relationship between precursor properties (mass and charge) and fragment-ion evidence, without requiring peptide sequence labels. We introduce dIon, which adapts the DINO framework with two latent prediction tasks, both recovering a clean teacher representation: one from a spectrum mixture, using the precursor as a selection query, and one from a partial spectrum with the precursor withheld. The first associates precursor information with fragment-ion evidence; the second prevents representational collapse onto that information alone. Mechanistic probes support both effects, and ablations show that the full objective performs best. Under identical end-to-end training, dIon initialization improves de novo peptide precision over training from scratch by 5.5 and 8.4 percentage points on the held-out MassIVE-KB and Kingdoms test sets, and by 2.3 and 4.8 percentage points with a larger supervised training corpus. The resulting models surpass fully supervised state-of-the-art de novo sequencing models on the diverse, multi-species Kingdoms corpus under the same greedy-decoding protocol. Without peptide labels, dIon learns strong native peptide-similarity geometry compared with other learned models; with limited peptide-supervised adaptation, it achieves the best retrieval and pair-discrimination performance across all representation benchmarks.','https://arxiv.org/abs/2610.06282','arXiv','preprint',NULL,'arxiv');
 INSERT INTO publication VALUES(982,'An integrated De novo sequencing and virtual screening strategy for the discovery of low-abundance natural peptides with potential bioactivities from Asini Corii Colla','2026-10-01','10.1016/j.jchromb.2026.125321','Elsevier BV','Purpose Natural bioactive peptides in animal-derived traditional medicines are characterized by their low abundance and high biological activity and have attracted increasing attention from researchers in recent years. However, the effective discovery of these peptides remains challenging due to several factors, including limited protein database coverage, relatively low accuracy of protein identification, and difficulties in obtaining individual peptide monomers. In this study, using Asini Corii Colla (ACC) as the research vehicle, we aimed to establish an integrated analytical strategy for discovering low-abundance natural peptides with potential bioactivities by integrating high-coverage identification with bioactivity prediction. Methods Natural peptides of ACC was analyzed using nano-liquid chromatography-tandem mass spectrometry (NanoLC-MS/MS). The de novo sequencing algorithm was used for high-coverage analysis of natural peptides. Potential bioactive peptides were screened using bioinformatics tools such as Peptide Ranker, and bioactivity predictions were further performed against the BIOPEP-UWM database to preliminarily obtain candidate bioactive peptides and their possible functional targets. Molecular docking was subsequently employed to evaluate the binding affinity between the candidate peptides and their targets. Results A total of 4764 natural peptides from ACC were identified by de novo sequencing. Peptide Ranker screened out 152 potential bioactive peptides with scores greater than 0.50. After further evaluation of water solubility, stability, safety, and absorbability, 39 peptides were prioritized as advantageous candidates. Search results from the BIOPEP-UWM database suggested that 39 peptides contained sequence features associated with reported ACE- and DPP-IV-inhibitory peptides. Molecular docking simulations showed that five peptides could form energetically favorable binding conformations with both ACE and DPP-IV, implying their theoretical potential for ACE- and DPP-IV inhibition. Conclusion This study established a strategy for the discovery of low-abundance natural peptides with potential bioactivities. The study preliminarily characterized the natural peptide profile of ACC and identified candidate peptides with potential dual antihypertensive and antidiabetic activities, thereby providing foundational data for exploring the material basis underlying the blood-pressure-regulating and blood-glucose-modulating effects of ACC.','https://doi.org/10.1016/j.jchromb.2026.125321','Journal of Chromatography B','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(983,'Analysis of skin derived peptides from the Cuyaba Dwarf Frog Physalaemus nattereri by off-line LC MALDI MS/MS','2017-05-01','10.1016/j.ijms.2016.10.005','Elsevier BV',NULL,'https://doi.org/10.1016/j.ijms.2016.10.005','International Journal of Mass Spectrometry','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19295,6 +19306,10 @@ INSERT INTO publication_author VALUES(982,3888,3);
 INSERT INTO publication_author VALUES(982,3889,4);
 INSERT INTO publication_author VALUES(982,3890,5);
 INSERT INTO publication_author VALUES(982,3891,6);
+INSERT INTO publication_author VALUES(983,3892,1);
+INSERT INTO publication_author VALUES(983,3893,2);
+INSERT INTO publication_author VALUES(983,3894,3);
+INSERT INTO publication_author VALUES(983,870,4);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27230,6 +27245,11 @@ INSERT INTO publication_author_affiliation VALUES(982,3888,722,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(982,3889,722,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(982,3890,722,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(982,3891,722,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(983,3892,1412,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(983,3892,1413,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(983,3893,1413,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(983,3894,1412,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(983,870,212,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28494,6 +28514,8 @@ INSERT INTO publication_algorithm VALUES(980,158,'uses');
 INSERT INTO publication_algorithm VALUES(981,816,'describes');
 INSERT INTO publication_algorithm VALUES(982,817,'describes');
 INSERT INTO publication_algorithm VALUES(982,62,'uses');
+INSERT INTO publication_algorithm VALUES(983,818,'describes');
+INSERT INTO publication_algorithm VALUES(983,62,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -45749,6 +45771,8 @@ INSERT INTO publication_citation VALUES(982,309,'crossref');
 INSERT INTO publication_citation VALUES(982,442,'crossref');
 INSERT INTO publication_citation VALUES(982,446,'crossref');
 INSERT INTO publication_citation VALUES(982,653,'crossref');
+INSERT INTO publication_citation VALUES(983,520,'crossref');
+INSERT INTO publication_citation VALUES(982,983,'crossref');
 CREATE TABLE checkpoint_dataset (
     checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
     dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
@@ -57384,10 +57408,10 @@ INSERT INTO paper_comparison_note VALUES(211,0,'emphasis','column ptm recall: th
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
-INSERT INTO sqlite_sequence VALUES('affiliation',1411);
-INSERT INTO sqlite_sequence VALUES('author',3891);
-INSERT INTO sqlite_sequence VALUES('algorithm',817);
-INSERT INTO sqlite_sequence VALUES('publication',982);
+INSERT INTO sqlite_sequence VALUES('affiliation',1413);
+INSERT INTO sqlite_sequence VALUES('author',3894);
+INSERT INTO sqlite_sequence VALUES('algorithm',818);
+INSERT INTO sqlite_sequence VALUES('publication',983);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

@@ -815,6 +815,7 @@ algorithms	814	hypsiboas-cinerascens-cinerascetins
 algorithms	815	conus-ateralbus-conotoxin-atvia
 algorithms	816	dion
 algorithms	817	asini-corii-colla-bioactive-peptides
+algorithms	818	physalaemus-nattereri-skin-peptides
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4587,6 +4588,9 @@ authors	3888	siqi-wang
 authors	3889	shouqi-zhang
 authors	3890	gan-luo
 authors	3891	xiaoyan-gao
+authors	3892	mariana-s-castro
+authors	3893	osmindo-rodrigues-pires-junior
+authors	3894	wagner-fontes
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7173,6 +7177,7 @@ publications	979	bidirectional-representations-augmented-autoregressive-biologic
 publications	980	characterization-of-the-first-conotoxin-from-conus-ateralbus-a-vermivorous-cone
 publications	981	dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass
 publications	982	an-integrated-de-novo-sequencing-and-virtual-screening-strategy-for-the
+publications	983	analysis-of-skin-derived-peptides-from-the-cuyaba-dwarf-frog-physalaemus
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
