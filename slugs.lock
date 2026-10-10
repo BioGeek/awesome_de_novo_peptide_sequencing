@@ -814,6 +814,7 @@ algorithms	813	isotopic-differentiation-protocol-idp
 algorithms	814	hypsiboas-cinerascens-cinerascetins
 algorithms	815	conus-ateralbus-conotoxin-atvia
 algorithms	816	dion
+algorithms	817	asini-corii-colla-bioactive-peptides
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4580,6 +4581,12 @@ authors	3882	samuel-s-espino
 authors	3883	maren-watkins
 authors	3884	vitor-vasconcelos
 authors	3885	baldomero-m-olivera
+authors	3886	han-zhang
+authors	3887	xiwang-li
+authors	3888	siqi-wang
+authors	3889	shouqi-zhang
+authors	3890	gan-luo
+authors	3891	xiaoyan-gao
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7165,6 +7172,7 @@ publications	978	universal-biological-sequence-reranking-for-improved-de-novo-pe
 publications	979	bidirectional-representations-augmented-autoregressive-biological-sequence
 publications	980	characterization-of-the-first-conotoxin-from-conus-ateralbus-a-vermivorous-cone
 publications	981	dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass
+publications	982	an-integrated-de-novo-sequencing-and-virtual-screening-strategy-for-the
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
