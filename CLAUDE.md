@@ -868,11 +868,11 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 903/982, of which 5 came from the PDFs themselves via
+Coverage is 904/982, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.
-The 79 without one are mostly theses, conference pages and records with no DOI,
+The 78 without one are mostly theses, conference pages and records with no DOI,
 where neither an API nor the PDF yields a clean abstract.
 
 **`build_pdf_abstracts.py` rejects more than it accepts, 13 of 18, and the
