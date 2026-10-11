@@ -13,7 +13,7 @@ Every benchmark below is also a catalogued `algorithm` row with
 | | [denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks) | [ProteoBench](https://proteobench.cubimed.rub.de/denovo_DDA_HCD) |
 |---|---|---|
 | Question | how does a tool hold up across conditions | with these settings, on this data, where does it land |
-| Data | 84 datasets: instruments, organisms, digests, PTMs, synthetic | one, the published nine-species benchmark, 779,879 spectra |
+| Data | 86 datasets: instruments, organisms, digests, PTMs, synthetic | one, the published nine-species benchmark, 779,879 spectra |
 | Who runs the tools | the benchmark, in per-tool containers | whoever submits, with their parameters recorded |
 | Results | `results/<dataset>/*.csv`, committed per dataset | one JSON per submission, committed |
 | Refreshed by | `build_benchmarks.py` | `build_proteobench.py` |
@@ -56,7 +56,7 @@ The gap that produces is large and, crucially, runs in **both directions**:
 | π-HelixNovo | 0.517 | **0.595** |
 | AdaNovo | 0.505 | **0.589** |
 | DeepNovo | **0.428** | 0.346 |
-| InstaNovo | 0.164 | not submitted; 0.853 median AP over 84 datasets in denovo_benchmarks |
+| InstaNovo | 0.164 | not submitted; 0.853 median AP over 86 datasets in denovo_benchmarks |
 
 DeepNovo scores *better* retrained, because its released weights are old. That
 two-way split is the tell: NovoBench measures an architecture's data efficiency

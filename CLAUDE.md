@@ -371,14 +371,14 @@ because "which papers involved PEAKS" is a question worth being able to answer.
 
 `build_benchmarks.py` reads
 [bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks),
-which runs 18 tools in their own containers over 84 public datasets and commits
+which runs 18 tools in their own containers over 86 public datasets and commits
 the evaluation curves. It is the only apples-to-apples comparison the field has,
 and this catalog's own data cannot produce it: everything else here describes
 what a method IS.
 
 Five tables, all written by that one builder and by nothing else:
-`benchmark_dataset` (84 rows), `benchmark_tool` (18), `benchmark_result`
-(1782 = one per tool, dataset and version), `benchmark_curve` (3636 = a
+`benchmark_dataset` (86 rows), `benchmark_tool` (18), `benchmark_result`
+(1794 = one per tool, dataset and version), `benchmark_curve` (3636 = a
 101-point averaged curve per tool and metric level) and `benchmark_source` (the
 upstream commit, its date and the fetch date, which the site quotes).
 
@@ -414,7 +414,7 @@ averaging areas.
 embedded numbers, and the chosen row is flagged `is_latest` because the rule is
 not expressible in SQL. The upstream visualisation PR keeps the highest-AUC
 version instead, which lets a tool use a different version on every dataset;
-measured, the two rules disagree on 83 of 1452 (tool, dataset) pairs with a
+measured, the two rules disagree on 83 of 1542 (tool, dataset) pairs with a
 median AP difference of 0.0000 and a maximum of 0.2088. Note the upstream
 dashboard's own "latest" is `sorted(versions)[-1]`, which picks `12.5_old` over
 `12.5`.
@@ -597,7 +597,7 @@ draw, 0 OJS errors, and a hover on each of the three marks shows its provenance.
 
 ## Benchmark numbers on the method pages
 
-The 17 methods with benchmark results carry a `## Benchmarks` section on their
+The 14 methods with benchmark results carry a `## Benchmarks` section on their
 page: median AP and median rank over the 84 datasets, plus the ProteoBench AUC
 and precision for the 7 that have a submission.
 
