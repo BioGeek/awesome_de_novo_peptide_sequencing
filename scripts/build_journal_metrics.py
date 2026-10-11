@@ -31,6 +31,8 @@ from pathlib import Path
 import requests
 from rapidfuzz import fuzz
 
+import openalex_key
+
 DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 USER_AGENT = (
     "awesome-de-novo-peptide-sequencing/0.1 "
@@ -64,8 +66,10 @@ def fetch_source(journal: str) -> dict | None:
     """Return the best OpenAlex source record for `journal`, or None on failure."""
     if journal in PINNED_IDS:
         try:
+            url = f"{OPENALEX_BASE}/{PINNED_IDS[journal]}"
             r = requests.get(
-                f"{OPENALEX_BASE}/{PINNED_IDS[journal]}",
+                url,
+                params=openalex_key.with_key(url, None),
                 headers={"User-Agent": USER_AGENT},
                 timeout=20,
             )
@@ -77,7 +81,7 @@ def fetch_source(journal: str) -> dict | None:
     try:
         r = requests.get(
             OPENALEX_BASE,
-            params={"search": journal, "per-page": 5},
+            params=openalex_key.with_key(OPENALEX_BASE, {"search": journal, "per-page": 5}),
             headers={"User-Agent": USER_AGENT},
             timeout=20,
         )

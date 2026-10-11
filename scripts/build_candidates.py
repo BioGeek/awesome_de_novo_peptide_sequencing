@@ -45,6 +45,8 @@ import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
+import openalex_key
+
 HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 WATCHLIST = HERE / "WATCHLIST.md"
@@ -58,7 +60,7 @@ RETRIES = 3
 
 def get(params: dict) -> dict:
     """GET with a short retry. OpenAlex 429s under load and 500s occasionally."""
-    params = {**params, "mailto": MAILTO}
+    params = openalex_key.with_key(API, {**params, "mailto": MAILTO})
     url = f"{API}?{urllib.parse.urlencode(params)}"
     for attempt in range(RETRIES):
         try:

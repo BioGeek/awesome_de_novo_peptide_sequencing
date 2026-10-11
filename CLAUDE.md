@@ -1197,8 +1197,16 @@ an artefact of the attempt order.
 gitignored `.env`, and `with_key(url, params)` adds it **only** when the
 request is going to `api.openalex.org`, so a builder that also calls Crossref,
 Europe PMC or ORCID through the same helper cannot leak it to them. Wired into
-`build_publication_impact.py`, `build_abstracts.py` and
-`build_affiliations.py`. Absent, nothing raises: every builder worked without a
+`build_publication_impact.py`, `build_journal_metrics.py`,
+`build_candidates.py`, `build_abstracts.py` and `build_affiliations.py`.
+
+**A builder reading the key is not the same as CI having it.** The repo holds
+an `OPENALEX_API_KEY` Actions secret, but a step sees it only if it maps it into
+`env:` itself. For weeks only `refresh-denovo-radar.yml` did, so
+`refresh-publication-impact` ran anonymous and aborted on run 38142008703 after
+ten empty lookups, at publication 700 of 982. Every workflow that calls
+OpenAlex now passes it: publication impact, journal metrics and candidates.
+Absent, nothing raises: every builder worked without a
 key before and still does, so an unkeyed clone is slower, not broken.
 
 The key exists because OpenAlex's anonymous pool is a daily budget shared
