@@ -39456,7 +39456,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/Westlake-OmicsAI/adano
 INSERT INTO repository_metrics VALUES('https://github.com/4chuanMcChicken/DpNovo',0,0,0,0,0,0,'2024-06-25T15:46:21Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/yangshu729/biatNovo-DDA',0,0,0,0,0,10,'2024-09-15T02:52:41Z','2026-10-05T12:46:50','v0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/semiller10/postnovo',10,3,3,0,1,0,'2022-11-29T02:45:14Z','2026-10-05T12:46:50','1.0.9-alpha');
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/winnow',11,2,19,81,5,142,'2026-10-09T14:19:55Z','2026-10-10T11:26:38','v2.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/winnow',11,2,25,81,10,142,'2026-10-10T17:04:43Z','2026-10-11T11:40:09','v2.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/Westlake-OmicsAI/NovoBench',7,1,0,0,0,0,'2024-08-16T11:37:36Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/marcottelab/UVnovo',1,1,0,0,0,0,'2017-02-27T19:26:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/dumbgoos/AbNovoBench',20,2,1,1,0,1,'2025-09-29T02:58:39Z','2026-10-05T12:46:50',NULL);
