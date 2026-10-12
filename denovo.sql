@@ -3780,6 +3780,37 @@ INSERT INTO author VALUES(3891,'Xiaoyan Gao',NULL,NULL,NULL,NULL,NULL,'A50427324
 INSERT INTO author VALUES(3892,'Mariana S. Castro',NULL,NULL,NULL,NULL,'0000-0001-5143-152X','A5058201358');
 INSERT INTO author VALUES(3893,'Osmindo Rodrigues Pires Júnior',NULL,NULL,NULL,NULL,'0000-0002-9875-9407','A5042649462');
 INSERT INTO author VALUES(3894,'Wagner Fontes',NULL,NULL,NULL,NULL,'0000-0001-5140-8573','A5013615191');
+INSERT INTO author VALUES(3895,'Peter V. Treit',NULL,NULL,NULL,NULL,'0000-0002-5264-5877','A5078407221');
+INSERT INTO author VALUES(3896,'Florian A. Rosenberger',NULL,NULL,NULL,NULL,'0000-0003-4604-6170','A5024887620');
+INSERT INTO author VALUES(3897,'Philip Hartout',NULL,NULL,NULL,NULL,'0000-0002-1067-7651','A5006121808');
+INSERT INTO author VALUES(3898,'Mikhail Lebedev',NULL,NULL,NULL,NULL,'0009-0008-3646-7899','A5117168703');
+INSERT INTO author VALUES(3899,'Jinqiu Xiao',NULL,NULL,NULL,NULL,'0000-0002-4279-9565','A5076742078');
+INSERT INTO author VALUES(3900,'Maximilian Zwiebel',NULL,NULL,NULL,NULL,'0000-0002-7005-5619','A5054251836');
+INSERT INTO author VALUES(3901,'Philipp E. Geyer',NULL,NULL,NULL,NULL,'0000-0001-7980-4826','A5101429821');
+INSERT INTO author VALUES(3902,'Ankit Sinha',NULL,NULL,NULL,NULL,'0000-0002-9113-2599','A5035930957');
+INSERT INTO author VALUES(3903,'Georg Wallmann',NULL,NULL,NULL,NULL,'0000-0003-4749-3730','A5046421282');
+INSERT INTO author VALUES(3904,'Vincenth Brennsteiner',NULL,NULL,NULL,NULL,'0009-0002-4629-481X','A5095887645');
+INSERT INTO author VALUES(3905,'Kathrin Korff',NULL,NULL,NULL,NULL,'0009-0005-4971-2417','A5117501170');
+INSERT INTO author VALUES(3906,'Edwin H. Rodriguez',NULL,NULL,NULL,NULL,NULL,'A5044435255');
+INSERT INTO author VALUES(3907,'Maximilian T. Strauss',NULL,NULL,NULL,NULL,'0000-0003-3320-6833','A5056149634');
+INSERT INTO author VALUES(3908,'Marisa I. Keller',NULL,NULL,NULL,NULL,'0000-0002-1485-415X','A5103125001');
+INSERT INTO author VALUES(3909,'Michael Kuhn',NULL,NULL,NULL,NULL,'0000-0002-2841-872X','A5083798629');
+INSERT INTO author VALUES(3910,'Jonel Trebicka',NULL,NULL,NULL,NULL,'0000-0002-7028-3881','A5029282864');
+INSERT INTO author VALUES(3911,'Christophe Junot',NULL,NULL,NULL,NULL,'0000-0003-0019-6827','A5091074065');
+INSERT INTO author VALUES(3912,'Mani Arumugam',NULL,NULL,NULL,NULL,'0000-0002-0886-9101',NULL);
+INSERT INTO author VALUES(3913,'Jessica A. Grembi',NULL,NULL,NULL,NULL,'0000-0001-6142-4913','A5021336770');
+INSERT INTO author VALUES(3914,'Dari Shalon',NULL,NULL,NULL,NULL,'0000-0003-2646-6215','A5085505470');
+INSERT INTO author VALUES(3915,'Kerwyn Casey Huang',NULL,NULL,NULL,NULL,'0000-0002-8043-8138','A5052019253');
+INSERT INTO author VALUES(3916,'Karsten Borgwardt',NULL,NULL,NULL,NULL,'0000-0001-7221-2393','A5074540538');
+INSERT INTO author VALUES(3917,'Johannes B. Mueller-Reif',NULL,NULL,NULL,NULL,'0000-0003-3454-2396',NULL);
+INSERT INTO author VALUES(3918,'Wafa Al-Mamari',NULL,NULL,NULL,NULL,NULL,'A5116056885');
+INSERT INTO author VALUES(3919,'Samir Al Bulushi',NULL,NULL,NULL,NULL,NULL,'A5123628290');
+INSERT INTO author VALUES(3920,'Rokeya S. Rekha',NULL,NULL,NULL,NULL,'0000-0002-0456-6832','A5045343750');
+INSERT INTO author VALUES(3921,'Abeer Al Hamrashdi',NULL,NULL,NULL,NULL,NULL,'A5073672735');
+INSERT INTO author VALUES(3922,'Peter Bergman',NULL,NULL,NULL,NULL,NULL,'A5157901463');
+INSERT INTO author VALUES(3923,'Ákos Végvári',NULL,NULL,NULL,NULL,'0000-0002-1287-0906','A5017803372');
+INSERT INTO author VALUES(3924,'Aliya Al-Ansari',NULL,NULL,NULL,NULL,'0000-0003-3125-9798','A5042897827');
+INSERT INTO author VALUES(3925,'Salma Al-Adwani',NULL,NULL,NULL,NULL,NULL,'A5157932380');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4816,7 +4847,7 @@ INSERT INTO affiliation VALUES(444,'Pacific Northwest National Laboratory','Chem
 INSERT INTO affiliation VALUES(445,'National Institutes of Health','Division of Intramural Research, National Library of Medicine',8,66,'https://ror.org/01cwqze88','National Institutes of Health',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(446,'Pacific Northwest National Laboratory','Applied Decisions Systems and Analytics Group',8,50,'https://ror.org/05h992307','Pacific Northwest National Laboratory',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(447,'Pacific Northwest National Laboratory','Applied Statistics and Computational Modeling Group',8,50,'https://ror.org/05h992307','Pacific Northwest National Laboratory',NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(448,'Karius Inc.',NULL,8,215,'https://ror.org/02jemby36',NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(448,'Karius Inc.',NULL,8,215,'https://ror.org/02jemby36','Karius, Inc. (United States)',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(449,'Ruđer Bošković Institute','Laboratory for Bioanalytics, Division of Molecular Medicine',70,216,'https://ror.org/02mw21745','Ruđer Bošković Institute',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(450,'Croatian Veterinary Institute','Laboratory for Residue Control, Department of Veterinary Public Health',70,216,'https://ror.org/01svwyw14','Croatian Veterinary Institute',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(451,'Ruđer Bošković Institute','Division of Molecular Medicine',70,216,'https://ror.org/02mw21745','Ruđer Bošković Institute',NULL,NULL,NULL);
@@ -12035,6 +12066,8 @@ INSERT INTO algorithm VALUES(815,'Conus ateralbus conotoxin AtVIA',NULL,NULL,NUL
 INSERT INTO algorithm VALUES(816,'dIon',NULL,NULL,'Transformer (AR)','Self-supervised DINO-style pretraining of a spectrum encoder, from a precursor-conditioned spectrum mixture and a partial spectrum with the precursor withheld; initialising a Casanovo-style de novo sequencer from it raises peptide precision over training from scratch.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(817,'Asini Corii Colla bioactive peptides',NULL,NULL,NULL,'De novo sequences 4764 natural peptides from Asini Corii Colla (donkey-hide gelatin, Ejiao), a traditional Chinese medicine, then screens them in silico (Peptide Ranker, BIOPEP-UWM, docking) down to five candidate dual ACE and DPP-IV inhibitors.','downstream-application',NULL,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(818,'Physalaemus nattereri skin peptides',NULL,NULL,NULL,'Automated off-line LC MALDI MS/MS of the skin secretion of the Cuyaba dwarf frog Physalaemus nattereri, sequenced de novo in PEAKS and matched by BLAST against amphibian UniProt; most deduced sequences match nothing known.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(819,'FastaLake','https://github.com/MannLabs/fasta-lake','https://github.com/MannLabs/fasta-lake','Hybrid de novo + database search','Metaproteomics workflow that uses full-length AlphaNovo de novo peptide predictions as exact queries to select compact search databases from large sequence reservoirs, then searches them with Sage. Matched metagenome-derived databases in two stool cohorts and found 20-35% more peptides in intestinal fluid, without matched metagenomic sequencing.','downstream-application',1,'DDA','','metaproteomics');
+INSERT INTO algorithm VALUES(820,'Camel leukocyte peptidome','','','','First proteomic survey of dromedary camel crude leukocyte polypeptides: PEAKS Studio de novo sequencing (ALC 95% or higher) gave 830 peptides beside the 120 proteins from database search, and the de novo peptides were the more strongly enriched for immune-system terms, as a source of candidate bioactive peptides.','downstream-application',0,'DDA','','bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13029,6 +13062,8 @@ INSERT INTO publication VALUES(981,'dIon: Fragmentation-Based Invariance for Sel
 INSERT INTO publication VALUES(982,'An integrated De novo sequencing and virtual screening strategy for the discovery of low-abundance natural peptides with potential bioactivities from Asini Corii Colla','2026-10-01','10.1016/j.jchromb.2026.125321','Elsevier BV','Purpose Natural bioactive peptides in animal-derived traditional medicines are characterized by their low abundance and high biological activity and have attracted increasing attention from researchers in recent years. However, the effective discovery of these peptides remains challenging due to several factors, including limited protein database coverage, relatively low accuracy of protein identification, and difficulties in obtaining individual peptide monomers. In this study, using Asini Corii Colla (ACC) as the research vehicle, we aimed to establish an integrated analytical strategy for discovering low-abundance natural peptides with potential bioactivities by integrating high-coverage identification with bioactivity prediction. Methods Natural peptides of ACC was analyzed using nano-liquid chromatography-tandem mass spectrometry (NanoLC-MS/MS). The de novo sequencing algorithm was used for high-coverage analysis of natural peptides. Potential bioactive peptides were screened using bioinformatics tools such as Peptide Ranker, and bioactivity predictions were further performed against the BIOPEP-UWM database to preliminarily obtain candidate bioactive peptides and their possible functional targets. Molecular docking was subsequently employed to evaluate the binding affinity between the candidate peptides and their targets. Results A total of 4764 natural peptides from ACC were identified by de novo sequencing. Peptide Ranker screened out 152 potential bioactive peptides with scores greater than 0.50. After further evaluation of water solubility, stability, safety, and absorbability, 39 peptides were prioritized as advantageous candidates. Search results from the BIOPEP-UWM database suggested that 39 peptides contained sequence features associated with reported ACE- and DPP-IV-inhibitory peptides. Molecular docking simulations showed that five peptides could form energetically favorable binding conformations with both ACE and DPP-IV, implying their theoretical potential for ACE- and DPP-IV inhibition. Conclusion This study established a strategy for the discovery of low-abundance natural peptides with potential bioactivities. The study preliminarily characterized the natural peptide profile of ACC and identified candidate peptides with potential dual antihypertensive and antidiabetic activities, thereby providing foundational data for exploring the material basis underlying the blood-pressure-regulating and blood-glucose-modulating effects of ACC.','https://doi.org/10.1016/j.jchromb.2026.125321','Journal of Chromatography B','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(983,'Analysis of skin derived peptides from the Cuyaba Dwarf Frog Physalaemus nattereri by off-line LC MALDI MS/MS','2017-05-01','10.1016/j.ijms.2016.10.005','Elsevier BV','We have investigated the potential for analysis of the complex peptide mixtures secreted from frog skin using off-line LC-MALDI MS/MS. Since only limited information about the sequence of such peptides is available, de novo sequencing followed by Blast search was needed. An automated workflow has been applied based on automated collection of the chromatographic fractions on the MALDI target followed by automated recording of the MS/MS spectra of the 10 most intense peaks in each fraction. The MS/MS spectra were submitted to de novo sequencing by the Peaks software and searched for potential matches in an amphibian database extracted from UniProt. A number of known skin secreted peptides as well as precursor proteins for these were identified. However, most of the recorded MS/MS data and deduced sequences did not result in matches with the databases. These sequences might serve as a reference for future studies of peptides secreted from frogs.','https://doi.org/10.1016/j.ijms.2016.10.005','International Journal of Mass Spectrometry','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(984,'Pretrained spectrum representations for diverse tandem mass spectrometry proteomics tasks','2026-10-01','10.1016/j.mcpro.2026.101673','Elsevier BV','Mass spectrometry is the dominant technology in the field of proteomics, enabling high-throughput analysis of the protein content of complex biological samples. Due to the complexity of the instrumentation and resulting data, sophisticated computational methods are required for the processing and interpretation of acquired mass spectra. Machine learning has shown great promise to improve the analysis of mass spectrometry data, with numerous purpose-built methods for improving specific steps in the data acquisition and analysis pipeline reaching widespread adoption. Each of these tasks rely on a shared fundamental understanding of the information present in a mass spectrum. Here, we propose a transfer learning framework, CasanovoTL, which utilizes pretrained spectrum representations, derived from a de novo sequencing model trained on a massive proteomics dataset, rather than training a spectrum encoder from scratch for each task. We show that using these pre-trained spectrum representations significantly improves our performance on the four downstream tasks of spectrum quality prediction, chimericity prediction, phosphorylation prediction, and glycosylation status prediction. Finally, we perform end-to-end finetuning, as well as multi-task training, and find that finetuned spectrum representations further improve performance on each individual task. Overall, our work demonstrates that a pretrained spectrum encoder for tandem mass spectrometry proteomics trained on de novo sequencing learns generalizable representations of spectra, improves performance on downstream tasks where training data is limited, and can ultimately enhance data acquisition and analysis in proteomics experiments.','https://www.sciencedirect.com/science/article/pii/S1535947626001696','Molecular & Cellular Proteomics','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(985,'FastaLake selects compact metaproteomic databases from large sequence reservoirs by de novo peptide lookup','2026-10-11','10.64898/2026.10.08.757395','Cold Spring Harbor Laboratory','Metaproteomics analyses require protein sequence databases, yet the microbial proteins present in complex communities are not known in advance. Searching reference catalogs containing hundreds of millions of candidate sequences reduces identification sensitivity, while generating sample-specific databases through metagenomic sequencing adds time and cost. We introduce FastaLake, a computational workflow that uses full-length de novo peptide predictions by AlphaNovo to retrieve complete proteins from broad sequence resources and selects compact databases for conventional searching. In a defined eight-member community, FastaLake approached reference-search peptide yields without knowing its members. Using public sequence catalogs, FastaLake identified about as many peptides as matched metagenomic databases in two stool cohorts and 20-35% more in intestinal fluid at the same nominal 1% peptide false discovery rate. The resulting proteomes reveal personal functional profiles that persist across intestinal regions despite differences in leading species between intestinal fluid and stool. DNA, RNA and protein profiles agreed on broad differences between patients but only weakly on individual functions. All 726 acquisition-specific databases were smaller than the human reference proteome. Compact databases allowed non-specific searches of all 347 CapScan acquisitions, revealing histidine enrichment at peptide C termini in intestinal fluid. FastaLake enables metaproteomics analysis without matched metagenomic sequencing by constructing search databases from sequence resources and de novo peptide sequencing.','https://www.biorxiv.org/content/10.64898/2026.10.08.757395v1','bioRxiv','preprint',NULL,'biorxiv');
+INSERT INTO publication VALUES(986,'Proteomic profiling of <i>Camelus dromedarius</i> blood leukocytes using protein sequence database searches and <i>de novo</i> peptide sequencing','2026-10-08','10.25259/jksus_108_2026','Scientific Scholar','There is a lack of studies on the crude leukocyte proteome of camels. Therefore, we hypothesized that camel leukocytes could be a source of bioactive peptides that have not been studied before. Here, we present the first comprehensive proteomic analysis of dromedary camel crude leukocyte-derived polypeptides (CLDP) using both protein sequence database searches (PSD) and de novo peptide sequencing (DPS) to improve peptide identification and coverage. The crude protein was extracted and analyzed by LC-MS/MS, followed by identification of protein and peptide sequences through PSD and DPS. PSD identified 120 proteins based on the Camelus dromedarius and Sus scrofa databases, while DPS identified a total of 830 peptides with an average local confidence (ALC) of 95% or higher. Gene Ontology (GO) annotation and KEGG analysis highlighted terms associated with stress adaptation, extracellular signaling, and immune response. However, DPS exhibited a broader and more pronounced enrichment trend, particularly in relation to the immune system.','https://doi.org/10.25259/jksus_108_2026','Journal of King Saud University – Science','peer-reviewed',NULL,'openalex');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19319,6 +19354,39 @@ INSERT INTO publication_author VALUES(984,86,5);
 INSERT INTO publication_author VALUES(984,808,6);
 INSERT INTO publication_author VALUES(984,94,7);
 INSERT INTO publication_author VALUES(984,96,8);
+INSERT INTO publication_author VALUES(985,3895,1);
+INSERT INTO publication_author VALUES(985,3896,2);
+INSERT INTO publication_author VALUES(985,3897,3);
+INSERT INTO publication_author VALUES(985,3898,4);
+INSERT INTO publication_author VALUES(985,3899,5);
+INSERT INTO publication_author VALUES(985,3900,6);
+INSERT INTO publication_author VALUES(985,3901,7);
+INSERT INTO publication_author VALUES(985,3902,8);
+INSERT INTO publication_author VALUES(985,3903,9);
+INSERT INTO publication_author VALUES(985,3904,10);
+INSERT INTO publication_author VALUES(985,3905,11);
+INSERT INTO publication_author VALUES(985,3906,12);
+INSERT INTO publication_author VALUES(985,256,13);
+INSERT INTO publication_author VALUES(985,3907,14);
+INSERT INTO publication_author VALUES(985,3908,15);
+INSERT INTO publication_author VALUES(985,3909,16);
+INSERT INTO publication_author VALUES(985,3910,17);
+INSERT INTO publication_author VALUES(985,3911,18);
+INSERT INTO publication_author VALUES(985,3912,19);
+INSERT INTO publication_author VALUES(985,3913,20);
+INSERT INTO publication_author VALUES(985,3914,21);
+INSERT INTO publication_author VALUES(985,3915,22);
+INSERT INTO publication_author VALUES(985,3916,23);
+INSERT INTO publication_author VALUES(985,3917,24);
+INSERT INTO publication_author VALUES(985,567,25);
+INSERT INTO publication_author VALUES(986,3918,1);
+INSERT INTO publication_author VALUES(986,3919,2);
+INSERT INTO publication_author VALUES(986,3920,3);
+INSERT INTO publication_author VALUES(986,3921,4);
+INSERT INTO publication_author VALUES(986,3922,5);
+INSERT INTO publication_author VALUES(986,3923,6);
+INSERT INTO publication_author VALUES(986,3924,7);
+INSERT INTO publication_author VALUES(986,3925,8);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -19517,6 +19585,7 @@ INSERT INTO algorithm_repository VALUES(8,'https://github.com/BEAM-Labs/denovo/t
 INSERT INTO algorithm_repository VALUES(20,'https://github.com/PHOENIXcenter/pi-PrimeNovo',0);
 INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/pi-PrimeNovo',1);
 INSERT INTO algorithm_repository VALUES(816,'https://github.com/statisticalbiotechnology/dIon',0);
+INSERT INTO algorithm_repository VALUES(819,'https://github.com/MannLabs/fasta-lake',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -20511,6 +20580,8 @@ INSERT INTO publication_impact VALUES(980,'W2963314804',15,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(981,'W7220653720',0,'doi',NULL,2026,'2026-10-11T14:18:44+00:00');
 INSERT INTO publication_impact VALUES(982,'W7220448850',0,'doi',NULL,2026,'2026-10-11T14:18:44+00:00');
 INSERT INTO publication_impact VALUES(983,'W2532478912',2,'doi',NULL,2026,'2026-10-11T14:18:44+00:00');
+INSERT INTO publication_impact VALUES(985,'W7221470543',0,'doi',NULL,2026,'2026-10-12T14:41:41+00:00');
+INSERT INTO publication_impact VALUES(986,'W7221032976',0,'doi',NULL,2026,'2026-10-12T14:41:41+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27275,13 +27346,9 @@ INSERT INTO publication_author_affiliation VALUES(984,808,436,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(984,94,48,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(984,96,47,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(984,96,48,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,2,2,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,2,4,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,14,2,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,19,2,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,20,2,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,21,8,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,21,10,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,21,8,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,21,1099,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,22,2,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,23,11,0,'openalex');
@@ -27291,15 +27358,19 @@ INSERT INTO publication_author_affiliation VALUES(3,27,8,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,27,1099,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,28,8,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,28,1099,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,14,2,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,29,8,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,29,1099,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(3,30,2,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(3,30,11,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,30,2,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,19,2,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,2,2,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(3,2,4,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,100,43,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,101,50,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(14,102,51,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,102,696,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,102,867,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(14,102,51,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,103,50,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,104,43,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,105,43,0,'openalex');
@@ -27310,8 +27381,8 @@ INSERT INTO publication_author_affiliation VALUES(230,831,444,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,832,444,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,833,445,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,834,445,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(230,835,47,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,835,444,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(230,835,47,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,836,446,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,837,447,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,838,444,0,'openalex');
@@ -27319,22 +27390,46 @@ INSERT INTO publication_author_affiliation VALUES(230,839,445,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,840,444,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(230,840,448,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(631,2359,226,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(979,60,31,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(979,62,515,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(979,63,697,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(979,66,23,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(979,67,697,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(979,73,697,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(979,63,697,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(979,74,67,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(979,60,31,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(979,75,31,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(981,31,110,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(979,73,697,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(981,32,516,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(981,33,12,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(981,31,110,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(981,1012,110,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(981,1012,12,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(981,33,110,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(981,33,12,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(981,34,13,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(981,34,516,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(981,1012,12,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(981,1012,110,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3895,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3896,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3897,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3898,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3899,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3900,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3901,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3902,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3903,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3904,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3905,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3906,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,256,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3907,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3908,659,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3909,659,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3911,1160,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3911,1163,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3915,228,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,3916,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(985,567,161,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(986,3920,755,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(986,3922,755,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(986,3923,755,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28602,6 +28697,9 @@ INSERT INTO publication_algorithm VALUES(982,62,'uses');
 INSERT INTO publication_algorithm VALUES(983,818,'describes');
 INSERT INTO publication_algorithm VALUES(983,62,'uses');
 INSERT INTO publication_algorithm VALUES(984,191,'describes');
+INSERT INTO publication_algorithm VALUES(985,819,'describes');
+INSERT INTO publication_algorithm VALUES(986,820,'describes');
+INSERT INTO publication_algorithm VALUES(986,62,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -39486,6 +39584,8 @@ INSERT INTO publication_dataset VALUES(877,984,354,377,'uses');
 INSERT INTO publication_dataset VALUES(878,984,353,376,'uses');
 INSERT INTO publication_dataset VALUES(879,984,352,375,'uses');
 INSERT INTO publication_dataset VALUES(880,984,351,374,'uses');
+INSERT INTO publication_dataset VALUES(881,985,34,43,'uses');
+INSERT INTO publication_dataset VALUES(882,985,204,227,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -46515,6 +46615,10 @@ INSERT INTO publication_citation VALUES(835,940,'crossref');
 INSERT INTO publication_citation VALUES(846,857,'both');
 INSERT INTO publication_citation VALUES(861,878,'crossref');
 INSERT INTO publication_citation VALUES(893,971,'crossref');
+INSERT INTO publication_citation VALUES(986,60,'both');
+INSERT INTO publication_citation VALUES(986,73,'both');
+INSERT INTO publication_citation VALUES(986,151,'both');
+INSERT INTO publication_citation VALUES(986,204,'both');
 CREATE TABLE checkpoint_dataset (
     checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
     dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
@@ -58151,9 +58255,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
 INSERT INTO sqlite_sequence VALUES('affiliation',1413);
-INSERT INTO sqlite_sequence VALUES('author',3894);
-INSERT INTO sqlite_sequence VALUES('algorithm',818);
-INSERT INTO sqlite_sequence VALUES('publication',984);
+INSERT INTO sqlite_sequence VALUES('author',3925);
+INSERT INTO sqlite_sequence VALUES('algorithm',820);
+INSERT INTO sqlite_sequence VALUES('publication',986);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

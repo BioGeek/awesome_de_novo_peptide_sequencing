@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 814 `algorithm` rows has at least one linked publication, because
+Every one of the 816 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -162,6 +162,39 @@ model`, algorithm 242, which is `kind='adjacent'`, against `InstaNovo-FM` and
 `Casanovo Foundation`, which are `kind='algorithm'`), and MDLMDec being
 submitted to a de novo benchmark implies it is one. Do not assume the repo and
 the PR describe the same model.
+
+### AlphaNovo
+
+| | |
+|---|---|
+| Cited as | Lebedev, M. et al. "AlphaNovo enables de novo peptide discovery beyond canonical proteomes." In preparation. |
+| Group | Mann lab, Max Planck Institute of Biochemistry, Martinsried; "Lebedev, M." is presumably Mikhail Lebedev (ORCID 0009-0008-3646-7899), fourth author of FastaLake |
+| Training data | MetaPTCM, "a large corpus that includes non-tryptic peptides and diverse post-translational and chemical modifications alongside conventional tryptic spectra" |
+| Checkpoint named | `model-epoch12-step058020-peprecall0.5156.ckpt`, SHA-256 `68ff1bfa6e20a2eab7a32f2589d6354e4a0d9e7d41d38ff7dfcf999ca863eacd` |
+| Surfaced by | FastaLake (publication 985, `10.64898/2026.10.08.757395`), its reference 16 and supplementary reference 6 |
+| Last checked | 2026-10-12 |
+
+A *de novo* sequencer that FastaLake uses but does not describe: FastaLake takes
+its "full-length" predictions as exact queries to pick metaproteomic search
+databases. What the FastaLake preprint does report about it, all on DDA data:
+the top-ranked prediction matched the reference-database identification for
+51.8% of 801,613 CAMPI spectra, I and L treated as equal (per-acquisition median
+67.7%, range 26.3-79.2%), and 85.3% of the 271,469 that passed the score filter
+used for database selection. It also emits "bags", runs of residues with a
+predicted composition but no fixed order, which FastaLake tried and set aside.
+The `peprecall0.5156` in the checkpoint name is a training-time validation
+figure, not a benchmark result.
+
+Searched 2026-10-12 with nothing found: OpenAlex (its only AlphaNovo hit is
+FastaLake), GitHub repository search, and `MannLabs/alphanovo` (404). FastaLake's
+data statement says its AlphaNovo prediction exports will be released on
+publication, which may come before the model itself.
+
+When a manuscript appears: `kind='algorithm'`, `is_deep_learning=1`,
+`acquisition_mode='DDA'` at least (its only reported use), the family read from
+the paper rather than guessed, and a `'uses'` link from publication 985 to the
+new row. That link is the reason to record it here rather than leave it in
+FastaLake's reference list.
 
 ## Considered, not added
 
