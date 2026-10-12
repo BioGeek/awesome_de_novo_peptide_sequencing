@@ -223,6 +223,22 @@ the PR describe the same model.
   Worth recording that the review's paraphrase of it was wrong, since that
   paraphrase is the only reason it looked like a candidate.
 
+- **CoSpred** ("Complete Spectrum Predictor"; `10.1002/pmic.70004`, Proteomics
+  2025-06-30; preprints `10.1101/2024.01.18.576149` on bioRxiv and
+  `10.21203/rs.3.rs-3880586/v1` on Research Square; code
+  `pfizer-opensource/CoSpred`, Apache-2.0). A transformer encoder that predicts
+  the complete MS/MS spectrum of a peptide, backbone and non-backbone ions,
+  for building spectral libraries. By Liang Xue, Shivani Tiwary, Mykola Bordyuh
+  and Robert Stanton at Pfizer, the group behind publication 458, the BCB '23
+  *de novo* immunopeptidomics benchmark abstract, which is how it surfaced.
+
+  Out because neither the abstract nor the README mentions *de novo* sequencing:
+  it is a spectral-library tool for database and library search. Prosit and
+  MS2PIP are in the catalog as `adjacent` only because they are used to rescore
+  *de novo* results, and CoSpred has no such use on record, so a spectrum
+  predictor is not in scope by virtue of being one. Revisit if a paper uses it to
+  rescore or validate *de novo* candidates.
+
 - **"De Novo Peptide Sequencing by Tandem Mass Spectrometry"**, ResolveMass
   Laboratories Inc. (<https://resolvemass.ca/de-novo-peptide-sequencing-by-tandem-mass-spectrometry/>),
   bylined Anusha Sinha, 2026-08-07. **Kept here because it is a genuinely good
