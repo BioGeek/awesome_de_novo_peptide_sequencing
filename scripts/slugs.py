@@ -167,6 +167,37 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
             'protein-amp-peptide-letters': 'protein-peptide-letters'}}
 
 
+
+# SECOND NAMES, each a URL that redirects to the method's own page. kind ->
+# {alias slug: page slug}. A method renamed between preprint and version of
+# record keeps its catalog name, because that name is its published URL, and
+# the new name gets an address of its own here. Unlike REDIRECTS nothing was
+# retired: both names are current.
+#
+# Curated, not derived from algorithm.aliases. That column also holds
+# descriptions ("18O labeling", "guanidination; sulfonation") and spellings of
+# the name itself ("PAAS-3"), and every entry here is a permanent URL.
+#
+# 2026-10-12: Casanovo Foundation's MCP paper (publication 984) names it CasanovoTL.
+ALIAS_URLS: dict[str, dict[str, str]] = {
+    "algorithms": {"casanovotl": "casanovo-foundation"},
+}
+
+
+def redirect_problems(slugs: dict[str, dict[int, str]]) -> list[str]:
+    """Every REDIRECTS and ALIAS_URLS entry must point at a live page and must
+    not BE one: Quarto would write the redirect stub over the real page."""
+    problems = []
+    for name, table in (("REDIRECTS", REDIRECTS), ("ALIAS_URLS", ALIAS_URLS)):
+        for kind, pairs in table.items():
+            live = set(slugs.get(kind, {}).values())
+            for old, new in pairs.items():
+                if old in live:
+                    problems.append(f"{name} {kind}/{old} is a live page; its redirect would overwrite it")
+                if new not in live:
+                    problems.append(f"{name} {kind}/{old} points at {new}, which is not a page")
+    return problems
+
 def slugify(text: str, maxlen: int = MAX_SLUG_CHARS) -> str:
     """ASCII kebab-case slug. Raises on input that cannot produce one."""
     if not text or not text.strip():
@@ -461,6 +492,9 @@ def main() -> int:
         # way; it is reported by the default audit, not here.
         rc = (write_lock(result) if args.write
               else check_lock(result, quiet=args.quiet))
+        for problem in redirect_problems(result):
+            print(f"  REDIRECT BROKEN  {problem}")
+            rc = 1
         conn.close()
         return rc
 

@@ -1998,6 +1998,17 @@ stored as `&amp;` had venue pages of their own. `slugify()` now strips tags
 and entities, the two journal names were decoded into the real venues, and
 the lock was rewritten with `--write`.
 
+**A second name gets a URL too, from `ALIAS_URLS`, not from the aliases
+column.** Casanovo Foundation was published in MCP as CasanovoTL, so
+`pages/algorithms/casanovotl.html` redirects to its page, by the same Quarto
+`aliases:` stub. The list is curated because `algorithm.aliases` also holds
+descriptions ("18O labeling", "guanidination; sulfonation") and every entry is
+a permanent URL. `slugs.py --check` fails if any `REDIRECTS` or `ALIAS_URLS`
+entry names a live page, which its stub would overwrite, or points at a page
+that does not exist. Search is separate: `postrender.py` appends every
+algorithm's "Also known as" value to its search record, so all 28 aliases
+(PandaNovo, PrimeNovo, CasanovoTL...) find their method from the navbar.
+
 **The markup is kept in the data and rendered, not stripped.** It is the
 paper's own typography, and the publication page's heading already showed it
 in italics while every list escaped it into literal tags. `title_md()` in

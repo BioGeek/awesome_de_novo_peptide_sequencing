@@ -56,6 +56,7 @@ def site_url() -> str:
         raise SystemExit("postrender: no site-url in _quarto.yml")
     return m.group(1).rstrip("/") + "/"
 
+AKA = re.compile(r"^\| Also known as \| (.+?) \|$", re.M)
 
 def front_matter(path: Path) -> dict[str, str]:
     """title / subtitle / description from a generated page's YAML header."""
@@ -98,6 +99,12 @@ def add_entity_search() -> None:
                 accs = sorted(set(ACCESSION.findall(qmd.read_text(encoding="utf-8"))))
                 if accs:
                     text += " · " + " ".join(accs[:12])
+            if kind == "algorithms":
+                # So "PandaNovo" or "CasanovoTL" finds the method filed under
+                # its other name. The page's metadata table carries the aliases.
+                aka = AKA.search(qmd.read_text(encoding="utf-8"))
+                if aka:
+                    text += " · also known as " + plain(aka.group(1))
             records.append({"objectID": href, "href": href, "title": title,
                             "section": label, "text": text})
             n += 1
