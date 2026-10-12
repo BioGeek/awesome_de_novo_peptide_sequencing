@@ -19460,7 +19460,7 @@ INSERT INTO algorithm_repository VALUES(174,'https://github.com/ddz-icb/DLDN-Ben
 INSERT INTO algorithm_repository VALUES(177,'https://github.com/compomics/denovogui',0);
 INSERT INTO algorithm_repository VALUES(178,'https://github.com/compomics/searchgui',0);
 INSERT INTO algorithm_repository VALUES(190,'https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',0);
-INSERT INTO algorithm_repository VALUES(191,'https://github.com/Noble-Lab/casanovo-foundation',0);
+INSERT INTO algorithm_repository VALUES(191,'https://github.com/Noble-Lab/casanovo-tl',0);
 INSERT INTO algorithm_repository VALUES(192,'https://openi.pcl.ac.cn/OpenI/pi-HelixNovo-NPU',0);
 INSERT INTO algorithm_repository VALUES(183,'https://github.com/kusterlab/prosit',0);
 INSERT INTO algorithm_repository VALUES(184,'https://github.com/compomics/ms2rescore',0);
@@ -39482,7 +39482,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',15,9,6,44,1,2,'2024-03-11T14:07:59Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,16,18,360,1,5,'2025-08-15T14:01:55Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-foundation',1,0,NULL,NULL,NULL,NULL,'2026-08-19T22:27:40Z','2026-08-20T06:21:16',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-tl',1,0,NULL,NULL,NULL,NULL,'2026-08-19T22:27:40Z','2026-08-20T06:21:16',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',91,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-09-11T10:03:54','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',66,23,17,109,1,133,'2026-10-09T10:10:30Z','2026-10-09T12:09:15','v4.0.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',56,21,48,505,1,18,'2026-09-28T21:18:13Z','2026-09-29T11:38:55',NULL);
