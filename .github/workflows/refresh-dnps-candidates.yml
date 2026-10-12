@@ -12,6 +12,13 @@
 # none. dnps_candidates.csv is gitignored like the other builder CSVs, so the
 # shortlist goes into the job summary and the full file is an artifact.
 #
+# A job summary is only read by someone who goes looking, so when the run
+# finds a paper nobody has ruled on yet it also opens an issue assigned to the
+# repository owner, which is what sends the notification. The builder already
+# drops everything decided (catalog, WATCHLIST.md, screening_decisions.tsv,
+# dnps_proposal.csv), so a quiet month opens nothing, and while an issue is
+# open a later run only comments with candidates the issue does not yet name.
+#
 # It adds nothing to the database on purpose. Two senses of "de novo" run
 # through that feed -- sequencing and DESIGN -- and telling them apart is most
 # of what the script does, but the final call against the WATCHLIST.md bar is a
@@ -37,6 +44,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: refresh-dnps-candidates
@@ -83,3 +91,54 @@ jobs:
           path: dnps_candidates.csv
           if-no-files-found: ignore
           retention-days: 30
+
+      - name: Open or update an issue for new candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import csv, json, os, subprocess
+          from pathlib import Path
+
+          p = Path("dnps_candidates.csv")
+          rows = list(csv.DictReader(p.open(encoding="utf-8"))) if p.exists() else []
+          if not rows:
+              print("No undecided candidates; no issue.")
+              raise SystemExit(0)
+
+          def gh(*args):
+              return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
+
+          TITLE = "DNPS-DR feed: papers to screen"
+          key = lambda r: r["doi"] or r["link"]
+          line = lambda r: (f"- [ ] {r['feed_date']} **{r['title']}** "
+                            f"({r['journal'] or 'venue unknown'} {r['year']}) "
+                            f"{('`' + r['doi'] + '`') if r['doi'] else r['link']}")
+          footer = ("\n\nDecide each against the bar in WATCHLIST.md: catalogue it, or record "
+                    "the rejection in `dnps_proposal.csv` (verdict `SKIP`), WATCHLIST.md or "
+                    "`screening_decisions.tsv`, so the next run stops proposing it. "
+                    f"Full list: [run artifact]({os.environ['RUN_URL']}).")
+
+          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
+                                "--json", "number,title,body"))
+          found = [i for i in found if i["title"] == TITLE]
+          if found:
+              num = str(found[0]["number"])
+              seen = found[0]["body"] + "".join(
+                  c["body"] for c in json.loads(gh("issue", "view", num, "--json", "comments"))["comments"])
+              fresh = [r for r in rows if key(r) not in seen]
+              if not fresh:
+                  print(f"All {len(rows)} candidates are already listed on #{num}.")
+                  raise SystemExit(0)
+              body = (f"@{os.environ['OWNER']} {len(fresh)} more from this run:\n\n"
+                      + "\n".join(map(line, fresh)) + footer)
+              gh("issue", "comment", num, "--body", body)
+              print(f"Commented {len(fresh)} new candidates on #{num}.")
+          else:
+              body = (f"The DNPS-DR feed turned up {len(rows)} paper(s) that are not in the "
+                      "catalog and have not been ruled on:\n\n" + "\n".join(map(line, rows)) + footer)
+              print(gh("issue", "create", "--title", TITLE, "--body", body,
+                       "--assignee", os.environ["OWNER"]))
+          PY

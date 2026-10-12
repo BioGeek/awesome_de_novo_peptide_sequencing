@@ -2780,6 +2780,24 @@ for all 70. And resolving every entry's PMID to a DOI would be 1167 lookups,
 so only the survivors are resolved -- but a DOI check against the catalog
 afterwards still caught 4 papers the title match had missed.
 
+**A candidate is a paper nobody has ruled on, and only that notifies.** The
+builder used to check WATCHLIST.md by PMID and title alone, so a rejection
+recorded anywhere else came back every month. The October list was one paper,
+`10.1002/rcm.338`, which `dnps_proposal.csv` marked "add, benchmark" and
+`screening_decisions.tsv` had rejected two weeks later. Its abstract settles
+it: Premstaller and Huber sequence 10- to 20-mer oligonucleotides, and the
+title never says so, which is how it got past `OTHER_ANALYTE`. `decided()` now
+drops every DOI in WATCHLIST.md and `screening_decisions.tsv` and every DOI and
+PMID in `dnps_proposal.csv`, which is this feed's own triage record. With that,
+the list is empty until the feed brings something new.
+
+Something new then opens an issue, "DNPS-DR feed: papers to screen", assigned
+to the repository owner, because a job summary is read only by someone already
+looking. While that issue is open, a later run comments with just the
+candidates it does not yet name, so an unanswered list does not re-notify every
+month. Closing it is not the decision: recording one in the three files is, or
+the next run proposes the paper again.
+
 `refresh-candidates.yml` runs it monthly on the 2nd, a day after
 `refresh-citation-graph`. It commits nothing and needs only read permission:
 `candidates.csv` is gitignored like the other builder audit CSVs, so the

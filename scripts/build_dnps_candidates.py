@@ -64,6 +64,11 @@ HERE = Path(__file__).resolve().parent.parent
 DB_PATH = HERE / "denovo.db"
 CACHE = HERE / ".cache" / "dnps"
 OUT = HERE / "dnps_candidates.csv"
+# Every decision already taken, so a candidate is something nobody has read:
+# the bulk screenings' rejections and holds, and this feed's own triage file.
+DECISIONS = HERE / "screening_decisions.tsv"
+PROPOSAL = HERE / "dnps_proposal.csv"
+DOI_RE = re.compile(r"10\.\d{4,9}/[^\s`)>,]+")
 SPACE = "yangtingpeng/DNPS-DR"
 MAILTO = "j.vangoey@instadeep.com"
 UA = ("awesome_de_novo_peptide_sequencing/1.0 "
@@ -113,6 +118,31 @@ def cached_json(key: str, url: str):
     return val
 
 
+def decided(watchlist: str) -> tuple[set[str], set[str]]:
+    """DOIs and PMIDs somebody has already ruled on, in or out.
+
+    WATCHLIST.md was read by PMID and title only, so a DOI-only entry there,
+    a rejection in screening_decisions.tsv, or a SKIP in dnps_proposal.csv came
+    back as a "candidate" every month: 10.1002/rcm.338, an oligonucleotide
+    paper rejected on 2026-10-05, was the whole of the 2026-10 list.
+    """
+    dois = {d.rstrip(".").lower() for d in DOI_RE.findall(watchlist)}
+    pmids: set[str] = set()
+    if DECISIONS.exists():
+        for line in DECISIONS.read_text(encoding="utf-8").splitlines():
+            first = line.split("\t", 1)[0].strip().lower()
+            if first.startswith("10."):
+                dois.add(first)
+    if PROPOSAL.exists():
+        with PROPOSAL.open(encoding="utf-8", newline="") as fh:
+            for r in csv.DictReader(fh):
+                if r.get("doi"):
+                    dois.add(r["doi"].strip().lower())
+                if r.get("pmid"):
+                    pmids.add(r["pmid"].strip())
+    return dois, pmids
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -143,8 +173,9 @@ def main() -> int:
     catalog = [norm(t) for (t,) in conn.execute("SELECT title FROM publication")]
     watchlist = (HERE / "WATCHLIST.md").read_text(encoding="utf-8").lower()
 
+    done_dois, done_pmids = decided(watchlist)
     rows, counts = [], {"catalogued": 0, "design": 0, "other analyte": 0,
-                        "not sequencing": 0, "watchlist": 0}
+                        "not sequencing": 0, "watchlist": 0, "already decided": 0}
     for e in entries:
         title = e["title"].strip()
         t = norm(title)
@@ -154,6 +185,9 @@ def main() -> int:
         pmid = (re.search(r"pubmed\.ncbi\.nlm\.nih\.gov/(\d+)", e.get("link", "")) or [None, ""])[1]
         if pmid and pmid in watchlist or norm(title)[:60] in norm(watchlist):
             counts["watchlist"] += 1
+            continue
+        if pmid and pmid in done_pmids:
+            counts["already decided"] += 1
             continue
         if not (SEQ.search(title) and ANALYTE.search(title)):
             counts["not sequencing"] += 1
@@ -193,6 +227,9 @@ def main() -> int:
     before = len(rows)
     rows = [r for r in rows if (r["doi"] or "").lower() not in have_doi]
     counts["catalogued"] += before - len(rows)
+    before = len(rows)
+    rows = [r for r in rows if (r["doi"] or "").lower() not in done_dois]
+    counts["already decided"] += before - len(rows)
 
     rows.sort(key=lambda r: r["feed_date"], reverse=True)
     with open(OUT, "w", newline="", encoding="utf-8") as fh:

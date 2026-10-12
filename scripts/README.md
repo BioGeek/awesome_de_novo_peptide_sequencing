@@ -67,7 +67,8 @@ citing them, scored by how many of ours they link to. Monthly in CI, writes
 
 ### `build_dnps_candidates.py`
 The same question asked of the DNPS-DR daily literature report (a Hugging Face
-Space). Monthly in CI, writes `dnps_candidates.csv` only.
+Space). Monthly in CI, writes `dnps_candidates.csv` only, leaving out anything
+already decided; when something is left, the workflow opens an issue.
 
 ## Curation (local)
 
