@@ -3263,11 +3263,12 @@ and as the mean of the nine, and **ProteoBench**, on the pooled nine-species
 selection and so only under *Average*.
 
 Nine-species is several datasets under one name, so the chart shows **one
-version at a time** by default, the original 2017 release most papers report.
-Tick others to add them. denovo_benchmarks runs on the *revised* benchmark and
-ProteoBench on its own selection, so each appears when its version is ticked.
-Mixing versions brings up a warning, because a gap between two versions can be
-the data rather than the method.
+version at a time** by default: the *revised* benchmark, which removed the
+peptides the original 2017 release leaked from training into test, and which
+denovo_benchmarks runs on. Most papers still report on the original release;
+tick it to add those numbers. ProteoBench runs on its own selection, so it
+appears when that version is ticked. Mixing versions brings up a warning,
+because a gap between two versions can be the data rather than the method.
 
 ```{ojs}
 //| echo: false
@@ -3334,15 +3335,15 @@ viewof perf_subset = Inputs.select(perf_subset_options, {label: "Species / set"}
 
 ```{ojs}
 //| echo: false
-// ONE NINE-SPECIES VERSION AT A TIME, by default. "Nine-species" is four
-// different collections of spectra (see The data underneath), and a number on
-// the original 2017 release is not the same claim as one on the revised
-// benchmark, whose test peptides no longer leak into training. So the chart
-// opens on the version most papers report, original, and the others are a
-// tick away. The benchmarks carry their own versions -- denovo_benchmarks the
-// revised one, ProteoBench its own selection -- so they appear when theirs is
-// ticked. Only nine-species has several versions; the other datasets show no
-// control.
+// ONE NINE-SPECIES VERSION AT A TIME, by default, and it is the REVISED one.
+// "Nine-species" is four different collections of spectra (see The data
+// underneath), and a number on the original 2017 release is not the same
+// claim as one on the revised benchmark, whose test peptides no longer leak
+// into training. The chart opens on revised (main): it is the curated version,
+// and it is where denovo_benchmarks runs, so the independent benchmark is on
+// screen from the start. The original release most papers report is a tick
+// away. ProteoBench carries its own selection and appears when that is ticked.
+// Only nine-species has several versions; the other datasets show no control.
 perf_versions_all = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
                      "ProteoBench selection", "version not stated"]
 ```
@@ -3351,7 +3352,7 @@ perf_versions_all = ["original (DeepNovo, 2017)", "revised (main)", "revised (ba
 //| echo: false
 viewof perf_versions = perf_panel === "nine"
   ? Inputs.checkbox(perf_versions_all.filter(v => perf_all.some(d => d.panel === "nine" && d.version === v)),
-                    {label: "Nine-species version", value: ["original (DeepNovo, 2017)"]})
+                    {label: "Nine-species version", value: ["revised (main)"]})
   : Object.assign(html`<span></span>`, {value: perf_versions_all})
 ```
 
