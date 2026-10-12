@@ -1298,6 +1298,16 @@ starting runs. The Space's date reads "List last changed", not "Generated":
 the workflow commits nothing when the papers are unchanged, so the date only
 moves when the list does.
 
+**A paper nobody has ruled on opens an issue**, "denovo-radar: papers to
+screen", assigned to the repository owner: the Space and the job summary are
+read only by someone already looking. It is the same step as the DNPS-DR
+feed's, with its own title, so the two lists never mix. The harvest has
+already dropped what WATCHLIST.md and `screening_decisions.tsv` reject, so
+what fires it is a kept paper with `in_catalog` false. While the issue is
+open a later run only comments with papers it does not yet name, and closing
+it decides nothing: catalogue each paper or record its rejection, or the next
+harvest proposes it again.
+
 **Three harvest bugs surfaced on the button's first day**, all fixed:
 - `--since` (and the workflow's `since` input) takes a date or a number of days
   back. A bare number used to reach Europe PMC as `FIRST_PDATE:[20 TO ...]`,

@@ -8,9 +8,16 @@
 # the harvest here means every result is a commit with a date on it.
 #
 # It commits NOTHING to this repository -- the data belongs to the Space -- so
-# it needs only read permission here, and it must never use
+# it needs only read permission on contents here, and it must never use
 # .github/actions/commit-refreshed-db, which recovers from a push race by
 # replaying the one table a workflow owns. This one owns none.
+#
+# It does write ISSUES. A paper the harvest keeps that is neither catalogued
+# nor rejected (WATCHLIST.md, screening_decisions.tsv) opens an issue assigned
+# to the repository owner, which is what sends a notification; the Space and
+# the job summary are only read by someone already looking. While that issue
+# is open, a later run comments with just the papers it does not yet name. The
+# same step lives in refresh-dnps-candidates.yml, with its own issue title.
 #
 # Needs two secrets, neither of which this repo can create for you:
 #   HF_TOKEN            a Hugging Face token with WRITE access to BioGeek
@@ -33,6 +40,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: refresh-denovo-radar
@@ -104,6 +112,65 @@ jobs:
               -c user.email="j.vangoey@instadeep.com" \
               commit -q -am "Refresh the paper list" 
           git push "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/BioGeek/denovo-radar" HEAD:main
+
+      - name: Open or update an issue for papers to screen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+
+          # The harvest has already dropped everything recorded as rejected;
+          # what is left and not in_catalog is a paper nobody has ruled on.
+          data = json.loads(Path("space/data/papers.json").read_text(encoding="utf-8"))
+          rows = [p for p in data.get("papers", []) if not p.get("in_catalog")]
+          if not rows:
+              print("Every kept paper is catalogued; no issue.")
+              raise SystemExit(0)
+
+          def gh(*args):
+              return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
+
+          TITLE = "denovo-radar: papers to screen"
+          def ref(p):
+              if p.get("doi"):
+                  return f"`{p['doi']}`"
+              if p.get("pmid"):
+                  return f"https://pubmed.ncbi.nlm.nih.gov/{p['pmid']}/"
+              return ""
+          line = lambda p: (f"- [ ] {p.get('date', '')} **{p.get('title', '').strip()}** "
+                            f"({p.get('journal') or 'venue unknown'}) {ref(p)}")
+          footer = ("\n\nDecide each against the bar in WATCHLIST.md: catalogue it, or record "
+                    "the rejection in WATCHLIST.md or `screening_decisions.tsv`, so the next "
+                    "harvest stops proposing it. "
+                    f"Run: {os.environ['RUN_URL']} · Space: https://huggingface.co/spaces/BioGeek/denovo-radar")
+
+          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
+                                "--json", "number,title,body"))
+          found = [i for i in found if i["title"] == TITLE]
+          if found:
+              num = str(found[0]["number"])
+              seen = found[0]["body"] + "".join(
+                  c["body"] for c in json.loads(gh("issue", "view", num, "--json", "comments"))["comments"])
+              # Match on the reference as printed, so a bare PMID cannot hit
+              # some other number already in the thread.
+              fresh = [p for p in rows if (ref(p) or p.get("title", "")) not in seen]
+              if not fresh:
+                  print(f"All {len(rows)} papers are already listed on #{num}.")
+                  raise SystemExit(0)
+              body = (f"@{os.environ['OWNER']} {len(fresh)} more from this run:\n\n"
+                      + "\n".join(map(line, fresh)) + footer)
+              gh("issue", "comment", num, "--body", body)
+              print(f"Commented {len(fresh)} new papers on #{num}.")
+          else:
+              body = (f"The denovo-radar harvest kept {len(rows)} paper(s) that are not in the "
+                      "catalog and have not been ruled on:\n\n" + "\n".join(map(line, rows)) + footer)
+              print(gh("issue", "create", "--title", TITLE, "--body", body,
+                       "--assignee", os.environ["OWNER"]))
+          PY
 
       - name: Summary
         if: always()
