@@ -1271,7 +1271,11 @@ contract `build_candidates.py` has. **Matching is DOI-only on purpose**: a
 watch-list entry argues about a paper in a sentence, and fuzzy-matching those
 sentences against titles would drop papers nobody rejected. An entry with no DOI
 is not enforceable there, which is a reason to record one when rejecting
-something.
+something. **A DOI the catalog holds is never a rejection**, because WATCHLIST.md
+also cites papers for context: the AlphaNovo entry names FastaLake's DOI, and
+the harvest dropped FastaLake as "already rejected" the day it was catalogued.
+InstaNovo's preprint and the cricket hydrolysate paper were cited the same way.
+The harvest now reads the catalog first and exempts its DOIs.
 
 **Name the repository that PUBLISHES a checkpoint, not where you found it.**
 Both π-PrimeNovo checkpoints were first credited to the ProteoBench discussion
