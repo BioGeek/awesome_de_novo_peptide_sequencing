@@ -15,8 +15,8 @@
 # A job summary is only read by someone who goes looking, so when the run
 # finds a paper nobody has ruled on yet it also opens an issue assigned to the
 # repository owner, which is what sends the notification. The builder already
-# drops everything decided (catalog, WATCHLIST.md, screening_decisions.tsv,
-# dnps_proposal.csv), so a quiet month opens nothing, and while an issue is
+# drops everything decided (catalog, WATCHLIST.md, screening_decisions.tsv),
+# so a quiet month opens nothing, and while an issue is
 # open a later run only comments with candidates the issue does not yet name.
 #
 # It adds nothing to the database on purpose. Two senses of "de novo" run
@@ -117,8 +117,8 @@ jobs:
                             f"({r['journal'] or 'venue unknown'} {r['year']}) "
                             f"{('`' + r['doi'] + '`') if r['doi'] else r['link']}")
           footer = ("\n\nDecide each against the bar in WATCHLIST.md: catalogue it, or record "
-                    "the rejection in `dnps_proposal.csv` (verdict `SKIP`), WATCHLIST.md or "
-                    "`screening_decisions.tsv`, so the next run stops proposing it. "
+                    "the rejection in WATCHLIST.md or `screening_decisions.tsv`, "
+                    "so the next run stops proposing it. "
                     f"Full list: [run artifact]({os.environ['RUN_URL']}).")
 
           found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",

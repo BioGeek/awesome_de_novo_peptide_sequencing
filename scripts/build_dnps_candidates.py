@@ -65,9 +65,8 @@ DB_PATH = HERE / "denovo.db"
 CACHE = HERE / ".cache" / "dnps"
 OUT = HERE / "dnps_candidates.csv"
 # Every decision already taken, so a candidate is something nobody has read:
-# the bulk screenings' rejections and holds, and this feed's own triage file.
+# WATCHLIST.md, and the bulk screenings' rejections and holds.
 DECISIONS = HERE / "screening_decisions.tsv"
-PROPOSAL = HERE / "dnps_proposal.csv"
 DOI_RE = re.compile(r"10\.\d{4,9}/[^\s`)>,]+")
 SPACE = "yangtingpeng/DNPS-DR"
 MAILTO = "j.vangoey@instadeep.com"
@@ -118,29 +117,22 @@ def cached_json(key: str, url: str):
     return val
 
 
-def decided(watchlist: str) -> tuple[set[str], set[str]]:
-    """DOIs and PMIDs somebody has already ruled on, in or out.
+def decided(watchlist: str) -> set[str]:
+    """DOIs somebody has already ruled out.
 
-    WATCHLIST.md was read by PMID and title only, so a DOI-only entry there,
-    a rejection in screening_decisions.tsv, or a SKIP in dnps_proposal.csv came
-    back as a "candidate" every month: 10.1002/rcm.338, an oligonucleotide
-    paper rejected on 2026-10-05, was the whole of the 2026-10 list.
+    WATCHLIST.md was read by PMID and title only, so a DOI-only entry there or
+    a rejection in screening_decisions.tsv came back as a "candidate" every
+    month: 10.1002/rcm.338, an oligonucleotide paper rejected on 2026-10-05,
+    was the whole of the 2026-10 list. A paper ruled IN is in the catalog,
+    which the DOI check below already covers.
     """
     dois = {d.rstrip(".").lower() for d in DOI_RE.findall(watchlist)}
-    pmids: set[str] = set()
     if DECISIONS.exists():
         for line in DECISIONS.read_text(encoding="utf-8").splitlines():
             first = line.split("\t", 1)[0].strip().lower()
             if first.startswith("10."):
                 dois.add(first)
-    if PROPOSAL.exists():
-        with PROPOSAL.open(encoding="utf-8", newline="") as fh:
-            for r in csv.DictReader(fh):
-                if r.get("doi"):
-                    dois.add(r["doi"].strip().lower())
-                if r.get("pmid"):
-                    pmids.add(r["pmid"].strip())
-    return dois, pmids
+    return dois
 
 
 def main() -> int:
@@ -173,7 +165,7 @@ def main() -> int:
     catalog = [norm(t) for (t,) in conn.execute("SELECT title FROM publication")]
     watchlist = (HERE / "WATCHLIST.md").read_text(encoding="utf-8").lower()
 
-    done_dois, done_pmids = decided(watchlist)
+    done_dois = decided(watchlist)
     rows, counts = [], {"catalogued": 0, "design": 0, "other analyte": 0,
                         "not sequencing": 0, "watchlist": 0, "already decided": 0}
     for e in entries:
@@ -185,9 +177,6 @@ def main() -> int:
         pmid = (re.search(r"pubmed\.ncbi\.nlm\.nih\.gov/(\d+)", e.get("link", "")) or [None, ""])[1]
         if pmid and pmid in watchlist or norm(title)[:60] in norm(watchlist):
             counts["watchlist"] += 1
-            continue
-        if pmid and pmid in done_pmids:
-            counts["already decided"] += 1
             continue
         if not (SEQ.search(title) and ANALYTE.search(title)):
             counts["not sequencing"] += 1
