@@ -2032,7 +2032,45 @@ refresh and the URL guard are not.
 
 ## Citation graph
 
-`build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or fuzzy-title match (token-set ratio ≥ 92), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI; it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
+`build_citations.py` is the offline builder: it walks every publication, queries Crossref (by DOI) and Semantic Scholar (by DOI or title search), resolves references back to local publication ids by DOI-exact or title match (see below), and inserts edges into `publication_citation`. Fuzzy matches are also logged to `citation_audit.csv` for human review. The script is intentionally NOT run by CI; it's ~30 min of network I/O and Semantic Scholar rate-limits hard. Re-run locally when new papers are added, eyeball the audit CSV, then commit the regenerated `denovo.db` + `denovo.sql`.
+
+**`token_set_ratio` is the prefilter, never the verdict.** It ignores the
+tokens one string has and the other lacks, so every reference containing the
+four words of publication 315, "De novo Peptide Sequencing", scored 100
+against it, and so did references to PEAKS, ContraNovo, AdaNovo and Depthcharge.
+315 had collected 26 citations that way, and "Deep Learning in Proteomics" 7.
+`titles_match()` now decides:
+
+- a catalog title under five words matches only exactly;
+- otherwise the title must appear as ONE contiguous span of the reference
+  (`partial_ratio_alignment` ≥ 95) that STARTS a title: at the beginning,
+  after punctuation, or after a capitalised word. "Deepnovov2: Better de novo |
+  peptide sequencing with deep learning" contains publication 57's title after
+  a lower-case word, so it is DeepNovoV2 and not 57;
+- or, for a bare title, the two agree nearly in full (ratio ≥ 92) or one is
+  the other plus a subtitle;
+- and a match to a paper dated more than `YEAR_SLACK` (2) years after the
+  year the reference prints is refused. Artemenko 2006, "De novo sequencing of
+  peptides by mass spectrometry", scores 94 against a 2009 encyclopedia entry
+  ending "using mass spectrometry", and no word-level rule separates that
+  substitution from SPIDER's references, which say "containing" for "with".
+
+The text is cleaned first, because what broke the first version of the rule
+was markup and not wording: `&lt;em&gt;`, `\emph{De Novo}`, Crossref's
+`\textbackslash emphłbrace`, ligatures (NFKC), a "Correction to:" prefix, and
+a trailing page or line number on a bare title.
+
+**A refuted edge is deleted; a missing one is not.** `publication_citation` is
+INSERT OR IGNORE, so a wrong edge never left on its own. An edge goes when the
+prefilter proposed it, the verdict rejected it, and nothing else this run
+supports it; one that simply was not re-found, on a bad API day, stays. Every
+rejection is written to the gitignored `citation_refused.csv`, with
+`edge_deleted` marking the ones that removed an edge. The 2026-10-12 rebuild
+took the graph from 6248 to 6863 edges: 678 added, nearly all papers catalogued
+since the last full rebuild, and 63 deleted, each read against its reference.
+61 were false. The other 2 are the price of the five-word floor: AdaNovo's
+reference to PEAKS is printed as "Peaks: powerful software", and NovoBoard's to
+AdaNovo as just "AdaNovo".
 
 When adding rows by hand, always check whether the entity already exists before inserting: author names and affiliation `(name, department)` pairs are the natural keys, not the surrogate IDs. A typical insert path for a new paper is: `country` → `city` → `affiliation` → `author` → `author_affiliation` → `algorithm` → `publication` → `publication_author` (with `author_order` set per author) → `publication_algorithm`. See any of the previously committed paper insertions (e.g. the `CausalNovo` commit) for the standard `INSERT … SELECT id FROM …` pattern.
 

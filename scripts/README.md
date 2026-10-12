@@ -42,7 +42,9 @@ skips any publication without an OpenAlex id.
 The intra-catalog citation graph from Crossref and Semantic Scholar, into
 `publication_citation`. Monthly; `--only <ids>` for new papers. Writes
 nothing until the walk ends, and fuzzy title matches go to
-`citation_audit.csv`.
+`citation_audit.csv`. A title match the stricter rule refuses goes to
+`citation_refused.csv`, and an edge it once made is deleted when nothing
+else in the run supports it.
 
 ### `build_journal_metrics.py`
 OpenAlex two-year mean citedness per peer-reviewed venue, into

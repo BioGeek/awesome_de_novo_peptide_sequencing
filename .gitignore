@@ -4,6 +4,7 @@ _site/
 _freeze/
 plots/
 citation_audit.csv
+citation_refused.csv
 
 /.quarto/
 __pycache__/
