@@ -149,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Hybrid de novo + database search</h1>
-<p class="subtitle lead">9 methods · 2005–2026</p>
+<p class="subtitle lead">10 methods · 2005–2026</p>
 </div>
 
 <div>
@@ -172,41 +172,41 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Two engines run side by side and reconciled, a <em>de novo</em> sequencer and a database search, each keeping the identifications the other cannot make.</p>
-<p>The earliest of its 9 methods is <a href="../algorithms/raid.html">RAId</a> (2005); 8 more have followed.</p>
+<p>The earliest of its 10 methods is <a href="../algorithms/raid.html">RAId</a> (2005); 9 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>9</td>
+<td>10</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>10</td>
+<td>11</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
-<td>48</td>
+<td>73</td>
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>2005-10-01 to 2026-07-11</td>
+<td>2005-10-01 to 2026-10-11</td>
 </tr>
 <tr class="odd">
 <td>Deep learning</td>
-<td>3 of 9</td>
+<td>4 of 10</td>
 </tr>
 <tr class="even">
 <td>Kinds</td>
-<td>adjacent (4), downstream-application (4), algorithm</td>
+<td>downstream-application (5), adjacent (4), algorithm</td>
 </tr>
 <tr class="odd">
 <td>Acquisition</td>
-<td>DDA (9)</td>
+<td>DDA (10)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-9" class="level2">
-<h2 class="anchored" data-anchor-id="methods-9">Methods (9)</h2>
+<section id="methods-10" class="level2">
+<h2 class="anchored" data-anchor-id="methods-10">Methods (10)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/raid.html">RAId</a> (2005): Robust Accurate Identification of peptides: runs de novo sequencing first to estimate spectrum-specific background statistics for a structured peptide library search, falling back on top de novo sequences for novel peptides.</li>
@@ -218,14 +218,15 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/hdps.html">HDPS</a> (2025): Heuristic two-round sequence assembly strategy combining multi-enzyme and microwave-assisted acid hydrolysis, pNovo de novo peptide sequencing, and pFind homology database search with k-mer graph assembly and majority-vote error correction; achieved 100% sequence coverage and &gt;98% amino-acid accuracy on full-length Ricin toxin A and B chains without a reference sequence, outperforming ALPS.</li>
 <li><a href="../algorithms/insearch.html">INSearch</a> (2026): Prototype AI-native database search that replaces the combinatorial scan with retrieval. A dual encoder projects experimental spectra and theoretical peptide sequences into one shared latent space under a contrastive objective with variance regularisation to prevent feature collapse, and an alternative alignment-and-uniformity loss; approximate nearest-neighbour search then returns the top-k candidates, cutting retrieval from the O(S × ρP) of a conventional engine to O(S(log P + K)). Because retrieval is approximate, candidates are re-ranked by InstaNovo’s decoder run in teacher-forcing mode as a scoring function, aggregating residue log-probabilities by geometric mean. On the nine-species benchmark the held-out yeast split reaches Recall@1/5/100 of 60.0/78.9/91.9%, with neural re-scoring lifting Recall@1 to 82.9%; the harder S. brodae proteome reaches only 55.5% Recall@100, pointing to a need for larger-scale training.</li>
 <li><a href="../algorithms/tips.html">TIPs</a> (2026): Deep-learning-guided proteogenomic framework that uses de novo sequencing to refine the search space for transposable-element-derived HLA antigens, finding 20-fold more than conventional searches.</li>
+<li><a href="../algorithms/fastalake.html">FastaLake</a> (2026): Metaproteomics workflow that uses full-length AlphaNovo de novo peptide predictions as exact queries to select compact search databases from large sequence reservoirs, then searches them with Sage. Matched metagenome-derived databases in two stool cohorts and found 20-35% more peptides in intestinal fluid, without matched metagenomic sequencing.</li>
 </ul>
 </section>
 <section id="applied-in" class="level2">
 <h2 class="anchored" data-anchor-id="applied-in">Applied in</h2>
 <p><a href="../subdomains/neuropeptidomics.html">Neuropeptidomics</a>, <a href="../subdomains/metaproteomics.html">Metaproteomics</a>, <a href="../subdomains/toxin-identification.html">Toxin identification (biodefense)</a>, <a href="../subdomains/immunopeptidomics.html">Immunopeptidomics / neoantigen</a></p>
 </section>
-<section id="papers-describing-them-10" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-10">Papers describing them (10)</h2>
+<section id="papers-describing-them-11" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-11">Papers describing them (11)</h2>
 <ul>
 <li><a href="../publications/robust-accurate-identification-of-peptides-raid-deciphering-ms2-data-using-a.html">Robust accurate identification of peptides (RAId): deciphering MS2 data using a structured library search with de novo based statistics</a> (2005, Bioinformatics, peer-reviewed)</li>
 <li><a href="../publications/a-hybrid-de-novo-based-genome-wide-database-search-approach-applied-to-the-sea.html">A Hybrid, de Novo Based, Genome-Wide Database Search Approach Applied to the Sea Urchin Neuropeptidome</a> (2010, Journal of Proteome Research, peer-reviewed)</li>
@@ -237,11 +238,12 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/identification-of-unknown-biological-toxin-proteins-using-mass-spectrometry-a.html">Identification of Unknown Biological Toxin Proteins Using Mass Spectrometry: A Case Study on De Novo Sequencing of Ricin</a> (2025, Toxins, peer-reviewed)</li>
 <li><a href="../publications/insearch-ai-native-framework-for-large-scale-proteomic-database-search-via.html">INSearch: AI-native framework for large scale proteomic database search via contrastive joint embeddings and transformer-based scoring function</a> (2026, thesis)</li>
 <li><a href="../publications/tips-a-deep-learning-guided-proteogenomic-framework-to-expand-the-landscape-of.html">TIPs: a deep learning-guided proteogenomic framework to expand the landscape of transposable element-derived antigens with immunopeptidomics</a> (2026, Genome Biology, peer-reviewed)</li>
+<li><a href="../publications/fastalake-selects-compact-metaproteomic-databases-from-large-sequence.html">FastaLake selects compact metaproteomic databases from large sequence reservoirs by de novo peptide lookup</a> (2026, bioRxiv, preprint)</li>
 </ul>
 </section>
-<section id="authors-48" class="level2">
-<h2 class="anchored" data-anchor-id="authors-48">Authors (48)</h2>
-<p><a href="../authors/andreas-schlosser.html">Andreas Schlosser</a>, <a href="../authors/andrew-j-m-nel.html">Andrew J. M. Nel</a>, <a href="../authors/bart-landuyt.html">Bart Landuyt</a>, <a href="../authors/bastian-schilling.html">Bastian Schilling</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/florian-erhard.html">Florian Erhard</a>, <a href="../authors/fuli-wang.html">Fuli Wang</a>, <a href="../authors/geert-baggerman.html">Geert Baggerman</a>, <a href="../authors/gelio-alves.html">Gelio Alves</a>, <a href="../authors/gerben-menschaert.html">Gerben Menschaert</a>, <a href="../authors/hanfa-zou.html">Hanfa Zou</a>, <a href="../authors/hao-wang.html">Hao Wang</a>, <a href="../authors/hongqiang-qin.html">Hongqiang Qin</a>, <a href="../authors/jerome-m-wendoh.html">Jerome M. Wendoh</a>, <a href="../authors/jiale-xu.html">Jiale Xu</a>, <a href="../authors/jiayi-shen.html">Jiayi Shen</a>, <a href="../authors/jing-dong.html">Jing Dong</a>, <a href="../authors/jonathan-m-blackburn.html">Jonathan M. Blackburn</a>, <a href="../authors/jonathan-v-sweedler.html">Jonathan V. Sweedler</a>, <a href="../authors/jun-zhu.html">Jun Zhu</a>, <a href="../authors/junjie-wen.html">Junjie Wen</a>, <a href="../authors/kai-cheng.html">Kai Cheng</a>, <a href="../authors/lars-dolken.html">Lars Dölken</a>, <a href="../authors/liliane-schoofs.html">Liliane Schoofs</a>, <a href="../authors/matthew-james-collins.html">Matthew James Collins</a>, <a href="../authors/matthys-g-potgieter.html">Matthys G. Potgieter</a>, <a href="../authors/mingliang-ye.html">Mingliang Ye</a>, <a href="../authors/mingming-dong.html">Mingming Dong</a>, <a href="../authors/nicola-j-mulder.html">Nicola J. Mulder</a>, <a href="../authors/qian-wu.html">Qian Wu</a>, <a href="../authors/qizhen-feng.html">Qizhen Feng</a>, <a href="../authors/shaun-garnett.html">Shaun Garnett</a>, <a href="../authors/siyu-zhu.html">Siyu Zhu</a>, <a href="../authors/suereta-fortuin.html">Suereta Fortuin</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a>, <a href="../authors/tom-t-m-vandekerckhove.html">Tom T. M. Vandekerckhove</a>, <a href="../authors/walter-luyten.html">Walter Luyten</a>, <a href="../authors/wenguang-shao.html">Wenguang Shao</a>, <a href="../authors/wim-van-criekinge.html">Wim Van Criekinge</a>, <a href="../authors/xiaobing-liu.html">Xiaobing Liu</a>, <a href="../authors/xiaoxiang-huang.html">Xiaoxiang Huang</a>, <a href="../authors/xinyue-zhou-shanghai-jiao-tong-university.html">Xinyue Zhou (Shanghai Jiao Tong University)</a>, <a href="../authors/yangyang-bian.html">Yangyang Bian</a>, <a href="../authors/yi-kuo-yu.html">Yi-Kuo Yu</a>, <a href="../authors/yongqian-zhang.html">Yongqian Zhang</a>, <a href="../authors/yubo-song.html">Yubo Song</a>, <a href="../authors/yun-chiang.html">Yun Chiang</a>, <a href="../authors/zixiang-shang.html">Zixiang Shang</a></p>
+<section id="authors-73" class="level2">
+<h2 class="anchored" data-anchor-id="authors-73">Authors (73)</h2>
+<p><a href="../authors/andreas-schlosser.html">Andreas Schlosser</a>, <a href="../authors/andrew-j-m-nel.html">Andrew J. M. Nel</a>, <a href="../authors/ankit-sinha.html">Ankit Sinha</a>, <a href="../authors/bart-landuyt.html">Bart Landuyt</a>, <a href="../authors/bastian-schilling.html">Bastian Schilling</a>, <a href="../authors/christophe-junot.html">Christophe Junot</a>, <a href="../authors/dari-shalon.html">Dari Shalon</a>, <a href="../authors/david-l-tabb.html">David L. Tabb</a>, <a href="../authors/edwin-h-rodriguez.html">Edwin H. Rodriguez</a>, <a href="../authors/florian-a-rosenberger.html">Florian A. Rosenberger</a>, <a href="../authors/florian-erhard.html">Florian Erhard</a>, <a href="../authors/fuli-wang.html">Fuli Wang</a>, <a href="../authors/geert-baggerman.html">Geert Baggerman</a>, <a href="../authors/gelio-alves.html">Gelio Alves</a>, <a href="../authors/georg-wallmann.html">Georg Wallmann</a>, <a href="../authors/gerben-menschaert.html">Gerben Menschaert</a>, <a href="../authors/hanfa-zou.html">Hanfa Zou</a>, <a href="../authors/hao-wang.html">Hao Wang</a>, <a href="../authors/hongqiang-qin.html">Hongqiang Qin</a>, <a href="../authors/jerome-m-wendoh.html">Jerome M. Wendoh</a>, <a href="../authors/jessica-a-grembi.html">Jessica A. Grembi</a>, <a href="../authors/jiale-xu.html">Jiale Xu</a>, <a href="../authors/jiayi-shen.html">Jiayi Shen</a>, <a href="../authors/jing-dong.html">Jing Dong</a>, <a href="../authors/jinqiu-xiao.html">Jinqiu Xiao</a>, <a href="../authors/johannes-b-mueller-reif.html">Johannes B. Mueller-Reif</a>, <a href="../authors/jonathan-m-blackburn.html">Jonathan M. Blackburn</a>, <a href="../authors/jonathan-v-sweedler.html">Jonathan V. Sweedler</a>, <a href="../authors/jonel-trebicka.html">Jonel Trebicka</a>, <a href="../authors/jun-zhu.html">Jun Zhu</a>, <a href="../authors/junjie-wen.html">Junjie Wen</a>, <a href="../authors/kai-cheng.html">Kai Cheng</a>, <a href="../authors/karsten-borgwardt.html">Karsten Borgwardt</a>, <a href="../authors/kathrin-korff.html">Kathrin Korff</a>, <a href="../authors/kerwyn-casey-huang.html">Kerwyn Casey Huang</a>, <a href="../authors/lars-dolken.html">Lars Dölken</a>, <a href="../authors/liliane-schoofs.html">Liliane Schoofs</a>, <a href="../authors/mani-arumugam.html">Mani Arumugam</a>, <a href="../authors/marisa-i-keller.html">Marisa I. Keller</a>, <a href="../authors/matthew-james-collins.html">Matthew James Collins</a>, <a href="../authors/matthias-mann.html">Matthias Mann</a>, <a href="../authors/matthys-g-potgieter.html">Matthys G. Potgieter</a>, <a href="../authors/maximilian-t-strauss.html">Maximilian T. Strauss</a>, <a href="../authors/maximilian-zwiebel.html">Maximilian Zwiebel</a>, <a href="../authors/michael-kuhn.html">Michael Kuhn</a>, <a href="../authors/mikhail-lebedev.html">Mikhail Lebedev</a>, <a href="../authors/mingliang-ye.html">Mingliang Ye</a>, <a href="../authors/mingming-dong.html">Mingming Dong</a>, <a href="../authors/nicola-j-mulder.html">Nicola J. Mulder</a>, <a href="../authors/peter-v-treit.html">Peter V. Treit</a>, <a href="../authors/philip-hartout.html">Philip Hartout</a>, <a href="../authors/philipp-e-geyer.html">Philipp E. Geyer</a>, <a href="../authors/qian-wu.html">Qian Wu</a>, <a href="../authors/qizhen-feng.html">Qizhen Feng</a>, <a href="../authors/shaun-garnett.html">Shaun Garnett</a>, <a href="../authors/siyu-zhu.html">Siyu Zhu</a>, <a href="../authors/suereta-fortuin.html">Suereta Fortuin</a>, <a href="../authors/tasneem-midhat-mustafa-attaallah.html">Tasneem Midhat Mustafa Attaallah</a>, <a href="../authors/tom-t-m-vandekerckhove.html">Tom T. M. Vandekerckhove</a>, <a href="../authors/vincenth-brennsteiner.html">Vincenth Brennsteiner</a>, <a href="../authors/walter-luyten.html">Walter Luyten</a>, <a href="../authors/wen-feng-zeng.html">Wen-Feng Zeng</a>, <a href="../authors/wenguang-shao.html">Wenguang Shao</a>, <a href="../authors/wim-van-criekinge.html">Wim Van Criekinge</a>, <a href="../authors/xiaobing-liu.html">Xiaobing Liu</a>, <a href="../authors/xiaoxiang-huang.html">Xiaoxiang Huang</a>, <a href="../authors/xinyue-zhou-shanghai-jiao-tong-university.html">Xinyue Zhou (Shanghai Jiao Tong University)</a>, <a href="../authors/yangyang-bian.html">Yangyang Bian</a>, <a href="../authors/yi-kuo-yu.html">Yi-Kuo Yu</a>, <a href="../authors/yongqian-zhang.html">Yongqian Zhang</a>, <a href="../authors/yubo-song.html">Yubo Song</a>, <a href="../authors/yun-chiang.html">Yun Chiang</a>, <a href="../authors/zixiang-shang.html">Zixiang Shang</a></p>
 </section>
 <section id="seen-in-the-charts" class="level2">
 <h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
