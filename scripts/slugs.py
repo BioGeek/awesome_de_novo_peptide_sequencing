@@ -104,6 +104,12 @@ TRANSLITERATE = {
 # "Liu Yang" was SSRN's reversed spelling of PeposX-Exhaust's 6th author, Yang Liu.
 # "PNAS" was one paper's spelling of a venue eight others give in full.
 # Nine author names were stored "Surname, Given"; four were people already here.
+# 2026-10-12: datasets had no redirects at all. Four dataset renames were missing
+# here, so their old indexed URLs 404'd instead of redirecting. Two predate
+# slugs.lock -- instadeepai-ms-proteometools and 10-5281-zenodo-1841428343, the
+# two Search Console flagged, recovered from git history and the DB; two are in
+# slugs.lock history. (Some publication/venue slugs also changed over time, but
+# their old forms are still live pages, so they are not retired redirects.)
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
@@ -143,6 +149,10 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'yi-liu-western-ontario': 'yi-liu',
              'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang',
              'zomaya-albert-y': 'albert-y-zomaya'},
+ 'datasets': {'instadeepai-ms-proteometools': 'proteometools',
+              '10-5281-zenodo-1841428343': '10-5281-zenodo-19347248',
+              'instadeepai-instanovo-p': 'instanovo-p-fine-tuning-data',
+              'ipx0000937000': 'proteomics-identifies-new-therapeutic-targets-of-early-stage-hepatocellular'},
  'publications': {'193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-i': '193-nm-ultraviolet-photodissociation-of-imidazolinylated-lys-n-peptides-for-de',
                   'an-improved-method-for-i-de-novo-i-sequencing-of-arginine-containing-n-sup-sup': 'an-improved-method-for-de-novo-sequencing-of-arginine-containing-n-tris-2-4-6',
                   'analysis-of-root-plasma-membrane-aquaporins-from-i-brassica-oleracea-i-post': 'analysis-of-root-plasma-membrane-aquaporins-from-brassica-oleracea-post',
