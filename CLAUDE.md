@@ -1307,9 +1307,12 @@ read only by someone already looking. It is the same step as the DNPS-DR
 feed's, with its own title, so the two lists never mix. The harvest has
 already dropped what WATCHLIST.md and `screening_decisions.tsv` reject, so
 what fires it is a kept paper with `in_catalog` false. While the issue is
-open a later run only comments with papers it does not yet name, and closing
-it decides nothing: catalogue each paper or record its rejection, or the next
-harvest proposes it again.
+open a later run only comments with papers it does not yet name. Closing it
+by hand decides nothing: catalogue each paper or record its rejection, or the
+next harvest proposes it again. **The run closes it**, with a comment, once the
+harvest keeps no paper that is not catalogued, which is the loop's last step:
+FastaLake and the camel leukocyte paper went from issue #2 to the catalog, and
+the next run closed #2.
 
 **Three harvest bugs surfaced on the button's first day**, all fixed:
 - `--since` (and the workflow's `since` input) takes a date or a number of days
@@ -2811,7 +2814,9 @@ looking. While that issue is open, a later run comments with just the
 candidates it does not yet name, so an unanswered list does not re-notify every
 month. Closing it is not the decision: cataloguing the paper, or recording its
 rejection in one of those two files, is; otherwise the next run proposes it
-again.
+again. A run that rebuilt the list and found nothing left closes the issue
+itself; one that skipped because the Space was unchanged leaves it open, since
+it checked nothing.
 
 `refresh-candidates.yml` runs it monthly on the 2nd, a day after
 `refresh-citation-graph`. It commits nothing and needs only read permission:

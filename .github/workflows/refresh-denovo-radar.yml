@@ -128,14 +128,25 @@ jobs:
           # what is left and not in_catalog is a paper nobody has ruled on.
           data = json.loads(Path("space/data/papers.json").read_text(encoding="utf-8"))
           rows = [p for p in data.get("papers", []) if not p.get("in_catalog")]
-          if not rows:
-              print("Every kept paper is catalogued; no issue.")
-              raise SystemExit(0)
 
           def gh(*args):
               return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
 
           TITLE = "denovo-radar: papers to screen"
+          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
+                                "--json", "number,title,body"))
+          found = [i for i in found if i["title"] == TITLE]
+          if not rows:
+              # The loop closes itself: once every listed paper is catalogued or
+              # rejected, the harvest keeps none unscreened and the issue goes.
+              for i in found:
+                  gh("issue", "close", str(i["number"]), "--comment",
+                     "Every paper the harvest keeps is now catalogued or rejected. "
+                     f"Closed by {os.environ['RUN_URL']}")
+                  print(f"Closed #{i['number']}: nothing left to screen.")
+              if not found:
+                  print("Every kept paper is catalogued; no issue.")
+              raise SystemExit(0)
           # Links, so each paper is one click from its record when screening:
           # the DOI, else PubMed, else the record the harvest found it in, else
           # a title search, so no line is left without one.
@@ -164,9 +175,6 @@ jobs:
                     "harvest stops proposing it. "
                     f"Run: {os.environ['RUN_URL']} · Space: https://huggingface.co/spaces/BioGeek/denovo-radar")
 
-          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
-                                "--json", "number,title,body"))
-          found = [i for i in found if i["title"] == TITLE]
           if found:
               num = str(found[0]["number"])
               seen = found[0]["body"] + "".join(

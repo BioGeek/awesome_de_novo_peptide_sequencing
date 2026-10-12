@@ -105,14 +105,26 @@ jobs:
 
           p = Path("dnps_candidates.csv")
           rows = list(csv.DictReader(p.open(encoding="utf-8"))) if p.exists() else []
-          if not rows:
-              print("No undecided candidates; no issue.")
-              raise SystemExit(0)
 
           def gh(*args):
               return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
 
           TITLE = "DNPS-DR feed: papers to screen"
+          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
+                                "--json", "number,title,body"))
+          found = [i for i in found if i["title"] == TITLE]
+          if not rows:
+              # Only a run that actually rebuilt the list may close the issue: a
+              # missing CSV means the Space was unchanged and nothing was checked.
+              if p.exists():
+                  for i in found:
+                      gh("issue", "close", str(i["number"]), "--comment",
+                         "Every candidate is now catalogued or rejected. "
+                         f"Closed by {os.environ['RUN_URL']}")
+                      print(f"Closed #{i['number']}: nothing left to screen.")
+              if not found or not p.exists():
+                  print("No undecided candidates; no issue.")
+              raise SystemExit(0)
           key = lambda r: r["doi"] or r["link"]
           line = lambda r: (f"- [ ] {r['feed_date']} **{r['title']}** "
                             f"({r['journal'] or 'venue unknown'} {r['year']}) "
@@ -127,9 +139,6 @@ jobs:
                     "so the next run stops proposing it. "
                     f"Full list: [run artifact]({os.environ['RUN_URL']}).")
 
-          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
-                                "--json", "number,title,body"))
-          found = [i for i in found if i["title"] == TITLE]
           if found:
               num = str(found[0]["number"])
               seen = found[0]["body"] + "".join(
