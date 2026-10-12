@@ -122,6 +122,7 @@ jobs:
           python3 - <<'PY'
           import json, os, subprocess
           from pathlib import Path
+          from urllib.parse import quote
 
           # The harvest has already dropped everything recorded as rejected;
           # what is left and not in_catalog is a paper nobody has ruled on.
@@ -135,12 +136,27 @@ jobs:
               return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
 
           TITLE = "denovo-radar: papers to screen"
+          # Links, so each paper is one click from its record when screening:
+          # the DOI, else PubMed, else the record the harvest found it in, else
+          # a title search, so no line is left without one.
           def ref(p):
               if p.get("doi"):
-                  return f"`{p['doi']}`"
+                  return f"[{p['doi']}](https://doi.org/{p['doi']})"
+              if p.get("pmid"):
+                  return f"[PMID {p['pmid']}](https://pubmed.ncbi.nlm.nih.gov/{p['pmid']}/)"
+              if p.get("url"):
+                  return f"[record]({p['url']})"
+              q = quote('TITLE:"' + p.get("title", "").replace('"', "") + '"', safe="")
+              return f"[search Europe PMC](https://europepmc.org/search?query={q})"
+          # What marks a paper as already listed: the bare DOI, PubMed URL or
+          # record URL, which every format the issue has used contains, else
+          # the title.
+          def key(p):
+              if p.get("doi"):
+                  return p["doi"]
               if p.get("pmid"):
                   return f"https://pubmed.ncbi.nlm.nih.gov/{p['pmid']}/"
-              return ""
+              return p.get("url") or p.get("title", "")
           line = lambda p: (f"- [ ] {p.get('date', '')} **{p.get('title', '').strip()}** "
                             f"({p.get('journal') or 'venue unknown'}) {ref(p)}")
           footer = ("\n\nDecide each against the bar in WATCHLIST.md: catalogue it, or record "
@@ -155,9 +171,9 @@ jobs:
               num = str(found[0]["number"])
               seen = found[0]["body"] + "".join(
                   c["body"] for c in json.loads(gh("issue", "view", num, "--json", "comments"))["comments"])
-              # Match on the reference as printed, so a bare PMID cannot hit
+              # A full DOI or PubMed URL, never a bare PMID, which could hit
               # some other number already in the thread.
-              fresh = [p for p in rows if (ref(p) or p.get("title", "")) not in seen]
+              fresh = [p for p in rows if key(p) not in seen]
               if not fresh:
                   print(f"All {len(rows)} papers are already listed on #{num}.")
                   raise SystemExit(0)

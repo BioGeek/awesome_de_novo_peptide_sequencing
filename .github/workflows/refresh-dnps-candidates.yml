@@ -101,6 +101,7 @@ jobs:
           python3 - <<'PY'
           import csv, json, os, subprocess
           from pathlib import Path
+          from urllib.parse import quote
 
           p = Path("dnps_candidates.csv")
           rows = list(csv.DictReader(p.open(encoding="utf-8"))) if p.exists() else []
@@ -115,7 +116,12 @@ jobs:
           key = lambda r: r["doi"] or r["link"]
           line = lambda r: (f"- [ ] {r['feed_date']} **{r['title']}** "
                             f"({r['journal'] or 'venue unknown'} {r['year']}) "
-                            f"{('`' + r['doi'] + '`') if r['doi'] else r['link']}")
+                            # Links, so each paper is one click from its record:
+                            # the DOI, else the feed's PubMed link, else a search.
+                            + (f"[{r['doi']}](https://doi.org/{r['doi']})" if r['doi']
+                               else f"[PubMed]({r['link']})" if r['link']
+                               else "[search Europe PMC](https://europepmc.org/search?query="
+                                    + quote('TITLE:"' + r["title"].replace('"', "") + '"', safe="") + ")"))
           footer = ("\n\nDecide each against the bar in WATCHLIST.md: catalogue it, or record "
                     "the rejection in WATCHLIST.md or `screening_decisions.tsv`, "
                     "so the next run stops proposing it. "
