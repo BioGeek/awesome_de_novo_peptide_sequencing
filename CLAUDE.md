@@ -255,7 +255,7 @@ forced apart on the assumption that a common Chinese name is two people,
 and the co-authors and institutions said one. Force a split only on a
 contradiction, such as a second ORCID or both rows on one byline.
 
-`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (787), `'preprint'` (114), `'thesis'` (42), `'ML conference'` (13), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
+`publication.publication_type` is a string and the SQL column comment is stale: it names only `'preprint'` / `'peer-reviewed'`, but the full vocabulary in use is `'peer-reviewed'` (788), `'preprint'` (114), `'thesis'` (42), `'ML conference'` (13), `'resource'` (4, for citable things that are not manuscripts: this catalog's own Zenodo record, a third-party link collection, a daily literature-briefing Space, and a vendor software manual, the Micromass MassLynx NT BioLynx & ProteinLynx Guide, which is the only documentation PepSeq's method has), `'postprint'` (2), `'commentary'` (1), `'abstract'` (17) and `'presentation'` (2). Use one of those nine; do not invent a tenth without updating this list, and never leave it empty.
 
 `'abstract'` is for a citable record with a DOI behind which **no full text will ever exist**: a meeting or showcase abstract. Publications 355 and 356 are in the Journal of Student-Scientists' Research (George Mason, ISSN 2689-7679), whose navigation is literally organised as "Abstracts by Department" and whose records carry no `citation_pdf_url` and no galley. Publication 357 is an ASBMB Annual Meeting abstract carried in a Journal of Biological Chemistry supplement: OpenAlex types it `conference-abstract`, Crossref holds no abstract text, and the title itself begins "Abstract 4402", all despite a jbc.org `/fulltext` URL that makes it look like a research article. All three come from the same George Mason host-defence peptide lab. Calling such a record `'peer-reviewed'` would be wrong twice over: it is faculty-mentored rather than peer-reviewed, and it would inflate a count this file and the site both report. The type was added rather than stretched because abstracts are a recurring shape, not a one-off: `WATCHLIST.md` had already parked the Hellbender ASBMB abstract on exactly this blocker, recording that it was "in scope on the merits" and waiting only because "no `publication_type` value fits without inventing an eighth".
 
@@ -313,7 +313,7 @@ moving, not a URL.
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 254 of the 1243 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 254 of the 1244 are `'uses'`, and they are concentrated rather than
 spread: 140 of PEAKS's 147 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -643,7 +643,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 983 against 982 publications today --
+a deleted row does not give its id back -- 984 against 983 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -767,8 +767,8 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 434 rows use day
-  `01` and 385 of those are in non-January months, so a first-of-the-month date is
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 435 rows use day
+  `01` and 386 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
 **The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
@@ -868,7 +868,7 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 904/982, of which 5 came from the PDFs themselves via
+Coverage is 905/983, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.
@@ -1368,7 +1368,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**478 datasets, 506 versions, 537 addresses, 844 publication links over 268 papers.**
+**478 datasets, 506 versions, 537 addresses, 865 publication links over 269 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
