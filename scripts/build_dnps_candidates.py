@@ -237,6 +237,9 @@ def main() -> int:
                            ["feed_date", "pmid", "title", "link", "doi", "journal", "year"])
         w.writeheader()
         w.writerows(rows)
+    # The cache folder is otherwise made only by a DOI lookup, so a run with no
+    # survivors on a fresh runner crashed here once decided papers were dropped.
+    CACHE.mkdir(parents=True, exist_ok=True)
     marker.write_text(stamp)
 
     lines = [f"{len(entries)} entries in the feed, last changed {stamp}", ""]
