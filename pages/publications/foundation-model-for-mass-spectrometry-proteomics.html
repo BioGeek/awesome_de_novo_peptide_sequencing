@@ -204,6 +204,16 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Peer-reviewed version:</strong> <a href="pretrained-spectrum-representations-for-diverse-tandem-mass-spectrometry.html">Pretrained spectrum representations for diverse tandem mass spectrometry proteomics tasks</a> (2026-10-01, Molecular &amp; Cellular Proteomics)</p>
+</div>
+</div>
+</div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>Mass spectrometry is the dominant technology in the field of proteomics, enabling high-throughput analysis of the protein content of complex biological samples. Due to the complexity of the instrumentation and resulting data, sophisticated computational methods are required for the processing and interpretation of acquired mass spectra. Machine learning has shown great promise to improve the analysis of mass spectrometry data, with numerous purpose-built methods for improving specific steps in the data acquisition and analysis pipeline reaching widespread adoption. Here, we propose unifying various spectrum prediction tasks under a single foundation model for mass spectra. To this end, we pre-train a spectrum encoder using de novo sequencing as a pre-training task. We then show that using these pre-trained spectrum representations improves our performance on the four downstream tasks of spectrum quality prediction, chimericity prediction, phosphorylation prediction, and glycosylation status prediction. Finally, we perform multi-task fine-tuning and find that this approach improves the performance on each task individually. Overall, our work demonstrates that a foundation model for tandem mass spectrometry proteomics trained on de novo sequencing learns generalizable representations of spectra, improves performance on downstream tasks where training data is limited, and can ultimately enhance data acquisition and analysis in proteomics experiments.</p>
@@ -224,7 +234,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="methods-and-tools" class="level2">
 <h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
 <ul>
-<li><a href="../algorithms/casanovo-foundation.html">Casanovo Foundation</a>: Foundation model for tandem-MS proteomics: pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5.</li>
+<li><a href="../algorithms/casanovo-foundation.html">Casanovo Foundation</a>: Foundation model for tandem-MS proteomics: pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5. The peer-reviewed version (MCP 2026) names the framework CasanovoTL.</li>
 </ul>
 </section>
 <section id="data-used" class="level2">
@@ -277,6 +287,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../../index.html#every-paper">Browse all papers</a></li>
 <li><a href="../../index.html#how-the-field-cites-itself">How the field cites itself</a></li>
 <li><a href="../../index.html#academic-impact-by-citation-count">Academic impact by citation count</a></li>
+<li><a href="../../index.html#publication-lifecycle">Publication lifecycle</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 

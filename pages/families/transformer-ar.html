@@ -185,7 +185,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>63</td>
+<td>64</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
@@ -240,7 +240,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/dinovo.html">DiNovo</a> (2025): Mirror proteases + DL</li>
 <li><a href="../algorithms/pairwise.html">Pairwise</a> (2025): Mass difference attention</li>
 <li><a href="../algorithms/instanovo-p.html">InstaNovo-P</a> (2025): Phosphoproteomics</li>
-<li><a href="../algorithms/casanovo-foundation.html">Casanovo Foundation</a> (2025): Foundation model for tandem-MS proteomics: pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5.</li>
+<li><a href="../algorithms/casanovo-foundation.html">Casanovo Foundation</a> (2025): Foundation model for tandem-MS proteomics: pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5. The peer-reviewed version (MCP 2026) names the framework CasanovoTL.</li>
 <li><a href="../algorithms/instanovo-glycopeptide-fine-tuning.html">InstaNovo glycopeptide fine-tuning</a> (2025): Adaptation of InstaNovo, a transformer de novo peptide sequencer, to glycoproteomics by fine-tuning on glycopeptide spectra. Learning from glyco spectra is measurable but limited, and every fine-tuning setting suffers catastrophic forgetting, losing accuracy on peptides the base model handled well; fine-tuning on unfiltered spectra that partly overlap the original training set gives the strongest learning signal but does not remove the effect. PCA of spectrum embeddings shows a large domain shift that explains the difficulty, and the study argues for treating overlapping glyco spectra as informative examples rather than outliers to discard, alongside multi-task and contrastive objectives and embedding transformations that pull glyco spectra toward the original distribution.</li>
 <li><a href="../algorithms/rnova.html">RNovA</a> (2025): Zero-shot open PTM discovery</li>
 <li><a href="../algorithms/punifind.html">pUniFind</a> (2025): Multimodal pre-trained transformer for mass spectra that unifies peptide-spectrum scoring and zero-shot de novo sequencing in a single model. Trained on &gt;100M open-search-derived spectra; reports +60% PSMs over prior de novo methods with 1,300+ modifications supported, and a DL-based QC step that recovers 38.5% additional peptides.</li>
@@ -272,8 +272,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="applied-in">Applied in</h2>
 <p><a href="../subdomains/glycoproteomics.html">Glycoproteomics</a></p>
 </section>
-<section id="papers-describing-them-63" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-63">Papers describing them (63)</h2>
+<section id="papers-describing-them-64" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-64">Papers describing them (64)</h2>
 <ul>
 <li><a href="../publications/de-novo-mass-spectrometry-peptide-sequencing-with-a-transformer-model-preprint.html">De novo mass spectrometry peptide sequencing with a transformer model</a> (2022, bioRxiv, preprint)</li>
 <li><a href="../publications/dpst-de-novo-peptide-sequencing-with-amino-acid-aware-transformers.html">DPST: De Novo Peptide Sequencing with Amino-Acid-Aware Transformers</a> (2022, arXiv, preprint)</li>
@@ -337,6 +337,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/pi-helixnovo2-making-accurate-online-de-novo-peptide-sequencing-available-to-all.html">π-HelixNovo2: Making Accurate Online De Novo Peptide Sequencing Available to All</a> (2026, Genomics, Proteomics &amp; Bioinformatics, peer-reviewed)</li>
 <li><a href="../publications/instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics.html">InstaNovo-P: a de novo peptide sequencing model for phosphoproteomics</a> (2026, Nature Communications, peer-reviewed)</li>
 <li><a href="../publications/gyronovo-error-guided-fragment-imputation-with-mass-aware-attention-for-de-novo.html">GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing</a> (2026, arXiv, preprint)</li>
+<li><a href="../publications/pretrained-spectrum-representations-for-diverse-tandem-mass-spectrometry.html">Pretrained spectrum representations for diverse tandem mass spectrometry proteomics tasks</a> (2026, Molecular &amp; Cellular Proteomics, peer-reviewed)</li>
 <li><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a> (2026, arXiv, preprint)</li>
 </ul>
 </section>
