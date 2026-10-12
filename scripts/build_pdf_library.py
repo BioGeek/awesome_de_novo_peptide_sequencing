@@ -73,6 +73,7 @@ import csv
 import datetime
 import functools
 import hashlib
+import html
 import json
 import re
 import shutil
@@ -319,7 +320,11 @@ def zotero_name(p: dict) -> str:
         tag = f"{first} and {(p['second_author'] or '').split()[-1]}"
     else:
         tag = first
-    title = re.sub(r"[^\w áàâäéèêëíìîïóòôöúùûüçñšžπ'()+-]", " ", p["title"])
+    # The title keeps the publisher's own <i>/<sub> markup in the catalog, and
+    # its tags are not part of the name: they produced "...by i de novo i
+    # sequencing...". Drop tags and decode entities before cleaning.
+    plain = html.unescape(re.sub(r"<[^>]+>", "", p["title"]))
+    title = re.sub(r"[^\w áàâäéèêëíìîïóòôöúùûüçñšžπ'()+-]", " ", plain)
     title = re.sub(r"\s+", " ", title).strip()
     stem = f"{tag} - {str(p['publication_date'])[:4]} - "
     budget = NAME_MAX - len((stem + ".pdf").encode())
