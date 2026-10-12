@@ -1,7 +1,7 @@
 # Scripts
 
 Everything that builds, refreshes, mines or checks the catalog. This folder
-holds **32 scripts**; every one has an entry below, under a heading that is its
+holds **33 scripts**; every one has an entry below, under a heading that is its
 filename, and `check_counts.py` fails the commit when the two drift apart:
 **0 scripts** lack an entry below, and **0 entries** name a script that does not
 exist.
@@ -178,6 +178,12 @@ CI. It also counts this folder against this file.
 ### `check_chart_overlap.py`
 Renders nothing itself: drives the rendered `_site` in headless Chrome and
 fails on any colliding or clipped chart label.
+
+### `check_links.py`
+Resolves every internal `.html` link in `index.qmd` and the generated pages to
+its source `.qmd` and fails on any that is missing. `slugs.py --check` guards URL
+stability; this guards URL existence (a slug computed differently for a page and
+a link to it 404s). Runs in CI (`check-links.yml`).
 
 ## Shared modules
 

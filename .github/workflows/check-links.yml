@@ -1,0 +1,32 @@
+# Fail when a generated page links to an internal page that does not exist.
+#
+# Every cross-page link is a relative .html target written from denovo.db. A slug
+# computed differently for a page and for a link to it produces a 404 that no
+# normal diff shows -- it only surfaces later as a Search Console "Not found"
+# error. check-slugs guards URL stability; this guards URL existence.
+#
+# The fix for a legitimate rename is a REDIRECTS entry in scripts/slugs.py (so the
+# old URL keeps working), then a rebuild; for a plain bug, correct the slug.
+
+name: check-links
+
+on:
+  push:
+    branches: [main]
+    paths: ['index.qmd', 'pages/**', 'scripts/build_pages.py', 'scripts/check_links.py']
+  pull_request:
+    paths: ['index.qmd', 'pages/**', 'scripts/build_pages.py', 'scripts/check_links.py']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # scripts/check_links.py is stdlib-only, so no uv sync and no dependency install.
+      - name: Check that every internal link resolves
+        run: python3 scripts/check_links.py
