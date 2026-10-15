@@ -1672,7 +1672,12 @@ by reading both at once.
 
 ### The navbar and the hero badges
 
-The navbar is **The map, Papers, Methods, Datasets, Authors**. Papers points at
+The navbar is **The map, Papers, Methods, Applications, Datasets, Authors**.
+Applications points at the section `#application-areas`, whose lane labels
+link each area's page; it was added because downstream applications are 349 of
+the 816 method rows, the largest kind, and had no way in from the navbar. It is
+one link rather than a dropdown of the 17 areas, which would be a hand-kept
+copy of the `subdomain` table. Papers points at
 `#every-paper` and Datasets at the SECTION `#the-data-underneath`, and the
 difference is deliberate: the papers section opens with a short list of recent
 arrivals standing in front of the table, while the datasets section opens with

@@ -24,15 +24,17 @@ website:
       # #every-paper, not #browse-all-papers: the section opens with the short
       # 'Recently added' list, so the heading anchor landed a reader on recent
       # arrivals rather than on the table this link promises.
-      # #every-paper, not #browse-all-papers: the section opens with the short
-      # 'Recently added' list, so the heading anchor landed a reader on recent
-      # arrivals rather than on the table this link promises.
       - text: "Papers"
         href: index.html#every-paper
       # Methods points at the architectures swim lane, the only view that shows
       # every method, the same target the hero's 'methods' badge uses.
       - text: "Methods"
         href: index.html#the-architectures
+      # Applications points at the section, which links each of the application
+      # areas' pages from the subdomain table. A dropdown of the areas would be
+      # a hand-kept copy of that table here, and would drift from it.
+      - text: "Applications"
+        href: index.html#application-areas
       # Datasets points at the SECTION, not at its table, unlike Papers above:
       # that section opens with the charts a reader wants, where the papers
       # section opened with a short list of recent arrivals standing in the way.
