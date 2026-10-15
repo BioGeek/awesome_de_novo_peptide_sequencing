@@ -114,7 +114,7 @@ INSERT INTO author VALUES(106,'Haiteng Deng',NULL,NULL,NULL,NULL,'0000-0001-9496
 INSERT INTO author VALUES(107,'Ming Li','mli@uwaterloo.ca',NULL,NULL,NULL,'0000-0002-2157-2775','A5100351398');
 INSERT INTO author VALUES(108,'Jun A',NULL,NULL,NULL,NULL,'0009-0005-5524-8892','A5143833435');
 INSERT INTO author VALUES(109,'Xiaofan Zhang',NULL,NULL,NULL,NULL,'0000-0001-5618-7554','A5100330731');
-INSERT INTO author VALUES(110,'Te Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(110,'Te Zhang',NULL,NULL,NULL,NULL,'0009-0003-8465-0501',NULL);
 INSERT INTO author VALUES(111,'Yamin Deng',NULL,NULL,NULL,NULL,'0009-0005-2699-2188','A5143784441');
 INSERT INTO author VALUES(112,'Pu Liu',NULL,NULL,NULL,NULL,'0000-0001-8750-7899','A5036044616');
 INSERT INTO author VALUES(113,'Zongxiang Nie',NULL,NULL,NULL,NULL,NULL,NULL);
@@ -3811,6 +3811,7 @@ INSERT INTO author VALUES(3922,'Peter Bergman',NULL,NULL,NULL,NULL,NULL,'A515790
 INSERT INTO author VALUES(3923,'Ákos Végvári',NULL,NULL,NULL,NULL,'0000-0002-1287-0906','A5017803372');
 INSERT INTO author VALUES(3924,'Aliya Al-Ansari',NULL,NULL,NULL,NULL,'0000-0003-3125-9798','A5042897827');
 INSERT INTO author VALUES(3925,'Salma Al-Adwani',NULL,NULL,NULL,NULL,NULL,'A5157932380');
+INSERT INTO author VALUES(3926,'Yiwen Yu',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -11246,6 +11247,9 @@ INSERT INTO author_affiliation VALUES(3892,1412);
 INSERT INTO author_affiliation VALUES(3892,1413);
 INSERT INTO author_affiliation VALUES(3893,1413);
 INSERT INTO author_affiliation VALUES(3894,1412);
+INSERT INTO author_affiliation VALUES(3926,53);
+INSERT INTO author_affiliation VALUES(3926,67);
+INSERT INTO author_affiliation VALUES(75,29);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -13066,6 +13070,7 @@ INSERT INTO publication VALUES(985,'FastaLake selects compact metaproteomic data
 INSERT INTO publication VALUES(986,'Proteomic profiling of <i>Camelus dromedarius</i> blood leukocytes using protein sequence database searches and <i>de novo</i> peptide sequencing','2026-10-08','10.25259/jksus_108_2026','Scientific Scholar','There is a lack of studies on the crude leukocyte proteome of camels. Therefore, we hypothesized that camel leukocytes could be a source of bioactive peptides that have not been studied before. Here, we present the first comprehensive proteomic analysis of dromedary camel crude leukocyte-derived polypeptides (CLDP) using both protein sequence database searches (PSD) and de novo peptide sequencing (DPS) to improve peptide identification and coverage. The crude protein was extracted and analyzed by LC-MS/MS, followed by identification of protein and peptide sequences through PSD and DPS. PSD identified 120 proteins based on the Camelus dromedarius and Sus scrofa databases, while DPS identified a total of 830 peptides with an average local confidence (ALC) of 95% or higher. Gene Ontology (GO) annotation and KEGG analysis highlighted terms associated with stress adaptation, extracellular signaling, and immune response. However, DPS exhibited a broader and more pronounced enrichment trend, particularly in relation to the immune system.','https://doi.org/10.25259/jksus_108_2026','Journal of King Saud University – Science','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(987,'Updated MS²PIP web server delivers fast and accurate MS² peak intensity prediction for multiple fragmentation methods, instruments and labeling techniques','2019-07-02','10.1093/nar/gkz299','Oxford University Press (OUP)','MS²PIP is a data-driven tool that accurately predicts peak intensities for a given peptide''s fragmentation mass spectrum. Since the release of the MS²PIP web server in 2015, we have brought significant updates to both the tool and the web server. In addition to the original models for CID and HCD fragmentation, we have added specialized models for the TripleTOF 5600+ mass spectrometer, for TMT-labeled peptides, for iTRAQ-labeled peptides, and for iTRAQ-labeled phosphopeptides. Because the fragmentation pattern is heavily altered in each of these cases, these additional models greatly improve the prediction accuracy for their corresponding data types. We have also substantially reduced the computational resources required to run MS²PIP, and have completely rebuilt the web server, which now allows predictions of up to 100 000 peptide sequences in a single request. The MS²PIP web server is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkz299','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(988,'Updated MS²PIP web server supports cutting-edge proteomics applications','2023-07-05','10.1093/nar/gkad335','Oxford University Press (OUP)','Interest in the use of machine learning for peptide fragmentation spectrum prediction has been strongly on the rise over the past years, especially for applications in challenging proteomics identification workflows such as immunopeptidomics and the full-proteome identification of data independent acquisition spectra. Since its inception, the MS²PIP peptide spectrum predictor has been widely used for various downstream applications, mostly thanks to its accuracy, ease-of-use, and broad applicability. We here present a thoroughly updated version of the MS²PIP web server, which includes new and more performant prediction models for both tryptic- and non-tryptic peptides, for immunopeptides, and for CID-fragmented TMT-labeled peptides. Additionally, we have also added new functionality to greatly facilitate the generation of proteome-wide predicted spectral libraries, requiring only a FASTA protein file as input. These libraries also include retention time predictions from DeepLC. Moreover, we now provide pre-built and ready-to-download spectral libraries for various model organisms in multiple DIA-compatible spectral library formats. Besides upgrading the back-end models, the user experience on the MS²PIP web server is thus also greatly enhanced, extending its applicability to new domains, including immunopeptidomics and MS3-based TMT quantification experiments. MS²PIP is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkad335','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(989,'MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics','2026-10-14','10.1038/s41592-026-03247-y',NULL,'Here we present MassNet, inspired by large-scale data corpora of text and images; MassNet is an artificial intelligence (AI)-ready data corpus for mass spectrometry (MS)-based proteomics. The corpus contains 1.5 billion tandem MS spectra from high-quality data-dependent acquisition (DDA) MS data across 35 species. Approximately 1.7 million peptide precursors are from human samples. We further present an AI-ready DDA data format called Mass Spectrometry DDA Tensor (MSDT) for compact and standardized storage, curation and reuse of data from multiple sources, which can be optionally converted to a Lightning Memory-Mapped Database for accelerated input/output in deep learning. On the basis of MassNet, we develop XuanjiNovo, a nonautoregressive transformer model that leverages a curriculum learning strategy for de novo peptide sequencing. XuanjiNovo achieves 38.35–143.57% improvement over state-of-the-art methods on human Astral data. MassNet also supports additional downstream tasks, including retention time prediction and PSM rescoring. MassNet represents a foundational MS-based proteomics data resource, marking a critical milestone for AI proteomics research.','https://www.nature.com/articles/s41592-026-03247-y','Nature Methods','peer-reviewed',NULL,'pdf');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19401,6 +19406,20 @@ INSERT INTO publication_author VALUES(988,786,6);
 INSERT INTO publication_author VALUES(988,29,7);
 INSERT INTO publication_author VALUES(988,787,8);
 INSERT INTO publication_author VALUES(988,788,9);
+INSERT INTO publication_author VALUES(989,108,1);
+INSERT INTO publication_author VALUES(989,62,2);
+INSERT INTO publication_author VALUES(989,109,3);
+INSERT INTO publication_author VALUES(989,66,4);
+INSERT INTO publication_author VALUES(989,110,5);
+INSERT INTO publication_author VALUES(989,111,6);
+INSERT INTO publication_author VALUES(989,112,7);
+INSERT INTO publication_author VALUES(989,113,8);
+INSERT INTO publication_author VALUES(989,3926,9);
+INSERT INTO publication_author VALUES(989,114,10);
+INSERT INTO publication_author VALUES(989,75,11);
+INSERT INTO publication_author VALUES(989,60,12);
+INSERT INTO publication_author VALUES(989,73,13);
+INSERT INTO publication_author VALUES(989,71,14);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -20598,6 +20617,7 @@ INSERT INTO publication_impact VALUES(985,'W7221470543',0,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(986,'W7221032976',0,'doi',NULL,2026,'2026-10-12T14:41:41+00:00');
 INSERT INTO publication_impact VALUES(987,'W2950804227',91,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
 INSERT INTO publication_impact VALUES(988,'W4368362035',33,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
+INSERT INTO publication_impact VALUES(989,'W7105753810',0,'doi',NULL,2026,'2026-10-15T14:46:56+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -20664,6 +20684,7 @@ INSERT INTO publication_version VALUES(845,844,'manual');
 INSERT INTO publication_version VALUES(352,978,'manual');
 INSERT INTO publication_version VALUES(9,979,'manual');
 INSERT INTO publication_version VALUES(218,984,'manual');
+INSERT INTO publication_version VALUES(15,989,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27475,6 +27496,35 @@ INSERT INTO publication_author_affiliation VALUES(988,787,1099,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,1097,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,698,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,1099,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(989,108,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,108,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,108,55,2,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,62,33,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,62,515,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,109,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,109,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,109,55,2,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,66,31,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,66,35,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,110,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,110,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,110,55,2,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,111,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,111,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,111,55,2,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,112,56,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,113,54,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,3926,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,3926,67,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,114,54,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,75,31,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,75,29,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,60,31,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,73,33,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,73,31,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,71,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,71,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(989,71,55,2,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,53,0,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,54,1,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,55,2,NULL);
@@ -28750,6 +28800,7 @@ INSERT INTO publication_algorithm VALUES(986,820,'describes');
 INSERT INTO publication_algorithm VALUES(986,62,'uses');
 INSERT INTO publication_algorithm VALUES(987,188,'describes');
 INSERT INTO publication_algorithm VALUES(988,188,'describes');
+INSERT INTO publication_algorithm VALUES(989,15,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -37696,6 +37747,8 @@ INSERT INTO dataset VALUES(486,'Characterisation of urinary WFDC12 in nocturnal 
 INSERT INTO dataset VALUES(487,'Peptidomics of Acanthoscurria gomesiana spider venom reveals new toxins with potential antimicrobial activity','Peptidomics of Acanthoscurria gomesiana spider venom reveals new toxins with potential antimicrobial activity','deposit',NULL,'Acanthoscurria gomesiana (tarantula spider) (phormictopus pheopygus)',NULL);
 INSERT INTO dataset VALUES(488,'Shell composition of the marine planktonic ciliate Schmidingerella (Alveolata, Ciliophora, Oligotrichea)','Shell composition of the marine planktonic ciliate Schmidingerella (Alveolata, Ciliophora, Oligotrichea)','deposit',NULL,'Eukaryota; Schmidingerella',NULL);
 INSERT INTO dataset VALUES(489,'Identification of broadly inhibitory anti-PfEMP1 antibodies by mass spectrometry sequencing of plasma IgG from a malaria-exposed child','Identification of broadly inhibitory anti-PfEMP1 antibodies by mass spectrometry sequencing of plasma IgG from a malaria-exposed child','deposit',NULL,'Homo sapiens (human)',NULL);
+INSERT INTO dataset VALUES(490,'MassNet','AI-ready corpus of more than 1.5 billion DDA MS/MS spectra from 27,643 LC-MS runs in 648 public projects over 35 species, searched with FragPipe and Sage and stored in the MSDT tensor format.','training','DDA','35 animal, plant and microbial species','https://guomics.com/software/massnet');
+INSERT INTO dataset VALUES(491,'15-species benchmark','De novo sequencing benchmark built by the MassNet authors from 15 PRIDE submissions across animals, plants and microbes, acquired on Q Exactive HF, Orbitrap Exploris 480 and Orbitrap Astral instruments.','benchmark','DDA','Homo sapiens; Mus musculus; Aedes aegypti; Drosophila melanogaster; Arabidopsis thaliana; Zea mays; Solanum lycopersicum; Escherichia coli; Saccharomyces cerevisiae; Pyrococcus furiosus; Aspergillus fumigatus; Toxoplasma gondii; Trypanosoma brucei; Bacteroides thetaiotaomicron; Acinetobacter calcoaceticus/baumannii',NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38215,6 +38268,10 @@ INSERT INTO dataset_version VALUES(514,486,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(515,487,'as deposited',NULL,NULL,NULL,NULL,NULL,'2016-08-02',NULL);
 INSERT INTO dataset_version VALUES(516,488,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-06-10',NULL);
 INSERT INTO dataset_version VALUES(517,489,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-02-23',NULL);
+INSERT INTO dataset_version VALUES(518,490,'full corpus','Raw MSDT files for every run, a metadata file, and global FDR-filtered FragPipe and Sage results. Deposited as PRIDE PXD071590, which was still private on 2026-10-15: the Nature Methods data statement gives reviewer access only.',NULL,NULL,NULL,NULL,NULL,15);
+INSERT INTO dataset_version VALUES(519,490,'XuanjiNovo training set (100M PSMs)','100 million PSMs sampled at random from the FragPipe identifications (Sage identifications not used), the training set of XuanjiNovo-100M. Part of PXD071590. The 30M and 65M scaling subsets are not published separately.',NULL,NULL,NULL,NULL,NULL,15);
+INSERT INTO dataset_version VALUES(520,491,'preprint (325 files)','As first described in the bioRxiv preprint: 325 DDA files from 15 species. The preprint names no accession for it beyond the human Astral submission, PXD046453, so it has no address here.',NULL,NULL,NULL,NULL,NULL,15);
+INSERT INTO dataset_version VALUES(521,491,'Nature Methods (307 files)','307 DDA LC-MS/MS files from 15 species, deposited inside PXD071590 and assembled from the 15 PRIDE submissions listed as provenance. Four of them (PXD028713, PXD040002, PXD025030, PXD046453) are also in MassNet and were excluded from XuanjiNovo training.',NULL,NULL,NULL,NULL,NULL,989);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -38762,6 +38819,24 @@ INSERT INTO dataset_address VALUES(547,514,'PRIDE','PXD005196','https://www.ebi.
 INSERT INTO dataset_address VALUES(548,515,'PRIDE','PXD003884','https://www.ebi.ac.uk/pride/archive/projects/PXD003884',NULL,0);
 INSERT INTO dataset_address VALUES(549,516,'PRIDE','PXD070957','https://www.ebi.ac.uk/pride/archive/projects/PXD070957',NULL,0);
 INSERT INTO dataset_address VALUES(550,517,'PRIDE','PXD064525','https://www.ebi.ac.uk/pride/archive/projects/PXD064525',NULL,0);
+INSERT INTO dataset_address VALUES(551,518,'PRIDE','PXD071590','https://www.ebi.ac.uk/pride/archive/projects/PXD071590',NULL,0);
+INSERT INTO dataset_address VALUES(552,519,'PRIDE','PXD071590','https://www.ebi.ac.uk/pride/archive/projects/PXD071590','training set of 100 million PSMs',0);
+INSERT INTO dataset_address VALUES(553,521,'PRIDE','PXD071590','https://www.ebi.ac.uk/pride/archive/projects/PXD071590','15-species benchmark',0);
+INSERT INTO dataset_address VALUES(554,521,'PRIDE','PXD046453','https://www.ebi.ac.uk/pride/archive/projects/PXD046453','Homo sapiens',1);
+INSERT INTO dataset_address VALUES(555,521,'PRIDE','PXD028713','https://www.ebi.ac.uk/pride/archive/projects/PXD028713','Mus musculus',1);
+INSERT INTO dataset_address VALUES(556,521,'PRIDE','PXD043965','https://www.ebi.ac.uk/pride/archive/projects/PXD043965','Aedes aegypti',1);
+INSERT INTO dataset_address VALUES(557,521,'PRIDE','PXD028498','https://www.ebi.ac.uk/pride/archive/projects/PXD028498','Drosophila melanogaster',1);
+INSERT INTO dataset_address VALUES(558,521,'PRIDE','PXD048853','https://www.ebi.ac.uk/pride/archive/projects/PXD048853','Arabidopsis thaliana',1);
+INSERT INTO dataset_address VALUES(559,521,'PRIDE','PXD039552','https://www.ebi.ac.uk/pride/archive/projects/PXD039552','Zea mays',1);
+INSERT INTO dataset_address VALUES(560,521,'PRIDE','PXD029422','https://www.ebi.ac.uk/pride/archive/projects/PXD029422','Solanum lycopersicum',1);
+INSERT INTO dataset_address VALUES(561,521,'PRIDE','PXD035873','https://www.ebi.ac.uk/pride/archive/projects/PXD035873','Escherichia coli',1);
+INSERT INTO dataset_address VALUES(562,521,'PRIDE','PXD025030','https://www.ebi.ac.uk/pride/archive/projects/PXD025030','Saccharomyces cerevisiae',1);
+INSERT INTO dataset_address VALUES(563,521,'PRIDE','PXD035847','https://www.ebi.ac.uk/pride/archive/projects/PXD035847','Pyrococcus furiosus',1);
+INSERT INTO dataset_address VALUES(564,521,'PRIDE','PXD054599','https://www.ebi.ac.uk/pride/archive/projects/PXD054599','Aspergillus fumigatus',1);
+INSERT INTO dataset_address VALUES(565,521,'PRIDE','PXD035654','https://www.ebi.ac.uk/pride/archive/projects/PXD035654','Toxoplasma gondii',1);
+INSERT INTO dataset_address VALUES(566,521,'PRIDE','PXD041551','https://www.ebi.ac.uk/pride/archive/projects/PXD041551','Trypanosoma brucei',1);
+INSERT INTO dataset_address VALUES(567,521,'PRIDE','PXD043360','https://www.ebi.ac.uk/pride/archive/projects/PXD043360','Bacteroides thetaiotaomicron',1);
+INSERT INTO dataset_address VALUES(568,521,'PRIDE','PXD040002','https://www.ebi.ac.uk/pride/archive/projects/PXD040002','Acinetobacter calcoaceticus/baumannii',1);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -39636,6 +39711,20 @@ INSERT INTO publication_dataset VALUES(879,984,352,375,'uses');
 INSERT INTO publication_dataset VALUES(880,984,351,374,'uses');
 INSERT INTO publication_dataset VALUES(881,985,34,43,'uses');
 INSERT INTO publication_dataset VALUES(882,985,204,227,'uses');
+INSERT INTO publication_dataset VALUES(883,989,1,1,'uses');
+INSERT INTO publication_dataset VALUES(884,989,27,36,'uses');
+INSERT INTO publication_dataset VALUES(885,15,490,518,'introduces');
+INSERT INTO publication_dataset VALUES(886,15,490,519,'introduces');
+INSERT INTO publication_dataset VALUES(887,989,490,518,'introduces');
+INSERT INTO publication_dataset VALUES(888,989,490,519,'introduces');
+INSERT INTO publication_dataset VALUES(889,15,491,520,'introduces');
+INSERT INTO publication_dataset VALUES(890,989,491,521,'introduces');
+INSERT INTO publication_dataset VALUES(891,15,44,67,'uses');
+INSERT INTO publication_dataset VALUES(892,15,2,NULL,'uses');
+INSERT INTO publication_dataset VALUES(893,15,3,NULL,'uses');
+INSERT INTO publication_dataset VALUES(894,989,44,67,'uses');
+INSERT INTO publication_dataset VALUES(895,989,2,NULL,'uses');
+INSERT INTO publication_dataset VALUES(896,989,3,NULL,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -46674,6 +46763,33 @@ INSERT INTO publication_citation VALUES(987,215,'both');
 INSERT INTO publication_citation VALUES(988,211,'crossref');
 INSERT INTO publication_citation VALUES(988,215,'crossref');
 INSERT INTO publication_citation VALUES(988,987,'crossref');
+INSERT INTO publication_citation VALUES(989,2,'crossref');
+INSERT INTO publication_citation VALUES(989,21,'crossref');
+INSERT INTO publication_citation VALUES(989,25,'crossref');
+INSERT INTO publication_citation VALUES(989,26,'crossref');
+INSERT INTO publication_citation VALUES(989,33,'crossref');
+INSERT INTO publication_citation VALUES(989,34,'crossref');
+INSERT INTO publication_citation VALUES(989,37,'crossref');
+INSERT INTO publication_citation VALUES(989,38,'crossref');
+INSERT INTO publication_citation VALUES(989,39,'crossref');
+INSERT INTO publication_citation VALUES(989,41,'crossref');
+INSERT INTO publication_citation VALUES(989,42,'crossref');
+INSERT INTO publication_citation VALUES(989,46,'crossref');
+INSERT INTO publication_citation VALUES(989,48,'crossref');
+INSERT INTO publication_citation VALUES(989,49,'crossref');
+INSERT INTO publication_citation VALUES(989,52,'crossref');
+INSERT INTO publication_citation VALUES(989,54,'crossref');
+INSERT INTO publication_citation VALUES(989,58,'crossref');
+INSERT INTO publication_citation VALUES(989,62,'crossref');
+INSERT INTO publication_citation VALUES(989,77,'crossref');
+INSERT INTO publication_citation VALUES(989,98,'crossref');
+INSERT INTO publication_citation VALUES(989,99,'crossref');
+INSERT INTO publication_citation VALUES(989,210,'crossref');
+INSERT INTO publication_citation VALUES(989,263,'crossref');
+INSERT INTO publication_citation VALUES(989,283,'crossref');
+INSERT INTO publication_citation VALUES(989,440,'crossref');
+INSERT INTO publication_citation VALUES(989,482,'crossref');
+INSERT INTO publication_citation VALUES(989,978,'crossref');
 CREATE TABLE checkpoint_dataset (
     checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
     dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
@@ -58310,9 +58426,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
 INSERT INTO sqlite_sequence VALUES('affiliation',1413);
-INSERT INTO sqlite_sequence VALUES('author',3925);
+INSERT INTO sqlite_sequence VALUES('author',3926);
 INSERT INTO sqlite_sequence VALUES('algorithm',820);
-INSERT INTO sqlite_sequence VALUES('publication',988);
+INSERT INTO sqlite_sequence VALUES('publication',989);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
