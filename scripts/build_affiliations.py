@@ -45,6 +45,12 @@ NULL source means a human typed it. The rule, borrowed verbatim from
 so hand-curated text is never overwritten without --force. Everything it would
 have changed goes to affiliation_audit.csv instead.
 
+The same holds for a byline: once a person has written any
+`publication_author_affiliation` row for an author on a paper (source NULL),
+the builder adds nothing more for that author there. OpenAlex attached
+Xiang Zhang's UBC and Fudan to Xiaofan Zhang on publication 15, and the
+correction would otherwise come back on the next full --write.
+
 Institution resolution is deliberately three-tiered, because merging two real
 universities into one row is invisible and destroys curated data:
 
@@ -538,7 +544,12 @@ def main() -> int:
     # --- write the per-byline table --------------------------------------
     inserted = 0
     if args.write and byline:
+        curated = set(cur.execute(
+            "SELECT publication_id, author_id FROM publication_author_affiliation "
+            "WHERE source IS NULL"))
         for pid, aid, affid, pos in byline:
+            if (pid, aid) in curated:
+                continue
             cur.execute(
                 "INSERT OR IGNORE INTO publication_author_affiliation "
                 "(publication_id, author_id, affiliation_id, position, source) "

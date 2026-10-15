@@ -20781,9 +20781,6 @@ INSERT INTO publication_author_affiliation VALUES(13,99,49,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,62,515,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,62,33,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,62,28,2,'openalex');
-INSERT INTO publication_author_affiliation VALUES(15,109,515,0,'openalex');
-INSERT INTO publication_author_affiliation VALUES(15,109,33,1,'openalex');
-INSERT INTO publication_author_affiliation VALUES(15,109,28,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,66,31,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,111,28,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(15,113,54,0,'openalex');
@@ -27478,6 +27475,9 @@ INSERT INTO publication_author_affiliation VALUES(988,787,1099,2,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,1097,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,698,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(988,788,1099,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(15,109,53,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(15,109,54,1,NULL);
+INSERT INTO publication_author_affiliation VALUES(15,109,55,2,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
