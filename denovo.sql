@@ -4816,7 +4816,7 @@ INSERT INTO affiliation VALUES(385,'University of Toronto','Department of Anthro
 INSERT INTO affiliation VALUES(386,'University of the Witwatersrand','Evolutionary Studies Institute',45,181,'https://ror.org/03rp50x72','University of the Witwatersrand',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(387,'University of York','Centre of Excellence in Mass Spectrometry',7,150,'https://ror.org/04m01e293','University of York',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(390,'Max Planck Institute of Biochemistry','Computational Systems Biochemistry',4,73,'https://ror.org/04py35477','Max Planck Institute of Biochemistry',NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(392,'Barcelona Institute of Science and Technology','Center for Genomic Regulation (CNAG-CRG)',33,149,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(392,'Barcelona Institute of Science and Technology','Center for Genomic Regulation (CNAG-CRG)',33,149,'https://ror.org/03kpps236','Barcelona Institute of Science and Technology',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(393,'University Pompeu Fabra','Proteomics Unit',33,149,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(395,'University Pompeu Fabra','Institute of Evolutionary Biology (UPF-CSIC)',33,149,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(396,'Centro Nacional de Investigación sobre la Evolución Humana (CENIEH)',NULL,33,194,NULL,NULL,NULL,NULL,NULL);
@@ -11437,7 +11437,7 @@ INSERT INTO algorithm VALUES(184,'MS2Rescore',NULL,NULL,NULL,'Data-driven PSM re
 INSERT INTO algorithm VALUES(185,'PeptideShaker',NULL,NULL,NULL,'Open-source Java GUI that aggregates and inspects search-engine and de-novo-engine results: the third sibling alongside DeNovoGUI and SearchGUI from the CompOmics-aligned Bergen / Ghent group.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(186,'Snake venom proteomes review',NULL,NULL,NULL,'Toxins (2017) review and database surveying snake venom proteomes assembled largely via de novo sequencing: entry point into venomics as a downstream application area for de novo methods.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(187,'Human plasma IgG1 repertoire profiling',NULL,NULL,NULL,'De novo MS workflow (LC-MS coupled with Stitch / native MS) for profiling the circulating human plasma IgG1 antibody repertoire, demonstrating individual-specific dynamics: landmark application of de novo to clinical antibodyomics.','downstream-application',1,'DDA',NULL,'antibodyomics');
-INSERT INTO algorithm VALUES(188,'MS2PIP',NULL,NULL,'Random Forest','Original MS2PIP: random-forest predictor of MS/MS fragment-ion peak intensities used to rescore search-engine and de novo sequencing results. Later updates (2019 web server, 2024 DL backbone) live in algorithm.short_description.','adjacent',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(188,'MS2PIP',NULL,NULL,'Random Forest','Predictor of MS/MS fragment-ion peak intensities, used to rescore search-engine and de novo sequencing results. Introduced in 2013 as a random-forest model; the 2019 web-server update added models for further fragmentation methods, instruments and labelling techniques, and the 2023 update added tryptic, non-tryptic, immunopeptide and TMT models and proteome-wide predicted spectral libraries with DeepLC retention times.','adjacent',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(189,'Awesome De Novo Peptide Sequencing catalog',NULL,NULL,NULL,'This catalog itself: a curated, interactive map of the de novo peptide sequencing field. SQLite database of papers, models, authors, affiliations, and venues, surfaced via an Observable JS site. Released under CC BY 4.0 (catalog) + MIT (helper scripts).','meta',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(190,'jingbo02 Awesome-Denovo-Peptide-Sequencing',NULL,NULL,NULL,'Curated GitHub-resident paper collection covering de novo peptide sequencing, maintained by Jingbo Zhou (Westlake / Zhejiang). Kindred meta-resource alongside this catalog: slightly different scope and editorial choices, but covers the same field.','meta',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(191,'Casanovo Foundation',NULL,NULL,'Transformer (AR)','Foundation model for tandem-MS proteomics: pre-trained the Casanovo spectrum encoder on 30M labelled spectra from MassIVE-KB, then reused the encoder off-the-shelf for downstream tasks (de novo sequencing, spectrum quality, chimericity, phosphorylation, glycosylation prediction). Successor in spirit to Casanovo v1/v2/v5. The peer-reviewed version (MCP 2026) names the framework CasanovoTL.','algorithm',1,'DDA','CasanovoTL',NULL);
@@ -13064,6 +13064,8 @@ INSERT INTO publication VALUES(983,'Analysis of skin derived peptides from the C
 INSERT INTO publication VALUES(984,'Pretrained spectrum representations for diverse tandem mass spectrometry proteomics tasks','2026-10-01','10.1016/j.mcpro.2026.101673','Elsevier BV','Mass spectrometry is the dominant technology in the field of proteomics, enabling high-throughput analysis of the protein content of complex biological samples. Due to the complexity of the instrumentation and resulting data, sophisticated computational methods are required for the processing and interpretation of acquired mass spectra. Machine learning has shown great promise to improve the analysis of mass spectrometry data, with numerous purpose-built methods for improving specific steps in the data acquisition and analysis pipeline reaching widespread adoption. Each of these tasks rely on a shared fundamental understanding of the information present in a mass spectrum. Here, we propose a transfer learning framework, CasanovoTL, which utilizes pretrained spectrum representations, derived from a de novo sequencing model trained on a massive proteomics dataset, rather than training a spectrum encoder from scratch for each task. We show that using these pre-trained spectrum representations significantly improves our performance on the four downstream tasks of spectrum quality prediction, chimericity prediction, phosphorylation prediction, and glycosylation status prediction. Finally, we perform end-to-end finetuning, as well as multi-task training, and find that finetuned spectrum representations further improve performance on each individual task. Overall, our work demonstrates that a pretrained spectrum encoder for tandem mass spectrometry proteomics trained on de novo sequencing learns generalizable representations of spectra, improves performance on downstream tasks where training data is limited, and can ultimately enhance data acquisition and analysis in proteomics experiments.','https://www.sciencedirect.com/science/article/pii/S1535947626001696','Molecular & Cellular Proteomics','peer-reviewed',NULL,'openalex');
 INSERT INTO publication VALUES(985,'FastaLake selects compact metaproteomic databases from large sequence reservoirs by de novo peptide lookup','2026-10-11','10.64898/2026.10.08.757395','Cold Spring Harbor Laboratory','Metaproteomics analyses require protein sequence databases, yet the microbial proteins present in complex communities are not known in advance. Searching reference catalogs containing hundreds of millions of candidate sequences reduces identification sensitivity, while generating sample-specific databases through metagenomic sequencing adds time and cost. We introduce FastaLake, a computational workflow that uses full-length de novo peptide predictions by AlphaNovo to retrieve complete proteins from broad sequence resources and selects compact databases for conventional searching. In a defined eight-member community, FastaLake approached reference-search peptide yields without knowing its members. Using public sequence catalogs, FastaLake identified about as many peptides as matched metagenomic databases in two stool cohorts and 20-35% more in intestinal fluid at the same nominal 1% peptide false discovery rate. The resulting proteomes reveal personal functional profiles that persist across intestinal regions despite differences in leading species between intestinal fluid and stool. DNA, RNA and protein profiles agreed on broad differences between patients but only weakly on individual functions. All 726 acquisition-specific databases were smaller than the human reference proteome. Compact databases allowed non-specific searches of all 347 CapScan acquisitions, revealing histidine enrichment at peptide C termini in intestinal fluid. FastaLake enables metaproteomics analysis without matched metagenomic sequencing by constructing search databases from sequence resources and de novo peptide sequencing.','https://www.biorxiv.org/content/10.64898/2026.10.08.757395v1','bioRxiv','preprint',NULL,'biorxiv');
 INSERT INTO publication VALUES(986,'Proteomic profiling of <i>Camelus dromedarius</i> blood leukocytes using protein sequence database searches and <i>de novo</i> peptide sequencing','2026-10-08','10.25259/jksus_108_2026','Scientific Scholar','There is a lack of studies on the crude leukocyte proteome of camels. Therefore, we hypothesized that camel leukocytes could be a source of bioactive peptides that have not been studied before. Here, we present the first comprehensive proteomic analysis of dromedary camel crude leukocyte-derived polypeptides (CLDP) using both protein sequence database searches (PSD) and de novo peptide sequencing (DPS) to improve peptide identification and coverage. The crude protein was extracted and analyzed by LC-MS/MS, followed by identification of protein and peptide sequences through PSD and DPS. PSD identified 120 proteins based on the Camelus dromedarius and Sus scrofa databases, while DPS identified a total of 830 peptides with an average local confidence (ALC) of 95% or higher. Gene Ontology (GO) annotation and KEGG analysis highlighted terms associated with stress adaptation, extracellular signaling, and immune response. However, DPS exhibited a broader and more pronounced enrichment trend, particularly in relation to the immune system.','https://doi.org/10.25259/jksus_108_2026','Journal of King Saud University – Science','peer-reviewed',NULL,'openalex');
+INSERT INTO publication VALUES(987,'Updated MS²PIP web server delivers fast and accurate MS² peak intensity prediction for multiple fragmentation methods, instruments and labeling techniques','2019-07-02','10.1093/nar/gkz299','Oxford University Press (OUP)','MS²PIP is a data-driven tool that accurately predicts peak intensities for a given peptide''s fragmentation mass spectrum. Since the release of the MS²PIP web server in 2015, we have brought significant updates to both the tool and the web server. In addition to the original models for CID and HCD fragmentation, we have added specialized models for the TripleTOF 5600+ mass spectrometer, for TMT-labeled peptides, for iTRAQ-labeled peptides, and for iTRAQ-labeled phosphopeptides. Because the fragmentation pattern is heavily altered in each of these cases, these additional models greatly improve the prediction accuracy for their corresponding data types. We have also substantially reduced the computational resources required to run MS²PIP, and have completely rebuilt the web server, which now allows predictions of up to 100 000 peptide sequences in a single request. The MS²PIP web server is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkz299','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(988,'Updated MS²PIP web server supports cutting-edge proteomics applications','2023-07-05','10.1093/nar/gkad335','Oxford University Press (OUP)','Interest in the use of machine learning for peptide fragmentation spectrum prediction has been strongly on the rise over the past years, especially for applications in challenging proteomics identification workflows such as immunopeptidomics and the full-proteome identification of data independent acquisition spectra. Since its inception, the MS²PIP peptide spectrum predictor has been widely used for various downstream applications, mostly thanks to its accuracy, ease-of-use, and broad applicability. We here present a thoroughly updated version of the MS²PIP web server, which includes new and more performant prediction models for both tryptic- and non-tryptic peptides, for immunopeptides, and for CID-fragmented TMT-labeled peptides. Additionally, we have also added new functionality to greatly facilitate the generation of proteome-wide predicted spectral libraries, requiring only a FASTA protein file as input. These libraries also include retention time predictions from DeepLC. Moreover, we now provide pre-built and ready-to-download spectral libraries for various model organisms in multiple DIA-compatible spectral library formats. Besides upgrading the back-end models, the user experience on the MS²PIP web server is thus also greatly enhanced, extending its applicability to new domains, including immunopeptidomics and MS3-based TMT quantification experiments. MS²PIP is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkad335','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19387,6 +19389,18 @@ INSERT INTO publication_author VALUES(986,3922,5);
 INSERT INTO publication_author VALUES(986,3923,6);
 INSERT INTO publication_author VALUES(986,3924,7);
 INSERT INTO publication_author VALUES(986,3925,8);
+INSERT INTO publication_author VALUES(987,788,1);
+INSERT INTO publication_author VALUES(987,29,2);
+INSERT INTO publication_author VALUES(987,787,3);
+INSERT INTO publication_author VALUES(988,783,1);
+INSERT INTO publication_author VALUES(988,784,2);
+INSERT INTO publication_author VALUES(988,679,3);
+INSERT INTO publication_author VALUES(988,690,4);
+INSERT INTO publication_author VALUES(988,785,5);
+INSERT INTO publication_author VALUES(988,786,6);
+INSERT INTO publication_author VALUES(988,29,7);
+INSERT INTO publication_author VALUES(988,787,8);
+INSERT INTO publication_author VALUES(988,788,9);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -20582,6 +20596,8 @@ INSERT INTO publication_impact VALUES(982,'W7220448850',0,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(983,'W2532478912',2,'doi',NULL,2026,'2026-10-11T14:18:44+00:00');
 INSERT INTO publication_impact VALUES(985,'W7221470543',0,'doi',NULL,2026,'2026-10-12T14:41:41+00:00');
 INSERT INTO publication_impact VALUES(986,'W7221032976',0,'doi',NULL,2026,'2026-10-12T14:41:41+00:00');
+INSERT INTO publication_impact VALUES(987,'W2950804227',91,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
+INSERT INTO publication_impact VALUES(988,'W4368362035',33,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27430,6 +27446,38 @@ INSERT INTO publication_author_affiliation VALUES(985,567,161,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(986,3920,755,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(986,3922,755,1,'openalex');
 INSERT INTO publication_author_affiliation VALUES(986,3923,755,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,788,698,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,788,1099,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,29,698,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,29,1099,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,787,698,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(987,787,1099,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,783,698,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,783,1099,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,784,1097,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,784,698,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,784,1099,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,679,332,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,679,392,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,679,1297,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,690,332,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,690,392,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,690,1297,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,785,761,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,785,1098,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,785,800,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,786,761,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,786,1098,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,786,800,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,29,1097,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,29,698,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,29,1099,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,787,1097,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,787,698,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,787,1099,2,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,788,1097,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,788,698,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(988,788,1099,2,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28700,6 +28748,8 @@ INSERT INTO publication_algorithm VALUES(984,191,'describes');
 INSERT INTO publication_algorithm VALUES(985,819,'describes');
 INSERT INTO publication_algorithm VALUES(986,820,'describes');
 INSERT INTO publication_algorithm VALUES(986,62,'uses');
+INSERT INTO publication_algorithm VALUES(987,188,'describes');
+INSERT INTO publication_algorithm VALUES(988,188,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -46620,6 +46670,10 @@ INSERT INTO publication_citation VALUES(986,60,'both');
 INSERT INTO publication_citation VALUES(986,73,'both');
 INSERT INTO publication_citation VALUES(986,151,'both');
 INSERT INTO publication_citation VALUES(986,204,'both');
+INSERT INTO publication_citation VALUES(987,215,'both');
+INSERT INTO publication_citation VALUES(988,211,'crossref');
+INSERT INTO publication_citation VALUES(988,215,'crossref');
+INSERT INTO publication_citation VALUES(988,987,'crossref');
 CREATE TABLE checkpoint_dataset (
     checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
     dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
@@ -58258,7 +58312,36 @@ INSERT INTO sqlite_sequence VALUES('city',573);
 INSERT INTO sqlite_sequence VALUES('affiliation',1413);
 INSERT INTO sqlite_sequence VALUES('author',3925);
 INSERT INTO sqlite_sequence VALUES('algorithm',820);
-INSERT INTO sqlite_sequence VALUES('publication',986);
+INSERT INTO sqlite_sequence VALUES('publication',988);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -58285,11 +58368,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -58305,12 +58383,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -58325,15 +58397,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -58362,6 +58425,20 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -58369,27 +58446,4 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;
