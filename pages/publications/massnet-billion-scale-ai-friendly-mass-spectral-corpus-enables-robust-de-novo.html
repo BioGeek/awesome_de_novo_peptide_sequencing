@@ -208,6 +208,16 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Peer-reviewed version:</strong> <a href="massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep.html">MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics</a> (2026-10-14, Nature Methods)</p>
+</div>
+</div>
+</div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>Breakthroughs in artificial intelligence (AI) for natural language processing and computer vision have been largely driven by high-quality, large-scale datasets such as OpenWebText and ImageNet. Inspired by this, we present MassNet, a foundational resource for proteomics designed to accelerate deep learning applications. MassNet is the largest known corpus of data-dependent acquisition (DDA) mass spectrometry (MS) data, derived from ~30 TB of raw files and comprising 1.54 billion MS/MS spectra, resulting in 558 million peptide-spectrum matches (PSMs) across 35 species, including animals, plants, and microbes. Within the human subset, MassNet includes more than 1.7 million precursors and 19,966 proteins, covering 98% of annotated human proteins. To enable efficient AI training, we developed the Mass Spectrometry Data Tensor (MSDT), a structured format based on Parquet that enables standardized, high-performance batch access and seamless integration with GPU and TPU platforms for distributed training. We further extended MassNet to support de novo peptide sequencing, which infers peptide sequences directly from MS/MS spectra without reference databases, and is critical for discovering novel proteins, characterizing non-model organisms, and identifying post-translational modifications (PTMs). We introduce XuanjiNovo, a non-autoregressive Transformer model that leverages a curriculum learning strategy to enhance training stability. By dynamically adjusting learning difficulty based on model performance, XuanjiNovo achieves smooth convergence on complex, multi-distributional data without manual hyperparameter tuning. Trained on 100 million PSMs from the MassNet, it consistently outperforms state-of-the-art methods across diverse benchmarking tasks. Peptide recall exceeds 0.8 on the Bacteroides thetaiotaomicron and Zea mays datasets. On human data acquired using the Orbitrap Astral platform, XuanjiNovo achieves achieves 38.8% to 144.3% improvement over existing models. MassNet represents the first large-scale, standardized foundational dataset in proteomics, marking a critical milestone in the integration of artificial intelligence into proteomics research.</p>
@@ -224,7 +234,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../authors/pu-liu.html">Pu Liu</a> · <a href="../institutions/westlake-omics-hangzhou-biotechnology-co-ltd.html">Westlake Omics (Hangzhou) Biotechnology Co., Ltd.</a></li>
 <li><a href="../authors/zongxiang-nie.html">Zongxiang Nie</a> · <a href="../institutions/westlake-university.html">Westlake University</a></li>
 <li><a href="../authors/yi-chen.html">Yi Chen</a> · <a href="../institutions/westlake-university.html">Westlake University</a></li>
-<li><a href="../authors/nanqing-dong.html">Nanqing Dong</a> · <a href="../institutions/shanghai-artificial-intelligence-laboratory.html">Shanghai Artificial Intelligence Laboratory</a></li>
+<li><a href="../authors/nanqing-dong.html">Nanqing Dong</a> · <a href="../institutions/shanghai-artificial-intelligence-laboratory.html">Shanghai Artificial Intelligence Laboratory</a>, <a href="../institutions/shanghai-innovation-institute.html">Shanghai Innovation Institute</a></li>
 <li><a href="../authors/zhiqiang-gao.html">Zhiqiang Gao</a> · <a href="../institutions/shanghai-artificial-intelligence-laboratory.html">Shanghai Artificial Intelligence Laboratory</a></li>
 <li><a href="../authors/siqi-sun.html">Siqi Sun</a> · <a href="../institutions/fudan-university.html">Fudan University</a>, <a href="../institutions/shanghai-artificial-intelligence-laboratory.html">Shanghai Artificial Intelligence Laboratory</a></li>
 <li><a href="../authors/tiannan-guo.html">Tiannan Guo</a> · <a href="../institutions/westlake-institute-for-advanced-study.html">Westlake Institute for Advanced Study</a>, <a href="../institutions/westlake-university.html">Westlake University</a></li>
@@ -236,10 +246,21 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/xuanjinovo.html">XuanjiNovo</a>: Billion-scale pretraining</li>
 </ul>
 </section>
+<section id="data-deposited" class="level2">
+<h2 class="anchored" data-anchor-id="data-deposited">Data deposited</h2>
+<ul>
+<li><strong>15-species benchmark</strong> <small>(preprint (325 files))</small> <small>· no public address</small></li>
+<li><strong>MassNet</strong> <small>(XuanjiNovo training set (100M PSMs))</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD071590">PXD071590</a></li>
+<li><strong>MassNet</strong> <small>(full corpus)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD071590">PXD071590</a></li>
+</ul>
+</section>
 <section id="data-used" class="level2">
 <h2 class="anchored" data-anchor-id="data-used">Data used</h2>
 <ul>
+<li><strong>MassIVE-KB</strong> <small>(version not stated)</small></li>
 <li><strong>Nine-species benchmark</strong> <small>(original (DeepNovo, 2017))</small> · <a href="https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000081382">MSV000081382</a>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD003868">PXD003868</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004325">PXD004325</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004424">PXD004424</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004467">PXD004467</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004536">PXD004536</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004565">PXD004565</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004947">PXD004947</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD004948">PXD004948</a> <small>(provenance)</small>, <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD005025">PXD005025</a> <small>(provenance)</small></li>
+<li><strong>ProteomeTools</strong> <small>(version not stated)</small></li>
+<li><strong>Proteomics identifies new therapeutic targets of early-stage hepatocellular carcinoma</strong> <small>(as deposited)</small> · <a href="https://www.iprox.cn/page/project.html?id=IPX0000937000">IPX0000937000</a></li>
 <li><strong>Ultra-fast label-free quantification and comprehensive proteome coverage with narrow-window data-independent acquisition</strong> <small>(as deposited)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD046453">PXD046453</a></li>
 </ul>
 </section>
@@ -292,6 +313,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../../index.html#every-paper">Browse all papers</a></li>
 <li><a href="../../index.html#how-the-field-cites-itself">How the field cites itself</a></li>
 <li><a href="../../index.html#academic-impact-by-citation-count">Academic impact by citation count</a></li>
+<li><a href="../../index.html#publication-lifecycle">Publication lifecycle</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
