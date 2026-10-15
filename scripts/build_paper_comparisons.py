@@ -321,6 +321,10 @@ COMPARISON_ALIASES: dict[str, tuple[str, str | None]] = {
     "primenovo": ("\u03c0-PrimeNovo", None),
     "helix": ("\u03c0-HelixNovo", None),
     "helixnovo": ("\u03c0-HelixNovo", None),
+    # MassNet's two XuanjiNovo checkpoints: 100M PSMs, and that model
+    # fine-tuned on 30M more from MassIVE-KB (130M). One method, two models.
+    "xuanjinovo100m": ("XuanjiNovo", "100M"),
+    "xuanjinovo130m": ("XuanjiNovo", "130M"),
 }
 
 # A table names the paper's own method 'Ours' at least as often as it names it.
@@ -3230,14 +3234,24 @@ def resolve_dataset(con: sqlite3.Connection, caption: str, near: str,
     if pinned_ds:
         # A CURATED DATASET WINS over anything read off the page: it was put
         # there because the page cannot be read correctly without the prose.
-        name, printed = pinned_ds
+        # An optional third element pins the VERSION too, for a table whose
+        # paper says which one in words no lexicon should learn.
+        name, printed, *pinned_v = pinned_ds
         if name is None:
             return None, None, None, printed
         row = con.execute("SELECT id FROM dataset WHERE name = ?", (name,)).fetchone()
         if not row:
             raise Reject(f"D1 TABLE_DATASET names {name!r}, absent from the "
                          f"dataset table")
-        return row[0], name, None, printed
+        vid = None
+        if pinned_v and pinned_v[0]:
+            got = con.execute("SELECT id FROM dataset_version WHERE dataset_id=? "
+                              "AND version=?", (row[0], pinned_v[0])).fetchone()
+            if not got:
+                raise Reject(f"D1 TABLE_DATASET pins version {pinned_v[0]!r} of "
+                             f"{name!r}, which is absent")
+            vid = got[0]
+        return row[0], name, vid, printed
     if hint:
         # A per-column spanner or header naming the dataset is MORE specific
         # than the caption, which on a split table names all of them at once.
@@ -4041,6 +4055,22 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # MassNet (989): "On the 15-species benchmark, XuanjiNovo (version 1.1)
+    # outperformed ... pi-HelixNovo (version 1.1), Casanovo V2 (version
+    # 5.0.0), InstaNovo+ (version 1.1.0), ContraNovo and pi-PrimeNovo". A
+    # released version number is a released model; ContraNovo and
+    # pi-PrimeNovo get none, so they stay unclear. Supplementary Fig. 3 says
+    # only that the pi-HelixNovo model "is publicly available".
+    (989, "Fig. 4b"): {
+        m: ("released", "On the 15-species benchmark, XuanjiNovo (version 1.1) outperformed "
+                        "widely used de novo sequencing methods, including π-HelixNovo "
+                        "(version 1.1), Casanovo V2 (version 5.0.0), InstaNovo+ (version "
+                        "1.1.0), ContraNovo and π-PrimeNovo")
+        for m in ("π-HelixNovo", "Casanovo", "InstaNovo+")},
+    (989, "Supplementary Fig. 3a"): {
+        "π-HelixNovo": ("released", "The π-HelixNovo model is publicly available and "
+                                         "was trained on datasets derived from eight species, "
+                                         "excluding human.")},
     # AdaNovo, every table: "We reproduce the results of Casanovo with the
     # settings and hypermeters of the original paper and report the published
     # results of DeepNovo and PointNovo as their pretrained weights are
@@ -4294,6 +4324,28 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    # MassNet (989): what the sheet and the paper disagree on.
+    (989, "Supplementary Fig. 3a"): (
+        "Values from the paper's Supplementary Data 1 (sheet SFigure3A); the figure "
+        "prints none. The sheet names InstaNovo where the legend draws InstaNovo+. "
+        "THE TEXT AND THE SHEET DISAGREE once: p. 8 puts XuanjiNovo-130M on "
+        "M. musculus at 'approximately 0.67', the sheet at 0.682."),
+    (989, "Supplementary Fig. 3b"): (
+        "Values from Supplementary Data 1 (sheet SFigure3B); the figure prints none. "
+        "The figure draws six bars and the sheet has five: \u03c0-HelixNovo, whose bar "
+        "is barely above zero, has no row, so it is not recorded rather than read off "
+        "the bar. XuanjiNovo is XuanjiNovo-100M, per the caption of Fig. 4."),
+    (989, "Supplementary Fig. 3c"): (
+        "Values from Supplementary Data 1 (sheet SFigure3C); the figure prints none. "
+        "The figure draws six bars and the sheet has five: \u03c0-HelixNovo (about 0.26 "
+        "by its bar) has no row, so it is not recorded. THE TEXT AND THE SHEET "
+        "DISAGREE: p. 8 says XuanjiNovo-100M 'achieved a recall of 0.62' on PT, the "
+        "sheet gives 0.605."),
+    (989, "Fig. 4b"): (
+        "Values from the paper's Source Data file (sheet Figure4B); the figure prints "
+        "none. XuanjiNovo is XuanjiNovo-100M, per the caption. THE TEXT AND THE SHEET "
+        "DISAGREE once: p. 5 says the other models on S. lycopersicum ranged 'from as "
+        "low as 0.01 (\u03c0-HelixNovo)', the sheet gives 0.001."),
     (53, "Fig. 3"): ("The data are the nine-species benchmark's yeast submission "
                      "(PXD003868, the paper's reference [33]), but NOT under the "
                      "benchmark's protocol: all 277,077 spectra were re-searched with "
@@ -4402,6 +4454,147 @@ def bar_figure_grid(page, spec: dict) -> list[list[str]]:
     return [head_metric, head_cat] + rows
 
 
+# FIGURES WHOSE VALUES ARE IN THE PAPER'S OWN SOURCE-DATA SPREADSHEET. A bar
+# chart that prints no values cannot be read off the page, and estimating from
+# bar heights is never done; but a Nature-family paper deposits the numbers
+# behind each figure as a sheet, which is the publisher's copy of the data and
+# needs no reading at all. The entry names the file (by the label
+# build_pdf_library's `supplements` files it under), the sheet, which column
+# holds the method, which the subset and which the value, and where the figure
+# is drawn, for the review crop. The sheet's own column names are NOT trusted
+# for the metric: MassNet's call peptide recall 'Pep_Precision' (TABLE_METRIC
+# carries the reasoning). Marked extraction='source-data' into the database.
+SOURCE_DATA_TABLES: dict[tuple[int, str], dict] = {}
+
+_MN_SF3 = ("Evaluation of de novo peptide sequencing performance on other benchmark "
+           "datasets. (A) Peptide recall across nine species using seven models: "
+           "InstaNovo+, π-HelixNovo, ContraNovo, CasaNovo V2, π-PrimeNovo, "
+           "XuanjiNovo-100M, and XuanjiNovo-130M. (B) Peptide recall on the HCC dataset. "
+           "(C) Peptide recall on the PT dataset. The π-HelixNovo model is publicly "
+           "available and was trained on datasets derived from eight species, excluding "
+           "human. XuanjiNovo-100M: base model; XuanjiNovo-130M: fine-tuned on 30M PSMs "
+           "from MassIVE.")
+# MassNet, Nature Methods (989). Its comparisons are all bar charts with no
+# printed value. Supplementary Data 1 holds Supplementary Fig. 3's three panels
+# and the Source Data file holds Fig. 4b, each as long rows (model, subset,
+# value). The sheets write 'InstaNovo' where the legends, the prose and the
+# version the paper ran (1.1.0) all say InstaNovo+, so the sheet's name is
+# mapped to the method the figure draws.
+for _lab, _sheet, _sub, _page, _bbox in (
+        ("Supplementary Fig. 3a", "SFigure3A", "Species", 5, (88.0, 76.0, 448.0, 228.0)),
+        ("Supplementary Fig. 3b", "SFigure3B", "Dataset", 5, (155.0, 250.0, 290.0, 408.0)),
+        ("Supplementary Fig. 3c", "SFigure3C", "Dataset", 5, (293.0, 250.0, 425.0, 408.0))):
+    SOURCE_DATA_TABLES[(989, _lab)] = {
+        "sheet_file": "Supplementary Data 1", "sheet": _sheet,
+        "method": "Model", "subset": _sub, "value": "Pep_Precision",
+        "rename": {"InstaNovo": "InstaNovo+"},
+        "pdf": "si1", "page": _page, "bbox": _bbox, "caption": _MN_SF3,
+        "metric_header": "Peptide recall",
+    }
+SOURCE_DATA_TABLES[(989, "Fig. 4b")] = {
+    "sheet_file": "Source Data", "sheet": "Figure4B",
+    "method": "Model", "subset": "Species", "value": "Pep_Precision",
+    "rename": {"InstaNovo": "InstaNovo+"},
+    "pdf": "", "page": 7, "bbox": (78.0, 298.0, 378.0, 550.0),
+    "caption": ("Comparison of XuanjiNovo and existing de novo peptide sequencing models "
+                "on the 15-species benchmark dataset. b, Cross-species peptide recall "
+                "aggregated by species, illustrating overall performance differences "
+                "across taxa."),
+    "metric_header": "Peptide recall",
+}
+
+
+def read_xlsx_sheet(path: pathlib.Path, sheet: str) -> list[list[str]]:
+    """One worksheet's cells as text rows, with the standard library only.
+
+    An .xlsx is a zip of XML: the workbook names each sheet and points at its
+    part through a relationship, strings live in a shared table, and a number
+    is stored as a double's full expansion, so it is shown at the 15
+    significant digits the sheet itself displays ('0.596').
+    """
+    import zipfile
+    import xml.etree.ElementTree as ET
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+          "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+          "p": "http://schemas.openxmlformats.org/package/2006/relationships"}
+    with zipfile.ZipFile(path) as z:
+        wb = ET.fromstring(z.read("xl/workbook.xml"))
+        rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+        target = {r.get("Id"): r.get("Target") for r in rels.findall("p:Relationship", ns)}
+        rid = next((s.get(f"{{{ns['r']}}}id") for s in wb.find("m:sheets", ns)
+                    if s.get("name") == sheet), None)
+        if rid is None:
+            raise Reject(f"S1 no sheet {sheet!r} in {path.name}")
+        part = target[rid].lstrip("/")
+        part = part if part.startswith("xl/") else "xl/" + part
+        shared = []
+        if "xl/sharedStrings.xml" in z.namelist():
+            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
+                shared.append("".join(t.text or "" for t in si.iter(f"{{{ns['m']}}}t")))
+        out = []
+        for row in ET.fromstring(z.read(part)).iter(f"{{{ns['m']}}}row"):
+            cells = {}
+            for c in row.findall("m:c", ns):
+                col = re.match(r"[A-Z]+", c.get("r")).group(0)
+                k = 0
+                for ch in col:
+                    k = k * 26 + ord(ch) - 64
+                v = c.find("m:v", ns)
+                if c.get("t") == "s" and v is not None:
+                    txt = shared[int(v.text)]
+                elif c.get("t") == "inlineStr":
+                    txt = "".join(t.text or "" for t in c.iter(f"{{{ns['m']}}}t"))
+                elif v is not None and c.get("t") in (None, "n"):
+                    # A number is stored as the double's full expansion
+                    # ('0.59599999999999997', '8.6999999999999994E-2'); 15
+                    # significant digits is what the sheet itself displays.
+                    txt = f"{float(v.text):.15g}"
+                else:
+                    txt = v.text if v is not None else ""
+                cells[k - 1] = (txt or "").strip()
+            if cells:
+                out.append([cells.get(i, "") for i in range(max(cells) + 1)])
+        return out
+
+
+def source_data_grid(path: pathlib.Path, spec: dict) -> list[list[str]]:
+    """A registered source-data sheet pivoted to a grid, header rows first.
+
+    Methods down the side in order of first appearance, subsets across in
+    order of first appearance, which is the sheet's and so the figure's order.
+    A method with no row for a subset gets an empty cell rather than a guess,
+    and a (method, subset) pair given twice refuses the table: two values for
+    one bar means the sheet is not what the entry says it is.
+    """
+    rows = read_xlsx_sheet(path, spec["sheet"])
+    head = rows[0]
+    try:
+        im, isub, iv = (head.index(spec[k]) for k in ("method", "subset", "value"))
+    except ValueError as exc:
+        raise Reject(f"S2 sheet {spec['sheet']!r} lacks a registered column: {exc}")
+    methods: list[str] = []
+    subsets: list[str] = []
+    vals: dict[tuple[str, str], str] = {}
+    for r in rows[1:]:
+        if len(r) <= max(im, isub, iv) or not r[im]:
+            continue
+        m = spec.get("rename", {}).get(r[im], r[im])
+        s, v = r[isub], r[iv]
+        if numeric(v) is None:
+            raise Reject(f"S3 {m} / {s}: {v!r} is not a number")
+        if (m, s) in vals:
+            raise Reject(f"S4 {m} / {s} is given twice in {spec['sheet']!r}")
+        vals[(m, s)] = v
+        if m not in methods:
+            methods.append(m)
+        if s not in subsets:
+            subsets.append(s)
+    head_metric = ["Method"] + [spec["metric_header"]] * len(subsets)
+    head_sub = ["Method"] + subsets
+    return [head_metric, head_sub] + [[m] + [vals.get((m, s), "") for s in subsets]
+                                      for m in methods]
+
+
 # COLUMNS THAT ARE NOT MEASUREMENTS, named where the header cannot say so:
 # column index (after the stub) -> why. The cells stay in the printed layer
 # as a not-recorded column, exactly like a year or a speed column.
@@ -4425,7 +4618,23 @@ TABLE_SELF: dict[tuple[int, str], list[str]] = {
 }
 
 
-TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
+TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, str, str]] = {
+    # MassNet (989). Supplementary Fig. 3: "the nine-species benchmark
+    # dataset, obtained from the MassIVE repository (accession no.
+    # MSV000081382)", the original deposit; "the HCC dataset, retrieved from
+    # the iProX repository (accession no. IPX0000937000)"; "the PT dataset,
+    # downloaded from the PRIDE database (accession no. PXD004732)", which is
+    # ProteomeTools Part I and an address of three of its versions, so no
+    # version. Fig. 4b is the paper's own 15-species benchmark, the 307-file
+    # version this article deposits, not the preprint's 325.
+    (989, "Supplementary Fig. 3a"): ("Nine-species benchmark", "nine-species benchmark "
+                                     "dataset (MSV000081382)", "original (DeepNovo, 2017)"),
+    (989, "Supplementary Fig. 3b"): ("Proteomics identifies new therapeutic targets of "
+                                     "early-stage hepatocellular carcinoma",
+                                     "HCC dataset (IPX0000937000)", "as deposited"),
+    (989, "Supplementary Fig. 3c"): ("ProteomeTools", "PT dataset (PXD004732)"),
+    (989, "Fig. 4b"): ("15-species benchmark", "15-species benchmark dataset",
+                       "Nature Methods (307 files)"),
     (434, "Table 1."): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     (434, "Table 1"): (None, "one per row group (MassIVE-KB; Zenodo 12587317)"),
     # pi-PrimeNovo's four-test-set table, likewise.
@@ -4537,6 +4746,13 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str]] = {
 # {"rows": [...]} for one per row that carries values.
 TABLE_METRIC: dict[tuple[int, str],
                    tuple[str, str] | list[tuple[str, str]] | dict] = {
+    # MassNet's source-data sheets name the column 'Pep_Precision', but the
+    # figures' axes say peptide recall and so does the prose, whose numbers
+    # are the sheet's rounded: HCC "a peptide recall of 0.68" is 0.676, and
+    # Fig. 4b's H. sapiens "0.45 ... pi-PrimeNovo (0.32) and InstaNovo+
+    # (0.26)" are 0.449, 0.324 and 0.259.
+    **{(989, t): ("recall", "peptide") for t in (
+        "Supplementary Fig. 3a", "Supplementary Fig. 3b", "Supplementary Fig. 3c", "Fig. 4b")},
     # Pairwise Attention, Table 3. Its caption says only "Performance after
     # training the models on the nine-species V2 dataset"; the paragraph above
     # it says "we tested on each of the species in the nine-species dataset and

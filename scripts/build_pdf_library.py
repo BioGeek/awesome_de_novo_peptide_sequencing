@@ -477,10 +477,24 @@ def supplement_sheets(pub: dict, root: Path) -> list[Path]:
                   key=lambda f: int(re.search(r"(\d+)\.xlsx$", f.name).group(1)))
 
 
+def supplement_sheet(pub: dict, root: Path, label: str) -> Path | None:
+    """One filed spreadsheet by its label ('Supplementary Data 1', 'Source Data')."""
+    f = root / SUPP_DIR / f"{zotero_name(pub)[:-4]} - {label}.xlsx"
+    return f if f.exists() else None
+
+
 # What a supplement link is labelled on a Springer Nature article page. Only
-# these are taken: the Reporting Summary, the peer-review file and Source Data
-# are supplementary files too, and none of them holds a results table.
+# these are taken: the Reporting Summary and the peer-review file are
+# supplementary files too, and neither holds a results table.
 SUPP_LABEL = re.compile(r"(?i)^supplementary (information|results|tables?|data|notes?|materials?)\b")
+
+# A SPREADSHEET is taken when it is labelled a table, supplementary data or
+# source data. Source data used to be skipped as holding no results table, and
+# MassNet's is where its headline comparison lives: Fig. 4b is a bar chart
+# with no value printed on it, and the sheet behind it has all 90 numbers.
+# Springer labels one source-data file after the first figure it covers
+# ('source data fig. 1'); it is filed as 'Source Data', since it covers all.
+SHEET_LABEL = re.compile(r"(?i)^(supplementary tables?( \d+)?|supplementary data \d+|source data\b)")
 
 
 def supplement_links(doi: str) -> tuple[list[tuple[str, str]], str]:
@@ -506,10 +520,10 @@ def supplement_links(doi: str) -> tuple[list[tuple[str, str]], str]:
             continue
         url = href.group(1)
         lab = label.group(1)
-        # A SPREADSHEET counts too when it is labelled a table: DeepNovo-DIA's
+        # A SPREADSHEET counts too (SHEET_LABEL): DeepNovo-DIA's
         # Supplementary Tables 1-6 are .xlsx files, not pages of its PDF.
         if (url.lower().endswith(".pdf") and SUPP_LABEL.match(lab)) or \
-                (url.lower().endswith(".xlsx") and re.match(r"(?i)^supplementary tables? \d", lab)):
+                (url.lower().endswith(".xlsx") and SHEET_LABEL.match(lab)):
             out.append((lab, "https:" + url if url.startswith("//") else url))
     return out, "" if out else "no supplementary PDF listed"
 
@@ -533,7 +547,8 @@ def cmd_supplements(args, conn, pubs, root):
         for label, url in links:
             if url.lower().endswith(".xlsx"):
                 # Named by its LABEL, which is how the paper cites it.
-                dest = d / f"{stem} - {label.title()}.xlsx"
+                name = "Source Data" if re.match(r"(?i)source data", label) else label.title()
+                dest = d / f"{stem} - {name}.xlsx"
                 magic = b"PK"
             else:
                 n += 1

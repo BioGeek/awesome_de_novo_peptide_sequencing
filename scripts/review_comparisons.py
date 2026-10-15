@@ -866,7 +866,7 @@ CREATE TABLE IF NOT EXISTS paper_comparison (
     kind               TEXT NOT NULL DEFAULT 'comparison'
                        CHECK (kind IN ('comparison','own_results')),
     extraction         TEXT NOT NULL DEFAULT 'text'
-                       CHECK (extraction IN ('text','image','figure')),
+                       CHECK (extraction IN ('text','image','figure','source-data')),
                                                -- image: no text layer; read by two
                                                -- vision models that agreed on
                                                -- every cell
@@ -1513,6 +1513,68 @@ def main() -> int:
                             "pdf_url": "file://" + urllib.parse.quote(str(path)),
                             "pdf_name": path.name, "tid": rec_tid,
                             "pub": pub["id"], "title": pub["title"], "source": "main",
+                            "year": str(pub["publication_date"] or "")[:4],
+                            "img": name if ok else None, "pdf_page": spec["page"],
+                            "crop_key": ""})
+                rec["base_verdict"] = rec["verdict"]
+                st = (approved.get(rec_tid) or {}).get("state")
+                if st == "approved" and rec["verdict"] == "accepted":
+                    rec["verdict"] = "approved"
+                elif st == "dismissed" and rec["verdict"] == "rejected":
+                    rec["verdict"] = "dismissed"
+                items.append(rec)
+                tally[rec["verdict"]] += 1
+        # FIGURES WHOSE VALUES ARE IN A SOURCE-DATA SHEET (B.SOURCE_DATA_TABLES):
+        # the publisher's spreadsheet behind a chart that prints no values,
+        # pivoted by source_data_grid() and resolved like any table. The crop
+        # is the figure as drawn, so the reviewer checks the sheet against the
+        # bars. Marked extraction='source-data'.
+        for (fpub, flabel), spec in B.SOURCE_DATA_TABLES.items():
+            if fpub != pub["id"]:
+                continue
+            src = spec.get("pdf", "")
+            path = dict(sources).get(src)
+            if path is None or texts.get(src) is None:
+                continue
+            pno = spec["page"] - 1
+            tid = table_tid(pub["id"], spec["page"], flabel, set(), src)
+            name = f"{tid}.png"
+            dest = OUT / name
+            ok = render(path, spec["page"], spec["bbox"], dest) or dest.exists()
+            recs = []
+            sheet = bpl.supplement_sheet(pub_rec, B.LIBRARY, spec["sheet_file"]) if pub_rec else None
+            try:
+                if sheet is None:
+                    raise B.Reject(f"S0 no '{spec['sheet_file']}' spreadsheet filed; run "
+                                   f"build_pdf_library.py supplements --ids {pub['id']}")
+                grid = B.source_data_grid(sheet, spec)
+                tb = IT.grid_table(grid, flabel, spec["caption"], spec["bbox"], spec["page"])
+                tb["extraction"] = "source-data"
+                tb["design_note"] = (
+                    f"Read from the paper's source data: every value is a cell of "
+                    f"'{sheet.name.split(' - ')[-1]}', sheet {spec['sheet']}, behind a "
+                    f"figure that prints no values. Nothing was estimated from bar heights.")
+                fvocab = B.paper_vocabulary(whole_all, con)
+                fsubject = con.execute("""
+                    SELECT a.id, a.name FROM algorithm a
+                      JOIN publication_algorithm pa ON pa.algorithm_id = a.id
+                     WHERE pa.publication_id = ? AND pa.role='describes'
+                     ORDER BY a.id LIMIT 1""", (pub["id"],)).fetchone()
+                base = {c: "" for c in B.AUDIT_COLUMNS}
+                base.update({"publication_id": pub["id"], "pdf_page": spec["page"]})
+                B.emit(con, base, tb, fvocab, index, fsubject,
+                       "\n".join(texts[src][max(0, pno - 1):pno + 2]), basis_all,
+                       [], collections.Counter(), False, collect=recs)
+            except B.Reject as exc:
+                recs.append({"verdict": "rejected", "reason": str(exc),
+                             "table_label": flabel, "caption": spec["caption"]})
+            for n_r, rec in enumerate(recs):
+                rec_tid = tid if n_r == 0 else f"{tid}-{n_r + 1}"
+                rec.update({"bbox": list(spec["bbox"]), "page": spec["page"],
+                            "extraction": "source-data",
+                            "pdf_url": "file://" + urllib.parse.quote(str(path)),
+                            "pdf_name": path.name, "tid": rec_tid,
+                            "pub": pub["id"], "title": pub["title"], "source": src or "main",
                             "year": str(pub["publication_date"] or "")[:4],
                             "img": name if ok else None, "pdf_page": spec["page"],
                             "crop_key": ""})

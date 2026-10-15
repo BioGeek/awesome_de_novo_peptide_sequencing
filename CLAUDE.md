@@ -2552,8 +2552,10 @@ supplement. Three changes reach them:
 - **Supplementary PDFs are fetched and read.** `build_pdf_library.py
   supplements --ids ...` takes what a Springer Nature article page lists as
   Supplementary Information / Results / Tables / Data, skipping the Reporting
-  Summary, peer-review file and source data, and files it in `supplements/`
-  as `<paper's library name> - Supplementary N.pdf`. The SUBFOLDER is the
+  Summary and peer-review file, and files it in `supplements/` as
+  `<paper's library name> - Supplementary N.pdf`. Spreadsheets labelled a
+  table, supplementary data or source data are filed by their label
+  (`- Supplementary Data 1.xlsx`, `- Source Data.xlsx`). The SUBFOLDER is the
   point: `pdfs()` reads only the root, so coverage, rename and dedupe can never
   mistake a supplement for its paper and rename it onto, or deduplicate it
   against, the main PDF. Both the miner and the review page read a paper's
@@ -2639,9 +2641,34 @@ files labelled "Supplementary Table 1-6". The fetcher now takes an `.xlsx`
 whose label says Supplementary Table, saved under that label
 (`supplement_sheets()` finds them). Read, none of the six is a comparison:
 dataset statistics, per-feature predictions, immunoglobulin and variant
-peptides. DeepNovo-DIA's comparisons exist only as figures, so no spreadsheet
-reader was built for them; one would be worth writing the day a sheet holds
-results.
+peptides. DeepNovo-DIA's comparisons exist only as figures.
+
+**A chart that prints NO values is read from the paper's source data**, and
+MassNet (publication 989) was the day a sheet held results. Every comparison
+it makes is a bar chart with nothing printed on the bars, and the publisher's
+spreadsheets carry every number: Supplementary Data 1 for Supplementary
+Fig. 3 (nine-species, HCC, PT) and the Source Data file for Fig. 4b (the
+15-species benchmark). `SOURCE_DATA_TABLES` registers each figure by file,
+sheet, and which columns hold method, subset and value, plus where the
+figure is drawn so the review crop shows the bars to check the sheet
+against. `read_xlsx_sheet()` reads an .xlsx with the standard library, since a
+zip of XML is not worth a dependency, and shows a number at the 15
+significant digits the sheet displays, because the file stores
+`0.59599999999999997`. The result is `extraction = 'source-data'`.
+
+Three things a source-data sheet gets wrong, all in MassNet's, and none of
+them corrected silently:
+- **The column name is not the metric.** The sheets call it `Pep_Precision`;
+  the axes and the prose say peptide recall, and the prose's numbers are the
+  sheet's rounded. `TABLE_METRIC` decides, with that reasoning.
+- **The method name is not the legend's.** The sheets say InstaNovo where the
+  legend, the prose and the version run (1.1.0) say InstaNovo+, so the entry
+  maps it with `rename`.
+- **A sheet can have fewer rows than the figure has bars.** Supplementary
+  Fig. 3b and 3c draw π-HelixNovo and the sheets have no row for it. It is
+  left unrecorded rather than read off its bar, and the table's note says so,
+  as it does for each place the prose quotes a different number (PT 0.62
+  against the sheet's 0.605).
 
 ### On the algorithm pages
 
