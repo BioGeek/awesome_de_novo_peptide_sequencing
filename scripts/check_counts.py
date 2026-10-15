@@ -122,7 +122,8 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "versions with no address",
      r"one\.\*\* (\d+) of \d+ versions have none",
      "SELECT COUNT(*) FROM dataset_version v WHERE NOT EXISTS"
-     "(SELECT 1 FROM dataset_address WHERE dataset_version_id=v.id)"),
+     "(SELECT 1 FROM dataset_address WHERE dataset_version_id=v.id"
+     " AND is_provenance = 0)"),
     ("CLAUDE.md", "versions total (no-address context)",
      r"one\.\*\* \d+ of (\d+) versions have none", "SELECT COUNT(*) FROM dataset_version"),
     ("CLAUDE.md", "ProteomeTools versions",

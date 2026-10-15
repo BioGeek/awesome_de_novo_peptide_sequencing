@@ -1388,7 +1388,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**480 datasets, 510 versions, 555 addresses, 881 publication links over 271 papers.**
+**480 datasets, 510 versions, 1294 addresses, 881 publication links over 271 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1471,15 +1471,29 @@ matcher hit. 29 links were promoted; both short-name cases now score 0.
 **Tiers are versions.** The InstaNovo-FM corpus publishes three nested labelled
 tiers, HCFM within MCFM within LCFM, plus **ACFM, the unlabelled superset,
 which is not published as a tier**. ACFM is still reproducible: the
-InstaNovo-FM paper lists the raw accessions it was built from, so rebuilding it
-means reprocessing those rather than downloading them. Recording it as a
-version with no address says exactly that, and is the reason the version table
-allows a version with no `dataset_address` row at all.
+InstaNovo-FM paper lists the 92 raw accessions it was built from, so
+rebuilding it means reprocessing those rather than downloading them. Those 92
+are its `dataset_address` rows, every one `is_provenance = 1`: where the
+spectra came from, not where the tier can be fetched.
+
+**A training corpus lists its source projects the same way, so overlap is a
+query.** MassNet's `full corpus` carries the 647 public projects of its Nature
+Methods Supplementary Table 1 (601 PRIDE, 46 iProX) as provenance, with the
+species in `part`. Joining two versions' addresses on `accession` then answers
+"do these corpora share data" and "is this benchmark inside that training set":
+MassNet and InstaNovo-FM's ACFM share three projects (PXD010154, PXD023064,
+PXD046453), and the same join reproduces the four MassNet projects its own paper
+says overlap its 15-species benchmark and were held out of training. Parse a
+table of accessions by newline, never `str.splitlines()`: pdftotext ends each
+page with a form feed, which `splitlines()` also splits on, so line numbers
+taken from `sed` land somewhere else and a slice silently drops a group (it
+dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 18 of 510 versions have none. Two shapes: ACFM, the InstaNovo-FM
-tier that is not published but is reproducible from the raw accessions its paper
-lists; and the living-proteomics benchmark's **private holdouts** (11 versions:
+missing one.** 19 of 510 versions have none, counting only addresses
+that are not provenance. Two shapes: tiers that are not published but are
+reproducible from the raw accessions recorded as their provenance (ACFM, and
+ProteomeTools' all-confidence version, InstaNovo's AC-PT); and the living-proteomics benchmark's **private holdouts** (11 versions:
 five organism sets, multi-protease, two immunopeptidomics, single-cell HeLa 2,
 PTM/phospho, and non-natural peptides). Results are reported against the
 holdouts and none can be downloaded, so those numbers are not independently
