@@ -1037,6 +1037,150 @@ Peptide recall
 </p>
 </section>
 </section>
+<section id="compared-against-in-other-papers-1" class="level2">
+<h2 class="anchored" data-anchor-id="compared-against-in-other-papers-1">Compared against in other papers (1)</h2>
+<p>1 table from 1 paper that report this method as a <strong>baseline</strong>, newest first. The caveats of the comparisons above hold twice over: each paper ran, retrained or quoted this method its own way, so its number here is that paper’s claim, not a measurement of the method. Where a paper says which it did, the word follows the method’s name.</p>
+<details>
+<summary>
+Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics (2026) · 1 table
+</summary>
+<section id="table-s12" class="level4">
+<h4 class="anchored" data-anchor-id="table-s12">Table S12</h4>
+<p><a href="../publications/learning-from-tandem-mass-spectra-at-scale-with-a-self-supervised-foundation.html">Learning from tandem mass spectra at scale with a self-supervised foundation model for proteomics</a>, page 84: <em>Peptide recall across the biological validation datasets for the de novo sequencing benchmark. The best model per dataset is in bold.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+a dataset per evaluation set
+</th>
+<th colspan="6" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>HeLa degradome</small>
+</th>
+<th>
+<small>Candidatus Scalindua brodae</small>
+</th>
+<th>
+<small>Snake venoms</small>
+</th>
+<th>
+<small>HeLa single-shot</small>
+</th>
+<th>
+<small>Nanobodies</small>
+</th>
+<th>
+<small>Wound exudates</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-fm.html">InstaNovo-FM</a> <small>fine-tuned</small>
+</th>
+<td>
+<u>0.821</u>
+</td>
+<td>
+0.740
+</td>
+<td>
+<u>0.230</u>
+</td>
+<td>
+0.662
+</td>
+<td>
+<u>0.528</u>
+</td>
+<td>
+0.366
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a> <small>v1.2</small>
+</th>
+<td>
+<strong>0.868</strong>
+</td>
+<td>
+<strong>0.764</strong>
+</td>
+<td>
+0.227
+</td>
+<td>
+<strong>0.708</strong>
+</td>
+<td>
+0.517
+</td>
+<td>
+<u>0.431</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.767
+</td>
+<td>
+<u>0.743</u>
+</td>
+<td>
+0.217
+</td>
+<td>
+0.531
+</td>
+<td>
+0.465
+</td>
+<td>
+0.262
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a>
+</th>
+<td>
+0.808
+</td>
+<td>
+0.741
+</td>
+<td>
+<strong>0.233</strong>
+</td>
+<td>
+<u>0.673</u>
+</td>
+<td>
+<strong>0.529</strong>
+</td>
+<td>
+<strong>0.466</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>No accession is printed for the six validation sets. They are mapped from the Methods, which call them InstaNovo's application datasets minus 'the Immuno and Herceptin datasets': GluC is InstaNovo's 'HeLa GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by elimination, its HeLa single-shot set.</small>
+</p>
+</section></details>
+</section>
+
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>
 <ul>

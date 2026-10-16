@@ -203,6 +203,400 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
+<section id="compared-against-in-other-papers-2" class="level2">
+<h2 class="anchored" data-anchor-id="compared-against-in-other-papers-2">Compared against in other papers (2)</h2>
+<p>4 tables from 2 papers that report this method as a <strong>baseline</strong>, newest first. The caveats of the comparisons above hold twice over: each paper ran, retrained or quoted this method its own way, so its number here is that paper’s claim, not a measurement of the method. Where a paper says which it did, the word follows the method’s name.</p>
+<details>
+<summary>
+LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing (2026) · 1 table
+</summary>
+<section id="table5" class="level4">
+<h4 class="anchored" data-anchor-id="table5">Table5</h4>
+<p><a href="../publications/lipnovo-plus-self-reflective-latent-imputation-for-robust-de-novo-peptide.html">LIPNovo+: Self-Reflective Latent Imputation for Robust De Novo Peptide Sequencing</a>, page 18: <em>Comparison with state-of-the-art methods on GraphNovo dataset [11].</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/graphnovo-dataset-and-checkpoint.html">GraphNovo dataset and checkpoint</a>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide recall
+</th>
+<th colspan="1" style="text-align:center">
+Peptide AUC
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid recall
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+0.475
+</td>
+<td>
+</td>
+<td>
+0.758
+</td>
+<td>
+0.775
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="novor.html">Novor</a>
+</th>
+<td>
+0.431
+</td>
+<td>
+</td>
+<td>
+0.740
+</td>
+<td>
+0.753
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+0.497
+</td>
+<td>
+</td>
+<td>
+0.769
+</td>
+<td>
+0.771
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+0.601
+</td>
+<td>
+</td>
+<td>
+0.815
+</td>
+<td>
+0.816
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="Pr ep 332 335 To ensure a fair and direct comparison, we retrain CasaNovo with the same data splits 336 and training/inference configurations as our methods (reported as Baseline).">· <em>retrained</em></small>
+</th>
+<td>
+0.605
+</td>
+<td>
+</td>
+<td>
+0.684
+</td>
+<td>
+0.684
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="graphnovo.html">GraphNovo</a>
+</th>
+<td>
+0.712
+</td>
+<td>
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+0.874
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo.html">LIPNovo</a>
+</th>
+<td>
+<u>0.729</u>
+</td>
+<td>
+0.707
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+<u>0.882</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="lipnovo-plus.html">LIPNovo+</a>
+</th>
+<td>
+<strong>0.740</strong>
+</td>
+<td>
+<strong>0.720</strong>
+</td>
+<td>
+<strong>0.889</strong>
+</td>
+<td>
+<strong>0.891</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section></details>
+<details>
+<summary>
+pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework (2019) · 3 tables
+</summary>
+</details></section>
+<section id="table2-qe_hf_x2" class="level4">
+<h4 class="anchored" data-anchor-id="table2-qe_hf_x2">Table2 (QE_HF_X2)</h4>
+<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X2</small>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo-3.html">pNovo 3</a>
+</th>
+<td>
+<strong>0.383</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+0.214
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+<u>0.246</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="novor.html">Novor</a>
+</th>
+<td>
+0.093
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table2-qe_hf_x1" class="level4">
+<h4 class="anchored" data-anchor-id="table2-qe_hf_x1">Table2 (QE_HF_X1)</h4>
+<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/hela-q-exactive-hf-runs-pnovo-3.html">HeLa Q Exactive HF runs (pNovo 3)</a><br><small>QE_HF_X1</small>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo-3.html">pNovo 3</a>
+</th>
+<td>
+<strong>0.478</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+0.298
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+<u>0.322</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="novor.html">Novor</a>
+</th>
+<td>
+0.109
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table2-nine-species" class="level4">
+<h4 class="anchored" data-anchor-id="table2-nine-species">Table2 (Nine-species)</h4>
+<p><a href="../publications/pnovo-3-precise-de-novo-peptide-sequencing-using-a-learning-to-rank-framework.html">pNovo 3: precise de novo peptide sequencing using a learning-to-rank framework</a>, page 5: <em>Recall of top-1 peptides identified by different de novo sequencing algorithms</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="5" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo-3.html">pNovo 3</a>
+</th>
+<td>
+<strong>0.646</strong>
+</td>
+<td>
+<strong>0.504</strong>
+</td>
+<td>
+<strong>0.660</strong>
+</td>
+<td>
+<strong>0.647</strong>
+</td>
+<td>
+<strong>0.625</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pnovo.html">pNovo</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+0.429
+</td>
+<td>
+<u>0.257</u>
+</td>
+<td>
+<u>0.424</u>
+</td>
+<td>
+0.477
+</td>
+<td>
+0.367
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a> <small class="text-muted" title="Figure 2 and Supplementary Figure S4 show the consistency of the correct results reported by pNovo 3, pNovo and PEAKS, in which pNovo 3 covered 88.1–94.6% of pNovo results and 82.5–89.6% of PEAKS results.">· <em>quoted</em></small>
+</th>
+<td>
+<u>0.443</u>
+</td>
+<td>
+0.249
+</td>
+<td>
+<u>0.424</u>
+</td>
+<td>
+<u>0.500</u>
+</td>
+<td>
+<u>0.380</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="novor.html">Novor</a>
+</th>
+<td>
+0.174
+</td>
+<td>
+0.097
+</td>
+<td>
+0.191
+</td>
+<td>
+0.191
+</td>
+<td>
+0.137
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</section>
+
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>
 <ul>
