@@ -1931,6 +1931,48 @@
   "pub": 9,
   "state": "dismissed"
  },
+ "p972-pg42-t3.2": {
+  "cells": 0,
+  "label": "Table 3.2",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
+ "p972-pg42-t3.3": {
+  "cells": 0,
+  "label": "Table 3.3",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
+ "p972-pg45-t3.4": {
+  "cells": 0,
+  "label": "Table 3.4",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
+ "p972-pg60-t4.5": {
+  "cells": 0,
+  "label": "Table 4.5",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
+ "p972-pg75-t5.5": {
+  "cells": 0,
+  "label": "Table 5.5",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
+ "p972-pg76-t5.6": {
+  "cells": 0,
+  "label": "Table 5.6",
+  "on": "2026-10-16",
+  "pub": 972,
+  "state": "dismissed"
+ },
  "p979-pg26-t6": {
   "cells": 6,
   "label": "Table6",
@@ -1978,6 +2020,132 @@
   "label": "Table 4",
   "on": "2026-10-16",
   "pub": 979,
+  "state": "dismissed"
+ },
+ "p981-pg24-t10": {
+  "cells": 0,
+  "label": "Table 10",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg25-t12": {
+  "cells": 0,
+  "label": "Table12",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg26-t13": {
+  "cells": 0,
+  "label": "Table 13",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg27-t14": {
+  "cells": 0,
+  "label": "Table14",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg27-t15": {
+  "cells": 0,
+  "label": "Table15",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg27-t16": {
+  "cells": 0,
+  "label": "Table16",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg27-t17": {
+  "cells": 0,
+  "label": "Table17",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg28-t18": {
+  "cells": 0,
+  "label": "Table18",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg28-t19": {
+  "cells": 0,
+  "label": "Table19",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg28-t20": {
+  "cells": 0,
+  "label": "Table20",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg30-t23": {
+  "cells": 0,
+  "label": "Table23",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg31-t25": {
+  "cells": 0,
+  "label": "Table 25",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg33-t26": {
+  "cells": 8,
+  "label": "Table 26",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "approved"
+ },
+ "p981-pg35-t29": {
+  "cells": 0,
+  "label": "Table29",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg7-t1-kingdoms-de-novo": {
+  "cells": 6,
+  "label": "Table1 [Kingdoms de novo]",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "approved"
+ },
+ "p981-pg7-t1-mskb-final": {
+  "cells": 6,
+  "label": "Table1 [MSKB-final]",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "approved"
+ },
+ "p981-pg8-t2": {
+  "cells": 0,
+  "label": "Table2",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "dismissed"
+ },
+ "p981-pg8-t3": {
+  "cells": 0,
+  "label": "Table 3",
+  "on": "2026-10-16",
+  "pub": 981,
   "state": "dismissed"
  },
  "p989-pg7-fig-4b": {
