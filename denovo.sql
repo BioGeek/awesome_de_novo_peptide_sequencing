@@ -3812,6 +3812,8 @@ INSERT INTO author VALUES(3923,'Ákos Végvári',NULL,NULL,NULL,NULL,'0000-0002-
 INSERT INTO author VALUES(3924,'Aliya Al-Ansari',NULL,NULL,NULL,NULL,'0000-0003-3125-9798','A5042897827');
 INSERT INTO author VALUES(3925,'Salma Al-Adwani',NULL,NULL,NULL,NULL,NULL,'A5157932380');
 INSERT INTO author VALUES(3926,'Yiwen Yu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3927,'Zhi Song',NULL,NULL,NULL,NULL,'0000-0001-9720-1084','A5110163995');
+INSERT INTO author VALUES(3928,'Zejian Ding',NULL,NULL,NULL,NULL,NULL,'A5153666954');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -11250,6 +11252,8 @@ INSERT INTO author_affiliation VALUES(3894,1412);
 INSERT INTO author_affiliation VALUES(3926,53);
 INSERT INTO author_affiliation VALUES(3926,67);
 INSERT INTO author_affiliation VALUES(75,29);
+INSERT INTO author_affiliation VALUES(3928,503);
+INSERT INTO author_affiliation VALUES(3927,503);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12072,6 +12076,7 @@ INSERT INTO algorithm VALUES(817,'Asini Corii Colla bioactive peptides',NULL,NUL
 INSERT INTO algorithm VALUES(818,'Physalaemus nattereri skin peptides',NULL,NULL,NULL,'Automated off-line LC MALDI MS/MS of the skin secretion of the Cuyaba dwarf frog Physalaemus nattereri, sequenced de novo in PEAKS and matched by BLAST against amphibian UniProt; most deduced sequences match nothing known.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(819,'FastaLake','https://github.com/MannLabs/fasta-lake','https://github.com/MannLabs/fasta-lake','Hybrid de novo + database search','Metaproteomics workflow that uses full-length AlphaNovo de novo peptide predictions as exact queries to select compact search databases from large sequence reservoirs, then searches them with Sage. Matched metagenome-derived databases in two stool cohorts and found 20-35% more peptides in intestinal fluid, without matched metagenomic sequencing.','downstream-application',1,'DDA','','metaproteomics');
 INSERT INTO algorithm VALUES(820,'Camel leukocyte peptidome','','','','First proteomic survey of dromedary camel crude leukocyte polypeptides: PEAKS Studio de novo sequencing (ALC 95% or higher) gave 830 peptides beside the 120 proteins from database search, and the de novo peptides were the more strongly enriched for immune-system terms, as a source of candidate bioactive peptides.','downstream-application',0,'DDA','','bioactive-peptides');
+INSERT INTO algorithm VALUES(821,'ScopeNovo',NULL,NULL,'Transformer (NAR)','Spectral-library reranking of π-PrimeNovo candidates','post-processor',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13071,6 +13076,7 @@ INSERT INTO publication VALUES(986,'Proteomic profiling of <i>Camelus dromedariu
 INSERT INTO publication VALUES(987,'Updated MS²PIP web server delivers fast and accurate MS² peak intensity prediction for multiple fragmentation methods, instruments and labeling techniques','2019-07-02','10.1093/nar/gkz299','Oxford University Press (OUP)','MS²PIP is a data-driven tool that accurately predicts peak intensities for a given peptide''s fragmentation mass spectrum. Since the release of the MS²PIP web server in 2015, we have brought significant updates to both the tool and the web server. In addition to the original models for CID and HCD fragmentation, we have added specialized models for the TripleTOF 5600+ mass spectrometer, for TMT-labeled peptides, for iTRAQ-labeled peptides, and for iTRAQ-labeled phosphopeptides. Because the fragmentation pattern is heavily altered in each of these cases, these additional models greatly improve the prediction accuracy for their corresponding data types. We have also substantially reduced the computational resources required to run MS²PIP, and have completely rebuilt the web server, which now allows predictions of up to 100 000 peptide sequences in a single request. The MS²PIP web server is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkz299','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(988,'Updated MS²PIP web server supports cutting-edge proteomics applications','2023-07-05','10.1093/nar/gkad335','Oxford University Press (OUP)','Interest in the use of machine learning for peptide fragmentation spectrum prediction has been strongly on the rise over the past years, especially for applications in challenging proteomics identification workflows such as immunopeptidomics and the full-proteome identification of data independent acquisition spectra. Since its inception, the MS²PIP peptide spectrum predictor has been widely used for various downstream applications, mostly thanks to its accuracy, ease-of-use, and broad applicability. We here present a thoroughly updated version of the MS²PIP web server, which includes new and more performant prediction models for both tryptic- and non-tryptic peptides, for immunopeptides, and for CID-fragmented TMT-labeled peptides. Additionally, we have also added new functionality to greatly facilitate the generation of proteome-wide predicted spectral libraries, requiring only a FASTA protein file as input. These libraries also include retention time predictions from DeepLC. Moreover, we now provide pre-built and ready-to-download spectral libraries for various model organisms in multiple DIA-compatible spectral library formats. Besides upgrading the back-end models, the user experience on the MS²PIP web server is thus also greatly enhanced, extending its applicability to new domains, including immunopeptidomics and MS3-based TMT quantification experiments. MS²PIP is freely available at https://iomics.ugent.be/ms2pip/.','https://doi.org/10.1093/nar/gkad335','Nucleic Acids Research','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(989,'MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics','2026-10-14','10.1038/s41592-026-03247-y',NULL,'Here we present MassNet, inspired by large-scale data corpora of text and images; MassNet is an artificial intelligence (AI)-ready data corpus for mass spectrometry (MS)-based proteomics. The corpus contains 1.5 billion tandem MS spectra from high-quality data-dependent acquisition (DDA) MS data across 35 species. Approximately 1.7 million peptide precursors are from human samples. We further present an AI-ready DDA data format called Mass Spectrometry DDA Tensor (MSDT) for compact and standardized storage, curation and reuse of data from multiple sources, which can be optionally converted to a Lightning Memory-Mapped Database for accelerated input/output in deep learning. On the basis of MassNet, we develop XuanjiNovo, a nonautoregressive transformer model that leverages a curriculum learning strategy for de novo peptide sequencing. XuanjiNovo achieves 38.35–143.57% improvement over state-of-the-art methods on human Astral data. MassNet also supports additional downstream tasks, including retention time prediction and PSM rescoring. MassNet represents a foundational MS-based proteomics data resource, marking a critical milestone for AI proteomics research.','https://www.nature.com/articles/s41592-026-03247-y','Nature Methods','peer-reviewed',NULL,'pdf');
+INSERT INTO publication VALUES(990,'ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy','2026-10-15','10.1093/bioinformatics/btag755',NULL,'Motivation De novo peptide sequencing from tandem mass spectra is essential for characterizing unknown proteins, identifying novel post-translational modifications, and analyzing samples without reference databases. While recent deep learning models have improved the predicted peptide accuracy, they typically select the predicted peptide sequence based solely on sequence-level decoding scores. Very often, high scores are assigned to peptides without the direct support from the observed mass spectrum. Results We present ScopeNovo, a de novo peptide sequencing method that improves predicted peptide accuracy by using spectrum-spectrum similarity between the input spectrum and the “representative” spectrum corresponding to the predicted peptide sequence. ScopeNovo generates multiple candidate peptides using an existing peptide de novo sequencing learning model and reranks candidates based on spectrum-spectrum similarity. To test our method, we use π-PrimeNovo as the base learning model. Experimental results on the standard nine-species benchmark datasets V1 and V2 show that ScopeNovo can substantially improve the prediction accuracy. We designed two settings, where Setting 1 is for well-annotated species, and Setting 2 is for species that are not well annotated. For Setting 1, ScopeNovo improves the average peptide accuracies of π-PrimeNovo over the nine species by 6.1% and 4.0% on V1 and V2, respectively. For Setting 2, ScopeNovo can still improve the peptide accuracy of π-PrimeNovo over the nine species by 3.4% and 1.9% on the V1 and V2 benchmark datasets, respectively. Compared to the best known method, RankNovo, the peptide accuracies over the nine species on V1 and V2 of our method for Setting 1 are 0.711 and 0.737, where the peptide accuracies for RankNovo are 0.687 and 0.682. Even for Setting 2, the peptide accuracies of our method are comparable to those of RankNovo. Availability ScopeNovo is implemented in Python under an MIT license. The source code is freely available at https://github.com/SoSongzhi/ScopeNovo.git. The test data are available at https://doi.org/10.5281/zenodo.23181841. Supplementary information Supplementary data are available at Bioinformatics online.','https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btag755/8923629','Bioinformatics','peer-reviewed',NULL,'crossref');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19420,6 +19426,9 @@ INSERT INTO publication_author VALUES(989,75,11);
 INSERT INTO publication_author VALUES(989,60,12);
 INSERT INTO publication_author VALUES(989,73,13);
 INSERT INTO publication_author VALUES(989,71,14);
+INSERT INTO publication_author VALUES(990,3927,1);
+INSERT INTO publication_author VALUES(990,3928,2);
+INSERT INTO publication_author VALUES(990,973,3);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -19619,6 +19628,7 @@ INSERT INTO algorithm_repository VALUES(20,'https://github.com/PHOENIXcenter/pi-
 INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/pi-PrimeNovo',1);
 INSERT INTO algorithm_repository VALUES(816,'https://github.com/statisticalbiotechnology/dIon',0);
 INSERT INTO algorithm_repository VALUES(819,'https://github.com/MannLabs/fasta-lake',0);
+INSERT INTO algorithm_repository VALUES(821,'https://github.com/SoSongzhi/ScopeNovo',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -20618,6 +20628,7 @@ INSERT INTO publication_impact VALUES(986,'W7221032976',0,'doi',NULL,2026,'2026-
 INSERT INTO publication_impact VALUES(987,'W2950804227',91,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
 INSERT INTO publication_impact VALUES(988,'W4368362035',33,'doi',NULL,2026,'2026-10-15T12:45:13+00:00');
 INSERT INTO publication_impact VALUES(989,'W7105753810',0,'doi',NULL,2026,'2026-10-15T14:46:56+00:00');
+INSERT INTO publication_impact VALUES(990,'W7220676429',0,'doi',NULL,2026,'2026-10-16T12:55:34+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27528,6 +27539,9 @@ INSERT INTO publication_author_affiliation VALUES(989,71,55,2,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,53,0,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,54,1,NULL);
 INSERT INTO publication_author_affiliation VALUES(15,109,55,2,NULL);
+INSERT INTO publication_author_affiliation VALUES(990,3927,503,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(990,3928,503,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(990,973,503,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28801,6 +28815,9 @@ INSERT INTO publication_algorithm VALUES(986,62,'uses');
 INSERT INTO publication_algorithm VALUES(987,188,'describes');
 INSERT INTO publication_algorithm VALUES(988,188,'describes');
 INSERT INTO publication_algorithm VALUES(989,15,'describes');
+INSERT INTO publication_algorithm VALUES(990,821,'describes');
+INSERT INTO publication_algorithm VALUES(990,20,'uses');
+INSERT INTO publication_algorithm VALUES(990,183,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -37749,6 +37766,7 @@ INSERT INTO dataset VALUES(488,'Shell composition of the marine planktonic cilia
 INSERT INTO dataset VALUES(489,'Identification of broadly inhibitory anti-PfEMP1 antibodies by mass spectrometry sequencing of plasma IgG from a malaria-exposed child','Identification of broadly inhibitory anti-PfEMP1 antibodies by mass spectrometry sequencing of plasma IgG from a malaria-exposed child','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(490,'MassNet','AI-ready corpus of more than 1.5 billion DDA MS/MS spectra from 27,643 LC-MS runs in 648 public projects over 35 species, searched with FragPipe and Sage and stored in the MSDT tensor format.','training','DDA','35 animal, plant and microbial species','https://guomics.com/software/massnet');
 INSERT INTO dataset VALUES(491,'15-species benchmark','De novo sequencing benchmark built by the MassNet authors from 15 PRIDE submissions across animals, plants and microbes, acquired on Q Exactive HF, Orbitrap Exploris 480 and Orbitrap Astral instruments.','benchmark','DDA','Homo sapiens; Mus musculus; Aedes aegypti; Drosophila melanogaster; Arabidopsis thaliana; Zea mays; Solanum lycopersicum; Escherichia coli; Saccharomyces cerevisiae; Pyrococcus furiosus; Aspergillus fumigatus; Toxoplasma gondii; Trypanosoma brucei; Bacteroides thetaiotaomicron; Acinetobacter calcoaceticus',NULL);
+INSERT INTO dataset VALUES(492,'ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy','Test data for ScopeNovo, deposited by its authors on Zenodo.','deposit',NULL,NULL,NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38272,6 +38290,7 @@ INSERT INTO dataset_version VALUES(518,490,'full corpus','Raw MSDT files for eve
 INSERT INTO dataset_version VALUES(519,490,'XuanjiNovo training set (100M PSMs)','100 million PSMs sampled at random from the FragPipe identifications (Sage identifications not used), the training set of XuanjiNovo-100M. Part of PXD071590. The 30M and 65M scaling subsets are not published separately.',NULL,NULL,NULL,NULL,NULL,15);
 INSERT INTO dataset_version VALUES(520,491,'preprint (325 files)','As first described in the bioRxiv preprint: 325 DDA files from 15 species. The preprint names no accession for it beyond the human Astral submission, PXD046453, so it has no address here.',NULL,NULL,NULL,NULL,NULL,15);
 INSERT INTO dataset_version VALUES(521,491,'Nature Methods (307 files)','307 DDA LC-MS/MS files from 15 species, deposited inside PXD071590 and assembled from the 15 PRIDE submissions listed as provenance. Four of them (PXD028713, PXD040002, PXD025030, PXD046453) are also in MassNet and were excluded from XuanjiNovo training.',NULL,NULL,NULL,NULL,NULL,989);
+INSERT INTO dataset_version VALUES(522,492,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,990);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -39576,6 +39595,7 @@ INSERT INTO dataset_address VALUES(1304,19,'PRIDE','PXD063058','https://www.ebi.
 INSERT INTO dataset_address VALUES(1305,19,'PRIDE','PXD065790','https://www.ebi.ac.uk/pride/archive/projects/PXD065790','metadata-gap study',1);
 INSERT INTO dataset_address VALUES(1306,19,'PRIDE','PXD068040','https://www.ebi.ac.uk/pride/archive/projects/PXD068040','metadata-gap study',1);
 INSERT INTO dataset_address VALUES(1307,19,'PRIDE','PXD068926','https://www.ebi.ac.uk/pride/archive/projects/PXD068926','metadata-gap study',1);
+INSERT INTO dataset_address VALUES(1308,522,'Zenodo','10.5281/zenodo.23181841','https://doi.org/10.5281/zenodo.23181841',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -40464,6 +40484,9 @@ INSERT INTO publication_dataset VALUES(893,15,3,NULL,'uses');
 INSERT INTO publication_dataset VALUES(894,989,44,67,'uses');
 INSERT INTO publication_dataset VALUES(895,989,2,NULL,'uses');
 INSERT INTO publication_dataset VALUES(896,989,3,NULL,'uses');
+INSERT INTO publication_dataset VALUES(897,990,492,522,'introduces');
+INSERT INTO publication_dataset VALUES(898,990,1,1,'uses');
+INSERT INTO publication_dataset VALUES(899,990,1,2,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -63384,9 +63407,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
 INSERT INTO sqlite_sequence VALUES('affiliation',1413);
-INSERT INTO sqlite_sequence VALUES('author',3926);
-INSERT INTO sqlite_sequence VALUES('algorithm',820);
-INSERT INTO sqlite_sequence VALUES('publication',989);
+INSERT INTO sqlite_sequence VALUES('author',3928);
+INSERT INTO sqlite_sequence VALUES('algorithm',821);
+INSERT INTO sqlite_sequence VALUES('publication',990);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

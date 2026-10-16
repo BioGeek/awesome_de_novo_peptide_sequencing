@@ -818,6 +818,7 @@ algorithms	817	asini-corii-colla-bioactive-peptides
 algorithms	818	physalaemus-nattereri-skin-peptides
 algorithms	819	fastalake
 algorithms	820	camel-leukocyte-peptidome
+algorithms	821	scopenovo
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4625,6 +4626,8 @@ authors	3923	akos-vegvari
 authors	3924	aliya-al-ansari
 authors	3925	salma-al-adwani
 authors	3926	yiwen-yu
+authors	3927	zhi-song
+authors	3928	zejian-ding
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -5105,6 +5108,7 @@ datasets	488	shell-composition-of-the-marine-planktonic-ciliate-schmidingerella-
 datasets	489	identification-of-broadly-inhibitory-anti-pfemp1-antibodies-by-mass
 datasets	490	massnet
 datasets	491	15-species-benchmark
+datasets	492	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -7220,6 +7224,7 @@ publications	986	proteomic-profiling-of-camelus-dromedarius-blood-leukocytes-usi
 publications	987	updated-ms2pip-web-server-delivers-fast-and-accurate-ms2-peak-intensity
 publications	988	updated-ms2pip-web-server-supports-cutting-edge-proteomics-applications
 publications	989	massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep
+publications	990	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
