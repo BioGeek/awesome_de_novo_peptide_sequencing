@@ -681,8 +681,18 @@ def comparison_table(site: Site, c: dict, from_kind: str) -> list[str]:
             elif n >= 3 and len(vs) > 1 and v == vs[1]:
                 mark[(rk, ck)] = "second"
 
-    ds = (a("datasets", c["dataset_id"], c["dataset"]) if c["dataset_id"]
-          else html.escape(c["dataset_printed"] or "dataset not stated"))
+    # A table whose evaluation sets are each a dataset of their own carries
+    # the miner's note 'one per row (Data availability)' in place of one
+    # dataset. That is a statement about the table's shape, so the corner
+    # says it in words rather than printing the note.
+    printed = c["dataset_printed"] or ""
+    if not c["dataset_id"] and printed.startswith("one per row group"):
+        ds = "a dataset per row group"
+    elif not c["dataset_id"] and printed.startswith("one per"):
+        ds = "a dataset per evaluation set"
+    else:
+        ds = (a("datasets", c["dataset_id"], c["dataset"]) if c["dataset_id"]
+              else html.escape(printed or "dataset not stated"))
     if c["dataset_version"]:
         ds += f'<br><small>{html.escape(c["dataset_version"])}</small>'
     subsets = [ck[0] for ck in cols]
@@ -1047,6 +1057,62 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                                   + f" ({md_escape(t['table_label'])}, page {t['pdf_page']})"
                                   for t in c["also_in"]) + ".", ""]
             L += comparison_table(site, c, K)
+
+    def table_head(c: dict, level: str) -> list[str]:
+        head = (f"{level} {md_escape(c['table_label'])}"
+                + (f" ({md_escape(c['part'])})" if c["part"] else ""))
+        out = [head, "",
+               f"{site.link('publications', c['publication_id'], c['title'], from_kind=K)}, "
+               f"page {c['pdf_page']}: *{md_escape(c['caption'])}*", ""]
+        if c.get("also_in"):
+            out += ["The same table is also printed in "
+                    + ", ".join(site.link("publications", t["publication_id"],
+                                          t["title"], from_kind=K)
+                                + f" ({md_escape(t['table_label'])}, page {t['pdf_page']})"
+                                for t in c["also_in"]) + ".", ""]
+        return out
+
+    # THE METHOD'S OWN RESULTS: a table in one of its papers that reports it
+    # alone, per evaluation set, with no baseline beside it (InstaNovo's
+    # results tables). Not a comparison, so not under that heading.
+    if ctx.get("own_results"):
+        n = len(ctx["own_results"])
+        L += [f"## Own results ({n})" if n > 1 else "## Own results", "",
+              "Table" + ("s" if n > 1 else "") + " from this method's own papers that "
+              "report it alone, on each of its evaluation sets, with no other method "
+              "in the table. Standardised like the comparisons: every value on a 0-1 "
+              "scale, the measure and then the evaluation set across.", ""]
+        for c in ctx["own_results"]:
+            L += table_head(c, "###")
+            L += comparison_table(site, c, K)
+
+    # WHAT OTHER PAPERS REPORT ABOUT THIS METHOD: every verified comparison
+    # table in which it is a baseline. Grouped by paper and collapsed, because
+    # a common baseline sits in over a hundred tables.
+    if ctx.get("as_baseline"):
+        by_pub: dict[int, list[dict]] = {}
+        for c in ctx["as_baseline"]:
+            by_pub.setdefault(c["publication_id"], []).append(c)
+        n_t, n_p = len(ctx["as_baseline"]), len(by_pub)
+        L += [f"## Compared against in other papers ({n_p})", "",
+              f"{n_t} table{'s' if n_t != 1 else ''} from {n_p} "
+              f"paper{'s' if n_p != 1 else ''} that report this method as a "
+              "**baseline**, newest first. The caveats of the comparisons above "
+              "hold twice over: each paper ran, retrained or quoted this method "
+              "its own way, so its number here is that paper's claim, not a "
+              "measurement of the method. Where a paper says which it did, the "
+              "word follows the method's name.", ""]
+        for pub_id, cs in by_pub.items():
+            first = cs[0]
+            year = str(first["publication_date"] or "")[:4]
+            summary = (html.escape(re.sub(r"<[^>]+>", "", first["title"]))
+                       + (f" ({year})" if year else "")
+                       + f" · {len(cs)} table{'s' if len(cs) != 1 else ''}")
+            L += ["<details>", f"<summary>{summary}</summary>", ""]
+            for c in cs:
+                L += table_head(c, "####")
+                L += comparison_table(site, c, K)
+            L += ["</details>", ""]
 
     # Two sections, never one: a paper that introduced this method and a paper
     # that ran it on a snake venom are not the same claim, and PEAKS's list of
@@ -2078,10 +2144,12 @@ def load(conn: sqlite3.Connection) -> dict:
     # named under it. Tables that differ in anything are both shown, because
     # the difference is the point.
     d["comparisons"] = defaultdict(list)
+    d["own_results"] = defaultdict(list)
+    d["as_baseline"] = defaultdict(list)
     TYPE_RANK = {"peer-reviewed": 0, "ML conference": 1, "postprint": 2,
                  "preprint": 3, "thesis": 4}
     comps = {r["id"]: dict(r) for r in q(
-        "SELECT c.id, c.review_id, c.publication_id, c.table_label, c.part, c.pdf_page,"
+        "SELECT c.id, c.review_id, c.publication_id, c.table_label, c.part, c.pdf_page, c.kind,"
         "       c.caption, c.footnote, c.design_note, c.dataset_id, c.dataset_printed,"
         "       c.unit_printed,"
         "       ds.name AS dataset, dv.version AS dataset_version,"
@@ -2089,10 +2157,10 @@ def load(conn: sqlite3.Connection) -> dict:
         "FROM paper_comparison c JOIN publication p ON p.id = c.publication_id "
         "LEFT JOIN dataset ds ON ds.id = c.dataset_id "
         "LEFT JOIN dataset_version dv ON dv.id = c.dataset_version_id "
-        # Comparisons only: a table of a paper's own results (one method, no
-        # baselines) is not "reported comparisons", and feeds the
-        # Performance-in-release-order chart instead.
-        "WHERE c.review_status = 'verified' AND c.kind = 'comparison'")}
+        # A table of a paper's OWN results (one method, no baselines) is not a
+        # "reported comparison": it gets a section of its own on the method's
+        # page, and feeds the Performance-in-release-order chart as before.
+        "WHERE c.review_status = 'verified'")}
     for c in comps.values():
         c["results"] = []
         c["notes"] = []
@@ -2109,6 +2177,8 @@ def load(conn: sqlite3.Connection) -> dict:
         if r["comparison_id"] in comps:
             comps[r["comparison_id"]]["notes"].append(r["text"])
     by_subject: dict[int, list[dict]] = defaultdict(list)
+    by_own: dict[int, list[dict]] = defaultdict(list)
+    by_baseline: dict[int, list[dict]] = defaultdict(list)
     for c in comps.values():
         # The BASIS is left out on purpose: it is our reading of each paper's
         # prose, not part of the printed table. CrossNovo's two preprints print
@@ -2118,9 +2188,22 @@ def load(conn: sqlite3.Connection) -> dict:
             (x["algorithm_id"], x["variant_printed"] or "", x["metric"], x["level"],
              x["subset_canonical"] or "", round(x["value"], 4))
             for x in c["results"])
-        for aid in {x["algorithm_id"] for x in c["results"] if x["is_self"]}:
+        own = {x["algorithm_id"] for x in c["results"] if x["is_self"]}
+        if c["kind"] == "own_results":
+            for aid in own:
+                by_own[aid].append(c)
+            continue
+        for aid in own:
             by_subject[aid].append(c)
-    for aid, cs in by_subject.items():
+        # A BASELINE is a method in the table that this paper does not
+        # describe: what OTHER papers report about it, the half no other page
+        # on the site collects. 55 tables from 15 papers carry InstaNovo that
+        # way, and its page showed none of them.
+        for aid in {x["algorithm_id"] for x in c["results"]} - own:
+            by_baseline[aid].append(c)
+
+    def dedupe(cs: list[dict]) -> list[dict]:
+        """One copy of a table printed twice, the most authoritative kept."""
         cs.sort(key=lambda c: (TYPE_RANK.get(c["publication_type"], 9),
                                -int(str(c["publication_date"] or "0")[:4] or 0),
                                c["publication_id"]))
@@ -2132,9 +2215,26 @@ def load(conn: sqlite3.Connection) -> dict:
                 twin.setdefault("also_in", []).append(c)
             else:
                 kept.append({**c})
+        return kept
+
+    for aid, cs in by_subject.items():
+        kept = dedupe(cs)
         kept.sort(key=lambda c: (str(c["publication_date"] or ""), c["pdf_page"],
                                  c["table_label"], c["part"] or ""))
         d["comparisons"][aid] = kept
+    for aid, cs in by_own.items():
+        kept = dedupe(cs)
+        kept.sort(key=lambda c: (str(c["publication_date"] or ""), c["pdf_page"],
+                                 c["table_label"], c["part"] or ""))
+        d["own_results"][aid] = kept
+    for aid, cs in by_baseline.items():
+        kept = dedupe(cs)
+        # Newest first: a reader looking up what others report about a method
+        # most wants the latest comparisons.
+        kept.sort(key=lambda c: (str(c["publication_date"] or ""), c["publication_id"],
+                                 c["pdf_page"], c["table_label"], c["part"] or ""),
+                  reverse=True)
+        d["as_baseline"][aid] = kept
 
     def by_date_desc(rows: list[tuple]) -> list[tuple]:
         return sorted(rows, key=lambda r: (str(r[2] or ""), r[0]), reverse=True)
@@ -2339,6 +2439,8 @@ def main() -> int:
                 "proteobench": d["proteobench"].get(gid),
                 "bench_ds_id": d["bench_ds_id"], "nine_ds_id": d["nine_ds_id"],
                 "comparisons": d["comparisons"].get(gid, []),
+                "own_results": d["own_results"].get(gid, []),
+                "as_baseline": d["as_baseline"].get(gid, []),
                 "subdomain": d["subdomain_by_name"].get(row["subdomain"]),
                 "family_key": d["family_key"].get(row["algorithm_family"]),
             }

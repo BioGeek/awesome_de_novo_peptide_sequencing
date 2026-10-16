@@ -2807,6 +2807,19 @@ printed precision (`0.530` stays `0.530`; a percentage table gains two
 decimals). The dataset heads the table and links to its page; every method
 links to its page. Bold and underline are our ranking per column.
 
+**Two more sections follow it, both from the same tables.** `## Own
+results` holds a paper's tables of its own method alone (`kind =
+'own_results'`, InstaNovo's results tables), which "Reported comparisons"
+leaves out because they compare nothing; before this they reached no page at
+all. `## Compared against in other papers` holds every verified comparison
+in which the method is a BASELINE, i.e. present in a table whose paper does
+not describe it: the half of the evidence no other page collects. InstaNovo
+is in 55 such tables from 15 papers and its page showed none. It is grouped by
+paper, newest first, each paper a collapsed `<details>`, because Casanovo is
+a baseline in over a hundred tables; a preprint and its version of record
+fold into one entry by the same duplicate rule. Publication pages carry no
+table section, by the owner's choice.
+
 It is built from `paper_comparison_result` alone and never from the printed
 header, which is why DiffNovo's mis-typeset Table 1 comes out as clean as any
 other. Three rules worth knowing:
