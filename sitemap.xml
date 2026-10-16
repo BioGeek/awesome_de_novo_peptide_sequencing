@@ -2906,7 +2906,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/bioinformatics.html</loc>
-    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/current-plant-biology.html</loc>
@@ -10758,7 +10758,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/lusheng-wang.html</loc>
-    <lastmod>2026-07-15T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/mario-stanke.html</loc>
@@ -17354,7 +17354,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/city-university-of-hong-kong.html</loc>
-    <lastmod>2026-07-15T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/instituto-nacional-de-ciencia-e-tecnologia-em-toxinas.html</loc>
@@ -30187,5 +30187,29 @@
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
     <lastmod>2026-10-16T12:54:35.411Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
+    <lastmod>2026-10-16T13:02:28.552Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/scopenovo.html</loc>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/zejian-ding.html</loc>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/zhi-song.html</loc>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum.html</loc>
+    <lastmod>2024-01-01T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum.html</loc>
+    <lastmod>2026-10-15T00:00:00.000Z</lastmod>
   </url>
 </urlset>
