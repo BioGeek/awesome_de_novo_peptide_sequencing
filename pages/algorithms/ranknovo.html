@@ -2366,6 +2366,1481 @@ Peptide recall
 </p>
 </section>
 </section>
+<section id="compared-against-in-other-papers-1" class="level2">
+<h2 class="anchored" data-anchor-id="compared-against-in-other-papers-1">Compared against in other papers (1)</h2>
+<p>2 tables from 1 paper that report this method as a <strong>baseline</strong>, newest first. The caveats of the comparisons above hold twice over: each paper ran, retrained or quoted this method its own way, so its number here is that paper’s claim, not a measurement of the method. Where a paper says which it did, the word follows the method’s name.</p>
+<details>
+<summary>
+ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy (2026) · 2 tables
+</summary>
+<section id="table-1-nine-species-revised-main" class="level4">
+<h4 class="anchored" data-anchor-id="table-1-nine-species-revised-main">Table 1 (Nine-species · revised (main))</h4>
+<p><a href="../publications/scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum.html">ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy</a>, page 5: <em>Comparison of de novo peptide sequencing methods on 9-species-V1 and 9-species-V2 benchmarks. For ScopeNovo we report two operating regimes: Setting 1 (External Library, spectrum-consistency reranking against a curated external spectral library), which characterizes the upper-bound performance attainable when high-quality external spectral resources are available; and Setting 2 (Self-Constructed Library), in which the reference library is bootstrapped entirely from high-confidence in-batch de novo predictions on the test data itself, placing ScopeNovo under the same resource assumptions as the baselines and yielding a direct comparison. In each column, the best value among the baselines and ScopeNovo (Setting 2) is in bold; ScopeNovo (Setting 1) is reported separately for reference and excluded from the bold comparison.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+<strong>0.923</strong>
+</td>
+<td>
+0.787
+</td>
+<td>
+0.776
+</td>
+<td>
+0.856
+</td>
+<td>
+0.828
+</td>
+<td>
+0.806
+</td>
+<td>
+0.854
+</td>
+<td>
+0.874
+</td>
+<td>
+0.865
+</td>
+<td>
+<u>0.881</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.843
+</td>
+<td>
+0.799
+</td>
+<td>
+0.788
+</td>
+<td>
+0.865
+</td>
+<td>
+0.836
+</td>
+<td>
+0.813
+</td>
+<td>
+0.867
+</td>
+<td>
+0.882
+</td>
+<td>
+0.875
+</td>
+<td>
+0.865
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+0.852
+</td>
+<td>
+0.751
+</td>
+<td>
+0.799
+</td>
+<td>
+0.847
+</td>
+<td>
+0.848
+</td>
+<td>
+0.634
+</td>
+<td>
+0.894
+</td>
+<td>
+0.864
+</td>
+<td>
+0.877
+</td>
+<td>
+0.850
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.863
+</td>
+<td>
+0.802
+</td>
+<td>
+0.817
+</td>
+<td>
+<strong>0.909</strong>
+</td>
+<td>
+0.864
+</td>
+<td>
+0.830
+</td>
+<td>
+0.903
+</td>
+<td>
+0.881
+</td>
+<td>
+0.883
+</td>
+<td>
+0.865
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+0.792
+</td>
+<td>
+0.816
+</td>
+<td>
+0.756
+</td>
+<td>
+0.800
+</td>
+<td>
+0.804
+</td>
+<td>
+0.757
+</td>
+<td>
+0.759
+</td>
+<td>
+0.831
+</td>
+<td>
+0.801
+</td>
+<td>
+0.794
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+0.836
+</td>
+<td>
+<strong>0.836</strong>
+</td>
+<td>
+<strong>0.891</strong>
+</td>
+<td>
+0.836
+</td>
+<td>
+<u>0.879</u>
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+0.896
+</td>
+<td>
+<u>0.893</u>
+</td>
+<td>
+0.879
+</td>
+<td>
+0.880
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+0.874
+</td>
+<td>
+0.806
+</td>
+<td>
+0.824
+</td>
+<td>
+0.870
+</td>
+<td>
+0.869
+</td>
+<td>
+0.808
+</td>
+<td>
+0.921
+</td>
+<td>
+0.885
+</td>
+<td>
+0.891
+</td>
+<td>
+0.866
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 1</small>
+</th>
+<td>
+<u>0.885</u>
+</td>
+<td>
+<u>0.822</u>
+</td>
+<td>
+<u>0.839</u>
+</td>
+<td>
+<u>0.884</u>
+</td>
+<td>
+<strong>0.882</strong>
+</td>
+<td>
+<u>0.841</u>
+</td>
+<td>
+<strong>0.931</strong>
+</td>
+<td>
+<strong>0.897</strong>
+</td>
+<td>
+<strong>0.900</strong>
+</td>
+<td>
+<strong>0.885</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 2</small>
+</th>
+<td>
+0.877
+</td>
+<td>
+0.814
+</td>
+<td>
+0.829
+</td>
+<td>
+0.879
+</td>
+<td>
+0.874
+</td>
+<td>
+0.821
+</td>
+<td>
+<u>0.926</u>
+</td>
+<td>
+0.889
+</td>
+<td>
+<u>0.892</u>
+</td>
+<td>
+0.868
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide accuracy
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.687
+</td>
+<td>
+0.522
+</td>
+<td>
+0.579
+</td>
+<td>
+0.662
+</td>
+<td>
+0.656
+</td>
+<td>
+0.522
+</td>
+<td>
+0.645
+</td>
+<td>
+0.730
+</td>
+<td>
+0.738
+</td>
+<td>
+0.682
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.693
+</td>
+<td>
+0.532
+</td>
+<td>
+0.587
+</td>
+<td>
+0.670
+</td>
+<td>
+0.661
+</td>
+<td>
+0.531
+</td>
+<td>
+0.654
+</td>
+<td>
+0.737
+</td>
+<td>
+<u>0.743</u>
+</td>
+<td>
+0.683
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+0.704
+</td>
+<td>
+0.512
+</td>
+<td>
+0.625
+</td>
+<td>
+0.670
+</td>
+<td>
+0.666
+</td>
+<td>
+0.504
+</td>
+<td>
+0.679
+</td>
+<td>
+0.721
+</td>
+<td>
+<strong>0.758</strong>
+</td>
+<td>
+0.698
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.709
+</td>
+<td>
+0.533
+</td>
+<td>
+0.615
+</td>
+<td>
+<u>0.759</u>
+</td>
+<td>
+0.698
+</td>
+<td>
+0.567
+</td>
+<td>
+0.722
+</td>
+<td>
+0.729
+</td>
+<td>
+0.725
+</td>
+<td>
+0.701
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+0.636
+</td>
+<td>
+<u>0.624</u>
+</td>
+<td>
+0.597
+</td>
+<td>
+0.590
+</td>
+<td>
+0.641
+</td>
+<td>
+0.472
+</td>
+<td>
+0.538
+</td>
+<td>
+0.693
+</td>
+<td>
+0.653
+</td>
+<td>
+0.635
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+0.713
+</td>
+<td>
+0.603
+</td>
+<td>
+0.617
+</td>
+<td>
+0.717
+</td>
+<td>
+0.712
+</td>
+<td>
+0.559
+</td>
+<td>
+0.744
+</td>
+<td>
+0.724
+</td>
+<td>
+0.680
+</td>
+<td>
+0.682
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+0.712
+</td>
+<td>
+0.572
+</td>
+<td>
+0.612
+</td>
+<td>
+0.710
+</td>
+<td>
+0.714
+</td>
+<td>
+0.548
+</td>
+<td>
+0.766
+</td>
+<td>
+0.719
+</td>
+<td>
+0.684
+</td>
+<td>
+0.697
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 1</small>
+</th>
+<td>
+<strong>0.748</strong>
+</td>
+<td>
+<strong>0.664</strong>
+</td>
+<td>
+<strong>0.669</strong>
+</td>
+<td>
+<strong>0.762</strong>
+</td>
+<td>
+<strong>0.772</strong>
+</td>
+<td>
+<strong>0.664</strong>
+</td>
+<td>
+<strong>0.816</strong>
+</td>
+<td>
+<strong>0.771</strong>
+</td>
+<td>
+0.702
+</td>
+<td>
+<strong>0.737</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 2</small>
+</th>
+<td>
+<u>0.728</u>
+</td>
+<td>
+0.619
+</td>
+<td>
+<u>0.641</u>
+</td>
+<td>
+0.750
+</td>
+<td>
+<u>0.743</u>
+</td>
+<td>
+<u>0.611</u>
+</td>
+<td>
+<u>0.788</u>
+</td>
+<td>
+<u>0.745</u>
+</td>
+<td>
+0.691
+</td>
+<td>
+<u>0.716</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>The paper bolds the best of the baselines and ScopeNovo (Setting 2) only: 'ScopeNovo (Setting 1) is reported separately for reference and excluded from the bold comparison.' Bold and underline here rank every row, Setting 1 included; the paper's own marks were checked against its rule, and match it.</small>
+</p>
+</section>
+<section id="table-1-nine-species-original-deepnovo-2017" class="level4">
+<h4 class="anchored" data-anchor-id="table-1-nine-species-original-deepnovo-2017">Table 1 (Nine-species · original (DeepNovo, 2017))</h4>
+<p><a href="../publications/scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum.html">ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy</a>, page 5: <em>Comparison of de novo peptide sequencing methods on 9-species-V1 and 9-species-V2 benchmarks. For ScopeNovo we report two operating regimes: Setting 1 (External Library, spectrum-consistency reranking against a curated external spectral library), which characterizes the upper-bound performance attainable when high-quality external spectral resources are available; and Setting 2 (Self-Constructed Library), in which the reference library is bootstrapped entirely from high-confidence in-batch de novo predictions on the test data itself, placing ScopeNovo under the same resource assumptions as the baselines and yielding a direct comparison. In each column, the best value among the baselines and ScopeNovo (Setting 2) is in bold; ScopeNovo (Setting 1) is reported separately for reference and excluded from the bold comparison.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.788
+</td>
+<td>
+0.676
+</td>
+<td>
+0.708
+</td>
+<td>
+0.676
+</td>
+<td>
+0.754
+</td>
+<td>
+0.765
+</td>
+<td>
+0.761
+</td>
+<td>
+0.792
+</td>
+<td>
+0.756
+</td>
+<td>
+0.743
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.801
+</td>
+<td>
+0.687
+</td>
+<td>
+0.721
+</td>
+<td>
+0.687
+</td>
+<td>
+0.767
+</td>
+<td>
+0.774
+</td>
+<td>
+0.768
+</td>
+<td>
+0.802
+</td>
+<td>
+0.768
+</td>
+<td>
+0.754
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+0.802
+</td>
+<td>
+0.656
+</td>
+<td>
+0.718
+</td>
+<td>
+0.691
+</td>
+<td>
+0.756
+</td>
+<td>
+0.742
+</td>
+<td>
+0.794
+</td>
+<td>
+0.774
+</td>
+<td>
+0.767
+</td>
+<td>
+0.745
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.828
+</td>
+<td>
+0.700
+</td>
+<td>
+0.764
+</td>
+<td>
+<u>0.778</u>
+</td>
+<td>
+0.798
+</td>
+<td>
+0.803
+</td>
+<td>
+0.804
+</td>
+<td>
+0.812
+</td>
+<td>
+0.787
+</td>
+<td>
+0.785
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.858</strong>
+</td>
+<td>
+<strong>0.798</strong>
+</td>
+<td>
+0.767
+</td>
+<td>
+0.690
+</td>
+<td>
+0.804
+</td>
+<td>
+0.778
+</td>
+<td>
+<strong>0.878</strong>
+</td>
+<td>
+0.818
+</td>
+<td>
+0.791
+</td>
+<td>
+<u>0.798</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+0.807
+</td>
+<td>
+<u>0.771</u>
+</td>
+<td>
+<strong>0.880</strong>
+</td>
+<td>
+<strong>0.784</strong>
+</td>
+<td>
+<strong>0.838</strong>
+</td>
+<td>
+<strong>0.823</strong>
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+<strong>0.846</strong>
+</td>
+<td>
+<strong>0.828</strong>
+</td>
+<td>
+<strong>0.827</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+0.840
+</td>
+<td>
+0.715
+</td>
+<td>
+0.767
+</td>
+<td>
+0.725
+</td>
+<td>
+0.799
+</td>
+<td>
+0.797
+</td>
+<td>
+0.823
+</td>
+<td>
+0.822
+</td>
+<td>
+0.795
+</td>
+<td>
+0.789
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 1</small>
+</th>
+<td>
+<u>0.849</u>
+</td>
+<td>
+0.715
+</td>
+<td>
+<u>0.778</u>
+</td>
+<td>
+0.729
+</td>
+<td>
+<u>0.811</u>
+</td>
+<td>
+<u>0.809</u>
+</td>
+<td>
+0.816
+</td>
+<td>
+0.825
+</td>
+<td>
+0.796
+</td>
+<td>
+0.797
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 2</small>
+</th>
+<td>
+0.844
+</td>
+<td>
+0.722
+</td>
+<td>
+0.774
+</td>
+<td>
+0.732
+</td>
+<td>
+0.806
+</td>
+<td>
+<u>0.809</u>
+</td>
+<td>
+0.829
+</td>
+<td>
+<u>0.828</u>
+</td>
+<td>
+<u>0.798</u>
+</td>
+<td>
+0.795
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide accuracy
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.621
+</td>
+<td>
+0.437
+</td>
+<td>
+0.494
+</td>
+<td>
+0.446
+</td>
+<td>
+0.568
+</td>
+<td>
+0.485
+</td>
+<td>
+0.593
+</td>
+<td>
+0.622
+</td>
+<td>
+0.601
+</td>
+<td>
+0.551
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.630
+</td>
+<td>
+0.445
+</td>
+<td>
+0.504
+</td>
+<td>
+0.455
+</td>
+<td>
+0.579
+</td>
+<td>
+0.493
+</td>
+<td>
+0.600
+</td>
+<td>
+0.629
+</td>
+<td>
+0.607
+</td>
+<td>
+0.559
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a>
+</th>
+<td>
+0.652
+</td>
+<td>
+0.459
+</td>
+<td>
+0.535
+</td>
+<td>
+0.515
+</td>
+<td>
+0.595
+</td>
+<td>
+0.525
+</td>
+<td>
+0.635
+</td>
+<td>
+0.635
+</td>
+<td>
+0.618
+</td>
+<td>
+0.582
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.688
+</td>
+<td>
+0.486
+</td>
+<td>
+0.580
+</td>
+<td>
+<u>0.625</u>
+</td>
+<td>
+0.633
+</td>
+<td>
+0.574
+</td>
+<td>
+0.678
+</td>
+<td>
+0.674
+</td>
+<td>
+0.673
+</td>
+<td>
+0.628
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+0.753
+</td>
+<td>
+<strong>0.638</strong>
+</td>
+<td>
+0.620
+</td>
+<td>
+0.494
+</td>
+<td>
+0.671
+</td>
+<td>
+0.546
+</td>
+<td>
+<strong>0.797</strong>
+</td>
+<td>
+0.684
+</td>
+<td>
+0.660
+</td>
+<td>
+0.660
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<u>0.765</u>
+</td>
+<td>
+0.592
+</td>
+<td>
+0.642
+</td>
+<td>
+0.621
+</td>
+<td>
+0.688
+</td>
+<td>
+0.595
+</td>
+<td>
+<u>0.765</u>
+</td>
+<td>
+0.720
+</td>
+<td>
+<u>0.726</u>
+</td>
+<td>
+<u>0.687</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+0.725
+</td>
+<td>
+0.532
+</td>
+<td>
+0.602
+</td>
+<td>
+0.575
+</td>
+<td>
+0.654
+</td>
+<td>
+0.572
+</td>
+<td>
+0.701
+</td>
+<td>
+0.701
+</td>
+<td>
+0.703
+</td>
+<td>
+0.650
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 1</small>
+</th>
+<td>
+<strong>0.789</strong>
+</td>
+<td>
+<u>0.610</u>
+</td>
+<td>
+<strong>0.665</strong>
+</td>
+<td>
+<strong>0.628</strong>
+</td>
+<td>
+<strong>0.731</strong>
+</td>
+<td>
+<strong>0.660</strong>
+</td>
+<td>
+0.755
+</td>
+<td>
+<strong>0.752</strong>
+</td>
+<td>
+<strong>0.744</strong>
+</td>
+<td>
+<strong>0.711</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="scopenovo.html">ScopeNovo</a> <small>Setting 2</small>
+</th>
+<td>
+0.749
+</td>
+<td>
+0.572
+</td>
+<td>
+<u>0.643</u>
+</td>
+<td>
+0.624
+</td>
+<td>
+<u>0.690</u>
+</td>
+<td>
+<u>0.637</u>
+</td>
+<td>
+0.733
+</td>
+<td>
+<u>0.732</u>
+</td>
+<td>
+0.721
+</td>
+<td>
+0.684
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>The paper bolds the best of the baselines and ScopeNovo (Setting 2) only: 'ScopeNovo (Setting 1) is reported separately for reference and excluded from the bold comparison.' Bold and underline here rank every row, Setting 1 included; the paper's own marks were checked against its rule, and match it.</small>
+</p>
+</section></details>
+</section>
+
 <section id="papers-describing-it-3" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-3">Papers describing it (3)</h2>
 <ul>
