@@ -245,6 +245,295 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>A host marked <em>archival</em> has a DOI and keeps what it is given. The others can move or disappear, which is why they are checked rather than merely listed. <strong>verified</strong> means the bytes were fetched and hashed on the date shown; <strong>live</strong> means only that the host answered when last asked.</p>
 </section>
+<section id="reported-comparisons-3" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="table1-kingdoms-de-novo" class="level3">
+<h3 class="anchored" data-anchor-id="table1-kingdoms-de-novo">Table1 (Kingdoms de novo)</h3>
+<p><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a>, page 7: <em>De novo sequencing on the Kingdoms de novo (all 70 species) and MSKB-final test sets. Within each training regime, scratch and dIon initialization use an identical end-to-end training protocol.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/the-proteome-landscape-of-the-kingdoms-of-life.html">The Proteome Landscape of the Kingdoms of Life</a>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision at coverage 1
+</th>
+</tr>
+<tr>
+<th>
+<small>Kingdoms</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.449
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.533
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+0.554
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+<strong>0.602</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>5.2.1</small> <small class="text-muted" title="External reference models use their own released preprocessing.">· <em>released</em></small>
+</th>
+<td>
+0.492
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a> <small>1.2.2</small> <small class="text-muted" title="External reference models use their own released preprocessing.">· <em>released</em></small>
+</th>
+<td>
+<u>0.570</u>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>Peptide precision here is at FULL coverage, unanswered spectra counted wrong, which is Casanovo's precision at coverage 1. Rows are grouped by training corpus, recorded in each variant. InstaNovo 1.2.2 has no MSKB-final value: it 'was trained on MassIVE-KB v1, the source of this test set'.</small>
+</p>
+</section>
+<section id="table1-mskb-final" class="level3">
+<h3 class="anchored" data-anchor-id="table1-mskb-final">Table1 (MSKB-final)</h3>
+<p><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a>, page 7: <em>De novo sequencing on the Kingdoms de novo (all 70 species) and MSKB-final test sets. Within each training regime, scratch and dIon initialization use an identical end-to-end training protocol.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/casanovo-digestion-enzyme-bias-data.html">Casanovo digestion enzyme bias data</a><br><small>as deposited</small>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision at coverage 1
+</th>
+</tr>
+<tr>
+<th>
+<small>MSKB-final</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.747
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.802
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+<u>0.819</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+<strong>0.842</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>5.2.1</small> <small class="text-muted" title="External reference models use their own released preprocessing.">· <em>released</em></small>
+</th>
+<td>
+0.783
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>Peptide precision here is at FULL coverage, unanswered spectra counted wrong, which is Casanovo's precision at coverage 1. Rows are grouped by training corpus, recorded in each variant. InstaNovo 1.2.2 has no MSKB-final value: it 'was trained on MassIVE-KB v1, the source of this test set'.</small>
+</p>
+</section>
+<section id="table-26" class="level3">
+<h3 class="anchored" data-anchor-id="table-26">Table 26</h3>
+<p><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a>, page 33: <em>Complete MSKB-final de novo results, including amino-acid metrics and the dIoninitialized models fine-tuned with a 1,000-peak cap. Within each training regime, scratch and dIon initialization use an identical end-to-end training protocol.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/casanovo-digestion-enzyme-bias-data.html">Casanovo digestion enzyme bias data</a><br><small>as deposited</small>
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid precision
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid recall
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision at coverage 1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.895
+</td>
+<td>
+0.895
+</td>
+<td>
+0.747
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on MSKB-final</small>
+</th>
+<td>
+0.927
+</td>
+<td>
+0.926
+</td>
+<td>
+0.802
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end, 1,000 peaks; trained on MSKB-final</small>
+</th>
+<td>
+0.935
+</td>
+<td>
+0.934
+</td>
+<td>
+0.822
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>from scratch, end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+0.933
+</td>
+<td>
+0.934
+</td>
+<td>
+0.819
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end; trained on DNL-v1</small>
+</th>
+<td>
+0.945
+</td>
+<td>
+0.945
+</td>
+<td>
+0.842
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="dion.html">dIon</a> <small>init., end-to-end, 1,000 peaks; trained on DNL-v1</small>
+</th>
+<td>
+<u>0.949</u>
+</td>
+<td>
+<u>0.949</u>
+</td>
+<td>
+<u>0.856</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>5.2.1</small> <small class="text-muted" title="External reference models use their own released preprocessing.">· <em>released</em></small>
+</th>
+<td>
+0.911
+</td>
+<td>
+0.912
+</td>
+<td>
+0.783
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo.html">InstaNovo</a> <small>1.2.2</small> <small class="text-muted" title="External reference models use their own released preprocessing.">· <em>released</em></small>
+</th>
+<td>
+<strong>0.961</strong>
+</td>
+<td>
+<strong>0.961</strong>
+</td>
+<td>
+<strong>0.916</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>MSKB-final, rows grouped by training corpus as in Table 1. InstaNovo 1.2.2 is printed in grey with an asterisk because it 'is documented as training on MassIVE-KB v1, the source corpus of this test set', so its numbers are not a held-out evaluation.<br>In the paper: column amino acid precision: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).<br>In the paper: column peptide precision at coverage 1: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.856).<br>In the paper: column amino acid recall: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).</small>
+</p>
+</section>
+</section>
 <section id="paper-describing-it" class="level2">
 <h2 class="anchored" data-anchor-id="paper-describing-it">Paper describing it</h2>
 <ul>
