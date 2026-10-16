@@ -525,6 +525,24 @@ def species_index(con: sqlite3.Connection, dataset: str | None = None) -> dict[s
     return _SPECIES_CACHE[name]
 
 
+# A PAPER'S OWN KEY TO ITS ABBREVIATIONS, used only to reach the canonical
+# name: the subset stays as printed. ScopeNovo heads Table 1 'Bac.', 'C.b.',
+# 'Hon.'..., too short for the common-name rule, and 'M.m.' fits both M.
+# mazei and Mus musculus; its legend under Table 2 says which.
+SUBSET_LEGEND: dict[int, dict[str, str]] = {
+    990: {"Bac.": "Bacillus", "C.b.": "C. bact", "Hon.": "Honeybee", "Hum.": "Human",
+          "M.m.": "M. mazei", "Mou.": "Mouse", "R.b.": "Rice bean", "Tom.": "Tomato",
+          "Yea.": "Yeast", "Avg.": "Avg."},
+}
+
+
+def legend_form(printed: str, pub_id) -> str:
+    """The printed subset as the paper's own legend spells it out."""
+    leg = SUBSET_LEGEND.get(pub_id) or {}
+    key = re.sub(r"\s+", "", printed or "")
+    return next((v for k, v in leg.items() if re.sub(r"\s+", "", k) == key), printed)
+
+
 # A subset that IS the whole test set of its dataset version. NovoBench's
 # seven-species split tests on yeast alone, so 'yeast' there names the test
 # set, not a part of it.
@@ -6244,7 +6262,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         for k in r["cells"]:
             _m, _mt, _lv, sub = cell_meta(k, ri)
             if _m and sub and sub not in seen_sub:
-                nm, acc = canonical_subset(sub, con, dname)
+                nm, acc = canonical_subset(legend_form(sub, base.get("publication_id")),
+                                           con, dname)
                 seen_sub[sub] = (f"{nm}" + (f" [{acc}]" if acc else "")) if nm else ""
     base["subsets_canonical"] = "|".join(f"{k}={v}" for k, v in seen_sub.items() if v)
     # PER-RESIDUE PRECISION IS A DIFFERENT GRAIN. A table whose subsets are
@@ -6426,7 +6445,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 for pi, (v, _p, mt, lv, bas) in enumerate(parts_of(cell, metric, level)):
                     _pre = SUBSET_PREFIX.get((base.get("publication_id"),
                                               (tb.get("registry_label") or tb["table_label"] or "").strip()))
-                    canon, acc = (canonical_subset(f"{_pre} {sub}" if _pre else sub, con, dname)
+                    _sub = legend_form(sub, base.get("publication_id"))
+                    canon, acc = (canonical_subset(f"{_pre} {_sub}" if _pre else _sub, con, dname)
                                   if sub else (None, None))
                     if rd and rd[2]:
                         canon, acc = rd[2], species_index(con, dname).get(rd[2])

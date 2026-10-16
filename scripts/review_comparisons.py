@@ -318,7 +318,7 @@ def printed_emphasis(rec: dict) -> dict | None:
 CON = None
 
 
-def canon_html(printed: str, dataset: str | None = None) -> str:
+def canon_html(printed: str, dataset: str | None = None, pub: int | None = None) -> str:
     """The printed subset, with its canonical name beneath where they differ.
 
     One species is printed a dozen ways across these papers -- 'B. sub.',
@@ -337,7 +337,7 @@ def canon_html(printed: str, dataset: str | None = None) -> str:
     if hit:
         name, acc, ds = hit
     else:
-        (name, acc), ds = B.canonical_subset(printed, CON, dataset), ""
+        (name, acc), ds = B.canonical_subset(B.legend_form(printed, pub), CON, dataset), ""
     if not name or (_norm(name) == _norm(printed) and not ds):
         return shown
     tip = f" title='{html.escape(acc)}'" if acc else ""
@@ -744,7 +744,7 @@ def grid_html(rec: dict) -> str:
                 while j + 1 < ncol and subs[j + 1] == subs[k]:
                     j += 1
                 cells_.append(f"<th colspan='{j - k + 1}' style='text-align:center'>"
-                              f"{canon_html(subs[k], rec.get("dataset"))}</th>")
+                              f"{canon_html(subs[k], rec.get("dataset"), rec.get("pub"))}</th>")
                 k = j + 1
             out.append("<tr><th></th>" + "".join(cells_) + "</tr>")
         out.append("<tr><th></th>" + "".join(
@@ -759,7 +759,7 @@ def grid_html(rec: dict) -> str:
             # whole table were peptide accuracy. RT-GCTnovo's TABLE I is
             # peptide accuracy on one row and amino-acid accuracy on the next,
             # so the metric belongs beside the ROW.
-            label = canon_html(r["label"], rec.get("dataset")) if r["label"] else "-"
+            label = canon_html(r["label"], rec.get("dataset"), rec.get("pub")) if r["label"] else "-"
             if maxis == "rows":
                 label += f"<br><small class='dim'>{mcell(i)}</small>"
             out.append(f"<tr><th>{label}</th>"
@@ -808,7 +808,7 @@ def grid_html(rec: dict) -> str:
                        (f"<th>{mcell(k)}</th>" if maxis == "columns"
                         and (rec['col_head'][k] if group_col
                              else rec['subsets'].get(k) or rec['col_head'][k]) in ("?", "")
-                        else f"<th>{html.escape(rec['col_head'][k]) if group_col else canon_html(rec['subsets'].get(k), rec.get("dataset")) if rec['subsets'].get(k) else html.escape(rec['col_head'][k])}"
+                        else f"<th>{html.escape(rec['col_head'][k]) if group_col else canon_html(rec['subsets'].get(k), rec.get("dataset"), rec.get("pub")) if rec['subsets'].get(k) else html.escape(rec['col_head'][k])}"
                              + (f"<br><small class='dim'>{mcell(k)}</small>"
                                 if maxis == "columns" else "")
                              + "</th>") for k in range(ncol)) + "</tr>")
@@ -822,7 +822,7 @@ def grid_html(rec: dict) -> str:
             grp = ""
             if group_col and i in span:
                 grp = (f"<th rowspan='{span[i]}' style='vertical-align:middle'>"
-                       f"{canon_html(rs.get(i, ''), rec.get("dataset"))}</th>")
+                       f"{canon_html(rs.get(i, ''), rec.get("dataset"), rec.get("pub"))}</th>")
             out.append(f"<tr>{grp}<th>{label}</th>"
                        + (f"<td class='dim'>{mcell(i)}</td>" if maxis == "rows" else "")
                        + "".join(cell(i, k) for k in range(ncol)) + "</tr>")
