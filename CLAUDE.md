@@ -313,7 +313,7 @@ moving, not a URL.
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 257 of the 1253 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 257 of the 1256 are `'uses'`, and they are concentrated rather than
 spread: 141 of PEAKS's 148 papers are applications that ran it, mostly snake-venom
 proteomics.
 
@@ -1714,7 +1714,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 107 of 817 methods have a row, 53 of the 72 deep-learning
+incomplete: 107 of 818 methods have a row, 53 of the 73 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -2361,7 +2361,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**138 verified tables from 38 papers, 5979 measurements.** The 175 refusals the
+**143 verified tables from 40 papers, 6939 measurements.** The 196 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
@@ -2810,7 +2810,7 @@ them corrected silently:
 
 ### On the algorithm pages
 
-**29 methods carry a `## Reported comparisons` section**, placed after
+**31 methods carry a `## Reported comparisons` section**, placed after
 `## Benchmarks` so a reader meets the independently run numbers first. One
 STANDARDISED table per printed table (or dataset part): methods down the side,
 species then metric across, every value on 0-1 at the
@@ -3280,7 +3280,7 @@ better default and the repository is still what someone downloading wants.
 **33 of 50** families that hold two or more methods. The other **17** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **337** of the **354**
+already exists, on a permanent indexed URL. Those cover **338** of the **355**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
