@@ -1003,9 +1003,9 @@ Peptide precision
 </div>
 </section>
 </section>
-<section id="compared-against-in-other-papers-3" class="level2">
-<h2 class="anchored" data-anchor-id="compared-against-in-other-papers-3">Compared against in other papers (3)</h2>
-<p>9 tables from 3 papers that report this method as a <strong>baseline</strong>, newest first. The caveats of the comparisons above hold twice over: each paper ran, retrained or quoted this method its own way, so its number here is that paper’s claim, not a measurement of the method. Where a paper says which it did, the word follows the method’s name.</p>
+<section id="compared-against-in-other-papers-4" class="level2">
+<h2 class="anchored" data-anchor-id="compared-against-in-other-papers-4">Compared against in other papers (4)</h2>
+<p>12 tables from 4 papers that report this method as a <strong>baseline</strong>, newest first. The caveats of the comparisons above hold twice over: each paper ran, retrained or quoted this method its own way, so its number here is that paper’s claim, not a measurement of the method. Where a paper says which it did, the word follows the method’s name.</p>
 <details>
 <summary>
 MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics (2026) · 4 tables
@@ -3480,11 +3480,2147 @@ Peptide recall
 
 <details>
 <summary>
+Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing (2025) · 3 tables
+</summary>
+</details></section>
+<section id="table7-1" class="level4">
+<h4 class="anchored" data-anchor-id="table7-1">Table7</h4>
+<p><a href="../publications/universal-biological-sequence-reranking-for-improved-de-novo-peptide-preprint.html">Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing</a>, page 17: <em>Evaluation of RankNovo in comparison to baseline and base methods on the 9-species-V2 test set. Bolded entries indicate the best-performing models. The symbol “†” indicates that the model serves as both a baseline and a base model. “⋆” signifies that the base models were developed and trained by us.</em></p>
+<p>The same table is also printed in <a href="../publications/ranknovo-a-universal-reranking-approach-for-robust-de-novo-peptide-sequencing.html">RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing</a> (Table2, page 8).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.888
+</td>
+<td>
+0.791
+</td>
+<td>
+0.823
+</td>
+<td>
+0.872
+</td>
+<td>
+0.877
+</td>
+<td>
+0.813
+</td>
+<td>
+0.891
+</td>
+<td>
+0.891
+</td>
+<td>
+0.915
+</td>
+<td>
+0.862
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.901
+</td>
+<td>
+0.807
+</td>
+<td>
+0.848
+</td>
+<td>
+0.920
+</td>
+<td>
+0.896
+</td>
+<td>
+0.839
+</td>
+<td>
+0.913
+</td>
+<td>
+0.898
+</td>
+<td>
+0.919
+</td>
+<td>
+0.882
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.92</u>
+</td>
+<td>
+<u>0.823</u>
+</td>
+<td>
+0.876
+</td>
+<td>
+0.917
+</td>
+<td>
+<u>0.914</u>
+</td>
+<td>
+0.841
+</td>
+<td>
+<u>0.932</u>
+</td>
+<td>
+0.912
+</td>
+<td>
+0.934
+</td>
+<td>
+<u>0.897</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.876
+</td>
+<td>
+0.804
+</td>
+<td>
+0.814
+</td>
+<td>
+0.891
+</td>
+<td>
+0.867
+</td>
+<td>
+0.821
+</td>
+<td>
+0.881
+</td>
+<td>
+0.891
+</td>
+<td>
+0.898
+</td>
+<td>
+0.860
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.909
+</td>
+<td>
+0.815
+</td>
+<td>
+0.865
+</td>
+<td>
+<u>0.923</u>
+</td>
+<td>
+0.901
+</td>
+<td>
+<u>0.849</u>
+</td>
+<td>
+0.919
+</td>
+<td>
+0.907
+</td>
+<td>
+0.925
+</td>
+<td>
+0.890
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a> <small>reverse decoding</small>
+</th>
+<td>
+0.919
+</td>
+<td>
+0.822
+</td>
+<td>
+<u>0.879</u>
+</td>
+<td>
+0.912
+</td>
+<td>
+0.912
+</td>
+<td>
+0.843
+</td>
+<td>
+<u>0.932</u>
+</td>
+<td>
+<u>0.913</u>
+</td>
+<td>
+<u>0.936</u>
+</td>
+<td>
+<u>0.897</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.926</strong>
+</td>
+<td>
+<strong>0.838</strong>
+</td>
+<td>
+<strong>0.885</strong>
+</td>
+<td>
+<strong>0.929</strong>
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+<strong>0.860</strong>
+</td>
+<td>
+<strong>0.938</strong>
+</td>
+<td>
+<strong>0.918</strong>
+</td>
+<td>
+<strong>0.938</strong>
+</td>
+<td>
+<strong>0.906</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>revised (main)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.793
+</td>
+<td>
+0.558
+</td>
+<td>
+0.669
+</td>
+<td>
+0.712
+</td>
+<td>
+0.754
+</td>
+<td>
+0.555
+</td>
+<td>
+0.772
+</td>
+<td>
+0.783
+</td>
+<td>
+0.837
+</td>
+<td>
+0.714
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.815
+</td>
+<td>
+0.575
+</td>
+<td>
+0.711
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+0.780
+</td>
+<td>
+0.616
+</td>
+<td>
+0.799
+</td>
+<td>
+0.794
+</td>
+<td>
+0.854
+</td>
+<td>
+0.752
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.833</u>
+</td>
+<td>
+0.582
+</td>
+<td>
+<u>0.731</u>
+</td>
+<td>
+0.789
+</td>
+<td>
+<u>0.799</u>
+</td>
+<td>
+0.596
+</td>
+<td>
+0.814
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+0.871
+</td>
+<td>
+<u>0.758</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.759
+</td>
+<td>
+0.558
+</td>
+<td>
+0.643
+</td>
+<td>
+0.732
+</td>
+<td>
+0.723
+</td>
+<td>
+0.558
+</td>
+<td>
+0.721
+</td>
+<td>
+0.768
+</td>
+<td>
+0.799
+</td>
+<td>
+0.696
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.821
+</td>
+<td>
+0.581
+</td>
+<td>
+0.719
+</td>
+<td>
+<u>0.815</u>
+</td>
+<td>
+0.779
+</td>
+<td>
+<u>0.620</u>
+</td>
+<td>
+0.804
+</td>
+<td>
+0.798
+</td>
+<td>
+0.861
+</td>
+<td>
+0.755
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a> <small>reverse decoding</small>
+</th>
+<td>
+0.831
+</td>
+<td>
+<u>0.585</u>
+</td>
+<td>
+0.729
+</td>
+<td>
+0.781
+</td>
+<td>
+0.794
+</td>
+<td>
+0.589
+</td>
+<td>
+<u>0.815</u>
+</td>
+<td>
+0.803
+</td>
+<td>
+<u>0.873</u>
+</td>
+<td>
+0.756
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.851</strong>
+</td>
+<td>
+<strong>0.620</strong>
+</td>
+<td>
+<strong>0.752</strong>
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+<strong>0.813</strong>
+</td>
+<td>
+<strong>0.629</strong>
+</td>
+<td>
+<strong>0.836</strong>
+</td>
+<td>
+<strong>0.822</strong>
+</td>
+<td>
+<strong>0.885</strong>
+</td>
+<td>
+<strong>0.781</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>RankNovo reranks the candidates of six base models. Casanovo V2 and ContraNovo are the released models; ByNovo is RankNovo's own in-house model, with an auxiliary b/y ion-annotation head (its Appendix B.4); R-Casanovo, R-ContraNovo and R-ByNovo are reverse-decoding versions of the three, trained by RankNovo's authors and recorded as the 'reverse decoding' variant. All six were trained on MassIVE-KB and evaluated zero-shot. '†' marks a model that is both baseline and base model, '⋆' one the authors trained. The plain Casanovo row repeats the values other papers print for Casanovo (0.749 and 0.537 on Bacillus) and the paper does not say where they come from.<br>In the paper: column peptide recall, Human: the original table only bolded RankNovo (0.820); ContraNovo (ContraNovo†) (0.820) ties with it and is bolded here too.</small>
+</p>
+</section>
+<section id="table6-1" class="level4">
+<h4 class="anchored" data-anchor-id="table6-1">Table6</h4>
+<p><a href="../publications/universal-biological-sequence-reranking-for-improved-de-novo-peptide-preprint.html">Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing</a>, page 17: <em>Evaluation of RankNovo in comparison to baseline and base methods on the 9-species-V1 test set. Bolded entries indicate the best-performing models. The symbol “†” indicates that the model serves as both a baseline and a base model. “⋆” signifies that the base models were developed and trained by us.</em></p>
+<p>The same table is also printed in <a href="../publications/ranknovo-a-universal-reranking-approach-for-robust-de-novo-peptide-sequencing.html">RankNovo: A Universal Reranking Approach for Robust De Novo Peptide Sequencing</a> (Table1, page 8).</p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+0.719
+</td>
+<td>
+0.586
+</td>
+<td>
+0.633
+</td>
+<td>
+0.639
+</td>
+<td>
+0.673
+</td>
+<td>
+0.600
+</td>
+<td>
+0.644
+</td>
+<td>
+0.728
+</td>
+<td>
+0.748
+</td>
+<td>
+0.663
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+0.742
+</td>
+<td>
+0.602
+</td>
+<td>
+0.630
+</td>
+<td>
+0.610
+</td>
+<td>
+0.694
+</td>
+<td>
+0.623
+</td>
+<td>
+0.679
+</td>
+<td>
+0.731
+</td>
+<td>
+0.750
+</td>
+<td>
+0.673
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+0.768
+</td>
+<td>
+0.589
+</td>
+<td>
+0.644
+</td>
+<td>
+0.606
+</td>
+<td>
+0.712
+</td>
+<td>
+0.626
+</td>
+<td>
+0.730
+</td>
+<td>
+0.733
+</td>
+<td>
+0.779
+</td>
+<td>
+0.687
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.749
+</td>
+<td>
+0.603
+</td>
+<td>
+0.629
+</td>
+<td>
+0.586
+</td>
+<td>
+0.679
+</td>
+<td>
+0.689
+</td>
+<td>
+0.668
+</td>
+<td>
+0.721
+</td>
+<td>
+0.684
+</td>
+<td>
+0.667
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.806
+</td>
+<td>
+0.685
+</td>
+<td>
+0.727
+</td>
+<td>
+0.69
+</td>
+<td>
+0.774
+</td>
+<td>
+0.768
+</td>
+<td>
+0.769
+</td>
+<td>
+0.799
+</td>
+<td>
+0.762
+</td>
+<td>
+0.753
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.828
+</td>
+<td>
+0.706
+</td>
+<td>
+0.761
+</td>
+<td>
+0.771
+</td>
+<td>
+0.798
+</td>
+<td>
+0.799
+</td>
+<td>
+0.804
+</td>
+<td>
+0.808
+</td>
+<td>
+0.782
+</td>
+<td>
+0.784
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.858</u>
+</td>
+<td>
+0.723
+</td>
+<td>
+0.791
+</td>
+<td>
+0.767
+</td>
+<td>
+<u>0.823</u>
+</td>
+<td>
+0.803
+</td>
+<td>
+<u>0.836</u>
+</td>
+<td>
+0.828
+</td>
+<td>
+<u>0.804</u>
+</td>
+<td>
+<u>0.804</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.804
+</td>
+<td>
+0.699
+</td>
+<td>
+0.728
+</td>
+<td>
+0.719
+</td>
+<td>
+0.769
+</td>
+<td>
+0.776
+</td>
+<td>
+0.782
+</td>
+<td>
+0.795
+</td>
+<td>
+0.762
+</td>
+<td>
+0.759
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.839
+</td>
+<td>
+0.716
+</td>
+<td>
+0.775
+</td>
+<td>
+<u>0.782</u>
+</td>
+<td>
+0.806
+</td>
+<td>
+<u>0.811</u>
+</td>
+<td>
+0.816
+</td>
+<td>
+0.822
+</td>
+<td>
+0.798
+</td>
+<td>
+0.796
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a> <small>reverse decoding</small>
+</th>
+<td>
+0.855
+</td>
+<td>
+<u>0.724</u>
+</td>
+<td>
+<u>0.794</u>
+</td>
+<td>
+0.762
+</td>
+<td>
+0.821
+</td>
+<td>
+0.81
+</td>
+<td>
+0.835
+</td>
+<td>
+<u>0.831</u>
+</td>
+<td>
+0.762
+</td>
+<td>
+0.799
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.874</strong>
+</td>
+<td>
+<strong>0.746</strong>
+</td>
+<td>
+<strong>0.81</strong>
+</td>
+<td>
+<strong>0.802</strong>
+</td>
+<td>
+<strong>0.84</strong>
+</td>
+<td>
+<strong>0.828</strong>
+</td>
+<td>
+<strong>0.859</strong>
+</td>
+<td>
+<strong>0.844</strong>
+</td>
+<td>
+<strong>0.816</strong>
+</td>
+<td>
+<strong>0.824</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+0.387
+</td>
+<td>
+0.203
+</td>
+<td>
+0.287
+</td>
+<td>
+0.277
+</td>
+<td>
+0.356
+</td>
+<td>
+0.197
+</td>
+<td>
+0.362
+</td>
+<td>
+0.403
+</td>
+<td>
+0.428
+</td>
+<td>
+0.322
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+0.449
+</td>
+<td>
+0.253
+</td>
+<td>
+0.330
+</td>
+<td>
+0.293
+</td>
+<td>
+0.422
+</td>
+<td>
+0.286
+</td>
+<td>
+0.436
+</td>
+<td>
+0.454
+</td>
+<td>
+0.462
+</td>
+<td>
+0.376
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+0.518
+</td>
+<td>
+0.298
+</td>
+<td>
+0.396
+</td>
+<td>
+0.351
+</td>
+<td>
+0.478
+</td>
+<td>
+0.355
+</td>
+<td>
+0.511
+</td>
+<td>
+0.513
+</td>
+<td>
+0.534
+</td>
+<td>
+0.439
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.537
+</td>
+<td>
+0.330
+</td>
+<td>
+0.406
+</td>
+<td>
+0.341
+</td>
+<td>
+0.478
+</td>
+<td>
+0.426
+</td>
+<td>
+0.506
+</td>
+<td>
+0.521
+</td>
+<td>
+0.490
+</td>
+<td>
+0.448
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.646
+</td>
+<td>
+0.46
+</td>
+<td>
+0.527
+</td>
+<td>
+0.492
+</td>
+<td>
+0.592
+</td>
+<td>
+0.493
+</td>
+<td>
+0.628
+</td>
+<td>
+0.637
+</td>
+<td>
+0.629
+</td>
+<td>
+0.567
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.684
+</td>
+<td>
+0.487
+</td>
+<td>
+0.576
+</td>
+<td>
+<u>0.624</u>
+</td>
+<td>
+0.628
+</td>
+<td>
+0.563
+</td>
+<td>
+0.676
+</td>
+<td>
+0.655
+</td>
+<td>
+0.669
+</td>
+<td>
+0.618
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.708</u>
+</td>
+<td>
+<u>0.499</u>
+</td>
+<td>
+<u>0.597</u>
+</td>
+<td>
+0.584
+</td>
+<td>
+<u>0.639</u>
+</td>
+<td>
+0.545
+</td>
+<td>
+<u>0.696</u>
+</td>
+<td>
+<u>0.667</u>
+</td>
+<td>
+<u>0.676</u>
+</td>
+<td>
+<u>0.623</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.628
+</td>
+<td>
+0.467
+</td>
+<td>
+0.515
+</td>
+<td>
+0.511
+</td>
+<td>
+0.57
+</td>
+<td>
+0.505
+</td>
+<td>
+0.611
+</td>
+<td>
+0.611
+</td>
+<td>
+0.601
+</td>
+<td>
+0.558
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small>reverse decoding</small> <small class="text-muted" title="The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.">· <em>retrained</em></small>
+</th>
+<td>
+0.682
+</td>
+<td>
+<u>0.499</u>
+</td>
+<td>
+0.583
+</td>
+<td>
+0.606
+</td>
+<td>
+0.621
+</td>
+<td>
+<u>0.566</u>
+</td>
+<td>
+0.673
+</td>
+<td>
+0.654
+</td>
+<td>
+0.664
+</td>
+<td>
+0.616
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a> <small>reverse decoding</small>
+</th>
+<td>
+0.703
+</td>
+<td>
+0.493
+</td>
+<td>
+0.59
+</td>
+<td>
+0.554
+</td>
+<td>
+0.637
+</td>
+<td>
+0.543
+</td>
+<td>
+0.685
+</td>
+<td>
+0.659
+</td>
+<td>
+0.629
+</td>
+<td>
+0.610
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.738</strong>
+</td>
+<td>
+<strong>0.539</strong>
+</td>
+<td>
+<strong>0.63</strong>
+</td>
+<td>
+<strong>0.642</strong>
+</td>
+<td>
+<strong>0.672</strong>
+</td>
+<td>
+<strong>0.583</strong>
+</td>
+<td>
+<strong>0.733</strong>
+</td>
+<td>
+<strong>0.691</strong>
+</td>
+<td>
+<strong>0.703</strong>
+</td>
+<td>
+<strong>0.660</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>RankNovo reranks the candidates of six base models. Casanovo V2 and ContraNovo are the released models; ByNovo is RankNovo's own in-house model, with an auxiliary b/y ion-annotation head (its Appendix B.4); R-Casanovo, R-ContraNovo and R-ByNovo are reverse-decoding versions of the three, trained by RankNovo's authors and recorded as the 'reverse decoding' variant. All six were trained on MassIVE-KB and evaluated zero-shot. '†' marks a model that is both baseline and base model, '⋆' one the authors trained. The plain Casanovo row repeats the values other papers print for Casanovo (0.749 and 0.537 on Bacillus) and the paper does not say where they come from. THE TEXT AND THE TABLE DISAGREE on V1: the prose gives RankNovo an amino-acid precision of 0.829 and a peptide recall '6.1%' above ByNovo; the table prints 0.824, and 0.660 against ByNovo's 0.623. The table's values are recorded.</small>
+</p>
+</section>
+<section id="table1-1" class="level4">
+<h4 class="anchored" data-anchor-id="table1-1">Table1</h4>
+<p><a href="../publications/universal-biological-sequence-reranking-for-improved-de-novo-peptide-preprint.html">Universal Biological Sequence Reranking for Improved De Novo Peptide Sequencing</a>, page 7: <em>Evaluation of RankNovo in comparison to baseline and base models on the 9-species-V1 and 9-species-V2 test sets. Bolded entries indicate the best-performing models. The symbol “†” indicates that the model serves as both a baseline and a base model. “⋆” signifies that the base models were developed and trained by us. Here, ByNovo is the best base model. So the performance of three self-trained base models (R-Casa, R-Contra, R-By) is only provided in Appendix D.1.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+0.719
+</td>
+<td>
+0.586
+</td>
+<td>
+0.633
+</td>
+<td>
+0.639
+</td>
+<td>
+0.673
+</td>
+<td>
+0.600
+</td>
+<td>
+0.644
+</td>
+<td>
+0.728
+</td>
+<td>
+0.748
+</td>
+<td>
+0.663
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+0.742
+</td>
+<td>
+0.602
+</td>
+<td>
+0.630
+</td>
+<td>
+0.610
+</td>
+<td>
+0.694
+</td>
+<td>
+0.623
+</td>
+<td>
+0.679
+</td>
+<td>
+0.731
+</td>
+<td>
+0.750
+</td>
+<td>
+0.673
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+0.768
+</td>
+<td>
+0.589
+</td>
+<td>
+0.644
+</td>
+<td>
+0.606
+</td>
+<td>
+0.712
+</td>
+<td>
+0.626
+</td>
+<td>
+0.730
+</td>
+<td>
+0.733
+</td>
+<td>
+0.779
+</td>
+<td>
+0.687
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.749
+</td>
+<td>
+0.603
+</td>
+<td>
+0.629
+</td>
+<td>
+0.586
+</td>
+<td>
+0.679
+</td>
+<td>
+0.689
+</td>
+<td>
+0.668
+</td>
+<td>
+0.721
+</td>
+<td>
+0.684
+</td>
+<td>
+0.667
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.888
+</td>
+<td>
+0.791
+</td>
+<td>
+0.823
+</td>
+<td>
+0.872
+</td>
+<td>
+0.877
+</td>
+<td>
+0.813
+</td>
+<td>
+0.891
+</td>
+<td>
+0.891
+</td>
+<td>
+0.915
+</td>
+<td>
+0.862
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.901
+</td>
+<td>
+0.807
+</td>
+<td>
+0.848
+</td>
+<td>
+<u>0.920</u>
+</td>
+<td>
+0.896
+</td>
+<td>
+0.839
+</td>
+<td>
+0.913
+</td>
+<td>
+0.898
+</td>
+<td>
+0.919
+</td>
+<td>
+0.882
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.920</u>
+</td>
+<td>
+<u>0.823</u>
+</td>
+<td>
+<u>0.876</u>
+</td>
+<td>
+0.917
+</td>
+<td>
+<u>0.914</u>
+</td>
+<td>
+<u>0.841</u>
+</td>
+<td>
+<u>0.932</u>
+</td>
+<td>
+<u>0.912</u>
+</td>
+<td>
+<u>0.934</u>
+</td>
+<td>
+<u>0.897</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.926</strong>
+</td>
+<td>
+<strong>0.838</strong>
+</td>
+<td>
+<strong>0.885</strong>
+</td>
+<td>
+<strong>0.929</strong>
+</td>
+<td>
+<strong>0.920</strong>
+</td>
+<td>
+<strong>0.860</strong>
+</td>
+<td>
+<strong>0.938</strong>
+</td>
+<td>
+<strong>0.918</strong>
+</td>
+<td>
+<strong>0.938</strong>
+</td>
+<td>
+<strong>0.906</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="peaks.html">PEAKS</a>
+</th>
+<td>
+0.387
+</td>
+<td>
+0.203
+</td>
+<td>
+0.287
+</td>
+<td>
+0.277
+</td>
+<td>
+0.356
+</td>
+<td>
+0.197
+</td>
+<td>
+0.362
+</td>
+<td>
+0.403
+</td>
+<td>
+0.428
+</td>
+<td>
+0.322
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a>
+</th>
+<td>
+0.449
+</td>
+<td>
+0.253
+</td>
+<td>
+0.330
+</td>
+<td>
+0.293
+</td>
+<td>
+0.422
+</td>
+<td>
+0.286
+</td>
+<td>
+0.436
+</td>
+<td>
+0.454
+</td>
+<td>
+0.462
+</td>
+<td>
+0.376
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a>
+</th>
+<td>
+0.518
+</td>
+<td>
+0.298
+</td>
+<td>
+0.396
+</td>
+<td>
+0.351
+</td>
+<td>
+0.478
+</td>
+<td>
+0.355
+</td>
+<td>
+0.511
+</td>
+<td>
+0.513
+</td>
+<td>
+0.534
+</td>
+<td>
+0.439
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a>
+</th>
+<td>
+0.537
+</td>
+<td>
+0.330
+</td>
+<td>
+0.406
+</td>
+<td>
+0.341
+</td>
+<td>
+0.478
+</td>
+<td>
+0.426
+</td>
+<td>
+0.506
+</td>
+<td>
+0.521
+</td>
+<td>
+0.490
+</td>
+<td>
+0.448
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.793
+</td>
+<td>
+0.558
+</td>
+<td>
+0.669
+</td>
+<td>
+0.712
+</td>
+<td>
+0.754
+</td>
+<td>
+0.555
+</td>
+<td>
+0.772
+</td>
+<td>
+0.783
+</td>
+<td>
+0.837
+</td>
+<td>
+0.714
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a> <small class="text-muted" title="Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.">· <em>released</em></small>
+</th>
+<td>
+0.815
+</td>
+<td>
+0.575
+</td>
+<td>
+0.711
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+0.780
+</td>
+<td>
+<u>0.616</u>
+</td>
+<td>
+0.799
+</td>
+<td>
+0.794
+</td>
+<td>
+0.854
+</td>
+<td>
+0.752
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="bynovo.html">ByNovo</a>
+</th>
+<td>
+<u>0.833</u>
+</td>
+<td>
+<u>0.582</u>
+</td>
+<td>
+<u>0.731</u>
+</td>
+<td>
+<u>0.789</u>
+</td>
+<td>
+<u>0.799</u>
+</td>
+<td>
+0.596
+</td>
+<td>
+<u>0.814</u>
+</td>
+<td>
+<u>0.807</u>
+</td>
+<td>
+<u>0.871</u>
+</td>
+<td>
+<u>0.758</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="ranknovo.html">RankNovo</a>
+</th>
+<td>
+<strong>0.851</strong>
+</td>
+<td>
+<strong>0.620</strong>
+</td>
+<td>
+<strong>0.752</strong>
+</td>
+<td>
+<strong>0.820</strong>
+</td>
+<td>
+<strong>0.813</strong>
+</td>
+<td>
+<strong>0.629</strong>
+</td>
+<td>
+<strong>0.836</strong>
+</td>
+<td>
+<strong>0.822</strong>
+</td>
+<td>
+<strong>0.885</strong>
+</td>
+<td>
+<strong>0.781</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>RankNovo reranks the candidates of six base models. Casanovo V2 and ContraNovo are the released models; ByNovo is RankNovo's own in-house model, with an auxiliary b/y ion-annotation head (its Appendix B.4); R-Casanovo, R-ContraNovo and R-ByNovo are reverse-decoding versions of the three, trained by RankNovo's authors and recorded as the 'reverse decoding' variant. All six were trained on MassIVE-KB and evaluated zero-shot. '†' marks a model that is both baseline and base model, '⋆' one the authors trained. The plain Casanovo row repeats the values other papers print for Casanovo (0.749 and 0.537 on Bacillus) and the paper does not say where they come from. THE TEXT AND THE TABLE DISAGREE on V1: the prose gives RankNovo an amino-acid precision of 0.829 and a peptide recall '6.1%' above ByNovo; the table prints 0.824, and 0.660 against ByNovo's 0.623. The table's values are recorded.<br>In the paper: column amino acid precision, Average: the original table bolded RankNovo (0.824), RankNovo (0.906).<br>In the paper: column amino acid precision, Bacillus: the original table bolded RankNovo (0.874), RankNovo (0.926).<br>In the paper: column amino acid precision, C. bacteria: the original table bolded RankNovo (0.746), RankNovo (0.838).<br>In the paper: column amino acid precision, Honeybee: the original table bolded RankNovo (0.810), RankNovo (0.885).<br>In the paper: column amino acid precision, Human: the original table bolded RankNovo (0.802), RankNovo (0.929).<br>In the paper: column amino acid precision, M. mazei: the original table bolded RankNovo (0.840), RankNovo (0.920).<br>In the paper: column amino acid precision, Mouse: the original table bolded RankNovo (0.828), RankNovo (0.860).<br>In the paper: column amino acid precision, Ricebean: the original table bolded RankNovo (0.859), RankNovo (0.938).<br>In the paper: column amino acid precision, Tomato: the original table bolded RankNovo (0.844), RankNovo (0.918).<br>In the paper: column amino acid precision, Yeast: the original table bolded RankNovo (0.816), RankNovo (0.938).<br>In the paper: column peptide recall, Average: the original table bolded RankNovo (0.660), RankNovo (0.781).<br>In the paper: column peptide recall, Bacillus: the original table bolded RankNovo (0.738), RankNovo (0.851).<br>In the paper: column peptide recall, C. bacteria: the original table bolded RankNovo (0.539), RankNovo (0.620).<br>In the paper: column peptide recall, Honeybee: the original table bolded RankNovo (0.630), RankNovo (0.752).<br>In the paper: column peptide recall, Human: the original table bolded RankNovo (0.642), RankNovo (0.820).<br>In the paper: column peptide recall, M. mazei: the original table bolded RankNovo (0.672), RankNovo (0.813).<br>In the paper: column peptide recall, Mouse: the original table bolded RankNovo (0.583), RankNovo (0.629).<br>In the paper: column peptide recall, Ricebean: the original table bolded RankNovo (0.733), RankNovo (0.836).<br>In the paper: column peptide recall, Tomato: the original table bolded RankNovo (0.691), RankNovo (0.822).<br>In the paper: column peptide recall, Yeast: the original table bolded RankNovo (0.703), RankNovo (0.885).</small>
+</p>
+
+<details>
+<summary>
 Distilling Non-Autoregressive Model Knowledge for Autoregressive De Novo Peptide Sequencing (2025) · 1 table
 </summary>
 </details></section>
-<section id="table1-1" class="level4">
-<h4 class="anchored" data-anchor-id="table1-1">Table1</h4>
+<section id="table1-2" class="level4">
+<h4 class="anchored" data-anchor-id="table1-2">Table1</h4>
 <p><a href="../publications/distilling-non-autoregressive-model-knowledge-for-autoregressive-de-novo.html">Distilling Non-Autoregressive Model Knowledge for Autoregressive De Novo Peptide Sequencing</a>, page 7: <em>Comparison of the performance of CrossNovo and baseline methods on 9-species-v1 test set. The bold font indicates the best performance.</em></p>
 <div class="table-responsive">
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
