@@ -62,7 +62,11 @@ def find_image_tables(page, seen_labels: set[str]) -> list[dict]:
         top_of = lambda i: min(w["top"] for w in rows[i])
         margin = max(20.0, x0 - 6)
         boxes = []
-        if cap_end + 1 < len(rows):                     # table BELOW its caption
+        # A TABLE BELOW ITS CAPTION, unless the caption sits under a TEXT
+        # table: NovoRank's thesis captions from below, and the band under
+        # 'Table 5. The clustering results', holding only the university seal,
+        # was cropped as an empty image table while the table stood above.
+        if cap_end + 1 < len(rows) and not _text_table_above(rows, li):
             boxes.append((margin, bottom_of(cap_end) + 2,
                           float(page.width) - margin, top_of(cap_end + 1) - 2))
         # A TABLE ABOVE ITS CAPTION, unless the caption heads a TEXT table
@@ -102,6 +106,25 @@ def _text_table_below(rows: list, cap_end: int) -> bool:
         if sum(g > 12.0 for g in gaps) >= 2:
             return True
         prev = nxt
+    return False
+
+
+def _text_table_above(rows: list, li: int) -> bool:
+    """Whether a row of table cells ends just above a caption's first line.
+
+    The mirror of _text_table_below: up to three lines up, each close above
+    the one under it, any with two column gaps over 12 pt.
+    """
+    below = rows[li]
+    line_h = max(w["bottom"] - w["top"] for w in below) or 10.0
+    for i in range(li - 1, max(-1, li - 4), -1):
+        up = sorted(rows[i], key=lambda w: w["x0"])
+        if min(w["top"] for w in below) - max(w["bottom"] for w in up) > 2.5 * line_h:
+            return False
+        gaps = [b["x0"] - a["x1"] for a, b in zip(up, up[1:])]
+        if sum(g > 12.0 for g in gaps) >= 2:
+            return True
+        below = up
     return False
 
 

@@ -575,6 +575,21 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
     pr = printed_emphasis(rec)
     if not pr:
         return rk, []
+    # THE PAPER'S MARKS ARE CHECKED AGAINST ITS OWN STATED RULE where it
+    # states one (B.RANK_EXCLUDE): ranked without the rows its caption leaves
+    # out. The marks DRAWN are still ours, over every row.
+    rk_check = rk
+    ex = B.RANK_EXCLUDE.get((rec.get("pub"),
+                             re.sub(r"\s*\[.*\]$", "", rec.get("table_label") or "").strip()))
+    if ex:
+        drop = {str(j) for j, m in (rec.get("methods") or {}).items()
+                if (m[0], m[1]) in {tuple(x) for x in ex["methods"]}}
+        trimmed = {**rec, "body": [
+            {**r, "cells": ({} if (rec["axis"] == "rows" and str(i) in drop) else
+                            {k: v for k, v in r["cells"].items()
+                             if not (rec["axis"] == "columns" and str(k) in drop)})}
+            for i, r in enumerate(rec["body"])]}
+        rk_check = ranking(trimmed)
     uses_underline = any(v == "second" for v in pr.values())
     notes = []
     for key, cells in sorted(_measurements(rec).items()):
@@ -603,8 +618,8 @@ def emphasis(rec: dict) -> tuple[dict, list[str]]:
                              f"{'was' if len(_absent_peers(rec, key)) == 1 else 'were'} not run; "
                              f"with nothing to rank it is not marked here.")
             continue
-        best = {c for c in cells if rk.get(c) == "best"}
-        second = {c for c in cells if rk.get(c) == "second"}
+        best = {c for c in cells if rk_check.get(c) == "best"}
+        second = {c for c in cells if rk_check.get(c) == "second"}
         bold_off = bool(bolds) and not bolds <= best
         # ...and with two values there is no runner-up of ours to compare a
         # paper's underline against, so it is not checked there either.

@@ -525,6 +525,22 @@ def species_index(con: sqlite3.Connection, dataset: str | None = None) -> dict[s
     return _SPECIES_CACHE[name]
 
 
+# ROWS A PAPER'S OWN MARKS LEAVE OUT, by its stated rule. OUR ranking still
+# covers every row; the paper's bold and underline are CHECKED against the
+# ranking without these rows, so a footnote appears only where the paper
+# breaks its own rule. Keyed by (publication, table label without the part),
+# each with the caption sentence that states the rule. ScopeNovo's Table 1
+# drew 22 footnotes otherwise, every one that sentence restated.
+RANK_EXCLUDE: dict[tuple[int, str], dict] = {
+    (990, "Table 1"): {
+        "methods": [("ScopeNovo", "Setting 1")],
+        "cue": ("In each column, the best value among the baselines and ScopeNovo "
+                "(Setting 2) is in bold; ScopeNovo (Setting 1) is reported separately "
+                "for reference and excluded from the bold comparison."),
+    },
+}
+
+
 # A PAPER'S OWN KEY TO ITS ABBREVIATIONS, used only to reach the canonical
 # name: the subset stays as printed. ScopeNovo heads Table 1 'Bac.', 'C.b.',
 # 'Hon.'..., too short for the common-name rule, and 'M.m.' fits both M.
@@ -4610,6 +4626,11 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (990, "Table 1"): (
+        "The paper bolds the best of the baselines and ScopeNovo (Setting 2) only: "
+        "'ScopeNovo (Setting 1) is reported separately for reference and excluded "
+        "from the bold comparison.' Bold and underline here rank every row, Setting 1 "
+        "included; the paper's own marks were checked against its rule, and match it."),
     **{(pid, t): (
         "RankNovo reranks the candidates of six base models. Casanovo V2 and ContraNovo "
         "are the released models; ByNovo is RankNovo's own in-house model, with an "

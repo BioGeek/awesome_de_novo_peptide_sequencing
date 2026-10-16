@@ -2244,6 +2244,15 @@ pi-PrimeNovo (0.697) and InstaNovo (0.732) for peptide recall on Tomato, and the
 odd-looking 0.732 is genuinely printed, since it reproduces that row's stated
 average of 0.530.
 
+**A paper that states its own bold rule is checked against that rule.**
+ScopeNovo's Table 1 caption says Setting 1 "is reported separately for
+reference and excluded from the bold comparison", and checked against our
+ranking over every row it drew 22 footnotes, each that sentence restated.
+`RANK_EXCLUDE` names the rows a caption excludes, with the sentence; the
+marks we DRAW still rank every row, and the paper's are compared with a
+ranking without those rows, so a footnote appears only where a paper breaks
+its own rule. ScopeNovo breaks it nowhere. The table note quotes the rule.
+
 A tie marked only IN PART is footnoted too, naming the tied cell we add:
 LIPNovo's Table 1 underlines pi-HelixNovo-dagger at 0.765 for amino-acid
 precision and not pi-HelixNovo, also 0.765. Which row carries that underline
@@ -2712,7 +2721,12 @@ its tables from above, and Table 4.2's own cells sit right under its caption,
 so the band above it, holding only the page watermark and Table 4.1's last
 rule, was cropped as an empty "image table". A line with two column gaps over
 12 pt within three lines of the caption is a text table, and the finder
-leaves it alone. The review page crops
+leaves it alone. **The mirror case holds too**: NovoRank's thesis captions
+from BELOW, and the band under 'Table 5. The clustering results', holding only
+the university seal, was cropped the same way, so a gap below a caption counts
+only when no text table ends just above it. Of the six image candidates, that
+removed three empty or figure crops and kept InstaNovo's two Extended Data
+tables and Aytun's Table 4.4. The review page crops
 each one and lists it in `image_tables.json`;
 `read_table_images.py --reader glm` and `--reader paddle` read the crops, each
 in its own environment, into `vlm-cache/`. The table is resolved only when the
