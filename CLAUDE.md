@@ -2512,6 +2512,19 @@ committed:
   multi-dataset tables lost their header. It now counts only lettered words,
   and only on a line with no gap wider than a word space.
 
+**Post-processors are mined too.** Both scripts used to read only papers
+describing an `algorithm`, so RankNovo, NovoRank, ScopeNovo and 32 other
+rerankers, rescorers and assemblers with a local PDF were never looked at,
+though they print the same comparison tables. The selection is now
+`kind IN ('algorithm', 'post-processor')`; the first pass over the 35 papers
+gave 67 candidate tables, all refused or awaiting review.
+
+**A publisher's download stamp is not page text.** OUP prints "Downloaded
+from https://academic.oup.com/... by guest on 16 October 2026" rotated up the
+margin of every page, and on ScopeNovo's page 5 the URL landed in Table 1 as a
+cell (G4). `strip_line_numbers()` now drops every word matching `STAMP` and
+every rotated word in its band, and never touches upright text.
+
 **A sentence that mentions a table is not its caption (C0).** A caption never
 continues with a lower-case word. All five such "captions" in the library
 were paragraphs opening "Table 3 reports...", refused before for whatever

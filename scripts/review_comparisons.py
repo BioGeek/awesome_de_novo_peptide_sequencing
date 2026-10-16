@@ -1199,7 +1199,7 @@ def main() -> int:
         SELECT DISTINCT p.id, p.title, p.publication_date FROM publication p
           JOIN publication_algorithm pa ON pa.publication_id = p.id AND pa.role='describes'
           JOIN algorithm a ON a.id = pa.algorithm_id
-         WHERE a.kind = 'algorithm' ORDER BY p.id""").fetchall()
+         WHERE a.kind IN ('algorithm', 'post-processor') ORDER BY p.id""").fetchall()
 
     # A CROP IS RE-RENDERED ONLY IF IT MOVED. Every pass used to run pdftoppm
     # over every page of every paper, which is almost all of the several

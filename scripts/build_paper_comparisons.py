@@ -408,6 +408,10 @@ def collapse_fake_bold(words: list[dict]) -> list[dict]:
     return out
 
 
+STAMP = re.compile(r"(?i)academic\.oup\.com/|^Downloaded(?:from)?$|downloadedfrom|"
+                   r"^byguest|bygueston")
+
+
 def strip_line_numbers(words: list[dict]) -> list[dict]:
     """Drop ICLR-style margin line numbers before anything else reads the page.
 
@@ -423,6 +427,20 @@ def strip_line_numbers(words: list[dict]) -> list[dict]:
     line numbering; fewer is a column of small integers, which a real table may
     legitimately have (charge states, spectrum counts).
     """
+    # A PUBLISHER'S DOWNLOAD STAMP IS NOT TEXT OF THE PAGE. OUP prints
+    # 'Downloaded from https://academic.oup.com/.../btag755/8923629 by guest
+    # on ...' up the margin of every page, and on ScopeNovo's page 5 that
+    # URL landed inside Table 1 as a cell and refused the table (G4). Only
+    # the stamp goes: it is set ROTATED, word by word, so every non-upright
+    # word in the vertical band of a stamp word is dropped with it ('from',
+    # 'by guest on 16 October 2026'), and upright text is never touched.
+    stamps = [w for w in words if STAMP.search(w["text"])]
+    if stamps:
+        bands_x = [(w["x0"] - 3, w["x1"] + 3) for w in stamps]
+        words = [w for w in words
+                 if not (STAMP.search(w["text"])
+                         or (not w.get("upright", True)
+                             and any(a <= w["x0"] and w["x1"] <= b for a, b in bands_x)))]
     bands: dict[int, list[dict]] = collections.defaultdict(list)
     for w in words:
         if LINE_NO.match(w["text"]):
@@ -3832,7 +3850,7 @@ def main() -> int:
         SELECT DISTINCT p.id, p.title FROM publication p
           JOIN publication_algorithm pa ON pa.publication_id = p.id AND pa.role = 'describes'
           JOIN algorithm a ON a.id = pa.algorithm_id
-         WHERE a.kind = 'algorithm' ORDER BY p.id""").fetchall()
+         WHERE a.kind IN ('algorithm', 'post-processor') ORDER BY p.id""").fetchall()
 
     audit: list[dict] = []
     tally: collections.Counter = collections.Counter()
