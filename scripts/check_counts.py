@@ -390,9 +390,12 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "WHERE r.comparison_id = c.id AND r.is_self = 1)"),
     ("CLAUDE.md", "duplicate measurements",
      r"(\d+) duplicate\s+measurements within a table",
+     # The DATASET VERSION is part of a measurement: RankNovo's arXiv Table 1
+     # stacks a V1 block over a V2 block, one method in each.
      "SELECT COUNT(*) FROM (SELECT 1 FROM paper_comparison_result "
      "GROUP BY comparison_id, algorithm_id, COALESCE(variant_printed,''), metric, "
-     "level, COALESCE(subset_printed,''), basis HAVING COUNT(*) > 1)"),
+     "level, COALESCE(subset_printed,''), COALESCE(dataset_version_id,''), basis "
+     "HAVING COUNT(*) > 1)"),
     ("CLAUDE.md", "methods with a Reported comparisons section",
      r"\*\*(\d+) methods carry a `## Reported comparisons` section\*\*",
      # kind = 'comparison' only: an own-results table compares nothing and is

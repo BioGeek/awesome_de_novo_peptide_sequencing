@@ -2519,6 +2519,17 @@ though they print the same comparison tables. The selection is now
 `kind IN ('algorithm', 'post-processor')`; the first pass over the 35 papers
 gave 67 candidate tables, all refused or awaiting review.
 
+**RankNovo's base models are named by the paper, and one is new.** Its
+tables list six base models: the released Casanovo V2 and ContraNovo (marked
+†, baseline and base model), ByNovo, RankNovo's in-house model with an
+auxiliary b/y ion head (Appendix B.4), and R-Casanovo, R-ContraNovo and
+R-ByNovo, "the reverse-decoding version" of each (marked ⋆, "developed and
+trained by us"). ByNovo is now an `algorithm` row described by RankNovo's
+three versions, and the R- models are a `reverse decoding` variant of their
+base. ⋆ (U+22C6) joined the label markers. The arXiv Table 1 stacks V1 and
+V2 blocks, so `ROW_VERSION` gives each method row its version positionally,
+and the version is part of the duplicate key.
+
 **A publisher's download stamp is not page text.** OUP prints "Downloaded
 from https://academic.oup.com/... by guest on 16 October 2026" rotated up the
 margin of every page, and on ScopeNovo's page 5 the URL landed in Table 1 as a

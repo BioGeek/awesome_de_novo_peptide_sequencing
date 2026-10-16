@@ -2322,7 +2322,7 @@ def caption_text(rows: list[list[dict]], paired: tuple | None,
 # * indicates the peptide-level accuracy reported in [10].' -- which is what
 # says one of those numbers was computed by somebody else, i.e. the basis.
 FOOTNOTE_CUE = re.compile(
-    r"(?i)(?:^|\s)[*\u2217+\u2020\u2021\u00a7\u00b6]\s*"
+    r"(?i)(?:^|\s)[*\u2217+\u2020\u2021\u00a7\u00b6\u22c6]\s*"
     r"(?:indicates?|denotes?|means?|marks?|stands|refers|is|are|the)\b"
     r"|^\s*(?:note|notes|the best|best (?:results?|entry|values?)|bold|"
     r"underlined?|scores? for|\u2013 ?indicates)\b")
@@ -3063,7 +3063,8 @@ def algorithm_index(con: sqlite3.Connection) -> dict[str, list[tuple[int, str]]]
 
 CITE_TAIL = re.compile(
     r"\s*(?:\[[\d,\s\u2013-]+\]|\((?=[^)]*(?:\b(?:19|20)\d{2}[a-z]?\b|et\s*al))[^)]*\))\s*$")
-MARKER_TAIL = re.compile(r"([*+\u2020\u2021\u00a7\u00b6])\s*$")
+# U+22C6, the star operator, is RankNovo's mark ("developed and trained by us").
+MARKER_TAIL = re.compile(r"([*+\u2020\u2021\u00a7\u00b6\u22c6])\s*$")
 
 
 def label_marker(printed: str) -> str:
@@ -3082,7 +3083,7 @@ def label_marker(printed: str) -> str:
     # where LIPNovo prints 'AdaNovo†', so the dagger went unseen and its
     # retrained Casanovo row came back 'quoted', colliding with the plain one.
     # A '+' is not a marker here: it is CausalNovo's plug-in notation.
-    m = re.match(r"\s*([*\u2217\u2020\u2021\u00a7\u00b6]+)", raw)
+    m = re.match(r"\s*([*\u2217\u2020\u2021\u00a7\u00b6\u22c6]+)", raw)
     return m.group(1) if m else ""
 
 
@@ -3222,7 +3223,7 @@ def resolve_method(printed: str, vocab: dict[str, list[tuple[int, str]]],
     # 2025)', and stripping the '+' as a marker merged the two methods.
     plus_named = raw.endswith("+") and any(
         "+" in n for _, n in index.get(norm(raw), []))
-    raw = re.sub(r"[*+\u2020\u2021\u00a7\u00b6]+\s*$", "", raw).strip()
+    raw = re.sub(r"[*+\u2020\u2021\u00a7\u00b6\u22c6]+\s*$", "", raw).strip()
     if plus_named:
         raw += "+"
     if not raw:
@@ -4133,6 +4134,16 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # pretraining, "matched training from scratch"; 'dIon init.' is the
     # pretrained encoder fine-tuned. The external references are the released
     # Casanovo 5.2.1 and InstaNovo 1.2.2.
+    # RankNovo's base models, by its own list: "R-Casanovo is the
+    # reverse-decoding version of Casanovo. R-ContraNovo: The reverse decoding
+    # version of ContraNovo. R-ByNovo: The reverse decoding version of ByNovo",
+    # ByNovo being RankNovo's in-house model with an auxiliary b/y ion head
+    # (its Appendix B.4). The ICML row, 978, inherits these from 352.
+    **{(pid, k): v for pid in (24, 352) for k, v in {
+        "rcasanovo": ("Casanovo", "reverse decoding"), "rcasa": ("Casanovo", "reverse decoding"),
+        "rcontranovo": ("ContraNovo", "reverse decoding"), "rcontra": ("ContraNovo", "reverse decoding"),
+        "rbynovo": ("ByNovo", "reverse decoding"), "rby": ("ByNovo", "reverse decoding"),
+    }.items()},
     (981, "scratchendtoend"): ("dIon", "from scratch, end-to-end"),
     (981, "scratchendtoend1000peaks"): ("dIon", "from scratch, end-to-end, 1,000 peaks"),
     (981, "dioninitendtoend"): ("dIon", "init., end-to-end"),
@@ -4271,6 +4282,19 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # RankNovo, its base-model tables: Casanovo V2 and ContraNovo are the
+    # released models, the reverse-decoding ones RankNovo's own training.
+    # Plain Casanovo, the original, is a baseline with no sentence about
+    # how it was run; its values (0.749 / 0.537 on Bacillus) are the ones
+    # seven other papers' tables print, so it is the field's circulated number,
+    # and the prose scan's 'released' came from the sentence about Casanovo-V2.
+    **{(pid, t): {"Casanovo": ("unclear", ""),
+                  "Casanovo@V2": ("released", 'Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.'),
+                  "ContraNovo": ("released", 'Of these, Casanovo-V2 and ContraNovo are directly adopted from the original works and represent both the current and previous stateof-the-art approaches.'),
+                  "Casanovo@reverse decoding": ("retrained", 'The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.'),
+                  "ContraNovo@reverse decoding": ("retrained", 'The latter four models, ByNovo, R-ContraNovo, and R-ByNovo, are developed and trained by us.')}
+       for pid, t in ((24, "Table1"), (24, "Table2"), (352, "Table1"),
+                      (352, "Table6"), (352, "Table7"))},
     # dIon: the external references are the released Casanovo 5.2.1 and
     # InstaNovo 1.2.2, run as shipped.
     **{(981, t): {"Casanovo": ("released", 'External reference models use their own released preprocessing.'),
@@ -4568,6 +4592,22 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    **{(pid, t): (
+        "RankNovo reranks the candidates of six base models. Casanovo V2 and ContraNovo "
+        "are the released models; ByNovo is RankNovo's own in-house model, with an "
+        "auxiliary b/y ion-annotation head (its Appendix B.4); R-Casanovo, R-ContraNovo "
+        "and R-ByNovo are reverse-decoding versions of the three, trained by RankNovo's "
+        "authors and recorded as the 'reverse decoding' variant. All six were trained "
+        "on MassIVE-KB and evaluated zero-shot. '\u2020' marks a model that is both "
+        "baseline and base model, '\u22c6' one the authors trained. The plain Casanovo "
+        "row repeats the values other papers print for Casanovo (0.749 and 0.537 on "
+        "Bacillus) and the paper does not say where they come from."
+        + (" THE TEXT AND THE TABLE DISAGREE on V1: the prose gives RankNovo an "
+           "amino-acid precision of 0.829 and a peptide recall '6.1%' above ByNovo; "
+           "the table prints 0.824, and 0.660 against ByNovo's 0.623. The table's "
+           "values are recorded." if t in ("Table1", "Table6") else ""))
+       for pid, t in ((24, "Table1"), (24, "Table2"), (352, "Table1"),
+                      (352, "Table6"), (352, "Table7"))},
     (440, "Table1"): (
         "The plain Casanovo column is quoted: each value is Casanovo's own Table 2 "
         "precision at coverage 1, set here under AdaNovo's precision. AdaNovo's own "
@@ -4888,6 +4928,9 @@ TABLE_SELF: dict[tuple[int, str], list[str]] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, str, str]] = {
+    # RankNovo's arXiv Table 1 holds both versions, one block each, so the
+    # table names the benchmark and ROW_VERSION gives each row its version.
+    (352, "Table1"): ("Nine-species benchmark", "9-species-V1 and 9-species-V2, a block each"),
     # CausalNovo, Table 8: "Cross-species validation on the Seven-species
     # dataset", one column per held-out species -- DeepNovo's leave-one-out
     # protocol over the seven, not NovoBench's yeast-only split.
@@ -5111,9 +5154,28 @@ TABLE_METRIC: dict[tuple[int, str],
     (17, "Table3"): [("precision", "amino acid"), ("recall", "amino acid"),
                      ("precision", "peptide"), ("auc", "peptide"),
                      ("precision", "ptm"), ("recall", "ptm")],
+    # RankNovo: each table prints its methods twice, under 'Amino Acid
+    # Precision' and then 'Peptide Recall', the group labels set beside the
+    # rows where no reading attaches them. 352's Table 1 is two blocks, V1
+    # (eight methods twice) then V2 (four methods twice); see ROW_VERSION.
+    **{(pid, t): {"rows": [("precision", "amino acid")] * 11 + [("recall", "peptide")] * 11}
+       for pid, t in ((24, "Table1"), (352, "Table6"))},
+    **{(pid, t): {"rows": [("precision", "amino acid")] * 7 + [("recall", "peptide")] * 7}
+       for pid, t in ((24, "Table2"), (352, "Table7"))},
+    (352, "Table1"): {"rows": [("precision", "amino acid")] * 8 + [("recall", "peptide")] * 8 + [("precision", "amino acid")] * 4 + [("recall", "peptide")] * 4},
     (18, "Table1"): {"rows": [("precision", "peptide")] * 3
                              + [("precision", "amino acid")] * 3
                              + [("recall", "amino acid")] * 3},
+}
+
+
+# THE DATASET VERSION OF EACH METHOD ROW, for a table that stacks two
+# versions' blocks one above the other. Positional, like TABLE_METRIC's row
+# lists, because nothing in the grid names the block.
+ROW_VERSION: dict[tuple[int, str], list[str]] = {
+    # RankNovo's arXiv Table 1: "on the 9-species-V1 and 9-species-V2 test
+    # sets", V1's sixteen rows first.
+    (352, "Table1"): ["original (DeepNovo, 2017)"] * 16 + ["revised (main)"] * 8,
 }
 
 
@@ -5545,7 +5607,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         # named in its own right.
         named_others = [k for k, v in methods.items() if v[0] != subject["id"]
                         and "baseline" not in (printed_of.get(k) or "").lower()
-                        and norm(re.sub(r"[*\u2020\u2021]+$", "",
+                        and norm(re.sub(r"[*\u2020\u2021\u22c6]+$", "",
                                         printed_of.get(k) or "")) not in
                         {"base", "vanilla", "ours"}]
         if len(own_variants) >= 2 and not named_others:
@@ -6106,6 +6168,15 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                else (row_subset.get(ri) or subsets[k]))
         return m, metrics[j], levels[j], sub
 
+    rv_list = ROW_VERSION.get(
+        (base.get("publication_id"), (tb.get("registry_label") or tb["table_label"] or "").strip()))
+    row_version: dict[int, str] = {}
+    if rv_list:
+        keys = sorted(methods)
+        if len(rv_list) != len(keys):
+            raise Reject(f"D3 ROW_VERSION lists {len(rv_list)} rows, the table has "
+                         f"{len(keys)} carrying methods")
+        row_version = dict(zip(keys, rv_list))
     seen = set()
     for ri, r in enumerate(tb["body"]):
         for k, cell in r["cells"].items():
@@ -6114,11 +6185,11 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 continue
             j = k if axis == "columns" else ri
             for _v, _p, mt, lv, pb in parts_of(cell, metric, level):
-                key = (m[0], m[2] or "", mt, lv, sub,
+                key = (m[0], m[2] or "", mt, lv, sub, row_version.get(ri, ""),
                        pb or (bases.get(j) or ("unclear",))[0])
                 if key in seen:
                     raise Reject(f"G6 duplicate measurement {m[1]} "
-                                 f"{mt}/{lv}/{sub or '-'}/{key[5]}")
+                                 f"{mt}/{lv}/{sub or '-'}/{key[6]}")
                 seen.add(key)
 
     vals = [v for ri, r in enumerate(tb["body"])
@@ -6158,6 +6229,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                           "d.id = v.dataset_id WHERE d.name = ? AND v.version = ?",
                           (dname, "NovoBench split")).fetchone()
         vid = got[0] if got else None
+    rv_id = {lab: got[0] for lab in set(row_version.values())
+             if did and (got := con.execute(
+                 "SELECT id FROM dataset_version WHERE dataset_id = ? AND version = ?",
+                 (did, lab)).fetchone())}
     vlabel = (con.execute("SELECT version FROM dataset_version WHERE id = ?",
                           (vid,)).fetchone() or [""])[0] if vid else ""
     # EVERY PRINTED SUBSET WITH ITS CANONICAL NAME, so the record a schema
@@ -6366,7 +6441,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                         "metric": mt, "level": lv,
                         # A ROW_DATASET row carries its own dataset.
                         "dataset_id": rd[0] if rd else did,
-                        "dataset_version_id": rd[1] if rd else vid,
+                        "dataset_version_id": (rd[1] if rd else
+                                               rv_id.get(row_version.get(ri), vid)),
                         # A subset that is not a species (OC, UTI, a pNovo
                         # run) KEEPS ITS PRINTED FORM as its canonical name,
                         # the rule canonical_subset() states; left empty, a
