@@ -231,8 +231,8 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>A host marked <em>archival</em> has a DOI and keeps what it is given. The others can move or disappear, which is why they are checked rather than merely listed. <strong>verified</strong> means the bytes were fetched and hashed on the date shown; <strong>live</strong> means only that the host answered when last asked. Where a <em>copy</em> is linked, it is a backup of someone else’s weights kept in case the original link goes stale; the original is the link to cite and to prefer.</p>
 </section>
-<section id="reported-comparisons-5" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparisons-5">Reported comparisons (5)</h2>
+<section id="reported-comparisons-6" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-6">Reported comparisons (6)</h2>
 <p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1" class="level3">
 <h3 class="anchored" data-anchor-id="table1">Table1</h3>
@@ -897,9 +897,456 @@ Peptide recall
 <small>In the paper: column peptide recall, Mouse: the original table only underlined ContraNovo (Contra.) (0.567); π-PrimeNovo (Prime.) (0.567) ties with it and is underlined here too.</small>
 </p>
 </section>
+<section id="table6" class="level3">
+<h3 class="anchored" data-anchor-id="table6">Table6</h3>
+<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 26: <em>Comparison of the performance of CROSSNOVO and baseline methods on WIgG1-Mouse. The bold font indicates the best performance.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/monoclonal-antibody-de-novo-assembly.html">Monoclonal antibody de novo assembly</a><br><small>as deposited</small>
+</th>
+<th colspan="5" style="text-align:center">
+Amino acid precision
+</th>
+<th colspan="5" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>HC AspN</small>
+</th>
+<th>
+<small>HC Chymotrypsin</small>
+</th>
+<th>
+<small>HC Trypsin</small>
+</th>
+<th>
+<small>LC AspN</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+<th>
+<small>HC AspN</small>
+</th>
+<th>
+<small>HC Chymotrypsin</small>
+</th>
+<th>
+<small>HC Trypsin</small>
+</th>
+<th>
+<small>LC AspN</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.714
+</td>
+<td>
+0.591
+</td>
+<td>
+<u>0.723</u>
+</td>
+<td>
+<u>0.668</u>
+</td>
+<td>
+<u>0.674</u>
+</td>
+<td>
+0.557
+</td>
+<td>
+0.483
+</td>
+<td>
+0.636
+</td>
+<td>
+0.456
+</td>
+<td>
+0.533
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+<u>0.750</u>
+</td>
+<td>
+<u>0.612</u>
+</td>
+<td>
+0.650
+</td>
+<td>
+0.649
+</td>
+<td>
+0.665
+</td>
+<td>
+<u>0.649</u>
+</td>
+<td>
+<u>0.545</u>
+</td>
+<td>
+<u>0.671</u>
+</td>
+<td>
+<u>0.519</u>
+</td>
+<td>
+<u>0.596</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="crossnovo.html">CrossNovo</a>
+</th>
+<td>
+<strong>0.769</strong>
+</td>
+<td>
+<strong>0.640</strong>
+</td>
+<td>
+<strong>0.747</strong>
+</td>
+<td>
+<strong>0.724</strong>
+</td>
+<td>
+<strong>0.720</strong>
+</td>
+<td>
+<strong>0.662</strong>
+</td>
+<td>
+<strong>0.577</strong>
+</td>
+<td>
+<strong>0.699</strong>
+</td>
+<td>
+<strong>0.581</strong>
+</td>
+<td>
+<strong>0.630</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table7" class="level3">
+<h3 class="anchored" data-anchor-id="table7">Table7</h3>
+<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 26: <em>Comparison of the performance of CROSSNOVO and baseline methods on IgG1-Human. Bold values indicate the best performance.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/monoclonal-antibody-de-novo-assembly.html">Monoclonal antibody de novo assembly</a><br><small>as deposited</small>
+</th>
+<th colspan="9" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>HC AspN</small>
+</th>
+<th>
+<small>HC Chymotrypsin</small>
+</th>
+<th>
+<small>HC GluC</small>
+</th>
+<th>
+<small>HC LysC</small>
+</th>
+<th>
+<small>HC Proteinase K</small>
+</th>
+<th>
+<small>HC Trypsin</small>
+</th>
+<th>
+<small>LC AspN</small>
+</th>
+<th>
+<small>LC LysC</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.520
+</td>
+<td>
+0.472
+</td>
+<td>
+0.605
+</td>
+<td>
+0.757
+</td>
+<td>
+<u>0.354</u>
+</td>
+<td>
+0.759
+</td>
+<td>
+0.666
+</td>
+<td>
+0.778
+</td>
+<td>
+0.642
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+<u>0.580</u>
+</td>
+<td>
+<u>0.565</u>
+</td>
+<td>
+<u>0.642</u>
+</td>
+<td>
+<u>0.790</u>
+</td>
+<td>
+0.348
+</td>
+<td>
+<u>0.787</u>
+</td>
+<td>
+<u>0.702</u>
+</td>
+<td>
+<u>0.793</u>
+</td>
+<td>
+<u>0.676</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="crossnovo.html">CrossNovo</a>
+</th>
+<td>
+<strong>0.613</strong>
+</td>
+<td>
+<strong>0.617</strong>
+</td>
+<td>
+<strong>0.694</strong>
+</td>
+<td>
+<strong>0.814</strong>
+</td>
+<td>
+<strong>0.367</strong>
+</td>
+<td>
+<strong>0.803</strong>
+</td>
+<td>
+<strong>0.719</strong>
+</td>
+<td>
+<strong>0.807</strong>
+</td>
+<td>
+<strong>0.702</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/monoclonal-antibody-de-novo-assembly.html">Monoclonal antibody de novo assembly</a><br><small>as deposited</small>
+</th>
+<th colspan="9" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>HC AspN</small>
+</th>
+<th>
+<small>HC Chymotrypsin</small>
+</th>
+<th>
+<small>HC GluC</small>
+</th>
+<th>
+<small>HC LysC</small>
+</th>
+<th>
+<small>HC Proteinase K</small>
+</th>
+<th>
+<small>HC Trypsin</small>
+</th>
+<th>
+<small>LC AspN</small>
+</th>
+<th>
+<small>LC LysC</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.265
+</td>
+<td>
+0.274
+</td>
+<td>
+0.399
+</td>
+<td>
+0.569
+</td>
+<td>
+0.206
+</td>
+<td>
+0.595
+</td>
+<td>
+0.325
+</td>
+<td>
+0.625
+</td>
+<td>
+0.446
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+<u>0.396</u>
+</td>
+<td>
+<u>0.372</u>
+</td>
+<td>
+<u>0.437</u>
+</td>
+<td>
+<u>0.653</u>
+</td>
+<td>
+<u>0.274</u>
+</td>
+<td>
+<u>0.675</u>
+</td>
+<td>
+<u>0.499</u>
+</td>
+<td>
+<u>0.646</u>
+</td>
+<td>
+<u>0.529</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="crossnovo.html">CrossNovo</a>
+</th>
+<td>
+<strong>0.415</strong>
+</td>
+<td>
+<strong>0.421</strong>
+</td>
+<td>
+<strong>0.512</strong>
+</td>
+<td>
+<strong>0.701</strong>
+</td>
+<td>
+<strong>0.275</strong>
+</td>
+<td>
+<strong>0.699</strong>
+</td>
+<td>
+<strong>0.544</strong>
+</td>
+<td>
+<strong>0.676</strong>
+</td>
+<td>
+<strong>0.560</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="table1-1" class="level3">
 <h3 class="anchored" data-anchor-id="table1-1">Table1</h3>
-<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 8: <em>Comparison of the performance of CROSSNOVO and baseline methods on the 9-species-v1 test set.</em></p>
+<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-sequence.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 8: <em>Comparison of the performance of CROSSNOVO and baseline methods on the 9-species-v1 test set.</em></p>
+<p>The same table is also printed in <a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a> (Table1, page 8).</p>
 <div class="table-responsive">
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
@@ -1702,8 +2149,8 @@ Peptide recall
 </section>
 <section id="table2" class="level3">
 <h3 class="anchored" data-anchor-id="table2">Table2</h3>
-<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 8: <em>Comparison of the performance of CROSSNOVO and baseline methods on 9-species-v2 test set. The bold font indicates the best performance.</em></p>
-<p>The same table is also printed in <a href="../publications/distilling-non-autoregressive-model-knowledge-for-autoregressive-de-novo.html">Distilling Non-Autoregressive Model Knowledge for Autoregressive De Novo Peptide Sequencing</a> (Table2, page 8).</p>
+<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-sequence.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 8: <em>Comparison of the performance of CROSSNOVO and baseline methods on 9-species-v2 test set. The bold font indicates the best performance.</em></p>
+<p>The same table is also printed in <a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a> (Table2, page 8), <a href="../publications/distilling-non-autoregressive-model-knowledge-for-autoregressive-de-novo.html">Distilling Non-Autoregressive Model Knowledge for Autoregressive De Novo Peptide Sequencing</a> (Table2, page 8).</p>
 <div class="table-responsive">
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
@@ -2081,18 +2528,136 @@ Peptide recall
 </table>
 </div>
 </section>
-<section id="table6" class="level3">
-<h3 class="anchored" data-anchor-id="table6">Table6</h3>
-<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 26: <em>Comparison of the performance of CROSSNOVO and baseline methods on WIgG1-Mouse. The bold font indicates the best performance.</em></p>
+<section id="table-8" class="level3">
+<h3 class="anchored" data-anchor-id="table-8">Table 8</h3>
+<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-sequence.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 28: <em>Performance comparison on five representative PTMs after fine-tuning on the 21-PTM dataset. Bold values indicate the best performance for each column.</em></p>
 <div class="table-responsive">
 <table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
 <thead>
 <tr>
 <th rowspan="2">
-WIgG1-Mouse antibody (CrossNovo); no accession stated
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>21-PTM subset</small>
 </th>
 <th colspan="5" style="text-align:center">
-Amino acid precision
+Ptm accuracy
+</th>
+<th colspan="5" style="text-align:center">
+Amino acid recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Acetylation</small>
+</th>
+<th>
+<small>Biotinylation</small>
+</th>
+<th>
+<small>Crotonylation</small>
+</th>
+<th>
+<small>Butyrylation</small>
+</th>
+<th>
+<small>Dimethylation</small>
+</th>
+<th>
+<small>Acetylation</small>
+</th>
+<th>
+<small>Biotinylation</small>
+</th>
+<th>
+<small>Crotonylation</small>
+</th>
+<th>
+<small>Butyrylation</small>
+</th>
+<th>
+<small>Dimethylation</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<strong>0.98</strong>
+</td>
+<td>
+<strong>0.99</strong>
+</td>
+<td>
+<strong>0.98</strong>
+</td>
+<td>
+0.97
+</td>
+<td>
+0.95
+</td>
+<td>
+0.95
+</td>
+<td>
+<strong>0.83</strong>
+</td>
+<td>
+<strong>0.90</strong>
+</td>
+<td>
+0.82
+</td>
+<td>
+0.84
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="crossnovo.html">CrossNovo</a>
+</th>
+<td>
+<strong>0.98</strong>
+</td>
+<td>
+0.98
+</td>
+<td>
+<strong>0.98</strong>
+</td>
+<td>
+<strong>0.98</strong>
+</td>
+<td>
+<strong>0.97</strong>
+</td>
+<td>
+<strong>0.96</strong>
+</td>
+<td>
+<strong>0.83</strong>
+</td>
+<td>
+0.86
+</td>
+<td>
+<strong>0.85</strong>
+</td>
+<td>
+<strong>0.85</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a><br><small>21-PTM subset</small>
 </th>
 <th colspan="5" style="text-align:center">
 Peptide recall
@@ -2100,106 +2665,41 @@ Peptide recall
 </tr>
 <tr>
 <th>
-<small>HC AspN</small>
+<small>Acetylation</small>
 </th>
 <th>
-<small>HC Chymotrypsin</small>
+<small>Biotinylation</small>
 </th>
 <th>
-<small>HC Trypsin</small>
+<small>Crotonylation</small>
 </th>
 <th>
-<small>LC AspN</small>
+<small>Butyrylation</small>
 </th>
 <th>
-<small>Average</small>
-</th>
-<th>
-<small>HC AspN</small>
-</th>
-<th>
-<small>HC Chymotrypsin</small>
-</th>
-<th>
-<small>HC Trypsin</small>
-</th>
-<th>
-<small>LC AspN</small>
-</th>
-<th>
-<small>Average</small>
+<small>Dimethylation</small>
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>V2</small>
+<a href="pi-primenovo.html">π-PrimeNovo</a>
 </th>
 <td>
-0.714
+0.89
 </td>
 <td>
-0.591
+0.70
 </td>
 <td>
-<u>0.723</u>
+<strong>0.79</strong>
 </td>
 <td>
-<u>0.668</u>
+0.65
 </td>
 <td>
-<u>0.674</u>
-</td>
-<td>
-0.557
-</td>
-<td>
-0.483
-</td>
-<td>
-0.636
-</td>
-<td>
-0.456
-</td>
-<td>
-0.533
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="contranovo.html">ContraNovo</a>
-</th>
-<td>
-<u>0.750</u>
-</td>
-<td>
-<u>0.612</u>
-</td>
-<td>
-0.650
-</td>
-<td>
-0.649
-</td>
-<td>
-0.665
-</td>
-<td>
-<u>0.649</u>
-</td>
-<td>
-<u>0.545</u>
-</td>
-<td>
-<u>0.671</u>
-</td>
-<td>
-<u>0.519</u>
-</td>
-<td>
-<u>0.596</u>
+0.66
 </td>
 </tr>
 <tr>
@@ -2207,325 +2707,27 @@ Peptide recall
 <a href="crossnovo.html">CrossNovo</a>
 </th>
 <td>
-<strong>0.769</strong>
+<strong>0.90</strong>
 </td>
 <td>
-<strong>0.640</strong>
+<strong>0.72</strong>
 </td>
 <td>
-<strong>0.747</strong>
+0.78
 </td>
 <td>
-<strong>0.724</strong>
+<strong>0.69</strong>
 </td>
 <td>
-<strong>0.720</strong>
-</td>
-<td>
-<strong>0.662</strong>
-</td>
-<td>
-<strong>0.577</strong>
-</td>
-<td>
-<strong>0.699</strong>
-</td>
-<td>
-<strong>0.581</strong>
-</td>
-<td>
-<strong>0.630</strong>
+<strong>0.68</strong>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="table7" class="level3">
-<h3 class="anchored" data-anchor-id="table7">Table7</h3>
-<p><a href="../publications/bidirectional-representations-augmented-autoregressive-biological-preprint.html">Bidirectional Representations Augmented Autoregressive Biological Sequence Generation</a>, page 26: <em>Comparison of the performance of CROSSNOVO and baseline methods on IgG1-Human. Bold values indicate the best performance.</em></p>
-<div class="table-responsive">
-<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
-<thead>
-<tr>
-<th rowspan="2">
-IgG1-Human antibody (CrossNovo); no accession stated
-</th>
-<th colspan="9" style="text-align:center">
-Amino acid precision
-</th>
-</tr>
-<tr>
-<th>
-<small>HC AspN</small>
-</th>
-<th>
-<small>HC Chymotrypsin</small>
-</th>
-<th>
-<small>HC GluC</small>
-</th>
-<th>
-<small>HC LysC</small>
-</th>
-<th>
-<small>HC Proteinase K</small>
-</th>
-<th>
-<small>HC Trypsin</small>
-</th>
-<th>
-<small>LC AspN</small>
-</th>
-<th>
-<small>LC LysC</small>
-</th>
-<th>
-<small>Average</small>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>V2</small>
-</th>
-<td>
-0.520
-</td>
-<td>
-0.472
-</td>
-<td>
-0.605
-</td>
-<td>
-0.757
-</td>
-<td>
-<u>0.354</u>
-</td>
-<td>
-0.759
-</td>
-<td>
-0.666
-</td>
-<td>
-0.778
-</td>
-<td>
-0.642
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="contranovo.html">ContraNovo</a>
-</th>
-<td>
-<u>0.580</u>
-</td>
-<td>
-<u>0.565</u>
-</td>
-<td>
-<u>0.642</u>
-</td>
-<td>
-<u>0.790</u>
-</td>
-<td>
-0.348
-</td>
-<td>
-<u>0.787</u>
-</td>
-<td>
-<u>0.702</u>
-</td>
-<td>
-<u>0.793</u>
-</td>
-<td>
-<u>0.676</u>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="crossnovo.html">CrossNovo</a>
-</th>
-<td>
-<strong>0.613</strong>
-</td>
-<td>
-<strong>0.617</strong>
-</td>
-<td>
-<strong>0.694</strong>
-</td>
-<td>
-<strong>0.814</strong>
-</td>
-<td>
-<strong>0.367</strong>
-</td>
-<td>
-<strong>0.803</strong>
-</td>
-<td>
-<strong>0.719</strong>
-</td>
-<td>
-<strong>0.807</strong>
-</td>
-<td>
-<strong>0.702</strong>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="table-responsive">
-<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
-<thead>
-<tr>
-<th rowspan="2">
-IgG1-Human antibody (CrossNovo); no accession stated
-</th>
-<th colspan="9" style="text-align:center">
-Peptide recall
-</th>
-</tr>
-<tr>
-<th>
-<small>HC AspN</small>
-</th>
-<th>
-<small>HC Chymotrypsin</small>
-</th>
-<th>
-<small>HC GluC</small>
-</th>
-<th>
-<small>HC LysC</small>
-</th>
-<th>
-<small>HC Proteinase K</small>
-</th>
-<th>
-<small>HC Trypsin</small>
-</th>
-<th>
-<small>LC AspN</small>
-</th>
-<th>
-<small>LC LysC</small>
-</th>
-<th>
-<small>Average</small>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small>V2</small>
-</th>
-<td>
-0.265
-</td>
-<td>
-0.274
-</td>
-<td>
-0.399
-</td>
-<td>
-0.569
-</td>
-<td>
-0.206
-</td>
-<td>
-0.595
-</td>
-<td>
-0.325
-</td>
-<td>
-0.625
-</td>
-<td>
-0.446
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="contranovo.html">ContraNovo</a>
-</th>
-<td>
-<u>0.396</u>
-</td>
-<td>
-<u>0.372</u>
-</td>
-<td>
-<u>0.437</u>
-</td>
-<td>
-<u>0.653</u>
-</td>
-<td>
-<u>0.274</u>
-</td>
-<td>
-<u>0.675</u>
-</td>
-<td>
-<u>0.499</u>
-</td>
-<td>
-<u>0.646</u>
-</td>
-<td>
-<u>0.529</u>
-</td>
-</tr>
-<tr>
-<th style="white-space:nowrap">
-<a href="crossnovo.html">CrossNovo</a>
-</th>
-<td>
-<strong>0.415</strong>
-</td>
-<td>
-<strong>0.421</strong>
-</td>
-<td>
-<strong>0.512</strong>
-</td>
-<td>
-<strong>0.701</strong>
-</td>
-<td>
-<strong>0.275</strong>
-</td>
-<td>
-<strong>0.699</strong>
-</td>
-<td>
-<strong>0.544</strong>
-</td>
-<td>
-<strong>0.676</strong>
-</td>
-<td>
-<strong>0.560</strong>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+<p class="comparison-notes">
+<small>In the paper: column ptm accuracy, Acetylation: the original table only bolded CrossNovo (0.98); π-PrimeNovo (PrimeNovo) (0.98) ties with it and is bolded here too.<br>In the paper: column ptm accuracy, Crotonylation: the original table only bolded CrossNovo (0.98); π-PrimeNovo (PrimeNovo) (0.98) ties with it and is bolded here too.</small>
+</p>
 </section>
 </section>
 <section id="papers-describing-it-3" class="level2">

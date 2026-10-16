@@ -203,6 +203,422 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Live stars, open issues and last-push figures are on the <a href="../../index.html#code-activity">Code activity chart</a>.</p>
 </section>
+<section id="reported-comparisons-3" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-3">Reported comparisons (3)</h2>
+<p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
+<section id="supplementary-fig.-3a" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-fig.-3a">Supplementary Fig. 3a</h3>
+<p><a href="../publications/massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep.html">MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics</a>, page 5: <em>Evaluation of de novo peptide sequencing performance on other benchmark datasets. (A) Peptide recall across nine species using seven models: InstaNovo+, π-HelixNovo, ContraNovo, CasaNovo V2, π-PrimeNovo, XuanjiNovo-100M, and XuanjiNovo-130M. (B) Peptide recall on the HCC dataset. (C) Peptide recall on the PT dataset. The π-HelixNovo model is publicly available and was trained on datasets derived from eight species, excluding human. XuanjiNovo-100M: base model; XuanjiNovo-130M: fine-tuned on 30M PSMs from MassIVE.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a><br><small>original (DeepNovo, 2017)</small>
+</th>
+<th colspan="9" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-helixnovo.html">π-HelixNovo</a> <small class="text-muted" title="The π-HelixNovo model is publicly available and was trained on datasets derived from eight species, excluding human.">· <em>released</em></small>
+</th>
+<td>
+0.596
+</td>
+<td>
+0.388
+</td>
+<td>
+0.473
+</td>
+<td>
+0.392
+</td>
+<td>
+0.56
+</td>
+<td>
+0.483
+</td>
+<td>
+0.623
+</td>
+<td>
+0.56
+</td>
+<td>
+0.568
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-plus.html">InstaNovo+</a>
+</th>
+<td>
+0.576
+</td>
+<td>
+0.417
+</td>
+<td>
+0.467
+</td>
+<td>
+0.456
+</td>
+<td>
+0.528
+</td>
+<td>
+0.471
+</td>
+<td>
+0.565
+</td>
+<td>
+0.585
+</td>
+<td>
+0.56
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.622
+</td>
+<td>
+0.446
+</td>
+<td>
+0.499
+</td>
+<td>
+0.455
+</td>
+<td>
+0.565
+</td>
+<td>
+0.486
+</td>
+<td>
+0.594
+</td>
+<td>
+0.624
+</td>
+<td>
+0.598
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.688
+</td>
+<td>
+0.487
+</td>
+<td>
+<u>0.576</u>
+</td>
+<td>
+<strong>0.622</strong>
+</td>
+<td>
+<u>0.63</u>
+</td>
+<td>
+0.566
+</td>
+<td>
+<u>0.677</u>
+</td>
+<td>
+0.672
+</td>
+<td>
+<u>0.674</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<strong>0.721</strong>
+</td>
+<td>
+<strong>0.531</strong>
+</td>
+<td>
+<strong>0.603</strong>
+</td>
+<td>
+0.574
+</td>
+<td>
+<strong>0.65</strong>
+</td>
+<td>
+<u>0.567</u>
+</td>
+<td>
+<strong>0.702</strong>
+</td>
+<td>
+<strong>0.697</strong>
+</td>
+<td>
+<strong>0.697</strong>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a> <small>100M</small>
+</th>
+<td>
+0.43
+</td>
+<td>
+0.393
+</td>
+<td>
+0.435
+</td>
+<td>
+0.589
+</td>
+<td>
+0.468
+</td>
+<td>
+0.502
+</td>
+<td>
+0.499
+</td>
+<td>
+0.536
+</td>
+<td>
+0.407
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a> <small>130M</small>
+</th>
+<td>
+<u>0.689</u>
+</td>
+<td>
+<u>0.503</u>
+</td>
+<td>
+0.574
+</td>
+<td>
+<u>0.6</u>
+</td>
+<td>
+0.628
+</td>
+<td>
+<strong>0.682</strong>
+</td>
+<td>
+0.595
+</td>
+<td>
+<u>0.681</u>
+</td>
+<td>
+0.67
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>Read from the paper's source data: every value is a cell of 'Supplementary Data 1.xlsx', sheet SFigure3A, behind a figure that prints no values. Nothing was estimated from bar heights. Values from the paper's Supplementary Data 1 (sheet SFigure3A); the figure prints none. The sheet names InstaNovo where the legend draws InstaNovo+. THE TEXT AND THE SHEET DISAGREE once: p.&nbsp;8 puts XuanjiNovo-130M on M. musculus at 'approximately 0.67', the sheet at 0.682.</small>
+</p>
+</section>
+<section id="supplementary-fig.-3b" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-fig.-3b">Supplementary Fig. 3b</h3>
+<p><a href="../publications/massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep.html">MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics</a>, page 5: <em>Evaluation of de novo peptide sequencing performance on other benchmark datasets. (A) Peptide recall across nine species using seven models: InstaNovo+, π-HelixNovo, ContraNovo, CasaNovo V2, π-PrimeNovo, XuanjiNovo-100M, and XuanjiNovo-130M. (B) Peptide recall on the HCC dataset. (C) Peptide recall on the PT dataset. The π-HelixNovo model is publicly available and was trained on datasets derived from eight species, excluding human. XuanjiNovo-100M: base model; XuanjiNovo-130M: fine-tuned on 30M PSMs from MassIVE.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/proteomics-identifies-new-therapeutic-targets-of-early-stage-hepatocellular.html">Proteomics identifies new therapeutic targets of early-stage hepatocellular carcinoma</a><br><small>as deposited</small>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>HCC</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.168
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-plus.html">InstaNovo+</a>
+</th>
+<td>
+0.087
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.373
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<u>0.382</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a>
+</th>
+<td>
+<strong>0.676</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>Read from the paper's source data: every value is a cell of 'Supplementary Data 1.xlsx', sheet SFigure3B, behind a figure that prints no values. Nothing was estimated from bar heights. Values from Supplementary Data 1 (sheet SFigure3B); the figure prints none. The figure draws six bars and the sheet has five: π-HelixNovo, whose bar is barely above zero, has no row, so it is not recorded rather than read off the bar. XuanjiNovo is XuanjiNovo-100M, per the caption of Fig. 4.</small>
+</p>
+</section>
+<section id="supplementary-fig.-3c" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-fig.-3c">Supplementary Fig. 3c</h3>
+<p><a href="../publications/massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep.html">MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics</a>, page 5: <em>Evaluation of de novo peptide sequencing performance on other benchmark datasets. (A) Peptide recall across nine species using seven models: InstaNovo+, π-HelixNovo, ContraNovo, CasaNovo V2, π-PrimeNovo, XuanjiNovo-100M, and XuanjiNovo-130M. (B) Peptide recall on the HCC dataset. (C) Peptide recall on the PT dataset. The π-HelixNovo model is publicly available and was trained on datasets derived from eight species, excluding human. XuanjiNovo-100M: base model; XuanjiNovo-130M: fine-tuned on 30M PSMs from MassIVE.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/proteometools.html">ProteomeTools</a>
+</th>
+<th colspan="1" style="text-align:center">
+Peptide recall
+</th>
+</tr>
+<tr>
+<th>
+<small>PT</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>V2</small>
+</th>
+<td>
+0.459
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="instanovo-plus.html">InstaNovo+</a>
+</th>
+<td>
+0.479
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="contranovo.html">ContraNovo</a>
+</th>
+<td>
+0.574
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pi-primenovo.html">π-PrimeNovo</a>
+</th>
+<td>
+<u>0.586</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="xuanjinovo.html">XuanjiNovo</a>
+</th>
+<td>
+<strong>0.605</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>Read from the paper's source data: every value is a cell of 'Supplementary Data 1.xlsx', sheet SFigure3C, behind a figure that prints no values. Nothing was estimated from bar heights. Values from Supplementary Data 1 (sheet SFigure3C); the figure prints none. The figure draws six bars and the sheet has five: π-HelixNovo (about 0.26 by its bar) has no row, so it is not recorded. THE TEXT AND THE SHEET DISAGREE: p.&nbsp;8 says XuanjiNovo-100M 'achieved a recall of 0.62' on PT, the sheet gives 0.605.</small>
+</p>
+</section>
+</section>
 <section id="papers-describing-it-2" class="level2">
 <h2 class="anchored" data-anchor-id="papers-describing-it-2">Papers describing it (2)</h2>
 <ul>

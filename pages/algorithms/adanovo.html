@@ -211,8 +211,8 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
-<section id="reported-comparisons-5" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparisons-5">Reported comparisons (5)</h2>
+<section id="reported-comparisons-8" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-8">Reported comparisons (8)</h2>
 <p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1" class="level3">
 <h3 class="anchored" data-anchor-id="table1">Table1</h3>
@@ -715,7 +715,7 @@ Ptm precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a> <small>w/oPSM-levelMI</small>
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level MI</small>
 </th>
 <td>
 <u>0.607</u>
@@ -729,7 +729,7 @@ Ptm precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a> <small>w/oAA-levelCMI</small>
+<a href="adanovo.html">AdaNovo</a> <small>w/o AA-level CMI</small>
 </th>
 <td>
 0.594
@@ -791,7 +791,7 @@ Peptide precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a> <small>w/oPSM-levelMI</small>
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level MI</small>
 </th>
 <td>
 0.586
@@ -802,7 +802,7 @@ Peptide precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a> <small>w/oAA-levelCMI</small>
+<a href="adanovo.html">AdaNovo</a> <small>w/o AA-level CMI</small>
 </th>
 <td>
 <u>0.614</u>
@@ -880,7 +880,7 @@ Peptide precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="adanovo.html">AdaNovo</a> <small>w/oPSM-levelMI</small>
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level MI</small>
 </th>
 <td>
 <u>0.784</u>
@@ -898,6 +898,648 @@ Peptide precision
 </td>
 <td>
 <strong>0.593</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table1-1" class="level3">
+<h3 class="anchored" data-anchor-id="table1-1">Table1</h3>
+<p><a href="../publications/adanovo-towards-robust-de-novo-peptide-sequencing-in-proteomics-against-data.html">AdaNovo: Towards Robust De Novo Peptide Sequencing in Proteomics against Data Biases</a>, page 7: <em>Empirical comparison of previous models on 9-species benchmark. The best and the second best results are highlighted with bold and underlined, respectively. The reproduced performance of Casanovo is denoted as Casanovo (rep.). Following Casanovo [35], we train 5 models with different random initializations and report the standard deviation when the test dataset is Mouse or Human. The other standard deviations are not reported because it would be too computationally expensive.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="10" style="text-align:center">
+Peptide precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="report the published results of DeepNovo and PointNovo as their pretrained weights are unavailable">· <em>quoted</em></small>
+</th>
+<td>
+0.286
+</td>
+<td>
+0.293
+</td>
+<td>
+0.462
+</td>
+<td>
+0.422
+</td>
+<td>
+0.330
+</td>
+<td>
+0.454
+</td>
+<td>
+0.436
+</td>
+<td>
+0.449
+</td>
+<td>
+0.253
+</td>
+<td>
+0.376
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="report the published results of DeepNovo and PointNovo as their pretrained weights are unavailable">· <em>quoted</em></small>
+</th>
+<td>
+0.355
+</td>
+<td>
+0.351
+</td>
+<td>
+0.534
+</td>
+<td>
+0.478
+</td>
+<td>
+0.396
+</td>
+<td>
+<u>0.513</u>
+</td>
+<td>
+0.511
+</td>
+<td>
+0.518
+</td>
+<td>
+0.298
+</td>
+<td>
+0.439
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.443
+</td>
+<td>
+<u>0.367</u>
+</td>
+<td>
+0.561
+</td>
+<td>
+<u>0.486</u>
+</td>
+<td>
+0.408
+</td>
+<td>
+0.460
+</td>
+<td>
+0.437
+</td>
+<td>
+<u>0.540</u>
+</td>
+<td>
+<u>0.371</u>
+</td>
+<td>
+0.453
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>rep.</small> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+<u>0.449</u>
+</td>
+<td>
+0.343
+</td>
+<td>
+<u>0.568</u>
+</td>
+<td>
+0.474
+</td>
+<td>
+<u>0.422</u>
+</td>
+<td>
+0.463
+</td>
+<td>
+<strong>0.549</strong>
+</td>
+<td>
+0.513
+</td>
+<td>
+0.347
+</td>
+<td>
+<u>0.459</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.493</strong>
+</td>
+<td>
+<strong>0.373</strong>
+</td>
+<td>
+<strong>0.612</strong>
+</td>
+<td>
+<strong>0.523</strong>
+</td>
+<td>
+<strong>0.431</strong>
+</td>
+<td>
+<strong>0.552</strong>
+</td>
+<td>
+<u>0.546</u>
+</td>
+<td>
+<strong>0.561</strong>
+</td>
+<td>
+<strong>0.397</strong>
+</td>
+<td>
+<strong>0.499</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="10" style="text-align:center">
+Amino acid precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Mus musculus</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Saccharomyces cerevisiae</small>
+</th>
+<th>
+<small>Methanosarcina mazei</small>
+</th>
+<th>
+<small>Apis mellifera</small>
+</th>
+<th>
+<small>Solanum lycopersicum</small>
+</th>
+<th>
+<small>Vigna mungo</small>
+</th>
+<th>
+<small>Bacillus subtilis</small>
+</th>
+<th>
+<small>Candidatus Thiodiazotropha endoloripes</small>
+</th>
+<th>
+<small>Average</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="deepnovo.html">DeepNovo</a> <small class="text-muted" title="report the published results of DeepNovo and PointNovo as their pretrained weights are unavailable">· <em>quoted</em></small>
+</th>
+<td>
+0.623
+</td>
+<td>
+<u>0.610</u>
+</td>
+<td>
+0.750
+</td>
+<td>
+0.694
+</td>
+<td>
+0.630
+</td>
+<td>
+0.731
+</td>
+<td>
+0.679
+</td>
+<td>
+0.742
+</td>
+<td>
+0.602
+</td>
+<td>
+0.673
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="pointnovo.html">PointNovo</a> <small class="text-muted" title="report the published results of DeepNovo and PointNovo as their pretrained weights are unavailable">· <em>quoted</em></small>
+</th>
+<td>
+<u>0.626</u>
+</td>
+<td>
+0.606
+</td>
+<td>
+<u>0.779</u>
+</td>
+<td>
+<u>0.712</u>
+</td>
+<td>
+<u>0.644</u>
+</td>
+<td>
+<u>0.733</u>
+</td>
+<td>
+<strong>0.730</strong>
+</td>
+<td>
+<u>0.768</u>
+</td>
+<td>
+0.589
+</td>
+<td>
+<u>0.687</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.562
+</td>
+<td>
+0.424
+</td>
+<td>
+0.591
+</td>
+<td>
+0.518
+</td>
+<td>
+0.461
+</td>
+<td>
+0.471
+</td>
+<td>
+0.442
+</td>
+<td>
+0.573
+</td>
+<td>
+0.405
+</td>
+<td>
+0.494
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>rep.</small> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.612
+</td>
+<td>
+0.585
+</td>
+<td>
+0.753
+</td>
+<td>
+0.686
+</td>
+<td>
+0.640
+</td>
+<td>
+0.720
+</td>
+<td>
+<u>0.727</u>
+</td>
+<td>
+0.711
+</td>
+<td>
+<u>0.617</u>
+</td>
+<td>
+0.672
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.667</strong>
+</td>
+<td>
+<strong>0.618</strong>
+</td>
+<td>
+<strong>0.825</strong>
+</td>
+<td>
+<strong>0.757</strong>
+</td>
+<td>
+<strong>0.650</strong>
+</td>
+<td>
+<strong>0.767</strong>
+</td>
+<td>
+0.719
+</td>
+<td>
+<strong>0.788</strong>
+</td>
+<td>
+<strong>0.656</strong>
+</td>
+<td>
+<strong>0.716</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="comparison-notes">
+<small>In the paper: column amino acid precision, Bacillus: the original table bolded PointNovo (0.768), AdaNovo (0.788) and underlined DeepNovo (0.742).</small>
+</p>
+</section>
+<section id="table2-1" class="level3">
+<h3 class="anchored" data-anchor-id="table2-1">Table2</h3>
+<p><a href="../publications/adanovo-towards-robust-de-novo-peptide-sequencing-in-proteomics-against-data.html">AdaNovo: Towards Robust De Novo Peptide Sequencing in Proteomics against Data Biases</a>, page 8: <em>Ablations on amino acid-level (AA-level) and peptide-level training strategies. The results are reported using the Human datasets as test set.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th rowspan="2">
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid precision
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision
+</th>
+<th colspan="1" style="text-align:center">
+PTM precision
+</th>
+</tr>
+<tr>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+<th>
+<small>Homo sapiens</small>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.585
+</td>
+<td>
+0.343
+</td>
+<td>
+0.300
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level objective</small>
+</th>
+<td>
+<u>0.607</u>
+</td>
+<td>
+<u>0.360</u>
+</td>
+<td>
+<u>0.478</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a> <small>w/o AA-level objective</small>
+</th>
+<td>
+0.594
+</td>
+<td>
+0.349
+</td>
+<td>
+0.314
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.618</strong>
+</td>
+<td>
+<strong>0.373</strong>
+</td>
+<td>
+<strong>0.483</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table4-1" class="level3">
+<h3 class="anchored" data-anchor-id="table4-1">Table4</h3>
+<p><a href="../publications/adanovo-towards-robust-de-novo-peptide-sequencing-in-proteomics-against-data.html">AdaNovo: Towards Robust De Novo Peptide Sequencing in Proteomics against Data Biases</a>, page 8: <em>Comparisons with alternative methods in terms of identifying amino acids with PTMs. All results are reported using the yeast dataset as test set.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid precision
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision
+</th>
+<th colspan="1" style="text-align:center">
+PTM precision
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.753
+</td>
+<td>
+0.568
+</td>
+<td>
+0.552
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>re-weight</small> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.762
+</td>
+<td>
+0.576
+</td>
+<td>
+0.564
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small>focal loss</small> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.745
+</td>
+<td>
+0.543
+</td>
+<td>
+0.550
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level objective</small>
+</th>
+<td>
+<u>0.793</u>
+</td>
+<td>
+<u>0.594</u>
+</td>
+<td>
+<u>0.616</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.825</strong>
+</td>
+<td>
+<strong>0.612</strong>
+</td>
+<td>
+<strong>0.665</strong>
 </td>
 </tr>
 </tbody>
