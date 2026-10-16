@@ -211,8 +211,8 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Both are mass-based matches on the tool’s most recent run. <a href="../../index.html#how-they-score">What these numbers mean</a>.</p>
 </section>
-<section id="reported-comparisons-8" class="level2">
-<h2 class="anchored" data-anchor-id="reported-comparisons-8">Reported comparisons (8)</h2>
+<section id="reported-comparisons-9" class="level2">
+<h2 class="anchored" data-anchor-id="reported-comparisons-9">Reported comparisons (9)</h2>
 <p>The comparison tables this method’s own papers print, standardised: every value on a 0-1 scale, methods down the side, the measure and then the species across. These are numbers papers report <strong>about themselves and their baselines</strong>. They are not a leaderboard, and they do not compare across tables: each was produced by a different group, on the dataset named in its corner, with each baseline either retrained, run from released weights or quoted from another paper. Where the paper says which, it follows the method’s name (hover it for the sentence); most papers do not say. <strong>Bold</strong> is the best value in a column and underline the runner-up, our ranking rather than the paper’s own marks.</p>
 <section id="table1" class="level3">
 <h3 class="anchored" data-anchor-id="table1">Table1</h3>
@@ -1024,7 +1024,7 @@ Peptide precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="The reproduced performance of Casanovo is denoted as Casanovo (rep.).">· <em>quoted</em></small>
 </th>
 <td>
 0.443
@@ -1247,7 +1247,7 @@ Amino acid precision
 </tr>
 <tr>
 <th style="white-space:nowrap">
-<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="The reproduced performance of Casanovo is denoted as Casanovo (rep.).">· <em>quoted</em></small>
 </th>
 <td>
 0.562
@@ -1354,7 +1354,7 @@ Amino acid precision
 </table>
 </div>
 <p class="comparison-notes">
-<small>In the paper: column amino acid precision, Bacillus: the original table bolded PointNovo (0.768), AdaNovo (0.788) and underlined DeepNovo (0.742).</small>
+<small>The plain Casanovo column is quoted: each value is Casanovo's own Table 2 precision at coverage 1, set here under AdaNovo's precision. AdaNovo's own run of Casanovo is 'Casanovo (rep.)', the column the arXiv version prints as plain 'Casanovo'.<br>In the paper: column amino acid precision, Bacillus: the original table bolded PointNovo (0.768), AdaNovo (0.788) and underlined DeepNovo (0.742).</small>
 </p>
 </section>
 <section id="table2-1" class="level3">
@@ -1444,6 +1444,73 @@ PTM precision
 </td>
 <td>
 <strong>0.483</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="table3-1" class="level3">
+<h3 class="anchored" data-anchor-id="table3-1">Table3</h3>
+<p><a href="../publications/adanovo-towards-robust-de-novo-peptide-sequencing-in-proteomics-against-data.html">AdaNovo: Towards Robust De Novo Peptide Sequencing in Proteomics against Data Biases</a>, page 8: <em>Models’ Performance on mass spectrum dataset with synthetic noise. The results are reported using the Clam bacteria as test set.</em></p>
+<div class="table-responsive">
+<table class="table table-sm table-hover comparison" style="font-size:0.85em; width:auto">
+<thead>
+<tr>
+<th>
+<a href="../datasets/nine-species-benchmark.html">Nine-species benchmark</a>
+</th>
+<th colspan="1" style="text-align:center">
+Amino acid precision
+</th>
+<th colspan="1" style="text-align:center">
+Peptide precision
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th style="white-space:nowrap">
+<a href="casanovo.html">Casanovo</a> <small class="text-muted" title="We reproduce the results of Casanovo with the settings and hypermeters of the original paper">· <em>retrained</em></small>
+</th>
+<td>
+0.582
+</td>
+<td>
+0.297
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a> <small>w/o PSM-level objective</small>
+</th>
+<td>
+0.617
+</td>
+<td>
+0.336
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a> <small>w/o AA-level objective</small>
+</th>
+<td>
+<u>0.644</u>
+</td>
+<td>
+<u>0.372</u>
+</td>
+</tr>
+<tr>
+<th style="white-space:nowrap">
+<a href="adanovo.html">AdaNovo</a>
+</th>
+<td>
+<strong>0.656</strong>
+</td>
+<td>
+<strong>0.397</strong>
 </td>
 </tr>
 </tbody>
