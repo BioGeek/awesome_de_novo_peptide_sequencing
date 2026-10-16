@@ -303,9 +303,9 @@
  "p17-pg8-t7": {
   "cells": 3,
   "label": "Table7",
-  "on": "2026-10-03",
+  "on": "2026-10-16",
   "pub": 17,
-  "state": "dismissed"
+  "state": "approved"
  },
  "p18-pg5-t1": {
   "cells": 9,
@@ -1462,6 +1462,13 @@
   "pub": 440,
   "state": "approved"
  },
+ "p440-pg8-t3": {
+  "cells": 4,
+  "label": "Table3",
+  "on": "2026-10-16",
+  "pub": 440,
+  "state": "approved"
+ },
  "p440-pg8-t4": {
   "cells": 5,
   "label": "Table4",
@@ -1892,9 +1899,9 @@
  "p9-pg28-t8": {
   "cells": 6,
   "label": "Table 8",
-  "on": "2026-10-03",
+  "on": "2026-10-16",
   "pub": 9,
-  "state": "dismissed"
+  "state": "approved"
  },
  "p9-pg8-t1": {
   "cells": 20,
@@ -1923,6 +1930,20 @@
   "on": "2026-10-03",
   "pub": 9,
   "state": "dismissed"
+ },
+ "p979-pg26-t6": {
+  "cells": 6,
+  "label": "Table6",
+  "on": "2026-10-16",
+  "pub": 979,
+  "state": "approved"
+ },
+ "p979-pg26-t7": {
+  "cells": 6,
+  "label": "Table7",
+  "on": "2026-10-16",
+  "pub": 979,
+  "state": "approved"
  },
  "p979-pg28-t8": {
   "cells": 6,
@@ -1958,6 +1979,13 @@
   "on": "2026-10-16",
   "pub": 979,
   "state": "dismissed"
+ },
+ "p989-pg7-fig-4b": {
+  "cells": 6,
+  "label": "Fig. 4b",
+  "on": "2026-10-16",
+  "pub": 989,
+  "state": "approved"
  },
  "p989-si1-pg5-supplementary-fig-3a": {
   "cells": 7,
