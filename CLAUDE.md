@@ -2278,13 +2278,26 @@ pass: `extract_words` splits a word wherever an extra attribute changes, so
 asking for `fontname` in the parsing pass could move a cell into another
 column.
 
+**That split can cut a bold number in three.** RefineNovo sets its bold cells
+as math, `$\mathbf{0.71}$`, whose decimal point comes from CMMI10 between two
+CMBX10 runs, so the font pass returned '0', '.', '71', none of them the
+printed cell, and no mark in its Table 6 was ever read. That is why the
+seven-species part showed no footnote although the paper bolds RefineNovo's
+0.09 where SearchNovo has 0.26. `join_number_fragments()` rejoins touching
+fragments on one line whose joined text is a number, in its digits' face.
+
 **One name per species, whatever a paper prints.** Across the accepted
 tables, nine species and an aggregate arrive under 69 spellings: `B. sub.`,
 `B.sub.`, `Bacillus` and `BacillusSubtilis` are one organism, `Clam bacteria`,
 `Clam Ba.`, `C. end.` and `CandidatusEndoloripes` another. `canonical_subset()`
 resolves each to the catalog's OWN name -- the nine-species benchmark's
 provenance submissions record their species in `dataset_address.part` -- and so
-to the accession its spectra came from. Common names are an explicit table
+to the accession its spectra came from. **The index is per benchmark**
+(`SPECIES_BENCHMARKS`), because one species is a different submission in
+each: yeast is PXD003868 in nine-species and PXD025030 in MassNet's
+15-species benchmark, whose fifteen abbreviations ('A.calcoaceticus',
+'B.thetaiotaomicron') resolve against its own provenance. A table on any
+other dataset reads the nine-species names, as before. Common names are an explicit table
 (nothing derives 'Human' from 'Homo sapiens'); abbreviations resolve by genus
 initial plus the start of the epithet; a typo (`B. subtilus`) by a near match on
 the epithet; proteases likewise (`HC Chymo.` is `HC Chymotrypsin`). A subset
@@ -2390,6 +2403,12 @@ That covers the paper's typo 'Chymotrysin' and the glued 'ProteinaseK'.
 CrossNovo prints 'HC Trypsin'; π-PrimeNovo prints 'Trypsin' in "the
 IgG1-Human-HC dataset". `SUBSET_PREFIX` adds the 'HC' that dataset name
 states, which is what lets the two papers' numbers meet on one subset.
+**And both papers' antibody tables are one deposit, MSV000079801.**
+CrossNovo prints no accession, but its prose cites the human set as
+reference [30], Tran et al. 2016, whose deposit that is. Its WIgG1-Mouse
+table cites nothing, and the same deposit's MassIVE record names it: *Mus
+musculus* among its species, and "IgG1 light and heavy chain digested by
+Asp-N, Chymotrypsin, Trypsin", the table's exact columns.
 
 **A per-residue table is refused (C4).** Precision on M(O), Q, F and K one
 residue at a time is a different grain from a table's amino-acid precision.
@@ -2490,7 +2509,15 @@ inside the metric spanners, and it is stored that way rather than tidied.
 What remains imperfect is the TEXT, not the structure: where a PDF drops the
 spaces, a label is stored as extracted (`Aminoacid-levelprecision(%)`). The
 review page re-inserts them for display, and the stored string is never
-silently "corrected".
+silently "corrected". **A ROW label is re-read instead**, from pdftotext,
+which keeps the spaces pdfplumber drops: `respace_from_reading()` turns
+'PeaksNovo(Maetal.,2003)' into 'Peaks Novo (Ma et al., 2003)' and
+'AdaNovo(w/oPSM-levelobjective)' into 'AdaNovo (w/o PSM-level objective)',
+as printed. It is a second reading of the same PDF, taken only when the
+label looks glued, is eight or more characters, and every place the
+document prints those characters spaces them the same way; a row-group
+prefix ('DB ...') is tried piece by piece, since in reading order it is not
+one run of text with the label.
 
 **Our bold and underline are not stored.** They are a ranking of the stored
 values within a measurement, recomputed wherever a table is drawn; storing
@@ -2574,7 +2601,13 @@ supplement. Three changes reach them:
 they agree.** `image_tables.find_image_tables()` takes a table caption with a
 text-free gap of 60 pt or more beside it, the gap holding images or vector
 drawings: the shape of InstaNovo's published Extended Data tables, whose text
-layer has a caption and a footnote and nothing between. The review page crops
+layer has a caption and a footnote and nothing between. **The gap above a
+caption counts only when no text table follows it**: Aytun's thesis captions
+its tables from above, and Table 4.2's own cells sit right under its caption,
+so the band above it, holding only the page watermark and Table 4.1's last
+rule, was cropped as an empty "image table". A line with two column gaps over
+12 pt within three lines of the caption is a text table, and the finder
+leaves it alone. The review page crops
 each one and lists it in `image_tables.json`;
 `read_table_images.py --reader glm` and `--reader paddle` read the crops, each
 in its own environment, into `vlm-cache/`. The table is resolved only when the

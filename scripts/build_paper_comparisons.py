@@ -147,6 +147,11 @@ METHOD_MARKERS: dict[tuple[int, str], dict[str, dict]] = {
     # publications". The unmarked rows are its own evaluations, and how those
     # were run is left to its prose.
     (202, "Table2"): {"\u2020": {"basis": "quoted"}},
+    # LIPNovo, Table 7: "\u00b6 is the extension", the baseline "extend[ed]
+    # ... by increasing the number of layers to 12 and adding an FFN to
+    # roughly match LIPNovo's parameter count". So 'Baseline\u00b6' is
+    # Casanovo widened, a variant of the same retrained model.
+    (17, "Table7"): {"\u00b6": {"variant": "extended to 12 layers + FFN"}},
 }
 
 
@@ -467,23 +472,36 @@ SPECIES_COMMON = {
 # 'Weighted Average' (Prime-DiffNovo) is an aggregate too, and a different
 # one: weighted by spectra, so it keeps its own name, like Average and Mean.
 AGGREGATE = re.compile(r"(?i)^\s*(weighted\s*average|average|avg\.?|mean|overall)\s*$")
-_SPECIES_CACHE: dict | None = None
+_SPECIES_CACHE: dict[str, dict[str, str]] = {}
+
+# The benchmarks whose provenance submissions are recorded ONE PER SPECIES,
+# the species in `part`. Only these can name a species: the other provenance
+# rows (MassNet's corpus, InstaNovo-FM's tiers) carry a selection group or a
+# list of organisms per project, and would resolve 'Human' to anything.
+SPECIES_BENCHMARKS = ("Nine-species benchmark", "15-species benchmark")
 
 
-def species_index(con: sqlite3.Connection) -> dict[str, str]:
-    """canonical species name -> its provenance accession, from the catalog."""
-    global _SPECIES_CACHE
-    if _SPECIES_CACHE is None:
-        _SPECIES_CACHE = {part: acc for acc, part in con.execute(
+def species_index(con: sqlite3.Connection, dataset: str | None = None) -> dict[str, str]:
+    """canonical species name -> its provenance accession, from the catalog.
+
+    Per benchmark, because one species is a different submission in each:
+    yeast is PXD003868 in the nine-species benchmark and PXD025030 in
+    MassNet's 15-species one. A table on any other dataset reads the
+    nine-species names, as every table did before the second benchmark.
+    """
+    name = dataset if dataset in SPECIES_BENCHMARKS else "Nine-species benchmark"
+    if name not in _SPECIES_CACHE:
+        _SPECIES_CACHE[name] = {part: acc for acc, part in con.execute(
             "SELECT da.accession, da.part FROM dataset_address da "
             "JOIN dataset_version dv ON dv.id = da.dataset_version_id "
             "JOIN dataset d ON d.id = dv.dataset_id "
-            "WHERE d.name = 'Nine-species benchmark' AND da.is_provenance = 1 "
-            "AND da.part IS NOT NULL")}
-    return _SPECIES_CACHE
+            "WHERE d.name = ? AND da.is_provenance = 1 "
+            "AND da.part IS NOT NULL", (name,))}
+    return _SPECIES_CACHE[name]
 
 
-def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None, str | None]:
+def canonical_subset(printed: str, con: sqlite3.Connection,
+                     dataset: str | None = None) -> tuple[str | None, str | None]:
     """(canonical subset, provenance accession) for a printed subset, or (None, None)."""
     if not printed:
         return None, None
@@ -500,7 +518,7 @@ def canonical_subset(printed: str, con: sqlite3.Connection) -> tuple[str | None,
             return "Weighted average", None
         return {"average": "Average", "avg": "Average",
                 "mean": "Mean", "overall": "Overall"}[word], None
-    species = species_index(con)
+    species = species_index(con, dataset)
     spaced = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", printed)        # ApisMellifera
     toks = re.findall(r"[a-z]+", spaced.lower())
     if not toks:
@@ -1087,8 +1105,8 @@ def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
     split a cell and move it into another column.
     """
     try:
-        words = collapse_fake_bold(page.extract_words(
-            use_text_flow=False, keep_blank_chars=False, extra_attrs=["fontname"]))
+        words = join_number_fragments(collapse_fake_bold(page.extract_words(
+            use_text_flow=False, keep_blank_chars=False, extra_attrs=["fontname"])))
     except Exception:
         return [], []
     # BOLD IS THE FACE THAT IS NOT THE PAGE'S OWN REGULAR FACE, measured, not
@@ -1119,6 +1137,31 @@ def page_emphasis(page) -> tuple[list[dict], list[tuple[float, float, float]]]:
         if abs(o["y0"] - o["y1"]) < 1.6 and 2.0 < (o["x1"] - o["x0"]) < 70.0:
             rules.append((o["top"], o["x0"], o["x1"]))
     return bold, rules
+
+
+def join_number_fragments(words: list[dict]) -> list[dict]:
+    """Rejoin a number the font pass split where its decimal point changes face.
+
+    RefineNovo sets its bold cells as math, $\\mathbf{0.71}$, whose point comes
+    from CMMI10 between two CMBX10 runs. Asking extract_words for the font
+    splits the word there, so '0', '.', '71' arrive as three words, none of them
+    the printed cell, and the table's bold was never read. Touching fragments
+    on one line whose joined text is a number become one word, in the face of
+    its digits.
+    """
+    out: list[dict] = []
+    for w in sorted(words, key=lambda w: (round(w["top"]), w["x0"])):
+        prev = out[-1] if out else None
+        if (prev is not None and abs(prev["top"] - w["top"]) < 1.0
+                and 0 <= w["x0"] - prev["x1"] < 0.6
+                and re.fullmatch(r"[\d.]+", prev["text"] + w["text"])
+                and re.search(r"\d", prev["text"] + w["text"])):
+            face = prev.get("fontname") if re.search(r"\d", prev["text"]) else w.get("fontname")
+            out[-1] = {**prev, "text": prev["text"] + w["text"], "x1": w["x1"],
+                       "bottom": max(prev["bottom"], w["bottom"]), "fontname": face}
+        else:
+            out.append(dict(w))
+    return out
 
 
 def emphasis_of(w: dict, bold: list[dict],
@@ -1496,6 +1539,45 @@ def unglue_label(text: str) -> str:
     for token, name in keep.items():
         out = out.replace(token, name)
     return re.sub(r"\s+", " ", out).strip()
+
+
+def respace_from_reading(label: str, reading: str) -> str:
+    """A glued label with the spaces the page prints, read from pdftotext.
+
+    pdfplumber drops narrow word spaces, so RefineNovo's row arrives as
+    'PeaksNovo(Maetal.,2003)' and AdaNovo's as 'AdaNovo(w/oPSM-levelobjective)',
+    while pdftotext reads the same line as 'Peaks Novo (Ma et al., 2003)' and
+    'AdaNovo (w/o PSM-level objective)'. This is a second reading of the same
+    PDF, not a correction, and it is taken only when it is unambiguous: the
+    label must look glued (unglue_label would change it), be at least eight
+    characters without spaces, and every place the document prints those
+    characters must space them the same way. Otherwise the label is kept as
+    extracted. A label that carries a row-group prefix ('DB PeaksNovo...')
+    is not one run of text in reading order, so when the whole label finds
+    nothing each space-separated piece is tried on its own.
+    """
+    def one(text: str) -> str | None:
+        squashed = re.sub(r"\s+", "", text)
+        if len(squashed) < 8 or unglue_label(text) == text:
+            return None
+        rx = re.compile(r"\s*".join(re.escape(ch) for ch in squashed))
+        forms = {re.sub(r"\s+", " ", m.group(0)).strip() for m in rx.finditer(reading)}
+        return forms.pop() if len(forms) == 1 else None
+    if not reading:
+        return label
+    whole = one(label)
+    if whole is not None:
+        return whole
+    if " " not in label.strip():
+        return label
+    return " ".join(one(piece) or piece for piece in label.split())
+
+
+def respace_row_labels(tb: dict, reading: str) -> None:
+    """Re-space every glued row label of a parsed table, in place."""
+    for r in tb.get("body") or []:
+        if r.get("label"):
+            r["label"] = respace_from_reading(r["label"], reading)
 
 
 def unsquash_label(text: str) -> str:
@@ -3154,8 +3236,8 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"(?i)ProteomeTools"), "ProteomeTools"),
     (re.compile(r"(?i)MassIVE-?KB"), "MassIVE-KB"),
     # pi-PrimeNovo's name for the Tran et al. 2016 antibody deposit, whose
-    # accession its Data Availability gives (MSV000079801). Only the -HC form:
-    # CrossNovo's bare 'IgG1-Human' gives no accession and stays unresolved.
+    # accession its Data Availability gives (MSV000079801). Only the -HC form;
+    # CrossNovo's antibody tables are pinned in TABLE_DATASET instead.
     (re.compile(r"(?i)IgG1-?Human-?HC"), "IgG1-Human-HC"),
     # pNovo 3's two HeLa runs, which share one PRIDE submission and differ only
     # in how much of it was used, so the label pins the version.
@@ -3431,6 +3513,12 @@ CAPTION_VETO_OVERRIDE: dict[tuple[int, str], str] = {
     # AdaNovo variants, so it compares AdaNovo against Casanovo on the Human
     # test set as well as ablating; the reviewer asked for it to be included.
     (32, "Table3"): "compares against Casanovo as well as ablating",
+    # LIPNovo, Table 7, "Parameters vs. model performance". The parameter
+    # count is one column; the rest compares LIPNovo with its retrained
+    # Casanovo and with that model widened to LIPNovo's size, on the
+    # nine-species average. The reviewer asked for it, as the same kind of
+    # retrained baseline the other tables carry.
+    (17, "Table7"): "compares LIPNovo with its retrained Casanovo, as well as by size",
 }
 
 
@@ -4027,6 +4115,10 @@ COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
     (283, "Table 2"): ["OC", "OC", "UTI", "UTI", "Plasma", "Plasma"],
     # AdaNovo, Table 3: every number is on the Human test set, per its caption.
     (32, "Table3"): ["Human", "Human", "Human"],
+    # LIPNovo, Table 7: the Baseline and LIPNovo rows are Table 1's Average
+    # column exactly (0.741 / 0.740 / 0.529 / 0.493 and 0.797 / 0.797 /
+    # 0.582 / 0.547), so every number is the nine-species average.
+    (17, "Table7"): ["Average", "Average", "Average", "Average"],
     # CrossNovo, Table 6, WIgG1-Mouse: HC over AspN/Chymotrypsin/Trypsin,
     # LC over AspN, then Average.
     (9, "Table6"): ["HC AspN", "HC Chymotrypsin", "HC Trypsin",
@@ -4157,6 +4249,12 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
             "reproduced version as the \u201cbaseline\u201d"),
         "*": ("quoted", "Unless otherwise noted, the reported results are "
                         "taken from NovoBench.")} for t in ("Table1", "Table2")},
+    # LIPNovo, Table 7: both baselines are its own runs, the retrained
+    # Casanovo and that model widened.
+    (17, "Table7"): {
+        "Casanovo": ("retrained", "Notably, we retrain a CasaNovo as the direct "
+                                  "baseline of our LIPNovo with the same configurations."),
+        "Casanovo@extended to 12 layers + FFN": ("retrained", 'To address this, we extend the baseline model by increasing the number of layers to 12 and adding an FFN to roughly match LIPNovo’s parameter count.')},
     # LIPNovo+, Tables 2, 3 and 4: 'Baseline' is Casanovo, retrained.
     **{(432, t): {"Casanovo@retrained": (
         "retrained", "we retrain CasaNovo with the same data splits and "
@@ -4324,6 +4422,12 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (17, "Table7"): (
+        "Every number is the nine-species average: the Baseline and LIPNovo rows "
+        "repeat Table 1's Average column exactly. Baseline is LIPNovo's own retrained "
+        "Casanovo; Baseline\u00b6 is that model widened to 12 layers plus an FFN to match "
+        "LIPNovo's size. The '# Params' column (47.4M, 69.4M, 68.4M) is read into the "
+        "row labels and is not recorded as a measurement."),
     # MassNet (989): what the sheet and the paper disagree on.
     (989, "Supplementary Fig. 3a"): (
         "Values from the paper's Supplementary Data 1 (sheet SFigure3A); the figure "
@@ -4619,6 +4723,10 @@ TABLE_SELF: dict[tuple[int, str], list[str]] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, str, str]] = {
+    # LIPNovo, Table 7: its Baseline and LIPNovo rows are Table 1's
+    # nine-species Average column, value for value, so it is that benchmark
+    # at the version Table 1 names, which is none.
+    (17, "Table7"): ("Nine-species benchmark", "nine-species average, as in Table 1"),
     # MassNet (989). Supplementary Fig. 3: "the nine-species benchmark
     # dataset, obtained from the MassIVE repository (accession no.
     # MSV000081382)", the original deposit; "the HCC dataset, retrieved from
@@ -4706,9 +4814,25 @@ TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, 
     # WIgG1-Mouse", "... on IgG1-Human"). With no dataset named in a header,
     # the cue scan fell back to the paper's nine-species link and filed both
     # under nine-species, which put eight enzyme columns into that benchmark.
-    # The paper gives no accession, so the antibody is recorded as printed.
-    (9, "Table6"): (None, "WIgG1-Mouse antibody (CrossNovo); no accession stated"),
-    (9, "Table7"): (None, "IgG1-Human antibody (CrossNovo); no accession stated"),
+    # The paper prints no accession, but it says which data: "We utilize a
+    # publicly available human antibody dataset [30]", and [30] is Tran et
+    # al. 2016, 'Complete de novo assembly of monoclonal antibody sequences',
+    # whose deposit is MSV000079801 -- the set pi-PrimeNovo calls
+    # IgG1-Human-HC. The mouse table cites nothing, and the same deposit is
+    # its source by its own record: MassIVE lists Mus musculus among its
+    # species and summarises it as "Human antibody light and heavy chain,
+    # IgG1 light and heavy chain digested by Asp-N, Chymotrypsin, Trypsin",
+    # which are exactly WIgG1-Mouse's columns (HC AspN, Chymotrypsin,
+    # Trypsin; LC AspN).
+    (9, "Table6"): ("Monoclonal antibody de novo assembly",
+                    "WIgG1-Mouse antibody (MSV000079801, by its species and enzymes)",
+                    "as deposited"),
+    (9, "Table7"): ("Monoclonal antibody de novo assembly",
+                    "IgG1-Human antibody, the paper's reference [30] (MSV000079801)",
+                    "as deposited"),
+    # CrossNovo, Table 8: "Performance comparison on five representative PTMs
+    # after fine-tuning on the 21-PTM dataset", ProteomeTools' 21-PTM subset.
+    (9, "Table 8"): ("ProteomeTools", "the 21-PTM dataset", "21-PTM subset"),
     # pi-PrimeNovo's preprint, Supplementary Table 3: "Peptide recall on the
     # nine-species benchmark dataset" -- the original, by its caption; its
     # Supplementary Table 5 is the one "on the revised nine-species benchmark",
@@ -5105,6 +5229,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     """
     apply_difference_table(tb, base.get("publication_id"))
     if split:
+        respace_row_labels(tb, whole)
         parts = split_by_dataset(tb)
         if parts:
             ok = 0
@@ -5530,6 +5655,13 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             if not marker and methods[k][0] == (subject["id"] if subject else None):
                 continue
             over = mk_legend.get(marker)
+            # A MARKER CAN NAME A VARIANT, where the paper marks a modified
+            # copy of one method rather than a different method: LIPNovo's
+            # Table 7 prints 'Baseline' and 'Baseline\u00b6', its retrained
+            # Casanovo and that model widened, and without the variant the two
+            # rows were one measurement.
+            if over and over.get("variant") and not methods[k][2]:
+                methods[k] = (methods[k][0], methods[k][1], over["variant"])
             if over and over.get("basis"):
                 bases[k] = (over["basis"],
                             f"the table's legend marks {printed!r}", False)
@@ -5761,7 +5893,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         for k in r["cells"]:
             _m, _mt, _lv, sub = cell_meta(k, ri)
             if _m and sub and sub not in seen_sub:
-                nm, acc = canonical_subset(sub, con)
+                nm, acc = canonical_subset(sub, con, dname)
                 seen_sub[sub] = (f"{nm}" + (f" [{acc}]" if acc else "")) if nm else ""
     base["subsets_canonical"] = "|".join(f"{k}={v}" for k, v in seen_sub.items() if v)
     # PER-RESIDUE PRECISION IS A DIFFERENT GRAIN. A table whose subsets are
@@ -5943,10 +6075,10 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                 for pi, (v, _p, mt, lv, bas) in enumerate(parts_of(cell, metric, level)):
                     _pre = SUBSET_PREFIX.get((base.get("publication_id"),
                                               (tb.get("registry_label") or tb["table_label"] or "").strip()))
-                    canon, acc = (canonical_subset(f"{_pre} {sub}" if _pre else sub, con)
+                    canon, acc = (canonical_subset(f"{_pre} {sub}" if _pre else sub, con, dname)
                                   if sub else (None, None))
                     if rd and rd[2]:
-                        canon, acc = rd[2], species_index(con).get(rd[2])
+                        canon, acc = rd[2], species_index(con, dname).get(rd[2])
                     sd = cell.get("stddev")
                     results.append({
                         "r": row_of[ri], "c": col_of_k[k], "part": pi,

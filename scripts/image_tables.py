@@ -65,7 +65,12 @@ def find_image_tables(page, seen_labels: set[str]) -> list[dict]:
         if cap_end + 1 < len(rows):                     # table BELOW its caption
             boxes.append((margin, bottom_of(cap_end) + 2,
                           float(page.width) - margin, top_of(cap_end + 1) - 2))
-        if li > 0:                                       # table ABOVE its caption
+        # A TABLE ABOVE ITS CAPTION, unless the caption heads a TEXT table
+        # below. Aytun's thesis captions its tables from above; Table 4.2's
+        # cells are ordinary text right under the caption, and the gap above
+        # it, which holds only the page's watermark and Table 4.1's last rule,
+        # was cropped as an image table with nothing in it.
+        if li > 0 and not _text_table_below(rows, cap_end):
             boxes.append((margin, bottom_of(li - 1) + 2,
                           float(page.width) - margin, top_of(li) - 2))
         for box in boxes:
@@ -74,6 +79,30 @@ def find_image_tables(page, seen_labels: set[str]) -> list[dict]:
                             "bbox": list(box), "page": page.page_number})
                 break
     return out
+
+
+def _text_table_below(rows: list, cap_end: int) -> bool:
+    """Whether the line right after a caption is a row of table cells.
+
+    A cell row is set with column gaps far wider than a word space; prose is
+    not. 'Expected   Found   Relative Distance' has two gaps over 12 pt.
+    The line must also start close under the caption, within two of its
+    line heights, or it is the next paragraph rather than the table's head.
+    The caption reader can stop a line early (Table 4.2's second caption line
+    reads as prose), so up to three lines are tried, each starting close under
+    the one before.
+    """
+    prev = rows[cap_end]
+    line_h = max(w["bottom"] - w["top"] for w in prev) or 10.0
+    for i in range(cap_end + 1, min(len(rows), cap_end + 4)):
+        nxt = sorted(rows[i], key=lambda w: w["x0"])
+        if min(w["top"] for w in nxt) - max(w["bottom"] for w in prev) > 2.5 * line_h:
+            return False
+        gaps = [b["x0"] - a["x1"] for a, b in zip(nxt, nxt[1:])]
+        if sum(g > 12.0 for g in gaps) >= 2:
+            return True
+        prev = nxt
+    return False
 
 
 def otsl_grid(text: str) -> list[list[str]]:
