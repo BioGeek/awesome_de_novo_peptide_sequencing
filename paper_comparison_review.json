@@ -2371,5 +2371,12 @@
   "on": "2026-10-03",
   "pub": 99,
   "state": "dismissed"
+ },
+ "p990-pg6-t2": {
+  "cells": 0,
+  "label": "Table 2",
+  "on": "2026-10-16",
+  "pub": 990,
+  "state": "dismissed"
  }
 }

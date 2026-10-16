@@ -2361,7 +2361,7 @@ it and put its numbers beside another paper's:
 Plus the view **`paper_comparison_measurement`**, which flattens a result
 with its paper, method and dataset and is where a standardised table starts.
 
-**143 verified tables from 40 papers, 6939 measurements.** The 196 refusals the
+**143 verified tables from 40 papers, 6939 measurements.** The 197 refusals the
 reviewer confirmed are kept as `rejected`, with their reason and no cells, so
 a refusal is a recorded decision and not an absence.
 
