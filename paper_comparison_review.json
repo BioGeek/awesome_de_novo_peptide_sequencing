@@ -2106,6 +2106,13 @@
   "pub": 981,
   "state": "dismissed"
  },
+ "p981-pg32-t25": {
+  "cells": 70,
+  "label": "Table25",
+  "on": "2026-10-16",
+  "pub": 981,
+  "state": "approved"
+ },
  "p981-pg33-t26": {
   "cells": 8,
   "label": "Table 26",
