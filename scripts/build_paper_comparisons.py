@@ -678,6 +678,13 @@ def row_kind(row: list[dict]) -> str:
         return "other"
     if nums >= 2:
         return "data"
+    # A NOT-RUN MARKER IS A CELL, just an empty one. dIon's Table 1 ends on
+    # 'InstaNovo 1.2.2  0.570  --', one number and a dash for the test set
+    # InstaNovo trained on, and with only the number counted the row was not
+    # data and the block stopped above it.
+    if nums >= 1 and nums + sum(1 for w in row if w["text"].strip().lower()
+                               in NOT_RUN) >= 2:
+        return "data"
     # A ROW OF SIGNIFICANCE MARKERS -- GA-Novo's '(+) (+) (+) (+) (=)', a
     # t-test against PEAKS set on its own line under the values -- is not a
     # row of the table; it is read past like a label line.
@@ -2769,7 +2776,14 @@ def extract(page, pub_id: int | None = None) -> tuple[list[dict], list[dict], in
                 # column. Clipping by the table's full span was not enough on
                 # a two-column page whose body text starts INSIDE that span:
                 # 'Mouse' came through as 'Mouse by+5.4%. Theseresultshigh...'.
-                mine_ = [w for w in r if w["x1"] <= label_right + 4
+                # A word that STARTS in the stub is the stub's, however far it
+                # runs: dIon's 'dIon-de-novo-labeled-v1 training' is one long
+                # token past the stub's right edge, and ending-inside dropped
+                # the label, so that group's rows took the previous group's.
+                mine_ = [w for w in r if (w["x1"] <= label_right + 4
+                                          or (w["x0"] < label_right
+                                              and " " not in w["text"].strip()
+                                              and len(r) == 1))
                          and w["x1"] >= edges[0][0] - 220]
                 if mine_ and row_kind(mine_) == "interstice":
                     pending.extend(w["text"] for w in mine_)
@@ -3264,6 +3278,14 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
 # ProteomeTools, so naming it pins both grains at once. See 'Datasets, at three
 # grains' in CLAUDE.md for why it is a version and not a dataset.
 DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
+    # dIon's two test sets (COLUMN_DATASET_OVERRIDE). Kingdoms de novo is its
+    # own run-disjoint split of 'The Proteome Landscape of the Kingdoms of
+    # Life', all 70 species, at most 100k spectra each, which is none of the
+    # deposit's versions. MSKB-final is "the released two-million-PSM
+    # tryptic/non-tryptic MassIVE-KB corpus used to train Casanovo 4", the
+    # split PLMNovo's MSKB rows also resolve to MassIVE-KB with no version.
+    "Kingdoms de novo": ("The Proteome Landscape of the Kingdoms of Life", None),
+    "MSKB-final": ("MassIVE-KB", None),
     "HC-PT": ("ProteomeTools", "HC-PT (NovoBench)"),
     "Nine-species": ("Nine-species benchmark", None),
     "Seven-species": ("Seven-species benchmark", None),
@@ -3910,6 +3932,10 @@ def resolve_in_label(label: str, vocab, index, subject, pub_id=None):
 # The names are resolved through the normal resolver, so a typo here is a
 # rejection and not a wrong attribution.
 SPANNER_OVERRIDE: dict[tuple[int, str], list[str]] = {
+    # dIon, Table 25: 'Spectra' (a count per species), then 'dIon init.' and
+    # 'Scratch' under 'DNL-v1, 200 peaks', then Casanovo 5.2.1 and InstaNovo
+    # 1.2.2 under 'External reference'.
+    (981, "Table25"): [None, "dIon init.", "Scratch", "Casanovo 5.2.1", "InstaNovo 1.2.2"],
     # Casanovo, Table 2. Columns, left to right:
     #   peptide-level:    DeepNovo Prec. | PointNovo Prec. |
     #                     Casanovo Prec. | Casanovo Cov. | Casanovo Prec.@Cov=1
@@ -4026,6 +4052,18 @@ PAPER_LABEL_ALIASES: dict[tuple[int, str], tuple[str, str | None]] = {
     # training/inference configurations as our methods (reported as
     # Baseline)" -- the same reading as LIPNovo's own tables, above.
     (432, "baseline"): ("Casanovo", "retrained"),
+    # dIon. 'Scratch' is dIon's own encoder and decoder trained with no
+    # pretraining, "matched training from scratch"; 'dIon init.' is the
+    # pretrained encoder fine-tuned. The external references are the released
+    # Casanovo 5.2.1 and InstaNovo 1.2.2.
+    (981, "scratchendtoend"): ("dIon", "from scratch, end-to-end"),
+    (981, "scratchendtoend1000peaks"): ("dIon", "from scratch, end-to-end, 1,000 peaks"),
+    (981, "dioninitendtoend"): ("dIon", "init., end-to-end"),
+    (981, "dioninitendtoend1000peaks"): ("dIon", "init., end-to-end, 1,000 peaks"),
+    (981, "dioninit"): ("dIon", "init.; DNL-v1, 200 peaks"),
+    (981, "scratch"): ("dIon", "from scratch; DNL-v1, 200 peaks"),
+    (981, "casanovo521"): ("Casanovo", "5.2.1"),
+    (981, "instanovo122"): ("InstaNovo", "1.2.2"),
 }
 
 
@@ -4109,6 +4147,15 @@ def apply_difference_table(tb: dict, pub_id) -> None:
 # stating the extents, so the grouping is read off the paper by a person.
 #
 # Without this the two AspN columns are one measurement, which G6 catches.
+ROW_GROUP_VARIANT: dict[tuple[int, str], dict[str, str | None]] = {
+    # dIon: the training corpus of each model, and the released external
+    # references, which need no qualifier.
+    **{(981, t): {"MSKB-final training": "trained on MSKB-final",
+                  "DNL-v1 training": "trained on DNL-v1",
+                  "dIon-de-novo-labeled-v1 training": "trained on DNL-v1",
+                  "External reference": None} for t in ("Table1", "Table 26")},
+}
+
 COLUMN_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {
     # BiATNovo, Table 2: the datasets over its columns (see SPANNER_OVERRIDE).
     (45, "Table 2"): ["OC", "OC", "UTI", "UTI", "Plasma", "Plasma", "Plasma"],
@@ -4147,6 +4194,11 @@ ROW_SUBSET_OVERRIDE: dict[tuple[int, str], list[str]] = {}
 # is what `basis_cue` stores: B1 in the plan says a basis is licensed by a
 # sentence, and a curated entry is that sentence written down.
 TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
+    # dIon: the external references are the released Casanovo 5.2.1 and
+    # InstaNovo 1.2.2, run as shipped.
+    **{(981, t): {"Casanovo": ("released", 'External reference models use their own released preprocessing.'),
+                  "InstaNovo": ("released", 'External reference models use their own released preprocessing.')}
+       for t in ("Table1", "Table25", "Table 26")},
     # MassNet (989): "On the 15-species benchmark, XuanjiNovo (version 1.1)
     # outperformed ... pi-HelixNovo (version 1.1), Casanovo V2 (version
     # 5.0.0), InstaNovo+ (version 1.1.0), ContraNovo and pi-PrimeNovo". A
@@ -4176,6 +4228,23 @@ TABLE_BASIS: dict[tuple[int, str], dict[str, tuple[str, str]]] = {
                  "PointNovo": ("quoted", "report the published results of DeepNovo and "
                                          "PointNovo as their pretrained weights are unavailable")}
        for t in ("Table1", "Table2", "Table3", "Table4", "Table5")},
+    # AdaNovo, NeurIPS Table 1, which needs its OWN entry rather than the
+    # preprint's. The arXiv Table 1 has one Casanovo column, AdaNovo's
+    # reproduction. The NeurIPS table keeps that column as 'Casanovo (rep.)'
+    # -- "The reproduced performance of Casanovo is denoted as Casanovo
+    # (rep.)" -- and adds a plain 'Casanovo' whose every value is Casanovo's
+    # own Table 2 precision at coverage 1 (0.461 / 0.408 honeybee, 0.424 /
+    # 0.367 human, ...). Inherited, the preprint's entry called that quoted
+    # column 'retrained'.
+    (440, "Table1"): {
+        "Casanovo": ("quoted", "The reproduced performance of Casanovo is denoted as "
+                               "Casanovo (rep.)."),
+        "Casanovo@rep.": ("retrained", "We reproduce the results of Casanovo with the "
+                                       "settings and hypermeters of the original paper"),
+        "DeepNovo": ("quoted", "report the published results of DeepNovo and "
+                               "PointNovo as their pretrained weights are unavailable"),
+        "PointNovo": ("quoted", "report the published results of DeepNovo and "
+                                "PointNovo as their pretrained weights are unavailable")},
     # Casanovo (2022 preprint), Table 2: "we rely on the pre-trained weights of
     # the former [DeepNovo] and the published results of the latter
     # [PointNovo]".
@@ -4422,6 +4491,25 @@ _FM_SETS = ("No accession is printed for the six validation sets. They are mappe
             "GluC degradome', TPL Antibodies its nanobodies, and Hela QC, by "
             "elimination, its HeLa single-shot set.")
 TABLE_NOTE: dict[tuple[int, str], str] = {
+    (440, "Table1"): (
+        "The plain Casanovo column is quoted: each value is Casanovo's own Table 2 "
+        "precision at coverage 1, set here under AdaNovo's precision. AdaNovo's own "
+        "run of Casanovo is 'Casanovo (rep.)', the column the arXiv version prints "
+        "as plain 'Casanovo'."),
+    (981, "Table1"): (
+        "Peptide precision here is at FULL coverage, unanswered spectra counted "
+        "wrong, which is Casanovo's precision at coverage 1. Rows are grouped by "
+        "training corpus, recorded in each variant. InstaNovo 1.2.2 has no MSKB-final "
+        "value: it 'was trained on MassIVE-KB v1, the source of this test set'."),
+    (981, "Table 26"): (
+        "MSKB-final, rows grouped by training corpus as in Table 1. InstaNovo 1.2.2 is "
+        "printed in grey with an asterisk because it 'is documented as training on "
+        "MassIVE-KB v1, the source corpus of this test set', so its numbers are not "
+        "a held-out evaluation."),
+    (981, "Table25"): (
+        "Peptide precision at full coverage per species of dIon's Kingdoms de novo "
+        "test split. The 'Spectra' column, the number of test spectra per species, "
+        "is not recorded as a measurement."),
     (17, "Table7"): (
         "Every number is the nine-species average: the Baseline and LIPNovo rows "
         "repeat Table 1's Average column exactly. Baseline is LIPNovo's own retrained "
@@ -4723,6 +4811,11 @@ TABLE_SELF: dict[tuple[int, str], list[str]] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, str, str]] = {
+    # dIon, Tables 25 and 26 (see DATASET_TARGETS for the two test sets).
+    (981, "Table25"): ("The Proteome Landscape of the Kingdoms of Life",
+                       "Kingdoms de novo test set: dIon's run-disjoint split, 70 species, "
+                       "at most 100k spectra each"),
+    (981, "Table 26"): ("MassIVE-KB", "MSKB-final, Casanovo 4's two-million-PSM split"),
     # LIPNovo, Table 7: its Baseline and LIPNovo rows are Table 1's
     # nine-species Average column, value for value, so it is that benchmark
     # at the version Table 1 names, which is none.
@@ -4875,6 +4968,14 @@ TABLE_METRIC: dict[tuple[int, str],
     # are the sheet's rounded: HCC "a peptide recall of 0.68" is 0.676, and
     # Fig. 4b's H. sapiens "0.45 ... pi-PrimeNovo (0.32) and InstaNovo+
     # (0.26)" are 0.449, 0.324 and 0.259.
+    # dIon: "Peptide precision at full coverage is the fraction of all test
+    # spectra whose predicted peptide matches at every token, with spectra
+    # lacking a prediction counted as errors", i.e. Casanovo's precision at
+    # coverage 1. Table 26 adds amino-acid precision and recall before it.
+    (981, "Table1"): ("precision@cov1", "peptide"),
+    (981, "Table25"): ("precision@cov1", "peptide"),
+    (981, "Table 26"): [("precision", "amino acid"), ("recall", "amino acid"),
+                        ("precision@cov1", "peptide")],
     **{(989, t): ("recall", "peptide") for t in (
         "Supplementary Fig. 3a", "Supplementary Fig. 3b", "Supplementary Fig. 3c", "Fig. 4b")},
     # Pairwise Attention, Table 3. Its caption says only "Performance after
@@ -5105,7 +5206,18 @@ def orientation(tb, vocab, index, subject, pub_id=None) -> tuple[str, dict, dict
                  f"headers {[' '.join(tb['own'].get(k, [])) or '?' for k in range(n)]}")
 
 
-def split_by_dataset(tb) -> dict[str, list[int]] | None:
+# THE DATASET OF EACH COLUMN, for a table whose headers name datasets the cue
+# list does not know and should not learn: a cue applies to every paper's
+# prose, and 'Kingdoms' or 'MSKB-final' added there would move other tables.
+# Each name is a DATASET_TARGETS key, so the part resolves through it.
+COLUMN_DATASET_OVERRIDE: dict[tuple[int, str], list[str]] = {
+    # dIon, Table 1: peptide precision on its Kingdoms de novo test set, then
+    # on MSKB-final.
+    (981, "Table1"): ["Kingdoms de novo", "MSKB-final"],
+}
+
+
+def split_by_dataset(tb, pub_id: int | None = None) -> dict[str, list[int]] | None:
     """Group a table's columns by the dataset each column's SPANNER names.
 
     One printed table often reports several datasets side by side: DiffuNovo's
@@ -5120,6 +5232,16 @@ def split_by_dataset(tb) -> dict[str, list[int]] | None:
     a dataset for the split to be taken: one unattributed column would land in
     no part and be silently dropped.
     """
+    curated = COLUMN_DATASET_OVERRIDE.get(
+        (pub_id, (tb.get("registry_label") or tb["table_label"] or "").strip()))
+    if curated:
+        if len(curated) != len(tb["edges"]):
+            raise Reject(f"D3 COLUMN_DATASET_OVERRIDE lists {len(curated)} columns, "
+                         f"the table has {len(tb['edges'])}")
+        out: dict[str, list[int]] = {}
+        for k, name in enumerate(curated):
+            out.setdefault(name, []).append(k)
+        return out if len(out) >= 2 else None
     groups: dict[str | None, list[int]] = {}
     for k in range(len(tb["edges"])):
         # The spanner AND the column's own header. A dataset is named in either
@@ -5230,7 +5352,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
     apply_difference_table(tb, base.get("publication_id"))
     if split:
         respace_row_labels(tb, whole)
-        parts = split_by_dataset(tb)
+        parts = split_by_dataset(tb, base.get("publication_id"))
         if parts:
             ok = 0
             for name, cols in parts.items():
@@ -5816,6 +5938,53 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                             for li, g in gathered.items()):
                         for ri, li in nearest.items():
                             row_subset[ri] = own_lab[li]
+
+    # A ROW GROUP THAT NAMES A VARIANT, NOT A SUBSET. dIon's Tables 1 and 26
+    # group their rows by TRAINING corpus ('MSKB-final training', 'DNL-v1
+    # training', 'External reference'), so the same 'dIon init., end-to-end'
+    # appears under two groups as two different models. Read as a subset the
+    # group would claim to be the test data; it is folded into the variant
+    # instead, by a curated map, and a group mapped to None adds nothing.
+    rg_var = ROW_GROUP_VARIANT.get(
+        (base.get("publication_id"), (tb.get("registry_label") or tb["table_label"] or "").strip()))
+    if rg_var and axis == "rows":
+        keyed = {re.sub(r"[^a-z0-9]", "", g.lower()): v for g, v in rg_var.items()}
+        # THE GROUPS ARE READ AFRESH here, top down: each interstitial label
+        # applies from the row it precedes until the next one. The general
+        # reading above is built for species set centred on their rows, and
+        # dIon's 'DNL-v1 training' happens to sit near the midpoint of two
+        # rows, so it went to the last MSKB-final row as well and to no row
+        # after. And THE FIRST GROUP'S LABEL SITS DIRECTLY UNDER THE HEADER,
+        # where the header walk reads it into the stub ('Training/
+        # initialization MSKB-finaltraining'), so the rows before the first
+        # interstitial label belong to the curated group named there.
+        head_txt = re.sub(r"[^a-z0-9]", "", ((tb.get("stub") or "") + " "
+                                              + (tb.get("header_raw") or "")).lower())
+        inter = [re.sub(r"[^a-z0-9]", "", " ".join(
+                     w for w in (r.get("extra") or []) if isinstance(w, str)).lower())
+                 for r in tb["body"]]
+        lead = [g for g in keyed if g in head_txt and g not in inter]
+        cur = None
+        for ri, gk in enumerate(inter):
+            if gk:
+                cur = gk
+            elif cur is None:
+                if len(lead) != 1:
+                    raise Reject("D3 rows before the first group label, and the header "
+                                 f"names {len(lead)} of ROW_GROUP_VARIANT's groups")
+                cur = lead[0]
+            row_subset[ri] = cur
+        for ri, grp in list(row_subset.items()):
+            gk = re.sub(r"[^a-z0-9]", "", (grp or "").lower())
+            if not gk:
+                continue
+            if gk not in keyed:
+                raise Reject(f"D3 row group {grp!r} is not in ROW_GROUP_VARIANT")
+            add = keyed[gk]
+            if add and ri in methods:
+                aid, name, ver = methods[ri]
+                methods[ri] = (aid, name, f"{ver}; {add}" if ver else add)
+            row_subset[ri] = ""
 
     def cell_meta(k, ri):
         """(method, metric, level, subset) for one cell, whichever the layout."""

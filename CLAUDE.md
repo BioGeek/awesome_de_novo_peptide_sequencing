@@ -2436,6 +2436,34 @@ three times over, and each cause was general:
 Its MSKB rows are MassIVE-KB, with no version, under the split published with
 Melendez et al.'s enzyme-bias data.
 
+**dIon's tables are kept where their metric meets another paper's.** dIon
+(publication 981) is a self-supervised spectrum encoder, and most of its 18
+tables measure representation geometry, source recovery or AUROC, which no
+other catalogued paper reports; those stay refused. Its three *de novo*
+tables are kept: Table 1 (Kingdoms *de novo* and MSKB-final), Table 26
+(MSKB-final with amino-acid metrics) and Table 25 (70 Kingdoms species), each
+with the released Casanovo 5.2.1 and InstaNovo 1.2.2 beside dIon. Four things
+they needed, each general or a named registry:
+- **"Peptide precision at full coverage" is `precision@cov1`**, by the
+  paper's own definition (unanswered spectra counted wrong), which the site
+  already reads as peptide recall.
+- **A row group can name a variant, not a subset.** Its rows are grouped by
+  TRAINING corpus, so one 'dIon init., end-to-end' row is two models.
+  `ROW_GROUP_VARIANT` folds each curated group label into the variant, reads
+  the groups top down, and takes the first group's label from the stub, where
+  the header walk puts a label set directly under the header.
+- **A table can name its datasets per column** (`COLUMN_DATASET_OVERRIDE`),
+  for headers the global cue list should not learn: 'Kingdoms' added there
+  would move every paper whose prose mentions the Kingdoms of Life.
+- **A not-run marker is a cell.** 'InstaNovo 1.2.2  0.570  --' counted as one
+  number, so the row was not data and the block ended above it. And a single
+  long word starting in the stub is the stub's: 'dIon-de-novo-labeled-v1
+  training' ran past the stub's edge and was dropped.
+
+Kingdoms *de novo* is dIon's own run-disjoint split of *The Proteome Landscape
+of the Kingdoms of Life*, so it resolves to that deposit with no version, and
+MSKB-final to MassIVE-KB with none, as PLMNovo's MSKB rows do.
+
 **A one-line centred caption has no pitch to stop on.** The caption walk ends
 at a paragraph gap measured against the caption's own line spacing, so a
 single centred line ran on into the paragraph under the table. That garbled
@@ -2562,6 +2590,22 @@ label outside it is not copied: AdaNovo's NeurIPS paper drops the preprint's
 PTM Table 2, so the preprint's Tables 3 to 5 are its Tables 2 to 4. The ICML
 tables come out identical, cell for cell, to the preprints' approved ones;
 AdaNovo's NeurIPS tables do not, since they add two baselines and ± spreads.
+
+**Inherited entries can be wrong where a column changed meaning, and
+AdaNovo's did.** The arXiv Table 1 has one Casanovo column, AdaNovo's own
+reproduction. The NeurIPS table renames that column 'Casanovo (rep.)' and
+adds a plain 'Casanovo' whose every value is Casanovo's own Table 2
+precision at coverage 1, so the inherited "we reproduce the results of
+Casanovo" called a quoted column retrained. The NeurIPS row now has its own
+`TABLE_BASIS` entry. Found by comparing every preprint and version-of-record
+pair measurement by measurement (method, variant, metric, level, dataset AND
+version, subset): CrossNovo, RefineNovo, LIPNovo and π-PrimeNovo agree on
+every shared value; InstaNovo's Nature tables replace the preprint's 'Exc.
+Yeast' row with Yeast, Bacillus and Mouse, so only the means move; and
+AdaNovo's own noise and PTM results were revised between versions (0.621 to
+0.656, 0.793 to 0.825), as both PDFs print. Leave the version out of the key
+and every revised nine-species table pairs with an original-version one and
+reads as a disagreement.
 
 ### Supplements, Extended Data, and a paper's own results
 
