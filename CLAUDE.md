@@ -2296,8 +2296,10 @@ to the accession its spectra came from. **The index is per benchmark**
 (`SPECIES_BENCHMARKS`), because one species is a different submission in
 each: yeast is PXD003868 in nine-species and PXD025030 in MassNet's
 15-species benchmark, whose fifteen abbreviations ('A.calcoaceticus',
-'B.thetaiotaomicron') resolve against its own provenance. A table on any
-other dataset reads the nine-species names, as before. Common names are an explicit table
+B.thetaiotaomicron') resolve against its own provenance. A table on any
+other dataset reads the nine-species NAMES but gets no accession: the
+accession is one benchmark's submission, and 30 seven-species measurements
+had been given the nine-species benchmark's. Common names are an explicit table
 (nothing derives 'Human' from 'Homo sapiens'); abbreviations resolve by genus
 initial plus the start of the epithet; a typo (`B. subtilus`) by a near match on
 the epithet; proteases likewise (`HC Chymo.` is `HC Chymotrypsin`). A subset
@@ -2461,8 +2463,11 @@ they needed, each general or a named registry:
   training' ran past the stub's edge and was dropped.
 
 Kingdoms *de novo* is dIon's own run-disjoint split of *The Proteome Landscape
-of the Kingdoms of Life*, so it resolves to that deposit with no version, and
-MSKB-final to MassIVE-KB with none, as PLMNovo's MSKB rows do.
+of the Kingdoms of Life*, so it resolves to that deposit with no version.
+MSKB-final is Melendez et al.'s released Casanovo 4.2/5.0 corpus, the deposit
+catalogued as *Casanovo digestion enzyme bias data*, scored on its whole
+200,000-spectrum test split; PLMNovo scores its tryptic and multi-enzyme
+parts separately, so the two do not meet on a subset.
 
 **A one-line centred caption has no pitch to stop on.** The caption walk ends
 at a paragraph gap measured against the caption's own line spacing, so a
@@ -2543,7 +2548,10 @@ which keeps the spaces pdfplumber drops: `respace_from_reading()` turns
 'AdaNovo(w/oPSM-levelobjective)' into 'AdaNovo (w/o PSM-level objective)',
 as printed. It is a second reading of the same PDF, taken only when the
 label looks glued, is eight or more characters, and every place the
-document prints those characters spaces them the same way; a row-group
+document prints those characters spaces them the same way. "Looks glued"
+includes a join with no case change: dIon's 70 species arrived as
+'Arabidopsisthaliana(callus)' and 'Bostaurus', so one unspaced token of
+eight or more letters, or letters run into a bracket, counts too; a row-group
 prefix ('DB ...') is tried piece by piece, since in reading order it is not
 one run of text with the label.
 
@@ -2606,6 +2614,35 @@ AdaNovo's own noise and PTM results were revised between versions (0.621 to
 0.656, 0.793 to 0.825), as both PDFs print. Leave the version out of the key
 and every revised nine-species table pairs with an original-version one and
 reads as a disagreement.
+
+**A table is only useful if its measurements can MEET another paper's**, on
+the grain (dataset, version, subset, metric, level). Checked for every
+verified table, a third of the isolated ones were naming, not data, and five
+rules now make them meet:
+- **A subset that restates the test set is no subset** (`whole_test_set()`):
+  RefineNovo's 'HC-PT' and DiffuNovo's 'Nine-Species' sat where eight papers
+  leave the subset empty, and NovoBench's seven-species split tests on yeast
+  alone, so 'yeast' there is the whole set (`WHOLE_SET_SUBSETS`).
+- **'PTM Prec.' is precision at the PTM level**, the measurement NovoBench
+  tables print as 'Precision' under a 'PTM' spanner, and its level is forced:
+  AdaNovo's glued 'PTMprec.' read as amino-acid level.
+- **Seven-species beside HC-PT is NovoBench's split.** HC-PT is NovoBench's
+  own subsample, so a table reporting both is a NovoBench table. Every
+  seven-species table had been filed under no version. CausalNovo's per-species
+  leave-one-out Table 8 is DeepNovo's original protocol, and pinned so.
+- **A deposit with one version takes it** wherever it is resolved, not only
+  in `ROW_DATASET`: pi-PrimeNovo's digest table and CrossNovo's antibody
+  tables on MSV000079801 met only if versions were ignored.
+- **The seven-species organisms are named**, from DeepNovo's own legend
+  (*Caenorhabditis elegans*, *Pseudomonas aeruginosa*...).
+
+What stays isolated is data nobody else reports: tables on no catalogued
+dataset, a paper's own split (SeqNovo, PLMNovo, pNovo 3's HeLa runs, MassNet's
+15-species benchmark), and a grain no one else prints (CrossNovo's per-PTM
+table, RT-GCTnovo's whole-benchmark accuracy). InstaNovo-FM's "peptide recall"
+and InstaNovo's "peptide accuracy" on the same six application sets are left
+apart: InstaNovo's own figures use both words, so they are not one metric by
+assertion.
 
 ### Supplements, Extended Data, and a paper's own results
 

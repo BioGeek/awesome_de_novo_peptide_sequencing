@@ -468,6 +468,13 @@ SPECIES_COMMON = {
     "clambacteria": "Candidatus Thiodiazotropha endoloripes",
     "c bacteria": "Candidatus Thiodiazotropha endoloripes",
     "bacillus": "Bacillus subtilis",
+    # The seven-species benchmark's other organisms, by DeepNovo's own
+    # legend ("C. elegans, Caenorhabditis elegans; ... P. aeruginosa,
+    # Pseudomonas aeruginosa"), as CausalNovo's Table 8 prints them.
+    "celegans": "Caenorhabditis elegans", "c elegans": "Caenorhabditis elegans",
+    "fruitfly": "Drosophila melanogaster", "fruit fly": "Drosophila melanogaster",
+    "ecoli": "Escherichia coli", "e coli": "Escherichia coli",
+    "pseudomonas": "Pseudomonas aeruginosa",
 }
 # 'Weighted Average' (Prime-DiffNovo) is an aggregate too, and a different
 # one: weighted by spectra, so it keeps its own name, like Average and Mean.
@@ -500,9 +507,50 @@ def species_index(con: sqlite3.Connection, dataset: str | None = None) -> dict[s
     return _SPECIES_CACHE[name]
 
 
+# A subset that IS the whole test set of its dataset version. NovoBench's
+# seven-species split tests on yeast alone, so 'yeast' there names the test
+# set, not a part of it.
+WHOLE_SET_SUBSETS: dict[tuple[str, str], set[str]] = {
+    ("Seven-species benchmark", "NovoBench split"): {"saccharomycescerevisiae"},
+}
+
+
+def whole_test_set(printed: str, canon: str | None, dataset: str | None,
+                   version: str) -> bool:
+    """Whether a printed subset only restates the table's own test set.
+
+    RefineNovo puts 'HC-PT' in the subset of its HC-PT part and DiffuNovo
+    'Nine-Species' in its nine-species one, where eight other papers leave the
+    subset empty for the same numbers, so the two never met. A subset of four
+    characters or more that begins the dataset's or the version's name is the
+    test set itself; so is a curated WHOLE_SET_SUBSETS entry.
+    """
+    if not dataset:
+        return False
+    n = re.sub(r"[^a-z0-9]", "", (printed or "").lower())
+    if len(n) >= 4 and any(re.sub(r"[^a-z0-9]", "", x.lower()).startswith(n)
+                           for x in (dataset, version or "") if x):
+        return True
+    c = re.sub(r"[^a-z0-9]", "", (canon or "").lower())
+    return c in WHOLE_SET_SUBSETS.get((dataset, version or ""), set())
+
+
 def canonical_subset(printed: str, con: sqlite3.Connection,
                      dataset: str | None = None) -> tuple[str | None, str | None]:
-    """(canonical subset, provenance accession) for a printed subset, or (None, None)."""
+    """(canonical subset, provenance accession) for a printed subset, or (None, None).
+
+    THE ACCESSION BELONGS TO ONE BENCHMARK. A species is named from the
+    nine-species index on any dataset, but its accession is that benchmark's
+    submission, so it is given only when the table IS that benchmark (or the
+    15-species one, which has its own). Seven-species' yeast is not
+    PXD003868, and 30 of its measurements said it was.
+    """
+    name, acc = _canonical_subset(printed, con, dataset)
+    return name, (acc if dataset in SPECIES_BENCHMARKS else None)
+
+
+def _canonical_subset(printed: str, con: sqlite3.Connection,
+                      dataset: str | None = None) -> tuple[str | None, str | None]:
     if not printed:
         return None, None
     # AN AGGREGATE KEEPS ITS OWN WORD. 'Average' and 'Mean' are NOT merged:
@@ -1565,7 +1613,12 @@ def respace_from_reading(label: str, reading: str) -> str:
     """
     def one(text: str) -> str | None:
         squashed = re.sub(r"\s+", "", text)
-        if len(squashed) < 8 or unglue_label(text) == text:
+        # GLUED is a camelCase join unglue_label can see, OR one unspaced
+        # token of eight letters or more, OR letters run into a bracket: dIon's
+        # 'Arabidopsisthaliana(callus)' changes case nowhere.
+        glued = (unglue_label(text) != text or re.search(r"[A-Za-z]\(", text)
+                 or (" " not in text.strip() and sum(c.isalpha() for c in text) >= 8))
+        if len(squashed) < 8 or not glued:
             return None
         rx = re.compile(r"\s*".join(re.escape(ch) for ch in squashed))
         forms = {re.sub(r"\s+", " ", m.group(0)).strip() for m in rx.finditer(reading)}
@@ -3282,16 +3335,22 @@ DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
     # own run-disjoint split of 'The Proteome Landscape of the Kingdoms of
     # Life', all 70 species, at most 100k spectra each, which is none of the
     # deposit's versions. MSKB-final is "the released two-million-PSM
-    # tryptic/non-tryptic MassIVE-KB corpus used to train Casanovo 4", the
-    # split PLMNovo's MSKB rows also resolve to MassIVE-KB with no version.
+    # tryptic/non-tryptic MassIVE-KB corpus used to train Casanovo 4.2 and 5.0
+    # (Melendez et al., 2024)", with "the 200,000-spectrum Casanovo test split"
+    # kept: the deposit catalogued as Casanovo digestion enzyme bias data
+    # (Zenodo 12587317), scored whole, where PLMNovo scores its tryptic and
+    # multi-enzyme parts apart.
     "Kingdoms de novo": ("The Proteome Landscape of the Kingdoms of Life", None),
-    "MSKB-final": ("MassIVE-KB", None),
+    "MSKB-final": ("Casanovo digestion enzyme bias data", "as deposited"),
     "HC-PT": ("ProteomeTools", "HC-PT (NovoBench)"),
     "Nine-species": ("Nine-species benchmark", None),
     "Seven-species": ("Seven-species benchmark", None),
     "ProteomeTools": ("ProteomeTools", None),
     "MassIVE-KB": ("MassIVE-KB", None),
-    "IgG1-Human-HC": ("Monoclonal antibody de novo assembly", None),
+    # A deposit with ONE version takes it, as ROW_DATASET's rows do: CrossNovo's
+    # antibody tables pin 'as deposited', and with None here pi-PrimeNovo's
+    # digest table on the same deposit met them only if versions were ignored.
+    "IgG1-Human-HC": ("Monoclonal antibody de novo assembly", "as deposited"),
     "QE_HF_X1": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X1"),
     "QE_HF_X2": ("HeLa Q Exactive HF runs (pNovo 3)", "QE_HF_X2"),
 }
@@ -4811,11 +4870,18 @@ TABLE_SELF: dict[tuple[int, str], list[str]] = {
 
 
 TABLE_DATASET: dict[tuple[int, str], tuple[str | None, str] | tuple[str | None, str, str]] = {
+    # CausalNovo, Table 8: "Cross-species validation on the Seven-species
+    # dataset", one column per held-out species -- DeepNovo's leave-one-out
+    # protocol over the seven, not NovoBench's yeast-only split.
+    (64, "Table8"): ("Seven-species benchmark", "Seven-species dataset, cross-species "
+                     "(leave-one-out) validation", "original (DeepNovo, 2017)"),
     # dIon, Tables 25 and 26 (see DATASET_TARGETS for the two test sets).
     (981, "Table25"): ("The Proteome Landscape of the Kingdoms of Life",
                        "Kingdoms de novo test set: dIon's run-disjoint split, 70 species, "
                        "at most 100k spectra each"),
-    (981, "Table 26"): ("MassIVE-KB", "MSKB-final, Casanovo 4's two-million-PSM split"),
+    (981, "Table 26"): ("Casanovo digestion enzyme bias data",
+                        "MSKB-final, Casanovo 4's two-million-PSM split (Melendez et al.)",
+                        "as deposited"),
     # LIPNovo, Table 7: its Baseline and LIPNovo rows are Table 1's
     # nine-species Average column, value for value, so it is that benchmark
     # at the version Table 1 names, which is none.
@@ -5357,6 +5423,7 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
             ok = 0
             for name, cols in parts.items():
                 part = subtable(tb, cols, name)
+                part["sibling_datasets"] = list(parts)
                 row = {**base, "table_label": part["table_label"],
                        "caption": part["caption"][:260]}
                 try:
@@ -5651,6 +5718,14 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                              f"headers {col_head}")
             found[k] = (metric, level)
         metric_axis = "columns"
+    # 'PTM PREC.' IS PRECISION AT THE PTM LEVEL, the measurement NovoBench-
+    # derived tables print as 'Precision' under a 'PTM' spanner. Read as a
+    # metric of its own it met nothing: DiffuNovo's Table 3 and AdaNovo's PTM
+    # tables reported PTM precision on the same test sets as eight other
+    # papers and shared no measurement with any. The level is forced, since
+    # a glued 'PTMprec.' under AdaNovo's amino-acid columns read as one.
+    found = {j: ((v[0][4:], "ptm") if v[0] in ("ptm-precision", "ptm-recall") else v)
+             for j, v in found.items()}
     metrics = {j: v[0] for j, v in found.items()}
     levels = {j: v[1] for j, v in found.items()}
 
@@ -6053,6 +6128,20 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
         con, tb["caption"], near, base["publication_id"],
         tb.get("dataset_hint") or table_dataset_label(tb), header_text,
         (tb.get("registry_label") or tb["table_label"] or "").strip())
+    # SEVEN-SPECIES BESIDE HC-PT IS NOVOBENCH'S. HC-PT is NovoBench's own
+    # subsample, and nine-species, seven-species and HC-PT are its three
+    # benchmarks, so a table reporting seven-species and HC-PT side by side is
+    # a NovoBench table and its seven-species part is NovoBench's split. Nine
+    # tables were filed under no version at all, which hid that they all
+    # report one test set.
+    if (dname == "Seven-species benchmark" and vid is None
+            and any(n.startswith("HC-PT") for n in tb.get("sibling_datasets") or [])):
+        got = con.execute("SELECT v.id FROM dataset_version v JOIN dataset d ON "
+                          "d.id = v.dataset_id WHERE d.name = ? AND v.version = ?",
+                          (dname, "NovoBench split")).fetchone()
+        vid = got[0] if got else None
+    vlabel = (con.execute("SELECT version FROM dataset_version WHERE id = ?",
+                          (vid,)).fetchone() or [""])[0] if vid else ""
     # EVERY PRINTED SUBSET WITH ITS CANONICAL NAME, so the record a schema
     # will write holds both: the species as the paper printed it, for
     # checking against the page, and as the catalog names it, with the
@@ -6248,6 +6337,8 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                                   if sub else (None, None))
                     if rd and rd[2]:
                         canon, acc = rd[2], species_index(con, dname).get(rd[2])
+                    if sub and not rd and whole_test_set(sub, canon, dname, vlabel):
+                        sub, canon, acc = "", None, None
                     sd = cell.get("stddev")
                     results.append({
                         "r": row_of[ri], "c": col_of_k[k], "part": pi,
