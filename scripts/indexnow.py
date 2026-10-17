@@ -97,15 +97,25 @@ def submit() -> int:
         body = json.dumps({"host": urlsplit(base).hostname, "key": KEY,
                            "keyLocation": key_url,
                            "urlList": urls[i:i + BATCH]}).encode()
-        req = urllib.request.Request(ENDPOINT, data=body, method="POST",
-                                     headers={"Content-Type": "application/json; charset=utf-8"})
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                code = r.status
-        except urllib.error.HTTPError as e:
-            code = e.code
-        except (urllib.error.URLError, OSError) as e:
-            return warn(f"POST failed: {e}")
+        # A 403 is retried. The first publish carrying the key got 403 for all
+        # 819 URLs although this script had just read the key file back from
+        # the live site; the same batch, sent again from a laptop an hour
+        # later, got 200. IndexNow fetches the key itself, apparently from an
+        # edge the fresh gh-pages deploy had not reached yet.
+        for attempt in range(4):
+            req = urllib.request.Request(ENDPOINT, data=body, method="POST",
+                                         headers={"Content-Type": "application/json; charset=utf-8"})
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    code = r.status
+            except urllib.error.HTTPError as e:
+                code = e.code
+            except (urllib.error.URLError, OSError) as e:
+                return warn(f"POST failed: {e}")
+            if code != 403 or attempt == 3:
+                break
+            print(f"indexnow: HTTP 403, retrying in 60 s ({attempt + 1}/3)")
+            time.sleep(60)
         # 200 accepted; 202 accepted, key validation pending. Anything else
         # (400 bad request, 403 key not served, 422 URL outside the key's
         # path, 429 too many requests) is the engine refusing the batch.

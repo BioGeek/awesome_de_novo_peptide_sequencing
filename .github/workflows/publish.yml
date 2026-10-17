@@ -149,5 +149,5 @@ jobs:
       # never a failed publish: the site is already live by this point.
       - name: Submit changed pages to IndexNow
         continue-on-error: true
-        timeout-minutes: 8
+        timeout-minutes: 12
         run: python3 scripts/indexnow.py submit
