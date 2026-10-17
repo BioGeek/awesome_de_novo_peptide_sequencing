@@ -86,6 +86,9 @@ MANIFEST = SITE / ".render-manifest"
 # The list the workflow feeds to `quarto render`, one path per line.
 FILES = SITE / ".render-files"
 LEGACY_KEY = SITE / ".render-key"
+# What indexnow.py submits after the publish. OUTSIDE _site, so it is never
+# published, and gitignored.
+INDEXNOW = HERE / ".indexnow-urls"
 
 # Past this many changed pages, render the project instead.
 #
@@ -185,6 +188,33 @@ def emit(mode: str, reason: str) -> None:
         sys.stdout.write(line)
 
 
+def indexnow_urls(pages: dict[str, str]) -> None:
+    """Write .indexnow-urls: the pages whose SOURCE changed since the last publish.
+
+    Not the pages a render rewrites. A full render forced by a Quarto upgrade
+    or a _quarto.yml edit rewrites every page and changes what none of them
+    says, so the list comes from the .qmd hashes alone, whatever the scope.
+    With no readable manifest there is nothing to compare against, and the list
+    is empty rather than all 7500 pages. The home page goes in only when some
+    page did: its build date moves on every run, its catalog content does not.
+    """
+    urls: list[str] = []
+    try:
+        old = json.loads(MANIFEST.read_text(encoding="utf-8"))["pages"]
+    except (OSError, ValueError, KeyError, TypeError):
+        old = None
+    if old is not None:
+        import re
+        m = re.search(r"^\s*site-url:\s*(\S+)\s*$",
+                      (HERE / "_quarto.yml").read_text(encoding="utf-8"), re.M)
+        base = m.group(1).rstrip("/") + "/" if m else None
+        changed = sorted(p for p, h in pages.items() if old.get(p) != h)
+        if base and changed:
+            urls = [base] + [base + p[:-len(".qmd")] + ".html" for p in changed]
+    INDEXNOW.write_text("".join(u + "\n" for u in urls), encoding="utf-8")
+    print(f"indexnow: {len(urls)} URLs queued", file=sys.stderr)
+
+
 def main() -> int:
     # --write-key is the name publish.yml used before the manifest; accepted so
     # a workflow run started from an older commit does not fail.
@@ -192,6 +222,7 @@ def main() -> int:
         return record()
 
     pages = page_hashes()
+    indexnow_urls(pages)
 
     def full(reason: str) -> int:
         emit("full", reason)

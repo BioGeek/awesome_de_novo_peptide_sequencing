@@ -141,3 +141,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           QUARTO_PYTHON: .venv/bin/python
+
+      # Push the pages whose content changed to IndexNow (Bing, Yandex, Seznam,
+      # Naver; Bing is what Copilot answers from). render_scope.py wrote the
+      # list from the .qmd hashes, so a config-only full render submits nothing.
+      # It waits for gh-pages to serve the key file, and a refusal is a warning,
+      # never a failed publish: the site is already live by this point.
+      - name: Submit changed pages to IndexNow
+        continue-on-error: true
+        timeout-minutes: 8
+        run: python3 scripts/indexnow.py submit

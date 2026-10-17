@@ -756,6 +756,31 @@ deliberate -- `slugs.py --check` fails the commit on one -- so 17 minutes is the
 right price. Before the manifest this happened by accident, because any change
 to the single key meant a full render anyway.
 
+## IndexNow: telling Bing what changed
+
+Google reads `sitemap.xml`; Bing, Yandex, Seznam and Naver also take
+**IndexNow** pushes, and Bing's index is what Copilot answers from. After the
+gh-pages push, `publish.yml` runs `indexnow.py submit`, which POSTs the changed
+URLs to `api.indexnow.org`.
+
+**The list comes from the `.qmd` hashes, not from what was rendered.**
+`render_scope.py` compares each page's source with the restored manifest and
+writes `.indexnow-urls` (outside `_site`, gitignored), whatever the render
+scope. A full render forced by a Quarto upgrade rewrites every page and changes
+what none of them says, and submitting thousands of unchanged URLs is exactly
+what the protocol asks sites not to do. The home page is added only when some
+page changed, since its build date moves on every run. The daily repo-metrics
+commit therefore submits nothing.
+
+**The key is public by design.** Ownership is proved by serving
+`<key>.txt` containing the key, so anyone can read it; `postrender.py` writes it
+into `_site` on every run, because a full render empties the directory. It
+sits under the project path rather than at the domain root, which `keyLocation`
+allows and which restricts the key to this site's URLs. The step waits up to
+five minutes for gh-pages to serve the file before submitting, since a key that
+cannot be fetched is answered 403, and every failure is a warning: the site is
+live by then, and a lost ping costs crawl latency, nothing more.
+
 ## Publication dates
 
 `publication.publication_date` is a full `YYYY-MM-DD` string with no NULLs, so a

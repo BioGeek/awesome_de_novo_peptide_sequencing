@@ -189,6 +189,11 @@ def strip_hidden_source() -> None:
 def main() -> int:
     strip_hidden_source()
     add_entity_search()
+    # IndexNow's ownership proof, a file named after the key. Written on every
+    # run because a full render empties _site, and only gh-pages would
+    # otherwise carry it from one publish to the next.
+    import indexnow
+    indexnow.write_key()
     # A sitemap is normally always there, since even a single-file render
     # merges into it. The one way to be here without one is a first build with
     # no gh-pages branch to restore from, which is not an error.

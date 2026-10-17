@@ -1,7 +1,7 @@
 # Scripts
 
 Everything that builds, refreshes, mines or checks the catalog. This folder
-holds **33 scripts**; every one has an entry below, under a heading that is its
+holds **34 scripts**; every one has an entry below, under a heading that is its
 filename, and `check_counts.py` fails the commit when the two drift apart:
 **0 scripts** lack an entry below, and **0 entries** name a script that does not
 exist.
@@ -167,7 +167,15 @@ Decides before a publish whether it needs a full, partial or index-only
 render, from the manifest the previous run left in `_site`.
 
 ### `postrender.py`
-Post-render fixes Quarto cannot express itself, run by `quarto render`.
+Post-render fixes Quarto cannot express itself, run by `publish.yml` as its own
+step after the render: the home page's sitemap entry, one search record per
+generated page, the hidden OJS source stripped from the home page, and the
+IndexNow key file.
+
+### `indexnow.py`
+Submits the pages a publish changed to IndexNow (Bing and the other
+participating engines), from the `.indexnow-urls` list `render_scope.py` writes.
+Runs in `publish.yml` after the gh-pages push; never fails the publish.
 
 ## Checks
 
