@@ -249,10 +249,13 @@ def json_ld(obj: dict) -> list[str]:
 
     Deterministic by construction: sorted keys, no timestamps, nothing that can
     reorder between runs. "<" is escaped so a title containing "</script>"
-    cannot close the block early.
+    cannot close the block early. The replacement is a backslash followed by
+    "u003c", which JSON reads back as "<". It used to be the Python escape
+    for "<", i.e. "<" itself, so it replaced nothing, on ten pages (SICI DOIs,
+    "<10 KD") that luckily held no "</".
     """
     payload = json.dumps(obj, ensure_ascii=False, sort_keys=True,
-                         separators=(",", ":")).replace("<", "\u003c")
+                         separators=(",", ":")).replace("<", "\\u003c")
     return ["```{=html}",
             f'<script type="application/ld+json">{payload}</script>',
             "```", ""]
