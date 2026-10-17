@@ -887,7 +887,7 @@ _counts = {k: _con.execute(q).fetchone()[0] for k, q in {
 _con.close()
 _site = "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
 _repo = "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing"
-_doi = "10.5281/zenodo.20825737"
+_doi = "10.5281/zenodo.20825736"
 _summary = (f"{_counts['papers']} papers, {_counts['methods']} methods, "
             f"{_counts['datasets']} datasets and {_counts['authors']} authors, "
             f"{_counts['first']} to {_counts['last']}")
@@ -8108,7 +8108,7 @@ The site is generated from `denovo.db` (SQLite, the source of truth). If you're 
 
 If you use this catalog, please cite it as:
 
-> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825737>
+> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825736>
 
 Machine-readable metadata is in [`CITATION.cff`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/CITATION.cff); GitHub's "Cite this repository" button exports BibTeX / APA.
 

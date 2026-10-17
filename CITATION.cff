@@ -33,7 +33,14 @@ keywords:
   - awesome list
   - literature database
   - curated resource
+# The CONCEPT DOI: it names every version and resolves to the latest, so a
+# citation written today does not point at an old snapshot after the next
+# release. Each release still gets its own version DOI, listed below.
+doi: "10.5281/zenodo.20825736"
 identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20825736"
+    description: "Zenodo concept DOI, all versions (resolves to the latest)"
   - type: doi
     value: "10.5281/zenodo.20825737"
     description: "Zenodo DOI for v0.1.0"

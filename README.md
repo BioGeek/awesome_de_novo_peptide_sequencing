@@ -1,7 +1,7 @@
 
 # Awesome *De Novo* Peptide Sequencing
 
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20825737-blue.svg)](https://doi.org/10.5281/zenodo.20825737)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20825736-blue.svg)](https://doi.org/10.5281/zenodo.20825736)
 
 A comprehensive, curated, and interactive map of the *de novo* peptide sequencing field. Algorithms, post-processors, downstream applications and adjacent tools, covering both deep-learning and classical approaches. Includes a SQLite database of papers, models, authors, affiliations, and venues, alongside a Quarto-based interactive website with Observable JS visualisations tracking publication impact, journal metrics, and GitHub activity across the field, plus a generated page for every paper, author, method, institution, venue, application area and architecture family, and a benchmark section ranking the methods on both public benchmarks.
 
@@ -78,7 +78,7 @@ The Zenodo deposit is archived under CC BY 4.0 (the umbrella that covers the bul
 
 If you use this catalog, please cite it:
 
-> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825737>
+> Van Goey, J. *Awesome De Novo Peptide Sequencing.* Zenodo. <https://doi.org/10.5281/zenodo.20825736>
 
 Machine-readable metadata lives in [`CITATION.cff`](CITATION.cff); GitHub renders a "Cite this repository" button in the sidebar that exposes BibTeX / APA / RIS / EndNote conversions.
 
