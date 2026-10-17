@@ -3079,11 +3079,25 @@ default was silently dropping them.
 ### OJS source is public, Python chunk source is not
 
 `echo: false` hides a cell's source from the rendered *page*, but Quarto still
-embeds every **OJS** cell's source into `_site/index.html` and `_site/search.json`,
-because the client-side OJS runtime needs it. So an OJS comment ships to the live
-site and is full-text searchable. **Python** chunk comments really are dropped
-(verified both ways: a distinctive comment from the Python chunk appears 0 times
-in both files, one from an OJS cell appears in both).
+embeds every **OJS** cell's source in `_site/index.html` TWICE: once base64 in
+the `ojs-module-contents` script, which the runtime evaluates, and once as a
+highlighted `<pre>` inside `.sourceCode.cell-code.hidden`, hidden by CSS and
+read by nothing. Search engines indexed that second copy as the page's text,
+`${first_year}` and `viewof` definitions included, and Quarto copied it into
+`search.json`. `postrender.py` now deletes it (163 blocks, 1.6 MB of the
+10 MB page) and rebuilds the home page's search records from the stripped
+page; verified in headless Chrome that every chart still draws with 0 OJS
+errors. The base64 copy stays, so an OJS comment still ships to every
+visitor, decodable by anyone who looks. **Python** chunk comments really are
+dropped (verified both ways: a distinctive comment from the Python chunk
+appears 0 times in both files, one from an OJS cell appeared in both).
+
+**The page's numbers are all drawn by OJS**, so a crawler that runs no
+JavaScript sees the prose with every count missing. The `crawler-metadata`
+chunk gives it two things, both read from `.zenodo.json` and `denovo.db`: a
+schema.org `Dataset` block (what Google Dataset Search reads: creator with
+ORCID, DOI, licence, downloads, dates) and a `<noscript>` summary with the
+counts.
 
 Consequence: any note you do not want published (an unpublished analysis, a TODO
 naming people, a half-finished finding) belongs in the Python chunk, not beside

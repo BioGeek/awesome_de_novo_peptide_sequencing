@@ -113,7 +113,81 @@ def add_entity_search() -> None:
     print(f"postrender: search.json += {n} catalog pages ({SEARCH.stat().st_size // 1024} KB)")
 
 
+# Quarto writes every OJS cell's source into the page a second time, as a
+# highlighted <pre> inside `.sourceCode.cell-code.hidden`, even under
+# `echo: false`: it is hidden by CSS, not left out. The runtime never reads
+# it (it evaluates the `ojs-module-contents` script), so it was 1.6 MB of the
+# 10 MB home page doing nothing except reaching search engines, which indexed
+# `${first_year}` and `viewof` definitions as the page's text. A cell's
+# source is escaped HTML, so `</pre>` cannot occur inside it and the first
+# one closes the block.
+HIDDEN_SOURCE = re.compile(
+    r'<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden"'
+    r".*?</pre></div>(?:<button[^>]*class=\"code-copy-button\"[^>]*>.*?</button>)?</div>",
+    re.S)
+HOME = ROOT / "_site" / "index.html"
+
+
+def section_text(page: str, anchor: str) -> str | None:
+    """The plain text of `<section id=anchor>`, nested sections included."""
+    m = re.search(rf'<section id="{re.escape(anchor)}"[^>]*>', page)
+    if not m:
+        return None
+    depth, pos = 1, m.end()
+    for tag in re.finditer(r"<(/?)section\b[^>]*>", page[pos:]):
+        depth += -1 if tag.group(1) else 1
+        if depth == 0:
+            body = page[pos:pos + tag.start()]
+            break
+    else:
+        return None
+    body = re.sub(r"<(script|style)\b.*?</\1>", " ", body, flags=re.S)
+    return plain(body)
+
+
+def strip_hidden_source() -> None:
+    """Drop the hidden cell source from the home page and from its search records.
+
+    Quarto built those records from the page BEFORE this step, so each still
+    carries the source; it is re-read from the stripped page, section by
+    section, which leaves only what a reader sees.
+    """
+    if not HOME.exists():
+        return
+    page = HOME.read_text(encoding="utf-8")
+    page, n = HIDDEN_SOURCE.subn("", page)
+    if n:
+        HOME.write_text(page, encoding="utf-8")
+    if "cell-code hidden" in page:
+        raise SystemExit("postrender: a hidden cell-source block did not match")
+    if SEARCH.exists():
+        records = json.loads(SEARCH.read_text(encoding="utf-8"))
+        kept = []
+        for r in records:
+            href = str(r.get("href", ""))
+            if href.startswith("index.html#"):
+                text = section_text(page, href.split("#", 1)[1])
+                # Quarto merges search.json on a single-file render, so a
+                # section that was removed keeps its record, pointing nowhere.
+                if text is None:
+                    continue
+                r["text"] = text
+            elif href == "index.html":
+                # The record for the text above the first section.
+                first = page.find("<section id=")
+                start = page.find('<main class="content"')
+                if 0 <= start < first:
+                    r["text"] = plain(re.sub(r"<(script|style)\b.*?</\1>", " ",
+                                             page[start:first], flags=re.S))
+            kept.append(r)
+        SEARCH.write_text(json.dumps(kept, ensure_ascii=False, separators=(",", ":")),
+                          encoding="utf-8")
+    print(f"postrender: index.html -{n} hidden cell-source blocks "
+          f"({HOME.stat().st_size // 1024} KB)")
+
+
 def main() -> int:
+    strip_hidden_source()
     add_entity_search()
     # A sitemap is normally always there, since even a single-file render
     # merges into it. The one way to be here without one is a first build with

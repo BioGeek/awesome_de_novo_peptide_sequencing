@@ -863,6 +863,67 @@ ojs_define(
 # ---------------------------------------------------------------------------
 ```
 
+```{python}
+#| label: crawler-metadata
+#| echo: false
+#| output: asis
+# What a search engine gets without running JavaScript. Every number on this
+# page is drawn by OJS, so a crawler that does not execute it saw headings and
+# prose with the counts missing. Two things fix that, both read from the same
+# sources as everything else (.zenodo.json for who and what, denovo.db for the
+# counts), so neither can drift from the page:
+#   * a schema.org Dataset block, which is what Google Dataset Search reads;
+#   * a <noscript> summary, which a JavaScript reader never sees.
+_meta = json.loads(Path(".zenodo.json").read_text(encoding="utf-8"))
+_con = sqlite3.connect(DB)
+_counts = {k: _con.execute(q).fetchone()[0] for k, q in {
+    "papers": "SELECT COUNT(*) FROM publication",
+    "methods": "SELECT COUNT(*) FROM algorithm",
+    "datasets": "SELECT COUNT(*) FROM dataset",
+    "authors": "SELECT COUNT(*) FROM author",
+    "first": "SELECT MIN(substr(publication_date, 1, 4)) FROM publication",
+    "last": "SELECT MAX(substr(publication_date, 1, 4)) FROM publication",
+}.items()}
+_con.close()
+_site = "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
+_repo = "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing"
+_doi = "10.5281/zenodo.20825737"
+_summary = (f"{_counts['papers']} papers, {_counts['methods']} methods, "
+            f"{_counts['datasets']} datasets and {_counts['authors']} authors, "
+            f"{_counts['first']} to {_counts['last']}")
+_ld = {
+    "@context": "https://schema.org", "@type": "Dataset",
+    "name": _meta["title"],
+    "description": f"{_meta['description']} Currently {_summary}.",
+    "url": _site, "sameAs": [_repo, f"https://doi.org/{_doi}"],
+    "identifier": f"https://doi.org/{_doi}",
+    "keywords": _meta["keywords"],
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "isAccessibleForFree": True,
+    "creator": [{"@type": "Person", "name": " ".join(reversed(c["name"].split(", "))),
+                 "affiliation": {"@type": "Organization", "name": c["affiliation"]},
+                 "sameAs": f"https://orcid.org/{c['orcid']}"}
+                for c in _meta["creators"]],
+    "temporalCoverage": f"{_counts['first']}/{_counts['last']}",
+    "dateModified": date.today().isoformat(),
+    "distribution": [
+        {"@type": "DataDownload", "encodingFormat": "application/vnd.sqlite3",
+         "contentUrl": f"{_repo}/raw/main/denovo.db"},
+        {"@type": "DataDownload", "encodingFormat": "application/sql",
+         "contentUrl": f"{_repo}/raw/main/denovo.sql"},
+    ],
+}
+print("```{=html}")
+print('<script type="application/ld+json">'
+      + json.dumps(_ld, ensure_ascii=False, sort_keys=True).replace("<", "\\u003c")
+      + "</script>")
+print(f"<noscript><p>This catalog holds {_summary}. The charts and tables on this "
+      f"page need JavaScript; the same data is in the "
+      f'<a href="{_repo}">GitHub repository</a> as a SQLite database, and every '
+      f"paper, method, author and dataset has its own page.</p></noscript>")
+print("```")
+```
+
 ```{ojs}
 //| echo: false
 // A paper title as a DOM node, keeping the publisher's own inline markup
