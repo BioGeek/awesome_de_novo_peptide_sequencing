@@ -861,11 +861,34 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     g_desc = [row["name"] + (": " + " · ".join(sub_bits) if sub_bits else "")]
     if row["short_description"]:
         g_desc.append(clip(row["short_description"], 170))
-    # No JSON-LD here on purpose: these rows span software, reviews, benchmarks
-    # and prose workflow descriptions, and no single schema.org type is honest
-    # for all of them. A wrong @type is worse than none.
     L += front_matter(row["name"], " · ".join(sub_bits) if sub_bits else None,
                       clip(join_sentences(g_desc), 250))
+
+    # These rows span software, reviews, benchmarks and prose workflow
+    # descriptions, and no single schema.org type is honest for all of them;
+    # a wrong @type is worse than none, which is why this page had no block at
+    # all. So the type follows what the catalog KNOWS. A recorded repository
+    # means the code exists: SoftwareSourceCode. Anything else is still a name
+    # this catalog defines and describes, which is all DefinedTerm claims, and
+    # it says nothing about whether software exists (PEAKS is sold, a manual
+    # interpretation protocol is not software at all). Either way the papers
+    # that DESCRIBE it are its subjectOf, never the ones that only used it.
+    ld = {"@context": "https://schema.org",
+          "@type": "SoftwareSourceCode" if ctx["repos"] else "DefinedTerm",
+          "name": row["name"], "url": ctx["page_url"]}
+    if row["short_description"]:
+        ld["description"] = clip(strip_markup(row["short_description"]), 500)
+    if ctx["repos"]:
+        ld["codeRepository"] = ctx["repos"][0]
+        if len(ctx["repos"]) > 1:
+            ld["sameAs"] = ctx["repos"][1:]
+    else:
+        ld["inDefinedTermSet"] = {"@type": "DefinedTermSet",
+                                  "name": "Awesome De Novo Peptide Sequencing",
+                                  "url": SITE_URL}
+    if ctx["describing_ld"]:
+        ld["subjectOf"] = ctx["describing_ld"]
+    L += json_ld(ld)
 
     if row["short_description"]:
         L += [md_escape(row["short_description"]), ""]
@@ -2400,6 +2423,7 @@ def main() -> int:
             emit("authors", site.slugs["authors"][aid], body, mtime)
 
     if "algorithms" in kinds:
+        pub_doi = {p["id"]: p["doi"] for p in d["publications"]}
         for row in d["algorithms"]:
             gid = row["id"]
             # Byline order, not alphabetical. 672 of 818 algorithms have exactly
@@ -2430,7 +2454,21 @@ def main() -> int:
                         seen.add(name)
                         authors.append((a, name))
             repos = d["repos"].get(gid, [])
+            describing_ld = []
+            for pub_id, title, date, *_r in described:
+                art = {"@type": "ScholarlyArticle", "name": strip_markup(title)}
+                if date:
+                    art["datePublished"] = str(date)
+                doi = pub_doi.get(pub_id)
+                slug = site.slugs["publications"].get(pub_id)
+                if doi:
+                    art["identifier"] = f"https://doi.org/{doi}"
+                if slug:
+                    art["url"] = f"{SITE_URL}pages/publications/{slug}.html"
+                describing_ld.append(art)
             ctx = {
+                "page_url": f"{SITE_URL}pages/algorithms/{site.slugs['algorithms'][gid]}.html",
+                "describing_ld": describing_ld,
                 "described": described,
                 "used": used,
                 "repos": repos,

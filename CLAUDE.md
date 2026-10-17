@@ -756,6 +756,23 @@ deliberate -- `slugs.py --check` fails the commit on one -- so 17 minutes is the
 right price. Before the manifest this happened by accident, because any change
 to the single key meant a full render anyway.
 
+## Structured data on the generated pages
+
+Every generated page type but two carries a schema.org block from
+`build_pages.json_ld()`: `ScholarlyArticle` for a paper, `Person`,
+`Organization`, `Periodical` and `Dataset`, and the home page a `Dataset` for
+the catalog itself. Family and application-area pages have none.
+
+**A method page's `@type` follows what the catalog knows**, because the
+`algorithm` rows span software, reviews, benchmarks and written-up workflows
+and no one type is honest for all of them. A recorded repository makes it
+`SoftwareSourceCode`, with the repository as `codeRepository`. Every other row
+is a `DefinedTerm` in the catalog's `DefinedTermSet`, which claims only that
+the catalog names and defines it: PEAKS is commercial software with no
+repository, and manual interpretation is not software at all. Both carry the
+DESCRIBING papers as `subjectOf`, never the ones that only ran the method.
+A wrong `@type` is worse than none.
+
 ## IndexNow: telling Bing what changed
 
 Google reads `sitemap.xml`; Bing, Yandex, Seznam and Naver also take
