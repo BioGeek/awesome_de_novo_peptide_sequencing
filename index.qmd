@@ -974,21 +974,34 @@ print("```")
 // The datasets too big to inline, one file each: see DATA_FILES in the first
 // Python chunk, which must list the same names. Each is a promise that the
 // cells reading it wait on, so the page paints before any of them arrives.
-pubs = FileAttachment("data/pubs.json").json()
-pub_authorship = FileAttachment("data/pub_authorship.json").json()
-coauth_edges = FileAttachment("data/coauth_edges.json").json()
-algorithms = FileAttachment("data/algorithms.json").json()
-author_details = FileAttachment("data/author_details.json").json()
-citations = FileAttachment("data/citations.json").json()
-entity_slugs = FileAttachment("data/entity_slugs.json").json()
-publication_impact = FileAttachment("data/publication_impact.json").json()
-benchmark_results = FileAttachment("data/benchmark_results.json").json()
-benchmark_curves = FileAttachment("data/benchmark_curves.json").json()
-dataset_usage = FileAttachment("data/dataset_usage.json").json()
-dataset_versions = FileAttachment("data/dataset_versions.json").json()
-dataset_addresses = FileAttachment("data/dataset_addresses.json").json()
-proteobench_curves = FileAttachment("data/proteobench_curves.json").json()
-perf_points = FileAttachment("data/perf_points.json").json()
+//
+// None is even REQUESTED before the first frame has been painted (two
+// animation frames, or 1 s if frames are not being produced, as in a
+// background tab). Without that, chart work could start before the first
+// paint, and Lighthouse's simulated phone then charged all of it to the
+// subtitle, the page's largest paint: LCP read 4.7 s or 11.8 s from run to run
+// while a real browser painted the subtitle at 0.96 s either way. A cell that
+// names `first_frame` waits for it to resolve, which is all the gate needs;
+// OJS hands other cells the RESOLVED value, so `first_frame.then` is an error.
+first_frame = new Promise(resolve => {
+  requestAnimationFrame(() => requestAnimationFrame(resolve))
+  setTimeout(resolve, 1000)
+})
+pubs = { first_frame; return FileAttachment("data/pubs.json").json() }
+pub_authorship = { first_frame; return FileAttachment("data/pub_authorship.json").json() }
+coauth_edges = { first_frame; return FileAttachment("data/coauth_edges.json").json() }
+algorithms = { first_frame; return FileAttachment("data/algorithms.json").json() }
+author_details = { first_frame; return FileAttachment("data/author_details.json").json() }
+citations = { first_frame; return FileAttachment("data/citations.json").json() }
+entity_slugs = { first_frame; return FileAttachment("data/entity_slugs.json").json() }
+publication_impact = { first_frame; return FileAttachment("data/publication_impact.json").json() }
+benchmark_results = { first_frame; return FileAttachment("data/benchmark_results.json").json() }
+benchmark_curves = { first_frame; return FileAttachment("data/benchmark_curves.json").json() }
+dataset_usage = { first_frame; return FileAttachment("data/dataset_usage.json").json() }
+dataset_versions = { first_frame; return FileAttachment("data/dataset_versions.json").json() }
+dataset_addresses = { first_frame; return FileAttachment("data/dataset_addresses.json").json() }
+proteobench_curves = { first_frame; return FileAttachment("data/proteobench_curves.json").json() }
+perf_points = { first_frame; return FileAttachment("data/perf_points.json").json() }
 ```
 
 ```{ojs}

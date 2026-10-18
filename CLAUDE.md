@@ -3136,6 +3136,17 @@ measured in headless Chrome at 412, 800 and 1280 px, in index.qmd's own
 render. CLS went from 0.41 to 0.006. Re-measure the heights if either cell
 gains a row.
 
+**No data file is requested before the first frame is painted.** Lighthouse's
+default mobile numbers are SIMULATED: it records one unthrottled load and
+estimates a slow phone from it. When chart work happened to start before the
+first frame in that recording, the estimate charged all of it to the
+subtitle, the page's largest paint, so LCP read 4.7 s or 11.8 s from run to
+run while a real browser, throttled 4x, painted the subtitle at 0.96 s either
+way. The `first_frame` cell (two animation frames, or 1 s) gates the 15 file
+cells, which costs a reader one frame. A cell names `first_frame` to wait on
+it: OJS hands other cells the RESOLVED value, so `first_frame.then(...)` was
+179 errors and an empty page.
+
 **A performance budget is checked weekly.** `lighthouse.yml` runs mobile
 Lighthouse three times on the live home page every Tuesday at 11:00 UTC (and
 on demand from the Actions tab) and checks the MEDIAN against LCP 9 s, total

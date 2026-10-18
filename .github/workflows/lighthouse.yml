@@ -69,7 +69,12 @@ jobs:
           # unless asked, so this is the HTML a browser has to parse.
           curl -s -o /dev/null -w '%{size_download}' "$URL" > html_bytes.txt
 
+      # shell: bash, not the default, for its -o pipefail: the default shell
+      # is `bash -e`, under which `python3 ... | tee` reports tee's status, so
+      # a crash in the script left the step green. That hid the first live
+      # run's failure.
       - name: Summarise
+        shell: bash
         run: |
           python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
           import glob, json, statistics
@@ -106,8 +111,12 @@ jobs:
 
       - name: Check the budget and open, update or close the issue
         if: env.URL == env.HOME_URL
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          # There is no checkout, so gh cannot infer the repository from a
+          # git remote and every `gh issue` call failed without this.
+          GH_REPO: ${{ github.repository }}
           OWNER: ${{ github.repository_owner }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
