@@ -3150,9 +3150,11 @@ it: OJS hands other cells the RESOLVED value, so `first_frame.then(...)` was
 **A performance budget is checked weekly.** `lighthouse.yml` runs mobile
 Lighthouse three times on the live home page every Tuesday at 11:00 UTC (and
 on demand from the Actions tab) and checks the MEDIAN against LCP 9 s, total
-blocking time 7 s, CLS 0.1 and 1 MB of uncompressed HTML: roughly 1.5 to 2x
-the medians after the fixes above (5.8 s, 3.8 s, 0.04, 646 KB), because single
-runs vary a lot. The page before them broke all four. A breach opens
+blocking time 9 s, CLS 0.1 and 1 MB of uncompressed HTML: roughly 1.5 to 2x
+the medians after the fixes above (4.7 s, 6.4 s, 0.005, 648 KB), because single
+runs vary a lot. Total blocking time counts only work after first paint, so
+the first-frame gate RAISED it from 3.8 s to 6.4 s without adding any work,
+which is why its budget is 9 s rather than the 7 s first set. The page before them broke all four. A breach opens
 "Site performance budget exceeded", assigned to the owner, comments on it
 while it stays open and closes it on the first run back inside. It never fails
 a publish: the site is live by then, so a red run would undo nothing. Measure

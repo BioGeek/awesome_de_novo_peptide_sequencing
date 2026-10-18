@@ -14,7 +14,7 @@
 # time 3.8 to 5.5 s.
 #
 # THE BUDGET is set at roughly 1.5 to 2x the medians measured after the
-# 2026-10-18 fixes (LCP 5.8 s, TBT 3.8 s, CLS 0.04, HTML 661 KB), so it flags a
+# 2026-10-18 fixes (LCP 4.7 s, TBT 6.4 s, CLS 0.005, HTML 648 KB), so it flags a
 # regression rather than noise. Before those fixes the page measured LCP
 # 14.0 s, TBT 15.0 s, CLS 0.41 and 8.4 MB of HTML, and would have broken all
 # four. A breach opens an issue assigned to the owner rather than failing a
@@ -44,7 +44,12 @@ env:
   # A scheduled run has no inputs, so it falls back to the home page.
   URL: ${{ inputs.url || 'https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/' }}
   BUDGET_LCP_S: "9"
-  BUDGET_TBT_MS: "7000"
+  # 9 s, not the 7 s first set. Gating the data on the first frame moved
+  # FCP earlier, and total blocking time only counts work AFTER FCP, so the
+  # same chart building now counts in full: the median went from 3.8 s to
+  # 6.4 s with one run at 7.1 s, while the work itself did not change. 9 s
+  # still catches the 15.0 s the page measured before the 2026-10-18 fixes.
+  BUDGET_TBT_MS: "9000"
   BUDGET_CLS: "0.1"
   BUDGET_HTML_KB: "1024"
 
