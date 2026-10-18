@@ -4629,6 +4629,7 @@ authors	3925	salma-al-adwani
 authors	3926	yiwen-yu
 authors	3927	zhi-song
 authors	3928	zejian-ding
+authors	3929	shanji-zhang
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -6237,6 +6238,7 @@ institutions	1408	universidade-federal-de-goias
 institutions	1409	university-of-utah
 institutions	1410	university-of-cabo-verde
 institutions	1411	interdisciplinary-centre-of-marine-and-environmental-research
+institutions	1414	kookmin-university
 publications	1	de-novo-peptide-sequencing-with-instanovo-accurate-database-free-peptide
 publications	2	instanovo-enables-diffusion-powered-de-novo-peptide-sequencing-in-large-scale
 publications	3	instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics-preprint
@@ -7226,6 +7228,7 @@ publications	987	updated-ms2pip-web-server-delivers-fast-and-accurate-ms2-peak-i
 publications	988	updated-ms2pip-web-server-supports-cutting-edge-proteomics-applications
 publications	989	massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep
 publications	990	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
+publications	991	pxg-comprehensive-and-reliable-identification-of-mhc-i-antigens-using-de-novo
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
