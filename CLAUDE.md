@@ -3126,6 +3126,16 @@ three force charts blocked the main thread for 2.7 s of every 5 s from second
 chart is within 200 px of the viewport, until it settles. Blocking time went
 from 24.0 s to 4.5 s, all of it in the first 5 s, building 41 charts.
 
+**The two cells above the scope banner hold their space before they render.**
+The hero counters and the kind/approach breakdown are drawn by OJS once the
+data arrives, and empty they let the banner and all the prose under it jump
+down by about 500 px: that was the page's entire layout-shift score, CLS
+0.41. `.hero-slot` and `.breakdown-slot` give the two cells a `min-height`
+measured in headless Chrome at 412, 800 and 1280 px, in index.qmd's own
+`{=html}` style block rather than `custom.scss`, which would force a full
+render. CLS went from 0.41 to 0.006. Re-measure the heights if either cell
+gains a row.
+
 The consequence for `check_chart_overlap.py`: it now scrolls every
 `.chart-wrap` into view in turn and waits for its dots to stop moving before
 measuring, because a layout that never ran is not a layout worth auditing.

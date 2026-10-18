@@ -1450,6 +1450,7 @@ acq_counts  = acq_modes_present.map(m => ({ acquisition: m, n: algorithms_t.filt
 author_papers_map = new Map(transpose(author_papers).map(r => [r.name, +r.publications]))
 ```
 
+::: {.hero-slot}
 ```{ojs}
 //| echo: false
 {
@@ -1469,6 +1470,7 @@ author_papers_map = new Map(transpose(author_papers).map(r => [r.name, +r.public
   </div>`
 }
 ```
+:::
 
 ```{ojs}
 //| echo: false
@@ -1496,6 +1498,7 @@ breakdown_apply = {
 }
 ```
 
+::: {.breakdown-slot}
 ```{ojs}
 //| echo: false
 {
@@ -1564,6 +1567,7 @@ breakdown_apply = {
   return root
 }
 ```
+:::
 
 ```{=html}
 <style>
@@ -1577,6 +1581,15 @@ breakdown_apply = {
 .hero-stat { text-align: center; padding: 1rem; background: #f6f8fa; border-radius: 0.5rem; }
 .hero-num { font-size: 2.5rem; font-weight: 700; color: #1f6feb; line-height: 1; }
 .hero-lbl { font-size: 0.9rem; color: #57606a; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+/* Space held for the two cells above the scope banner, which OJS draws only
+   once their data has loaded. Empty until then, they let the banner and all
+   the prose below it jump down by ~500 px, the page's whole layout-shift
+   score (CLS 0.41). Heights measured in headless Chrome at 412, 800 and
+   1280 px; a min-height only reserves, so content that outgrows it still
+   shows in full. */
+.hero-slot { min-height: 155px; }
+.breakdown-slot { min-height: 310px; }
+@media (max-width: 991px) { .hero-slot { min-height: 168px; } .breakdown-slot { min-height: 370px; } }
 .scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
 .breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0.75rem 0 1.5rem; }
 .breakdown-cell { padding: 0.85rem 1rem; background: #f6f8fa; border-radius: 0.5rem; }
