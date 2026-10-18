@@ -85,6 +85,12 @@ pubs = pd.read_sql(
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
               WHERE pal.publication_id = p.id AND pal.role = 'describes')
              AS models_described,
+           -- And the methods it only RUNS, so the papers table can show the two
+           -- roles as separate columns instead of one list that mixes them.
+           (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
+              FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
+              WHERE pal.publication_id = p.id AND pal.role = 'uses')
+             AS models_used,
            -- Repository URLs come from algorithm_repository (1-N rows per algo).
            -- Concatenate with whitespace so the OJS multi-link renderer keeps working.
            -- sort_order says which of a method's repositories is canonical,
@@ -7960,6 +7966,8 @@ viewof selected_pubs = {
   const search_with_if = search.map(r => ({
     ...r,
     models: annotate_models(r.models),
+    models_described: annotate_models(r.models_described),
+    models_used: annotate_models(r.models_used),
     // The full date as an ISO STRING, not the Date object and not the year. It
     // is what the table sorts on, and a string keeps three things working at
     // once: ISO dates sort lexicographically, the search box can match
@@ -7967,14 +7975,34 @@ viewof selected_pubs = {
     date_str: fmt_day(r.date),
     citedness: journal_impact_by_name.get(r.journal)?.two_yr_citedness ?? null
   }))
+  // One method list as links, at most four names then a count. An empty list
+  // returns "" itself: htl.html over nothing gives null, which the table
+  // printed as the word "null" in every row that uses no method.
+  const method_links = m => {
+    const parts = String(m ?? "").split(",").map(x => x.trim()).filter(Boolean)
+    if (!parts.length) return ""
+    const out = []
+    parts.slice(0, 4).forEach((part, idx) => {
+      if (idx) out.push(", ")
+      const alias = part.match(/^(.*?)(\s*\(aka [^)]*\))$/)
+      const name = alias ? alias[1] : part
+      out.push(page_link("algorithms", name, name))
+      if (alias) out.push(alias[2])
+    })
+    if (parts.length > 4) out.push(` +${parts.length - 4}`)
+    return htl.html`${out}`
+  }
   const table = Inputs.table(search_with_if, {
     // `id` is the insertion order, so sorting on it descending answers "what
     // was added last", which the Date column cannot: an older paper added today
     // sorts by its own date, wherever that falls.
-    columns: ["id", "date_str", "models", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
+    // The two roles as two columns: what the paper contributes and what it
+    // only ran. One "Method(s)" column used to list both, so a snake-venom
+    // paper that ran PEAKS read exactly like a PEAKS paper.
+    columns: ["id", "date_str", "models_described", "models_used", "version", "kind", "is_dl", "acquisition", "title", "authors", "journal", "citedness", "type", "repo"],
     header: {
       id: "#",
-      date_str: "Date", models: "Method(s)", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
+      date_str: "Date", models_described: "Describes", models_used: "Uses", version: "Ver.", kind: "Kind", is_dl: "DL?", acquisition: "Acq.",
       title: "Title", authors: "Authors", journal: "Venue", citedness: "IF₂ᵧᵣ", type: "Type", repo: "Code"
     },
     format: {
@@ -7997,19 +8025,8 @@ viewof selected_pubs = {
       },
       // annotate_models() appended "(aka ...)" to renamed tools. Keep that
       // visible but link only the name part, which is the slug key.
-      models: m => {
-        const parts = String(m ?? "").split(",").map(x => x.trim()).filter(Boolean)
-        const out = []
-        parts.slice(0, 4).forEach((part, idx) => {
-          if (idx) out.push(", ")
-          const alias = part.match(/^(.*?)(\s*\(aka [^)]*\))$/)
-          const name = alias ? alias[1] : part
-          out.push(page_link("algorithms", name, name))
-          if (alias) out.push(alias[2])
-        })
-        if (parts.length > 4) out.push(` +${parts.length - 4}`)
-        return htl.html`${out}`
-      },
+      models_described: m => method_links(m),
+      models_used: m => method_links(m),
       // Three names then a count: a 53-author consortium paper would otherwise
       // fill the row with links.
       authors: a => page_links("authors", a, { max: 3 }),
@@ -8031,7 +8048,7 @@ viewof selected_pubs = {
     sort: "date_str",
     reverse: true,
     rows: 25,
-    width: { id: 50, date_str: 96, type: 100, models: 130, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
+    width: { id: 50, date_str: 96, type: 100, models_described: 130, models_used: 110, version: 60, kind: 130, is_dl: 70, acquisition: 70, citedness: 70, repo: 60 }
   })
   // Reflect the inner Inputs.table's value/input on the fullscreen wrapper so
   // `viewof selected_pubs` exposes the rows the user has ticked, used by the

@@ -364,8 +364,10 @@ Four places read the role rather than the raw link: the algorithm page splits it
 papers and takes its authors from the describing ones, the publication page
 mirrors the split, `algorithms.first_pub` and `family_firsts` date a method by
 the paper that describes it, and the author→model graph uses the `models_described`
-column rather than `models`. The publications table keeps the full `models` list,
-because "which papers involved PEAKS" is a question worth being able to answer.
+column rather than `models`. The publications table shows the two roles as
+two columns, **Describes** and **Uses** (`models_described`, `models_used`),
+and keeps the full `models` list in each row, so its search box still answers
+"which papers involved PEAKS" whichever role the link has.
 
 ## Public benchmarks
 
