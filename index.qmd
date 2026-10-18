@@ -666,11 +666,13 @@ for (rid, pub, title, ptype, pdate, label, part, page, aid, alg, variant, printe
         "value": value, "source": "paper", "version": vlabel,
         "bases": set(), "seen": []})
     pt["bases"].add(basis)
-    pt["seen"].append({"pub": pub, "title": title, "year": str(pdate)[:4],
-                       "type": ptype, "table": label + (f" ({part})" if part else ""),
+    # The paper's title, year and type are NOT copied in: the tooltip looks
+    # them up in `pubs` by id. Copied, they were 0.8 MB of this table's 3.2 MB,
+    # the same few hundred titles repeated across 7000 entries, and the cue
+    # (0.4 MB) was never displayed at all.
+    pt["seen"].append({"pub": pub, "table": label + (f" ({part})" if part else ""),
                        "page": page, "printed": printed, "subset": sub_printed,
-                       "basis": basis, "cue": cue[:220], "derived": derived,
-                       "as": as_printed})
+                       "basis": basis, "derived": derived, "as": as_printed})
 _rows = []
 for pt in _pts.values():
     bases = pt.pop("bases")
@@ -737,7 +739,7 @@ perf_points = pd.DataFrame(_rows)
 
 conn.close()
 
-ojs_define(
+_data = dict(
     pubs=pubs,
     top_authors=top_authors,
     geo=geo,
@@ -770,6 +772,49 @@ ojs_define(
     perf_points=perf_points,
     build_date=build_date,
 )
+
+# THE BIG DATASETS ARE FILES, NOT PART OF THE PAGE. ojs_define inlines every
+# value as JSON inside index.html, and by 2026-10 that was 7.9 MB of an 8.4 MB
+# page: a phone had to download and parse all of it before painting the first
+# word, and mobile Lighthouse put first paint at ~50 s on a simulated 4G link.
+# Each name in DATA_FILES is written to data/<name>.json instead and loaded by
+# the `FileAttachment` cells right after this chunk, so the prose renders at
+# once and the charts fill in as their data arrives, gzipped by GitHub Pages.
+# The JSON is exactly what ojs_define would have inlined (Quarto's own
+# DataFrame conversion, copied below), so every cell reads the same value.
+#
+# The OJS cell list and this set must name the same datasets: a name written
+# here with no cell is a ReferenceError on the page, which the chart audit's
+# OJS-error count catches. And an INLINE value that grows past INLINE_MAX
+# fails the render, so the next big table cannot quietly land in the HTML.
+DATA_FILES = {
+    "pubs", "pub_authorship", "coauth_edges", "algorithms", "author_details",
+    "citations", "entity_slugs", "publication_impact", "benchmark_results",
+    "benchmark_curves", "dataset_usage", "dataset_versions", "dataset_addresses",
+    "proteobench_curves", "perf_points",
+}
+INLINE_MAX = 100_000
+
+def _ojs_value(v):
+    # Quarto's ojs_define conversion, verbatim (setup.py in its python lang).
+    if type(v) == pd.Series:
+        v = pd.DataFrame(v)
+    if type(v) == pd.DataFrame:
+        j = json.loads(v.T.to_json(orient="split"))
+        return dict((k, v) for (k, v) in zip(j["index"], j["data"]))
+    return v
+
+Path("data").mkdir(exist_ok=True)
+for _name in DATA_FILES:
+    Path("data", f"{_name}.json").write_text(
+        json.dumps(_ojs_value(_data[_name]), separators=(",", ":")), encoding="utf-8")
+_inline = {k: v for k, v in _data.items() if k not in DATA_FILES}
+for _name, _v in _inline.items():
+    _n = len(json.dumps(_ojs_value(_v)))
+    if _n > INLINE_MAX:
+        raise SystemExit(f"index.qmd: {_name} is {_n:,} bytes inline; add it to DATA_FILES "
+                         f"and give it a FileAttachment cell")
+ojs_define(**_inline)
 
 # ---------------------------------------------------------------------------
 # NETWORK STATISTICS OF THE AUTHOR-MODEL BIPARTITE GRAPH
@@ -926,6 +971,28 @@ print("```")
 
 ```{ojs}
 //| echo: false
+// The datasets too big to inline, one file each: see DATA_FILES in the first
+// Python chunk, which must list the same names. Each is a promise that the
+// cells reading it wait on, so the page paints before any of them arrives.
+pubs = FileAttachment("data/pubs.json").json()
+pub_authorship = FileAttachment("data/pub_authorship.json").json()
+coauth_edges = FileAttachment("data/coauth_edges.json").json()
+algorithms = FileAttachment("data/algorithms.json").json()
+author_details = FileAttachment("data/author_details.json").json()
+citations = FileAttachment("data/citations.json").json()
+entity_slugs = FileAttachment("data/entity_slugs.json").json()
+publication_impact = FileAttachment("data/publication_impact.json").json()
+benchmark_results = FileAttachment("data/benchmark_results.json").json()
+benchmark_curves = FileAttachment("data/benchmark_curves.json").json()
+dataset_usage = FileAttachment("data/dataset_usage.json").json()
+dataset_versions = FileAttachment("data/dataset_versions.json").json()
+dataset_addresses = FileAttachment("data/dataset_addresses.json").json()
+proteobench_curves = FileAttachment("data/proteobench_curves.json").json()
+perf_points = FileAttachment("data/perf_points.json").json()
+```
+
+```{ojs}
+//| echo: false
 // A paper title as a DOM node, keeping the publisher's own inline markup
 // (<i>de novo</i>, cytochrome <i>c</i><sub>4</sub>, JATS <italic>) and
 // escaping everything else. htl.html escapes a string, so these titles showed
@@ -965,6 +1032,26 @@ plot_tip_style = ({
 })
 
 pubs_t = transpose(pubs).map(r => ({ ...r, year: +r.year, date: r.date ? new Date(r.date) : null }))
+pub_lookup = new Map(pubs_t.map(p => [p.id, p]))
+
+// A force layout runs only while its chart is on screen. All three ran from
+// page load, wherever the reader was: measured with the CPU slowed 4x, as
+// Lighthouse does for a phone, they blocked the main thread for 2.7 s of every
+// 5 s from second 5 to second 45, three sections below anything visible. Each
+// simulation starts stopped and resumes, from wherever it paused, whenever its
+// chart comes within 200 px of the viewport; once it has settled it is left
+// alone (a drag still reheats it as before). Disconnects with the cell.
+run_when_visible = (sim, el, invalidation) => {
+  sim.stop()
+  let settled = false
+  sim.on("end.visible", () => { settled = true })
+  const io = new IntersectionObserver(([e]) => {
+    if (settled) { io.disconnect(); return }
+    if (e.isIntersecting) sim.restart(); else sim.stop()
+  }, {rootMargin: "200px"})
+  io.observe(el)
+  invalidation.then(() => { io.disconnect(); sim.stop() })
+}
 
 // Shared country colour scale. Both the Top-institutions bars and the
 // most-published-authors bars use this, so a country keeps the same colour in
@@ -3537,7 +3624,7 @@ perf_chart = {
         <div class="map-tooltip-meta">${d.version} · basis ${d.basis}</div>
         <div class="map-tooltip-meta" style="margin-top:6px">Seen in ${d.n_papers} paper${d.n_papers > 1 ? "s" : ""}:</div>
         ${seen.map(x => html`<div class="map-tooltip-meta" style="max-width:340px; white-space:normal; margin-top:3px">
-          · <i>${title_html(x.title)}</i> (${x.year}, ${x.type}), ${x.table}, p. ${x.page}; printed as
+          · <i>${title_html(pub_lookup.get(x.pub)?.title ?? "")}</i> (${pub_lookup.get(x.pub)?.year}, ${pub_lookup.get(x.pub)?.type}), ${x.table}, p. ${x.page}; printed as
           “${x.printed}”${x.subset ? ` on ${x.subset}` : ""}; ${x.basis}${x.as ? `; ${x.as}` : ""}${x.derived ? "; not printed, derived" : ""}</div>`)}
         ${d.detail.length > 8 ? html`<div class="map-tooltip-meta">… and ${d.detail.length - 8} more</div>` : ""}
       </div>`
@@ -4534,7 +4621,7 @@ dataset_paper_network = {
   // horizontally scrollable container, so 176 nodes can be read on a laptop.
   // The tooltip lives INSIDE .chart-wrap, because a fixed-position element
   // outside the fullscreened subtree is not rendered in fullscreen at all.
-  return html`<div class="chart-wrap">
+  const wrap = html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
       const el = this.parentElement;
       if (document.fullscreenElement) document.exitFullscreen();
@@ -4543,6 +4630,9 @@ dataset_paper_network = {
     <div class="chart-scroll">${svg.node()}</div>
     ${ds_tip}
   </div>`
+  // Ticks only while on screen: see run_when_visible.
+  run_when_visible(sim, wrap, invalidation)
+  return wrap
 }
 ```
 
@@ -6221,7 +6311,7 @@ network_chart = {
       .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
   }
 
-  return html`<div class="chart-wrap">
+  const wrap = html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
       const el = this.parentElement;
       if (document.fullscreenElement) document.exitFullscreen();
@@ -6230,6 +6320,9 @@ network_chart = {
     <div class="chart-scroll">${svg.node()}</div>
     ${tooltip_el}
   </div>`
+  // Ticks only while on screen: see run_when_visible.
+  run_when_visible(sim, wrap, invalidation)
+  return wrap
 }
 ```
 
@@ -6662,7 +6755,7 @@ author_algo_network = {
       .on("end", (ev, d) => { if (!ev.active) simulation.alphaTarget(0); d.fx = null; d.fy = null })
   }
 
-  return html`<div class="chart-wrap">
+  const wrap = html`<div class="chart-wrap">
     <button class="fs-btn" onclick="
       const el = this.parentElement;
       if (document.fullscreenElement) document.exitFullscreen();
@@ -6671,6 +6764,9 @@ author_algo_network = {
     <div class="chart-scroll">${svg.node()}</div>
     ${tooltip_el}
   </div>`
+  // Ticks only while on screen: see run_when_visible.
+  run_when_visible(sim, wrap, invalidation)
+  return wrap
 }
 ```
 

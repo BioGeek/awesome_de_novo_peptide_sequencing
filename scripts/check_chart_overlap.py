@@ -134,6 +134,32 @@ PROBE = r"""
 })()
 """
 
+# The force layouts tick only while on screen (run_when_visible in index.qmd),
+# so a probe of the page as loaded measures three unsettled layouts. Bring each
+# chart into view in turn, as a reader scrolling down would, and stay until its
+# dots stop moving.
+SNAP = """(() => { const w = document.querySelectorAll('.chart-wrap')[%d]; if (!w) return null;
+  w.scrollIntoView({block: 'center'});
+  return Array.from(w.querySelectorAll('circle')).slice(0, 400)
+    .map(c => (+c.getAttribute('cx') || 0).toFixed(0) + ',' + (+c.getAttribute('cy') || 0).toFixed(0)
+              + (c.getAttribute('transform') || '')).join(' ')
+    + Array.from(w.querySelectorAll('g[transform]')).slice(0, 400).map(g => g.getAttribute('transform')).join(' '); })()"""
+# Wait for the charts to exist first: until the page has built them there is
+# nothing to scroll to, and the pass below would end at once.
+t0 = time.time()
+while time.time() - t0 < 120 and not (ev("document.querySelectorAll('.chart-wrap svg').length") or 0) >= 15:
+    time.sleep(2)
+n_wraps = ev("document.querySelectorAll('.chart-wrap').length") or 0
+print(f"scrolling {n_wraps} charts into view in turn")
+for i in range(n_wraps):
+    t1, prev = time.time(), None
+    while time.time() - t1 < 60:
+        snap = ev(SNAP % i)
+        if snap is None or snap == prev:
+            break
+        prev = snap; time.sleep(1.5)
+ev("window.scrollTo(0, 0)")
+
 t0 = time.time(); last = None
 while time.time() - t0 < 150:
     r = ev(PROBE)

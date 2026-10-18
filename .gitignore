@@ -56,3 +56,6 @@ denovo.db.before-rebase
 
 # IndexNow submission list, written by render_scope.py in CI
 .indexnow-urls
+
+# Written by index.qmd on every render, served as data files by the site
+/data/

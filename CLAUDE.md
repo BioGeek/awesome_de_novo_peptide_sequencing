@@ -3092,9 +3092,43 @@ this job owns no table.
 
 `index.qmd` + `_quarto.yml` produce an interactive site published to GitHub Pages at <https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/>. Architecture:
 
-- A **single Python chunk** at the top of `index.qmd` queries `denovo.db` and calls `ojs_define(...)` for each dataset (publications, top authors, geography, institutions, co-authorship edges, author affiliations, algorithms, venues).
+- A **single Python chunk** at the top of `index.qmd` queries `denovo.db` and hands each dataset to OJS: the big ones as `data/<name>.json` files, the rest inline through `ojs_define(...)`. See **The homepage loads its data as files** below.
 - **OJS cells** call Quarto's built-in `transpose()` to convert column-oriented data into row-oriented arrays, then render with **Observable Plot** (bars / scatter / timeline) and **d3-force** (co-authorship network). Every counter, axis label, and prose number flows from those datasets; never hardcode anything in the .qmd.
 - `.github/workflows/publish.yml` rebuilds on every push to `main` and pushes to the `gh-pages` branch via `quarto-actions/publish@v2`. Cache is via `astral-sh/setup-uv@v3`; no PAT needed (uses `GITHUB_TOKEN`).
+
+### The homepage loads its data as files
+
+`ojs_define` inlines every value as JSON inside `index.html`, and by 2026-10
+that was **7.9 MB of an 8.4 MB page**. Measured with mobile Lighthouse from a
+GitHub runner (`lighthouse.yml`, 3 runs, median): score 6, first paint 10.4 s,
+largest paint 14.0 s, 15.0 s of blocking time, interactive at 40.5 s.
+
+**The big datasets are files now.** `DATA_FILES` in the first Python chunk
+names the 15 that are written to `data/<name>.json` (gitignored, regenerated
+every render) with Quarto's own DataFrame conversion copied verbatim, and one
+OJS block of `FileAttachment(...).json()` cells loads them, so every chart
+reads exactly the value it read before. Quarto copies a file referenced by
+`FileAttachment` into `_site` by itself. The page paints before any data
+arrives: 645 KB of HTML instead of 8.4 MB. **An inline value over 100 KB fails
+the render**, naming itself, so the next big table cannot land in the HTML
+unnoticed; it needs a `DATA_FILES` entry AND a cell, and a name with no cell is
+a ReferenceError that the chart audit counts.
+
+`perf_points` was 3.2 MB on its own, 2.5 MB of it tooltip provenance that
+repeated each paper's title, year and type in all 7000 entries, plus a cue
+sentence that was never displayed. The tooltip now looks the paper up in
+`pub_lookup` by id: 1.8 MB.
+
+**A force layout ticks only while its chart is on screen.** Throttled 4x, the
+three force charts blocked the main thread for 2.7 s of every 5 s from second
+5 to second 45, sections below anything visible: 24 s of blocking time in all.
+`run_when_visible` starts each simulation stopped and resumes it whenever its
+chart is within 200 px of the viewport, until it settles. Blocking time went
+from 24.0 s to 4.5 s, all of it in the first 5 s, building 41 charts.
+
+The consequence for `check_chart_overlap.py`: it now scrolls every
+`.chart-wrap` into view in turn and waits for its dots to stop moving before
+measuring, because a layout that never ran is not a layout worth auditing.
 
 ### The two network charts filter on papers per author, with a slider
 
