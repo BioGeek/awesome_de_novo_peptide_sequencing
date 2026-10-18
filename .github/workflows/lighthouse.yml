@@ -1,4 +1,5 @@
-# Mobile Lighthouse against the LIVE site, from a GitHub runner.
+# Mobile Lighthouse against the LIVE site, from a GitHub runner, weekly and on
+# demand, with a performance budget that opens an issue when it is broken.
 #
 # Why a workflow rather than a laptop: the machine this site is maintained on
 # sits behind an HTTPS gateway that decompresses HTML and CSS for inspection,
@@ -7,19 +8,45 @@
 # Insights API is the other clean source, but its anonymous quota is zero.
 #
 # Lighthouse's default mobile settings are the ones pagespeed.web.dev uses:
-# simulated slow 4G and a 4x CPU slowdown. Run three times; the median is the
-# number to quote, because single runs of a page this heavy vary by a lot.
+# simulated slow 4G and a 4x CPU slowdown. Three runs, and the MEDIAN is what
+# the budget is checked against, because single runs of a page this heavy
+# vary a lot: on 2026-10-18 one run's score ranged 32 to 41 and its blocking
+# time 3.8 to 5.5 s.
+#
+# THE BUDGET is set at roughly 1.5 to 2x the medians measured after the
+# 2026-10-18 fixes (LCP 5.8 s, TBT 3.8 s, CLS 0.04, HTML 661 KB), so it flags a
+# regression rather than noise. Before those fixes the page measured LCP
+# 14.0 s, TBT 15.0 s, CLS 0.41 and 8.4 MB of HTML, and would have broken all
+# four. A breach opens an issue assigned to the owner rather than failing a
+# publish: by the time this runs the site is already live, so a red run would
+# undo nothing. While the issue is open each breaching run comments on it,
+# and the first run back inside the budget closes it.
+#
+# Tuesday 11:00 UTC is clear of every refresh in the staircase. This job only
+# reads, so it cannot race them for main anyway.
 name: lighthouse
 
 on:
+  schedule:
+    - cron: '0 11 * * 2'
   workflow_dispatch:
     inputs:
       url:
-        description: "Page to measure"
+        description: "Page to measure (the budget is checked only for the home page)"
         default: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
 
 permissions:
   contents: read
+  issues: write
+
+env:
+  HOME_URL: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
+  # A scheduled run has no inputs, so it falls back to the home page.
+  URL: ${{ inputs.url || 'https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/' }}
+  BUDGET_LCP_S: "9"
+  BUDGET_TBT_MS: "7000"
+  BUDGET_CLS: "0.1"
+  BUDGET_HTML_KB: "1024"
 
 jobs:
   measure:
@@ -31,8 +58,6 @@ jobs:
           node-version: 22
 
       - name: Run Lighthouse three times
-        env:
-          URL: ${{ inputs.url }}
         run: |
           for i in 1 2 3; do
             npx --yes lighthouse@12.8.2 "$URL" --only-categories=performance \
@@ -40,6 +65,9 @@ jobs:
               --chrome-flags="--headless=new --no-sandbox" --quiet \
               --max-wait-for-load=120000 || true
           done
+          # The page's own size, uncompressed: curl sends no Accept-Encoding
+          # unless asked, so this is the HTML a browser has to parse.
+          curl -s -o /dev/null -w '%{size_download}' "$URL" > html_bytes.txt
 
       - name: Summarise
         run: |
@@ -61,18 +89,74 @@ jobs:
                   "TTI s": a["interactive"]["numericValue"] / 1000,
                   "KB": a["total-byte-weight"]["numericValue"] / 1024,
               })
-          keys = list(runs[0]) if runs else []
+          if not runs:
+              raise SystemExit("every Lighthouse run failed")
+          median = {k: statistics.median(r[k] for r in runs) for k in runs[0]}
+          median["HTML KB"] = int(open("html_bytes.txt").read() or 0) / 1024
+          json.dump({"runs": len(runs), "median": median}, open("median.json", "w"))
           print(f"### Mobile Lighthouse, {len(runs)} runs\n")
           print("| metric | " + " | ".join(f"run {i+1}" for i in range(len(runs))) + " | median |")
           print("|---|" + "---|" * (len(runs) + 1))
-          for k in keys:
-              vals = [r[k] for r in runs]
+          for k in runs[0]:
               fmt = (lambda v: f"{v:.3f}") if k == "CLS" else (lambda v: f"{v:,.1f}")
-              print(f"| {k} | " + " | ".join(fmt(v) for v in vals)
-                    + f" | **{fmt(statistics.median(vals))}** |")
+              print(f"| {k} | " + " | ".join(fmt(r[k]) for r in runs)
+                    + f" | **{fmt(median[k])}** |")
+          print(f"\nHome page HTML, uncompressed: {median['HTML KB']:,.0f} KB")
+          PY
+
+      - name: Check the budget and open, update or close the issue
+        if: env.URL == env.HOME_URL
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, os, subprocess
+          m = json.load(open("median.json"))["median"]
+          budget = [  # (metric, median, limit, unit)
+              ("Largest contentful paint", m["LCP s"], float(os.environ["BUDGET_LCP_S"]), "s"),
+              ("Total blocking time", m["TBT ms"], float(os.environ["BUDGET_TBT_MS"]), "ms"),
+              ("Cumulative layout shift", m["CLS"], float(os.environ["BUDGET_CLS"]), ""),
+              ("Home page HTML", m["HTML KB"], float(os.environ["BUDGET_HTML_KB"]), "KB"),
+          ]
+          fmt = lambda v, u: f"{v:.3f}" if not u else f"{v:,.1f} {u}"
+          table = ("| metric | median | budget | |\n|---|---|---|---|\n" + "\n".join(
+              f"| {name} | {fmt(v, u)} | {fmt(lim, u)} | {'**over**' if v > lim else 'ok'} |"
+              for name, v, lim, u in budget))
+          over = [name for name, v, lim, _u in budget if v > lim]
+          print("\n### Budget\n\n" + table + "\n")
+
+          def gh(*args):
+              return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
+          TITLE = "Site performance budget exceeded"
+          found = [i for i in json.loads(gh("issue", "list", "--state", "open", "--search",
+                                            f"{TITLE} in:title", "--json", "number,title"))
+                   if i["title"] == TITLE]
+          run = os.environ["RUN_URL"]
+          if not over:
+              for i in found:
+                  gh("issue", "close", str(i["number"]), "--comment",
+                     f"Back inside the budget:\n\n{table}\n\nClosed by {run}")
+                  print(f"Closed #{i['number']}: inside the budget again.")
+              if not found:
+                  print("Inside the budget.")
+              raise SystemExit(0)
+          body = (f"Mobile Lighthouse on the live home page, median of three runs, is over "
+                  f"budget on: {', '.join(over)}.\n\n{table}\n\nThe budget and its reasoning are "
+                  f"in `.github/workflows/lighthouse.yml`; the full reports are this run's "
+                  f"artifact. Run: {run}")
+          if found:
+              gh("issue", "comment", str(found[0]["number"]), "--body",
+                 f"@{os.environ['OWNER']} still over budget. " + body)
+              print(f"Commented on #{found[0]['number']}.")
+          else:
+              print(gh("issue", "create", "--title", TITLE, "--body", body,
+                       "--assignee", os.environ["OWNER"]))
           PY
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: lighthouse-reports
           path: lh_*

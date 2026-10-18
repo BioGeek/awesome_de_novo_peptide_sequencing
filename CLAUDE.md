@@ -3136,6 +3136,18 @@ measured in headless Chrome at 412, 800 and 1280 px, in index.qmd's own
 render. CLS went from 0.41 to 0.006. Re-measure the heights if either cell
 gains a row.
 
+**A performance budget is checked weekly.** `lighthouse.yml` runs mobile
+Lighthouse three times on the live home page every Tuesday at 11:00 UTC (and
+on demand from the Actions tab) and checks the MEDIAN against LCP 9 s, total
+blocking time 7 s, CLS 0.1 and 1 MB of uncompressed HTML: roughly 1.5 to 2x
+the medians after the fixes above (5.8 s, 3.8 s, 0.04, 646 KB), because single
+runs vary a lot. The page before them broke all four. A breach opens
+"Site performance budget exceeded", assigned to the owner, comments on it
+while it stays open and closes it on the first run back inside. It never fails
+a publish: the site is live by then, so a red run would undo nothing. Measure
+from there, not from the maintainer's machine, whose gateway decompresses
+HTML and makes every local run look several times worse.
+
 The consequence for `check_chart_overlap.py`: it now scrolls every
 `.chart-wrap` into view in turn and waits for its dots to stop moving before
 measuring, because a layout that never ran is not a layout worth auditing.
