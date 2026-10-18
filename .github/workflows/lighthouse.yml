@@ -1,0 +1,78 @@
+# Mobile Lighthouse against the LIVE site, from a GitHub runner.
+#
+# Why a workflow rather than a laptop: the machine this site is maintained on
+# sits behind an HTTPS gateway that decompresses HTML and CSS for inspection,
+# so a local Lighthouse run sees an 8 MB page where a visitor receives about
+# 1 MB, and its numbers are far worse than anyone else's. The PageSpeed
+# Insights API is the other clean source, but its anonymous quota is zero.
+#
+# Lighthouse's default mobile settings are the ones pagespeed.web.dev uses:
+# simulated slow 4G and a 4x CPU slowdown. Run three times; the median is the
+# number to quote, because single runs of a page this heavy vary by a lot.
+name: lighthouse
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Page to measure"
+        default: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Lighthouse three times
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          for i in 1 2 3; do
+            npx --yes lighthouse@12.8.2 "$URL" --only-categories=performance \
+              --output=json --output=html --output-path="lh_$i" \
+              --chrome-flags="--headless=new --no-sandbox" --quiet \
+              --max-wait-for-load=120000 || true
+          done
+
+      - name: Summarise
+        run: |
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import glob, json, statistics
+          runs = []
+          for f in sorted(glob.glob("lh_*.report.json")):
+              lr = json.load(open(f))
+              if lr.get("runtimeError"):
+                  continue
+              a = lr["audits"]
+              runs.append({
+                  "score": round(100 * lr["categories"]["performance"]["score"]),
+                  "FCP s": a["first-contentful-paint"]["numericValue"] / 1000,
+                  "LCP s": a["largest-contentful-paint"]["numericValue"] / 1000,
+                  "TBT ms": a["total-blocking-time"]["numericValue"],
+                  "CLS": a["cumulative-layout-shift"]["numericValue"],
+                  "SI s": a["speed-index"]["numericValue"] / 1000,
+                  "TTI s": a["interactive"]["numericValue"] / 1000,
+                  "KB": a["total-byte-weight"]["numericValue"] / 1024,
+              })
+          keys = list(runs[0]) if runs else []
+          print(f"### Mobile Lighthouse, {len(runs)} runs\n")
+          print("| metric | " + " | ".join(f"run {i+1}" for i in range(len(runs))) + " | median |")
+          print("|---|" + "---|" * (len(runs) + 1))
+          for k in keys:
+              vals = [r[k] for r in runs]
+              fmt = (lambda v: f"{v:.3f}") if k == "CLS" else (lambda v: f"{v:,.1f}")
+              print(f"| {k} | " + " | ".join(fmt(v) for v in vals)
+                    + f" | **{fmt(statistics.median(vals))}** |")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lh_*
