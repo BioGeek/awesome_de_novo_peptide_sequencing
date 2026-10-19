@@ -322,6 +322,18 @@ def date_to_mtime(date_str: str | None) -> float:
 # Page templates
 # --------------------------------------------------------------------------
 
+def supplement_lines(supps: list[dict]) -> list[str]:
+    """A '## Supplementary material' section, or nothing for a paper without."""
+    if not supps:
+        return []
+    L = ["## Supplementary material", ""]
+    for x in supps:
+        line = f"- [{md_escape(x['title'])}]({x['url']}) <small>({md_escape(x['label'])}"
+        line += f", {x['pages']} pages)</small>" if x["pages"] else ")</small>"
+        L.append(line)
+    return L + [""]
+
+
 def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     K = "publications"
     L = []
@@ -422,6 +434,8 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                 line += f": {md_escape(descr)}"
             L.append(line)
         L.append("")
+
+    L += supplement_lines(ctx["supplements"])
 
     # Data, split the way the role column splits it: what this paper put into
     # the world, and what it consumed. 'introduces' is the deposit; everything
@@ -930,6 +944,10 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     # Repository URLs are stable, but stars / open issues / last-push refresh
     # DAILY. Baking them in would rewrite every algorithm page every day, so
     # only the URL goes here; the live numbers stay on the Code activity chart.
+    # The describing papers' supplements, where a method lives in them: the
+    # Hunt Lab Guide's worked examples are what a reader of that page wants.
+    L += supplement_lines(ctx["supplements"])
+
     if ctx["repos"]:
         L += ["## Code", ""]
         for url in ctx["repos"]:
@@ -1774,6 +1792,15 @@ def load(conn: sqlite3.Connection) -> dict:
     # Casanovo 4.2.0 was trained on ~2M PSMs from MassIVE-KB v1 + v2.0.15 and
     # 5.2.0-Orbitrap is a different selector -- so the version and the training
     # data are shown, not just a link.
+    # A paper's supplementary files, in the publisher's own order. The Hunt Lab
+    # Guide's two worked-example guides, by CAD and by ETD, are the reason
+    # this exists: they are the substance of that paper and live only as its
+    # supplements.
+    d["supplements"] = defaultdict(list)
+    for r in q("SELECT publication_id, label, title, url, pages "
+               "  FROM publication_supplement ORDER BY publication_id, position"):
+        d["supplements"][r["publication_id"]].append(dict(r))
+
     d["checkpoints"] = defaultdict(list)
     for r in q("SELECT algorithm_id, label, tool_version, trained_on, host, url, "
                "       accession, licence, size_bytes, archival, status, last_checked, "
@@ -2387,6 +2414,7 @@ def main() -> int:
                 "counterpart": counterpart,
                 "supervisors": d["supervisors_of"].get(pid, []),
                 "datasets": d["pub_datasets"].get(pid, []),
+                "supplements": d["supplements"].get(pid, []),
             }
             body, mtime = render_publication(site, row, ctx)
             emit("publications", site.slugs["publications"][pid], body, mtime)
@@ -2473,6 +2501,8 @@ def main() -> int:
                 "used": used,
                 "repos": repos,
                 "checkpoints": d["checkpoints"].get(gid, []),
+                "supplements": [x for pub_id, *_r in described
+                                for x in d["supplements"].get(pub_id, [])],
                 "authors": authors,
                 "has_metrics": any(u in d["metric_urls"] for u in repos),
                 "has_prolific_author": any(a in d["prolific"] for a, _n in authors),

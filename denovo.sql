@@ -66440,6 +66440,18 @@ INSERT INTO paper_comparison_note VALUES(352,1,'emphasis','column ptm accuracy, 
 INSERT INTO paper_comparison_note VALUES(370,0,'emphasis','column amino acid precision: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).');
 INSERT INTO paper_comparison_note VALUES(370,1,'emphasis','column peptide precision at coverage 1: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.856).');
 INSERT INTO paper_comparison_note VALUES(370,2,'emphasis','column amino acid recall: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).');
+CREATE TABLE publication_supplement (
+    id             INTEGER PRIMARY KEY,
+    publication_id INTEGER NOT NULL REFERENCES publication(id),
+    position       INTEGER NOT NULL,
+    label          TEXT NOT NULL,
+    title          TEXT NOT NULL,
+    url            TEXT NOT NULL,
+    pages          INTEGER,
+    UNIQUE (publication_id, position)
+);
+INSERT INTO publication_supplement VALUES(1,195,1,'Supplementary 1 (CAD)','The Hunt Lab Guide to De Novo Peptide Sequence Analysis by CAD','https://www.mcponline.org/cms/10.1016/j.mcpro.2024.100875/attachment/b424ba9a-d632-4721-b0c8-aa3101fa7232/mmc1.pdf',25);
+INSERT INTO publication_supplement VALUES(2,195,2,'Supplementary 2 (ETD)','The Hunt Lab Guide to De Novo Peptide Sequence Analysis by ETD','https://www.mcponline.org/cms/10.1016/j.mcpro.2024.100875/attachment/e3157d31-1405-43e9-841f-f5d64ef36e45/mmc2.pdf',24);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
