@@ -1296,7 +1296,7 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     """One dataset: its versions, where each version lives, and who used it.
 
     The page the Every-dataset table sends a reader to. It exists because
-    "nine-species" names four different objects and no other page can say so:
+    "nine-species" names several different objects and no other page can say so:
     the version list with its addresses IS the answer to which spectra a number
     was computed over.
 
@@ -2324,7 +2324,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~7546 thin pages out of
+    # committed under pages/. search: false keeps ~7548 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.

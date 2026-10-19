@@ -37785,6 +37785,8 @@ INSERT INTO dataset VALUES(489,'Identification of broadly inhibitory anti-PfEMP1
 INSERT INTO dataset VALUES(490,'MassNet','AI-ready corpus of more than 1.5 billion DDA MS/MS spectra from 27,643 LC-MS runs in 648 public projects over 35 species, searched with FragPipe and Sage and stored in the MSDT tensor format.','training','DDA','35 animal, plant and microbial species','https://guomics.com/software/massnet');
 INSERT INTO dataset VALUES(491,'15-species benchmark','De novo sequencing benchmark built by the MassNet authors from 15 PRIDE submissions across animals, plants and microbes, acquired on Q Exactive HF, Orbitrap Exploris 480 and Orbitrap Astral instruments.','benchmark','DDA','Homo sapiens; Mus musculus; Aedes aegypti; Drosophila melanogaster; Arabidopsis thaliana; Zea mays; Solanum lycopersicum; Escherichia coli; Saccharomyces cerevisiae; Pyrococcus furiosus; Aspergillus fumigatus; Toxoplasma gondii; Trypanosoma brucei; Bacteroides thetaiotaomicron; Acinetobacter calcoaceticus',NULL);
 INSERT INTO dataset VALUES(492,'ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy','Test data for ScopeNovo, deposited by its authors on Zenodo.','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(493,'dIon-de-novo-labeled-v1 (DNL-v1)','dIon''s supervised de novo training corpus, combining MassIVE-KB, ProteomeTools and further labelled sources, split by canonical peptide identity with exact-spectrum duplicates removed. Internally called KitchenSink V5.','training','DDA',NULL,'https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/corpora/DNL-v1');
+INSERT INTO dataset VALUES(494,'A systematic evaluation of common yeast whole cell lysate proteomics sample preparation protocols',NULL,'deposit',NULL,'Saccharomyces cerevisiae (baker''s yeast)','https://www.ebi.ac.uk/pride/archive/projects/PXD026806');
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38309,6 +38311,13 @@ INSERT INTO dataset_version VALUES(519,490,'XuanjiNovo training set (100M PSMs)'
 INSERT INTO dataset_version VALUES(520,491,'preprint (325 files)','As first described in the bioRxiv preprint: 325 DDA files from 15 species. The preprint names no accession for it beyond the human Astral submission, PXD046453, so it has no address here.',NULL,NULL,NULL,NULL,NULL,15);
 INSERT INTO dataset_version VALUES(521,491,'Nature Methods (307 files)','307 DDA LC-MS/MS files from 15 species, deposited inside PXD071590 and assembled from the 15 PRIDE submissions listed as provenance. Four of them (PXD028713, PXD040002, PXD025030, PXD046453) are also in MassNet and were excluded from XuanjiNovo training.',NULL,NULL,NULL,NULL,NULL,989);
 INSERT INTO dataset_version VALUES(522,492,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,990);
+INSERT INTO dataset_version VALUES(523,24,'MSKB-final (dIon)','Casanovo''s official MassIVE-KB train/test partition, processed to Lance, with a small validation set carved from training by canonical peptidoform (seed 42). A 196,979-spectrum charge 1-4 subset of the test split is kept for comparisons with Casanovo.',NULL,1989996,10004,200000,'2026-10-09',981);
+INSERT INTO dataset_version VALUES(524,493,'v1',NULL,NULL,5275467,170140,345414,'2026-10-09',981);
+INSERT INTO dataset_version VALUES(525,18,'capped de novo test (dIon)','Run-disjoint, multi-species de novo test corpus from PXD019483: 70 species, at most 100,000 spectra per species. Filter the species column for the per-species evaluations.',NULL,NULL,NULL,4926232,'2026-10-09',981);
+INSERT INTO dataset_version VALUES(526,18,'representation benchmark (dIon)','Run-disjoint validation and test populations for spectrum retrieval and pair discrimination, not peptidoform-disjoint. Distinct from dIon''s capped de novo test.',NULL,NULL,658738,4112590,'2026-10-09',981);
+INSERT INTO dataset_version VALUES(527,1,'representation benchmark (dIon)','Spectrum-retrieval and pair-discrimination benchmark derived from the revised benchmark (MSV000090982), with dIon''s development backbones excluded from the held-out set. Measures spectrum representations, not de novo sequencing.',NULL,NULL,6119,182393,'2026-10-09',981);
+INSERT INTO dataset_version VALUES(528,494,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-06-18',NULL);
+INSERT INTO dataset_version VALUES(529,494,'single label-free run (dIon)','One run, MDR27022021_S01_2_DDA01.raw: 39,460 MS2 spectra with no peptide labels. dIon scores de novo predictions by their occurrence in the yeast proteome (UniProt UP000002311), not by peptide accuracy.',39460,NULL,NULL,NULL,'2026-10-09',981);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -39614,6 +39623,13 @@ INSERT INTO dataset_address VALUES(1305,19,'PRIDE','PXD065790','https://www.ebi.
 INSERT INTO dataset_address VALUES(1306,19,'PRIDE','PXD068040','https://www.ebi.ac.uk/pride/archive/projects/PXD068040','metadata-gap study',1);
 INSERT INTO dataset_address VALUES(1307,19,'PRIDE','PXD068926','https://www.ebi.ac.uk/pride/archive/projects/PXD068926','metadata-gap study',1);
 INSERT INTO dataset_address VALUES(1308,522,'Zenodo','10.5281/zenodo.23181841','https://doi.org/10.5281/zenodo.23181841',NULL,0);
+INSERT INTO dataset_address VALUES(1309,523,'Hugging Face','alfred-n/dIon-datasets#de_novo/corpora/MSKB-final','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/corpora/MSKB-final','de_novo/corpora/MSKB-final',0);
+INSERT INTO dataset_address VALUES(1310,524,'Hugging Face','alfred-n/dIon-datasets#de_novo/corpora/DNL-v1','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/corpora/DNL-v1','de_novo/corpora/DNL-v1',0);
+INSERT INTO dataset_address VALUES(1311,525,'Hugging Face','alfred-n/dIon-datasets#de_novo/kingdoms','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/kingdoms','de_novo/kingdoms',0);
+INSERT INTO dataset_address VALUES(1312,526,'Hugging Face','alfred-n/dIon-datasets#representation_benchmarks/kingdoms','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/kingdoms','representation_benchmarks/kingdoms',0);
+INSERT INTO dataset_address VALUES(1313,527,'Hugging Face','alfred-n/dIon-datasets#representation_benchmarks/ninespecies','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/ninespecies','representation_benchmarks/ninespecies',0);
+INSERT INTO dataset_address VALUES(1314,528,'PRIDE','PXD026806','https://www.ebi.ac.uk/pride/archive/projects/PXD026806',NULL,0);
+INSERT INTO dataset_address VALUES(1315,529,'Hugging Face','alfred-n/dIon-datasets#de_novo/yeast_label_free','https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/yeast_label_free','de_novo/yeast_label_free',0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -40505,6 +40521,12 @@ INSERT INTO publication_dataset VALUES(896,989,3,NULL,'uses');
 INSERT INTO publication_dataset VALUES(897,990,492,522,'introduces');
 INSERT INTO publication_dataset VALUES(898,990,1,1,'uses');
 INSERT INTO publication_dataset VALUES(899,990,1,2,'uses');
+INSERT INTO publication_dataset VALUES(900,981,24,523,'introduces');
+INSERT INTO publication_dataset VALUES(901,981,493,524,'introduces');
+INSERT INTO publication_dataset VALUES(902,981,18,525,'introduces');
+INSERT INTO publication_dataset VALUES(903,981,18,526,'introduces');
+INSERT INTO publication_dataset VALUES(904,981,1,527,'introduces');
+INSERT INTO publication_dataset VALUES(905,981,494,529,'introduces');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -66459,6 +66481,35 @@ INSERT INTO sqlite_sequence VALUES('affiliation',1414);
 INSERT INTO sqlite_sequence VALUES('author',3929);
 INSERT INTO sqlite_sequence VALUES('algorithm',822);
 INSERT INTO sqlite_sequence VALUES('publication',991);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -66485,11 +66536,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -66505,12 +66551,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -66525,15 +66565,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -66562,6 +66593,20 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -66569,27 +66614,4 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;

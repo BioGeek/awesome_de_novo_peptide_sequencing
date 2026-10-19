@@ -3516,7 +3516,7 @@ viewof perf_subset = Inputs.select(perf_subset_options, {label: "Species / set"}
 ```{ojs}
 //| echo: false
 // ONE NINE-SPECIES VERSION AT A TIME, by default, and it is the REVISED one.
-// "Nine-species" is four different collections of spectra (see The data
+// "Nine-species" is several different collections of spectra (see The data
 // underneath), and a number on the original 2017 release is not the same
 // claim as one on the revised benchmark, whose test peptides no longer leak
 // into training. The chart opens on revised (main): it is the curated version,
@@ -3778,12 +3778,18 @@ Inputs.table(perf_table, {
 ## The data underneath
 
 Every benchmark score above was produced by running software over spectra,
-and the spectra have versions. "Trained on nine-species" names four different
+and the spectra have versions. "Trained on nine-species" names ${number_word(nine_species_versions)} different
 objects, and many of the papers that say it do not say which. The charts in
 this section are about that.
 
 ```{ojs}
 //| echo: false
+// A small count in prose reads as a word ("six different objects"), a larger
+// one as digits. The nine-species sentence above used to say "four", written
+// in by hand, and was wrong as soon as a sixth version row arrived.
+number_word = n => ["no", "one", "two", "three", "four", "five", "six", "seven",
+                    "eight", "nine", "ten"][n] ?? String(n)
+nine_species_versions = dataset_versions_t.filter(v => v.dataset === "Nine-species benchmark").length
 dataset_usage_t = transpose(dataset_usage)
 dataset_versions_t = transpose(dataset_versions)
 dataset_addresses_t = transpose(dataset_addresses)

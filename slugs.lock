@@ -5111,6 +5111,8 @@ datasets	489	identification-of-broadly-inhibitory-anti-pfemp1-antibodies-by-mass
 datasets	490	massnet
 datasets	491	15-species-benchmark
 datasets	492	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
+datasets	493	dion-de-novo-labeled-v1-dnl-v1
+datasets	494	a-systematic-evaluation-of-common-yeast-whole-cell-lysate-proteomics-sample
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar

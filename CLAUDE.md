@@ -1432,7 +1432,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**481 datasets, 511 versions, 1295 addresses, 884 publication links over 272 papers.**
+**483 datasets, 518 versions, 1302 addresses, 890 publication links over 273 papers.**
 
 **The nine-species benchmark alone has four versions**, and they are
 distinguishable by number, which is the only reliable way:
@@ -1469,6 +1469,15 @@ distinguishable by number, which is the only reliable way:
   architecture on.
 - **ProteoBench selection**, the 779,879 spectra that benchmark scores against.
 
+A fifth row, dIon's **representation benchmark** (publication 981), is derived
+from the revised deposit and measures spectrum retrieval rather than *de novo*
+sequencing, so it is a version of these spectra and not a fifth thing a
+sequencing paper can mean. dIon also contributed versions of two other
+datasets: Casanovo's MassIVE-KB split with a validation set carved out
+(`MSKB-final (dIon)`) and a capped, run-disjoint *de novo* test set of the
+Kingdoms of Life deposit, each addressed at its folder of
+`alfred-n/dIon-datasets`, a 16-dataset bundle on Hugging Face.
+
 **Provenance is an address, not a different dataset.** The benchmark is nine
 unrelated third-party PRIDE submissions re-curated into one MassIVE deposit, so
 those nine carry `is_provenance = 1` and name their species in `part`. They are
@@ -1476,9 +1485,9 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 60 papers use the
+**A NULL `dataset_version_id` is the finding, not a gap.** 61 papers use the
 nine-species benchmark; 22 name the original, 15 the revised, 3 the InstaNovo
-split, and **20 print only a per-species provenance accession**, which does not
+split, 1 dIon's retrieval benchmark, and **20 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
 
@@ -1534,7 +1543,7 @@ taken from `sed` land somewhere else and a slice silently drops a group (it
 dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 19 of 511 versions have none, counting only addresses
+missing one.** 19 of 518 versions have none, counting only addresses
 that are not provenance. Two shapes: tiers that are not published but are
 reproducible from the raw accessions recorded as their provenance (ACFM, and
 ProteomeTools' all-confidence version, InstaNovo's AC-PT); and the living-proteomics benchmark's **private holdouts** (11 versions:
