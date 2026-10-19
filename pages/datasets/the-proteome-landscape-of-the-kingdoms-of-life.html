@@ -153,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">The Proteome Landscape of the Kingdoms of Life</h1>
-<p class="subtitle lead">benchmark · DDA · 1 version · 8 papers</p>
+<p class="subtitle lead">benchmark · DDA · 3 versions · 9 papers</p>
 </div>
 
 <div>
@@ -175,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","description":"A cross-kingdom proteomics survey, deposited as two accessions and reused as a generalisation test across species.","identifier":["PXD014877","PXD019483"],"name":"The Proteome Landscape of the Kingdoms of Life"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","description":"A cross-kingdom proteomics survey, deposited as two accessions and reused as a generalisation test across species.","identifier":["PXD014877","PXD019483","alfred-n/dIon-datasets#de_novo/kingdoms","alfred-n/dIon-datasets#representation_benchmarks/kingdoms"],"name":"The Proteome Landscape of the Kingdoms of Life"}</script>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -208,6 +208,30 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>PRIDE</strong> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD019483">PXD019483</a></li>
 </ul>
 </section>
+<section id="capped-de-novo-test-dion" class="level3">
+<h3 class="anchored" data-anchor-id="capped-de-novo-test-dion">capped de novo test (dIon)</h3>
+<p>Run-disjoint, multi-species <em>de novo</em> test corpus from PXD019483: 70 species, at most 100,000 spectra per species. Filter the species column for the per-species evaluations.</p>
+<p>test 4,926,232 · released 2026-10-09 · introduced by <a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a></p>
+<p>Where it lives:</p>
+<ul>
+<li><strong>Hugging Face</strong> · <a href="https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/de_novo/kingdoms">alfred-n/dIon-datasets#de_novo/kingdoms</a> <small>de_novo/kingdoms</small></li>
+</ul>
+</section>
+<section id="representation-benchmark-dion" class="level3">
+<h3 class="anchored" data-anchor-id="representation-benchmark-dion">representation benchmark (dIon)</h3>
+<p>Run-disjoint validation and test populations for spectrum retrieval and pair discrimination, not peptidoform-disjoint. Distinct from dIon’s capped <em>de novo</em> test.</p>
+<p>validation 658,738 · test 4,112,590 · released 2026-10-09 · introduced by <a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a></p>
+<p>Where it lives:</p>
+<ul>
+<li><strong>Hugging Face</strong> · <a href="https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/kingdoms">alfred-n/dIon-datasets#representation_benchmarks/kingdoms</a> <small>representation_benchmarks/kingdoms</small></li>
+</ul>
+</section>
+</section>
+<section id="deposited-by-1" class="level2">
+<h2 class="anchored" data-anchor-id="deposited-by-1">Deposited by (1)</h2>
+<ul>
+<li><a href="../publications/dion-fragmentation-based-invariance-for-self-supervised-learning-of-tandem-mass.html">dIon: Fragmentation-Based Invariance for Self-Supervised Learning of Tandem Mass Spectra</a> (2026) <small>preprint</small> <small>capped de novo test (dIon), representation benchmark (dIon)</small></li>
+</ul>
 </section>
 <section id="used-by-8" class="level2">
 <h2 class="anchored" data-anchor-id="used-by-8">Used by (8)</h2>
@@ -222,12 +246,13 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/pepnet-a-fully-convolutional-neural-network-for-de-novo-peptide-sequencing.html">PepNet: A Fully Convolutional Neural Network for De novo Peptide Sequencing</a> (2022) <small>preprint</small> <small>as deposited</small></li>
 </ul>
 </section>
-<section id="methods-on-these-papers-7" class="level2">
-<h2 class="anchored" data-anchor-id="methods-on-these-papers-7">Methods on these papers (7)</h2>
+<section id="methods-on-these-papers-8" class="level2">
+<h2 class="anchored" data-anchor-id="methods-on-these-papers-8">Methods on these papers (8)</h2>
 <ul>
 <li><a href="../algorithms/instanovo-fm.html">InstaNovo-FM</a> <small>algorithm</small></li>
 <li><a href="../algorithms/pepnet.html">PepNet</a> <small>algorithm</small></li>
 <li><a href="../algorithms/winnow.html">Winnow</a> <small>post-processor</small></li>
+<li><a href="../algorithms/dion.html">dIon</a> <small>algorithm</small></li>
 <li><a href="../algorithms/punifind.html">pUniFind</a> <small>algorithm</small></li>
 <li><a href="../algorithms/pi-helixnovo2.html">π-HelixNovo2</a> <small>algorithm</small></li>
 <li><a href="../algorithms/pi-msnet.html">π-MSNet</a> <small>adjacent</small></li>
