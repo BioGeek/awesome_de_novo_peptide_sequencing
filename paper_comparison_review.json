@@ -846,9 +846,9 @@
   "pub": 255,
   "state": "approved"
  },
- "p255-pg8-t1-nine-species-revised-main": {
+ "p255-pg8-t1-nine-species-revised-build-not-stated": {
   "cells": 10,
-  "label": "Table 1 [Nine-species \u00b7 revised (main)]",
+  "label": "Table 1 [Nine-species \u00b7 revised (build not stated)]",
   "on": "2026-10-03",
   "pub": 255,
   "state": "approved"
@@ -1406,9 +1406,9 @@
   "pub": 4,
   "state": "approved"
  },
- "p4-pg7-t2-nine-species-revised-main": {
+ "p4-pg7-t2-nine-species-revised-build-not-stated": {
   "cells": 10,
-  "label": "Table2 [Nine-species \u00b7 revised (main)]",
+  "label": "Table2 [Nine-species \u00b7 revised (build not stated)]",
   "on": "2026-10-03",
   "pub": 4,
   "state": "approved"
@@ -2317,14 +2317,14 @@
   "state": "dismissed"
  },
  "p978-pg17-t6": {
-  "cells": 0,
+  "cells": 22,
   "label": "Table6",
   "on": "2026-10-16",
   "pub": 978,
   "state": "dismissed"
  },
  "p978-pg17-t7": {
-  "cells": 0,
+  "cells": 14,
   "label": "Table7",
   "on": "2026-10-16",
   "pub": 978,
@@ -2401,7 +2401,7 @@
   "state": "dismissed"
  },
  "p978-pg7-t1": {
-  "cells": 0,
+  "cells": 24,
   "label": "Table1",
   "on": "2026-10-16",
   "pub": 978,
@@ -2638,9 +2638,9 @@
   "pub": 990,
   "state": "approved"
  },
- "p990-pg5-t1-nine-species-revised-main": {
+ "p990-pg5-t1-nine-species-revised-build-not-stated": {
   "cells": 18,
-  "label": "Table 1 [Nine-species \u00b7 revised (main)]",
+  "label": "Table 1 [Nine-species \u00b7 revised (build not stated)]",
   "on": "2026-10-16",
   "pub": 990,
   "state": "approved"

@@ -226,12 +226,27 @@ def main() -> int:
     # '10.5281/ZENODO.6791263' became a second dataset beside the lower-case
     # one already catalogued. Every accession is keyed in lower case.
     for acc, dsid, vid, prov in rows:
-        by_acc[acc.split("#")[0].lower()].append((dsid, vid, prov))
+        by_acc[acc.split("#")[0].lower()].append((dsid, vid, prov, "#" in acc))
     for acc, claims in by_acc.items():
-        datasets = {d for d, _, _ in claims}
-        direct = [(d, v) for d, v, p in claims if not p]
+        datasets = {d for d, _, _, _ in claims}
+        direct = [(d, v) for d, v, p, _ in claims if not p]
+        # A PAPER PRINTS THE BARE ACCESSION, never the '#folder' that tells one
+        # version's address from another's. MSV000090982 holds three builds
+        # under 'MSV000090982#peak' and two '#updates/...' folders, plus the
+        # bare address on 'revised (build not stated)', which is exactly what a
+        # paper printing only the accession has told us. So when one direct
+        # claim is the bare accession and the rest are folders, it wins.
+        # The same holds ACROSS datasets: denovo_benchmarks' deposit
+        # MSV000096182 is a dataset of its own at the bare accession, and its
+        # nine-species part is a version of the nine-species benchmark at
+        # 'MSV000096182#9_species'. A paper printing MSV000096182 means the
+        # deposit.
+        bare = [(d, v) for d, v, p, sub in claims if not p and not sub]
+        subs_only = all(sub and not p for d, v, p, sub in claims if (d, v) not in bare)
         if len(datasets) == 1 and len(direct) == 1:
             known[acc] = direct[0]
+        elif len(bare) == 1 and subs_only:
+            known[acc] = bare[0]
         elif len(datasets) == 1:
             known[acc] = (next(iter(datasets)), None)
         # An accession claimed by two different datasets is ambiguous and is

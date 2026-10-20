@@ -148,6 +148,11 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version LIKE 'revised%'"),
+    ("CLAUDE.md", "nine-species, revised build not stated",
+     r"belongs: (\d+) links\s+do\.", "SELECT COUNT(*) FROM publication_dataset pd "
+     "JOIN dataset_version v ON v.id=pd.dataset_version_id "
+     "JOIN dataset d ON d.id=v.dataset_id "
+     "WHERE d.name='Nine-species benchmark' AND v.version='revised (build not stated)'"),
     ("CLAUDE.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
      "SELECT COUNT(*) FROM publication_dataset WHERE dataset_id="

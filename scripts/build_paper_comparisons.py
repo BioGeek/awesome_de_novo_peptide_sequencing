@@ -3416,7 +3416,7 @@ DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
 VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
     "Nine-species benchmark": [
         (re.compile(r"(?i)9-?species-?v2|nine-?species-?v2|revised (?:nine-species )?(?:benchmark|dataset)|"
-                    r"multi-?species benchmark|re-?curated"), "revised (main)"),
+                    r"multi-?species benchmark|re-?curated"), "revised (build not stated)"),
         (re.compile(r"(?i)balanced"), "revised (balanced)"),
         (re.compile(r"(?i)InstaNovo split|parquet split"), "InstaNovo split"),
         (re.compile(r"(?i)ProteoBench"), "ProteoBench selection"),
@@ -3425,7 +3425,12 @@ VERSION_LEXICON: dict[str, list[tuple[re.Pattern, str]]] = {
         # The ACCESSION is the most reliable cue of all: Prime-DiffNovo heads
         # its columns 'Nine-species MSV000081382' and 'Revised Nine-species
         # MSV000090982'. Listed after the phrases, so a stated phrase wins.
-        (re.compile(r"MSV000090982"), "revised (main)"),
+        # NEITHER the phrases above NOR this accession says WHICH revised
+        # build: MSV000090982 holds three, from 2022, 2023 and 2024, and the
+        # published benchmark is a fourth, Zenodo main (NINE_SPECIES.md). So
+        # both resolve to 'revised (build not stated)', and a table whose
+        # paper does say is pinned in TABLE_DATASET.
+        (re.compile(r"MSV000090982"), "revised (build not stated)"),
         (re.compile(r"MSV000081382"), "original (DeepNovo, 2017)"),
     ],
 }
@@ -5208,13 +5213,30 @@ TABLE_METRIC: dict[tuple[int, str],
 }
 
 
+# THE BUILD OF THE REVISED NINE-SPECIES BENCHMARK, where a paper says which
+# one in words the lexicon cannot read off the table's page:
+# (paper, table, version the table resolved to) -> the version it really is.
+# Pairwise Attention gives the path
+# "MSV000090982/updates/2024-05-14_woutb_71950b89/peak/9speciesbenchmark/" and
+# prints that release's counts (1,358,337 B. subtilis, 82,290 C. endoloripes);
+# pi-PrimeNovo's Supplementary Table 1 gives MSV000090982 as 2,812,194
+# spectra, the 2022 release exactly, and its Supplementary Table 5 is that
+# dataset.
+VERSION_OVERRIDE: dict[tuple[int, str, str], str] = {
+    (4, "Table2", "revised (build not stated)"): "revised (MassIVE 2024)",
+    (4, "Table3", "revised (build not stated)"): "revised (MassIVE 2024)",
+    (21, "SupplementaryTable5", "revised (build not stated)"): "revised (MassIVE 2022)",
+    (107, "SupplementaryTable5", "revised (build not stated)"): "revised (MassIVE 2022)",
+}
+
+
 # THE DATASET VERSION OF EACH METHOD ROW, for a table that stacks two
 # versions' blocks one above the other. Positional, like TABLE_METRIC's row
 # lists, because nothing in the grid names the block.
 ROW_VERSION: dict[tuple[int, str], list[str]] = {
     # RankNovo's arXiv Table 1: "on the 9-species-V1 and 9-species-V2 test
     # sets", V1's sixteen rows first.
-    (352, "Table1"): ["original (DeepNovo, 2017)"] * 16 + ["revised (main)"] * 8,
+    (352, "Table1"): ["original (DeepNovo, 2017)"] * 16 + ["revised (build not stated)"] * 8,
 }
 
 
@@ -6268,6 +6290,20 @@ def emit(con, base, tb, vocab, index, subject, near, whole, audit, tally, show,
                           "d.id = v.dataset_id WHERE d.name = ? AND v.version = ?",
                           (dname, "NovoBench split")).fetchone()
         vid = got[0] if got else None
+    # THE BUILD, where the paper says which one, applied to the ONE version a
+    # table (or one part of a split table) resolved to. A TABLE_DATASET pin is
+    # the wrong tool here: it pins every part, and Pairwise Attention's Table 2
+    # has an original part and a revised one.
+    if vid is not None:
+        resolved = (con.execute("SELECT version FROM dataset_version WHERE id = ?", (vid,)).fetchone() or [""])[0]
+        to = VERSION_OVERRIDE.get((base["publication_id"],
+                                   (tb.get("registry_label") or tb["table_label"] or "").strip(), resolved))
+        if to:
+            got = con.execute("SELECT id FROM dataset_version WHERE dataset_id = ? AND version = ?",
+                              (did, to)).fetchone()
+            if not got:
+                raise Reject(f"D1 VERSION_OVERRIDE names {to!r}, absent from {dname!r}")
+            vid = got[0]
     rv_id = {lab: got[0] for lab in set(row_version.values())
              if did and (got := con.execute(
                  "SELECT id FROM dataset_version WHERE dataset_id = ? AND version = ?",
