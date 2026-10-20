@@ -12,7 +12,7 @@ A curated knowledge base covering the *de novo* peptide sequencing field: algori
 - `plots.ipynb`: Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only, not published).
 - `index.qmd` + `_quarto.yml`: the Quarto site that renders interactive charts straight from `denovo.db`.
 - `WATCHLIST.md`: tools that belong in the catalog but have no citable manuscript yet, plus things deliberately left out. Check it before concluding a tool is simply missing, and add to it rather than adding a method with no publication.
-- `NINE_SPECIES.md`: the nine-species benchmark's ten public versions compared spectrum by spectrum, with the code in `analysis/nine_species/` (run off-repo, never in CI). Read it before attaching a number to a nine-species version: MSV000090982 holds three releases, none of them the published Zenodo main.
+- `NINE_SPECIES.md`: a short pointer to the site page *The nine-species benchmark, version by version*, which compares the benchmark's eleven public versions spectrum by spectrum. The page's source is `analysis/nine_species/page.qmd` plus `site_data.json`, and the code that produced the numbers is beside them (run off-repo, never in CI). Read it before attaching a number to a nine-species version: MSV000090982 holds three builds, none of them the published Zenodo main, and denovo_benchmarks runs on a selection of its own.
 - `BENCHMARKS.md`: the field's public benchmarks, which two are charted and why the others are not, and the retrained-versus-released trap. **Read it before putting a benchmark number next to another one**: NovoBench, ProteoBench and denovo_benchmarks all say "nine-species" and only two of the three are comparable.
 
 ## Common commands
@@ -550,17 +550,19 @@ the axis stopped being time. Its heading keeps the old anchor,
 whose peer-reviewed results paper is not out yet -- is laid over it per species
 and as the mean of the nine; ProteoBench as one pooled point under *Average*.
 
-- **One nine-species version at a time, and the default is *revised
-  (main)*.** It used to be *original (DeepNovo, 2017)*, where most papers
-  report, which hid the independent benchmark until a reader went looking.
-  Benchmark points carry their own versions: denovo_benchmarks is *revised
-  (main)*, because its `datasets_info.py` names MSV000090982, the revised
-  deposit; ProteoBench is *ProteoBench selection*. Each shows when its version
-  is ticked. A "Comparing across versions" warning appears whenever the
-  visible points span more than one. Measured in headless Chrome: 11 paper and
-  17 denovo_benchmarks points by default with no warning and 0 OJS errors; 12
-  paper points on original alone; 40 paper, 17 denovo_benchmarks and 7
-  ProteoBench with everything ticked.
+- **The default is every revised build, plus denovo_benchmarks.** It used to
+  be *original (DeepNovo, 2017)*, where most papers report, which hid the
+  independent benchmark until a reader went looking, and then *revised (main)*
+  alone. Once MSV000090982 was split into its three builds, most paper points
+  moved to *revised (build not stated)*, so the default became every revised
+  version but balanced. denovo_benchmarks is *denovo_benchmarks selection*, a
+  version of its own: its MSV000096182 deposit is 101 raw files relabelled by
+  its own search, whatever its `datasets_info.py` says. ProteoBench is
+  *ProteoBench selection*. The "Comparing across versions" warning fires on
+  version FAMILY (`perf_family`: every revised build but balanced is one), so
+  it shows by default, because denovo_benchmarks is other spectra. Point shapes
+  go by family too: only seven filled symbols exist and a value outside the
+  domain drops the point silently.
 - **A number several papers print is one point**, its tooltip listing every
   paper, table and page it was seen in. Seven-species' 371 printed values are
   143 points: most are NovoBench's, quoted again.
@@ -1433,10 +1435,11 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
 
-**483 datasets, 518 versions, 1302 addresses, 890 publication links over 273 papers.**
+**483 datasets, 523 versions, 1307 addresses, 890 publication links over 273 papers.**
 
-**The nine-species benchmark alone has four versions**, and they are
-distinguishable by number, which is the only reliable way:
+**The nine-species benchmark has a version per build anyone ran on**, and
+they are distinguishable by number, which is the only reliable way. The main
+ones:
 
 - **original** (`MSV000081382`, DeepNovo 2017) is what a paper means unless it
   says otherwise. Its MassIVE title is "De novo peptide sequencing by deep
@@ -1452,7 +1455,18 @@ distinguishable by number, which is the only reliable way:
   `MSV000090982`, whose record carries DATED UPDATE FOLDERS (one paper cites
   `updates/2024-05-14_woutb_71950b89`) so even that accession is not a single
   fixed object: its 2022, 2023 and 2024 releases are three builds, and the 2024
-  one is still 47,640 spectra away from Zenodo main (`NINE_SPECIES.md`);
+  one is still 47,640 spectra away from Zenodo main (`NINE_SPECIES.md`). Each
+  build is a version of its own, `revised (MassIVE 2022)`, `... 2023` and
+  `... 2024`, addressed as `MSV000090982#peak` and `MSV000090982#updates/...`;
+  InstaNovo's `ninespecies_updated` IPC files are a second address of 2023. The
+  BARE accession sits on `revised (build not stated)`, which is where a paper
+  printing only MSV000090982, or only "the revised benchmark", belongs: 8 links
+  do. `build_dataset_accessions.py` resolves a bare accession to the one
+  address that is bare, so those links keep landing there, and the miner's
+  `VERSION_LEXICON` sends its generic revised cues to the same version. A
+  build is asserted only on evidence: Pairwise Attention prints the 2024
+  folder and its counts, pi-PrimeNovo prints 2,812,194 spectra, the 2022
+  count. `revised (main)` now means the Zenodo archive, and keeps
   `10.5281/zenodo.13685813` for the data; and
   `10.5281/zenodo.12926326` plus `Noble-Lab/multi-species-benchmark` for the
   construction code, marked as such in `part` because code is not an address of
@@ -1547,7 +1561,7 @@ taken from `sed` land somewhere else and a slice silently drops a group (it
 dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 19 of 518 versions have none, counting only addresses
+missing one.** 19 of 523 versions have none, counting only addresses
 that are not provenance. Two shapes: tiers that are not published but are
 reproducible from the raw accessions recorded as their provenance (ACFM, and
 ProteomeTools' all-confidence version, InstaNovo's AC-PT); and the living-proteomics benchmark's **private holdouts** (11 versions:
@@ -3410,6 +3424,26 @@ page exists to expose. The page prints *not stated* rather than picking one.
 The dataset pages show the table and then every evidence string beneath it. A
 reader who disagrees with a link can see exactly what it rests on, which is the
 point of not deriving them.
+
+### Hand-written analysis pages
+
+`pages/` is gitignored and rebuilt by `build_pages.py` on every publish, and
+`render_scope.py` re-renders only index.qmd and what is under `pages/`. So a
+page written by hand cannot sit at the root: it would need a `_quarto.yml`
+change (a full render) to exist, and its later edits would never reach the fast
+paths. Instead its source is committed under `analysis/<name>/` and
+`build_pages.py` copies it to `pages/analyses/<slug>.qmd` as the `analyses`
+kind, from the `ANALYSES` registry. Its `site_data.json` is INLINED as the OJS
+value `ns`, so a change to the numbers changes the page's hash and the next
+publish re-renders it. `postrender.py` gives it a search record ("Analysis"),
+and the dataset page named in the registry links to it. One so far:
+`nine-species-versions`, linked from the homepage's *The data underneath*.
+
+Two traps met building it. In OJS `name = {...}` is a BLOCK, not an object
+literal, so it needs parentheses. And `check_chart_overlap.py` counted only the
+runtime's error class, so an OJS SYNTAX error, which Quarto prints as a callout
+reading "OJS Syntax Error", passed as 0 errors. It now counts that text too, and
+takes a page path: `check_chart_overlap.py pages/analyses/nine-species-versions.html`.
 
 ### A dataset page per dataset
 

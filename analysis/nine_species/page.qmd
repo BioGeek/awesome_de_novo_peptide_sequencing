@@ -1,0 +1,333 @@
+---
+title: "The nine-species benchmark, version by version"
+subtitle: "Every public copy of the benchmark, compared spectrum by spectrum"
+description: "The nine-species de novo sequencing benchmark exists in at least eleven public versions. Every spectrum followed from one to the next: splits, labels, precursors, peaks, and how much of one version's test set another version trained on."
+---
+
+"Evaluated on nine-species" names at least eleven different sets of spectra.
+This page puts every public copy of the benchmark on one key, *(species, raw
+file, scan)*, and follows each spectrum from one version to the next: whether
+it stays, which split it lands in, whether its label changes, and whether the
+spectrum itself does. It was computed on 2026-10-20 from the files as
+published that day; every number is an exact count unless it says otherwise.
+The code is in
+[`analysis/nine_species/`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/tree/main/analysis/nine_species),
+and the catalog's own record of the versions is the
+[nine-species benchmark's page](../datasets/nine-species-benchmark.html).
+
+::: {.callout-important appearance="simple"}
+**Four things to know before quoting a nine-species number.**
+
+1. **MSV000090982 is not the published benchmark.** It holds three builds, from
+   2022, 2023 and 2024. The published one is a fourth, on Zenodo, and even the
+   2024 build is 47,640 spectra away from it.
+2. **The InstaNovo split, which NovoBench trains on, overlaps the test sets of
+   the newer versions.** 17% of ProteoBench's spectra, 22% of dIon's test set and
+   22% of denovo_benchmarks' nine-species sets are scans from its training split.
+3. **One revised spectrum in six has a precursor on an isotope peak.** A model
+   that enforces the precursor mass with no isotope allowance cannot get those
+   right; on the original and on the InstaNovo split that never happens.
+4. **The original writes every leucine as I.** Fold I and L before comparing
+   labels across versions.
+:::
+
+## The versions
+
+| version | where | spectra | made by |
+|---|---|---:|---|
+| **original** | MSV000081382, `HighResolution/data/high.<species>/peaks.db.mgf` | 1,528,127 | PEAKS DB exports, one MGF per species ([DeepNovo, 2017](../publications/de-novo-peptide-sequencing-by-deep-learning.html)) |
+| original folds | same deposit, `cross.9high_80k.exclude_<species>` | 9 × 555,000 to 598,000 | about 80,000 spectra per species sampled once (mouse and *V. mungo* whole); each fold drops one species and splits the rest into train, valid and test |
+| **InstaNovo split** | Hugging Face `InstaDeepAI/ms_ninespecies_benchmark` | 639,286 | the yeast-excluded fold's train (499,402) and valid (28,572), plus the original yeast file as test (111,312) |
+| **MassIVE 2022** | MSV000090982, `peak/` | 2,812,194 | the first revised search: Tide and Percolator over ThermoRawFileParser MGFs, no N-terminal modifications |
+| **MassIVE 2023** | MSV000090982, `updates/2023-03-08_woutb_2c43c18c` | 2,854,651 | a re-search; identical, record for record, to InstaNovo's `data/ninespecies_updated` |
+| **MassIVE 2024** | MSV000090982, `updates/2024-05-14_woutb_71950b89` | 2,844,905 | the 2023 search, with peptides shared between species redrawn |
+| **Zenodo main** | `10.5281/zenodo.13685813` | 2,838,117 | the published benchmark ([Wen & Noble, 2024](../publications/a-multi-species-benchmark-for-training-and-validating-mass-spectrometry.html)), the first build with no backbone in two species |
+| **Zenodo balanced** | same record | 779,879 | 150 whole raw files of main, chosen to even out the species |
+| **ProteoBench** | `nine_species_balanced_De_Novo.mgf.gz` | 779,879 | balanced, record for record, with the species dropped and the scans renumbered |
+| **dIon** | Hugging Face `alfred-n/dIon-datasets` | 188,512 | a subset of main: 3,653 peptides per species for test, 100 for validation |
+| **denovo_benchmarks** | MSV000096182, `9_species_*` | 946,155 | 101 raw files relabelled by the living benchmark's own search |
+
+A **backbone** is the bare sequence with I and L folded together, the grain at
+which two labels can be the same peptide.
+
+```{mermaid}
+flowchart LR
+  O["original 2017<br/>1,528,127"] --> F["9 folds<br/>~555k each"]
+  F --> I["InstaNovo split<br/>639,286"]
+  O -->|"yeast file = test"| I
+  R["raw files"] --> C["converted MGFs<br/>15,165,161"]
+  C --> M22["MassIVE 2022<br/>2,812,194"]
+  C --> M23["MassIVE 2023<br/>2,854,651"]
+  M23 --> M24["MassIVE 2024<br/>2,844,905"]
+  C --> Z["Zenodo main<br/>2,838,117"]
+  Z --> B["balanced<br/>779,879"]
+  B --> P["ProteoBench<br/>779,879"]
+  Z --> D["dIon<br/>188,512"]
+  C --> DB["denovo_benchmarks<br/>946,155"]
+```
+
+The original and the revised benchmark share raw files and nothing else: the
+revised benchmark re-converted every raw file, re-searched it, and relabelled
+it. The three MassIVE builds, Zenodo main and denovo_benchmarks share the
+converted peak lists: a spectrum present in two of them has the same precursor,
+charge, retention time and peaks (denovo_benchmarks drops a few peaks per
+spectrum). What differs between them is which spectra are in and what each is
+labelled.
+
+## Where the original's spectra went
+
+Half of the original's 1,528,127 labelled spectra are in Zenodo main. Each of
+the others was dropped at a step of the revised pipeline that can be named, by
+asking the revised search itself about that scan.
+
+```{ojs}
+//| echo: false
+fate_order = ["kept in main", "raw file not in the revised search", "no target PSM for the scan",
+              "failed 1% FDR, same peptide", "failed 1% FDR, other peptide",
+              "passed, but the MGF gives no precursor charge",
+              "passed, but its peptide was drawn for another species"]
+// The CSV's columns are numbered steps of the pipeline ("3a failed ..."); the number names the fate.
+// Parenthesised: in OJS `name = {...}` is a block, not an object literal.
+fate_of = ({"0": 0, "1": 1, "2": 2, "3a": 3, "3b": 4, "4a": 5, "4c": 6})
+fate_rows = ns.fate_by_species.flatMap(r => Object.entries(r)
+  .filter(([k]) => k !== "species")
+  .map(([k, v]) => ({species: r.species, fate: fate_order[fate_of[k.split(" ")[0]]], n: v})))
+Plot.plot({
+  width: Math.min(width, 1000), height: 330, marginLeft: 110, marginBottom: 40,
+  x: {label: "Share of the original's spectra in that species", percent: true, labelOffset: 34},
+  y: {label: null, domain: d3.groupSort(fate_rows, g => -d3.sum(g.filter(d => d.fate === fate_order[0]), d => d.n) / d3.sum(g, d => d.n), d => d.species)},
+  color: {domain: fate_order, range: ["#16a34a", "#94a3b8", "#cbd5e1", "#fbbf24", "#d97706", "#7c3aed", "#2563eb"],
+          legend: true, columns: 2},
+  marks: [
+    Plot.barX(fate_rows, Plot.stackX({offset: "normalize", order: fate_order,
+      x: "n", y: "species", fill: "fate", tip: {format: {x: false}, channels: {Spectra: "n"}}})),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+| fate | spectra | share |
+|---|---:|---:|
+| kept in main | 762,973 | 49.9% |
+| raw file not in the revised search (honeybee `BM-2`) | 22,757 | 1.5% |
+| the revised search reported no target PSM for the scan | 305,624 | 20.0% |
+| best PSM failed the 1% FDR, same peptide as the original | 130,599 | 8.5% |
+| best PSM failed the 1% FDR, another peptide | 239,294 | 15.7% |
+| passed, but the converted MGF gives no precursor charge | 37,179 | 2.4% |
+| passed, but its peptide was found in several species and drawn for another | 29,701 | 1.9% |
+
+Every scan the revised search reported nothing for was converted and searched;
+its best match was simply a decoy, or nothing at all. Of the 762,973 kept,
+705,828 keep their backbone and their modifications, 44,275 keep the backbone
+with different modifications, and 12,870 are relabelled as another peptide.
+
+## From raw files to main, and a filter the paper does not mention
+
+Zenodo also publishes the converted MGFs before any search, which lets the
+whole pipeline be replayed in counts.
+
+```{ojs}
+//| echo: false
+funnel = {
+  const all = ns.converted.find(d => d.species === "ALL")
+  return [
+    {step: "MS2 spectra converted", n: all["converted MS2"]},
+    {step: "best Percolator match is a target", n: all["target PSM"]},
+    {step: "that PSM has q < 0.01", n: all["q<0.01"]},
+    {step: "and the MGF gives a charge", n: all["q<0.01"] - all["q<0.01, no charge"]},
+    {step: "Zenodo main", n: 2838117}
+  ]
+}
+Plot.plot({
+  width: Math.min(width, 1000), height: 230, marginLeft: 230, marginRight: 80, marginBottom: 40,
+  x: {label: "Spectra (millions)", transform: d => d / 1e6, labelOffset: 34},
+  y: {label: null, domain: funnel.map(d => d.step)},
+  marks: [
+    Plot.barX(funnel, {x: "n", y: "step", fill: "#2563eb"}),
+    Plot.text(funnel, {x: "n", y: "step", text: d => d3.format(",")(d.n), dx: 6, textAnchor: "start", fontSize: 11}),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+**Not one spectrum in main lacks a precursor charge**, although 2,345,279 of
+the converted spectra do and the search ran on all of them: 62% of the human
+spectra, 56% of *C. endoloripes*' and 15% of *B. subtilis*'. Percolator accepted
+75,693 of them and every one was dropped. Wen & Noble do not describe this step.
+They report dropping "13 MGF files with fewer than 100 accepted PSMs", and those
+are 13 *B. subtilis* files in which no spectrum has a charge at all (103 to 397
+accepted PSMs each, and a DIA run with 1): they fall under 100 only once the
+charge-less ones are gone. Four mouse files with almost nothing accepted leave
+339 raw files in main. Subtracting the charge-less spectra and those four files
+gives 2,898,614, the paper's 2,898,611 within 3, and the shared-peptide draw
+then removes 60,497 more. denovo_benchmarks applies the same charge filter when
+it builds a dataset.
+
+## What changed in the spectra that stayed
+
+The original was exported by PEAKS in 2017 and the revised benchmark by
+ThermoRawFileParser in 2022, and the two disagree about the spectrum itself.
+
+**The precursor m/z.** Among the 801,288 spectra the original shares with the
+2022 build, 15% have a neutral precursor mass 1 or 2 Da heavier in the revised
+version. Every precursor in the original sits on its label's monoisotopic peak;
+ThermoRawFileParser writes the m/z the instrument selected, which is often an
+isotope peak. The revised search "allowed for 1 isotope error in the selection
+of candidate peptides" (Wen & Noble, Methods), and the released MGFs keep the
+instrument's m/z.
+
+```{ojs}
+//| echo: false
+// Column in the data -> label on the page.
+iso_versions = new Map([["MassIVE r2022", "MassIVE 2022"], ["MassIVE r2023", "MassIVE 2023"],
+                        ["MassIVE r2024", "MassIVE 2024"], ["Zenodo main", "Zenodo main"],
+                        ["Zenodo balanced = ProteoBench", "balanced = ProteoBench"], ["dIon", "dIon"]])
+iso_rows = ns.isotope_by_species.flatMap(r => [...iso_versions].map(([col, label]) => ({species: r.species, version: label, pct: r[col]})))
+Plot.plot({
+  width: Math.min(width, 1000), height: 420, marginLeft: 110, marginBottom: 40,
+  x: {label: "Spectra whose precursor is the label's M+1 peak (%)", domain: [0, 32], labelOffset: 34},
+  y: {label: null, domain: d3.groupSort(iso_rows, g => -d3.mean(g, d => d.pct), d => d.species)},
+  color: {domain: [...iso_versions.values()], scheme: "tableau10", legend: true},
+  marks: [
+    Plot.ruleY(d3.groups(iso_rows, d => d.species).map(([s]) => s), {stroke: "#e2e8f0"}),
+    // One mark per version, each nudged vertically: the builds sit within a
+    // point of each other and drew on top of one another. dy is a constant in
+    // Plot, not a channel, which is why this is six marks and not one.
+    ...[...iso_versions.values()].map((v, i) =>
+      Plot.dot(iso_rows.filter(d => d.version === v), {x: "pct", y: "species", fill: "version", r: 4,
+               dy: (i - 2.5) * 6, stroke: "white", strokeWidth: 0.5, tip: true})),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+Over Zenodo main it is 484,359 spectra, 17.1%, from 1.6% of *V. mungo* to 24.8%
+of yeast; 13.6% of ProteoBench's. The original, the InstaNovo split and
+denovo_benchmarks have none. These are isotope picks and not missed
+deamidations, which sit 0.019 Da away: the mass difference centres on 1.003 Da,
+the error assuming a carbon-13 offset has a median of 1.0 ppm against 11.0 ppm
+assuming deamidation, and 74,170 of the offset spectra have no N or Q to
+deamidate. Casanovo's default allows an offset of 0 or 1; check what a given
+model does before comparing its numbers across the two.
+
+**The peaks.** The original's peak lists are sparser (median 142 peaks against
+334) and reach fragment m/z values no fragment of the precursor can have (up to
+47,568, against 5,496). For mouse, where both sides could be downloaded whole,
+19,993 spectra were compared peak by peak: a median 97.6% of the original's
+peaks are in the revised peak list within 10 ppm, carrying 97.0% of its
+intensity, and the original's intensities are about 2.5 times the revised
+ones. The original is the same scan after PEAKS's own processing.
+
+**Everything else** barely moves: 20 of 801,288 shared spectra change charge,
+every retention time agrees within 1 s, and the revised builds hold no charge-1
+spectra (the original has 0.24%) and no peptide shorter than 6 or longer than 50
+residues (the original runs from 5 to 65).
+
+**The modification vocabulary.** The original and the 2022 build carry
+oxidation, N and Q deamidation and carbamidomethylation. From 2023 on, four
+N-terminal modifications appear: acetylation (+42.01), carbamylation (+43.01),
+ammonia loss (-17.03) and carbamylation with ammonia loss (+25.98), on 6.6% of
+main's spectra. A model trained on the original or on the InstaNovo split has
+never seen one.
+
+## Between the revised builds
+
+| | out | in | label changed |
+|---|---:|---:|---:|
+| MassIVE 2022 → 2023 | 199,297 | 241,754 | 41,389 |
+| MassIVE 2023 → 2024 | 28,674 | 18,928 | 0 |
+| MassIVE 2024 → Zenodo main | 27,214 | 20,426 | 0 |
+
+**2022 to 2023 is a re-search.** 83% of the spectra leaving, and 83% of those
+arriving, have a peptide the other build keeps in the same species: different
+scans of the same peptide passed the FDR. Of the 41,389 relabelled spectra,
+21,818 gain, lose or move an N or Q deamidation, 1,226 gain an N-terminal
+modification, 10,775 move an I/L or a modification, and 7,570 change peptide.
+
+**After 2023 every change is the shared-peptide draw.** Wen & Noble give each
+peptide found in more than one species to one species at random and drop its
+spectra from the others. Re-running that draw moves whole peptides between
+species files: 28,673 of the 28,674 spectra leaving between 2023 and 2024, and
+all 20,426 arriving between 2024 and Zenodo, carry a peptide found in more than
+one species. Backbones present in more than one species file: 855 in 2022,
+1,458 in 2023, 353 in 2024, and 0 in Zenodo main. The benchmark repository
+cannot regenerate any of them exactly: its seed is fixed, but the species and
+file order it draws over come from the filesystem.
+
+## denovo_benchmarks' nine species
+
+The living benchmark's datasets file calls its nine-species sets "De novo
+nine-species benchmark (MSV000090982)". They are not. Its own deposit,
+[MSV000096182](../datasets/de-novo-peptide-sequencing-tools-benchmark.html),
+holds 101 raw files relabelled by its own search: 946,155 labels, keyed as
+`<raw file>_<chunk>:<index>` into MGF chunks of at most 20,000 charged spectra.
+
+- **A different subset of files.** Mouse takes all 13 raw files, including the
+  four main drops; *B. subtilis* takes 4 of 106 and yeast 3 of 27; and honeybee
+  includes `BM-2`, the file the revised search never had.
+- **Different labels.** Of the spectra it shares with Zenodo main (478,000),
+  87.6% carry the same label. 467,000 of its spectra, half, are not in main
+  at all. 188,000 labels carry a modification the revised search did not
+  allow: N-terminal, D, E and H carbamidomethylation, sodium on D and E, lysine
+  and arginine methylation, and +12 and +26 N-terminal adducts.
+- **A deamidation where the others see an isotope peak.** On 44,464 spectra
+  that main labels at the M+1 peak, denovo_benchmarks writes the same backbone
+  with one more deamidation in 39,011 cases. The carbon-13 reading fits better
+  for 37,982 of them (median error 0.9 ppm against 12.1 ppm), so about 4% of
+  these labels most likely carry a deamidation that is not there.
+- **A deposit that does not match its labels in two files.** 1,014 labels point
+  past the end of their MGF chunk (`BC-2_1` holds 18,996 spectra and is cited up
+  to index 19,933), so those chunks are not the files the labels were made from.
+
+## Splits, and what a model has already seen
+
+**The original folds are disjoint on the modified peptide, not on the
+backbone.** No validation or test label of a fold is a training label of that
+fold, but 29 to 36% of every fold's validation and test spectra carry a backbone
+it trains on, in another modification state. Across species, the held-out
+species' spectra whose backbone the fold trained on run from 0.4% (*M. mazei*)
+to 22.6% (*V. mungo*). The revised benchmark was built to remove that, and did:
+no backbone in Zenodo main is in two species.
+
+**The InstaNovo split is the original's yeast fold**, the same 499,402 training
+spectra NovoBench retrains on: its train and valid are that fold's, and its test
+set is the whole original yeast file. **Training on it and testing on another
+version outside yeast tests partly on training data**, because the spectra are
+the same physical scans, re-labelled.
+
+```{ojs}
+//| echo: false
+leak_rows = ns.leak.filter(d => !d["evaluate on"].startsWith("InstaNovo valid")).flatMap(d => [
+  {set: d["evaluate on"], what: "its backbone is in the training split", pct: d["peptide seen %"]},
+  {set: d["evaluate on"], what: "the same scan is in the training split", pct: d["same spectrum %"]}])
+Plot.plot({
+  width: Math.min(width, 1000), height: 300, marginLeft: 260, marginRight: 30, marginBottom: 40,
+  x: {label: "Share of the evaluation spectra (%)", domain: [0, 80], labelOffset: 34},
+  y: {label: null, domain: [...new Set(leak_rows.map(d => d.set))]},
+  color: {domain: ["its backbone is in the training split", "the same scan is in the training split"],
+          range: ["#cbd5e1", "#dc2626"], legend: true},
+  marks: [
+    Plot.barX(leak_rows.filter(d => d.what.startsWith("its")), {x: "pct", y: "set", fill: "what"}),
+    Plot.barX(leak_rows.filter(d => d.what.startsWith("the same")), {x: "pct", y: "set", fill: "what", insetTop: 5, insetBottom: 5}),
+    Plot.text(leak_rows.filter(d => d.what.startsWith("its")), {x: "pct", y: "set", text: d => `${d.pct.toFixed(1)}%`, dx: 5, textAnchor: "start", fontSize: 10}),
+    Plot.ruleX([0])
+  ]
+})
+```
+
+ProteoBench's yeast and *B. subtilis* spectra are untouched, but 71% of its mouse
+spectra and half its human ones are scans a NovoBench-style model was trained
+on. A number such a model scores on ProteoBench, on main beyond the yeast file,
+on dIon or on denovo_benchmarks is partly a training score.
+
+## What to write when reporting a number
+
+- **Name the build, not the accession.** "Revised nine-species" is three builds
+  under one MassIVE accession plus the Zenodo record; the InstaNovo IPC copy is
+  the 2023 build; denovo_benchmarks is a selection of its own.
+- **Do not train on the InstaNovo or NovoBench split and test on a newer
+  version outside yeast.** Up to 22% of the test spectra are training scans, and
+  about 60% carry a backbone the model trained on.
+- **Allow a one-dalton precursor offset**, or score the revised spectra whose
+  precursor is an isotope peak separately.
+- **Fold I and L before comparing labels across versions.**

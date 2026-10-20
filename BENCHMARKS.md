@@ -76,8 +76,15 @@ the same set InstaNovo publishes as its split, and 132,843 of ProteoBench's
 779,879 spectra (17%) are the same scans, relabelled by the revised search:
 71% of its mouse spectra and half its human ones. Only yeast and *B. subtilis*
 are clean. A NovoBench-style model scored on ProteoBench is partly scored on
-its training data. The spectrum-level trace is in
-[`NINE_SPECIES.md`](NINE_SPECIES.md).
+its training data, and the same goes for denovo_benchmarks' nine-species sets:
+22% of their spectra are scans from that split.
+
+**And denovo_benchmarks' nine species are not the revised benchmark**, although
+its `datasets_info.py` names MSV000090982. Its own deposit, MSV000096182, holds
+101 raw files relabelled by its own search, and half its spectra are not in
+Zenodo main, so its nine-species numbers and ProteoBench's are on different
+spectra. The spectrum-level trace is the site page
+[The nine-species benchmark, version by version](https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/analyses/nine-species-versions.html).
 
 Two smaller versions of the same trap, both already live on the site:
 
@@ -95,8 +102,8 @@ Two smaller versions of the same trap, both already live on the site:
 
 - The **nine-species dataset** and its rebalanced successor are *data*, not a
   leaderboard. Three benchmarks above evaluate on it, which is exactly why
-  "on nine-species" identifies almost nothing on its own. [`NINE_SPECIES.md`](NINE_SPECIES.md) follows every
-  spectrum through its ten public versions.
+  "on nine-species" identifies almost nothing on its own. [The nine-species benchmark, version by version](https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/analyses/nine-species-versions.html)
+  follows every spectrum through its eleven public versions.
 - **NovoBoard** is an FDR and accuracy *framework*: a way to compute a number,
   not a published set of numbers.
 - Several catalogued `kind='benchmark'` rows are one-off evaluation papers

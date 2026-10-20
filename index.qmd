@@ -706,11 +706,14 @@ for (aid, tool, metric), vals in _dvb.items():
     alg = conn.execute("SELECT name FROM algorithm WHERE id = ?", (aid,)).fetchone()[0]
     base = {"panel": "nine", "metric": metric, "algorithm_id": aid, "algorithm": alg,
             "variant": "", "family": _family.get(aid) or "", "date": _firsts.get(aid),
-            # denovo_benchmarks' 9_species_* sets are the REVISED benchmark:
-            # its datasets_info.py calls them "De novo nine-species benchmark
-            # (MSV000090982)", the revised deposit. Recorded so the version
-            # filter can keep them off the original version's points.
-            "source": "denovo_benchmarks", "version": "revised (main)", "basis": "released",
+            # denovo_benchmarks' 9_species_* sets are NOT the revised benchmark,
+            # whatever its datasets_info.py says ("De novo nine-species
+            # benchmark (MSV000090982)"): its own deposit, MSV000096182, holds
+            # 101 raw files relabelled by its own search, and half its spectra
+            # are not in Zenodo main (NINE_SPECIES.md). So they carry a version
+            # of their own, and the version filter keeps them apart from every
+            # paper's points.
+            "source": "denovo_benchmarks", "version": "denovo_benchmarks selection", "basis": "released",
             "n_papers": 0}
     for sp, version, v in vals:
         _rows.append({**base, "subset": sp, "value": v, "detail": json.dumps(
@@ -3442,13 +3445,16 @@ outlined: **denovo_benchmarks**, the living proteomics benchmark, per species
 and as the mean of the nine, and **ProteoBench**, on the pooled nine-species
 selection and so only under *Average*.
 
-Nine-species is several datasets under one name, so the chart shows **one
-version at a time** by default: the *revised* benchmark, which removed the
-peptides the original 2017 release leaked from training into test, and which
-denovo_benchmarks runs on. Most papers still report on the original release;
-tick it to add those numbers. ProteoBench runs on its own selection, so it
-appears when that version is ticked. Mixing versions brings up a warning,
-because a gap between two versions can be the data rather than the method.
+Nine-species is several datasets under one name, so the chart opens on the
+*revised* benchmark, which removed the peptides the original 2017 release
+leaked from training into test, in every build of it, since most papers do not
+say which build they ran. denovo_benchmarks opens beside it, on a selection of
+its own: 101 raw files relabelled by its own search, half of whose spectra are
+not in Zenodo main. Most papers still report on the original release; tick it
+to add those numbers. ProteoBench runs on its own selection too, so it appears
+when that version is ticked. Mixing versions brings up a warning, because a
+gap between two versions can be the data rather than the method. [How the
+versions differ, spectrum by spectrum](pages/analyses/nine-species-versions.html).
 
 ```{ojs}
 //| echo: false
@@ -3519,20 +3525,34 @@ viewof perf_subset = Inputs.select(perf_subset_options, {label: "Species / set"}
 // "Nine-species" is several different collections of spectra (see The data
 // underneath), and a number on the original 2017 release is not the same
 // claim as one on the revised benchmark, whose test peptides no longer leak
-// into training. The chart opens on revised (main): it is the curated version,
-// and it is where denovo_benchmarks runs, so the independent benchmark is on
-// screen from the start. The original release most papers report is a tick
-// away. ProteoBench carries its own selection and appears when that is ticked.
-// Only nine-species has several versions; the other datasets show no control.
-perf_versions_all = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
-                     "ProteoBench selection", "version not stated"]
+// into training. The chart opens on the revised benchmark, every BUILD of it
+// but balanced: MSV000090982 holds three (2022, 2023, 2024), Zenodo main is a
+// fourth, and most papers name none of them, so 'revised (build not stated)'
+// carries most paper points. The builds share their peak lists and nearly all
+// their labels (NINE_SPECIES.md), which is why they open together and why the
+// caveat below fires on version FAMILY, not on build. denovo_benchmarks runs on
+// a selection of its own, so it opens beside them under that caveat. The original release
+// most papers report is a tick away. ProteoBench carries its own selection and
+// appears when that is ticked. Only nine-species has several versions; the
+// other datasets show no control.
+perf_versions_all = ["original (DeepNovo, 2017)", "revised (main)", "revised (build not stated)",
+                     "revised (MassIVE 2022)", "revised (MassIVE 2023)", "revised (MassIVE 2024)",
+                     "revised (balanced)", "denovo_benchmarks selection", "ProteoBench selection",
+                     "version not stated"]
+// The family a version belongs to: every revised build but balanced is one.
+perf_family = v => v.startsWith("revised (") && v !== "revised (balanced)" ? "revised (any build)" : v
 ```
 
 ```{ojs}
 //| echo: false
 viewof perf_versions = perf_panel === "nine"
   ? Inputs.checkbox(perf_versions_all.filter(v => perf_all.some(d => d.panel === "nine" && d.version === v)),
-                    {label: "Nine-species version", value: ["revised (main)"]})
+                    {label: "Nine-species version",
+                     // denovo_benchmarks opens too, so the independent benchmark is on
+                     // screen from the start; the caveat below then says it is
+                     // other spectra.
+                     value: perf_versions_all.filter(v => perf_family(v) === "revised (any build)"
+                                                          || v === "denovo_benchmarks selection")})
   : Object.assign(html`<span></span>`, {value: perf_versions_all})
 ```
 
@@ -3548,7 +3568,8 @@ perf_sel = perf_all.filter(d => d.panel === perf_panel && d.metric === perf_metr
 // The caveat appears whenever what is on screen spans more than one version.
 perf_version_note = {
   const shown = [...new Set(perf_sel.map(d => d.version))]
-  return perf_panel === "nine" && shown.length > 1
+  const families = new Set(shown.map(perf_family))
+  return perf_panel === "nine" && families.size > 1
     ? html`<div class="callout callout-style-default callout-warning callout-titled" style="margin:0.5rem 0">
         <div class="callout-header"><div class="callout-title-container">Comparing across versions</div></div>
         <div class="callout-body-container callout-body"><p>These points come from
@@ -3575,7 +3596,10 @@ perf_chart = {
     .filter(d => d.hi > d.lo)
   const cats = ["paper · retrained", "paper · quoted", "paper · released",
                 "paper · unclear", "paper · mixed", "denovo_benchmarks", "ProteoBench"]
-  const versions = ["original (DeepNovo, 2017)", "revised (main)", "revised (balanced)",
+  // Shapes go by FAMILY: there are only seven filled symbols, two of them
+  // taken by the benchmark marks, and a value outside the domain drops the
+  // point silently. The exact build is in the tooltip.
+  const versions = ["original (DeepNovo, 2017)", "revised (any build)", "revised (balanced)",
                     "version not stated"]
   // ONE EQUAL SLOT PER METHOD, ordered by release date. A time axis put
   // PEAKS (2003) a decade before everything else and squeezed the field into
@@ -3625,7 +3649,7 @@ perf_chart = {
                        // value outside the symbol domain DROPS the mark
                        // silently in Plot, which is how HC-PT (version
                        // 'HC-PT (NovoBench)') first drew no points at all.
-                       symbol: perf_panel === "nine" ? "version" : "circle",
+                       symbol: perf_panel === "nine" ? d => perf_family(d.version) : "circle",
                        fillOpacity: 0.85, stroke: "white", strokeWidth: 0.8,
                        sort: null}),
       // The benchmarks sit just beside the method's paper points, not on top
@@ -3664,7 +3688,7 @@ perf_chart = {
     const x = d.detail
     return html`<div>${head}
       <div class="map-tooltip-meta" style="margin-top:6px">${d.source === "denovo_benchmarks"
-        ? `denovo_benchmarks, on the revised nine-species benchmark (MSV000090982): ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
+        ? `denovo_benchmarks, on its own nine-species selection (MSV000096182): ${x.tool} ${x.version}, released checkpoint${x.mean_of ? `, mean of ${x.mean_of} species` : ""}; upstream commit ${x.commit} (${x.commit_date})`
         : `ProteoBench: ${x.tool}${x.version ? ` ${x.version}` : ""}${x.decoding ? `, ${x.decoding}` : ""}${x.checkpoint ? `, checkpoint ${x.checkpoint}` : ""}; submitted ${x.submitted}; pooled nine-species selection`}</div>
     </div>`
   }
@@ -3781,6 +3805,13 @@ Every benchmark score above was produced by running software over spectra,
 and the spectra have versions. "Trained on nine-species" names ${number_word(nine_species_versions)} different
 objects, and many of the papers that say it do not say which. The charts in
 this section are about that.
+
+::: {.callout-tip appearance="simple"}
+**[The nine-species benchmark, version by version](pages/analyses/nine-species-versions.html)**
+follows every spectrum through every public copy of the benchmark: which split
+it lands in, how its label changes, which spectra each build drops and why,
+and how much of one version's test set another version trained on.
+:::
 
 ```{ojs}
 //| echo: false
@@ -3959,7 +3990,7 @@ nine_species_flow = {
 
   const width = 1100
   const PAD = 10
-  const row_px = 34
+  const row_px = 42
   const n_rows = Math.max(provenance.length, versions.length + 1)
   const height = Math.max(430, 60 + n_rows * row_px)
   // left 300: 'Candidatus Thiodiazotropha endoloripes . PXD004536' is the
@@ -4001,14 +4032,28 @@ nine_species_flow = {
     right_items.push({ id: "__none__", label: "version not stated",
                        papers: papers_of.get("__none__"), unstated: true })
   }
-  const FLOOR = 16
+  // THE FLOOR IS FOR EVERY BOX, not just the uncited ones: a box carries a
+  // two-line label (name, then spectra and papers), and once MSV000090982 was
+  // split into its builds, versions named by one paper got a proportional
+  // share under the label's height and their labels collided. So any box whose
+  // share would fall under the floor is fixed at it, and the rest share what
+  // remains, repeated until nothing new falls under.
+  const FLOOR = 28
   const weighted = d3.sum(right_items, d => d.papers)
   const avail = inner_h - PAD * (right_items.length - 1)
-  const floor_total = right_items.filter(d => d.papers === 0).length * FLOOR
+  const fixed = new Set(right_items.filter(d => d.papers === 0))
+  for (let pass = 0; pass < right_items.length; pass++) {
+    const w = d3.sum(right_items.filter(d => !fixed.has(d)), d => d.papers)
+    const free = avail - fixed.size * FLOOR
+    const under = right_items.filter(d => !fixed.has(d) && (d.papers / w) * free < FLOOR)
+    if (!under.length) break
+    under.forEach(d => fixed.add(d))
+  }
+  const w_free = d3.sum(right_items.filter(d => !fixed.has(d)), d => d.papers)
+  const free_px = avail - fixed.size * FLOOR
   let cursor = 0
   for (const r of right_items) {
-    r.h = r.papers === 0 ? FLOOR
-        : ((r.papers / weighted) * (avail - floor_total))
+    r.h = fixed.has(r) ? FLOOR : (r.papers / w_free) * free_px
     r.y0 = cursor; r.y1 = cursor + r.h; cursor += r.h + PAD
   }
 

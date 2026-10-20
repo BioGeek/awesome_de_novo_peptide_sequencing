@@ -1,6 +1,7 @@
 # Nine-species versions, spectrum by spectrum
 
-The code behind [`NINE_SPECIES.md`](../../NINE_SPECIES.md). It puts every public
+The code behind the site page *The nine-species benchmark, version by version*,
+whose source is [`page.qmd`](page.qmd) in this folder. It puts every public
 version of the nine-species benchmark on one spectrum key, `(species, raw file,
 scan)`, and compares them.
 
@@ -23,16 +24,20 @@ the outputs. Python 3.12 with polars, pyarrow, numpy, requests and pyteomics.
 | extract | `datazip.py` | spectrum headers of Zenodo's 59 GB `nine-species-data.zip`, streamed one request per member, never written to disk |
 | key | `percolator_keyed.py` | Percolator's `PSMId` to (raw file, scan), via the file-index lines in `percolator.log.txt` |
 | compare | `a_*.py` | one script per question; `ns.py` (loading, label normalisation, masses) and `compare.py` (spectrum-level diff) are shared |
+| denovo_benchmarks | `make_jobs_dnb.py` → `run_jobs.py`, then `a_dnb.py` | its nine-species MGF chunks in MSV000096182, keyed through its own `9_species_*_labels.csv` (`<raw>_<chunk>:<index>`) |
+| site | `export_site_data.py` | the small `site_data.json` the site page reads; `page.qmd` is that page's source, copied to `pages/analyses/` by `scripts/build_pages.py` |
 
 The order within `a_*.py` matters in one place: `a_flow.py build` writes
 `results/registry.parquet`, one row per spectrum seen in any version, and
-`a_leak.py`, `a_fate.py` and `a_converted.py` read it.
+`a_leak.py`, `a_fate.py`, `a_converted.py` and `a_dnb.py` read it. `a_dnb.py`
+writes `dnb_keyed.parquet`, which a second run of `a_leak.py` picks up.
 
 ## Three things worth knowing before changing anything
 
 - **Labels go through one normaliser** (`extract.norm_seq`, re-applied at load
-  time by `ns.renorm`), because the versions spell the same peptide five ways:
-  `C(+57.02)`, `C+57.021`, `+42.011ABC`, `[+42.0106]-ABC` and Tide's
+  time by `ns.renorm`), because the versions spell the same peptide six ways:
+  `C(+57.02)`, `C+57.021`, `+42.011ABC`, `[+42.0106]-ABC`, denovo_benchmarks'
+  `n[42.0106]ABC` and Tide's
   `A[42.0106]BC`, which puts an N-terminal modification on the first residue,
   after that residue's own modification if it has one. Static
   carbamidomethylation is written out everywhere, because Tide and DeepNovo omit

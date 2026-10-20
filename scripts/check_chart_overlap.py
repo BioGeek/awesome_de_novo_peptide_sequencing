@@ -24,6 +24,7 @@ screen, so the only honest check is to measure the glyphs.
 Needs a rendered _site (quarto render) and google-chrome. Run it with
 
     uv run --with websockets python3 scripts/check_chart_overlap.py
+    uv run --with websockets python3 scripts/check_chart_overlap.py pages/analyses/nine-species-versions.html
 
 Exits 1 if anything collides, listing the worst offenders per chart.
 """
@@ -39,8 +40,10 @@ CHROME = (shutil.which("google-chrome") or shutil.which("chromium")
           or shutil.which("chromium-browser"))
 if not CHROME:
     sys.exit("no chrome on PATH")
-if not Path(SITE, "index.html").exists():
-    sys.exit(f"no rendered site at {SITE}: run `uv run quarto render index.qmd` first")
+# The page to audit, relative to _site: the home page unless one is named.
+PAGE = sys.argv[1] if len(sys.argv) > 1 else "index.html"
+if not Path(SITE, PAGE).exists():
+    sys.exit(f"no rendered {PAGE} in {SITE}: render it first")
 # A throwaway profile per run: a surviving browser holding the debug port is
 # what once made three runs attach to a stale, already-broken tab.
 PROFILE = tempfile.mkdtemp(prefix="chart-overlap-")
@@ -56,7 +59,7 @@ chrome = subprocess.Popen(
      "--no-first-run", "--disable-gpu", "--window-size=1600,4000",
      "--disable-background-timer-throttling", "--disable-renderer-backgrounding",
      "--disable-backgrounding-occluded-windows", "--disable-ipc-flooding-protection",
-     f"http://127.0.0.1:{PORT}/index.html"],
+     f"http://127.0.0.1:{PORT}/{PAGE}"],
     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 @atexit.register
@@ -98,7 +101,11 @@ PROBE = r"""
     const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
     return (w > 1.5 && h > 1.5) ? Math.round(Math.min(w, h)) : 0;
   };
-  const out = {errs: document.querySelectorAll('.observablehq--error').length, charts: []};
+  // A runtime error carries the runtime's class; a SYNTAX error is printed by
+  // Quarto as a callout reading 'OJS Syntax Error', which that class missed.
+  const out = {errs: document.querySelectorAll('.observablehq--error').length
+                     + (document.body.innerText.match(/OJS (?:Syntax|Runtime) Error/g) || []).length,
+               charts: []};
   for (const sec of document.querySelectorAll('section[id]')) {
     let n = 0;
     for (const svg of sec.querySelectorAll('svg')) {

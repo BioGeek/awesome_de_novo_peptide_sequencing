@@ -27,6 +27,13 @@ EVAL = {
     "dIon test": (pl.col("dion_split") == "test", "pep"),
     "dIon validation": (pl.col("dion_split") == "valid", "pep"),
 }
+# denovo_benchmarks' selection is keyed by a_dnb.py, which runs after this script's first pass.
+import os
+if os.path.exists(f"{OUT}/dnb_keyed.parquet"):
+    _dnb = pl.read_parquet(f"{OUT}/dnb_keyed.parquet").select("species", "raw_file", "scan", "seq_bare")
+    reg = reg.join(_dnb.with_columns(il(pl.col("seq_bare")).alias("pep_dnb")).drop("seq_bare"),
+                   on=["species", "raw_file", "scan"], how="full", coalesce=True)
+    EVAL["denovo_benchmarks selection"] = (pl.col("pep_dnb").is_not_null(), "pep_dnb")
 rows = []
 for tn in TRAIN:
     t, tp = train_set(tn)

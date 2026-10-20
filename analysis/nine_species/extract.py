@@ -44,6 +44,8 @@ def norm_seq(s):
     m = FLANK.match(s)
     if m: s = m.group(1)
     nterm = 0.0
+    # denovo_benchmarks writes an N-terminal mod as a lowercase 'n' residue: 'n[42.0106]AAK'.
+    s = re.sub(r"^n\[([+-]?)(\d*\.\d+)\]", lambda m: f"[{m.group(1) or '+'}{m.group(2)}]-", s)
     lead = re.match(r"^((?:\[?[+-]\d*\.\d+\]?)+)-?(?=[A-Z])", s)        # leading N-terminal mod(s)
     if lead:
         nterm = sum(float(x) for x in re.findall(r"[+-]\d*\.\d+", lead.group(1))); s = s[lead.end():]
@@ -125,7 +127,10 @@ def to_row(rec, source, species, raw_file, scan, split, fold, row, extra=None):
 
 def scan_of(rec):
     s = rec.get("SCANS", "")
-    m = re.search(r"(\d+)$", s) or re.search(r"scan=(\d+)", rec.get("TITLE", ""))
+    # SCANS=, a 'scan=' in the TITLE (ThermoRawFileParser), or a 'raw.scan.scan.charge' TITLE
+    # (denovo_benchmarks' MGFs in MSV000096182)
+    m = (re.search(r"(\d+)$", s) or re.search(r"scan=(\d+)", rec.get("TITLE", ""))
+         or re.search(r"\.(\d+)\.\d+\.\d+$", rec.get("TITLE", "")))
     return int(m.group(1)) if m else None
 
 def run_mgf(lines, out, source, species=None, raw_file=None, split=None, fold=None, original=False):
