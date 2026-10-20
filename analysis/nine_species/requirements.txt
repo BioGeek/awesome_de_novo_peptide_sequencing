@@ -1,0 +1,5 @@
+numpy==2.5.4
+polars==2.0.0
+pyarrow==26.0.0
+pyteomics==5.0.1
+requests==2.34.2

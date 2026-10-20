@@ -42,8 +42,16 @@ if "build" in sys.argv:
     zb = release("zenodo_balanced", zk + ["seq_raw"]).collect().pipe(renorm).join(zm.select(zk + ["raw_file"]), on=zk, how="left")
     print(f"[zenodo_balanced] keyed through main for {zb['raw_file'].is_not_null().sum()} of {zb.height}")
     reg = reg.join(zb.drop_nulls("raw_file").select(KEY + [pl.col("seq_norm").alias("lab_zenodo_balanced")]), on=KEY, how="full", coalesce=True)
-    ins = pl.read_parquet(f"{OUT}/instanovo_split_keyed.parquet").select(
-        pl.col("o_species").alias("species"), "raw_file", "scan", pl.col("split").alias("instanovo_split")).unique(subset=KEY)
+    # THE INSTANOVO SPLIT IS v1 IN v1's OWN ORDER: row i of its train and valid is row i of v1's
+    # yeast-excluded fold files, and row i of its test is row i of v1's yeast species file (every
+    # precursor and peak count agrees). So it is keyed by position, exactly. Matching records to
+    # scans by precursor and peaks instead, as a_instanovo.py does, lost 744 records to ties.
+    fold = original("orig_fold", ["species", "raw_file", "scan", "split", "fold", "row"]).filter(
+        (pl.col("fold") == "Saccharomyces-cerevisiae") & pl.col("split").is_in(["train", "valid"])).collect()
+    yeast = original("orig_species", ["species", "raw_file", "scan", "row"]).filter(
+        pl.col("species") == "Saccharomyces-cerevisiae").collect().with_columns(pl.lit("test").alias("split"))
+    ins = pl.concat([fold.select(KEY + ["split", "row"]), yeast.select(KEY + ["split", "row"])])
+    ins = ins.select(KEY + [pl.col("split").alias("instanovo_split")])
     reg = reg.join(ins, on=KEY, how="full", coalesce=True)
     dion = release("dion", ["species", "split", "extra"]).collect().with_columns(
         pl.col("extra").str.json_path_match("$.source_row_index").cast(pl.Int64).alias("row"))

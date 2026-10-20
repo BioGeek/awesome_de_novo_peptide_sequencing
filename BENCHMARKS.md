@@ -72,7 +72,7 @@ anyone downloads. Quoting it as the latter is the error.
 
 **That training split also overlaps ProteoBench's test set.** NovoBench's
 499,402 training spectra are the original 2017 deposit's yeast-held-out fold,
-the same set InstaNovo publishes as its split, and 132,843 of ProteoBench's
+the same set InstaNovo publishes as its split, and 132,897 of ProteoBench's
 779,879 spectra (17%) are the same scans, relabelled by the revised search:
 71% of its mouse spectra and half its human ones. Only yeast and *B. subtilis*
 are clean. A NovoBench-style model scored on ProteoBench is partly scored on

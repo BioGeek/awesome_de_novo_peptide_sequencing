@@ -3439,6 +3439,16 @@ publish re-renders it. `postrender.py` gives it a search record ("Analysis"),
 and the dataset page named in the registry links to it. One so far:
 `nine-species-versions`, linked from the homepage's *The data underneath*.
 
+**Every number on an analysis page is computed, never typed.** The analysis's
+`page_numbers.py` registers one function per number, with the public sources
+it reads (keys of its `sources.py`) and the scripts its input comes from, and
+writes `page_numbers.json`. `build_pages.py` replaces each `{{n:<id>}}` in
+`page.qmd` with the number as a link to its entry in a generated *Reproducing
+every number* appendix (`{{appendix}}`), which prints the sources, the scripts
+and the function's own code. An id the JSON lacks fails the build, and an id
+must be lower case. The nine-species page is reproducible from public sources
+by `run_all.sh`; the owner chose scripts over publishing derived PSM files.
+
 Two traps met building it. In OJS `name = {...}` is a BLOCK, not an object
 literal, so it needs parentheses. And `check_chart_overlap.py` counted only the
 runtime's error class, so an OJS SYNTAX error, which Quarto prints as a callout

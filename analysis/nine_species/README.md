@@ -14,6 +14,20 @@ the outputs. Python 3.12 with polars, pyarrow, numpy, requests and pyteomics.
 
 ## Run order
 
+[`run_all.sh`](run_all.sh) runs everything below in order, from public sources
+to the numbers the page prints, and skips what it finds done. Every input is in
+[`sources.py`](sources.py), which [`download_sources.py`](download_sources.py)
+fetches from and the page's appendix links to. The environment is
+[`requirements.txt`](requirements.txt), Python 3.12.
+
+**Every number on the page comes from [`page_numbers.py`](page_numbers.py)**, one
+decorated function per number, naming its sources and the scripts its input
+comes from. It writes [`page_numbers.json`](page_numbers.json), which
+`scripts/build_pages.py` substitutes into the page's `{{n:<id>}}` placeholders
+and turns into the page's appendix, code included; `page_numbers.py --check`
+recomputes them all and compares. A number with no function behind it cannot
+reach the page, so do not type one into `page.qmd`.
+
 | step | script | what it does |
 |---|---|---|
 | list | `massive_ls.py`, `zip_ls.py`, `ftp_head.py` | list MSV000081382 and MSV000090982 over FTPS (TLS is required), list a remote zip's members over HTTP range requests, peek at a file's first bytes |
@@ -25,14 +39,21 @@ the outputs. Python 3.12 with polars, pyarrow, numpy, requests and pyteomics.
 | key | `percolator_keyed.py` | Percolator's `PSMId` to (raw file, scan), via the file-index lines in `percolator.log.txt` |
 | compare | `a_*.py` | one script per question; `ns.py` (loading, label normalisation, masses) and `compare.py` (spectrum-level diff) are shared |
 | denovo_benchmarks | `make_jobs_dnb.py` → `run_jobs.py`, then `a_dnb.py` | its nine-species MGF chunks in MSV000096182, keyed through its own `9_species_*_labels.csv` (`<raw>_<chunk>:<index>`) |
-| site | `export_site_data.py` | the small `site_data.json` the site page reads; `page.qmd` is that page's source, copied to `pages/analyses/` by `scripts/build_pages.py` |
+| site | `export_site_data.py` | the small `site_data.json` the site page's charts read, Sankey flows included; `page.qmd` is that page's source, copied to `pages/analyses/` by `scripts/build_pages.py` |
+| numbers | `page_numbers.py` | every number the page prints, into `page_numbers.json` |
 
 The order within `a_*.py` matters in one place: `a_flow.py build` writes
 `results/registry.parquet`, one row per spectrum seen in any version, and
 `a_leak.py`, `a_fate.py`, `a_converted.py` and `a_dnb.py` read it. `a_dnb.py`
 writes `dnb_keyed.parquet`, which a second run of `a_leak.py` picks up.
 
-## Three things worth knowing before changing anything
+## Four things worth knowing before changing anything
+
+- **The InstaNovo split is keyed by POSITION.** Its records carry no scan, but
+  row *i* of its train and valid is row *i* of v1's yeast-excluded fold files and
+  row *i* of its test is row *i* of v1's yeast file (all 639,286 agree on
+  precursor and peak count), so `a_flow.py` keys it by row. Matching records to
+  scans by precursor and peaks, as `a_instanovo.py` does, lost 744 to ties.
 
 - **Labels go through one normaliser** (`extract.norm_seq`, re-applied at load
   time by `ns.renorm`), because the versions spell the same peptide six ways:

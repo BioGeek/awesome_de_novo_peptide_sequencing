@@ -1,0 +1,2767 @@
+{
+ "v1_psms": {
+  "value": 1528127,
+  "text": "1,528,127",
+  "desc": "Labelled spectra in v1's nine species files",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "@number(\"v1_psms\", \"Labelled spectra in v1's nine species files\", [\"v1\"], [\"make_jobs.py\", \"extract.py\"])\ndef _():\n    return table(\"v1\", (\"species\",)).height\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "v1_labels_with_l": {
+  "value": 0,
+  "text": "0",
+  "desc": "v1 labels containing an L (it writes every leucine as I)",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "@number(\"v1_labels_with_l\", \"v1 labels containing an L (it writes every leucine as I)\", [\"v1\"], [\"make_jobs.py\", \"extract.py\"])\ndef _():\n    return int(table(\"v1\")[\"seq_raw\"].str.contains(\"L\").sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "v1_fold_min": {
+  "value": 554738,
+  "text": "554,738",
+  "desc": "Spectra in the smallest of v1's nine folds (train + valid + test)",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "@number(\"v1_fold_min\", \"Spectra in the smallest of v1's nine folds (train + valid + test)\", [\"v1_folds\"], [\"make_jobs.py\", \"extract.py\"])\ndef _():\n    f = original(\"orig_fold\", [\"fold\", \"split\"]).filter(pl.col(\"split\").is_in([\"train\", \"valid\", \"test\"])).collect()\n    return int(f.group_by(\"fold\").len()[\"len\"].min())\n",
+  "sources": [
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "v1_fold_max": {
+  "value": 598010,
+  "text": "598,010",
+  "desc": "Spectra in the largest of v1's nine folds",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "@number(\"v1_fold_max\", \"Spectra in the largest of v1's nine folds\", [\"v1_folds\"], [\"make_jobs.py\", \"extract.py\"])\ndef _():\n    f = original(\"orig_fold\", [\"fold\", \"split\"]).filter(pl.col(\"split\").is_in([\"train\", \"valid\", \"test\"])).collect()\n    return int(f.group_by(\"fold\").len()[\"len\"].max())\n",
+  "sources": [
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "instanovo_train": {
+  "value": 499402,
+  "text": "499,402",
+  "desc": "InstaNovo split, train",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "def _f(s=_split):\n    return release(\"instanovo_split\", [\"split\"]).filter(pl.col(\"split\") == s).collect().height\n# called with s='train'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "instanovo_valid": {
+  "value": 28572,
+  "text": "28,572",
+  "desc": "InstaNovo split, valid",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "def _f(s=_split):\n    return release(\"instanovo_split\", [\"split\"]).filter(pl.col(\"split\") == s).collect().height\n# called with s='valid'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "instanovo_test": {
+  "value": 111312,
+  "text": "111,312",
+  "desc": "InstaNovo split, test",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "def _f(s=_split):\n    return release(\"instanovo_split\", [\"split\"]).filter(pl.col(\"split\") == s).collect().height\n# called with s='test'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "instanovo_all": {
+  "value": 639286,
+  "text": "639,286",
+  "desc": "InstaNovo split, all three splits",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "@number(\"instanovo_all\", \"InstaNovo split, all three splits\", [\"instanovo_split\"], [\"extract_tabular.py\"])\ndef _():\n    return release(\"instanovo_split\", [\"split\"]).collect().height\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "instanovo_row_aligned": {
+  "value": 639286,
+  "text": "639,286",
+  "desc": "InstaNovo split records whose precursor and peak count equal the v1 record in the same position (v1's yeast-excluded fold files for train and valid, v1's yeast file for test)",
+  "made_by": [
+   "extract_tabular.py",
+   "make_jobs.py"
+  ],
+  "code": "@number(\"instanovo_row_aligned\", \"InstaNovo split records whose precursor and peak count equal the v1 record in the same \"\n        \"position (v1's yeast-excluded fold files for train and valid, v1's yeast file for test)\",\n        [\"instanovo_split\", \"v1\", \"v1_folds\"], [\"extract_tabular.py\", \"make_jobs.py\"])\ndef _():\n    n = 0\n    for split in (\"train\", \"valid\", \"test\"):\n        a = release(\"instanovo_split\", [\"split\", \"row\", \"pepmass\", \"n_peaks\"]).filter(pl.col(\"split\") == split).collect()\n        if split == \"test\":\n            b = original(\"orig_species\", [\"species\", \"row\", \"pepmass\", \"n_peaks\"]).filter(\n                pl.col(\"species\") == \"Saccharomyces-cerevisiae\").collect()\n        else:\n            b = original(\"orig_fold\", [\"fold\", \"split\", \"row\", \"pepmass\", \"n_peaks\"]).filter(\n                (pl.col(\"fold\") == \"Saccharomyces-cerevisiae\") & (pl.col(\"split\") == split)).collect()\n        j = a.join(b.select(\"row\", pl.col(\"pepmass\").alias(\"pm_b\"), pl.col(\"n_peaks\").alias(\"np_b\")), on=\"row\")\n        n += j.filter(((pl.col(\"pepmass\") - pl.col(\"pm_b\")).abs() < 1e-3) & (pl.col(\"n_peaks\") == pl.col(\"np_b\"))).height\n    return n\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   },
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "n_r2022": {
+  "value": 2812194,
+  "text": "2,812,194",
+  "desc": "Spectra in r2022",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='r2022'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "n_r2023": {
+  "value": 2854651,
+  "text": "2,854,651",
+  "desc": "Spectra in r2023",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='r2023'\n",
+  "sources": [
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "n_r2024": {
+  "value": 2844905,
+  "text": "2,844,905",
+  "desc": "Spectra in r2024",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='r2024'\n",
+  "sources": [
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "n_zenodo_main": {
+  "value": 2838117,
+  "text": "2,838,117",
+  "desc": "Spectra in zenodo_main",
+  "made_by": [
+   "make_jobs_zip.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='zenodo_main'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "n_zenodo_balanced": {
+  "value": 779879,
+  "text": "779,879",
+  "desc": "Spectra in zenodo_balanced",
+  "made_by": [
+   "make_jobs_zip.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='zenodo_balanced'\n",
+  "sources": [
+   {
+    "key": "v2_balanced",
+    "label": "10.5281/zenodo.13685813, nine-species-balanced.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-balanced.zip"
+   }
+  ]
+ },
+ "n_proteobench": {
+  "value": 779879,
+  "text": "779,879",
+  "desc": "Spectra in proteobench",
+  "made_by": [
+   "make_jobs_zip.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='proteobench'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "n_instanovo_ipc": {
+  "value": 2854651,
+  "text": "2,854,651",
+  "desc": "Spectra in instanovo_ipc",
+  "made_by": [
+   "extract_tabular.py",
+   "extract.py"
+  ],
+  "code": "def _f(b=_b):\n    return release(b, [\"species\"]).collect().height\n# called with b='instanovo_ipc'\n",
+  "sources": [
+   {
+    "key": "instanovo_ipc",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/ninespecies_updated/*.ipc",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data/ninespecies_updated"
+   }
+  ]
+ },
+ "ipc_is_2023": {
+  "value": 2854651,
+  "text": "2,854,651",
+  "desc": "InstaNovo's ninespecies_updated records identical to a MassIVE 2023 record (same species, scan, retention time, precursor, charge, label, peak count and top-10 peaks)",
+  "made_by": [
+   "extract_tabular.py",
+   "make_jobs.py"
+  ],
+  "code": "@number(\"ipc_is_2023\", \"InstaNovo's ninespecies_updated records identical to a MassIVE 2023 record \"\n        \"(same species, scan, retention time, precursor, charge, label, peak count and top-10 peaks)\",\n        [\"instanovo_ipc\", \"massive_2023\"], [\"extract_tabular.py\", \"make_jobs.py\"])\ndef _():\n    c = [\"species\", \"scan\", \"pepmass\", \"rt\", \"charge\", \"seq_raw\", \"n_peaks\", \"top10_mz\"]\n    k = [\"species\", \"scan\", \"rt3\", \"mz4\"]\n    a = release(\"instanovo_ipc\", c).collect().pipe(renorm)\n    b = release(\"r2023\", c).collect().pipe(renorm)\n    a, b = [x.with_columns(pl.col(\"rt\").round(3).alias(\"rt3\"), pl.col(\"pepmass\").round(4).alias(\"mz4\")) for x in (a, b)]\n    j = a.join(b.select(k + [\"seq_norm\", \"charge\", \"n_peaks\", \"top10_mz\"]), on=k, suffix=\"_b\")\n    same = ((j[\"seq_norm\"] == j[\"seq_norm_b\"]) & (j[\"charge\"] == j[\"charge_b\"]) & (j[\"n_peaks\"] == j[\"n_peaks_b\"])\n            & j.select(pl.col(\"top10_mz\").list.sort() == pl.col(\"top10_mz_b\").list.sort()).to_series())\n    return int(same.sum())\n",
+  "sources": [
+   {
+    "key": "instanovo_ipc",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/ninespecies_updated/*.ipc",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data/ninespecies_updated"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "dion_test": {
+  "value": 182393,
+  "text": "182,393",
+  "desc": "dIon representation benchmark, test",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "def _f(s=_s):\n    return release(\"dion\", [\"split\"]).filter(pl.col(\"split\") == s).collect().height\n# called with s='test'\n",
+  "sources": [
+   {
+    "key": "dion",
+    "label": "Hugging Face alfred-n/dIon-datasets, representation_benchmarks/ninespecies/",
+    "url": "https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/ninespecies"
+   }
+  ]
+ },
+ "dion_valid": {
+  "value": 6119,
+  "text": "6,119",
+  "desc": "dIon representation benchmark, valid",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "def _f(s=_s):\n    return release(\"dion\", [\"split\"]).filter(pl.col(\"split\") == s).collect().height\n# called with s='valid'\n",
+  "sources": [
+   {
+    "key": "dion",
+    "label": "Hugging Face alfred-n/dIon-datasets, representation_benchmarks/ninespecies/",
+    "url": "https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/ninespecies"
+   }
+  ]
+ },
+ "dion_all": {
+  "value": 188512,
+  "text": "188,512",
+  "desc": "dIon representation benchmark, both splits",
+  "made_by": [
+   "extract_tabular.py"
+  ],
+  "code": "@number(\"dion_all\", \"dIon representation benchmark, both splits\", [\"dion\"], [\"extract_tabular.py\"])\ndef _():\n    return release(\"dion\", [\"split\"]).collect().height\n",
+  "sources": [
+   {
+    "key": "dion",
+    "label": "Hugging Face alfred-n/dIon-datasets, representation_benchmarks/ninespecies/",
+    "url": "https://huggingface.co/datasets/alfred-n/dIon-datasets/tree/main/representation_benchmarks/ninespecies"
+   }
+  ]
+ },
+ "dnb_labels": {
+  "value": 946155,
+  "text": "946,155",
+  "desc": "Labels in denovo_benchmarks' nine 9_species_*_labels.csv files",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "@number(\"dnb_labels\", \"Labels in denovo_benchmarks' nine 9_species_*_labels.csv files\", [\"dnb\"], [\"download_sources.py\"])\ndef _():\n    return sum(pl.read_csv(f).height for f in glob.glob(f\"{T}/../raw/dnb_labels/9_species_*_labels.csv\"))\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "dnb_raw_files": {
+  "value": 101,
+  "text": "101",
+  "desc": "Raw files denovo_benchmarks' nine-species labels cite",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "@number(\"dnb_raw_files\", \"Raw files denovo_benchmarks' nine-species labels cite\", [\"dnb\"], [\"download_sources.py\"])\ndef _():\n    ids = pl.concat([pl.read_csv(f) for f in glob.glob(f\"{T}/../raw/dnb_labels/9_species_*_labels.csv\")])[\"spectrum_id\"]\n    return ids.str.extract(r\"^(.*)_\\d+:\\d+$\", 1).n_unique()\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "converted": {
+  "value": 15165161,
+  "text": "15,165,161",
+  "desc": "MS2 spectra in v2's converted MGFs (nine-species-data.zip)",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "@number(\"converted\", \"MS2 spectra in v2's converted MGFs (nine-species-data.zip)\", [\"v2_data\"], [\"datazip.py\", \"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"converted MS2\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "perc_target_psms": {
+  "value": 8145796,
+  "text": "8,145,796",
+  "desc": "Target PSMs in v2's Percolator output",
+  "made_by": [
+   "extract_tabular.py",
+   "percolator_keyed.py"
+  ],
+  "code": "@number(\"perc_target_psms\", \"Target PSMs in v2's Percolator output\", [\"v2_intermediate\"], [\"extract_tabular.py\", \"percolator_keyed.py\"])\ndef _():\n    return pl.read_parquet(f\"{OUT}/percolator_keyed.parquet\", columns=[\"scan\"]).height\n",
+  "sources": [
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "perc_target_scans": {
+  "value": 8054115,
+  "text": "8,054,115",
+  "desc": "Converted scans whose best Percolator match is a target",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "@number(\"perc_target_scans\", \"Converted scans whose best Percolator match is a target\", [\"v2_data\", \"v2_intermediate\"],\n        [\"datazip.py\", \"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"target PSM\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "fate_kept": {
+  "value": 762973,
+  "text": "762,973",
+  "desc": "v1 spectra whose fate in v2 main is step 0 (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='0'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_raw_missing": {
+  "value": 22757,
+  "text": "22,757",
+  "desc": "v1 spectra whose fate in v2 main is step 1 (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='1'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_no_psm": {
+  "value": 305624,
+  "text": "305,624",
+  "desc": "v1 spectra whose fate in v2 main is step 2 (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='2'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_fdr_same": {
+  "value": 130599,
+  "text": "130,599",
+  "desc": "v1 spectra whose fate in v2 main is step 3a (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='3a'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_fdr_other": {
+  "value": 239294,
+  "text": "239,294",
+  "desc": "v1 spectra whose fate in v2 main is step 3b (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='3b'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_nocharge": {
+  "value": 37179,
+  "text": "37,179",
+  "desc": "v1 spectra whose fate in v2 main is step 4a (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='4a'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_shared": {
+  "value": 29701,
+  "text": "29,701",
+  "desc": "v1 spectra whose fate in v2 main is step 4c (see the table)",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "def _f(p=_p):\n    f = csv(\"fate__orig_to_main\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(p + \" \"))[\"spectra\"][0])\n# called with p='4c'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "fate_kept_pct": {
+  "value": 49.928638130207766,
+  "text": "49.9%",
+  "desc": "Share of v1's spectra in v2 main",
+  "made_by": [
+   "a_flow.py",
+   "a_fate.py"
+  ],
+  "code": "@number(\"fate_kept_pct\", \"Share of v1's spectra in v2 main\", [\"v1\", \"v2_main\"], [\"a_flow.py\", \"a_fate.py\"], fmt=\".1f\", suffix=\"%\")\ndef _():\n    f = csv(\"fate__orig_to_main\")\n    return 100 * f.filter(pl.col(\"fate\").str.starts_with(\"0 \"))[\"spectra\"][0] / f[\"spectra\"].sum()\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "nopsm_with_charge": {
+  "value": 278175,
+  "text": "278,175",
+  "desc": "v1 spectra with no target PSM, converted with charge",
+  "made_by": [
+   "a_fate.py",
+   "a_converted.py"
+  ],
+  "code": "def _f(c=_col):\n    f = csv(\"converted__orig_fate\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(\"2 \"))[c][0])\n# called with c='converted with charge'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "nopsm_without_charge": {
+  "value": 27449,
+  "text": "27,449",
+  "desc": "v1 spectra with no target PSM, converted without charge",
+  "made_by": [
+   "a_fate.py",
+   "a_converted.py"
+  ],
+  "code": "def _f(c=_col):\n    f = csv(\"converted__orig_fate\")\n    return int(f.filter(pl.col(\"fate\").str.starts_with(\"2 \"))[c][0])\n# called with c='converted without charge'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "kept_same": {
+  "value": 705828,
+  "text": "705,828",
+  "desc": "v1 spectra in v2 main with the same backbone and modifications (I=L)",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"kept_same\", \"v1 spectra in v2 main with the same backbone and modifications (I=L)\", [\"v1\", \"v2_main\"], [\"a_flow.py\"])\ndef _():\n    f = csv(\"flow__labels_orig_vs_zenodo_main\")\n    return int(f[\"identical\"].sum() + f[\"I/L only\"].sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "kept_mods": {
+  "value": 44275,
+  "text": "44,275",
+  "desc": "v1 spectra in v2 main with the same backbone, other modifications",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"kept_mods\", \"v1 spectra in v2 main with the same backbone, other modifications\", [\"v1\", \"v2_main\"], [\"a_flow.py\"])\ndef _():\n    return int(csv(\"flow__labels_orig_vs_zenodo_main\")[\"modifications differ\"].sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "kept_diff": {
+  "value": 12870,
+  "text": "12,870",
+  "desc": "v1 spectra in v2 main labelled as another peptide",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"kept_diff\", \"v1 spectra in v2 main labelled as another peptide\", [\"v1\", \"v2_main\"], [\"a_flow.py\"])\ndef _():\n    return int(csv(\"flow__labels_orig_vs_zenodo_main\")[\"different peptide\"].sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "orig_label_il_only": {
+  "value": 524296,
+  "text": "524,296",
+  "desc": "Spectra v1 and v2 main share whose labels differ only by I/L",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"orig_label_il_only\", \"Spectra v1 and v2 main share whose labels differ only by I/L\", [\"v1\", \"v2_main\"], [\"a_flow.py\"])\ndef _():\n    return int(csv(\"flow__labels_orig_vs_zenodo_main\")[\"I/L only\"].sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "nocharge_total": {
+  "value": 2345279,
+  "text": "2,345,279",
+  "desc": "Converted spectra whose MGF gives no precursor charge",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "@number(\"nocharge_total\", \"Converted spectra whose MGF gives no precursor charge\", [\"v2_data\"], [\"datazip.py\", \"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"no charge\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "nocharge_human_pct": {
+  "value": 61.91413522657746,
+  "text": "62%",
+  "desc": "Share of H.-sapiens's converted spectra with no precursor charge",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "def _f(sp=_sp):\n    r = csv(\"converted__summary\").filter(pl.col(\"species\") == sp)\n    return 100 * r[\"no charge\"][0] / r[\"converted MS2\"][0]\n# called with sp='H.-sapiens'\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "nocharge_cendo_pct": {
+  "value": 56.48886476941475,
+  "text": "56%",
+  "desc": "Share of Candidatus-endoloripes's converted spectra with no precursor charge",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "def _f(sp=_sp):\n    r = csv(\"converted__summary\").filter(pl.col(\"species\") == sp)\n    return 100 * r[\"no charge\"][0] / r[\"converted MS2\"][0]\n# called with sp='Candidatus-endoloripes'\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "nocharge_bsub_pct": {
+  "value": 14.708834091099863,
+  "text": "15%",
+  "desc": "Share of Bacillus-subtilis's converted spectra with no precursor charge",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "def _f(sp=_sp):\n    r = csv(\"converted__summary\").filter(pl.col(\"species\") == sp)\n    return 100 * r[\"no charge\"][0] / r[\"converted MS2\"][0]\n# called with sp='Bacillus-subtilis'\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "nocharge_passing": {
+  "value": 75693,
+  "text": "75,693",
+  "desc": "Charge-less spectra Percolator accepted at q < 0.01",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "@number(\"nocharge_passing\", \"Charge-less spectra Percolator accepted at q < 0.01\", [\"v2_data\", \"v2_intermediate\"],\n        [\"datazip.py\", \"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"q<0.01, no charge\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "nocharge_in_main": {
+  "value": 0,
+  "text": "0",
+  "desc": "Charge-less spectra in v2 main",
+  "made_by": [
+   "datazip.py",
+   "a_converted.py"
+  ],
+  "code": "@number(\"nocharge_in_main\", \"Charge-less spectra in v2 main\", [\"v2_data\", \"v2_main\"], [\"datazip.py\", \"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"in main, no charge\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "q01_scans": {
+  "value": 2974353,
+  "text": "2,974,353",
+  "desc": "Converted scans whose best target PSM has q < 0.01",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"q01_scans\", \"Converted scans whose best target PSM has q < 0.01\", [\"v2_data\", \"v2_intermediate\"], [\"a_converted.py\"])\ndef _():\n    return int(row(csv(\"converted__summary\"), \"q<0.01\", species=\"ALL\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "bsub_chargeless_files": {
+  "value": 13,
+  "text": "13",
+  "desc": "B. subtilis MGFs with nothing in main, every spectrum charge-less",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"bsub_chargeless_files\", \"B. subtilis MGFs with nothing in main, every spectrum charge-less\", [\"v2_data\"], [\"a_converted.py\"])\ndef _():\n    return _dropped_files().filter(pl.col(\"species\") == \"Bacillus-subtilis\").height\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "bsub_file_psm_min": {
+  "value": 103,
+  "text": "103",
+  "desc": "Fewest q < 0.01 PSMs in one of those files, the DIA run aside",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"bsub_file_psm_min\", \"Fewest q < 0.01 PSMs in one of those files, the DIA run aside\", [\"v2_data\", \"v2_intermediate\"], [\"a_converted.py\"])\ndef _():\n    d = _dropped_files().filter((pl.col(\"species\") == \"Bacillus-subtilis\") & ~pl.col(\"raw_file\").str.contains(\"DIA\"))\n    return int(d[\"q<0.01\"].min())\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "bsub_file_psm_max": {
+  "value": 397,
+  "text": "397",
+  "desc": "Most q < 0.01 PSMs in one of those files",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"bsub_file_psm_max\", \"Most q < 0.01 PSMs in one of those files\", [\"v2_data\", \"v2_intermediate\"], [\"a_converted.py\"])\ndef _():\n    return int(_dropped_files().filter(pl.col(\"species\") == \"Bacillus-subtilis\")[\"q<0.01\"].max())\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "mouse_dropped_files": {
+  "value": 4,
+  "text": "4",
+  "desc": "Mouse MGFs with nothing in main",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"mouse_dropped_files\", \"Mouse MGFs with nothing in main\", [\"v2_data\"], [\"a_converted.py\"])\ndef _():\n    return _dropped_files().filter(pl.col(\"species\") == \"Mus-musculus\").height\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "raw_files_converted": {
+  "value": 356,
+  "text": "356",
+  "desc": "Raw files in v2's conversion",
+  "made_by": [
+   "datazip.py"
+  ],
+  "code": "@number(\"raw_files_converted\", \"Raw files in v2's conversion\", [\"v2_data\"], [\"datazip.py\"])\ndef _():\n    return len(glob.glob(f\"{T}/datazip__*.parquet\"))\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "raw_files_main": {
+  "value": 339,
+  "text": "339",
+  "desc": "Raw files with a spectrum in v2 main",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"raw_files_main\", \"Raw files with a spectrum in v2 main\", [\"v2_main\"], [\"a_flow.py\"])\ndef _():\n    return registry().filter(pl.col(\"lab_zenodo_main\").is_not_null()).select(\"species\", \"raw_file\").n_unique()\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "after_filters": {
+  "value": 2898614,
+  "text": "2,898,614",
+  "desc": "q < 0.01 scans less the charge-less ones and the four mouse files",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"after_filters\", \"q < 0.01 scans less the charge-less ones and the four mouse files\", [\"v2_data\", \"v2_intermediate\"], [\"a_converted.py\"])\ndef _():\n    s = csv(\"converted__summary\").filter(pl.col(\"species\") == \"ALL\")\n    mouse = _dropped_files().filter(pl.col(\"species\") == \"Mus-musculus\")[\"q<0.01\"].sum()\n    return int(s[\"q<0.01\"][0] - s[\"q<0.01, no charge\"][0] - mouse)\n",
+  "sources": [
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   },
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "shared_draw_removed": {
+  "value": 60497,
+  "text": "60,497",
+  "desc": "Spectra the shared-peptide draw removes on the way to v2 main",
+  "made_by": [
+   "a_converted.py"
+  ],
+  "code": "@number(\"shared_draw_removed\", \"Spectra the shared-peptide draw removes on the way to v2 main\", [\"v2_main\", \"v2_data\"], [\"a_converted.py\"])\ndef _():\n    return REG[\"after_filters\"][\"f\"]() - release(\"zenodo_main\", [\"species\"]).collect().height\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "v1_2022_shared": {
+  "value": 801288,
+  "text": "801,288",
+  "desc": "Spectra v1 shares with MassIVE 2022",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "@number(\"v1_2022_shared\", \"Spectra v1 shares with MassIVE 2022\", [\"v1\", \"massive_2022\"], [\"make_jobs.py\", \"extract.py\"])\ndef _():\n    return _v1_vs_2022().height\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "v1_2022_plus1": {
+  "value": 102812,
+  "text": "102,812",
+  "desc": "Spectra v1 shares with MassIVE 2022 whose 2022 neutral precursor mass is 1 Da heavier",
+  "made_by": [
+   "make_jobs.py"
+  ],
+  "code": "@number(\"v1_2022_plus1\", \"Spectra v1 shares with MassIVE 2022 whose 2022 neutral precursor mass is 1 Da heavier\", [\"v1\", \"massive_2022\"], [\"make_jobs.py\"])\ndef _():\n    return int((_v1_vs_2022()[\"dn\"] == 1).sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "v1_2022_plus2": {
+  "value": 17634,
+  "text": "17,634",
+  "desc": "Spectra v1 shares with MassIVE 2022 whose 2022 neutral precursor mass is 2 Da heavier",
+  "made_by": [
+   "make_jobs.py"
+  ],
+  "code": "@number(\"v1_2022_plus2\", \"Spectra v1 shares with MassIVE 2022 whose 2022 neutral precursor mass is 2 Da heavier\", [\"v1\", \"massive_2022\"], [\"make_jobs.py\"])\ndef _():\n    return int((_v1_vs_2022()[\"dn\"] == 2).sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "v1_2022_charge_changed": {
+  "value": 20,
+  "text": "20",
+  "desc": "Spectra v1 shares with MassIVE 2022 whose charge differs between the two",
+  "made_by": [
+   "make_jobs.py"
+  ],
+  "code": "@number(\"v1_2022_charge_changed\", \"Spectra v1 shares with MassIVE 2022 whose charge differs between the two\", [\"v1\", \"massive_2022\"], [\"make_jobs.py\"])\ndef _():\n    j = _v1_vs_2022()\n    return int((j[\"charge\"] != j[\"charge_r\"]).sum())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "iso_main": {
+  "value": 484359,
+  "text": "484,359",
+  "desc": "Zenodo main: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='Zenodo main'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_main_pct": {
+  "value": 17.07,
+  "text": "17.1%",
+  "desc": "Zenodo main: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='Zenodo main'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2022": {
+  "value": 464658,
+  "text": "464,658",
+  "desc": "MassIVE r2022: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='MassIVE r2022'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2022_pct": {
+  "value": 16.52,
+  "text": "16.5%",
+  "desc": "MassIVE r2022: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='MassIVE r2022'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2023": {
+  "value": 488139,
+  "text": "488,139",
+  "desc": "MassIVE r2023: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='MassIVE r2023'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2023_pct": {
+  "value": 17.1,
+  "text": "17.1%",
+  "desc": "MassIVE r2023: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='MassIVE r2023'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2024": {
+  "value": 487073,
+  "text": "487,073",
+  "desc": "MassIVE r2024: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='MassIVE r2024'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_2024_pct": {
+  "value": 17.12,
+  "text": "17.1%",
+  "desc": "MassIVE r2024: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='MassIVE r2024'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_balanced": {
+  "value": 105918,
+  "text": "105,918",
+  "desc": "Zenodo balanced = ProteoBench: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='Zenodo balanced = ProteoBench'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_balanced_pct": {
+  "value": 13.58,
+  "text": "13.6%",
+  "desc": "Zenodo balanced = ProteoBench: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='Zenodo balanced = ProteoBench'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_dion": {
+  "value": 27970,
+  "text": "27,970",
+  "desc": "dIon: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='dIon'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_dion_pct": {
+  "value": 14.84,
+  "text": "14.8%",
+  "desc": "dIon: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='dIon'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_v1": {
+  "value": 0,
+  "text": "0",
+  "desc": "original (species files): spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='original (species files)'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_v1_pct": {
+  "value": 0.0,
+  "text": "0.0%",
+  "desc": "original (species files): that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='original (species files)'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_instanovo": {
+  "value": 0,
+  "text": "0",
+  "desc": "InstaNovo split: spectra whose precursor is the label's M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(v=_v):\n    return int(_iso(v)[\"offset +1\"][0])\n# called with v='InstaNovo split'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_instanovo_pct": {
+  "value": 0.0,
+  "text": "0.0%",
+  "desc": "InstaNovo split: that, as a share",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _p(v=_v):\n    return float(_iso(v)[\"non-monoisotopic %\"][0])\n# called with v='InstaNovo split'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_vmungo_pct": {
+  "value": 1.62,
+  "text": "1.6%",
+  "desc": "v2 main, Vigna-mungo: share of precursors on the M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(sp=_sp):\n    return float(row(csv(\"isotope__non_mono_by_species\"), \"Zenodo main\", species=sp))\n# called with sp='Vigna-mungo'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_yeast_pct": {
+  "value": 24.77,
+  "text": "24.8%",
+  "desc": "v2 main, Saccharomyces-cerevisiae: share of precursors on the M+1 peak",
+  "made_by": [
+   "a_isotope.py"
+  ],
+  "code": "def _f(sp=_sp):\n    return float(row(csv(\"isotope__non_mono_by_species\"), \"Zenodo main\", species=sp))\n# called with sp='Saccharomyces-cerevisiae'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_c13_median_ppm": {
+  "value": 1.0365800498313356,
+  "text": "1.0 ppm",
+  "desc": "v2 main M+1 spectra: median error assuming a carbon-13 offset",
+  "made_by": [
+   "make_jobs_zip.py"
+  ],
+  "code": "@number(\"iso_c13_median_ppm\", \"v2 main M+1 spectra: median error assuming a carbon-13 offset\", [\"v2_main\"], [\"make_jobs_zip.py\"], fmt=\".1f\", suffix=\" ppm\")\ndef _():\n    return float(_offset_spectra()[\"e1\"].median())\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_deam_median_ppm": {
+  "value": 10.992624344791496,
+  "text": "11.0 ppm",
+  "desc": "v2 main M+1 spectra: median error assuming a missed deamidation instead",
+  "made_by": [
+   "make_jobs_zip.py"
+  ],
+  "code": "@number(\"iso_deam_median_ppm\", \"v2 main M+1 spectra: median error assuming a missed deamidation instead\", [\"v2_main\"], [\"make_jobs_zip.py\"], fmt=\".1f\", suffix=\" ppm\")\ndef _():\n    return float(_offset_spectra()[\"edeam\"].median())\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "iso_no_nq": {
+  "value": 74170,
+  "text": "74,170",
+  "desc": "v2 main M+1 spectra whose peptide has no N or Q to deamidate",
+  "made_by": [
+   "make_jobs_zip.py"
+  ],
+  "code": "@number(\"iso_no_nq\", \"v2 main M+1 spectra whose peptide has no N or Q to deamidate\", [\"v2_main\"], [\"make_jobs_zip.py\"])\ndef _():\n    return int((~_offset_spectra()[\"seq_bare\"].str.contains(\"[NQ]\")).sum())\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "peaks_v1_median": {
+  "value": 142.0,
+  "text": "142",
+  "desc": "Median peaks per spectrum, v1",
+  "made_by": [
+   "a_profile.py"
+  ],
+  "code": "@number(\"peaks_v1_median\", \"Median peaks per spectrum, v1\", [\"v1\"], [\"a_profile.py\"], fmt=\".0f\")\ndef _():\n    return float(_profile(\"original (species files)\", \"peaks median\"))\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "peaks_v2_median": {
+  "value": 334.0,
+  "text": "334",
+  "desc": "Median peaks per spectrum, v2 main",
+  "made_by": [
+   "a_profile.py"
+  ],
+  "code": "@number(\"peaks_v2_median\", \"Median peaks per spectrum, v2 main\", [\"v2_main\"], [\"a_profile.py\"], fmt=\".0f\")\ndef _():\n    return float(_profile(\"Zenodo main\", \"peaks median\"))\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "frag_v1_max": {
+  "value": 47568.18359375,
+  "text": "47,568",
+  "desc": "Largest fragment m/z, v1",
+  "made_by": [
+   "a_profile.py"
+  ],
+  "code": "@number(\"frag_v1_max\", \"Largest fragment m/z, v1\", [\"v1\"], [\"a_profile.py\"], fmt=\",.0f\")\ndef _():\n    return float(_profile(\"original (species files)\", \"fragment m/z max\"))\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "frag_v2_max": {
+  "value": 5496.06298828125,
+  "text": "5,496",
+  "desc": "Largest fragment m/z, v2 main",
+  "made_by": [
+   "a_profile.py"
+  ],
+  "code": "@number(\"frag_v2_max\", \"Largest fragment m/z, v2 main\", [\"v2_main\"], [\"a_profile.py\"], fmt=\",.0f\")\ndef _():\n    return float(_profile(\"Zenodo main\", \"fragment m/z max\"))\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "v1_charge1_pct": {
+  "value": 0.24,
+  "text": "0.24%",
+  "desc": "Share of v1 spectra at charge 1",
+  "made_by": [
+   "a_profile.py"
+  ],
+  "code": "@number(\"v1_charge1_pct\", \"Share of v1 spectra at charge 1\", [\"v1\"], [\"a_profile.py\"], fmt=\".2f\", suffix=\"%\")\ndef _():\n    return float(_profile(\"original (species files)\", \"z=1 %\"))\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "nterm_main_pct": {
+  "value": 6.584436089139384,
+  "text": "6.6%",
+  "desc": "Share of v2 main spectra with an N-terminal modification",
+  "made_by": [
+   "make_jobs_zip.py"
+  ],
+  "code": "@number(\"nterm_main_pct\", \"Share of v2 main spectra with an N-terminal modification\", [\"v2_main\"], [\"make_jobs_zip.py\"], fmt=\".1f\", suffix=\"%\")\ndef _():\n    m = table(\"zenodo_main\", (\"species\", \"seq_raw\"))\n    return 100 * m[\"seq_norm\"].str.contains(r\"^\\[[^\\]]*\\]-\").sum() / m.height\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "mouse_peak_spectra": {
+  "value": 19993,
+  "text": "19,993",
+  "desc": "Mouse spectra compared peak by peak (v1 against MassIVE 2024)",
+  "made_by": [
+   "a_peaks.py"
+  ],
+  "code": "@number(\"mouse_peak_spectra\", \"Mouse spectra compared peak by peak (v1 against MassIVE 2024)\", [\"v1\", \"massive_2024\"], [\"a_peaks.py\"])\ndef _():\n    return _peaks().height\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "mouse_peaks_matched_pct": {
+  "value": 97.59036144578313,
+  "text": "97.6%",
+  "desc": "Median share of v1's peaks found in the revised peak list within 10 ppm",
+  "made_by": [
+   "a_peaks.py"
+  ],
+  "code": "@number(\"mouse_peaks_matched_pct\", \"Median share of v1's peaks found in the revised peak list within 10 ppm\", [\"v1\", \"massive_2024\"],\n        [\"a_peaks.py\"], fmt=\".1f\", suffix=\"%\")\ndef _():\n    return 100 * float(_peaks()[\"orig_peaks_in_revised\"].median())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "mouse_intensity_matched_pct": {
+  "value": 96.99685506878195,
+  "text": "97.0%",
+  "desc": "Median share of v1's intensity carried by the peaks found in the revised peak list",
+  "made_by": [
+   "a_peaks.py"
+  ],
+  "code": "@number(\"mouse_intensity_matched_pct\", \"Median share of v1's intensity carried by the peaks found in the revised peak list\", [\"v1\", \"massive_2024\"], [\"a_peaks.py\"],\n        fmt=\".1f\", suffix=\"%\")\ndef _():\n    return 100 * float(_peaks()[\"orig_intensity_in_revised\"].median())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "mouse_intensity_ratio": {
+  "value": 2.4695853683497595,
+  "text": "2.5",
+  "desc": "Median ratio of v1's to the revised median intensity",
+  "made_by": [
+   "a_peaks.py"
+  ],
+  "code": "@number(\"mouse_intensity_ratio\", \"Median ratio of v1's to the revised median intensity\", [\"v1\", \"massive_2024\"], [\"a_peaks.py\"], fmt=\".1f\")\ndef _():\n    return float(_peaks()[\"intensity_ratio_median\"].median())\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2022_r2023_out": {
+  "value": 199297,
+  "text": "199,297",
+  "desc": "Spectra in r2022, not r2023",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _out(a=_a, b=_b):\n    return int(row(csv(f\"{a}_vs_{b}__presence\"), \"only_a\", species=\"ALL\"))\n# called with a='r2022', b='r2023'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2022_r2023_in": {
+  "value": 241754,
+  "text": "241,754",
+  "desc": "Spectra in r2023, not r2022",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _in(a=_a, b=_b):\n    return int(row(csv(f\"{a}_vs_{b}__presence\"), \"only_b\", species=\"ALL\"))\n# called with a='r2022', b='r2023'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2022_r2023_relabelled": {
+  "value": 41389,
+  "text": "41,389",
+  "desc": "Spectra in both whose label changed",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _lab(a=_a, b=_b):\n    r = csv(f\"{a}_vs_{b}__labels\").filter(pl.col(\"species\") == \"ALL\")\n    return int(r[\"I/L only\"][0] + r[\"modifications differ\"][0] + r[\"different peptide\"][0])\n# called with a='r2022', b='r2023'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2023_r2024_out": {
+  "value": 28674,
+  "text": "28,674",
+  "desc": "Spectra in r2023, not r2024",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _out(a=_a, b=_b):\n    return int(row(csv(f\"{a}_vs_{b}__presence\"), \"only_a\", species=\"ALL\"))\n# called with a='r2023', b='r2024'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2023_r2024_in": {
+  "value": 18928,
+  "text": "18,928",
+  "desc": "Spectra in r2024, not r2023",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _in(a=_a, b=_b):\n    return int(row(csv(f\"{a}_vs_{b}__presence\"), \"only_b\", species=\"ALL\"))\n# called with a='r2023', b='r2024'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2023_r2024_relabelled": {
+  "value": 0,
+  "text": "0",
+  "desc": "Spectra in both whose label changed",
+  "made_by": [
+   "a_versions.py"
+  ],
+  "code": "def _lab(a=_a, b=_b):\n    r = csv(f\"{a}_vs_{b}__labels\").filter(pl.col(\"species\") == \"ALL\")\n    return int(r[\"I/L only\"][0] + r[\"modifications differ\"][0] + r[\"different peptide\"][0])\n# called with a='r2023', b='r2024'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "r2024_main_out": {
+  "value": 27214,
+  "text": "27,214",
+  "desc": "Spectra in r2024, not zenodo_main",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t):\n    return int(row(csv(\"swing__transitions\"), \"spectra\", transition=t))\n# called with t='in r2024, not zenodo_main'\n",
+  "sources": [
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "r2024_main_in": {
+  "value": 20426,
+  "text": "20,426",
+  "desc": "Spectra in zenodo_main, not r2024",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t):\n    return int(row(csv(\"swing__transitions\"), \"spectra\", transition=t))\n# called with t='in zenodo_main, not r2024'\n",
+  "sources": [
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "r2024_main_diff": {
+  "value": 47640,
+  "text": "47,640",
+  "desc": "Spectra in exactly one of MassIVE 2024 and v2 main",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "@number(\"r2024_main_diff\", \"Spectra in exactly one of MassIVE 2024 and v2 main\", [\"massive_2024\", \"v2_main\"], [\"a_swing.py\"])\ndef _():\n    return REG[\"r2024_main_out\"][\"f\"]() + REG[\"r2024_main_in\"][\"f\"]()\n",
+  "sources": [
+   {
+    "key": "massive_2024",
+    "label": "MSV000090982, updates/2024-05-14_woutb_71950b89/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "swing_23_24_shared": {
+  "value": 28673,
+  "text": "28,673",
+  "desc": "Spectra in r2023, not r2024 whose peptide Percolator found in more than one species",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t, c=_c):\n    return int(row(csv(\"swing__transitions\"), c, transition=t))\n# called with t='in r2023, not r2024', c='peptide shared between species (q<0.01)'\n",
+  "sources": [
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "swing_main_shared": {
+  "value": 20426,
+  "text": "20,426",
+  "desc": "Spectra in zenodo_main, not r2024 whose peptide Percolator found in more than one species",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t, c=_c):\n    return int(row(csv(\"swing__transitions\"), c, transition=t))\n# called with t='in zenodo_main, not r2024', c='peptide shared between species (q<0.01)'\n",
+  "sources": [
+   {
+    "key": "v2_intermediate",
+    "label": "10.5281/zenodo.13685813, nine-species-intermediate.zip (Tide and Percolator output)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-intermediate.zip"
+   }
+  ]
+ },
+ "swing_22_23_out_same_pct": {
+  "value": 82.58980315810072,
+  "text": "83%",
+  "desc": "Spectra in r2022, not r2023 whose peptide the other build keeps in the same species",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t):\n    r = csv(\"swing__transitions\").filter(pl.col(\"transition\") == t)\n    return 100 * r[\"peptide present in other build, same species\"][0] / r[\"spectra\"][0]\n# called with t='in r2022, not r2023'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "swing_22_23_in_same_pct": {
+  "value": 83.2135145643919,
+  "text": "83%",
+  "desc": "Spectra in r2023, not r2022 whose peptide the other build keeps in the same species",
+  "made_by": [
+   "a_swing.py"
+  ],
+  "code": "def _f(t=_t):\n    r = csv(\"swing__transitions\").filter(pl.col(\"transition\") == t)\n    return 100 * r[\"peptide present in other build, same species\"][0] / r[\"spectra\"][0]\n# called with t='in r2023, not r2022'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "relabel_deamidation": {
+  "value": 21818,
+  "text": "21,818",
+  "desc": "2022 to 2023 relabellings: deamidation",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(k=_k):\n    return int(_relabel_22_23()[k])\n# called with k='deamidation'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "relabel_nterm": {
+  "value": 1226,
+  "text": "1,226",
+  "desc": "2022 to 2023 relabellings: N-terminal gained",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(k=_k):\n    return int(_relabel_22_23()[k])\n# called with k='N-terminal gained'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "relabel_same_set": {
+  "value": 10775,
+  "text": "10,775",
+  "desc": "2022 to 2023 relabellings: same set",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(k=_k):\n    return int(_relabel_22_23()[k])\n# called with k='same set'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "relabel_peptide": {
+  "value": 7570,
+  "text": "7,570",
+  "desc": "2022 to 2023 relabellings: different peptide",
+  "made_by": [
+   "make_jobs.py",
+   "extract.py"
+  ],
+  "code": "def _f(k=_k):\n    return int(_relabel_22_23()[k])\n# called with k='different peptide'\n",
+  "sources": [
+   {
+    "key": "massive_2022",
+    "label": "MSV000090982, peak/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   },
+   {
+    "key": "massive_2023",
+    "label": "MSV000090982, updates/2023-03-08_woutb_2c43c18c/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=e7c2e8518f10466bb4ce0e1070f43b90"
+   }
+  ]
+ },
+ "multi_species_r2022": {
+  "value": 855,
+  "text": "855",
+  "desc": "Backbones in more than one species file, r2022",
+  "made_by": [
+   "make_jobs.py",
+   "make_jobs_zip.py"
+  ],
+  "code": "def _f(b=_b):\n    d = table(b, (\"species\", \"seq_raw\")).with_columns(il(pl.col(\"seq_bare\")).alias(\"p\"))\n    return d.group_by(\"p\").agg(pl.col(\"species\").n_unique().alias(\"n\")).filter(pl.col(\"n\") > 1).height\n# called with b='r2022'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "multi_species_r2023": {
+  "value": 1458,
+  "text": "1,458",
+  "desc": "Backbones in more than one species file, r2023",
+  "made_by": [
+   "make_jobs.py",
+   "make_jobs_zip.py"
+  ],
+  "code": "def _f(b=_b):\n    d = table(b, (\"species\", \"seq_raw\")).with_columns(il(pl.col(\"seq_bare\")).alias(\"p\"))\n    return d.group_by(\"p\").agg(pl.col(\"species\").n_unique().alias(\"n\")).filter(pl.col(\"n\") > 1).height\n# called with b='r2023'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "multi_species_r2024": {
+  "value": 353,
+  "text": "353",
+  "desc": "Backbones in more than one species file, r2024",
+  "made_by": [
+   "make_jobs.py",
+   "make_jobs_zip.py"
+  ],
+  "code": "def _f(b=_b):\n    d = table(b, (\"species\", \"seq_raw\")).with_columns(il(pl.col(\"seq_bare\")).alias(\"p\"))\n    return d.group_by(\"p\").agg(pl.col(\"species\").n_unique().alias(\"n\")).filter(pl.col(\"n\") > 1).height\n# called with b='r2024'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "multi_species_zenodo_main": {
+  "value": 0,
+  "text": "0",
+  "desc": "Backbones in more than one species file, zenodo_main",
+  "made_by": [
+   "make_jobs.py",
+   "make_jobs_zip.py"
+  ],
+  "code": "def _f(b=_b):\n    d = table(b, (\"species\", \"seq_raw\")).with_columns(il(pl.col(\"seq_bare\")).alias(\"p\"))\n    return d.group_by(\"p\").agg(pl.col(\"species\").n_unique().alias(\"n\")).filter(pl.col(\"n\") > 1).height\n# called with b='zenodo_main'\n",
+  "sources": [
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_mouse_files": {
+  "value": 13,
+  "text": "13",
+  "desc": "denovo_benchmarks, Mus-musculus: raw files",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "def _f(sp=_sp, col=_col):\n    return _dnb_counts(sp, col)\n# called with sp='Mus-musculus', col='raw files'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "dnb_bsub_files": {
+  "value": 4,
+  "text": "4",
+  "desc": "denovo_benchmarks, Bacillus-subtilis: raw files",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "def _f(sp=_sp, col=_col):\n    return _dnb_counts(sp, col)\n# called with sp='Bacillus-subtilis', col='raw files'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "dnb_bsub_converted": {
+  "value": 106,
+  "text": "106",
+  "desc": "denovo_benchmarks, Bacillus-subtilis: raw files converted",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "def _f(sp=_sp, col=_col):\n    return _dnb_counts(sp, col)\n# called with sp='Bacillus-subtilis', col='raw files converted'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "dnb_yeast_files": {
+  "value": 3,
+  "text": "3",
+  "desc": "denovo_benchmarks, Saccharomyces-cerevisiae: raw files",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "def _f(sp=_sp, col=_col):\n    return _dnb_counts(sp, col)\n# called with sp='Saccharomyces-cerevisiae', col='raw files'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "dnb_yeast_converted": {
+  "value": 27,
+  "text": "27",
+  "desc": "denovo_benchmarks, Saccharomyces-cerevisiae: raw files converted",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "def _f(sp=_sp, col=_col):\n    return _dnb_counts(sp, col)\n# called with sp='Saccharomyces-cerevisiae', col='raw files converted'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_data",
+    "label": "10.5281/zenodo.13685813, nine-species-data.zip (the converted MGFs)",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-data.zip"
+   }
+  ]
+ },
+ "dnb_keyed": {
+  "value": 945141,
+  "text": "945,141",
+  "desc": "denovo_benchmarks labels whose chunk index resolves to a deposited spectrum",
+  "made_by": [
+   "make_jobs_dnb.py",
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_keyed\", \"denovo_benchmarks labels whose chunk index resolves to a deposited spectrum\", [\"dnb\"], [\"make_jobs_dnb.py\", \"a_dnb.py\"])\ndef _():\n    return pl.read_parquet(f\"{OUT}/dnb_keyed.parquet\", columns=[\"scan\"]).height\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "dnb_in_main": {
+  "value": 477999,
+  "text": "477,999",
+  "desc": "denovo_benchmarks spectra that v2 main also holds",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_in_main\", \"denovo_benchmarks spectra that v2 main also holds\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"])\ndef _():\n    return sum(_dnb_vs(c) for c in (\"identical\", \"I/L only\", \"modifications differ\", \"different peptide\"))\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_same_label_pct": {
+  "value": 87.85771518350457,
+  "text": "87.9%",
+  "desc": "Share of the spectra denovo_benchmarks shares with v2 main that carry the same label (I=L)",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_same_label_pct\", \"Share of the spectra denovo_benchmarks shares with v2 main that carry the same label (I=L)\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"], fmt=\".1f\", suffix=\"%\")\ndef _():\n    return 100 * (_dnb_vs(\"identical\") + _dnb_vs(\"I/L only\")) / REG[\"dnb_in_main\"][\"f\"]()\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_not_in_main": {
+  "value": 467142,
+  "text": "467,142",
+  "desc": "denovo_benchmarks spectra v2 main does not hold",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_not_in_main\", \"denovo_benchmarks spectra v2 main does not hold\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"])\ndef _():\n    return _dnb_vs(\"absent\")\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_rare_mods": {
+  "value": 188089,
+  "text": "188,089",
+  "desc": "denovo_benchmarks labels with a modification the revised search did not allow",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_rare_mods\", \"denovo_benchmarks labels with a modification the revised search did not allow\", [\"dnb\"], [\"a_dnb.py\"])\ndef _():\n    j = pl.read_parquet(f\"{OUT}/dnb_vs_registry.parquet\", columns=[\"lab_dnb\"])\n    return int(j[\"lab_dnb\"].str.contains(r\"[DEHKRC]\\[\\+(?:57.02|21.98|14.02|39.99)\\]|\\[\\+(?:57.02|26.02|12.00)\\]-\").sum())\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "dnb_iso_spectra": {
+  "value": 44464,
+  "text": "44,464",
+  "desc": "Spectra v2 main labels at the M+1 peak that denovo_benchmarks also labels",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_iso_spectra\", \"Spectra v2 main labels at the M+1 peak that denovo_benchmarks also labels\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"])\ndef _():\n    return _dnb_iso(None)\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_iso_deamidation": {
+  "value": 39011,
+  "text": "39,011",
+  "desc": "Of those, spectra denovo_benchmarks labels as the same backbone with one more deamidation",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_iso_deamidation\", \"Of those, spectra denovo_benchmarks labels as the same backbone with one more deamidation\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"])\ndef _():\n    return _dnb_iso(\"modifications differ\")\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_c13_better": {
+  "value": 37982,
+  "text": "37,982",
+  "desc": "Of those, spectra where v2 main's carbon-13 reading fits the precursor better",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_c13_better\", \"Of those, spectra where v2 main's carbon-13 reading fits the precursor better\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"])\ndef _():\n    x = _dnb_deam()\n    return int((x[\"e_c13\"].abs() < x[\"e_dnb\"].abs()).sum())\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_c13_ppm": {
+  "value": 0.8808957144785964,
+  "text": "0.9 ppm",
+  "desc": "Of those, the median precursor error of v2 main's carbon-13 reading",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_c13_ppm\", \"Of those, the median precursor error of v2 main's carbon-13 reading\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"], fmt=\".1f\", suffix=\" ppm\")\ndef _():\n    return float(_dnb_deam()[\"e_c13\"].median())\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_deam_ppm": {
+  "value": 12.10034236332296,
+  "text": "12.1 ppm",
+  "desc": "Of those, the median precursor error of denovo_benchmarks' deamidation reading",
+  "made_by": [
+   "a_dnb.py"
+  ],
+  "code": "@number(\"dnb_deam_ppm\", \"Of those, the median precursor error of denovo_benchmarks' deamidation reading\", [\"dnb\", \"v2_main\"], [\"a_dnb.py\"], fmt=\".1f\", suffix=\" ppm\")\ndef _():\n    return float(_dnb_deam()[\"e_dnb\"].median())\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "v2_main",
+    "label": "10.5281/zenodo.13685813, nine-species-main.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-main.zip"
+   }
+  ]
+ },
+ "dnb_unresolved": {
+  "value": 1014,
+  "text": "1,014",
+  "desc": "denovo_benchmarks labels pointing past the end of their deposited MGF chunk",
+  "made_by": [
+   "make_jobs_dnb.py"
+  ],
+  "code": "@number(\"dnb_unresolved\", \"denovo_benchmarks labels pointing past the end of their deposited MGF chunk\", [\"dnb\"], [\"make_jobs_dnb.py\"])\ndef _():\n    return _dnb_unresolved()[0].height\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "dnb_bc2_1_spectra": {
+  "value": 18996,
+  "text": "18,996",
+  "desc": "Spectra in the deposited chunk BC-2_1.mgf",
+  "made_by": [
+   "make_jobs_dnb.py"
+  ],
+  "code": "@number(\"dnb_bc2_1_spectra\", \"Spectra in the deposited chunk BC-2_1.mgf\", [\"dnb\"], [\"make_jobs_dnb.py\"])\ndef _():\n    mg = _dnb_unresolved()[1]\n    return mg.filter((pl.col(\"raw_file\") == \"BC-2\") & (pl.col(\"fold\") == \"1\")).height\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "dnb_bc2_1_max_index": {
+  "value": 19999,
+  "text": "19,999",
+  "desc": "Highest index the labels cite in BC-2_1",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "@number(\"dnb_bc2_1_max_index\", \"Highest index the labels cite in BC-2_1\", [\"dnb\"], [\"download_sources.py\"])\ndef _():\n    miss = _dnb_unresolved()[0]\n    return int(miss.filter(pl.col(\"spectrum_id\").str.starts_with(\"BC-2_1:\"))[\"row\"].max())\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "fold_backbone_min": {
+  "value": 28.48563311396411,
+  "text": "28%",
+  "desc": "Lowest share of a v1 fold's valid or test spectra whose backbone the fold trains on",
+  "made_by": [
+   "make_jobs.py"
+  ],
+  "code": "@number(\"fold_backbone_min\", \"Lowest share of a v1 fold's valid or test spectra whose backbone the fold trains on\", [\"v1_folds\"],\n        [\"make_jobs.py\"], fmt=\".0f\", suffix=\"%\")\ndef _():\n    return min(_fold_backbone())\n",
+  "sources": [
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "fold_backbone_max": {
+  "value": 36.33669235328986,
+  "text": "36%",
+  "desc": "Highest such share",
+  "made_by": [
+   "make_jobs.py"
+  ],
+  "code": "@number(\"fold_backbone_max\", \"Highest such share\", [\"v1_folds\"], [\"make_jobs.py\"], fmt=\".0f\", suffix=\"%\")\ndef _():\n    return max(_fold_backbone())\n",
+  "sources": [
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "heldout_min_pct": {
+  "value": 0.4,
+  "text": "0.4%",
+  "desc": "M. mazei spectra whose backbone the fold holding it out trained on",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(h=_h):\n    return float(row(csv(\"leak__original_folds\"), \"peptide trained on %\", **{\"held-out species\": h}))\n# called with h='M. mazei'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "heldout_max_pct": {
+  "value": 22.6,
+  "text": "22.6%",
+  "desc": "V. mungo spectra whose backbone the fold holding it out trained on",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(h=_h):\n    return float(row(csv(\"leak__original_folds\"), \"peptide trained on %\", **{\"held-out species\": h}))\n# called with h='V. mungo'\n",
+  "sources": [
+   {
+    "key": "v1",
+    "label": "MSV000081382, HighResolution/data/high.<species>/peaks.db.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   },
+   {
+    "key": "v1_folds",
+    "label": "MSV000081382, HighResolution/data/cross.9high_80k.exclude_<species>/",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb"
+   }
+  ]
+ },
+ "leak_pb_pct": {
+  "value": 17.0,
+  "text": "17.0%",
+  "desc": "Zenodo balanced = ProteoBench: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"same spectrum %\", **{\"evaluate on\": e}))\n# called with e='Zenodo balanced = ProteoBench'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_pb_pct_backbone": {
+  "value": 61.0,
+  "text": "61.0%",
+  "desc": "Zenodo balanced = ProteoBench: share whose backbone is in that training split",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _b(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"peptide seen %\", **{\"evaluate on\": e}))\n# called with e='Zenodo balanced = ProteoBench'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_dion_pct": {
+  "value": 21.8,
+  "text": "21.8%",
+  "desc": "dIon test: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"same spectrum %\", **{\"evaluate on\": e}))\n# called with e='dIon test'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_dion_pct_backbone": {
+  "value": 58.5,
+  "text": "58.5%",
+  "desc": "dIon test: share whose backbone is in that training split",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _b(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"peptide seen %\", **{\"evaluate on\": e}))\n# called with e='dIon test'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_dnb_pct": {
+  "value": 21.8,
+  "text": "21.8%",
+  "desc": "denovo_benchmarks selection: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"same spectrum %\", **{\"evaluate on\": e}))\n# called with e='denovo_benchmarks selection'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_dnb_pct_backbone": {
+  "value": 64.2,
+  "text": "64.2%",
+  "desc": "denovo_benchmarks selection: share whose backbone is in that training split",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _b(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"peptide seen %\", **{\"evaluate on\": e}))\n# called with e='denovo_benchmarks selection'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_main_pct": {
+  "value": 8.2,
+  "text": "8.2%",
+  "desc": "Zenodo main, all species: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"same spectrum %\", **{\"evaluate on\": e}))\n# called with e='Zenodo main, all species'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_main_pct_backbone": {
+  "value": 59.9,
+  "text": "59.9%",
+  "desc": "Zenodo main, all species: share whose backbone is in that training split",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _b(e=_e):\n    return float(row(csv(\"leak__cross_version\"), \"peptide seen %\", **{\"evaluate on\": e}))\n# called with e='Zenodo main, all species'\n",
+  "sources": [
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_pb_mouse_pct": {
+  "value": 71.22815267654205,
+  "text": "71%",
+  "desc": "ProteoBench, Mus-musculus: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(sp=_sp):\n    r = csv(\"leak__instanovo_train_to_proteobench_by_species\").filter(pl.col(\"species\") == sp)\n    return 100 * r[\"same spectrum\"][0] / r[\"spectra\"][0]\n# called with sp='Mus-musculus'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   },
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "leak_pb_human_pct": {
+  "value": 50.21437069294485,
+  "text": "50%",
+  "desc": "ProteoBench, H.-sapiens: share of spectra that are InstaNovo/NovoBench training scans",
+  "made_by": [
+   "a_leak.py"
+  ],
+  "code": "def _f(sp=_sp):\n    r = csv(\"leak__instanovo_train_to_proteobench_by_species\").filter(pl.col(\"species\") == sp)\n    return 100 * r[\"same spectrum\"][0] / r[\"spectra\"][0]\n# called with sp='H.-sapiens'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   },
+   {
+    "key": "instanovo_split",
+    "label": "Hugging Face InstaDeepAI/ms_ninespecies_benchmark, data/{train,validation,test}-*.parquet",
+    "url": "https://huggingface.co/datasets/InstaDeepAI/ms_ninespecies_benchmark/tree/main/data"
+   }
+  ]
+ },
+ "balanced_files": {
+  "value": 150,
+  "text": "150",
+  "desc": "Raw files in v2 balanced",
+  "made_by": [
+   "a_flow.py"
+  ],
+  "code": "@number(\"balanced_files\", \"Raw files in v2 balanced\", [\"v2_balanced\"], [\"a_flow.py\"])\ndef _():\n    return registry().filter(pl.col(\"lab_zenodo_balanced\").is_not_null()).select(\"species\", \"raw_file\").n_unique()\n",
+  "sources": [
+   {
+    "key": "v2_balanced",
+    "label": "10.5281/zenodo.13685813, nine-species-balanced.zip",
+    "url": "https://zenodo.org/records/13685813/files/nine-species-balanced.zip"
+   }
+  ]
+ }
+}
