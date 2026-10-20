@@ -43,7 +43,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-a0d75ab255f333f73b2f6541b3f8f560.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f5e9a95a621d5b04f26998c3e09d6170.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -222,8 +222,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="revised-main" class="level3">
 <h3 class="anchored" data-anchor-id="revised-main">revised (main)</h3>
-<p>Re-curated to remove peptide redundancy between species, which leaked test peptides into training in the original, and re-released with a fix for a bug that wrongly detected shared peptides between species. Introduced by “A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models”. 2,844,842 spectra. The MassIVE record carries dated update folders, so that accession is not a single fixed object.</p>
-<p>spectra 2,844,842 · released 2024-11-08 · introduced by <a href="../publications/a-multi-species-benchmark-for-training-and-validating-mass-spectrometry.html">A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models</a></p>
+<p>Re-curated to remove peptide redundancy between species, which leaked test peptides into training in the original, and re-released with a fix for a bug that wrongly detected shared peptides between species. Introduced by “A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models”. 2,838,117 spectra in the Zenodo main archive. The MassIVE record holds three earlier builds in dated folders (2022, 2023, 2024), none identical to it: the 2024 one differs by 47,640 spectra, because each build redrew which species keeps a peptide found in several.</p>
+<p>spectra 2,838,117 · released 2024-11-08 · introduced by <a href="../publications/a-multi-species-benchmark-for-training-and-validating-mass-spectrometry.html">A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models</a></p>
 <p>Where it lives:</p>
 <ul>
 <li><strong>DOI</strong> · <a href="https://doi.org/10.5281/zenodo.12926326">10.5281/zenodo.12926326</a> <small>construction code and archive, not the spectra</small></li>
@@ -234,7 +234,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="instanovo-split" class="level3">
 <h3 class="anchored" data-anchor-id="instanovo-split">InstaNovo split</h3>
-<p>A fixed train/validation/test split published as parquet with its own DOI, which makes it the only version of this benchmark that is reproducible by citation alone. Its 499,402 training spectra are the same count NovoBench retrains every architecture on.</p>
+<p>A fixed train/validation/test split published as parquet with its own DOI, which makes it the only version of this benchmark that is reproducible by citation alone. Its 499,402 training spectra are the original 2017 deposit’s yeast-held-out fold, the same set NovoBench retrains every architecture on, and its test set is the original yeast file. A sixth of ProteoBench’s spectra are scans from its training split.</p>
 <p>spectra 639,286 · train 499,402 · validation 28,572 · test 111,312 · released 2024-12-01</p>
 <p>Where it lives:</p>
 <ul>
@@ -244,7 +244,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="proteobench-selection" class="level3">
 <h3 class="anchored" data-anchor-id="proteobench-selection">ProteoBench selection</h3>
-<p>The selection ProteoBench’s <em>de novo</em> DDA-HCD module scores submissions against.</p>
+<p>The selection ProteoBench’s <em>de novo</em> DDA-HCD module scores submissions against: the revised (balanced) variant record for record, with the species dropped and the scans renumbered.</p>
 <p>spectra 779,879</p>
 <p>Where it lives:</p>
 <ul>
@@ -253,8 +253,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="revised-balanced" class="level3">
 <h3 class="anchored" data-anchor-id="revised-balanced">revised (balanced)</h3>
-<p>The same re-curation, then randomly thinned so the species are more evenly represented: smaller and balanced rather than larger and skewed. Shipped in the same Zenodo record as the main variant, so “the revised benchmark” is still two different things.</p>
-<p>released 2024-11-08 · introduced by <a href="../publications/a-multi-species-benchmark-for-training-and-validating-mass-spectrometry.html">A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models</a></p>
+<p>The same re-curation, cut to 150 whole raw files of main, taken in random order per species until it reached about 100,000 spectra (human, mouse and Candidatus endoloripes are kept whole). Shipped in the same Zenodo record as the main variant, so “the revised benchmark” is still two different things.</p>
+<p>spectra 779,879 · released 2024-11-08 · introduced by <a href="../publications/a-multi-species-benchmark-for-training-and-validating-mass-spectrometry.html">A multi-species benchmark for training and validating mass spectrometry proteomics machine learning models</a></p>
 <p>Where it lives:</p>
 <ul>
 <li><strong>Zenodo</strong> · <a href="https://doi.org/10.5281/zenodo.13685813">10.5281/zenodo.13685813</a> <small>balanced variant</small></li>
