@@ -40544,7 +40544,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnolo
 INSERT INTO repository_metrics VALUES('https://github.com/YanFuGroup/DiNovo',7,1,1,0,0,1,'2026-03-28T12:45:25Z','2026-09-22T15:22:30','v1.5.0-release');
 INSERT INTO repository_metrics VALUES('https://github.com/alifare/PepGo/tree/main',1,0,0,0,0,0,'2026-07-03T06:41:39Z','2026-07-03T08:42:29','v1.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo',32,3,1,7,0,1,'2026-09-20T04:34:25Z','2026-09-20T10:09:56',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/Modanovo',4,1,1,1,0,0,'2025-12-04T11:10:34Z','2026-10-16T10:12:43','v1.0.0');
+INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/Modanovo',4,1,2,1,0,0,'2025-12-04T11:10:34Z','2026-10-20T10:29:30','v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/biocc/SP-MEGD_Fusion',4,1,0,0,0,0,'2026-02-10T08:43:17Z','2026-09-09T10:11:46',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/PrimeNovo',32,3,1,7,0,1,'2026-09-20T04:34:25Z','2026-09-20T10:09:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/hearthewind/dianovo',6,2,1,0,0,0,'2025-11-12T22:57:57Z','2026-10-12T13:37:53',NULL);
@@ -40560,10 +40560,10 @@ INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/DeepNovoAA',12
 INSERT INTO repository_metrics VALUES('https://github.com/bbehsaz/cyclonovo',10,0,3,0,0,0,'2020-09-29T03:24:38Z','2026-10-15T10:25:20',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/DeepNovoV2',27,17,5,0,0,0,'2019-05-21T20:32:37Z','2026-05-26T12:42:18',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',3,0,1,0,0,0,'2025-11-08T14:51:06Z','2026-06-10T07:20:03',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',204,86,27,315,20,346,'2026-10-15T02:13:08Z','2026-10-15T10:25:20','v5.2.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',204,86,27,315,21,346,'2026-10-15T02:13:08Z','2026-10-20T10:29:30','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',6,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-09-07T10:49:15',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',11,6,0,4,1,6,'2026-08-19T05:02:25Z','2026-10-17T09:46:23','v1.1');
+INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',12,7,0,4,1,6,'2026-08-19T05:02:25Z','2026-10-20T10:29:30','v1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo',32,3,1,7,0,1,'2026-09-20T04:34:25Z','2026-09-20T10:09:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/usr922/LIPNovo',9,1,1,0,0,0,'2025-05-26T03:21:36Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/qiyueliuhuo8/TSARseqNovo',7,1,2,0,0,0,'2024-12-26T15:55:41Z','2026-08-31T11:55:55',NULL);
@@ -40590,7 +40590,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shak
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',50,22,5,82,1,183,'2026-07-13T17:01:59Z','2026-10-15T10:25:20','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',3,0,1,0,0,0,'2026-05-13T07:08:03Z','2026-10-16T10:12:43',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,0,0,0,0,0,'2026-08-13T12:53:35Z','2026-08-25T06:21:51','panel30-configs-frozen');
-INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,4,16,0,46,'2026-10-09T11:35:08Z','2026-10-09T12:09:15','v0.3.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,7,16,0,46,'2026-10-09T11:35:08Z','2026-10-20T10:29:30','v0.3.1');
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',13,3,0,0,4,15,'2026-09-17T10:06:05Z','2026-09-26T10:21:53','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
@@ -40604,7 +40604,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/Westlake-OmicsAI/adano
 INSERT INTO repository_metrics VALUES('https://github.com/4chuanMcChicken/DpNovo',0,0,0,0,0,0,'2024-06-25T15:46:21Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/yangshu729/biatNovo-DDA',0,0,0,0,0,10,'2024-09-15T02:52:41Z','2026-10-05T12:46:50','v0.1');
 INSERT INTO repository_metrics VALUES('https://github.com/semiller10/postnovo',10,3,3,0,1,0,'2022-11-29T02:45:14Z','2026-10-05T12:46:50','1.0.9-alpha');
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/winnow',12,2,28,81,12,146,'2026-10-19T09:02:33Z','2026-10-19T11:20:50','v2.1.1');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/winnow',12,2,41,81,12,150,'2026-10-19T16:46:29Z','2026-10-20T10:29:30','v2.1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Westlake-OmicsAI/NovoBench',7,1,0,0,0,0,'2024-08-16T11:37:36Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/marcottelab/UVnovo',1,1,0,0,0,0,'2017-02-27T19:26:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/dumbgoos/AbNovoBench',20,2,1,1,0,1,'2025-09-29T02:58:39Z','2026-10-05T12:46:50',NULL);
@@ -66481,35 +66481,6 @@ INSERT INTO sqlite_sequence VALUES('affiliation',1414);
 INSERT INTO sqlite_sequence VALUES('author',3929);
 INSERT INTO sqlite_sequence VALUES('algorithm',822);
 INSERT INTO sqlite_sequence VALUES('publication',991);
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -66536,6 +66507,11 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -66551,6 +66527,12 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -66565,6 +66547,15 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -66593,20 +66584,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -66614,4 +66591,27 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;
