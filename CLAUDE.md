@@ -12,6 +12,7 @@ A curated knowledge base covering the *de novo* peptide sequencing field: algori
 - `plots.ipynb`: Jupyter notebook that connects to `denovo.db`, runs SQL, and renders matplotlib figures (offline exploration / sanity-check only, not published).
 - `index.qmd` + `_quarto.yml`: the Quarto site that renders interactive charts straight from `denovo.db`.
 - `WATCHLIST.md`: tools that belong in the catalog but have no citable manuscript yet, plus things deliberately left out. Check it before concluding a tool is simply missing, and add to it rather than adding a method with no publication.
+- `NINE_SPECIES.md`: the nine-species benchmark's ten public versions compared spectrum by spectrum, with the code in `analysis/nine_species/` (run off-repo, never in CI). Read it before attaching a number to a nine-species version: MSV000090982 holds three releases, none of them the published Zenodo main.
 - `BENCHMARKS.md`: the field's public benchmarks, which two are charted and why the others are not, and the retrained-versus-released trap. **Read it before putting a benchmark number next to another one**: NovoBench, ProteoBench and denovo_benchmarks all say "nine-species" and only two of the three are comparable.
 
 ## Common commands
@@ -1444,12 +1445,15 @@ distinguishable by number, which is the only reliable way:
   validating mass spectrometry proteomics machine learning models"
   (publications 98 and 113), re-curated to remove peptide redundancy between
   species, which leaked test peptides into training in the original.
-  2,844,842 spectra. It is **itself two variants**, `main` and `balanced`, the
-  balanced one randomly thinned so the species are more evenly represented;
-  both ship in one Zenodo record, so "the revised benchmark" is still two
-  things. Addresses: `MSV000090982`, whose record carries DATED UPDATE FOLDERS
-  (one paper cites `updates/2024-05-14_woutb_71950b89`) so even that accession
-  is not a single fixed object; `10.5281/zenodo.13685813` for the data; and
+  2,838,117 spectra in Zenodo main. It is **itself two variants**, `main` and
+  `balanced`, the balanced one 150 whole raw files of main (779,879 spectra)
+  chosen so the species are more evenly represented; both ship in one Zenodo
+  record, so "the revised benchmark" is still two things. Addresses:
+  `MSV000090982`, whose record carries DATED UPDATE FOLDERS (one paper cites
+  `updates/2024-05-14_woutb_71950b89`) so even that accession is not a single
+  fixed object: its 2022, 2023 and 2024 releases are three builds, and the 2024
+  one is still 47,640 spectra away from Zenodo main (`NINE_SPECIES.md`);
+  `10.5281/zenodo.13685813` for the data; and
   `10.5281/zenodo.12926326` plus `Noble-Lab/multi-species-benchmark` for the
   construction code, marked as such in `part` because code is not an address of
   the spectra.

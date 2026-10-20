@@ -70,6 +70,15 @@ So InstaNovo at 0.164 peptide precision is not a broken run. It is a true
 statement about a model NovoBench trained, and not a statement about the tool
 anyone downloads. Quoting it as the latter is the error.
 
+**That training split also overlaps ProteoBench's test set.** NovoBench's
+499,402 training spectra are the original 2017 deposit's yeast-held-out fold,
+the same set InstaNovo publishes as its split, and 132,843 of ProteoBench's
+779,879 spectra (17%) are the same scans, relabelled by the revised search:
+71% of its mouse spectra and half its human ones. Only yeast and *B. subtilis*
+are clean. A NovoBench-style model scored on ProteoBench is partly scored on
+its training data. The spectrum-level trace is in
+[`NINE_SPECIES.md`](NINE_SPECIES.md).
+
 Two smaller versions of the same trap, both already live on the site:
 
 - **Precision at a tool's own coverage flatters a tool that answers less.**
@@ -86,7 +95,8 @@ Two smaller versions of the same trap, both already live on the site:
 
 - The **nine-species dataset** and its rebalanced successor are *data*, not a
   leaderboard. Three benchmarks above evaluate on it, which is exactly why
-  "on nine-species" identifies almost nothing on its own.
+  "on nine-species" identifies almost nothing on its own. [`NINE_SPECIES.md`](NINE_SPECIES.md) follows every
+  spectrum through its ten public versions.
 - **NovoBoard** is an FDR and accuracy *framework*: a way to compute a number,
   not a published set of numbers.
 - Several catalogued `kind='benchmark'` rows are one-off evaluation papers
