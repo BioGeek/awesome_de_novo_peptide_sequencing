@@ -78,6 +78,31 @@ paper is still to come (then it is a new `algorithm` row, `kind='algorithm'`,
 landing the day after the announcement makes the first likely, not
 established.
 
+### Beyond Best Guesses (Wilhelm lab, HUPO 2026 poster)
+
+| | |
+|---|---|
+| Title | "Beyond Best Guesses: A Multi-Level Confidence Assessment Framework for De Novo Peptide Sequencing Results" |
+| Presenter | Cemil Can Saylan, PhD student, Technical University of Munich (Wilhelm lab; Mathias Wilhelm is author 33) |
+| Venue | HUPO 2026, Singapore, Poster Session 2, board PS02.146, 2026-09-29 |
+| Sources | the lab's HUPO 2026 schedule graphic; <https://tnuki.com/conferences/hupo-2026/technical-university-of-munich> (Cloudflare-gated, a browser reads it) |
+| Last checked | 2026-10-24 |
+
+A confidence-assessment framework for *de novo* results, by its title a
+post-processor in the Winnow and NovoBoard neighbourhood. Nothing more is
+public: tnuki lists title, presenter level, session and board only, and the
+HUPO 2026 scientific program on EventsAir exposes no abstracts to a
+scripted request. No DOI, poster PDF, preprint or repository found (web
+search on the title and on the presenter's name).
+
+Not added yet because a `'presentation'` row still needs a byline and an
+`algorithm` link to the method it is about, and neither is known: the
+program gives one presenter, not the authors, and the method's name is not
+in the title. It goes in as soon as either the poster PDF (as publication
+533 did, a PEAKS poster with no DOI) or a preprint appears; the Wilhelm lab
+can be asked directly for the PDF. Expected classification:
+`kind='post-processor'`, the rest from the abstract.
+
 ### Hellbender antimicrobial peptides — ADDED 2026-09-29
 
 Promoted into the catalog as publication 357, once `publication_type`
