@@ -13,9 +13,9 @@ name: check-links
 on:
   push:
     branches: [main]
-    paths: ['index.qmd', 'pages/**', 'scripts/build_pages.py', 'scripts/check_links.py']
+    paths: ['index.qmd', 'denovo.db', 'analysis/**', 'scripts/build_pages.py', 'scripts/slugs.py', 'scripts/check_links.py']
   pull_request:
-    paths: ['index.qmd', 'pages/**', 'scripts/build_pages.py', 'scripts/check_links.py']
+    paths: ['index.qmd', 'denovo.db', 'analysis/**', 'scripts/build_pages.py', 'scripts/slugs.py', 'scripts/check_links.py']
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # scripts/check_links.py is stdlib-only, so no uv sync and no dependency install.
+      # pages/ is gitignored, so a fresh checkout has none: without this step only
+      # index.qmd was checked, and its link to pages/analyses/ (copied from
+      # analysis/ by build_pages.py) always failed. Both scripts are stdlib-only,
+      # so no uv sync and no dependency install; the build takes ~3 s.
+      - name: Generate the entity pages
+        run: python3 scripts/build_pages.py
+
       - name: Check that every internal link resolves
         run: python3 scripts/check_links.py
