@@ -3815,6 +3815,16 @@ INSERT INTO author VALUES(3926,'Yiwen Yu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3927,'Zhi Song',NULL,NULL,NULL,NULL,'0000-0001-9720-1084','A5110163995');
 INSERT INTO author VALUES(3928,'Zejian Ding',NULL,NULL,NULL,NULL,NULL,'A5153666954');
 INSERT INTO author VALUES(3929,'Shanji Zhang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3930,'Fengyuan Yang',NULL,NULL,NULL,NULL,NULL,'A5159317083');
+INSERT INTO author VALUES(3931,'Yichen Guo',NULL,NULL,NULL,NULL,'0000-0003-1298-9410','A5101989489');
+INSERT INTO author VALUES(3932,'Peiqi Luo',NULL,NULL,NULL,NULL,'0009-0009-0908-2499','A5053759203');
+INSERT INTO author VALUES(3933,'Yucheng Wu',NULL,NULL,NULL,NULL,NULL,'A5159322640');
+INSERT INTO author VALUES(3934,'Yapeng Li',NULL,NULL,NULL,NULL,NULL,'A5159327523');
+INSERT INTO author VALUES(3935,'Zishun Zhang',NULL,NULL,NULL,NULL,NULL,'A5159316387');
+INSERT INTO author VALUES(3936,'Na Ge',NULL,NULL,NULL,NULL,'0000-0003-4913-1469','A5102861582');
+INSERT INTO author VALUES(3937,'Haihan Yuan',NULL,NULL,NULL,NULL,NULL,'A5031319764');
+INSERT INTO author VALUES(3938,'Desi Liu',NULL,NULL,NULL,NULL,NULL,'A5159301686');
+INSERT INTO author VALUES(3939,'Jianbo Pan',NULL,NULL,NULL,NULL,'0000-0001-6014-8160','A5045047208');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -11258,6 +11268,16 @@ INSERT INTO author_affiliation VALUES(3928,503);
 INSERT INTO author_affiliation VALUES(3927,503);
 INSERT INTO author_affiliation VALUES(181,1414);
 INSERT INTO author_affiliation VALUES(3929,78);
+INSERT INTO author_affiliation VALUES(3930,1188);
+INSERT INTO author_affiliation VALUES(3931,1188);
+INSERT INTO author_affiliation VALUES(3932,1188);
+INSERT INTO author_affiliation VALUES(3933,1188);
+INSERT INTO author_affiliation VALUES(3934,1188);
+INSERT INTO author_affiliation VALUES(3935,1188);
+INSERT INTO author_affiliation VALUES(3936,1188);
+INSERT INTO author_affiliation VALUES(3937,1188);
+INSERT INTO author_affiliation VALUES(3938,1188);
+INSERT INTO author_affiliation VALUES(3939,1188);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12082,6 +12102,7 @@ INSERT INTO algorithm VALUES(819,'FastaLake','https://github.com/MannLabs/fasta-
 INSERT INTO algorithm VALUES(820,'Camel leukocyte peptidome','','','','First proteomic survey of dromedary camel crude leukocyte polypeptides: PEAKS Studio de novo sequencing (ALC 95% or higher) gave 830 peptides beside the 120 proteins from database search, and the de novo peptides were the more strongly enriched for immune-system terms, as a source of candidate bioactive peptides.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(821,'ScopeNovo',NULL,NULL,'Transformer (NAR)','Spectral-library reranking of π-PrimeNovo candidates','post-processor',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(822,'ByNovo',NULL,NULL,'Transformer (AR)','RankNovo''s in-house base model with an auxiliary b/y ion head','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(823,'PeptidomicsDB',NULL,'http://www.inbirg.com/ppd/',NULL,'A database of endogenous peptides built by reanalysing 151 public peptidomics projects (3992 samples; global, neuro- and immunopeptidomics) with PEAKS Studio 13''s DeepNovo Peptidome workflow, which combines database, homology and de novo search: over 4 million unique peptides, linked to precursor proteins, samples, differential abundance and bioactive-peptide similarity.','downstream-application',1,'DDA',NULL,'bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13083,6 +13104,7 @@ INSERT INTO publication VALUES(988,'Updated MS²PIP web server supports cutting-
 INSERT INTO publication VALUES(989,'MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics','2026-10-14','10.1038/s41592-026-03247-y',NULL,'Here we present MassNet, inspired by large-scale data corpora of text and images; MassNet is an artificial intelligence (AI)-ready data corpus for mass spectrometry (MS)-based proteomics. The corpus contains 1.5 billion tandem MS spectra from high-quality data-dependent acquisition (DDA) MS data across 35 species. Approximately 1.7 million peptide precursors are from human samples. We further present an AI-ready DDA data format called Mass Spectrometry DDA Tensor (MSDT) for compact and standardized storage, curation and reuse of data from multiple sources, which can be optionally converted to a Lightning Memory-Mapped Database for accelerated input/output in deep learning. On the basis of MassNet, we develop XuanjiNovo, a nonautoregressive transformer model that leverages a curriculum learning strategy for de novo peptide sequencing. XuanjiNovo achieves 38.35–143.57% improvement over state-of-the-art methods on human Astral data. MassNet also supports additional downstream tasks, including retention time prediction and PSM rescoring. MassNet represents a foundational MS-based proteomics data resource, marking a critical milestone for AI proteomics research.','https://www.nature.com/articles/s41592-026-03247-y','Nature Methods','peer-reviewed',NULL,'pdf');
 INSERT INTO publication VALUES(990,'ScopeNovo: a De Novo Peptide Sequencing Method Using Spectrum-Spectrum Similarity to Refine the Prediction Accuracy','2026-10-15','10.1093/bioinformatics/btag755',NULL,'Motivation De novo peptide sequencing from tandem mass spectra is essential for characterizing unknown proteins, identifying novel post-translational modifications, and analyzing samples without reference databases. While recent deep learning models have improved the predicted peptide accuracy, they typically select the predicted peptide sequence based solely on sequence-level decoding scores. Very often, high scores are assigned to peptides without the direct support from the observed mass spectrum. Results We present ScopeNovo, a de novo peptide sequencing method that improves predicted peptide accuracy by using spectrum-spectrum similarity between the input spectrum and the “representative” spectrum corresponding to the predicted peptide sequence. ScopeNovo generates multiple candidate peptides using an existing peptide de novo sequencing learning model and reranks candidates based on spectrum-spectrum similarity. To test our method, we use π-PrimeNovo as the base learning model. Experimental results on the standard nine-species benchmark datasets V1 and V2 show that ScopeNovo can substantially improve the prediction accuracy. We designed two settings, where Setting 1 is for well-annotated species, and Setting 2 is for species that are not well annotated. For Setting 1, ScopeNovo improves the average peptide accuracies of π-PrimeNovo over the nine species by 6.1% and 4.0% on V1 and V2, respectively. For Setting 2, ScopeNovo can still improve the peptide accuracy of π-PrimeNovo over the nine species by 3.4% and 1.9% on the V1 and V2 benchmark datasets, respectively. Compared to the best known method, RankNovo, the peptide accuracies over the nine species on V1 and V2 of our method for Setting 1 are 0.711 and 0.737, where the peptide accuracies for RankNovo are 0.687 and 0.682. Even for Setting 2, the peptide accuracies of our method are comparable to those of RankNovo. Availability ScopeNovo is implemented in Python under an MIT license. The source code is freely available at https://github.com/SoSongzhi/ScopeNovo.git. The test data are available at https://doi.org/10.5281/zenodo.23181841. Supplementary information Supplementary data are available at Bioinformatics online.','https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btag755/8923629','Bioinformatics','peer-reviewed',NULL,'crossref');
 INSERT INTO publication VALUES(991,'pXg: Comprehensive and Reliable Identification of MHC-I Antigens Using De Novo Peptide Sequencing and Immunotranscriptomic Datasets','2026-10-16','10.1007/978-1-0716-5519-1_16','Springer US','De novo peptide sequencing enables the identification of a broad repertoire of major histocompatibility complex class I-associated peptides, providing a valuable source of potential immunotherapeutic targets in cancer. Nevertheless, its practical utility remains limited by the absence of robust methods for confidently determining peptide-spectrum matches and interpreting their proteogenomic information. This chapter presents the pXg workflow, designed to comprehensively and reliably identify peptides derived from de novo sequencing in mass spectrometry-based immunopeptidomics, integrated with matched RNA-seq data. We guide the reader through the use of pXg, covering the rescoring of peptide-spectrum matches and the estimation of a false discovery rate from the popular de novo sequencing tool Casanovo. This ultimately yields rich proteogenomic insights into the identified peptides.','https://link.springer.com/protocol/10.1007/978-1-0716-5519-1_16','Methods in Molecular Biology','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(992,'PeptidomicsDB: a unified resource of endogenous peptidomes for peptide discovery and functional exploration across species and biological contexts','2026-10-23','10.1093/nar/gkag1032','Oxford University Press (OUP)','Endogenous peptides represent a rich source of bioactive molecules that regulate diverse physiological processes and offer opportunities for functional discovery. Mass spectrometry-based peptidomics enables their systematic characterization, yet public datasets remain fragmented and are often processed using heterogeneous tools and parameters, limiting peptide-level retrieval, cross-study exploration, and data reuse. We developed PeptidomicsDB (freely accessible at http://www.inbirg.com/ppd/), a unified resource based on the standardized reanalysis of 151 public peptidomics projects comprising 3992 biological samples from major branches, including global peptidomics, neuropeptidomics, and immunopeptidomics, across species and biological contexts. Using the DeepNovo Peptidome workflow implemented in PEAKS Studio 13.0, which integrates database searching, homology searching, and de novo sequencing, we identified >33 million peptide records representing over 4 million unique peptide sequences, of which >400 000 showed sequence similarity to bioactive peptides curated in public repositories. Analysis of 249 curated pairwise comparison datasets identified 78 910 differentially abundant peptide records, while 14 context-specific datasets yielded 148 175 peptide records enriched in individual tissues, diseases, or cell types. PeptidomicsDB links peptide, precursor-protein, sample, and dataset levels with experimental provenance, quantitative evidence, mass spectrometric data, and functional annotations. Together, these capabilities support peptide discovery and functional exploration.','https://doi.org/10.1093/nar/gkag1032','Nucleic Acids Research','peer-reviewed',NULL,'crossref');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19438,6 +19460,16 @@ INSERT INTO publication_author VALUES(990,973,3);
 INSERT INTO publication_author VALUES(991,181,1);
 INSERT INTO publication_author VALUES(991,3929,2);
 INSERT INTO publication_author VALUES(991,182,3);
+INSERT INTO publication_author VALUES(992,3930,1);
+INSERT INTO publication_author VALUES(992,3931,2);
+INSERT INTO publication_author VALUES(992,3932,3);
+INSERT INTO publication_author VALUES(992,3933,4);
+INSERT INTO publication_author VALUES(992,3934,5);
+INSERT INTO publication_author VALUES(992,3935,6);
+INSERT INTO publication_author VALUES(992,3936,7);
+INSERT INTO publication_author VALUES(992,3937,8);
+INSERT INTO publication_author VALUES(992,3938,9);
+INSERT INTO publication_author VALUES(992,3939,10);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27556,6 +27588,16 @@ INSERT INTO publication_author_affiliation VALUES(990,973,503,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(991,181,1414,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(991,3929,78,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(991,182,78,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(992,3930,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3931,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3932,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3933,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3934,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3935,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3936,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3937,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3938,1188,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(992,3939,1188,0,'crossref');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28837,6 +28879,9 @@ INSERT INTO publication_algorithm VALUES(352,822,'describes');
 INSERT INTO publication_algorithm VALUES(978,822,'describes');
 INSERT INTO publication_algorithm VALUES(991,29,'describes');
 INSERT INTO publication_algorithm VALUES(991,12,'uses');
+INSERT INTO publication_algorithm VALUES(992,823,'describes');
+INSERT INTO publication_algorithm VALUES(992,38,'uses');
+INSERT INTO publication_algorithm VALUES(992,62,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -66489,9 +66534,38 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
 INSERT INTO sqlite_sequence VALUES('affiliation',1414);
-INSERT INTO sqlite_sequence VALUES('author',3929);
-INSERT INTO sqlite_sequence VALUES('algorithm',822);
-INSERT INTO sqlite_sequence VALUES('publication',991);
+INSERT INTO sqlite_sequence VALUES('author',3939);
+INSERT INTO sqlite_sequence VALUES('algorithm',823);
+INSERT INTO sqlite_sequence VALUES('publication',992);
+CREATE VIEW author_display AS
+SELECT a.*,
+       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
+            THEN a.name || ' (' || a.disambiguator || ')'
+            ELSE a.name END AS display_name
+FROM author a;
+CREATE VIEW paper_comparison_measurement AS
+SELECT r.id                AS result_id,
+       c.id                AS comparison_id,
+       c.review_id,
+       c.publication_id    AS reported_by,
+       p.publication_date  AS reported_on,
+       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
+       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
+       r.algorithm_printed, r.is_self,
+       r.metric, r.level,
+       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
+       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
+       dv.version AS dataset_version, c.dataset_printed,
+       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
+       r.is_aggregate,
+       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
+       c.unit_printed
+  FROM paper_comparison_result r
+  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
+  JOIN publication p      ON p.id = c.publication_id
+  JOIN algorithm a        ON a.id = r.algorithm_id
+  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
+  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 CREATE TRIGGER prevent_future_publication_date_outgoing_update
 BEFORE UPDATE OF publication_date ON publication
 FOR EACH ROW
@@ -66518,11 +66592,6 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'publication date would make an incoming citation point to the future');
 END;
-CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
-CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
-CREATE UNIQUE INDEX idx_author_name_disambig_unique
-               ON author(name, IFNULL(disambiguator,''));
-CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
 CREATE TRIGGER publication_version_sanity
         BEFORE INSERT ON publication_version
         FOR EACH ROW
@@ -66538,12 +66607,6 @@ CREATE TRIGGER publication_version_sanity
                 THEN RAISE(ABORT, 'published version predates the preprint')
             END;
         END;
-CREATE VIEW author_display AS
-SELECT a.*,
-       CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
-            THEN a.name || ' (' || a.disambiguator || ')'
-            ELSE a.name END AS display_name
-FROM author a;
 CREATE TRIGGER thesis_supervisor_sanity
 BEFORE INSERT ON thesis_supervisor
 FOR EACH ROW
@@ -66558,15 +66621,6 @@ BEGIN
         THEN RAISE(ABORT, 'that person is already an author of this thesis; supervisor is a different role')
     END;
 END;
-CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
-CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
-CREATE UNIQUE INDEX idx_publication_dataset_unique
-    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
-CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
-CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
-CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
-CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
-CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE TRIGGER prevent_future_publication_citation_insert
 BEFORE INSERT ON publication_citation
 FOR EACH ROW
@@ -66595,6 +66649,20 @@ WHEN EXISTS (
 BEGIN
     SELECT RAISE(ABORT, 'citation cannot point to a future publication');
 END;
+CREATE UNIQUE INDEX idx_city_name_country_unique ON city(name, IFNULL(country_id,-1));
+CREATE UNIQUE INDEX idx_affiliation_name_dept_unique ON affiliation(name, IFNULL(department,''));
+CREATE UNIQUE INDEX idx_author_name_disambig_unique
+               ON author(name, IFNULL(disambiguator,''));
+CREATE UNIQUE INDEX idx_publication_version_published ON publication_version(published_id);
+CREATE UNIQUE INDEX ux_country_iso2 ON country(iso2) WHERE iso2 IS NOT NULL;
+CREATE INDEX ix_affiliation_ror ON affiliation(ror) WHERE ror IS NOT NULL;
+CREATE UNIQUE INDEX idx_publication_dataset_unique
+    ON publication_dataset(publication_id, dataset_id, IFNULL(dataset_version_id, -1), role);
+CREATE INDEX idx_dataset_address_accession ON dataset_address(accession);
+CREATE INDEX idx_dataset_version_dataset   ON dataset_version(dataset_id);
+CREATE INDEX idx_publication_dataset_pub   ON publication_dataset(publication_id);
+CREATE INDEX idx_checkpoint_algorithm ON checkpoint(algorithm_id);
+CREATE INDEX idx_checkpoint_status    ON checkpoint(status);
 CREATE INDEX idx_publication_citation_cited ON publication_citation(cited_id);
 CREATE UNIQUE INDEX idx_checkpoint_dataset_unique
     ON checkpoint_dataset(checkpoint_id, dataset_id, IFNULL(dataset_version_id, -1));
@@ -66602,27 +66670,4 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
-CREATE VIEW paper_comparison_measurement AS
-SELECT r.id                AS result_id,
-       c.id                AS comparison_id,
-       c.review_id,
-       c.publication_id    AS reported_by,
-       p.publication_date  AS reported_on,
-       c.table_label, c.part, c.kind, c.extraction, c.pdf_page,
-       r.algorithm_id, a.name AS algorithm, r.variant_printed AS variant,
-       r.algorithm_printed, r.is_self,
-       r.metric, r.level,
-       COALESCE(r.dataset_id, c.dataset_id) AS dataset_id, d.name AS dataset,
-       COALESCE(r.dataset_version_id, c.dataset_version_id) AS dataset_version_id,
-       dv.version AS dataset_version, c.dataset_printed,
-       r.subset_canonical  AS subset, r.subset_accession, r.subset_printed,
-       r.is_aggregate,
-       r.value, r.stddev, r.basis, r.basis_cue, r.derived_from,
-       c.unit_printed
-  FROM paper_comparison_result r
-  JOIN paper_comparison c ON c.id = r.comparison_id AND c.review_status = 'verified'
-  JOIN publication p      ON p.id = c.publication_id
-  JOIN algorithm a        ON a.id = r.algorithm_id
-  LEFT JOIN dataset d     ON d.id = COALESCE(r.dataset_id, c.dataset_id)
-  LEFT JOIN dataset_version dv ON dv.id = COALESCE(r.dataset_version_id, c.dataset_version_id);
 COMMIT;

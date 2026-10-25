@@ -820,6 +820,7 @@ algorithms	819	fastalake
 algorithms	820	camel-leukocyte-peptidome
 algorithms	821	scopenovo
 algorithms	822	bynovo
+algorithms	823	peptidomicsdb
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4630,6 +4631,16 @@ authors	3926	yiwen-yu
 authors	3927	zhi-song
 authors	3928	zejian-ding
 authors	3929	shanji-zhang
+authors	3930	fengyuan-yang
+authors	3931	yichen-guo
+authors	3932	peiqi-luo
+authors	3933	yucheng-wu
+authors	3934	yapeng-li
+authors	3935	zishun-zhang
+authors	3936	na-ge
+authors	3937	haihan-yuan
+authors	3938	desi-liu
+authors	3939	jianbo-pan
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7231,6 +7242,7 @@ publications	988	updated-ms2pip-web-server-supports-cutting-edge-proteomics-appl
 publications	989	massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep
 publications	990	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
 publications	991	pxg-comprehensive-and-reliable-identification-of-mhc-i-antigens-using-de-novo
+publications	992	peptidomicsdb-a-unified-resource-of-endogenous-peptidomes-for-peptide-discovery
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
