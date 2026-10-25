@@ -12102,7 +12102,7 @@ INSERT INTO algorithm VALUES(819,'FastaLake','https://github.com/MannLabs/fasta-
 INSERT INTO algorithm VALUES(820,'Camel leukocyte peptidome','','','','First proteomic survey of dromedary camel crude leukocyte polypeptides: PEAKS Studio de novo sequencing (ALC 95% or higher) gave 830 peptides beside the 120 proteins from database search, and the de novo peptides were the more strongly enriched for immune-system terms, as a source of candidate bioactive peptides.','downstream-application',0,'DDA','','bioactive-peptides');
 INSERT INTO algorithm VALUES(821,'ScopeNovo',NULL,NULL,'Transformer (NAR)','Spectral-library reranking of π-PrimeNovo candidates','post-processor',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(822,'ByNovo',NULL,NULL,'Transformer (AR)','RankNovo''s in-house base model with an auxiliary b/y ion head','algorithm',1,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(823,'PeptidomicsDB',NULL,'http://www.inbirg.com/ppd/',NULL,'A database of endogenous peptides built by reanalysing 151 public peptidomics projects (3992 samples; global, neuro- and immunopeptidomics) with PEAKS Studio 13''s DeepNovo Peptidome workflow, which combines database, homology and de novo search: over 4 million unique peptides, linked to precursor proteins, samples, differential abundance and bioactive-peptide similarity.','downstream-application',1,'DDA',NULL,'bioactive-peptides');
+INSERT INTO algorithm VALUES(823,'PeptidomicsDB',NULL,'http://www.inbirg.com/ppd/',NULL,'A database of endogenous peptides built by reanalysing 151 public peptidomics projects (3992 samples; global, neuro- and immunopeptidomics, DDA and DIA) with PEAKS Studio 13''s DeepNovo Peptidome workflow, which combines database, DeepNovo de novo and SPIDER homology search: over 4 million unique peptides, linked to precursor proteins, samples, differential abundance and bioactive-peptide similarity.','downstream-application',1,'both',NULL,'bioactive-peptides');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -28882,6 +28882,7 @@ INSERT INTO publication_algorithm VALUES(991,12,'uses');
 INSERT INTO publication_algorithm VALUES(992,823,'describes');
 INSERT INTO publication_algorithm VALUES(992,38,'uses');
 INSERT INTO publication_algorithm VALUES(992,62,'uses');
+INSERT INTO publication_algorithm VALUES(992,140,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known

@@ -314,7 +314,7 @@ moving, not a URL.
 ## Describing a method or using it
 
 `publication_algorithm.role` says what a paper does with a method: `'describes'`
-or `'uses'`. 260 of the 1261 are `'uses'`, and they are concentrated rather than
+or `'uses'`. 261 of the 1262 are `'uses'`, and they are concentrated rather than
 spread: 142 of PEAKS's 149 papers are applications that ran it, mostly snake-venom
 proteomics.
 
