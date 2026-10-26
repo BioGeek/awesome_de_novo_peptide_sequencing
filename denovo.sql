@@ -19580,7 +19580,7 @@ INSERT INTO algorithm_repository VALUES(22,'https://github.com/hearthewind/diano
 INSERT INTO algorithm_repository VALUES(24,'https://github.com/PHOENIXcenter/pi-xNovo',0);
 INSERT INTO algorithm_repository VALUES(25,'https://github.com/ThatMatin/TransNovo',0);
 INSERT INTO algorithm_repository VALUES(26,'https://github.com/protdb/PowerNovo',0);
-INSERT INTO algorithm_repository VALUES(28,'https://github.com/Biocomputing-Research-Group/Transformer-DIA',0);
+INSERT INTO algorithm_repository VALUES(28,'https://github.com/Biocomputing-Research-Group/Transformer-DIA/tree/master',0);
 INSERT INTO algorithm_repository VALUES(29,'https://github.com/progistar/pXg',0);
 INSERT INTO algorithm_repository VALUES(31,'https://github.com/ProteomeTeam/NovoB',0);
 INSERT INTO algorithm_repository VALUES(32,'https://github.com/PHOENIXcenter/pi-HelixNovo',0);
