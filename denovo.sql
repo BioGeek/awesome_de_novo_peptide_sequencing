@@ -11379,7 +11379,7 @@ INSERT INTO algorithm VALUES(93,'π-MSNet',NULL,NULL,NULL,'Billion-scale AI-read
 INSERT INTO algorithm VALUES(94,'Casanovo-DM2',NULL,NULL,'Diffusion','Diffusion decoder variants (Casanovo-DS / DM1 / DM2) plugged into Casanovo''s spectrum encoder; DM2 + DINOISER loss reported the best amino-acid recall.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(95,'Metaproteomics de novo review',NULL,NULL,NULL,'Mini-review on applying de novo peptide sequencing in metaproteomics: challenges (large search spaces, missing references) and tooling outlook.','review',NULL,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(96,'De novo sequencing of peptides by MS/MS (Proteomics review)',NULL,NULL,NULL,'Tutorial review (Proteomics 2010) surveying de novo peptide sequencing by MS/MS: fragmentation chemistry, manual interpretation, and the algorithmic landscape pre-deep-learning.','review',NULL,NULL,NULL,NULL);
-INSERT INTO algorithm VALUES(97,'DiffNovo-DIA',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing: DIA-side companion to DiffNovo. From Shiva Ebrahimi''s PhD thesis (UNT, 2025); a PyPI package exists (diffnovo-dia v0.1.2) but the GitHub repo is currently empty and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA',NULL);
+INSERT INTO algorithm VALUES(97,'DiffNovo-DIA',NULL,NULL,'Diffusion','Transformer-diffusion model for DIA de novo peptide sequencing: DIA-side companion to DiffNovo, extending Transformer-DIA (DiaTrans) with a diffusion model. From Shiva Ebrahimi''s PhD thesis (UNT, 2025). The code is in her own GitHub repository (Apache-2.0) and on PyPI (diffnovo-dia v0.1.2); the lab repository the package points to is still empty, and no standalone paper has been published.','algorithm',1,'DIA','DiffNovo_DIA',NULL);
 INSERT INTO algorithm VALUES(98,'AL-DeepNovo-DIA',NULL,NULL,'CNN + RNN','Active-learning wrapper around Tran et al. 2019''s DeepNovo-DIA. Uses acquisition functions to pick the most informative spectra at each training iteration instead of random selection. First published as AL-DeepNovo-DIA (ICML 2022 Workshop on Computational Biology, Ebrahimi & Guo); rebranded ActiveNovo_DIA in Ebrahimi''s 2025 UNT PhD thesis.','algorithm',1,'DIA','ActiveNovo-DIA, ActiveNovo_DIA',NULL);
 INSERT INTO algorithm VALUES(100,'PowerNovo2',NULL,NULL,'Flow','Non-autoregressive generative-flow-based de novo sequencer: successor to PowerNovo v1, designed to skip the cascading-error problem of autoregressive transformers while running 4-5x faster. Published in PLOS Computational Biology, May 2026.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(101,'Antilope',NULL,NULL,'Graph / DP','Lagrangian-relaxation formulation of de novo peptide sequencing. Frames the problem as a constrained optimization over the spectrum graph and solves it with iterative subgradient ascent.','algorithm',0,'DDA',NULL,NULL);
@@ -19603,7 +19603,7 @@ INSERT INTO algorithm_repository VALUES(72,'https://github.com/cmb-chula/SMSNet'
 INSERT INTO algorithm_repository VALUES(74,'https://github.com/junxia97/SearchNovo',0);
 INSERT INTO algorithm_repository VALUES(75,'https://github.com/nh2tran/NovoBoard',0);
 INSERT INTO algorithm_repository VALUES(90,'https://github.com/Yan98/DPST',0);
-INSERT INTO algorithm_repository VALUES(97,'https://pypi.org/project/diffnovo-dia/',0);
+INSERT INTO algorithm_repository VALUES(97,'https://pypi.org/project/diffnovo-dia/',1);
 INSERT INTO algorithm_repository VALUES(100,'https://github.com/protdb/PowerNovo2',0);
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/zqq66/RNovA',0);
 INSERT INTO algorithm_repository VALUES(14,'https://github.com/AmadeusloveIris/RNovA_SeqFiller_Inference',1);
@@ -19670,6 +19670,7 @@ INSERT INTO algorithm_repository VALUES(20,'https://github.com/BEAM-Labs/pi-Prim
 INSERT INTO algorithm_repository VALUES(816,'https://github.com/statisticalbiotechnology/dIon',0);
 INSERT INTO algorithm_repository VALUES(819,'https://github.com/MannLabs/fasta-lake',0);
 INSERT INTO algorithm_repository VALUES(821,'https://github.com/SoSongzhi/ScopeNovo',0);
+INSERT INTO algorithm_repository VALUES(97,'https://github.com/sadatebrahimi/DiffNovo-DIA',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
