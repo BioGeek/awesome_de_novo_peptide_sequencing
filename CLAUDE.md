@@ -3207,7 +3207,21 @@ the title block's duplicate description was one: the description showed for a
 frame, 128 px tall, then vanished, and CLS went from 0.024 to 0.085-0.126. That
 rule, the hero and breakdown slot heights and the scope banner are now an
 `include-in-header` style in index.qmd's front matter; recorded frame by frame
-under throttling, CLS is 0.006.
+under throttling, CLS is 0.006. Preloading the fonts took CLS to 0.000 and
+cost a second of LCP on Lighthouse's slow 4G, so they are not preloaded; the
+front matter records both numbers.
+
+**The OJS source and inline values are files, not part of the page.** They
+were 85% of the home page's HTML (433 KB of base64 source, 141 KB of values),
+and Lighthouse paints nothing before the document has arrived. `postrender.py`
+moves every `script[type=ojs-module-contents]` and `script[type=ojs-define]`
+into `_site/ojs/<kind>.<hash>.json` and makes Quarto's bootstrap fetch them
+and put the same elements back just before `interpretFromScriptTags()`. The
+page went from 194 KB to 21 KB gzipped. Hashed names keep a page and its files
+together through GitHub Pages' ten-minute cache, and `ojs/manifest.json` keeps
+the last five generations of each so a page still cached from an earlier
+publish finds its own. The source is no less public for it: it is one request
+away instead of inline.
 
 **Accessibility and SEO read 100 locally, and four fixes got them there.** Once
 axe could finish, it found markup no option controls: Observable's inspector

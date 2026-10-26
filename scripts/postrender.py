@@ -23,6 +23,7 @@ home-page entry comes back as `index.html` and needs rewriting again.
 
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import re
@@ -212,9 +213,77 @@ def defer_head_scripts() -> None:
     print(f"postrender: index.html deferred {n} head scripts")
 
 
+# The OJS source (base64, about 430 KB) and the inline OJS values (about 130
+# KB of JSON) were 85% of the home page's HTML, 195 KB gzipped, and Lighthouse
+# paints nothing until the document has arrived: on its slow 4G link that was
+# about a second of first paint and LCP spent on bytes the first screen never
+# reads. The runtime only reads them once it starts, from
+# script[type='ojs-module-contents'] and script[type='ojs-define'], so they
+# move to files and the bootstrap Quarto writes (an inline module script ending
+# in interpretFromScriptTags) fetches them and puts the same elements back
+# just before that call.
+#
+# Each file is named by its content hash. GitHub Pages caches a page for ten
+# minutes, and the inline values change with every daily metrics refresh, so
+# fixed names would let a cached page meet newer data or the reverse. A hashed
+# name ties each page to its own files, and OJS_KEEP earlier generations stay
+# so that a page still cached from the last publish or two finds its own.
+OJS_DIR = ROOT / "_site" / "ojs"
+OJS_KEEP = 4
+OJS_BOOT = "window._ojs.runtime.interpretFromScriptTags();"
+
+
+def externalize_ojs() -> None:
+    if not HOME.exists():
+        return
+    page = HOME.read_text(encoding="utf-8")
+    if OJS_BOOT not in page:
+        raise SystemExit("postrender: the OJS bootstrap call was not found")
+    if 'fetch("ojs/' in page:
+        return  # already done on this file
+    OJS_DIR.mkdir(exist_ok=True)
+    fetched = []
+    # Quarto writes more than one element of a kind (two module-contents, one
+    # of them nearly empty); the runtime reads them in document order, so each
+    # kind is stored as the list of its bodies and put back in that order.
+    for kind in ("ojs-module-contents", "ojs-define"):
+        found = list(re.finditer(rf'<script type="{kind}">(.*?)</script>\n?', page, re.S))
+        if not found:
+            raise SystemExit(f"postrender: no {kind} element in index.html")
+        body = json.dumps([m.group(1) for m in found])
+        name = f"{kind}.{hashlib.sha256(body.encode()).hexdigest()[:12]}.json"
+        (OJS_DIR / name).write_text(body, encoding="utf-8")
+        for m in reversed(found):
+            page = page[:m.start()] + page[m.end():]
+        fetched.append((kind, name))
+    boot = ("await Promise.all(" + json.dumps(fetched) + ".map(async ([type, file]) => {\n"
+            "  for (const text of await (await fetch(\"ojs/\" + file)).json()) {\n"
+            "    const el = document.createElement(\"script\"); el.type = type; el.text = text;\n"
+            "    document.body.append(el);\n"
+            "  }\n"
+            "}));\n" + OJS_BOOT)
+    page = page.replace(OJS_BOOT, boot, 1)
+    HOME.write_text(page, encoding="utf-8")
+    # Keep this generation and the OJS_KEEP before it, per kind, by the order
+    # they were first written; the manifest survives publishes in gh-pages.
+    manifest_path = OJS_DIR / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else []
+    manifest = [n for n in manifest if n not in {f for _, f in fetched}] + [f for _, f in fetched]
+    keep = set()
+    for kind, _ in fetched:
+        keep.update([n for n in manifest if n.startswith(kind + ".")][-(OJS_KEEP + 1):])
+    for f in OJS_DIR.iterdir():
+        if f.name != "manifest.json" and f.name not in keep:
+            f.unlink()
+    manifest_path.write_text(json.dumps([n for n in manifest if n in keep], indent=0))
+    sizes = ", ".join(f"{k} {(OJS_DIR / f).stat().st_size // 1024} KB" for k, f in fetched)
+    print(f"postrender: index.html {HOME.stat().st_size // 1024} KB, OJS moved out ({sizes})")
+
+
 def main() -> int:
     strip_hidden_source()
     defer_head_scripts()
+    externalize_ojs()
     add_entity_search()
     # IndexNow's ownership proof, a file named after the key. Written on every
     # run because a full render empties _site, and only gh-pages would
