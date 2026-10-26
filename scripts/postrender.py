@@ -187,8 +187,34 @@ def strip_hidden_source() -> None:
           f"({HOME.stat().st_size // 1024} KB)")
 
 
+# Quarto puts ten classic <script src> tags in the <head> (navbar, search,
+# clipboard, tooltips, anchors, Bootstrap), and each one blocks the first
+# paint: mobile Lighthouse estimated 1.1 s of render-blocking time on the home
+# page, on a simulated slow 4G link. `defer` loads them in parallel with the
+# HTML and runs them in document order once it is parsed, still before
+# DOMContentLoaded, which is where Quarto does all its own work: every inline
+# use of them, quarto-html-after-body included, sits in a DOMContentLoaded
+# handler, and quarto.js and tabsets.js are modules, deferred already. The one
+# order that changes is theirs relative to these, and neither touches them at
+# load. Only the home page: it is the one that is measured, and the generated
+# pages are lighter.
+HEAD_SCRIPT = re.compile(r'<script src="(site_libs/[^"]+\.js)"(?=[^>]*>)(?![^>]*\b(?:defer|async|type)\b)')
+
+
+def defer_head_scripts() -> None:
+    if not HOME.exists():
+        return
+    page = HOME.read_text(encoding="utf-8")
+    head_end = page.find("</head>")
+    head, n = HEAD_SCRIPT.subn(r'<script defer src="\1"', page[:head_end])
+    if n:
+        HOME.write_text(head + page[head_end:], encoding="utf-8")
+    print(f"postrender: index.html deferred {n} head scripts")
+
+
 def main() -> int:
     strip_hidden_source()
+    defer_head_scripts()
     add_entity_search()
     # IndexNow's ownership proof, a file named after the key. Written on every
     # run because a full render empties _site, and only gh-pages would

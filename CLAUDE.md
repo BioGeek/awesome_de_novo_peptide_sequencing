@@ -3191,6 +3191,15 @@ inline values are printed as a raw `<script type="ojs-define">` from the
 `output: asis` chunk `ojs-define` instead, which the OJS runtime reads all the
 same. Print raw HTML from an `asis` chunk rather than calling `display(HTML(...))`.
 
+**Quarto's own head scripts are deferred on the home page.** `postrender.py`
+adds `defer` to the ten classic `<script src="site_libs/...">` tags in its
+`<head>`, which Lighthouse charged about 1.1 s of render blocking. Safe because
+every inline use of them, Quarto's `quarto-html-after-body` included, runs in a
+DOMContentLoaded handler, which deferred scripts precede. Verified in headless
+Chrome: navbar, search (43 results for "Casanovo"), tooltips and the 36 heading
+anchors all work. Re-check after a Quarto upgrade, which may add a script that
+runs inline.
+
 **Accessibility and SEO read 100 locally, and four fixes got them there.** Once
 axe could finish, it found markup no option controls: Observable's inspector
 draws its expand toggle as an `<a>` with no href (about 120 hidden ones, which
