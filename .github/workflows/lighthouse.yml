@@ -13,11 +13,14 @@
 # vary a lot: on 2026-10-18 one run's score ranged 32 to 41 and its blocking
 # time 3.8 to 5.5 s.
 #
-# THE BUDGET is set at roughly 1.5 to 2x the medians measured after the
-# 2026-10-18 fixes (LCP 4.7 s, TBT 6.4 s, CLS 0.005, HTML 648 KB), so it flags a
-# regression rather than noise. Before those fixes the page measured LCP
-# 14.0 s, TBT 15.0 s, CLS 0.41 and 8.4 MB of HTML, and would have broken all
-# four. A breach opens an issue assigned to the owner rather than failing a
+# THE BUDGET is set at roughly 2x the medians measured after the 2026-10-26
+# fixes (LCP 3.0 s, TBT 1.2 s, CLS 0.024, HTML 98 KB; score 58), so it flags a
+# regression rather than noise: single runs still range widely, one of that
+# day's three put TBT at 4.7 s against 1.0 and 1.2 s. The history: on
+# 2026-10-18 the page measured LCP 14.0 s, TBT 15.0 s, CLS 0.41 and 8.4 MB of
+# HTML; after that day's fixes LCP 4.7 s, TBT 6.4 s and 648 KB, with a budget
+# of 9 s, 9 s and 1 MB that no longer caught anything once charts were built
+# on demand and the OJS source moved out of the page. A breach opens an issue assigned to the owner rather than failing a
 # publish: by the time this runs the site is already live, so a red run would
 # undo nothing. While the issue is open each breaching run comments on it,
 # and the first run back inside the budget closes it.
@@ -43,15 +46,17 @@ env:
   HOME_URL: "https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/"
   # A scheduled run has no inputs, so it falls back to the home page.
   URL: ${{ inputs.url || 'https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/' }}
-  BUDGET_LCP_S: "9"
-  # 9 s, not the 7 s first set. Gating the data on the first frame moved
-  # FCP earlier, and total blocking time only counts work AFTER FCP, so the
-  # same chart building now counts in full: the median went from 3.8 s to
-  # 6.4 s with one run at 7.1 s, while the work itself did not change. 9 s
-  # still catches the 15.0 s the page measured before the 2026-10-18 fixes.
-  BUDGET_TBT_MS: "9000"
+  BUDGET_LCP_S: "6"
+  # Total blocking time only counts work AFTER first paint, so making the
+  # page paint sooner can RAISE it with no new work: gating the data on the
+  # first frame once took the median from 3.8 s to 6.4 s. 3.5 s is about 3x
+  # today's median because of that and of the runner noise above, and still
+  # catches charts being built at load again (5.5 s).
+  BUDGET_TBT_MS: "3500"
   BUDGET_CLS: "0.1"
-  BUDGET_HTML_KB: "1024"
+  # 256 KB: the OJS source and inline values coming back into the page
+  # (scripts/postrender.py externalize_ojs) would take it to about 660 KB.
+  BUDGET_HTML_KB: "256"
 
 jobs:
   measure:
