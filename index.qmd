@@ -823,7 +823,21 @@ for _name, _v in _inline.items():
     if _n > INLINE_MAX:
         raise SystemExit(f"index.qmd: {_name} is {_n:,} bytes inline; add it to DATA_FILES "
                          f"and give it a FileAttachment cell")
-ojs_define(**_inline)
+
+# NOT ojs_define(**_inline), though this is exactly what it writes. ojs_define
+# emits its <script type="ojs-define"> as a text/html DISPLAY output, and Quarto
+# answers any text/html output from a Jupyter cell by assuming a JavaScript
+# widget: it puts require.js and jQuery 3.5.1 from jsdelivr in the <head>,
+# render-blocking, ahead of the first paint. Nothing on the page uses either;
+# mobile Lighthouse charged them about 1.2 s of first paint and 1.3 s of main
+# thread. The `ojs-define` chunk below prints the same element as raw HTML from
+# an `output: asis` chunk, which is plain stdout to Quarto, and the OJS runtime
+# reads every script[type='ojs-define'] in the document however it got there.
+# "</" is escaped so a string in the data cannot close the script element.
+_ojs_define_html = ('<script type="ojs-define">'
+                    + json.dumps({"contents": [{"name": k, "value": _ojs_value(v)}
+                                               for k, v in _inline.items()]}).replace("</", "<\\/")
+                    + "</script>")
 
 # ---------------------------------------------------------------------------
 # NETWORK STATISTICS OF THE AUTHOR-MODEL BIPARTITE GRAPH
@@ -915,6 +929,14 @@ ojs_define(**_inline)
 #     Salvageable by switching to a bounded window ("no method in the prior
 #     three years") instead of a cumulative set. Do that before believing it.
 # ---------------------------------------------------------------------------
+```
+
+```{python}
+#| label: ojs-define
+#| echo: false
+#| output: asis
+# The inline OJS values, as raw HTML: see the note above _ojs_define_html.
+print("\n```{=html}\n" + _ojs_define_html + "\n```\n")
 ```
 
 ```{python}
