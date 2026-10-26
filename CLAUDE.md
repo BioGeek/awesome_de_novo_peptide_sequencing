@@ -3167,6 +3167,30 @@ three force charts blocked the main thread for 2.7 s of every 5 s from second
 chart is within 200 px of the viewport, until it settles. Blocking time went
 from 24.0 s to 4.5 s, all of it in the first 5 s, building 41 charts.
 
+**A chart is built only when it is about to be seen.** Building all 41 at load
+still left 39,023 DOM elements and 9.9 s of main thread on mobile Lighthouse,
+and it ran the accessibility checker out of time: PageSpeed then reports every
+accessibility and SEO audit as "Error!", `<title>` and `lang` included, which
+is a crash and not 70 failures. Each chart cell is now
+`lazy_chart("key", () => { ...body... })`, a generator that shows a
+placeholder of the chart's measured height (`lazy_heights`, at 412 and 1600 px,
+interpolated) and builds the chart when the placeholder is within 600 px of the
+viewport. Its data cells still run at load. Measured locally at 4x CPU: 30
+charts deferred, the DOM at load 39,023 to 8,822 elements, busy time 7.2 s to
+3.4 s. **A new chart cell should use it**, with its heights added to the map;
+`check_chart_overlap.py` scrolls to every `[data-lazy]` placeholder before
+measuring and fails if one never builds. Only a cell nothing else reads can be
+wrapped, since its value becomes the placeholder first: the papers table,
+`viewof selected_pubs`, is not.
+
+**No Python cell may display HTML.** Quarto treats any `text/html` display
+output from a Jupyter cell as a JavaScript widget and puts require.js and jQuery
+from jsdelivr in the `<head>`, render-blocking; `ojs_define` is such an output,
+and it cost about 1.2 s of first paint for two libraries nothing used. The
+inline values are printed as a raw `<script type="ojs-define">` from the
+`output: asis` chunk `ojs-define` instead, which the OJS runtime reads all the
+same. Print raw HTML from an `asis` chunk rather than calling `display(HTML(...))`.
+
 **The two cells above the scope banner hold their space before they render.**
 The hero counters and the kind/approach breakdown are drawn by OJS once the
 data arrives, and empty they let the banner and all the prose under it jump

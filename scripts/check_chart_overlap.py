@@ -152,10 +152,25 @@ SNAP = """(() => { const w = document.querySelectorAll('.chart-wrap')[%d]; if (!
               + (c.getAttribute('transform') || '')).join(' ')
     + Array.from(w.querySelectorAll('g[transform]')).slice(0, 400).map(g => g.getAttribute('transform')).join(' '); })()"""
 # Wait for the charts to exist first: until the page has built them there is
-# nothing to scroll to, and the pass below would end at once.
+# nothing to scroll to, and the pass below would end at once. The home page
+# builds a chart only when it is scrolled near (lazy_chart in index.qmd), so a
+# placeholder counts as existing, and the page is then walked down to every
+# placeholder still unbuilt; otherwise the audit would measure 0 of 30 charts
+# and pass.
 t0 = time.time()
-while time.time() - t0 < 120 and not (ev("document.querySelectorAll('.chart-wrap svg').length") or 0) >= 15:
+while time.time() - t0 < 120 and not (
+        (ev("document.querySelectorAll('[data-lazy]').length") or 0)
+        or (ev("document.querySelectorAll('.chart-wrap svg').length") or 0) >= 15):
     time.sleep(2)
+UNBUILT = """(() => { const e = document.querySelector('[data-lazy]:not([data-built])');
+  if (e) e.scrollIntoView({block: 'center'});
+  return document.querySelectorAll('[data-lazy]:not([data-built])').length; })()"""
+t0 = time.time()
+while time.time() - t0 < 300 and ev(UNBUILT):
+    time.sleep(1)
+if ev("document.querySelectorAll('[data-lazy]:not([data-built])').length"):
+    print("some charts were never built: lazy_chart placeholders left on the page")
+    sys.exit(1)
 n_wraps = ev("document.querySelectorAll('.chart-wrap').length") or 0
 print(f"scrolling {n_wraps} charts into view in turn")
 for i in range(n_wraps):
