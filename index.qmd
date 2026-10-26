@@ -33,8 +33,20 @@ format:
       # tall, then vanished and moved everything under it (CLS 0.085 to
       # 0.126). Anything that changes the layout of the first screen belongs
       # here.
+      # The three Source Sans Pro faces the first screen sets (300 subtitle,
+      # 400 text, 700 for the 600-weight title) are preloaded: Bootstrap's
+      # @font-face is font-display: swap, so a face that arrives after the
+      # first paint reflows the title block, and Lighthouse put that at 0.024
+      # of CLS. And Quarto's script pads the body by the fixed navbar's height,
+      # 60 px under Bootstrap's lg breakpoint and 62 px above it, where
+      # Bootstrap's own rule says 64: set here, the 4 px nudge (0.0045) goes.
       - text: |
+          <link rel="preload" href="site_libs/bootstrap/fonts/source-sans-pro-300-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+          <link rel="preload" href="site_libs/bootstrap/fonts/source-sans-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+          <link rel="preload" href="site_libs/bootstrap/fonts/source-sans-pro-700-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
           <style>
+          body.nav-fixed { padding-top: 62px; }
+          @media (max-width: 991.98px) { body.nav-fixed { padding-top: 60px; } }
           #title-block-header .description { display: none; }
           .hero-slot { min-height: 155px; }
           .breakdown-slot { min-height: 310px; }
