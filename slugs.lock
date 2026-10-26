@@ -821,6 +821,7 @@ algorithms	820	camel-leukocyte-peptidome
 algorithms	821	scopenovo
 algorithms	822	bynovo
 algorithms	823	peptidomicsdb
+algorithms	824	peptide-similarity-alignment
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4641,6 +4642,8 @@ authors	3936	na-ge
 authors	3937	haihan-yuan
 authors	3938	desi-liu
 authors	3939	jianbo-pan
+authors	3940	cemil-can-saylan
+authors	3941	armin-suleymaniniya
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7243,6 +7246,7 @@ publications	989	massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-
 publications	990	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
 publications	991	pxg-comprehensive-and-reliable-identification-of-mhc-i-antigens-using-de-novo
 publications	992	peptidomicsdb-a-unified-resource-of-endogenous-peptidomes-for-peptide-discovery
+publications	993	beyond-best-guesses-a-multi-level-confidence-assessment-framework-for-de-novo
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -7562,3 +7566,4 @@ venues	975	natural-products-chemistry-research
 venues	977	journal-of-the-brazilian-chemical-society
 venues	979	neurips-2025
 venues	986	journal-of-king-saud-university-science
+venues	993	hupo-2026-world-congress

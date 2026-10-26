@@ -3,7 +3,7 @@
 Tools that belong in the catalog but cannot be added yet, and things deliberately
 left out. Keep it short: this is a note, not a process.
 
-Every one of the 819 `algorithm` rows has at least one linked publication, because
+Every one of the 820 `algorithm` rows has at least one linked publication, because
 `publication_algorithm` is how an algorithm gets its authors, its date on the
 swim-lanes, its venue and its place in the citation graph. A tool with no
 manuscript would have no date to plot and an empty Authors section on its
@@ -78,30 +78,17 @@ paper is still to come (then it is a new `algorithm` row, `kind='algorithm'`,
 landing the day after the announcement makes the first likely, not
 established.
 
-### Beyond Best Guesses (Wilhelm lab, HUPO 2026 poster)
+### Beyond Best Guesses (Wilhelm lab, HUPO 2026 poster), ADDED 2026-10-26
 
-| | |
-|---|---|
-| Title | "Beyond Best Guesses: A Multi-Level Confidence Assessment Framework for De Novo Peptide Sequencing Results" |
-| Presenter | Cemil Can Saylan, PhD student, Technical University of Munich (Wilhelm lab; Mathias Wilhelm is author 33) |
-| Venue | HUPO 2026, Singapore, Poster Session 2, board PS02.146, 2026-09-29 |
-| Sources | the lab's HUPO 2026 schedule graphic; <https://tnuki.com/conferences/hupo-2026/technical-university-of-munich> (Cloudflare-gated, a browser reads it) |
-| Last checked | 2026-10-24 |
-
-A confidence-assessment framework for *de novo* results, by its title a
-post-processor in the Winnow and NovoBoard neighbourhood. Nothing more is
-public: tnuki lists title, presenter level, session and board only, and the
-HUPO 2026 scientific program on EventsAir exposes no abstracts to a
-scripted request. No DOI, poster PDF, preprint or repository found (web
-search on the title and on the presenter's name).
-
-Not added yet because a `'presentation'` row still needs a byline and an
-`algorithm` link to the method it is about, and neither is known: the
-program gives one presenter, not the authors, and the method's name is not
-in the title. It goes in as soon as either the poster PDF (as publication
-533 did, a PEAKS poster with no DOI) or a preprint appears; the Wilhelm lab
-can be asked directly for the PDF. Expected classification:
-`kind='post-processor'`, the rest from the abstract.
+Promoted into the catalog as publication 993, a `'presentation'`, once the
+presenter, Cemil Can Saylan, sent the poster PDF (HUPO 2026, board
+PS02.146, 2026-09-29). Its byline is Saylan, Armin Suleymaniniya and
+Mathias Wilhelm, and the method it describes is new algorithm row
+`Peptide similarity alignment` (PSA): error grading of *de novo* calls
+against database-search peptides by Levenshtein tier and alignment event,
+plus a one-class isolation-forest rescorer over Oktoberfest features. It
+uses Casanovo and Prosit. The poster has no DOI and is not public, so the
+row's URL is the tnuki listing; the PDF is in the local library only.
 
 ### Hellbender antimicrobial peptides — ADDED 2026-09-29
 
