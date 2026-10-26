@@ -17,6 +17,30 @@ format:
       # than replacing it (verified: og:title and og:description survive).
       - text: |
           <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/">
+      # Space held for the two cells above the scope banner, which OJS draws
+      # only once their data has loaded. Empty until then, they let the banner
+      # and all the prose below it jump down by ~500 px, the page's whole
+      # layout-shift score (CLS 0.41). Heights measured in headless Chrome at
+      # 412, 800 and 1280 px; a min-height only reserves, so content that
+      # outgrows it still shows in full.
+      # The front matter's description is the page's <meta name="description">,
+      # and Quarto also prints it under the subtitle, saying the same thing
+      # twice, so it is hidden.
+      # ALL of these are in the <head>, not in the body's style blocks beside
+      # the rest of the page's CSS, because they shape the first screen. Once
+      # Quarto's head scripts were deferred the browser painted before parsing
+      # reached those blocks: the description showed for one frame, 128 px
+      # tall, then vanished and moved everything under it (CLS 0.085 to
+      # 0.126). Anything that changes the layout of the first screen belongs
+      # here.
+      - text: |
+          <style>
+          #title-block-header .description { display: none; }
+          .hero-slot { min-height: 155px; }
+          .breakdown-slot { min-height: 310px; }
+          @media (max-width: 991px) { .hero-slot { min-height: 168px; } .breakdown-slot { min-height: 370px; } }
+          .scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
+          </style>
 ---
 
 ```{python}
@@ -1695,16 +1719,8 @@ breakdown_apply = {
 .hero-stat { text-align: center; padding: 1rem; background: #f6f8fa; border-radius: 0.5rem; }
 .hero-num { font-size: 2.5rem; font-weight: 700; color: #1f6feb; line-height: 1; }
 .hero-lbl { font-size: 0.9rem; color: #57606a; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
-/* Space held for the two cells above the scope banner, which OJS draws only
-   once their data has loaded. Empty until then, they let the banner and all
-   the prose below it jump down by ~500 px, the page's whole layout-shift
-   score (CLS 0.41). Heights measured in headless Chrome at 412, 800 and
-   1280 px; a min-height only reserves, so content that outgrows it still
-   shows in full. */
-.hero-slot { min-height: 155px; }
-.breakdown-slot { min-height: 310px; }
-@media (max-width: 991px) { .hero-slot { min-height: 168px; } .breakdown-slot { min-height: 370px; } }
-.scope-banner { padding: 0.75rem 1rem; background: #fff8c5; border-left: 4px solid #d4a72c; border-radius: 0 0.25rem 0.25rem 0; margin: 1.5rem 0; }
+/* .hero-slot and .breakdown-slot are sized in the <head>: see the front matter. */
+/* .scope-banner is styled in the <head>: see the front matter. */
 .breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0.75rem 0 1.5rem; }
 .breakdown-cell { padding: 0.85rem 1rem; background: #f6f8fa; border-radius: 0.5rem; }
 .breakdown-title { font-size: 0.8rem; color: #57606a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-weight: 600; }
@@ -1855,9 +1871,7 @@ n_papers_filtered = pubs_filtered.length
 
 ```{=html}
 <style>
-/* The front matter's description is the page's <meta name="description">,
-   and Quarto also prints it under the subtitle, saying the same thing twice. */
-#title-block-header .description { display: none; }
+/* #title-block-header .description is hidden in the <head>: see the front matter. */
 .sticky-filters {
   position: sticky;
   top: 0;

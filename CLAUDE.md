@@ -3200,6 +3200,15 @@ Chrome: navbar, search (43 results for "Casanovo"), tooltips and the 36 heading
 anchors all work. Re-check after a Quarto upgrade, which may add a script that
 runs inline.
 
+**CSS that shapes the first screen goes in the `<head>`.** With nothing
+blocking in the head, the browser paints before parsing reaches the style
+blocks in the body, so a rule there arrives one frame late. The rule hiding
+the title block's duplicate description was one: the description showed for a
+frame, 128 px tall, then vanished, and CLS went from 0.024 to 0.085-0.126. That
+rule, the hero and breakdown slot heights and the scope banner are now an
+`include-in-header` style in index.qmd's front matter; recorded frame by frame
+under throttling, CLS is 0.006.
+
 **Accessibility and SEO read 100 locally, and four fixes got them there.** Once
 axe could finish, it found markup no option controls: Observable's inspector
 draws its expand toggle as an `<a>` with no href (about 120 hidden ones, which
