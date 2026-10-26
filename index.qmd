@@ -2503,16 +2503,59 @@ of them with a page in this catalog. Numbers as committed to
 
 ```{ojs}
 //| echo: false
-// The family colour scale is shared with the architectures swim lane, so a
-// Transformer (AR) dot is the same colour here as it is there. A tool with no
-// catalog row has no family and gets the unknown grey.
-bench_family_domain = Array.from(new Set(bench_t.map(d => d.family ?? "Unknown")))
+// ONE COLOUR PER METHOD, the same in every chart that plots methods one by
+// one: the rank box plot, the critical-difference diagram, the
+// precision-coverage curves and both ProteoBench charts. They used to
+// disagree: the first two and the ProteoBench scatter coloured by FAMILY, the
+// two curve charts by position in their own legend, so InstaNovo was orange
+// in one chart and blue in the next. Family colour cannot do this job: 7 of
+// the 18 benchmarked tools are Transformer (AR), and their curves would be
+// one orange. The family is still in every tooltip, and family colour stays
+// in the charts that hold hundreds of methods (the swim lane, code activity,
+// the author graph), where one colour per method is impossible.
+//
+// Assigned by the same farthest-point walk as family_color_scale, over the
+// same kind of LCh grid (24 hues, two lightnesses, two chromas, all dark
+// enough to carry a bold label on white), so every pair is as far apart in
+// CIE Lab as 18 colours allow. Methods are walked in catalog order (algorithm
+// id), so a newly benchmarked tool, normally a new catalog row, is appended
+// and takes a colour without moving anyone else's.
+method_color_domain = {
+  const ids = new Map()
+  for (const d of [...bench_t, ...pb_t]) {
+    if (!ids.has(d.display_name) || ids.get(d.display_name) == null)
+      ids.set(d.display_name, d.algorithm_id ?? null)
+  }
+  return Array.from(ids, ([name, id]) => ({ name, id }))
+    .sort((a, b) => d3.ascending(a.id ?? Infinity, b.id ?? Infinity) || d3.ascending(a.name, b.name))
+    .map(d => d.name)
+}
 ```
 
 ```{ojs}
 //| echo: false
-bench_family_range = bench_family_domain.map(
-  f => f === "Unknown" ? "#9aa5b1" : family_color_scale(f))
+method_color_range = {
+  const grid = d3.cross(d3.range(24), [40, 54], [42, 62])
+    .map(([h, l, c]) => d3.lch(l, c, h * 15).formatHex())
+  const lab = new Map(grid.map(h => [h, d3.lab(h)]))
+  const dE = (p, q) => { const a = lab.get(p), b = lab.get(q)
+    return Math.hypot(a.l - b.l, a.a - b.a, a.b - b.b) }
+  const taken = []
+  for (const _ of method_color_domain) {
+    const pick = d3.greatest(grid.filter(c => !taken.includes(c)),
+      c => taken.length ? d3.min(taken, t => dE(c, t)) : 0)
+    taken.push(pick)
+  }
+  return taken
+}
+```
+
+```{ojs}
+//| echo: false
+method_color = {
+  const m = new Map(method_color_domain.map((n, i) => [n, method_color_range[i]]))
+  return name => m.get(name) ?? "#9aa5b1"
+}
 ```
 
 ```{ojs}
@@ -2608,7 +2651,7 @@ lazy_chart("bench_rank", () => {
          labelOffset: 40 },
     r: { range: [2, 9] },
     y: { domain: bench_order, label: null },
-    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    color: { domain: method_color_domain, range: method_color_range, legend: false },
     marks: [
       Plot.boxX(bench_ranked, {
         x: "rank", y: "display_name",
@@ -2622,12 +2665,13 @@ lazy_chart("bench_rank", () => {
       // does not resolve: the tooltip came out empty, having been told to hide
       // x, y, fill and r and then given three channels it could not find.
       Plot.dot(bench_rank_counts, {
-        x: "rank", y: "display_name", r: "n", fill: "family", fillOpacity: 0.85,
+        x: "rank", y: "display_name", r: "n", fill: "display_name", fillOpacity: 0.85,
         stroke: "white", strokeWidth: 0.6,
         href: d => page_href("algorithms", d.display_name), target: "_self",
         tip: { format: { x: false, y: false, r: false, fill: false } },
         channels: {
           "Method": "display_name",
+          "Family": d => d.family ?? "—",
           "Rank": d => `${d.rank} of ${bench_order.length}`,
           "Datasets at this rank": d => `${d.n} of ${d.total}`,
           "Median AP here": d => d.median_ap.toFixed(3)
@@ -2690,9 +2734,10 @@ bench_cd = {
   const Q05 = [NaN, NaN, 1.960, 2.343, 2.569, 2.728, 2.850, 2.949, 3.031,
                3.102, 3.164, 3.219, 3.268, 3.313, 3.354, 3.391, 3.426, 3.458,
                3.489, 3.517, 3.544]
-  // The family comes along because the marks colour by it. Leaving it out cost
-  // an hour: `fill: "family"` with an undefined value silently drops the datum,
-  // so the leads rendered and the dots and labels did not.
+  // The marks colour by `name` through method_color. A fill channel whose value
+  // is missing from the colour domain silently drops the datum: colouring by a
+  // `family` field these rows once lacked cost an hour, because the leads
+  // rendered and the dots and labels did not.
   const tools = Array.from(d3.group(bench_ranked, d => d.display_name),
     ([name, v]) => ({ name, avg: d3.mean(v, d => d.rank),
                       family: v[0].family ?? "Unknown" }))
@@ -2803,7 +2848,7 @@ lazy_chart("bench_cd", () => {
          label: "Average rank across the datasets (1 = best) →",
          labelAnchor: "center", labelOffset: 38 },
     y: { domain: [bottom - 0.5, 0.5], axis: null },
-    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    color: { domain: method_color_domain, range: method_color_range, legend: false },
     marks: [
       Plot.ruleY([0], { stroke: "#57606a" }),
       // Vertical lead from the axis down to the method's row, then out to the
@@ -2816,16 +2861,16 @@ lazy_chart("bench_cd", () => {
       Plot.link(rows.filter(d => !d.left), {
         x1: "avg", x2: () => k + x_pad, y1: "row", y2: "row",
         stroke: "#8c959f", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "avg", y: "row", fill: "family", r: 4,
+      Plot.dot(rows, { x: "avg", y: "row", fill: "name", r: 4,
                        stroke: "white", strokeWidth: 1, href, target: "_self" }),
       Plot.text(rows.filter(d => d.left), {
         x: () => 1 - x_pad, y: "row", text: d => `${d.name}  ${d.avg.toFixed(2)}`,
         textAnchor: "end", dx: -6, fontSize: 11, fontWeight: "bold",
-        fill: "family", href, target: "_self" }),
+        fill: "name", href, target: "_self" }),
       Plot.text(rows.filter(d => !d.left), {
         x: () => k + x_pad, y: "row", text: d => `${d.avg.toFixed(2)}  ${d.name}`,
         textAnchor: "start", dx: 6, fontSize: 11, fontWeight: "bold",
-        fill: "family", href, target: "_self" }),
+        fill: "name", href, target: "_self" }),
       // One bar per clique: a thick line spanning the average ranks of the
       // methods the test cannot tell apart, stacked below the leads.
       Plot.link(cliques.map(([a, b], n) => ({ a, b, n })), {
@@ -2956,9 +3001,9 @@ lazy_chart("bench_curves", () => {
   // Legend order follows AP, so the legend doubles as the ranking. Built from
   // the tools rather than from the labels, which saves parsing the number back
   // out of the string.
-  const domain = Array.from(d3.group(highlighted, d => d.tool))
-    .sort((a, b) => d3.descending(ap(a[1][0]), ap(b[1][0])))
-    .map(d => label(d[1][0]))
+  const legend = Array.from(d3.group(highlighted, d => d.tool), ([, v]) => v[0])
+    .sort((a, b) => d3.descending(ap(a), ap(b)))
+  const domain = legend.map(label)
   const chart = Plot.plot({
     width: 1100,
     height: 560,
@@ -2968,7 +3013,10 @@ lazy_chart("bench_curves", () => {
          labelOffset: 40 },
     y: { label: `${bench_level_label} precision`, domain: [0, 1], grid: true },
     // Seventeen legend entries at full width fit four to a row.
-    color: { domain, range: domain.map((_, i) => bench_curve_colour(i)),
+    // Each line in its method's own colour (method_color), not the next one
+    // in a palette, so InstaNovo is the same colour here as in every other
+    // chart; the legend is still ordered by AP.
+    color: { domain, range: legend.map(d => method_color(d.display_name)),
              legend: true, columns: "25%" },
     marks: [
       // Both line marks carry the same tip, so an unticked grey line still
@@ -3012,15 +3060,6 @@ bench_curve_tip = ap => ({
   "at coverage": d => d.coverage.toFixed(2),
   "precision": d => d.precision.toFixed(3)
 })
-```
-
-```{ojs}
-//| echo: false
-// With every tool ticked by default there are 17 lines, and Tableau10 would
-// repeat a colour every tenth. Extending it with Set2 and Dark2 gives 17
-// distinct ones in a consistent register; the ORDER is by AP, so neighbours in
-// the legend are neighbours in the ranking.
-bench_curve_colour = i => (d3.schemeTableau10.concat(d3.schemeSet2, d3.schemeDark2))[i % 26]
 ```
 
 ### Every tool on every dataset
@@ -3317,8 +3356,8 @@ lazy_chart("pb_scatter", () => {
   // quadrants at 0.5. The names and their meanings are ProteoBench's.
   //
   // Not reproduced: the background gradient from light at the origin to dark in
-  // the top-right corner. Here the colour channel carries the architecture
-  // family, as it does in every other chart on this page, and two colour
+  // the top-right corner. Here the colour channel carries the method, in the
+  // colour it has in every benchmark chart (method_color), and two colour
   // encodings in one frame is one too many.
   const R = [-0.05, 1.1], MID = 0.5
   const quadrants = [
@@ -3338,7 +3377,7 @@ lazy_chart("pb_scatter", () => {
     x: { domain: R, grid: true, label: `Peptide-level ${pb_metric_label} →`,
          labelOffset: 40 },
     y: { domain: R, grid: true, label: `↑ Amino-acid-level ${pb_metric_label}` },
-    color: { domain: bench_family_domain, range: bench_family_range, legend: false },
+    color: { domain: method_color_domain, range: method_color_range, legend: false },
     marks: [
       Plot.ruleX([MID], { stroke: "#8c959f", strokeDasharray: "4 3" }),
       Plot.ruleY([MID], { stroke: "#8c959f", strokeDasharray: "4 3" }),
@@ -3348,11 +3387,12 @@ lazy_chart("pb_scatter", () => {
         textAnchor: "middle"
       }),
       Plot.dot(pb_subs, {
-        x: "x", y: "y", fill: "family", r: 7, stroke: "white", strokeWidth: 1.5,
+        x: "x", y: "y", fill: "display_name", r: 7, stroke: "white", strokeWidth: 1.5,
         href: d => page_href("algorithms", d.display_name), target: "_self",
         tip: { format: { x: false, y: false, fill: false } },
         channels: {
-          "Method": "display_name", "Version": d => d.version ?? "—",
+          "Method": "display_name", "Family": d => d.family ?? "—",
+          "Version": d => d.version ?? "—",
           "Peptide": d => d.x.toFixed(3), "Amino acid": d => d.y.toFixed(3),
           "Peptide coverage": d => d.pep_coverage.toFixed(3),
           "Decoding": d => d.decoding ?? "—",
@@ -3367,7 +3407,7 @@ lazy_chart("pb_scatter", () => {
         ([above, row, dy, lineAnchor]) => Plot.text(
           pb_placed.filter(d => d.above === above && d.row === row), {
             x: "x", y: "y", text: "display_name", dy, lineAnchor,
-            fontSize: 11, fontWeight: "bold", fill: "family"
+            fontSize: 11, fontWeight: "bold", fill: "display_name"
           }))
     ],
     tip: plot_tip_style
@@ -3539,8 +3579,9 @@ viewof pb_curve_level = Inputs.radio(
 ```{ojs}
 //| echo: false
 // Seven curves need seven distinguishable colours, which the family palette
-// cannot give: five of these seven runs are Transformer (AR) and would be the
-// same orange. Ordered by AUC so the legend doubles as a ranking.
+// cannot give: four of these seven runs are Transformer (AR) and would be the
+// same orange. Each takes its method's colour from method_color, as in the
+// other benchmark charts. Ordered by AUC so the legend doubles as a ranking.
 pb_curve_domain = pb_t
   .filter(d => d.level === pb_curve_level && d.match_type === pb_match)
   .slice().sort((a, b) => d3.descending(a.auc, b.auc)).map(d => d.display_name)
@@ -3548,7 +3589,7 @@ pb_curve_domain = pb_t
 
 ```{ojs}
 //| echo: false
-pb_curve_range = pb_curve_domain.map((_, i) => d3.schemeTableau10[i % 10])
+pb_curve_range = pb_curve_domain.map(method_color)
 ```
 
 ```{ojs}

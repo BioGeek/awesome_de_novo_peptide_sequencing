@@ -522,8 +522,23 @@ peptide level against amino-acid level, on fixed `[-0.05, 1.1]` axes split at
 0.5 into the four quadrants it names (Good performance, Near-miss, Low
 performance, Alternative candidate). Not reproduced: its background gradient
 from light at the origin to dark in the top-right, because on this page the
-colour channel carries the architecture family and two colour encodings in one
-frame is one too many.
+colour channel carries the method and two colour encodings in one frame is one
+too many.
+
+**A method has one colour in every benchmark chart.** The rank box plot, the
+critical-difference diagram, both precision-coverage charts and the
+ProteoBench scatter all take it from `method_color` in index.qmd. They used to
+disagree: three coloured by architecture family and the two curve charts by
+position in their own legend, so InstaNovo was orange in one and blue in the
+next. Family colour cannot serve here, because 7 of the 18 benchmarked tools
+are Transformer (AR) and their curves would be one orange; the family is in
+the tooltips instead, and family colour stays in the charts that hold hundreds
+of methods (the swim lane, code activity, the author graph). The 18 colours
+come from the same farthest-point walk over an LCh grid as the family scale,
+closest pair 21.4 deltaE, walked in algorithm-id order so a newly benchmarked
+tool is appended without moving any other method's colour. Verified in the
+rendered charts: Casanovo, π-PrimeNovo, DeepNovo, π-HelixNovo, AdaNovo and
+ContraNovo are one colour across all five charts.
 
 **Curves are strided, not interpolated.** ProteoBench stores up to 500 points
 per curve; `subsample()` keeps at most 101 of them at an even stride, first and
