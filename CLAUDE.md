@@ -3191,6 +3191,19 @@ inline values are printed as a raw `<script type="ojs-define">` from the
 `output: asis` chunk `ojs-define` instead, which the OJS runtime reads all the
 same. Print raw HTML from an `asis` chunk rather than calling `display(HTML(...))`.
 
+**Accessibility and SEO read 100 locally, and four fixes got them there.** Once
+axe could finish, it found markup no option controls: Observable's inspector
+draws its expand toggle as an `<a>` with no href (about 120 hidden ones, which
+the SEO audit counts as uncrawlable links), and Inputs.table and Inputs.range
+leave their checkboxes and sliders unlabelled. A small inline script beside
+the hero styles, installed before the OJS runtime starts, gives each toggle
+`role="button"` and each control an `aria-label` as it appears (13 ms at 4x
+CPU), and removes Quarto's invalid `role="menu"` from the navbar toggler. The
+↗ links are `.ext-link`, a 24 px touch target, and the citation blockquote is
+#57606a, since Bootstrap's grey is 4.39:1. Still open inside a BUILT chart,
+where load-time Lighthouse does not look: Plot puts `aria-label` on bare `<g>`
+elements, and the SVG links on chart marks have no accessible name.
+
 **The two cells above the scope banner hold their space before they render.**
 The hero counters and the kind/approach breakdown are drawn by OJS once the
 data arrives, and empty they let the banner and all the prose under it jump

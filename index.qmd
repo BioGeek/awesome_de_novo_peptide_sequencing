@@ -1727,7 +1727,56 @@ breakdown_apply = {
 .breakdown-row-link:hover { background: #eaeef2; }
 .breakdown-row-link:hover .bk-lbl { color: #0969da; text-decoration: underline; }
 .breakdown-row-link:focus-visible { outline: 2px solid #1f6feb; outline-offset: 1px; }
+/* The ↗ links beside a title or a repository were 9.5 x 19 px, under the
+   24 x 24 px touch target WCAG 2.2 asks for, and 68 of them failed
+   Lighthouse's target-size audit. Table rows are ~30 px apart, so a 24 px
+   box fits without reaching the next row's link. */
+.ext-link { display: inline-block; min-width: 24px; min-height: 24px; line-height: 24px;
+            text-align: center; text-decoration: none; }
+/* Bootstrap's blockquote grey, #6d7a86, is 4.39:1 on white, under the 4.5:1
+   that body text needs. */
+#cite .blockquote, #cite .blockquote p { color: #57606a; }
 </style>
+<script>
+// Two kinds of markup on this page that Lighthouse's accessibility and SEO
+// audits fail and that no option can change, fixed as the elements appear.
+// Installed while the HTML is still parsing, so it is in place before the OJS
+// runtime (a module, deferred) renders anything.
+//  * Observable's inspector draws its expand toggle as an <a> with no href.
+//    Every hidden declaration cell has one (about 120), and the SEO audit
+//    counts each as an uncrawlable link. It is a button, so it says so.
+//  * Inputs.table draws its selection checkboxes with no label (174 failed
+//    "Form elements have associated labels"). Each gets an aria-label naming
+//    what it selects.
+//  * Inputs.range labels its number box and not the slider beside it (5
+//    failures); the slider takes the same label text.
+// Quarto's navbar toggler also carries role="menu", which a <button> may not.
+(() => {
+  document.querySelector(".navbar-toggler[role=menu]")?.removeAttribute("role")
+  const TOGGLE = ".observablehq--inspect a:not([href]):not([role])"
+  const BOX = "table input[type=checkbox]:not([aria-label])"
+  const RANGE = "form input[type=range]:not([aria-label])"
+  // The added node and what is under it, never its parent: d3 appends marks one
+  // at a time into a parent that can hold thousands, and rescanning that parent
+  // for each one would be quadratic.
+  const all = (n, sel) => n.matches(sel) ? [n] : n.querySelectorAll(sel)
+  const fix = n => {
+    for (const a of all(n, TOGGLE)) a.setAttribute("role", "button")
+    for (const c of all(n, BOX)) {
+      if (c.closest("thead")) { c.setAttribute("aria-label", "Select all rows"); continue }
+      const what = (c.closest("td")?.nextElementSibling?.textContent ?? "").trim().slice(0, 80)
+      c.setAttribute("aria-label", what ? `Select row: ${what}` : "Select row")
+    }
+    for (const r of all(n, RANGE)) {
+      const text = r.closest("form")?.querySelector("label")?.textContent.trim()
+      if (text) r.setAttribute("aria-label", text)
+    }
+  }
+  new MutationObserver(ms => {
+    for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) fix(n)
+  }).observe(document.documentElement, {childList: true, subtree: true})
+})()
+</script>
 ```
 
 ```{ojs}
@@ -7386,7 +7435,7 @@ lazy_chart("impact_table", () => {
         const label = internal ? htl.html`<a href=${internal}>${title_html(t)}</a>` : title_html(t)
         return external
           ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
-              title="Publisher / DOI" style="text-decoration:none">↗</a>`
+              title="Publisher / DOI" class="ext-link">↗</a>`
           : label
       },
       models:  m => page_links("algorithms", m, { max: 4 }),
@@ -8076,7 +8125,7 @@ html`<ol class="recent-list" start="1">${recent_pubs.map(d => {
   const models = String(d.models ?? "").split(",").map(x => x.trim()).filter(Boolean)
   return htl.html`<li><span class="recent-num">#${d.id}</span> ${title}
     ${doi ? htl.html` <a href=${doi} target="_blank" rel="noopener"
-        title="Publisher / DOI" style="text-decoration:none">↗</a>` : ""}
+        title="Publisher / DOI" class="ext-link">↗</a>` : ""}
     <span class="recent-meta">${[fmt_day(d.date), d.journal, d.type]
       .filter(Boolean).join(" · ")}</span>
     ${models.length ? htl.html`<span class="recent-meta"> · ${models.map((m, i) =>
@@ -8163,7 +8212,7 @@ viewof selected_pubs = {
         const label = internal ? htl.html`<a href=${internal}>${title_html(t)}</a>` : title_html(t)
         return external
           ? htl.html`${label} <a href="${external}" target="_blank" rel="noopener"
-              title="Publisher / DOI" style="text-decoration:none">↗</a>`
+              title="Publisher / DOI" class="ext-link">↗</a>`
           : label
       },
       // annotate_models() appended "(aka ...)" to renamed tools. Keep that
@@ -8180,7 +8229,7 @@ viewof selected_pubs = {
         // (a few RNovA-style entries). Render up to three short link chips.
         const urls = String(r).split(/\s+/).filter(s => /^https?:\/\//.test(s)).slice(0, 3)
         if (!urls.length) return ""
-        return htl.html`${urls.map(u => htl.html`<a href="${u}" target="_blank" rel="noopener" title="${u}" style="margin-right:4px">↗</a>`)}`
+        return htl.html`${urls.map(u => htl.html`<a href="${u}" target="_blank" rel="noopener" title="${u}" class="ext-link" style="margin-right:4px">↗</a>`)}`
       }
     },
     // On the DATE, not the year. Sorting on a year descending leaves the rows
