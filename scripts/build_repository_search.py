@@ -93,6 +93,11 @@ REJECTED = {
     "github.com/abhijitju06/jumpt-version-1.2.0-python-edition-": "a JUMPt release, not JUMP",
     "github.com/yangshu729/buaa-biatnovo": "the same author's development repository; biatNovo-DDA is the release",
     "github.com/biocc/sp-megd_fusion": "XA-Novo's repository; nothing ties it to the Fusion assembler paper",
+    # Shiva Ebrahimi's own account. Only her DiffNovo-DIA is catalogued, because
+    # the lab's copy of it is empty; the other three duplicate a lab repository.
+    "github.com/sadatebrahimi/diffnovo": "byte-identical to Biocomputing-Research-Group/DiffNovo bar one README heading",
+    "github.com/sadatebrahimi/transformer-dia": "same commit as the master branch of Biocomputing-Research-Group/Transformer-DIA",
+    "github.com/sadatebrahimi/casanovo-dia": "the pre-rename code, as on the main branch of Biocomputing-Research-Group/Transformer-DIA",
 }
 DOMAIN = re.compile(r"\b(peptide|proteom|mass spectr|ms/ms|tandem|spectra|"
                     r"de novo|denovo|mgf|mzml)", re.I)
