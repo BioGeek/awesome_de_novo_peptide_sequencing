@@ -157,6 +157,7 @@ CREATE TABLE IF NOT EXISTS patent_cited_by (
     sector           TEXT CHECK (sector IN ('company', 'academic', 'hospital')),
     citing_patent_id INTEGER REFERENCES patent(id) ON DELETE SET NULL,  -- when it is catalogued too
     self_citation    INTEGER NOT NULL DEFAULT 0,  -- the cited patent's own assignee citing it
+    affiliation_id   INTEGER REFERENCES affiliation(id),  -- the citer's institution page, if it has one
     priority_date    TEXT,
     publication_date TEXT,
     title            TEXT,
@@ -229,7 +230,7 @@ ASSIGNEE_EN: dict[str, str] = {
     "青岛科技大学": "Qingdao University of Science and Technology",
     "山东管理学院": "Shandong Management University",
     "南京鼓楼医院": "Nanjing Drum Tower Hospital",
-    "中国科学院计算技术研究所": "Institute of Computing Technology, CAS",
+    "中国科学院计算技术研究所": "Institute of Computing Technology",
     "中国科学院数学与系统科学研究院": "Academy of Mathematics and Systems Science, CAS",
     "上海计算机软件技术开发中心": "Shanghai Development Center of Computer Software Technology",
     "上海中科新生命生物科技有限公司": "Shanghai Applied Protein Technology",
@@ -268,6 +269,7 @@ ASSIGNEE_EN: dict[str, str] = {
     "제넨테크, 인크.": "Genentech",
     # One organisation filing under several entities.
     "BASF Agricultural Solutions US LLC": "BASF",
+    "Oxford Glycosciences (UK) Ltd": "Oxford GlycoSciences",
     "Basf Corporation": "BASF",
     "Immatics Biotechnologies Gmbh": "Immatics",
 }
@@ -425,15 +427,21 @@ def name_keys(name: str) -> set[str]:
     return out
 
 
-def organisation(assignee: str) -> tuple[str, str]:
-    """(one display name per organisation, sector) for an assignee as printed."""
+def org_base(assignee: str) -> str:
+    """An assignee's name with its legal suffix, holder wrapper and language
+    folded away. Pure: organisation() adds the spelling choice on top."""
     name = (assignee or "").split(";")[0].strip()
     name = ASSIGNEE_EN.get(name, name)
     base = re.sub(r"\s+", " ", LEGAL.sub("", name)).strip(" ,.")
     base = HOLDER.sub("", base).strip(" ,.")
     # Google capitalises every word ("University Of Toronto"); the small ones
     # go back to lower case, but never the first word.
-    base = re.sub(r"(?<=\s)(Of|And|The|For|Et|De|In)(?=\s)", lambda m: m.group(1).lower(), base)
+    return re.sub(r"(?<=\s)(Of|And|The|For|Et|De|In)(?=\s)", lambda m: m.group(1).lower(), base)
+
+
+def organisation(assignee: str) -> tuple[str, str]:
+    """(one display name per organisation, sector) for an assignee as printed."""
+    base = org_base(assignee)
     # One spelling per organisation: "PrognomIQ, Inc." and "Prognomiq Inc"
     # differ only in case once the suffix goes. The spelling kept is the one
     # with the most capitals that is not ALL capitals, so the company's own
@@ -456,7 +464,20 @@ def connect() -> sqlite3.Connection:
     con = sqlite3.connect(DB)
     con.execute("PRAGMA foreign_keys = ON")
     con.executescript(DDL)
+    # Columns added after a table first shipped: CREATE TABLE IF NOT EXISTS
+    # leaves an existing table as it was.
+    have = {r[1] for r in con.execute("PRAGMA table_info(patent_cited_by)")}
+    if "affiliation_id" not in have:
+        con.execute("ALTER TABLE patent_cited_by ADD COLUMN affiliation_id INTEGER REFERENCES affiliation(id)")
     return con
+
+
+def institution_index(con) -> dict[str, set[int]]:
+    """Folded institution name -> the ids of the institutions carrying it."""
+    idx: dict[str, set[int]] = {}
+    for i, n in con.execute("SELECT MIN(id), name FROM affiliation GROUP BY name"):
+        idx.setdefault(org_base(n).casefold(), set()).add(i)
+    return idx
 
 
 def family_index(con) -> dict[str, int]:
@@ -504,6 +525,7 @@ def refresh(con, ids: list[int] | None, force: bool) -> None:
         for k in name_keys(name):
             authors.setdefault(k, []).append(aid)
     today = date.today().isoformat()
+    institutions = institution_index(con)
     parsed: dict[int, dict] = {}
 
     for pid, number in rows:
@@ -524,6 +546,13 @@ def refresh(con, ids: list[int] | None, force: bool) -> None:
                      d["publication_date"], granted, d["status"], " ".join(members), " ".join(d["cpc"]),
                      len(d["cited_by"]), len(d["cited_by_family"]), len(d["npl"]),
                      f"https://patents.google.com/patent/{number}/en", today, pid))
+        # The assignee's institution page, when exactly one institution has the
+        # assignee's name once both are folded the same way. A curated link is
+        # never replaced, and two candidates link nothing.
+        if con.execute("SELECT affiliation_id FROM patent WHERE id = ?", (pid,)).fetchone()[0] is None:
+            hits = institutions.get(org_base("; ".join(d["assignee"])).casefold(), set())
+            if len(hits) == 1:
+                con.execute("UPDATE patent SET affiliation_id = ? WHERE id = ?", (next(iter(hits)), pid))
 
         # Inventors: who among them is demonstrably a catalog author.
         describers = {a for (a,) in con.execute(
@@ -599,10 +628,14 @@ def refresh(con, ids: list[int] | None, force: bool) -> None:
         organisation(a), organisation(own)
     for rid, a, own in rows:
         org, sector = organisation(a)
-        con.execute("""UPDATE patent_cited_by SET organisation = ?, sector = ?, self_citation = ?
-                        WHERE rowid = ?""",
+        # The same one-match rule as the assignee link: Genentech is two
+        # institutions here ("Genentech", "Genentech, Inc."), so it links neither.
+        hits = institutions.get(org_base(a).casefold(), set())
+        con.execute("""UPDATE patent_cited_by SET organisation = ?, sector = ?, self_citation = ?,
+                              affiliation_id = ? WHERE rowid = ?""",
                     (org or None, sector if org else None,
-                     int(bool(org) and org == organisation(own)[0]), rid))
+                     int(bool(org) and org == organisation(own)[0]),
+                     next(iter(hits)) if len(hits) == 1 else None, rid))
     con.commit()
     n_pub, n_pat = con.execute("""SELECT COUNT(cited_publication_id), COUNT(cited_patent_id)
                                   FROM patent_citation""").fetchone()

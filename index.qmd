@@ -597,9 +597,10 @@ patent_links = pd.read_sql("""
 # Who cites the catalogued patents: every citing family, anyone's, with its
 # assignee folded to one organisation name by build_patents.py.
 patent_citers = pd.read_sql("""
-    SELECT patent_id, citing_number, organisation, sector, self_citation,
-           priority_date, title, examiner
-      FROM patent_cited_by
+    SELECT c.patent_id, c.citing_number, c.organisation, c.sector, c.self_citation,
+           c.priority_date, c.title, c.examiner,
+           af.name AS institution  -- the citer's own page here, when it has one
+      FROM patent_cited_by c LEFT JOIN affiliation af ON af.id = c.affiliation_id
 """, conn)
 
 dataset_addresses = pd.read_sql("""
@@ -8082,15 +8083,22 @@ lazy_chart("patents_citers", () => {
       citing: v.map(c => `${c.citing_number} (${c.priority_date ?? "?"})`).join(", ")
     })))
   const rows = totals.map(([o]) => label.get(o))
+  // A citer that is also an institution in this catalog links to its page.
+  const inst = new Map(patent_citers_t.filter(c => c.institution).map(c => [c.organisation, c.institution]))
+  const ylabels = totals.map(([o]) => ({ o, label: label.get(o), href: page_href("institutions", inst.get(o)) }))
   return Plot.plot({
     width: 900, height: 70 + rows.length * 17, marginLeft: 360, marginTop: 70, marginRight: 30,
     x: { domain: columns, axis: "top", label: null, tickRotate: -30 },
     r: { type: "identity" },
-    y: { domain: rows, label: null, tickSize: 0 },
+    // The axis is drawn as text marks, because an axis tick cannot be a link.
+    y: { domain: rows, label: null, axis: null },
     color: { domain: ["company", "academic", "hospital"],
              range: ["#0f766e", "#b45309", "#be185d"], legend: true },
     marks: [
       Plot.gridY(rows, { stroke: "#f0f2f4" }),
+      ...[ylabels.filter(d => !d.href), ylabels.filter(d => d.href)].map((data, linked) => Plot.text(data, {
+        y: "label", text: "label", frameAnchor: "left", textAnchor: "end", dx: -8, fontSize: 10,
+        fill: linked ? "#0969da" : "#24292f", href: linked ? "href" : undefined })),
       // Two marks, not a fill function returning "white": Plot would map that
       // string through the colour scale (see the fill trap in CLAUDE.md).
       ...[cells.filter(d => !d.self), cells.filter(d => d.self)].map((data, hollow) => Plot.dot(data, {

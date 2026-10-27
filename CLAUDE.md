@@ -2144,6 +2144,25 @@ syntax traps in the search endpoint: the `url=` parameter is the query string
 URL-encoded TWICE, and fields are `TI=(...)`. The lower-case `ti:` prefix is
 answered with a syntax error.
 
+**An assignee is an institution, even with no catalog author.** A company
+whose only link to the field is a patent gets an `affiliation` row, and so an
+institution page listing its patents: Verily is the first. Its place is where
+the patents were filed from, not today's headquarters (ROR has Verily in
+Texas since 2023). Such a page says "1 patent family", not "0 authors and 0
+papers", and points at the Patents section rather than at the map. A row is
+added only once its patent is catalogued: Oxford GlycoSciences and Venn
+Biosciences wait for theirs, because an institution page with nothing on it
+would be a permanent URL for an empty page. `refresh` links a patent to its
+institution itself when exactly one institution has the assignee's name once
+both are folded by `org_base()`; a curated link is never replaced.
+
+**Citing organisations get no page of their own.** 78 organisations cite
+these patents, and most of them, from Visa to OPPO, have no other connection
+to the field. A citer that already IS an institution here, by the same
+one-match rule, links to its page from the chart (16 do). Genentech does not:
+the catalog holds it twice, as "Genentech" and "Genentech, Inc.", and two
+matches link nothing.
+
 **There is no page per patent.** Google Patents is the patent's page, with
 the claims, the family and the legal events, and a copy here would only go
 stale. A patent appears wherever it meets a page this site has: the method it

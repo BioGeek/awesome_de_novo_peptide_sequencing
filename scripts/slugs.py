@@ -303,8 +303,8 @@ def assign_unique(
 # --------------------------------------------------------------------------
 # The catalog's seven entity types, and how each is keyed.
 #
-# Institutions are keyed by NAME, not by affiliation row: 1362 affiliation rows
-# collapse to 1095 institutions because one institution has many departments,
+# Institutions are keyed by NAME, not by affiliation row: 1363 affiliation rows
+# collapse to 1096 institutions because one institution has many departments,
 # and every chart groups on `af.name` (index.qmd projects `af.name AS
 # affiliation` with no department). A page per row would leave a click on
 # "Utrecht University" ambiguous across three targets.

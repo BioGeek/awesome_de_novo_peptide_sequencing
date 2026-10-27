@@ -116,6 +116,7 @@ ANCHORS = {
     "bipartite":       ("Models and the authors behind them", "models-and-the-authors-behind-them"),
     "geography":       ("Where the work happens", "where-the-work-happens"),
     "venues":          ("Where it appears", "where-it-appears"),
+    "patents":         ("Patents", "patents"),
 }
 
 # A publication's dominant kind, resolved with the SAME priority order index.qmd
@@ -229,6 +230,8 @@ class Site:
         return f"../../index.html#{anchor}"
 
     def seen_in(self, keys: list[str]) -> list[str]:
+        if not keys:
+            return ["", "[Back to the full map](../../index.html)", ""]
         out = ["", "## Seen in the charts", ""]
         for key in keys:
             label, anchor = ANCHORS[key]
@@ -1324,14 +1327,21 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     sub = []
     if ctx["places"]:
         sub.append(", ".join(ctx["places"]))
-    sub.append(f"{len(ctx['authors'])} author{'s' if len(ctx['authors']) != 1 else ''}")
+    n_pat = len(ctx.get("patents", []))
+    pl = lambda n, w: f"{n} {w}{'s' if n != 1 else ''}"
+    if ctx["authors"]:
+        sub.append(pl(len(ctx["authors"]), "author"))
+        what = f"{pl(len(ctx['authors']), 'author')} and {pl(len(ctx['pubs']), 'paper')}"
+        if n_pat:
+            what += f", and {pl(n_pat, 'patent family')}".replace("familys", "families")
+    else:
+        # A patent assignee with no catalog author: "0 authors and 0 papers"
+        # would describe the page as empty when its patents are the content.
+        sub.append(pl(n_pat, "patent family").replace("familys", "families"))
+        what = pl(n_pat, "patent family").replace("familys", "families")
     i_desc = (f"{name}"
               + (f" ({', '.join(ctx['places'])})" if ctx["places"] else "")
-              + f": {len(ctx['authors'])} author"
-              + ("s" if len(ctx["authors"]) != 1 else "")
-              + f" and {len(ctx['pubs'])} paper"
-              + ("s" if len(ctx["pubs"]) != 1 else "")
-              + " in the de novo peptide sequencing catalog.")
+              + f": {what} in the de novo peptide sequencing catalog.")
     L += front_matter(name, " · ".join(sub), clip(i_desc, 250))
     ld = {"@context": "https://schema.org", "@type": "Organization", "name": name}
     if ctx["places"]:
@@ -1360,7 +1370,10 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     L += patent_lines("Patents", ctx.get("patents", []),
                       "Patent families this institution was the original assignee of.")
 
-    L += site.seen_in(["geography", "browse-authors"])
+    keys = ["geography", "browse-authors"] if ctx["authors"] else []
+    if ctx.get("patents"):
+        keys.append("patents")
+    L += site.seen_in(keys)
     latest = max((p[2] for p in ctx["pubs"] if p[2]), default=None)
     return "\n".join(L) + "\n", date_to_mtime(latest)
 
@@ -1879,6 +1892,17 @@ def load(conn: sqlite3.Connection) -> dict:
     d["inst_key"] = {}
     for r in q("SELECT name, MIN(id) AS k FROM affiliation GROUP BY name ORDER BY name"):
         d["inst_key"][r["name"]] = r["k"]
+    # An institution with no catalog author still has a place: a company whose
+    # only link to the field is a patent (Verily, Oxford GlycoSciences). Read
+    # from its own row, and only for those, so no other page changes.
+    for r in q("SELECT af.name AS inst, ci.name AS city, co.name AS country FROM affiliation af "
+               "LEFT JOIN city ci ON ci.id = af.city_id LEFT JOIN country co ON co.id = af.country_id "
+               "WHERE af.name NOT IN (SELECT a2.name FROM author_affiliation aa "
+               "                      JOIN affiliation a2 ON a2.id = aa.affiliation_id) "
+               "ORDER BY af.name, af.id"):
+        place = ", ".join(x for x in (r["city"], r["country"]) if x)
+        if place and place not in d["inst_places"][r["inst"]]:
+            d["inst_places"][r["inst"]].append(place)
 
     # publication_algorithm.role says what the paper does with the method,
     # 'describes' or 'uses'. It is carried through both directions here: an
@@ -2466,7 +2490,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~7565 thin pages out of
+    # committed under pages/. search: false keeps ~7566 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
