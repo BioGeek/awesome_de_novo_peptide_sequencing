@@ -582,6 +582,19 @@ def candidates(cache: Path, pub: dict) -> tuple[list[tuple[str, str]], bool]:
             seen.add(url)
             out.append((src, url))
 
+    # A row whose url pins a bioRxiv version is THAT version and no other (see
+    # 'Preprint versions' in CLAUDE.md), so it is the only candidate. The DOI
+    # is shared by every version and lists the newest first, and OpenAlex's
+    # locations name whichever version it saw: the Kaiko preprint's v1 and v2
+    # rows (994, 995) each came back holding the other's PDF that way. A failed
+    # fetch must not fall back to another version either, or it would be filed
+    # under this row's name.
+    m = re.match(r"(https?://www\.biorxiv\.org/content/[\w./-]+v\d+)/?$",
+                 (pub["url"] or "").strip().lower())
+    if m:
+        add("biorxiv-landing", m.group(1) + ".full.pdf")
+        return out, True
+
     if doi.startswith("10.48550/arxiv."):
         # export.arxiv.org is the mirror arXiv asks automated clients to use.
         add("arxiv", f"https://export.arxiv.org/pdf/{doi.split('arxiv.', 1)[1]}")

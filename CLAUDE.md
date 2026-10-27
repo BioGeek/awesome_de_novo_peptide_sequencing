@@ -1108,6 +1108,16 @@ the tie on the EXACT characters of the title against the filename's title text,
 then on the lower id -- a rule that reads only the title and so converges
 wherever it starts. Verified: `rename` reports 0 on the second pass.
 
+**A row pinned to a bioRxiv version is fetched as that version and no
+other.** A bioRxiv DOI is shared by every version, and `candidates()` used
+to try the newest version first, then OpenAlex's locations, which name
+whichever version OpenAlex saw. The Kaiko preprint's two rows came back
+swapped: v1 (994, which holds the DOI) got v2's PDF, and v2 (995, no DOI)
+got v1's through OpenAlex. Each file carried the other's name, and only the
+"this version posted" stamp on page one showed it. Now a `...vN` URL makes
+that version's PDF the only candidate, with no fallback that could file
+another version under the row's name.
+
 **`dedupe` checks the publication as well as the hash.** Byte equality is too
 strict for the same paper twice: bioRxiv served one preprint to two fetches 26
 bytes apart, a timestamp inside the PDF, so two copies each of Sanders 2024 and
