@@ -17,10 +17,17 @@
 # catalogue a family with `build_patents.py add`, or record why not in
 # REJECTED in that script, and the next run stops proposing it.
 #
-# Google Patents answers a burst of requests with HTTP 503 for a long while.
-# A throttled run says so in the summary and leaves
-# patent_candidates.incomplete, and then never closes the issue: an empty list
-# from a search that did not finish means nothing.
+# Google Patents answers a burst of requests with HTTP 503 for a long while,
+# and a runner's share is small: the first run got eight queries through and
+# was refused everything after, while the old backoff spent six minutes on
+# each refused request and would have run into the timeout before reaching
+# the issue step. So the search stops asking at the first request refused
+# after one retry, and spends a budget of 20 requests in order: the queries,
+# then the catalogued patents' pages oldest first (who cites them is what
+# grows), then candidate pages. The cache carries what one month got to the
+# next, so the pages come round. A run whose QUERIES went unanswered says so
+# and leaves patent_candidates.incomplete, and then never closes the issue:
+# an empty list from a search that did not finish means nothing.
 #
 # Monthly on the 4th at 10:00 UTC: a day after refresh-dnps-candidates on the
 # 3rd, and an hour clear of everything else. Patents publish weekly, but a
@@ -43,7 +50,7 @@ concurrency:
 jobs:
   refresh-patent-candidates:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -69,7 +76,7 @@ jobs:
       - name: Search for patent families the catalog is missing
         run: |
           uv run python scripts/build_patents.py search --fresh \
-            --summary patent_summary.md --backoff 0,60,300
+            --summary patent_summary.md --backoff 0,60 --budget 20
 
       # Saved whatever happened above, so a throttled run still keeps the
       # pages it did get for next month.

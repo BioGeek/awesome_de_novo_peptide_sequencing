@@ -295,7 +295,17 @@ def curl(url: str) -> tuple[int, str]:
 
 
 def polite_get(url: str, gap: float) -> str | None:
-    """GET with backoff on Google's 503 'Sorry' page; None if it never clears."""
+    """GET with backoff on Google's 503 'Sorry' page; None if it never clears.
+
+    Two limits, both learned on a GitHub runner, which got eight queries through
+    and was then refused everything: once one request has been refused after
+    every retry, nothing more is asked this run (the block outlasts any backoff
+    a job can afford, and each further try cost six minutes), and a run may set
+    a BUDGET of real requests, spent in the order search() asks."""
+    global BLOCKED, SPENT
+    if BLOCKED or (BUDGET is not None and SPENT >= BUDGET):
+        return None
+    SPENT += 1
     for wait in BACKOFF:
         if wait:
             print(f"    throttled; waiting {wait}s", flush=True)
@@ -306,13 +316,17 @@ def polite_get(url: str, gap: float) -> str | None:
             return body
         if code == 404:
             return None
-    print(f"    gave up on {url}", file=sys.stderr)
+    print(f"    gave up on {url}; asking nothing more this run", file=sys.stderr)
     global FAILED
     FAILED += 1
+    BLOCKED = True
     return None
 
 
 FAILED = 0          # requests that never cleared the throttle, this run
+BLOCKED = False     # set by the first of them: nothing more is asked
+BUDGET: int | None = None   # real requests this run may make; None is no limit
+SPENT = 0
 BACKOFF = (0, 60, 300, 900)
 
 
@@ -332,6 +346,9 @@ def page(number: str, force: bool = False) -> str | None:
     return body
 
 
+QUERY_FAILED = 0    # queries with no answer, fresh or cached: the search is incomplete
+
+
 def query(q: str | dict, page_no: int = 0, num: int = 100, fresh: bool = False) -> dict | None:
     CACHE.mkdir(parents=True, exist_ok=True)
     params = dict(q) if isinstance(q, dict) else {"q": q}
@@ -343,7 +360,10 @@ def query(q: str | dict, page_no: int = 0, num: int = 100, fresh: bool = False) 
     body = polite_get("https://patents.google.com/xhr/query?url="
                       + urllib.parse.quote(inner, safe="") + "&exp=", QUERY_GAP_S)
     if not body:
-        return None
+        global QUERY_FAILED
+        QUERY_FAILED += 1
+        # A refused fresh query still has last month's answer to fall back on.
+        return json.loads(p.read_text()) if p.exists() else None
     try:
         res = json.loads(body)["results"]
     except (ValueError, KeyError):
@@ -673,9 +693,17 @@ def search(con, fresh: bool = False, summary: Path | None = None) -> None:
         print(f"  {label}: {n} hits")
 
     # Fresh, the catalogued patents' own pages are refetched: who cites them
-    # is the part of the snowball that grows.
-    for pid, number in con.execute("SELECT id, number FROM patent").fetchall():
+    # is the part of the snowball that grows. Oldest copy first, so a budget
+    # that cannot cover them all this month covers the rest next month.
+    def age(number: str) -> float:
+        f = CACHE / f"{number}.html"
+        return f.stat().st_mtime if f.exists() else 0.0
+    numbers = sorted((n for (n,) in con.execute("SELECT number FROM patent")), key=age)
+    stale = 0
+    for number in numbers:
+        before = age(number)
         doc = page(number, force=fresh)
+        stale += fresh and age(number) == before
         if not doc:
             continue
         d = parse(doc)
@@ -685,11 +713,14 @@ def search(con, fresh: bool = False, summary: Path | None = None) -> None:
                          f"{key.replace('_', ' ')} {number}")
 
     # Collapse to one row per family: fetch each candidate's page (cached).
+    # A candidate whose page could not be had this run falls back on its
+    # number without the kind code, which still folds CN103852513A into
+    # CN103852513B, the commonest pair.
     seen_fam: dict[str, dict] = {}
     for c in sorted(cands.values(), key=lambda c: c["priority"]):
         doc = page(c["number"])
         d = parse(doc) if doc else {}
-        fid = d.get("family_id") or c["number"]
+        fid = d.get("family_id") or re.sub(r"[A-Z]\d?$", "", c["number"])
         if any(m in fam or m in rejected for m in d.get("members", [])):
             continue
         row = seen_fam.setdefault(fid, {**c, "family_id": fid, "members": " ".join(d.get("members", [])),
@@ -707,17 +738,25 @@ def search(con, fresh: bool = False, summary: Path | None = None) -> None:
 
     # A throttled run must not read as an empty one: the marker stops the
     # workflow closing an issue on a search that did not finish.
+    # INCOMPLETE means a query went unanswered, which is the search itself
+    # not finishing. A page that could not be refreshed only means older
+    # citations, and a candidate with no page only a thinner row.
     marker = CANDIDATES.with_suffix(".incomplete")
-    if FAILED:
-        marker.write_text(f"{FAILED} request(s) never cleared Google's throttle\n")
-        print(f"INCOMPLETE: {FAILED} request(s) never cleared the throttle")
+    if QUERY_FAILED:
+        marker.write_text(f"{QUERY_FAILED} query page(s) went unanswered\n")
+        print(f"INCOMPLETE: {QUERY_FAILED} query page(s) went unanswered")
     elif marker.exists():
         marker.unlink()
+    print(f"{SPENT} request(s) made" + (f" of a budget of {BUDGET}" if BUDGET is not None else "")
+          + (", then blocked" if BLOCKED else "") + f"; {stale} catalogued page(s) not refreshed")
     if summary:
         L = ["## Patent candidates", ""]
-        if FAILED:
-            L += [f"**Incomplete:** {FAILED} request(s) never cleared Google Patents' throttle, "
-                  "so this list may be short.", ""]
+        if QUERY_FAILED:
+            L += [f"**Incomplete:** {QUERY_FAILED} query page(s) went unanswered, Google Patents "
+                  "throttling this runner, so this list may be short.", ""]
+        if stale:
+            L += [f"{stale} catalogued patent(s) were not refetched this run, so new patents "
+                  "citing them wait for a later one.", ""]
         if not seen_fam:
             L.append("No patent family that is neither catalogued nor rejected.")
         else:
@@ -747,10 +786,14 @@ def main() -> int:
     se.add_argument("--summary", type=Path, help="also write a Markdown table here")
     se.add_argument("--backoff", default="0,60,300,900",
                     help="seconds to wait before each try of a throttled request")
+    se.add_argument("--budget", type=int,
+                    help="at most this many real requests; queries first, then the oldest "
+                         "catalogued pages, then candidate pages")
     args = ap.parse_args()
     if args.cmd == "search":
-        global BACKOFF
+        global BACKOFF, BUDGET
         BACKOFF = tuple(int(x) for x in args.backoff.split(","))
+        BUDGET = args.budget
     con = connect()
     if args.cmd == "add":
         pid = add(con, args.number, args.algorithm, args.affiliation, args.note)

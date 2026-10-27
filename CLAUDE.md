@@ -2198,8 +2198,16 @@ UTC) and opens or updates the issue "Patents: families to screen", the same
 loop as the DNPS-DR feed. It commits nothing. `--fresh` re-asks every query
 and refetches the catalogued patents' own pages, since a new filing citing one
 of ours is the commonest way a new patent appears; candidates' pages come from
-a cache carried between runs with `actions/cache`. A throttled run leaves
-`patent_candidates.incomplete` and never closes the issue. A family is
+a cache carried between runs with `actions/cache`. **A runner's share of
+Google is about eight requests**: the first run got eight queries through and
+was refused everything after, and at six minutes of backoff per refused
+request it would have hit the job's timeout before the issue step. So the
+first request refused after its retries stops all asking for the run, and CI
+spends a budget of 20 requests in a fixed order: queries, then the catalogued
+patents' pages oldest first, then candidate pages. A refused query falls back
+on last month's cached answer. Only an unanswered QUERY makes a run
+incomplete: it leaves `patent_candidates.incomplete` and never closes the
+issue, while a page not refreshed only means older citations. A family is
 matched against the issue by any member's number, because the same family can
 come back under another one.
 
