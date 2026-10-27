@@ -3827,6 +3827,7 @@ INSERT INTO author VALUES(3938,'Desi Liu',NULL,NULL,NULL,NULL,NULL,'A5159301686'
 INSERT INTO author VALUES(3939,'Jianbo Pan',NULL,NULL,NULL,NULL,'0000-0001-6014-8160','A5045047208');
 INSERT INTO author VALUES(3940,'Cemil Can Saylan',NULL,NULL,NULL,NULL,'0000-0002-3534-8352','A5060772341');
 INSERT INTO author VALUES(3941,'Armin Suleymaniniya',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3942,'Anil K. Shukla',NULL,NULL,NULL,NULL,'0000-0001-8162-1543','A5055753264');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -11274,6 +11275,7 @@ INSERT INTO author_affiliation VALUES(3028,52);
 INSERT INTO author_affiliation VALUES(3029,52);
 INSERT INTO author_affiliation VALUES(3030,52);
 INSERT INTO author_affiliation VALUES(3031,52);
+INSERT INTO author_affiliation VALUES(3942,601);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -13103,6 +13105,8 @@ INSERT INTO publication VALUES(990,'ScopeNovo: a De Novo Peptide Sequencing Meth
 INSERT INTO publication VALUES(991,'pXg: Comprehensive and Reliable Identification of MHC-I Antigens Using De Novo Peptide Sequencing and Immunotranscriptomic Datasets','2026-10-16','10.1007/978-1-0716-5519-1_16','Springer US','De novo peptide sequencing enables the identification of a broad repertoire of major histocompatibility complex class I-associated peptides, providing a valuable source of potential immunotherapeutic targets in cancer. Nevertheless, its practical utility remains limited by the absence of robust methods for confidently determining peptide-spectrum matches and interpreting their proteogenomic information. This chapter presents the pXg workflow, designed to comprehensively and reliably identify peptides derived from de novo sequencing in mass spectrometry-based immunopeptidomics, integrated with matched RNA-seq data. We guide the reader through the use of pXg, covering the rescoring of peptide-spectrum matches and the estimation of a false discovery rate from the popular de novo sequencing tool Casanovo. This ultimately yields rich proteogenomic insights into the identified peptides.','https://link.springer.com/protocol/10.1007/978-1-0716-5519-1_16','Methods in Molecular Biology','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(992,'PeptidomicsDB: a unified resource of endogenous peptidomes for peptide discovery and functional exploration across species and biological contexts','2026-10-23','10.1093/nar/gkag1032','Oxford University Press (OUP)','Endogenous peptides represent a rich source of bioactive molecules that regulate diverse physiological processes and offer opportunities for functional discovery. Mass spectrometry-based peptidomics enables their systematic characterization, yet public datasets remain fragmented and are often processed using heterogeneous tools and parameters, limiting peptide-level retrieval, cross-study exploration, and data reuse. We developed PeptidomicsDB (freely accessible at http://www.inbirg.com/ppd/), a unified resource based on the standardized reanalysis of 151 public peptidomics projects comprising 3992 biological samples from major branches, including global peptidomics, neuropeptidomics, and immunopeptidomics, across species and biological contexts. Using the DeepNovo Peptidome workflow implemented in PEAKS Studio 13.0, which integrates database searching, homology searching, and de novo sequencing, we identified >33 million peptide records representing over 4 million unique peptide sequences, of which >400 000 showed sequence similarity to bioactive peptides curated in public repositories. Analysis of 249 curated pairwise comparison datasets identified 78 910 differentially abundant peptide records, while 14 context-specific datasets yielded 148 175 peptide records enriched in individual tissues, diseases, or cell types. PeptidomicsDB links peptide, precursor-protein, sample, and dataset levels with experimental provenance, quantitative evidence, mass spectrometric data, and functional annotations. Together, these capabilities support peptide discovery and functional exploration.','https://doi.org/10.1093/nar/gkag1032','Nucleic Acids Research','peer-reviewed',NULL,'crossref');
 INSERT INTO publication VALUES(993,'Beyond Best Guesses: A Multi-Level Confidence Assessment Framework for De Novo Peptide Sequencing Results','2026-09-29',NULL,'Human Proteome Organization',NULL,'https://tnuki.com/conferences/hupo-2026/technical-university-of-munich','HUPO 2026 World Congress','presentation',NULL,NULL);
+INSERT INTO publication VALUES(994,'Proteomics of natural bacterial isolates powered by deep learning-based de novo identification','2018-09-27','10.1101/428334','Cold Spring Harbor Laboratory',replace('Metaproteomics has been increasingly utilized for high-throughput molecular characterization in complex environments and has been demonstrated to provide insights into microbial composition and functional roles in soil systems. Despite its potential for the study of microbiomes, significant challenges remain in data analysis, including the creation of a sample-specific protein sequence database as the taxonomic composition of soil is often unknown. Almost all metaproteome analysis tools require this database and their accuracy and sensitivity suffer when the database is incomplete or contains extraneous sequences from organisms which are not present. Here, we leverage a de novo peptide sequencing approach to identify sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data, and trained it on 5 million peptide-spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified unsequenced soil isolates directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S ribosomal RNA sequencing of the soil samples and also uncovered several additional species which were strongly represented only in proteomic data. Our pipeline offers an alternative and complementary method for metaproteomic data analysis by creating a protein database directly from proteomic data, thus removing the need for metagenomic sequencing.\n\nSignificance StatementProteomic characterization of environmental samples, or metaproteomics, reveals microbial activity critical to our understanding of climate, nutrient cycling and human health. Metaproteomic samples originate from diverse environs, such as soil and oceans. One option for data analysis is a de novo interpretation of the mass spectra. Unfortunately, the current generation of de novo algorithms were primarily trained on data originating from human proteins. Therefore, these algorithms struggle with data from environmental samples, limiting our ability to analyze metaproteomics data. To address this challenge, we trained a new algorithm with data from dozens of diverse environmental bacteria and achieved significant improvements in accuracy across a broad range of organisms. This generality opens proteomics to the world of natural isolates and microbiomes.','\n',char(10)),'https://www.biorxiv.org/content/10.1101/428334v1','bioRxiv','preprint','v1','biorxiv');
+INSERT INTO publication VALUES(995,'Uncovering hidden members and functions of the soil microbiome using de novo metaproteomics','2020-11-16',NULL,'Cold Spring Harbor Laboratory',replace('Metaproteomics has been increasingly utilized for high-throughput molecular characterization in complex environments and has been demonstrated to provide insights into microbial composition and functional roles in soil systems. Despite its potential for the study of microbiomes, significant challenges remain in data analysis, including the creation of a sample-specific protein sequence database as the taxonomic composition of soil is often unknown. Almost all metaproteome analysis tools require this database and their accuracy and sensitivity suffer when the database is incomplete or contains extraneous sequences from organisms which are not present. Here, we leverage a de novo peptide sequencing approach to identify sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data, and trained it on 5 million peptide-spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified unsequenced soil isolates directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S ribosomal RNA sequencing of the soil samples and also uncovered several additional species which were strongly represented only in proteomic data. Our pipeline offers an alternative and complementary method for metaproteomic data analysis by creating a protein database directly from proteomic data, thus removing the need for metagenomic sequencing.\n\nSignificance StatementProteomic characterization of environmental samples, or metaproteomics, reveals microbial activity critical to our understanding of climate, nutrient cycling and human health. Metaproteomic samples originate from diverse environs, such as soil and oceans. One option for data analysis is a de novo interpretation of the mass spectra. Unfortunately, the current generation of de novo algorithms were primarily trained on data originating from human proteins. Therefore, these algorithms struggle with data from environmental samples, limiting our ability to analyze metaproteomics data. To address this challenge, we trained a new algorithm with data from dozens of diverse environmental bacteria and achieved significant improvements in accuracy across a broad range of organisms. This generality opens proteomics to the world of natural isolates and microbiomes.','\n',char(10)),'https://www.biorxiv.org/content/10.1101/428334v2','bioRxiv','preprint','v2','biorxiv');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19471,6 +19475,25 @@ INSERT INTO publication_author VALUES(992,3939,10);
 INSERT INTO publication_author VALUES(993,3940,1);
 INSERT INTO publication_author VALUES(993,3941,2);
 INSERT INTO publication_author VALUES(993,33,3);
+INSERT INTO publication_author VALUES(994,238,1);
+INSERT INTO publication_author VALUES(994,239,2);
+INSERT INTO publication_author VALUES(994,1141,3);
+INSERT INTO publication_author VALUES(994,831,4);
+INSERT INTO publication_author VALUES(994,838,5);
+INSERT INTO publication_author VALUES(994,3942,6);
+INSERT INTO publication_author VALUES(994,1143,7);
+INSERT INTO publication_author VALUES(994,1012,8);
+INSERT INTO publication_author VALUES(995,238,1);
+INSERT INTO publication_author VALUES(995,239,2);
+INSERT INTO publication_author VALUES(995,1141,3);
+INSERT INTO publication_author VALUES(995,1142,4);
+INSERT INTO publication_author VALUES(995,831,5);
+INSERT INTO publication_author VALUES(995,838,6);
+INSERT INTO publication_author VALUES(995,1143,7);
+INSERT INTO publication_author VALUES(995,1144,8);
+INSERT INTO publication_author VALUES(995,1145,9);
+INSERT INTO publication_author VALUES(995,1146,10);
+INSERT INTO publication_author VALUES(995,1012,11);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -20741,6 +20764,7 @@ INSERT INTO publication_version VALUES(352,978,'manual');
 INSERT INTO publication_version VALUES(9,979,'manual');
 INSERT INTO publication_version VALUES(218,984,'manual');
 INSERT INTO publication_version VALUES(15,989,'manual');
+INSERT INTO publication_version VALUES(994,51,'biorxiv');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27604,6 +27628,25 @@ INSERT INTO publication_author_affiliation VALUES(816,3030,52,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(816,3031,52,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(816,252,52,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(14,105,52,1,'openalex');
+INSERT INTO publication_author_affiliation VALUES(994,238,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,239,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,1141,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,831,109,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,838,109,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,3942,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,1143,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(994,1012,110,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,238,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,239,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1141,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1142,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,831,109,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,838,109,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1143,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1144,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1145,601,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1146,602,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(995,1012,110,0,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28892,6 +28935,8 @@ INSERT INTO publication_algorithm VALUES(992,140,'uses');
 INSERT INTO publication_algorithm VALUES(993,824,'describes');
 INSERT INTO publication_algorithm VALUES(993,12,'uses');
 INSERT INTO publication_algorithm VALUES(993,183,'uses');
+INSERT INTO publication_algorithm VALUES(994,48,'describes');
+INSERT INTO publication_algorithm VALUES(995,48,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -40203,7 +40248,7 @@ INSERT INTO publication_dataset VALUES(211,281,57,80,'uses');
 INSERT INTO publication_dataset VALUES(212,273,51,74,'uses');
 INSERT INTO publication_dataset VALUES(213,281,51,74,'uses');
 INSERT INTO publication_dataset VALUES(214,4,77,100,'uses');
-INSERT INTO publication_dataset VALUES(215,51,77,100,'uses');
+INSERT INTO publication_dataset VALUES(215,51,77,100,'introduces');
 INSERT INTO publication_dataset VALUES(216,3,88,111,'uses');
 INSERT INTO publication_dataset VALUES(217,251,88,111,'uses');
 INSERT INTO publication_dataset VALUES(218,3,84,107,'uses');
@@ -40362,8 +40407,8 @@ INSERT INTO publication_dataset VALUES(376,10,120,143,'uses');
 INSERT INTO publication_dataset VALUES(377,10,377,400,'uses');
 INSERT INTO publication_dataset VALUES(378,33,124,147,'uses');
 INSERT INTO publication_dataset VALUES(379,51,252,275,'uses');
-INSERT INTO publication_dataset VALUES(380,51,279,302,'uses');
-INSERT INTO publication_dataset VALUES(381,51,358,381,'uses');
+INSERT INTO publication_dataset VALUES(380,51,279,302,'introduces');
+INSERT INTO publication_dataset VALUES(381,51,358,381,'introduces');
 INSERT INTO publication_dataset VALUES(382,40,176,199,'introduces');
 INSERT INTO publication_dataset VALUES(384,221,292,315,'uses');
 INSERT INTO publication_dataset VALUES(385,73,333,356,'uses');
@@ -40883,6 +40928,11 @@ INSERT INTO publication_dataset VALUES(902,981,18,525,'introduces');
 INSERT INTO publication_dataset VALUES(903,981,18,526,'introduces');
 INSERT INTO publication_dataset VALUES(904,981,1,527,'introduces');
 INSERT INTO publication_dataset VALUES(905,981,494,529,'introduces');
+INSERT INTO publication_dataset VALUES(906,994,279,302,'introduces');
+INSERT INTO publication_dataset VALUES(907,995,279,302,'uses');
+INSERT INTO publication_dataset VALUES(908,994,77,100,'introduces');
+INSERT INTO publication_dataset VALUES(909,995,77,100,'uses');
+INSERT INTO publication_dataset VALUES(910,995,358,381,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -47951,6 +48001,23 @@ INSERT INTO publication_citation VALUES(989,283,'crossref');
 INSERT INTO publication_citation VALUES(989,440,'crossref');
 INSERT INTO publication_citation VALUES(989,482,'crossref');
 INSERT INTO publication_citation VALUES(989,978,'crossref');
+INSERT INTO publication_citation VALUES(994,62,'crossref');
+INSERT INTO publication_citation VALUES(994,67,'crossref');
+INSERT INTO publication_citation VALUES(994,68,'crossref');
+INSERT INTO publication_citation VALUES(994,73,'crossref');
+INSERT INTO publication_citation VALUES(995,62,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,66,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,68,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,70,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,73,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,145,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,146,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,159,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,172,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,175,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,304,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,329,'semanticscholar');
+INSERT INTO publication_citation VALUES(995,370,'semanticscholar');
 CREATE TABLE checkpoint_dataset (
     checkpoint_id      INTEGER NOT NULL REFERENCES checkpoint(id),
     dataset_id         INTEGER NOT NULL REFERENCES dataset(id),
@@ -67169,9 +67236,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',575);
 INSERT INTO sqlite_sequence VALUES('affiliation',1419);
-INSERT INTO sqlite_sequence VALUES('author',3941);
+INSERT INTO sqlite_sequence VALUES('author',3942);
 INSERT INTO sqlite_sequence VALUES('algorithm',824);
-INSERT INTO sqlite_sequence VALUES('publication',993);
+INSERT INTO sqlite_sequence VALUES('publication',995);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

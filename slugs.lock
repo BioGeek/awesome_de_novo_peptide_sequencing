@@ -4644,6 +4644,7 @@ authors	3938	desi-liu
 authors	3939	jianbo-pan
 authors	3940	cemil-can-saylan
 authors	3941	armin-suleymaniniya
+authors	3942	anil-k-shukla
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7256,6 +7257,8 @@ publications	990	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-sp
 publications	991	pxg-comprehensive-and-reliable-identification-of-mhc-i-antigens-using-de-novo
 publications	992	peptidomicsdb-a-unified-resource-of-endogenous-peptidomes-for-peptide-discovery
 publications	993	beyond-best-guesses-a-multi-level-confidence-assessment-framework-for-de-novo
+publications	994	proteomics-of-natural-bacterial-isolates-powered-by-deep-learning-based-de-novo
+publications	995	uncovering-hidden-members-and-functions-of-the-soil-microbiome-using-preprint
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
