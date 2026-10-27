@@ -52,6 +52,7 @@ repository_candidates.csv
 repository_search.csv
 # Patent proposals from build_patents.py search, screened by hand
 patent_candidates.csv
+patent_candidates.incomplete
 
 # Backup rebase-onto-refresh.sh leaves beside the database; never commit it
 denovo.db.before-rebase

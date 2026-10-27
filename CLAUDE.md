@@ -2090,8 +2090,8 @@ Five tables written by `build_patents.py`: `patent`, one row per patent
 FAMILY; `patent_inventor`; `patent_algorithm`, the catalog method a patent
 claims, with its evidence; `patent_citation`, what a patent cites that the
 catalog holds; and `patent_cited_by`, every family, anyone's, that cites a
-catalogued one. **6 patent families** from 3 assignees, 4 of them claiming a method
-the catalog describes from its paper. Together they cite 29 catalogued papers between them.
+catalogued one. **9 patent families** from 6 assignees, 5 of them claiming a method
+the catalog describes from its paper. Together they cite 33 catalogued papers between them.
 
 **A patent is not a publication here**, and that is the design decision.
 Typing it as a tenth `publication_type` would have reused every page and chart,
@@ -2153,9 +2153,9 @@ institution page listing its patents: Verily is the first. Its place is where
 the patents were filed from, not today's headquarters (ROR has Verily in
 Texas since 2023). Such a page says "1 patent family", not "0 authors and 0
 papers", and points at the Patents section rather than at the map. A row is
-added only once its patent is catalogued: Oxford GlycoSciences and Venn
-Biosciences wait for theirs, because an institution page with nothing on it
-would be a permanent URL for an empty page. `refresh` links a patent to its
+added only once its patent is catalogued, because an institution page with
+nothing on it would be a permanent URL for an empty page: Oxford GlycoSciences
+and Venn Biosciences were held back until Google let their patents be fetched. `refresh` links a patent to its
 institution itself when exactly one institution has the assignee's name once
 both are folded by `org_base()`; a curated link is never replaced.
 
@@ -2206,6 +2206,9 @@ far. Names are settled over the whole table rather than row by row, or one
 company's rows would carry whichever spelling each met first. **A computed
 sector is a keyword match, and "International" contains "national"**: that
 put Honeywell and Visa in academia until the keyword got its word boundaries.
+**A legal suffix is stripped only at the END of a name**, and never from
+"& Co.": the first rule matched "Co" anywhere and turned "Merck & Co., Inc."
+into "Merck &".
 
 **`refresh-patent-candidates.yml` runs the search monthly** (the 4th, 10:00
 UTC) and opens or updates the issue "Patents: families to screen", the same

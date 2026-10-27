@@ -7869,6 +7869,12 @@ lazy_chart("repo_table", () => {
 ```{ojs}
 //| echo: false
 patents_t = transpose(patents).map(p => ({ ...p, priority: new Date(p.priority_date) }))
+// A patent's short name for a chart label: the method it claims, else its
+// assignee by the catalog's name, legal suffix dropped ("Regeneron
+// Pharmaceuticals", not "Regeneron Pharmaceuticals, Inc." or the register's
+// "Oxford Glycosciences (UK) Ltd").
+patent_short = p => p.methods ? p.methods.split("; ")[0]
+  : (p.institution ?? p.assignee).replace(/[,\s]+\b(Inc|LLC|Ltd|Corp(oration)?|Co)\b\.?$/i, "").trim()
 patent_links_t = transpose(patent_links)
 ```
 
@@ -7911,7 +7917,10 @@ is one catalogued patent citing another.`
 //| echo: false
 lazy_chart("patents_prior_art", () => {
   const pub = id => pub_lookup.get(id)
-  const assignees = Array.from(new Set(patents_t.map(p => p.assignee)))
+  // Coloured by owner under the catalog's name for it, so the legend does not
+  // read "BIOINFORMATICS SOLUTIONS Inc".
+  const owner = p => p.institution ?? p.assignee
+  const assignees = Array.from(new Set(patents_t.map(owner)))
   const color = d3.scaleOrdinal(assignees, d3.schemeTableau10)
   const by_id = new Map(patents_t.map(p => [p.id, p]))
   const links = patent_links_t.filter(l => l.pub_id != null && pub(l.pub_id))
@@ -7930,15 +7939,17 @@ lazy_chart("patents_prior_art", () => {
   const W = 1100, ML = 120, MR = 40
   const x = d3.scaleUtc(d3.extent([...patents_t.map(p => p.priority), ...papers.map(p => p.date)]),
                         [ML, W - MR]).nice()
-  const label = p => (p.methods ? p.methods.split("; ")[0] : p.assignee.replace(/\b(Inc|LLC|Ltd|Corp(oration)?|Pharmaceuticals?)\b\.?/g, "").replace(/[,\s]+$/, ""))
   const tiers = []
   const placed = patents_t.slice().sort((a, b) => a.priority - b.priority).map(p => {
-    const text = label(p)
-    const x0 = x(p.priority) - 4, x1 = x0 + text.length * 6.6 + 12
+    const text = patent_short(p)
+    const w = text.length * 6.6 + 12
+    // A label that would run past the right edge starts further left; its
+    // leader line still drops from the label to the patent's own date.
+    const x0 = Math.min(x(p.priority) - 4, W - MR - w), x1 = x0 + w
     let t = tiers.findIndex(end => end < x0)
     if (t < 0) { t = tiers.length; tiers.push(0) }
     tiers[t] = x1
-    return { ...p, text, tier: t }
+    return { ...p, text, tier: t, lx: x.invert(x0 + 4) }
   })
   const nt = Math.max(1, tiers.length)
   const tierH = 0.11
@@ -7956,10 +7967,10 @@ lazy_chart("patents_prior_art", () => {
       // Prior art, faint; the patent's own method's paper, solid.
       Plot.link(links.filter(l => !l.own_method), {
         x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
-        stroke: l => l.patent.assignee, strokeOpacity: 0.22 }),
+        stroke: l => owner(l.patent), strokeOpacity: 0.22 }),
       Plot.link(links.filter(l => l.own_method), {
         x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
-        stroke: l => l.patent.assignee, strokeWidth: 2.2, strokeOpacity: 0.95 }),
+        stroke: l => owner(l.patent), strokeWidth: 2.2, strokeOpacity: 0.95 }),
       Plot.arrow(arcs, { x1: a => a.from.priority, y1: 1, x2: a => a.to.priority, y2: 1,
                          bend: -40, stroke: "#57606a", strokeWidth: 1.2, headLength: 6 }),
       Plot.dot(papers, { x: "date", y: 0, r: p => 2.5 + 2.2 * Math.sqrt(p.n), fill: "#8c959f",
@@ -7970,16 +7981,16 @@ lazy_chart("patents_prior_art", () => {
                                      "Cited by": p => p.citing.join(", ") },
                          tip: { ...plot_tip_style, lineWidth: 60,
                                 format: { x: false, y: false, r: false } } }),
-      Plot.dot(placed, { x: "priority", y: 1, symbol: "square", r: 6, fill: "assignee",
+      Plot.dot(placed, { x: "priority", y: 1, symbol: "square", r: 6, fill: owner,
                          stroke: "white", strokeWidth: 1,
-                         channels: { Patent: "number", Title: "title", Assignee: "assignee",
+                         channels: { Patent: "number", Title: "title", Assignee: owner,
                                      Priority: "priority_date", Status: "status",
                                      Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
                          tip: { ...plot_tip_style, lineWidth: 60,
                                 format: { x: false, y: false, fill: false } } }),
       Plot.ruleX(placed, { x: "priority", y1: 1.04, y2: p => 1 + (p.tier + 1) * tierH - 0.02,
                            stroke: "#d0d7de" }),
-      Plot.text(placed, { x: "priority", y: p => 1 + (p.tier + 1) * tierH, text: "text",
+      Plot.text(placed, { x: "lx", y: p => 1 + (p.tier + 1) * tierH, text: "text",
                           textAnchor: "start", dx: -4, fontSize: 11, fill: "#24292f",
                           href: p => page_href("patents", p.number) }),
     ],
@@ -8073,8 +8084,7 @@ are folded into one row.`
 //| echo: false
 lazy_chart("patents_citers", () => {
   const by_id = new Map(patents_t.map(p => [p.id, p]))
-  const col = p => p.methods ? p.methods.split("; ")[0]
-                             : p.assignee.replace(/\b(Inc|LLC|Ltd|Corp(oration)?|Pharmaceuticals?)\b\.?/g, "").replace(/[,\s]+$/, "")
+  const col = patent_short
   const cited = patents_t.filter(p => patent_citers_t.some(c => c.patent_id === p.id))
   const columns = cited.map(col)
   const totals = d3.rollups(patent_citers_t, v => new Set(v.map(c => c.citing_number)).size,
@@ -8094,8 +8104,10 @@ lazy_chart("patents_citers", () => {
   const inst = new Map(patent_citers_t.filter(c => c.institution).map(c => [c.organisation, c.institution]))
   const ylabels = totals.map(([o]) => ({ o, label: label.get(o), href: page_href("institutions", inst.get(o)) }))
   return Plot.plot({
-    width: 900, height: 70 + rows.length * 17, marginLeft: 360, marginTop: 70, marginRight: 30,
-    x: { domain: columns, axis: "top", label: null, tickRotate: -30 },
+    // Vertical column labels: slanted, nine columns of ~57 px overlapped by
+    // up to 45 px once the third assignee arrived.
+    width: 900, height: 140 + rows.length * 17, marginLeft: 360, marginTop: 140, marginRight: 30,
+    x: { domain: columns, axis: "top", label: null, tickRotate: -90 },
     r: { type: "identity" },
     // The axis is drawn as text marks, because an axis tick cannot be a link.
     y: { domain: rows, label: null, axis: null },

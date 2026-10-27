@@ -200,6 +200,37 @@ REJECTED: dict[str, str] = {
     "US11862298B1": "Verily: predicts fragment-ion intensities from a sequence; neither claims nor description mention de novo sequencing",
     "US12362041B1": "Verily: predicts peptide retention time; never mentions de novo sequencing",
     "US12334189B2": "Tesorai: learned molecule identification against spectra; never mentions de novo sequencing",
+    # Screened by title from the first full search, 2026-10-27.
+    "DE10112002A1": "a designed protein domain for purification, not sequencing",
+    "WO2003098219A1": "an ELISA for peptide-MHC binding",
+    "US20050048589A1": "lung-cancer gene products and antibodies",
+    "US20130122022A1": "an antibody's variable-region sequence, not a sequencing method",
+    "US9840544B2": "de novo protein design",
+    "MX2014012651A": "antibodies for stroke, not a sequencing method",
+    "HK1207565B": "antibodies for stroke, not a sequencing method",
+    "US20230022977A1": "protecting an antibody conjugate's sequence from disclosure",
+    "US11215621B2": "protein-protein interactions from crosslinking MS",
+    "US20230357378A1": "an anti-FAM19A5 antibody's use",
+    "HK40121247A": "an anti-FAM19A5 antibody's use",
+    "JP2022541697A": "generating camelid antibodies from sequence libraries",
+    "US20200303034A1": "accelerating a database search query",
+    "EP3963590A1": "antibody sequence patterns from repertoire sequencing",
+    "US11587645B2": "machine-learned protein sequence generation (design)",
+    "US20200392578A1": "sequencing hybridoma antibody chains from nucleic acid",
+    "JP2022543687A": "predicting fragmentation spectra, not sequencing from them",
+    "WO2021172946A1": "predicting a peptide's spectral profile",
+    "JP2023521706A": "a de novo designed ACE2 decoy protein",
+    "CN113851188A": "predicting MS/MS spectra and retention times",
+    "US20250104804A1": "generating disease-associated antibody sequences",
+    "CN113936742B": "predicting peptide retention time",
+    "CN114524863A": "a peptide for quantifying a vaccine protein",
+    "CN115792048A": "quantifying casein by marker peptides",
+    "TR2022016617A2": "de novo designed antimicrobial peptides",
+    "CN116825200B": "predicting glycopeptide spectra",
+    "WO2025038596A1": "de novo designed polypeptides",
+    "US5538897A": "SEQUEST: database search, the field's best-known baseline and not de novo",
+    "CN110349621B": "checking the reliability of database-search matches",
+    "HK40105650A": "a member of US20240153587A1's family, already catalogued",
 }
 
 # (patent number, inventor as printed) -> author id, or None to refuse a link
@@ -267,6 +298,13 @@ ASSIGNEE_EN: dict[str, str] = {
     "苏州元脑智能科技有限公司": "Suzhou Yuannao Intelligent Technology",
     "宏碁股份有限公司": "Acer",
     "제넨테크, 인크.": "Genentech",
+    "日本電気株式会社": "NEC",
+    "メルク エンド カムパニー インコーポレーテッド": "Merck & Co.",
+    "株式会社メディカル・プロテオスコープ": "Medical ProteoScope",
+    "株式会社島津製作所": "Shimadzu",
+    "Общество С Ограниченной Ответственностью \"Интерлаб\"": "Interlab",
+    "한국과학기술원": "Korea Advanced Institute of Science and Technology",
+    "Univerzita Palackého v Olomouci": "Palacký University Olomouc",
     # One organisation filing under several entities.
     "BASF Agricultural Solutions US LLC": "BASF",
     "Oxford Glycosciences (UK) Ltd": "Oxford GlycoSciences",
@@ -281,8 +319,10 @@ HOLDER = re.compile(r"^(?:the\s+)?(?:regents\s+of|governing\s+council\s+of|trust
 ACADEMIC = re.compile(r"universit|college|institut|academy|school|foundation|council|大学|学院|研究所|研究院|대학교|"
                       r"research cent|government|\bnational\b|ministry|\bETH\b|CNRS|INSERM", re.I)
 HOSPITAL = re.compile(r"hospital|medical cent|clinic|health system|医院|병원", re.I)
-LEGAL = re.compile(r",?\s*\b(inc|incorporated|llc|ltd|limited|co|corp|corporation|gmbh|ag|sa|sas|"
-                   r"plc|bv|nv|ab|as|kk|pte|pty|company)\b\.?", re.I)
+# Only at the END of a name, repeatedly ("Co., Ltd."): a suffix word in the
+# middle is part of the name.
+LEGAL = re.compile(r"(?:[,\s]+\b(?:inc|incorporated|llc|ltd|limited|co|corp|corporation|gmbh|ag|sa|"
+                   r"sas|plc|bv|nv|ab|as|kk|pte|pty|company)\b\.?)+\s*$", re.I)
 
 
 # ── transport ────────────────────────────────────────────────────────────────
@@ -452,8 +492,10 @@ def org_base(assignee: str) -> str:
     folded away. Pure: organisation() adds the spelling choice on top."""
     name = (assignee or "").split(";")[0].strip()
     name = ASSIGNEE_EN.get(name, name)
-    base = re.sub(r"\s+", " ", LEGAL.sub("", name)).strip(" ,.")
-    base = HOLDER.sub("", base).strip(" ,.")
+    # "Merck & Co." is a name, not a name plus a suffix: shield it from LEGAL.
+    shielded = re.sub(r"&\s*Co\b\.?", "& Co\x00", name)
+    base = re.sub(r"\s+", " ", LEGAL.sub("", shielded)).strip(" ,.")
+    base = HOLDER.sub("", base).strip(" ,.").replace("\x00", ".")
     # Google capitalises every word ("University Of Toronto"); the small ones
     # go back to lower case, but never the first word.
     return re.sub(r"(?<=\s)(Of|And|The|For|Et|De|In)(?=\s)", lambda m: m.group(1).lower(), base)
