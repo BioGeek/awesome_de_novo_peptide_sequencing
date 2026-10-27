@@ -172,7 +172,9 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
                   'mining-novel-allergens-from-coconut-pollen-employing-manual-i-de-novo-i': 'mining-novel-allergens-from-coconut-pollen-employing-manual-de-novo-sequencing',
                   'top-down-analysis-of-protein-samples-by-i-de-novo-i-sequencing-techniques': 'top-down-analysis-of-protein-samples-by-de-novo-sequencing-techniques',
                   'top-down-i-de-novo-i-protein-sequencing-of-a-13-6-kda-camelid-single-heavy': 'top-down-de-novo-protein-sequencing-of-a-13-6-kda-camelid-single-heavy-chain'},
- 'institutions': {'genentech': 'genentech-inc'},
+ 'institutions': {'bioinformatics-solutions-canada': 'bioinformatics-solutions-inc',
+                  'genentech': 'genentech-inc',
+                  'regeneron-united-states': 'regeneron-pharmaceuticals-inc'},
  'venues': {'molecular-amp-cellular-proteomics': 'molecular-cellular-proteomics',
             'pnas': 'proceedings-of-the-national-academy-of-sciences',
             'protein-amp-peptide-letters': 'protein-peptide-letters'}}
@@ -304,8 +306,8 @@ def assign_unique(
 # --------------------------------------------------------------------------
 # The catalog's seven entity types, and how each is keyed.
 #
-# Institutions are keyed by NAME, not by affiliation row: 1363 affiliation rows
-# collapse to 1095 institutions because one institution has many departments,
+# Institutions are keyed by NAME, not by affiliation row: 1362 affiliation rows
+# collapse to 1093 institutions because one institution has many departments,
 # and every chart groups on `af.name` (index.qmd projects `af.name AS
 # affiliation` with no department). A page per row would leave a click on
 # "Utrecht University" ambiguous across three targets.
