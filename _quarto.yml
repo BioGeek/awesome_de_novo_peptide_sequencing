@@ -13,7 +13,7 @@ website:
   repo-actions: [edit, issue]
   page-navigation: false
   back-to-top-navigation: true
-  # Without a navbar the ~7566 generated entity pages have no way back to the
+  # Without a navbar the ~7565 generated entity pages have no way back to the
   # map except the in-page links the generator writes. A sidebar is not an
   # option at that scale.
   navbar:
@@ -40,6 +40,10 @@ website:
       # section opened with a short list of recent arrivals standing in the way.
       - text: "Datasets"
         href: index.html#the-data-underneath
+      # Patents points at the section, whose chart and table lead to Google
+      # Patents and to the assignees' institution pages; a patent has no page here.
+      - text: "Patents"
+        href: index.html#patents
       - text: "Authors"
         href: index.html#browse-all-authors
     right:

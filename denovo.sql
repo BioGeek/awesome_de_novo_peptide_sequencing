@@ -4687,10 +4687,10 @@ INSERT INTO affiliation VALUES(231,'Purdue University','Department of Computer S
 INSERT INTO affiliation VALUES(232,'Hebei Academy of Sciences','Institute of Applied Mathematics',2,104,'https://ror.org/03xqveg17','Hebei Academy of Sciences',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(233,'University of California San Diego','Bioinformatics Program',8,56,'https://ror.org/0168r3w48','University of California San Diego',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(234,'Mapp Biopharmaceutical, Inc.',NULL,8,49,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(235,'Genentech, Inc.','Department of Proteomics & Biological Resources',8,105,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(236,'Genentech, Inc.','Department of Protein Chemistry',8,105,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(237,'Genentech, Inc.','Department of Antibody Engineering',8,105,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(238,'Genentech, Inc.','Department of Molecular Biology',8,105,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(235,'Genentech, Inc.','Department of Proteomics & Biological Resources',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(236,'Genentech, Inc.','Department of Protein Chemistry',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(237,'Genentech, Inc.','Department of Antibody Engineering',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(238,'Genentech, Inc.','Department of Molecular Biology',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(239,'Vellore Institute of Technology','Department of Biotechnology',28,106,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(240,'Indian Institute of Science','Molecular Biophysics Unit',28,107,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(241,'University of Wisconsin-Madison','School of Pharmacy and Department of Chemistry',8,108,'https://ror.org/01y2jtd41','University of Wisconsin–Madison',NULL,NULL,NULL);
@@ -5281,7 +5281,7 @@ INSERT INTO affiliation VALUES(867,'Shanghai Institute of Organic Chemistry',NUL
 INSERT INTO affiliation VALUES(868,'Institute for Research in Immunology and Cancer',NULL,9,360,'https://ror.org/00wj6x496','Institute for Research in Immunology and Cancer','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(869,'Université de Montréal',NULL,9,360,'https://ror.org/0161xgx34','Université de Montréal','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(870,'The University of Texas at Arlington',NULL,8,361,'https://ror.org/019kgqr73','The University of Texas at Arlington','openalex',NULL,'openalex');
-INSERT INTO affiliation VALUES(871,'Genentech',NULL,NULL,NULL,'https://ror.org/04gndp242','Genentech','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(871,'Genentech, Inc.',NULL,8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,'openalex');
 INSERT INTO affiliation VALUES(872,'University of Southern Mississippi',NULL,8,362,'https://ror.org/0270vfa57','University of Southern Mississippi','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(873,'Leiden University',NULL,5,363,'https://ror.org/027bh9e22','Leiden University','openalex',NULL,'openalex');
 INSERT INTO affiliation VALUES(874,'University of Macau',NULL,83,364,'https://ror.org/01r4q9n85','University of Macau','openalex',NULL,'openalex');
@@ -67092,7 +67092,7 @@ INSERT INTO patent_cited_by VALUES(3,'CN112564974A','patent',1,'武汉大学','W
 INSERT INTO patent_cited_by VALUES(3,'CN112908421A','patent',1,'普瑞基准生物医药(苏州)有限公司','Prophet Genomics (Suzhou)','company',NULL,0,'2021-03-22','2021-06-04','Tumor neogenesis antigen prediction method, device, equipment and medium',NULL);
 INSERT INTO patent_cited_by VALUES(3,'WO2022070131A1','patent',1,'Gsi Technology Inc.','Gsi Technology','company',NULL,0,'2020-10-01','2022-04-07','Functional protein classification for pandemic research',NULL);
 INSERT INTO patent_cited_by VALUES(3,'US11309061B1','patent',1,'The Florida International University Board Of Trustees','Florida International University','academic',NULL,0,'2021-07-02','2022-04-19','Systems and methods for peptide identification',NULL);
-INSERT INTO patent_cited_by VALUES(3,'WO2022204566A1','patent',1,'Genentech, Inc.','Genentech','company',NULL,0,'2021-03-25','2022-09-29','Using neural networks to predict peptide immunogenicity',NULL);
+INSERT INTO patent_cited_by VALUES(3,'WO2022204566A1','patent',1,'Genentech, Inc.','Genentech','company',NULL,0,'2021-03-25','2022-09-29','Using neural networks to predict peptide immunogenicity',235);
 INSERT INTO patent_cited_by VALUES(3,'WO2022250726A1','patent',1,'Peptilogics, Inc.','Peptilogics','company',NULL,0,'2021-05-25','2022-12-01','Methods and apparatuses for using artificial intelligence trained to generate candidate drug compounds based on dialects',NULL);
 INSERT INTO patent_cited_by VALUES(3,'US20220383996A1','patent',1,'Amazon Technologies, Inc.','Amazon Technologies','company',NULL,0,'2021-05-27','2022-12-01','Assigning peptides to peptide groups for vaccine development',NULL);
 INSERT INTO patent_cited_by VALUES(3,'JP2023080714A','patent',1,'ダイキン工業株式会社','Daikin Industries','company',NULL,0,'2021-11-30','2023-06-09','Disease or health condition inspection method and inspection system',NULL);
@@ -67109,7 +67109,7 @@ INSERT INTO patent_cited_by VALUES(4,'CN113362899B','family',1,'厦门大学','X
 INSERT INTO patent_cited_by VALUES(4,'CN113281446B','family',1,'天津国科医工科技发展有限公司','Tianjin Guoke Medical Technology Development','company',NULL,0,'2021-06-29','2022-09-20','Automatic mass spectrometer resolution adjusting method based on RBF network',NULL);
 INSERT INTO patent_cited_by VALUES(4,'CN113936742B','family',1,'上海中科新生命生物科技有限公司','Shanghai Applied Protein Technology','company',NULL,0,'2021-09-14','2024-08-02','Peptide spectrum residence time prediction method and system based on mass spectrometry',NULL);
 INSERT INTO patent_cited_by VALUES(4,'US12205806B2','family',1,'Sapient Bioanalytics, Llc','Sapient Bioanalytics','company',NULL,0,'2022-05-20','2025-01-21','Mass spectrometry binning pipeline',NULL);
-INSERT INTO patent_cited_by VALUES(4,'KR20250078915A','family',1,'제넨테크, 인크.','Genentech','company',NULL,0,'2022-09-27','2025-06-04','Prediction of molecular structure and properties by machine learning',NULL);
+INSERT INTO patent_cited_by VALUES(4,'KR20250078915A','family',1,'제넨테크, 인크.','Genentech','company',NULL,0,'2022-09-27','2025-06-04','Prediction of molecular structure and properties by machine learning',235);
 INSERT INTO patent_cited_by VALUES(4,'CN116500118B','family',1,'珠海高凌信息科技股份有限公司','Zhuhai Comleader Information Technology','company',NULL,0,'2023-03-10','2026-01-02','A Deep Learning-Based Method and Apparatus for Ion Fragment Peak Region Identification in Voss Mass Spectrometry',NULL);
 INSERT INTO patent_cited_by VALUES(4,'CN116825200B','family',1,'浙江大学杭州国际科创中心','Zhejiang University Hangzhou Global Innovation Center','academic',NULL,0,'2023-07-07','2026-06-12','A deep learning-based glycopeptide mass spectrometry prediction device',NULL);
 INSERT INTO patent_cited_by VALUES(4,'CN116825198B','family',1,'湖南工商大学','Hunan University of Technology and Business','academic',NULL,0,'2023-07-14','2024-05-10','Peptide sequence tag identification method based on graph annotation mechanism',NULL);

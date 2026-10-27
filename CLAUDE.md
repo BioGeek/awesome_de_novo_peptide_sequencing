@@ -1772,7 +1772,9 @@ by reading both at once.
 
 ### The navbar and the hero badges
 
-The navbar is **The map, Papers, Methods, Applications, Datasets, Authors**.
+The navbar is **The map, Papers, Methods, Applications, Datasets, Patents,
+Authors**. Patents points at the section `#patents`, since a patent has no page
+of its own here.
 Applications points at the section `#application-areas`, whose lane labels
 link each area's page; it was added because downstream applications are 349 of
 the 816 method rows, the largest kind, and had no way in from the navbar. It is
