@@ -216,6 +216,16 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Preprint version:</strong> <a href="proteomics-of-natural-bacterial-isolates-powered-by-deep-learning-based-de-novo.html">Proteomics of natural bacterial isolates powered by deep learning-based de novo identification</a> (2018-09-27, bioRxiv)</p>
+</div>
+</div>
+</div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>High Resolution Image Download MS PowerPoint Slide Metaproteomics has been increasingly utilized for high-throughput characterization of proteins in complex environments and has been demonstrated to provide insights into microbial composition and functional roles. However, significant challenges remain in metaproteomic data analysis, including creation of a sample-specific protein sequence database. A well-matched database is a requirement for successful metaproteomics analysis, and the accuracy and sensitivity of PSM identification algorithms suffer when the database is incomplete or contains extraneous sequences. When matched DNA sequencing data of the sample is unavailable or incomplete, creating the proteome database that accurately represents the organisms in the sample is a challenge. Here, we leverage a de novo peptide sequencing approach to identify the sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data and trained it on 5 million peptide–spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified organisms from soil isolates and synthetic communities directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed as an alternative and complementary method to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S rRNA sequencing of the soil samples and uncovered several additional species which were strongly represented only in proteomic data.</p>
@@ -242,13 +252,18 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/kaiko.html">Kaiko</a>: Deep-learning (CNN + RNN) de novo peptide sequencer trained on 5 M peptide-spectrum matches from 55 phylogenetically diverse bacteria. Identifies microbial community members directly from metaproteomic MS/MS, then builds sample-specific protein databases without requiring matched metagenomes: validated on native soil microbiome samples.</li>
 </ul>
 </section>
-<section id="data-used" class="level2">
-<h2 class="anchored" data-anchor-id="data-used">Data used</h2>
+<section id="data-deposited" class="level2">
+<h2 class="anchored" data-anchor-id="data-deposited">Data deposited</h2>
 <ul>
 <li><strong>DeNovo Peptide Identification Deep Learning Test Set</strong> <small>(as deposited)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD010613">PXD010613</a></li>
 <li><strong>DeNovo Peptide Identification Deep Learning Training Set</strong> <small>(as deposited)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD010000">PXD010000</a></li>
-<li><strong>Simplified Human Intestinal Microbiota (SIHUMIx) LC-MS/MS dataset</strong> <small>(as deposited)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD017035">PXD017035</a></li>
 <li><strong>Soil metaproteomics data analysis based on de novo sequencing with the deep learning-based Kaiko model</strong> <small>(as deposited)</small> · <a href="https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?accession=MSV000086336">MSV000086336</a></li>
+</ul>
+</section>
+<section id="data-used" class="level2">
+<h2 class="anchored" data-anchor-id="data-used">Data used</h2>
+<ul>
+<li><strong>Simplified Human Intestinal Microbiota (SIHUMIx) LC-MS/MS dataset</strong> <small>(as deposited)</small> · <a href="https://www.ebi.ac.uk/pride/archive/projects/PXD017035">PXD017035</a></li>
 </ul>
 </section>
 <section id="cites-14" class="level2">
@@ -290,6 +305,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../../index.html#every-paper">Browse all papers</a></li>
 <li><a href="../../index.html#how-the-field-cites-itself">How the field cites itself</a></li>
 <li><a href="../../index.html#academic-impact-by-citation-count">Academic impact by citation count</a></li>
+<li><a href="../../index.html#publication-lifecycle">Publication lifecycle</a></li>
 </ul>
 <p><a href="../../index.html">Back to the full map</a></p>
 
