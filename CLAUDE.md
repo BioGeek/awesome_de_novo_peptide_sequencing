@@ -214,7 +214,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**46 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `publication_supplement`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 3584 of 3822 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers in the query (raised to five by default with each chart's **Min papers per author** slider), so it stays out of the co-authorship graph and the bipartite chart.
+**47 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `publication_supplement`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 3584 of 3822 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers in the query (raised to five by default with each chart's **Min papers per author** slider), so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -2083,10 +2083,11 @@ reports the candidates and what blocks each one.
 
 ## Patents
 
-Four tables written by `build_patents.py`: `patent`, one row per patent
+Five tables written by `build_patents.py`: `patent`, one row per patent
 FAMILY; `patent_inventor`; `patent_algorithm`, the catalog method a patent
-claims, with its evidence; and `patent_citation`, what a patent cites that the
-catalog holds. **6 patent families** from 3 assignees, 4 of them claiming a method
+claims, with its evidence; `patent_citation`, what a patent cites that the
+catalog holds; and `patent_cited_by`, every family, anyone's, that cites a
+catalogued one. **6 patent families** from 3 assignees, 4 of them claiming a method
 the catalog describes from its paper. Together they cite 29 catalogued papers between them.
 
 **A patent is not a publication here**, and that is the design decision.
@@ -2120,11 +2121,11 @@ not propose them again.
 **An inventor becomes an author only on evidence.** A name that matches exactly
 one catalog author is linked if that author wrote a paper describing a method
 the patent claims, or is affiliated with the assignee. Otherwise the inventor
-is left unlinked and the builder prints the near miss. Peter Cimermancic, a
-Verily inventor, shares a name with the author of a 2011 peptidogenomics
-paper. It is very likely the same person, and no claimed method or shared
-institution says so. `INVENTOR_AUTHOR` pins such a case when a person has
-checked it.
+is left unlinked and the builder prints the near miss. `INVENTOR_AUTHOR` pins
+what the rules cannot see, once a person has checked: Peter Cimermancic, a
+Verily inventor, is the author of the 2011 peptidogenomics paper, which no
+claimed method or shared institution could establish. His profile, read by
+the owner, runs from Verily to Tesorai, where he is CTO.
 
 **A patent's literature is matched by `build_citations.py`'s own matcher**
 (`match_reference`, as a free-text citation), so prior art resolves to a
@@ -2154,6 +2155,32 @@ chart puts each patent at its PRIORITY date, which is what prior art is
 judged against, and the papers it cites below, at their publication dates. A
 solid line is a patent citing the paper of the method it claims; an arc along
 the top is one catalogued family citing another.
+
+**"Who cites these patents" is the other direction**: a dot for each
+organisation and catalogued patent it cites, coloured company, academic or
+hospital, hollow where an assignee cites its own earlier patent. Google lists
+citing FAMILIES once each, plus citing publications; a direct citer usually
+reappears among the families under another member's number, so the family
+list is used whenever there is one. **An assignee is printed in its filing's
+language**, so PrognomIQ arrived as "PrognomIQ, Inc.", "Prognomiq Inc" and
+"プログノミック インコーポレイテッド". `organisation()` folds legal suffixes,
+holder wrappers ("The Governing Council of...") and case, keeping the
+spelling with the most capitals that is not all capitals, and `ASSIGNEE_EN`
+holds the English name of every Chinese, Japanese and Korean assignee met so
+far. Names are settled over the whole table rather than row by row, or one
+company's rows would carry whichever spelling each met first. **A computed
+sector is a keyword match, and "International" contains "national"**: that
+put Honeywell and Visa in academia until the keyword got its word boundaries.
+
+**`refresh-patent-candidates.yml` runs the search monthly** (the 4th, 10:00
+UTC) and opens or updates the issue "Patents: families to screen", the same
+loop as the DNPS-DR feed. It commits nothing. `--fresh` re-asks every query
+and refetches the catalogued patents' own pages, since a new filing citing one
+of ours is the commonest way a new patent appears; candidates' pages come from
+a cache carried between runs with `actions/cache`. A throttled run leaves
+`patent_candidates.incomplete` and never closes the issue. A family is
+matched against the issue by any member's number, because the same family can
+come back under another one.
 
 ## URLs are a lock file
 

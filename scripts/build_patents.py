@@ -7,7 +7,7 @@ a preprint and a version of record, and a citation list an examiner adds to.
 Folding patents into `publication` would have counted them as papers in every
 chart and on every author's page, which is the inflation CLAUDE.md warns about
 for abstracts. So they have their own four tables, which this script creates
-if they are missing:
+if they are missing, and a fifth it alone writes:
 
   patent            one row per patent FAMILY, keyed by Google Patents' family
                     id, represented by one publication (`number`): the granted
@@ -19,6 +19,9 @@ if they are missing:
   patent_citation   what a patent cites that the catalog holds: another
                     catalogued patent family, or a catalogued paper matched
                     from its non-patent literature
+  patent_cited_by   every patent family, anyone's, that cites a catalogued
+                    one, with its assignee normalised to one organisation
+                    name: who treats this field as prior art
 
 WHICH patents belong is a judgement, made by hand like every inclusion here:
 `add` inserts one, and the rest of its row is this script's to fill. The bar
@@ -31,6 +34,7 @@ propose them again.
     uv run python scripts/build_patents.py refresh             # every patent row
     uv run python scripts/build_patents.py refresh --ids 3,4
     uv run python scripts/build_patents.py search              # patent_candidates.csv
+    uv run python scripts/build_patents.py search --fresh --summary s.md   # as CI runs it
 
 `refresh` fills the bibliographic columns from the Google Patents page,
 rebuilds the inventor rows and both citation sets. `search` is REPORT-ONLY,
@@ -52,7 +56,21 @@ exactly, and a long one must appear as one span that starts a title.
 Transport is curl, for the reason recorded under 'The local PDF library' in
 CLAUDE.md. Google Patents answers a burst of requests with HTTP 503 and a
 "Sorry..." page; that is never cached, and the script backs off and retries.
-Pages and query results are cached in .cache/patents/. Never in CI.
+Pages and query results are cached in .cache/patents/.
+
+`search` is the one subcommand CI runs, monthly, in
+refresh-patent-candidates.yml: `--fresh` re-asks every query and refetches
+every catalogued patent's page, since what changes is the result list and who
+has cited us since; a candidate's own page is still read from the cache. A
+run that Google throttled says so in its summary and leaves
+`patent_candidates.incomplete` beside the CSV, so the workflow never closes an
+issue on a search that did not finish. `add` and `refresh` stay local.
+
+**Assignees are printed in the filing's language**, so one company arrives as
+"PrognomIQ, Inc.", "Prognomiq Inc" and "プログノミック インコーポレイテッド".
+`organisation()` folds legal suffixes and case, and `ASSIGNEE_EN` gives the
+English name of every CJK assignee met so far; an unknown one is shown as
+printed, which is visible, rather than guessed.
 """
 from __future__ import annotations
 
@@ -129,6 +147,21 @@ CREATE TABLE IF NOT EXISTS patent_citation (
     reference            TEXT,                        -- the cited number, or the citation as printed
     CHECK ((cited_patent_id IS NULL) <> (cited_publication_id IS NULL))
 );
+CREATE TABLE IF NOT EXISTS patent_cited_by (
+    patent_id        INTEGER NOT NULL REFERENCES patent(id) ON DELETE CASCADE,  -- the catalogued patent
+    citing_number    TEXT NOT NULL,          -- the citing publication, as Google lists it
+    via              TEXT NOT NULL CHECK (via IN ('patent', 'family')),
+    examiner         INTEGER NOT NULL DEFAULT 0,
+    assignee         TEXT,                   -- as printed, in the filing's language
+    organisation     TEXT,                   -- one name per organisation (organisation())
+    sector           TEXT CHECK (sector IN ('company', 'academic', 'hospital')),
+    citing_patent_id INTEGER REFERENCES patent(id) ON DELETE SET NULL,  -- when it is catalogued too
+    self_citation    INTEGER NOT NULL DEFAULT 0,  -- the cited patent's own assignee citing it
+    priority_date    TEXT,
+    publication_date TEXT,
+    title            TEXT,
+    PRIMARY KEY (patent_id, citing_number)
+);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_patent_citation
     ON patent_citation (citing_patent_id, IFNULL(cited_patent_id, 0), IFNULL(cited_publication_id, 0));
 CREATE INDEX IF NOT EXISTS ix_patent_algorithm_algorithm ON patent_algorithm (algorithm_id);
@@ -162,11 +195,92 @@ OFF_SCOPE = re.compile(r"\bdesign|assembl|nucleic|\bDNA\b|\bRNA\b|genom|nucleoti
 # Patents (any family member's number) looked at and left out, with why, so
 # `search` does not propose them again. Same contract as REJECTED in
 # build_repository_search.py.
-REJECTED: dict[str, str] = {}
+REJECTED: dict[str, str] = {
+    "US11862298B1": "Verily: predicts fragment-ion intensities from a sequence; neither claims nor description mention de novo sequencing",
+    "US12362041B1": "Verily: predicts peptide retention time; never mentions de novo sequencing",
+    "US12334189B2": "Tesorai: learned molecule identification against spectra; never mentions de novo sequencing",
+}
 
 # (patent number, inventor as printed) -> author id, or None to refuse a link
 # the rules would otherwise make. For people the evidence rules cannot see.
-INVENTOR_AUTHOR: dict[tuple[str, str], int | None] = {}
+INVENTOR_AUTHOR: dict[tuple[str, str], int | None] = {
+    # The catalog's author 3203 (the 2011 peptidogenomics paper, from UCSF) is
+    # the Verily inventor: the owner checked his profile, which runs from Verily
+    # to Tesorai, where he is CTO. No claimed method or shared institution could
+    # have said so.
+    ("US12340874B1", "Peter Cimermancic"): 3203,
+}
+
+# English names for assignees printed in Chinese, Japanese or Korean, and for
+# Latin spellings that organisation() cannot fold on its own. Keyed by the
+# string as Google prints it. Romanised where no official English name was
+# found, rather than translated word by word.
+ASSIGNEE_EN: dict[str, str] = {
+    "湖南工商大学": "Hunan University of Technology and Business",
+    "山东大学": "Shandong University",
+    "武汉大学": "Wuhan University",
+    "厦门大学": "Xiamen University",
+    "南京医科大学": "Nanjing Medical University",
+    "昆明理工大学": "Kunming University of Science and Technology",
+    "北京邮电大学": "Beijing University of Posts and Telecommunications",
+    "北京信息科技大学": "Beijing Information Science and Technology University",
+    "北方工业大学": "North China University of Technology",
+    "华南师范大学": "South China Normal University",
+    "青岛科技大学": "Qingdao University of Science and Technology",
+    "山东管理学院": "Shandong Management University",
+    "南京鼓楼医院": "Nanjing Drum Tower Hospital",
+    "中国科学院计算技术研究所": "Institute of Computing Technology, CAS",
+    "中国科学院数学与系统科学研究院": "Academy of Mathematics and Systems Science, CAS",
+    "上海计算机软件技术开发中心": "Shanghai Development Center of Computer Software Technology",
+    "上海中科新生命生物科技有限公司": "Shanghai Applied Protein Technology",
+    "上海易算生物科技有限公司": "Shanghai Yisuan Biotechnology",
+    "深圳云天励飞技术有限公司": "Shenzhen Intellifusion Technologies",
+    "深圳承启生物科技有限公司": "Shenzhen Chengqi Biotechnology",
+    "深圳赛陆医疗科技有限公司": "Shenzhen Sailu Medical Technology",
+    "芋头科技（杭州）有限公司": "Yutou Technology (Hangzhou)",
+    "上海有个机器人有限公司": "Shanghai Yogo Robot",
+    "北京医准智能科技有限公司": "Beijing Yizhun Medical AI",
+    "杭州智科慧创科技有限公司": "Hangzhou Zhike Huichuang Technology",
+    "徐州光引科技发展有限公司": "Xuzhou Guangyin Technology Development",
+    "Oppo广东移动通信有限公司": "OPPO Guangdong Mobile Telecommunications",
+    "Dh科技发展私人贸易有限公司": "DH Technologies Development",
+    "富士フイルムビジネスイノベーション株式会社": "Fujifilm Business Innovation",
+    "プログノミック インコーポレイテッド": "PrognomIQ",
+    "イマティクス ユーエス，アイエヌシー．": "Immatics",
+    "㈜베르티스": "Bertis",
+    "한양대학교 산학협력단": "Hanyang University",
+    "사회복지법인 삼성생명공익재단": "Samsung Medical Center (Samsung Life Public Welfare Foundation)",
+    "エヌイーシー ラボラトリーズ アメリカ インク": "NEC Laboratories America",
+    "ダイキン工業株式会社": "Daikin Industries",
+    "中外製薬株式会社": "Chugai Pharmaceutical",
+    "北京航空航天大学": "Beihang University",
+    "天津国科医工科技发展有限公司": "Tianjin Guoke Medical Technology Development",
+    "陕西师范大学": "Shaanxi Normal University",
+    "贵州大学": "Guizhou University",
+    "安徽大学": "Anhui University",
+    "重庆邮电大学": "Chongqing University of Posts and Telecommunications",
+    "浙江大学杭州国际科创中心": "Zhejiang University Hangzhou Global Innovation Center",
+    "普瑞基准生物医药(苏州)有限公司": "Prophet Genomics (Suzhou)",
+    "天津智谱仪器有限公司": "Tianjin Zhipu Instrument",
+    "珠海高凌信息科技股份有限公司": "Zhuhai Comleader Information Technology",
+    "苏州元脑智能科技有限公司": "Suzhou Yuannao Intelligent Technology",
+    "宏碁股份有限公司": "Acer",
+    "제넨테크, 인크.": "Genentech",
+    # One organisation filing under several entities.
+    "BASF Agricultural Solutions US LLC": "BASF",
+    "Basf Corporation": "BASF",
+    "Immatics Biotechnologies Gmbh": "Immatics",
+}
+# Wrappers around a name that say who holds the patent for it, not who it is.
+HOLDER = re.compile(r"^(?:the\s+)?(?:regents\s+of|governing\s+council\s+of|trustees\s+of)\s+(?:the\s+)?"
+                    r"|\s+board\s+of\s+(?:trustees|regents)$|^the\s+", re.I)
+# A sector by keyword, on the English name. "Foundation" and "Institute" count
+# as academic: in these citations they are research bodies, not companies.
+ACADEMIC = re.compile(r"universit|college|institut|academy|school|foundation|council|大学|学院|研究所|研究院|대학교|"
+                      r"research cent|government|\bnational\b|ministry|\bETH\b|CNRS|INSERM", re.I)
+HOSPITAL = re.compile(r"hospital|medical cent|clinic|health system|医院|병원", re.I)
+LEGAL = re.compile(r",?\s*\b(inc|incorporated|llc|ltd|limited|co|corp|corporation|gmbh|ag|sa|sas|"
+                   r"plc|bv|nv|ab|as|kk|pte|pty|company)\b\.?", re.I)
 
 
 # ── transport ────────────────────────────────────────────────────────────────
@@ -180,7 +294,7 @@ def curl(url: str) -> tuple[int, str]:
 
 def polite_get(url: str, gap: float) -> str | None:
     """GET with backoff on Google's 503 'Sorry' page; None if it never clears."""
-    for wait in (0, 60, 300, 900):
+    for wait in BACKOFF:
         if wait:
             print(f"    throttled; waiting {wait}s", flush=True)
             time.sleep(wait)
@@ -191,10 +305,19 @@ def polite_get(url: str, gap: float) -> str | None:
         if code == 404:
             return None
     print(f"    gave up on {url}", file=sys.stderr)
+    global FAILED
+    FAILED += 1
     return None
 
 
+FAILED = 0          # requests that never cleared the throttle, this run
+BACKOFF = (0, 60, 300, 900)
+
+
 def page(number: str, force: bool = False) -> str | None:
+    """A Google Patents page, from the cache unless `force`. A forced fetch
+    that fails falls back to the cached copy, so a throttled run degrades to
+    last month's answer rather than to none."""
     CACHE.mkdir(parents=True, exist_ok=True)
     p = CACHE / f"{number}.html"
     if p.exists() and not force:
@@ -202,16 +325,18 @@ def page(number: str, force: bool = False) -> str | None:
     body = polite_get(f"https://patents.google.com/patent/{number}/en", PAGE_GAP_S)
     if body:
         p.write_text(body, encoding="utf-8")
+    elif p.exists():
+        return p.read_text(encoding="utf-8", errors="replace")
     return body
 
 
-def query(q: str | dict, page_no: int = 0, num: int = 100) -> dict | None:
+def query(q: str | dict, page_no: int = 0, num: int = 100, fresh: bool = False) -> dict | None:
     CACHE.mkdir(parents=True, exist_ok=True)
     params = dict(q) if isinstance(q, dict) else {"q": q}
     inner = urllib.parse.urlencode({**params, "num": num, "page": page_no})
     key = hashlib.sha1(inner.encode()).hexdigest()[:16]
     p = CACHE / f"query-{key}.json"
-    if p.exists():
+    if p.exists() and not fresh:
         return json.loads(p.read_text())
     body = polite_get("https://patents.google.com/xhr/query?url="
                       + urllib.parse.quote(inner, safe="") + "&exp=", QUERY_GAP_S)
@@ -298,6 +423,31 @@ def name_keys(name: str) -> set[str]:
     if len(parts) > 2:
         out.add(" ".join(p for p in parts if len(p) > 1))
     return out
+
+
+def organisation(assignee: str) -> tuple[str, str]:
+    """(one display name per organisation, sector) for an assignee as printed."""
+    name = (assignee or "").split(";")[0].strip()
+    name = ASSIGNEE_EN.get(name, name)
+    base = re.sub(r"\s+", " ", LEGAL.sub("", name)).strip(" ,.")
+    base = HOLDER.sub("", base).strip(" ,.")
+    # Google capitalises every word ("University Of Toronto"); the small ones
+    # go back to lower case, but never the first word.
+    base = re.sub(r"(?<=\s)(Of|And|The|For|Et|De|In)(?=\s)", lambda m: m.group(1).lower(), base)
+    # One spelling per organisation: "PrognomIQ, Inc." and "Prognomiq Inc"
+    # differ only in case once the suffix goes. The spelling kept is the one
+    # with the most capitals that is not ALL capitals, so the company's own
+    # "PrognomIQ" wins and a register's "BIOINFORMATICS SOLUTIONS" loses.
+    key = base.casefold()
+    rank = lambda v: (not v.isupper(), sum(ch.isupper() for ch in v))
+    if key not in ORG_CASE or rank(base) > rank(ORG_CASE[key]):
+        ORG_CASE[key] = base
+    base = ORG_CASE[key]
+    sector = "hospital" if HOSPITAL.search(base) else "academic" if ACADEMIC.search(base) else "company"
+    return base, sector
+
+
+ORG_CASE: dict[str, str] = {}
 
 
 # ── the database ────────────────────────────────────────────────────────────
@@ -423,6 +573,36 @@ def refresh(con, ids: list[int] | None, force: bool) -> None:
                     con.execute("""INSERT OR IGNORE INTO patent_citation
                                    (citing_patent_id, cited_patent_id, via, examiner, reference)
                                    VALUES (?, ?, ?, ?, ?)""", (pid, tgt, via, int(r["examiner"]), r["number"]))
+
+        # Everyone who cites this family. Google lists citing FAMILIES once each
+        # under "Families citing this family" and citing publications under
+        # "Cited by"; a family's direct citer usually reappears among the
+        # families under another member's number, so the family list is used
+        # whenever it exists and the direct list only when it is empty
+        # (an application with no grant yet has only the direct list).
+        con.execute("DELETE FROM patent_cited_by WHERE patent_id = ?", (pid,))
+        via, rows_ = ("family", d["cited_by_family"]) if d["cited_by_family"] else ("patent", d["cited_by"])
+        for r in rows_:
+            org, sector = organisation(r["assignee"])
+            con.execute("""INSERT OR IGNORE INTO patent_cited_by
+                           (patent_id, citing_number, via, examiner, assignee, organisation, sector,
+                            citing_patent_id, priority_date, publication_date, title)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (pid, r["number"], via, int(r["examiner"]), r["assignee"], org or None,
+                         sector if org else None, fam.get(r["number"]), r["priority"] or None,
+                         r["published"] or None, r["title"] or None))
+    # Names are settled over the whole table, not row by row, so every row of
+    # one organisation gets the spelling chosen from all of its variants.
+    rows = con.execute("""SELECT c.rowid, c.assignee, p.assignee FROM patent_cited_by c
+                            JOIN patent p ON p.id = c.patent_id""").fetchall()
+    for _rid, a, own in rows:
+        organisation(a), organisation(own)
+    for rid, a, own in rows:
+        org, sector = organisation(a)
+        con.execute("""UPDATE patent_cited_by SET organisation = ?, sector = ?, self_citation = ?
+                        WHERE rowid = ?""",
+                    (org or None, sector if org else None,
+                     int(bool(org) and org == organisation(own)[0]), rid))
     con.commit()
     n_pub, n_pat = con.execute("""SELECT COUNT(cited_publication_id), COUNT(cited_patent_id)
                                   FROM patent_citation""").fetchone()
@@ -430,7 +610,7 @@ def refresh(con, ids: list[int] | None, force: bool) -> None:
           f"{n_pat} of catalog patents")
 
 
-def search(con) -> None:
+def search(con, fresh: bool = False, summary: Path | None = None) -> None:
     fam = family_index(con)
     rejected = set(REJECTED)
     cands: dict[str, dict] = {}
@@ -447,7 +627,7 @@ def search(con) -> None:
     for label, q in SEARCHES.items():
         n = 0
         for page_no in range(10):
-            res = query(q, page_no)
+            res = query(q, page_no, fresh=fresh)
             if not res:
                 break
             hits = [x["patent"] for c in res.get("cluster", []) for x in c["result"]]
@@ -459,8 +639,10 @@ def search(con) -> None:
                 break
         print(f"  {label}: {n} hits")
 
-    for pid, number in con.execute("SELECT id, number FROM patent"):
-        doc = page(number)
+    # Fresh, the catalogued patents' own pages are refetched: who cites them
+    # is the part of the snowball that grows.
+    for pid, number in con.execute("SELECT id, number FROM patent").fetchall():
+        doc = page(number, force=fresh)
         if not doc:
             continue
         d = parse(doc)
@@ -490,6 +672,30 @@ def search(con) -> None:
                         "n_found": len(r["found_by"]), "found_by": " | ".join(sorted(r["found_by"]))})
     print(f"{len(seen_fam)} candidate famil(ies) -> {CANDIDATES.name}")
 
+    # A throttled run must not read as an empty one: the marker stops the
+    # workflow closing an issue on a search that did not finish.
+    marker = CANDIDATES.with_suffix(".incomplete")
+    if FAILED:
+        marker.write_text(f"{FAILED} request(s) never cleared Google's throttle\n")
+        print(f"INCOMPLETE: {FAILED} request(s) never cleared the throttle")
+    elif marker.exists():
+        marker.unlink()
+    if summary:
+        L = ["## Patent candidates", ""]
+        if FAILED:
+            L += [f"**Incomplete:** {FAILED} request(s) never cleared Google Patents' throttle, "
+                  "so this list may be short.", ""]
+        if not seen_fam:
+            L.append("No patent family that is neither catalogued nor rejected.")
+        else:
+            L += ["| Patent | Priority | Assignee | Title | Found by |", "|---|---|---|---|---|"]
+            for r in sorted(seen_fam.values(), key=lambda r: r["priority"]):
+                cell = lambda v: str(v).replace("|", "/")
+                L.append(f"| [{r['number']}](https://patents.google.com/patent/{r['number']}/en) "
+                         f"| {r['priority']} | {cell(r['assignee'])} | {cell(r['title'])} "
+                         f"| {cell(' / '.join(sorted(r['found_by'])))} |")
+        summary.write_text("\n".join(L) + "\n", encoding="utf-8")
+
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -502,8 +708,16 @@ def main() -> int:
     r = sub.add_parser("refresh", help="refill every patent row from its page")
     r.add_argument("--ids", type=lambda s: [int(x) for x in s.split(",")])
     r.add_argument("--force", action="store_true", help="refetch pages rather than use the cache")
-    sub.add_parser("search", help="propose patents the catalog is missing")
+    se = sub.add_parser("search", help="propose patents the catalog is missing")
+    se.add_argument("--fresh", action="store_true",
+                    help="re-ask every query and refetch the catalogued patents' pages")
+    se.add_argument("--summary", type=Path, help="also write a Markdown table here")
+    se.add_argument("--backoff", default="0,60,300,900",
+                    help="seconds to wait before each try of a throttled request")
     args = ap.parse_args()
+    if args.cmd == "search":
+        global BACKOFF
+        BACKOFF = tuple(int(x) for x in args.backoff.split(","))
     con = connect()
     if args.cmd == "add":
         pid = add(con, args.number, args.algorithm, args.affiliation, args.note)
@@ -511,7 +725,7 @@ def main() -> int:
     elif args.cmd == "refresh":
         refresh(con, args.ids, args.force)
     else:
-        search(con)
+        search(con, args.fresh, args.summary)
     return 0
 
 

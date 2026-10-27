@@ -1,0 +1,167 @@
+# Look for patent families on de novo peptide sequencing that the catalog is
+# missing, and open an issue when there is one nobody has ruled on.
+#
+# scripts/build_patents.py search runs title and assignee queries on Google
+# Patents and walks the citations of every catalogued patent in both
+# directions, so a new filing that cites one of ours is found the month it is
+# published. --fresh re-asks every query and refetches the catalogued patents'
+# pages; a candidate's own page comes from the cache, which is carried from run
+# to run, so a quiet month costs a dozen requests.
+#
+# Same shape and same rules as refresh-dnps-candidates.yml: it commits
+# NOTHING, needs only read permission on the repository, touches denovo.db not
+# at all, and must never use .github/actions/commit-refreshed-db, which
+# recovers from a push race by replaying the tables a workflow owns -- this one
+# owns none. patent_candidates.csv is gitignored, so the shortlist goes into
+# the job summary and the full file is an artifact. Deciding is a person's:
+# catalogue a family with `build_patents.py add`, or record why not in
+# REJECTED in that script, and the next run stops proposing it.
+#
+# Google Patents answers a burst of requests with HTTP 503 for a long while.
+# A throttled run says so in the summary and leaves
+# patent_candidates.incomplete, and then never closes the issue: an empty list
+# from a search that did not finish means nothing.
+#
+# Monthly on the 4th at 10:00 UTC: a day after refresh-dnps-candidates on the
+# 3rd, and an hour clear of everything else. Patents publish weekly, but a
+# month's delay costs nothing for a catalog of prior art.
+name: refresh-patent-candidates
+
+on:
+  schedule:
+    - cron: '0 10 4 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: refresh-patent-candidates
+  cancel-in-progress: false
+
+jobs:
+  refresh-patent-candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      # build_patents.py imports build_citations.py's matcher, which needs
+      # requests and rapidfuzz, so this needs the environment.
+      - name: Sync Python environment
+        run: uv sync --frozen
+
+      # Last run's pages and queries. Pages are what spare the throttle; the
+      # queries are re-asked anyway under --fresh.
+      - name: Restore the patent page cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/patents
+          key: patents-${{ github.run_id }}
+          restore-keys: patents-
+
+      - name: Search for patent families the catalog is missing
+        run: |
+          uv run python scripts/build_patents.py search --fresh \
+            --summary patent_summary.md --backoff 0,60,300
+
+      # Saved whatever happened above, so a throttled run still keeps the
+      # pages it did get for next month.
+      - name: Save the patent page cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/patents
+          key: patents-${{ github.run_id }}
+
+      - name: Write the shortlist into the job summary
+        if: always()
+        run: |
+          if [ -s patent_summary.md ]; then
+            cat patent_summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Patent candidates" >> "$GITHUB_STEP_SUMMARY"
+            echo >> "$GITHUB_STEP_SUMMARY"
+            echo "The search did not finish; see the log." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload the full list
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: patent-candidates
+          path: |
+            patent_candidates.csv
+            patent_candidates.incomplete
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Open or update an issue for new candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import csv, json, os, subprocess
+          from pathlib import Path
+
+          p = Path("patent_candidates.csv")
+          incomplete = Path("patent_candidates.incomplete").exists()
+          rows = list(csv.DictReader(p.open(encoding="utf-8"))) if p.exists() else []
+
+          def gh(*args):
+              return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
+
+          TITLE = "Patents: families to screen"
+          found = json.loads(gh("issue", "list", "--state", "open", "--search", f"{TITLE} in:title",
+                                "--json", "number,title,body"))
+          found = [i for i in found if i["title"] == TITLE]
+          if not rows:
+              # Only a search that finished may close the issue.
+              if p.exists() and not incomplete:
+                  for i in found:
+                      gh("issue", "close", str(i["number"]), "--comment",
+                         "Every candidate is now catalogued or rejected. "
+                         f"Closed by {os.environ['RUN_URL']}")
+                      print(f"Closed #{i['number']}: nothing left to screen.")
+              print("No undecided candidates" + (" (search incomplete)" if incomplete else "") + "; no issue.")
+              raise SystemExit(0)
+          line = lambda r: (f"- [ ] [{r['number']}](https://patents.google.com/patent/{r['number']}/en) "
+                            f"**{r['title']}** ({r['assignee'] or 'assignee unknown'}, "
+                            f"priority {r['priority'] or '?'}) <sub>{r['found_by']}</sub>")
+          footer = ("\n\nDecide each against the bar in CLAUDE.md's Patents section (the CLAIMS "
+                    "are about de novo sequencing of peptides or proteins by mass spectrometry, "
+                    "or about something done with its result): catalogue it with "
+                    "`uv run python scripts/build_patents.py add <number>`, or add it to "
+                    "`REJECTED` in that script with the reason, so the next run stops proposing it. "
+                    f"Full list: [run artifact]({os.environ['RUN_URL']}).")
+          if incomplete:
+              footer += "\n\nThis run was throttled by Google Patents, so the list may be short."
+
+          if found:
+              num = str(found[0]["number"])
+              seen = found[0]["body"] + "".join(
+                  c["body"] for c in json.loads(gh("issue", "view", num, "--json", "comments"))["comments"])
+              # A family may come back under another member's number.
+              fresh = [r for r in rows
+                       if not any(n in seen for n in [r["number"], *r["members"].split()])]
+              if not fresh:
+                  print(f"All {len(rows)} candidates are already listed on #{num}.")
+                  raise SystemExit(0)
+              body = (f"@{os.environ['OWNER']} {len(fresh)} more from this run:\n\n"
+                      + "\n".join(map(line, fresh)) + footer)
+              gh("issue", "comment", num, "--body", body)
+              print(f"Commented {len(fresh)} new candidates on #{num}.")
+          else:
+              body = (f"The patent search turned up {len(rows)} famil(ies) that are not in the "
+                      "catalog and have not been ruled on:\n\n" + "\n".join(map(line, rows)) + footer)
+              print(gh("issue", "create", "--title", TITLE, "--body", body,
+                       "--assignee", os.environ["OWNER"]))
+          PY

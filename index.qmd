@@ -594,6 +594,14 @@ patent_links = pd.read_sql("""
       FROM patent_citation c LEFT JOIN publication pu ON pu.id = c.cited_publication_id
 """, conn)
 
+# Who cites the catalogued patents: every citing family, anyone's, with its
+# assignee folded to one organisation name by build_patents.py.
+patent_citers = pd.read_sql("""
+    SELECT patent_id, citing_number, organisation, sector, self_citation,
+           priority_date, title, examiner
+      FROM patent_cited_by
+""", conn)
+
 dataset_addresses = pd.read_sql("""
     SELECT dv.id AS version_id, d.name AS dataset, dv.version,
            a.repository, a.accession, a.url, a.part, a.is_provenance
@@ -848,6 +856,7 @@ _data = dict(
     checkpoints=checkpoints,
     patents=patents,
     patent_links=patent_links,
+    patent_citers=patent_citers,
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
@@ -1207,7 +1216,7 @@ lazy_heights = ({
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
   lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
-  patents_prior_art: [360, 360]
+  patents_prior_art: [360, 360], patents_citers: [900, 1500]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -7935,6 +7944,7 @@ lazy_chart("patents_prior_art", () => {
     width: W, height: 300 + nt * 22, marginLeft: ML, marginRight: MR, marginBottom: 40,
     x: { type: "utc", domain: x.domain(), label: null },
     y: { domain: [-0.18, yTop], axis: null },
+    r: { type: "identity" },
     marks: [
       Plot.text([{ y: 1, t: "Patents" }, { y: 0, t: "Papers they cite" }],
                 { x: x.domain()[0], y: "y", text: "t", textAnchor: "end", dx: -14,
@@ -8008,6 +8018,90 @@ Inputs.table(patent_search, {
   },
   width: { number: 140, title: 360, assignee: 170, priority_date: 90, status: 80,
            methods: 120, n_papers_cited: 70, cited_by_families: 70 }
+})
+```
+
+### Who cites these patents
+
+```{ojs}
+//| echo: false
+patent_citers_t = transpose(patent_citers)
+```
+
+```{ojs}
+//| echo: false
+pc_stats = {
+  const fams = new Set(patent_citers_t.map(c => c.citing_number)).size
+  const orgs = d3.rollups(patent_citers_t.filter(c => !c.self_citation),
+                          v => new Set(v.map(c => c.citing_number)).size, c => c.organisation)
+    .sort((a, b) => d3.descending(a[1], b[1]) || d3.ascending(a[0], b[0]))
+  const sector = d3.rollup(patent_citers_t.filter(c => !c.self_citation), v => v.length, c => c.sector)
+  const outside = d3.sum(sector.values())
+  const self = patent_citers_t.filter(c => c.self_citation).length
+  return { fams, orgs, n_orgs: orgs.length, top: orgs.slice(0, 3), self,
+           company: sector.get("company") ?? 0, academic: sector.get("academic") ?? 0,
+           hospital: sector.get("hospital") ?? 0, outside }
+}
+```
+
+```{ojs}
+//| echo: false
+md`A patent is cited by later patents whose applicants, or examiners, treat it
+as prior art, and that shows who else is filing in this space. **${pc_stats.fams}**
+patent families cite the ones recorded here, from **${pc_stats.n_orgs}**
+organisations besides the assignees themselves.
+${pc_stats.company} of those citations come from companies, ${pc_stats.academic}
+from universities and institutes, and ${pc_stats.hospital} from hospitals. The most
+frequent citers are ${pc_stats.top.map(([o, n]) => `${o} (${n})`).join(", ")}.
+A hollow dot is an assignee citing its own earlier patent
+(${pc_stats.self} such citations).
+
+Names are printed in the language of each filing, so a Chinese, Japanese or
+Korean assignee is given its English name, and one company's several spellings
+are folded into one row.`
+```
+
+```{ojs}
+//| echo: false
+lazy_chart("patents_citers", () => {
+  const by_id = new Map(patents_t.map(p => [p.id, p]))
+  const col = p => p.methods ? p.methods.split("; ")[0]
+                             : p.assignee.replace(/\b(Inc|LLC|Ltd|Corp(oration)?|Pharmaceuticals?)\b\.?/g, "").replace(/[,\s]+$/, "")
+  const cited = patents_t.filter(p => patent_citers_t.some(c => c.patent_id === p.id))
+  const columns = cited.map(col)
+  const totals = d3.rollups(patent_citers_t, v => new Set(v.map(c => c.citing_number)).size,
+                            c => c.organisation)
+    .sort((a, b) => d3.descending(a[1], b[1]) || d3.ascending(a[0], b[0]))
+  // Clipped, not wrapped: the tip carries the full name.
+  const clip = (t, k = 52) => t.length > k ? t.slice(0, k - 1) + "…" : t
+  const label = new Map(totals.map(([o, n]) => [o, `${clip(o)} (${n})`]))
+  const cells = d3.rollups(patent_citers_t, v => v, c => c.organisation, c => c.patent_id)
+    .flatMap(([org, per]) => per.map(([pid, v]) => ({
+      org: label.get(org), patent: col(by_id.get(pid)), number: by_id.get(pid).number,
+      n: v.length, sector: v[0].sector, self: !!v[0].self_citation,
+      citing: v.map(c => `${c.citing_number} (${c.priority_date ?? "?"})`).join(", ")
+    })))
+  const rows = totals.map(([o]) => label.get(o))
+  return Plot.plot({
+    width: 900, height: 70 + rows.length * 17, marginLeft: 360, marginTop: 70, marginRight: 30,
+    x: { domain: columns, axis: "top", label: null, tickRotate: -30 },
+    r: { type: "identity" },
+    y: { domain: rows, label: null, tickSize: 0 },
+    color: { domain: ["company", "academic", "hospital"],
+             range: ["#0f766e", "#b45309", "#be185d"], legend: true },
+    marks: [
+      Plot.gridY(rows, { stroke: "#f0f2f4" }),
+      // Two marks, not a fill function returning "white": Plot would map that
+      // string through the colour scale (see the fill trap in CLAUDE.md).
+      ...[cells.filter(d => !d.self), cells.filter(d => d.self)].map((data, hollow) => Plot.dot(data, {
+        x: "patent", y: "org", r: d => 3.5 + 1.8 * Math.sqrt(d.n),
+        fill: hollow ? "white" : "sector", stroke: "sector", strokeWidth: 1.6,
+        channels: { Organisation: "org", Cites: "number", "Citing patents": "citing" },
+        tip: { ...plot_tip_style, lineWidth: 60,
+               format: { x: false, y: false, r: false, fill: false, stroke: false } }
+      }))
+    ]
+  })
 })
 ```
 

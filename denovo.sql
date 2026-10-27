@@ -66902,7 +66902,7 @@ INSERT INTO patent_inventor VALUES(4,5,'Baozhen SHAN',252);
 INSERT INTO patent_inventor VALUES(4,6,'Ali Ghodsi',161);
 INSERT INTO patent_inventor VALUES(4,7,'Ming Li',107);
 INSERT INTO patent_inventor VALUES(5,1,'Krishnan Palaniappan',NULL);
-INSERT INTO patent_inventor VALUES(5,2,'Peter Cimermancic',NULL);
+INSERT INTO patent_inventor VALUES(5,2,'Peter Cimermancic',3203);
 INSERT INTO patent_inventor VALUES(5,3,'Roie Levy',NULL);
 INSERT INTO patent_inventor VALUES(6,1,'Lili Blumenberg',NULL);
 INSERT INTO patent_inventor VALUES(6,2,'Kamil Cygan',1930);
@@ -66997,6 +66997,128 @@ INSERT INTO patent_citation VALUES(4,1,NULL,'patent',1,'US20190018019A1');
 INSERT INTO patent_citation VALUES(4,2,NULL,'patent',1,'US20190147983A1');
 INSERT INTO patent_citation VALUES(4,3,NULL,'patent',1,'US20200243164A1');
 INSERT INTO patent_citation VALUES(5,1,NULL,'patent',1,'US20190018019A1');
+CREATE TABLE patent_cited_by (
+    patent_id        INTEGER NOT NULL REFERENCES patent(id) ON DELETE CASCADE,  -- the catalogued patent
+    citing_number    TEXT NOT NULL,          -- the citing publication, as Google lists it
+    via              TEXT NOT NULL CHECK (via IN ('patent', 'family')),
+    examiner         INTEGER NOT NULL DEFAULT 0,
+    assignee         TEXT,                   -- as printed, in the filing's language
+    organisation     TEXT,                   -- one name per organisation (organisation())
+    sector           TEXT CHECK (sector IN ('company', 'academic', 'hospital')),
+    citing_patent_id INTEGER REFERENCES patent(id) ON DELETE SET NULL,  -- when it is catalogued too
+    self_citation    INTEGER NOT NULL DEFAULT 0,  -- the cited patent's own assignee citing it
+    priority_date    TEXT,
+    publication_date TEXT,
+    title            TEXT,
+    PRIMARY KEY (patent_id, citing_number)
+);
+INSERT INTO patent_cited_by VALUES(1,'JP6922284B2','family',1,'富士フイルムビジネスイノベーション株式会社','Fujifilm Business Innovation','company',NULL,0,'2017-03-15','2021-08-18','Information processing equipment and programs');
+INSERT INTO patent_cited_by VALUES(1,'US11587644B2','family',1,'The Translational Genomics Research Institute','Translational Genomics Research Institute','academic',NULL,0,'2017-07-28','2023-02-21','Methods of profiling mass spectral data using neural networks');
+INSERT INTO patent_cited_by VALUES(1,'US12340874B1','family',1,'Verily Life Sciences Llc','Verily Life Sciences','company',5,0,'2017-11-03','2025-06-24','Artificial neural network models for prediction of de novo sequencing of chains of amino acids');
+INSERT INTO patent_cited_by VALUES(1,'US11215621B2','family',0,'Cornell University','Cornell University','academic',NULL,0,'2018-04-13','2022-01-04','Large-scale mapping of protein-protein interactions from crosslinking mass spectrometry');
+INSERT INTO patent_cited_by VALUES(1,'WO2019196439A1','family',1,'The Hong Kong Polytechnic University','Hong Kong Polytechnic University','academic',NULL,0,'2018-04-13','2019-10-17','Data storage using peptides');
+INSERT INTO patent_cited_by VALUES(1,'US10872601B1','family',1,'Amazon Technologies, Inc.','Amazon Technologies','company',NULL,0,'2018-09-27','2020-12-22','Natural language processing');
+INSERT INTO patent_cited_by VALUES(1,'US11644470B2','family',1,'Bioinformatics Solutions Inc.','Bioinformatics Solutions','company',4,1,'2019-04-15','2023-05-09','Systems and methods for de novo peptide sequencing using deep learning and spectrum pairs');
+INSERT INTO patent_cited_by VALUES(1,'EP3963590A1','family',1,'ETH Zurich','ETH Zurich','academic',NULL,0,'2019-05-03','2022-03-09','Identification of convergent antibody specificity sequence patterns');
+INSERT INTO patent_cited_by VALUES(1,'CN110111848B','family',1,'南京鼓楼医院','Nanjing Drum Tower Hospital','hospital',NULL,0,'2019-05-08','2023-04-07','Human body cycle expression gene identification method based on RNN-CNN neural network fusion algorithm');
+INSERT INTO patent_cited_by VALUES(1,'US11587645B2','family',0,'Just-Evotec Biologics, Inc.','Just-Evotec Biologics','company',NULL,0,'2019-05-19','2023-02-21','Generation of protein sequences using machine learning techniques');
+INSERT INTO patent_cited_by VALUES(1,'CN110349621B','family',1,'中国科学院计算技术研究所','Institute of Computing Technology, CAS','academic',NULL,0,'2019-06-04','2021-08-27','Method, system, storage medium and device for checking reliability of peptide fragment-spectrogram matching');
+INSERT INTO patent_cited_by VALUES(1,'EP3966824A1','family',1,'Quantum-Si Incorporated','Quantum-Si','company',NULL,0,'2019-06-12','2022-03-16','Techniques for protein identification using machine learning and related systems and methods');
+INSERT INTO patent_cited_by VALUES(1,'CN110413539B','family',1,'深圳云天励飞技术有限公司','Shenzhen Intellifusion Technologies','company',NULL,0,'2019-06-19','2021-09-14','Data processing method and device');
+INSERT INTO patent_cited_by VALUES(1,'JP2022543687A','family',1,'イマティクス ユーエス，アイエヌシー．','Immatics','company',NULL,0,'2019-08-09','2022-10-13','Methods for predicting peptide mass spectrometry fragmentation');
+INSERT INTO patent_cited_by VALUES(1,'CN110488020B','family',1,'山东大学','Shandong University','academic',NULL,0,'2019-08-09','2022-12-13','A method for identifying protein glycation sites');
+INSERT INTO patent_cited_by VALUES(1,'US12655176B2','family',1,'The Governing Council Of The University Of Toronto','University of Toronto','academic',NULL,0,'2019-12-06','2026-06-16','System and method for generating a protein sequence');
+INSERT INTO patent_cited_by VALUES(1,'CN110991619A','family',1,'Oppo广东移动通信有限公司','OPPO Guangdong Mobile Telecommunications','company',NULL,0,'2019-12-09','2020-04-10','Neural network processor, chip and electronic equipment');
+INSERT INTO patent_cited_by VALUES(1,'CN111081311A','family',1,'青岛科技大学','Qingdao University of Science and Technology','academic',NULL,0,'2019-12-26','2020-04-28','Prediction of protein lysine malonylation sites based on deep learning');
+INSERT INTO patent_cited_by VALUES(1,'GB2603051B','family',0,'Prognomiq Inc','PrognomIQ','company',NULL,0,'2020-01-30','2023-04-26','Lung biomarkers and methods of use thereof');
+INSERT INTO patent_cited_by VALUES(1,'WO2021172946A1','family',1,'㈜베르티스','Bertis','company',NULL,0,'2020-02-28','2021-09-02','System based on learning peptide properties for predicting spectral profile of peptide-producing ions in liquid chromatograph-mass spectrometry');
+INSERT INTO patent_cited_by VALUES(1,'WO2021191421A1','family',0,'Ventana Medical Systems, Inc.','Ventana Medical Systems','company',NULL,0,'2020-03-27','2021-09-30','Computer implemented method for identifying at least one peak in a mass spectrometry response curve');
+INSERT INTO patent_cited_by VALUES(1,'CN111599412B','family',1,'山东大学','Shandong University','academic',NULL,0,'2020-04-24','2024-03-29','DNA replication initiation region identification method based on word vector and convolutional neural network');
+INSERT INTO patent_cited_by VALUES(1,'US11664090B2','family',1,'Life Technologies Corporation','Life Technologies','company',NULL,0,'2020-06-11','2023-05-30','Basecaller with dilated convolutional neural network');
+INSERT INTO patent_cited_by VALUES(1,'CN113851188A','family',1,'上海易算生物科技有限公司','Shanghai Yisuan Biotechnology','company',NULL,0,'2020-06-28','2021-12-28','A method for predicting peptide cascade mass spectra and retention times based on deep learning');
+INSERT INTO patent_cited_by VALUES(1,'US20220139498A1','family',1,'Basf Corporation','BASF','company',NULL,0,'2020-11-04','2022-05-05','Apparatuses, systems, and methods for extracting meaning from dna sequence data using natural language processing (nlp)');
+INSERT INTO patent_cited_by VALUES(1,'US12511869B2','family',0,'Ro5 Inc.','Ro5','company',NULL,0,'2020-12-16','2025-12-30','System and method for pharmacophore-conditioned generation of molecules');
+INSERT INTO patent_cited_by VALUES(1,'WO2022184832A2','family',0,'Immatics Biotechnologies Gmbh','Immatics','company',NULL,0,'2021-03-03','2022-09-09','Method for the absolute quantification of mhc molecules');
+INSERT INTO patent_cited_by VALUES(1,'AU2022249074A1','family',0,'PrognomIQ, Inc.','PrognomIQ','company',NULL,0,'2021-03-31','2023-09-21','Multi-omic assessment');
+INSERT INTO patent_cited_by VALUES(1,'CN113033695B','family',1,'北京信息科技大学','Beijing Information Science and Technology University','academic',NULL,0,'2021-04-12','2023-07-25','Method for predicting faults of electronic device');
+INSERT INTO patent_cited_by VALUES(1,'EP4352733A4','family',1,'BASF Agricultural Solutions US LLC','BASF','company',NULL,0,'2021-06-10','2025-04-16','Deep learning model for predicting the ability of a protein to form pores');
+INSERT INTO patent_cited_by VALUES(1,'WO2023039479A1','family',1,'PrognomIQ, Inc.','PrognomIQ','company',NULL,0,'2021-09-10','2023-03-16','Direct classification of raw biomolecule measurement data');
+INSERT INTO patent_cited_by VALUES(1,'JP2024534992A','family',0,'プログノミック インコーポレイテッド','PrognomIQ','company',NULL,0,'2021-09-13','2024-09-26','Enhanced detection and quantification of biomolecules');
+INSERT INTO patent_cited_by VALUES(1,'CN113960152B','family',1,'北方工业大学','North China University of Technology','academic',NULL,0,'2021-10-18','2023-06-06','Trace explosive identification method and system based on ion mobility spectrometry');
+INSERT INTO patent_cited_by VALUES(1,'US20230137741A1','family',0,'Matterworks Inc','Matterworks','company',NULL,0,'2021-11-01','2023-05-04','Methods and compositions for analyte quantification');
+INSERT INTO patent_cited_by VALUES(1,'WO2023077166A1','family',1,'Matterworks Inc','Matterworks','company',NULL,0,'2021-11-01','2023-05-04','Methods and compositions for analyte quantification');
+INSERT INTO patent_cited_by VALUES(1,'US12100484B2','family',0,'Matterworks Inc','Matterworks','company',NULL,0,'2021-11-01','2024-09-24','Methods and compositions for analyte quantification');
+INSERT INTO patent_cited_by VALUES(1,'CN114781575B','family',1,'华南师范大学','South China Normal University','academic',NULL,0,'2022-04-07','2025-04-08','A fully intelligent car based on the neurons of Caenorhabditis elegans');
+INSERT INTO patent_cited_by VALUES(1,'CN115206422B','family',1,'深圳承启生物科技有限公司','Shenzhen Chengqi Biotechnology','company',NULL,0,'2022-07-05','2026-01-06','Mass spectrometry spectral analysis methods, devices and intelligent terminals');
+INSERT INTO patent_cited_by VALUES(1,'CN116825198B','family',1,'湖南工商大学','Hunan University of Technology and Business','academic',NULL,0,'2023-07-14','2024-05-10','Peptide sequence tag identification method based on graph annotation mechanism');
+INSERT INTO patent_cited_by VALUES(1,'CN116596933B','family',1,'深圳赛陆医疗科技有限公司','Shenzhen Sailu Medical Technology','company',NULL,0,'2023-07-18','2023-09-29','Base cluster detection method and device, gene sequencer and storage medium');
+INSERT INTO patent_cited_by VALUES(1,'FR3159254A1','family',1,'Lesaffre Et Compagnie','Lesaffre et Compagnie','company',NULL,0,'2024-02-12','2025-08-15','Method for non-targeted identification of peptide sequences');
+INSERT INTO patent_cited_by VALUES(2,'US11587644B2','family',1,'The Translational Genomics Research Institute','Translational Genomics Research Institute','academic',NULL,0,'2017-07-28','2023-02-21','Methods of profiling mass spectral data using neural networks');
+INSERT INTO patent_cited_by VALUES(2,'US11644470B2','family',1,'Bioinformatics Solutions Inc.','Bioinformatics Solutions','company',4,1,'2019-04-15','2023-05-09','Systems and methods for de novo peptide sequencing using deep learning and spectrum pairs');
+INSERT INTO patent_cited_by VALUES(2,'KR102455469B1','family',1,'사회복지법인 삼성생명공익재단','Samsung Medical Center (Samsung Life Public Welfare Foundation)','hospital',NULL,0,'2019-04-17','2022-10-17','The auxiliary method for lower urinary tract symptom diagnosis');
+INSERT INTO patent_cited_by VALUES(2,'US20220189751A1','family',1,'Shimadzu Corporation','Shimadzu','company',NULL,0,'2019-04-24','2022-06-16','Imaging mass spectrometer');
+INSERT INTO patent_cited_by VALUES(2,'CN112825250B','family',1,'芋头科技（杭州）有限公司','Yutou Technology (Hangzhou)','company',NULL,0,'2019-11-20','2024-08-30','Voice wake-up method, device, storage medium and program product');
+INSERT INTO patent_cited_by VALUES(2,'CN111181626B','family',1,'北京邮电大学','Beijing University of Posts and Telecommunications','academic',NULL,0,'2019-12-31','2021-04-30','Data transmission method and device for unmanned aerial vehicle self-organizing network');
+INSERT INTO patent_cited_by VALUES(2,'GB2603051B','family',0,'Prognomiq Inc','PrognomIQ','company',NULL,0,'2020-01-30','2023-04-26','Lung biomarkers and methods of use thereof');
+INSERT INTO patent_cited_by VALUES(2,'CN111476266B','family',1,'武汉大学','Wuhan University','academic',NULL,0,'2020-02-27','2022-04-12','Non-equilibrium type leukocyte classification method based on transfer learning');
+INSERT INTO patent_cited_by VALUES(2,'WO2021172946A1','family',1,'㈜베르티스','Bertis','company',NULL,0,'2020-02-28','2021-09-02','System based on learning peptide properties for predicting spectral profile of peptide-producing ions in liquid chromatograph-mass spectrometry');
+INSERT INTO patent_cited_by VALUES(2,'CN113851188A','family',1,'上海易算生物科技有限公司','Shanghai Yisuan Biotechnology','company',NULL,0,'2020-06-28','2021-12-28','A method for predicting peptide cascade mass spectra and retention times based on deep learning');
+INSERT INTO patent_cited_by VALUES(2,'CN112580528B','family',1,'上海有个机器人有限公司','Shanghai Yogo Robot','company',NULL,0,'2020-12-22','2024-09-24','Method, device, storage medium and terminal for reducing false detection of target detection network');
+INSERT INTO patent_cited_by VALUES(2,'EP4047371A1','family',1,'Thermo Fisher Scientific (Bremen) GmbH','Thermo Fisher Scientific (Bremen)','company',NULL,0,'2021-02-18','2022-08-24','Method and apparatus for analysing samples of biomolecules using mass spectrometry with data-independent acquisition');
+INSERT INTO patent_cited_by VALUES(2,'AU2022249074A1','family',0,'PrognomIQ, Inc.','PrognomIQ','company',NULL,0,'2021-03-31','2023-09-21','Multi-omic assessment');
+INSERT INTO patent_cited_by VALUES(2,'CN113362899B','family',1,'厦门大学','Xiamen University','academic',NULL,0,'2021-04-20','2023-12-19','Deep learning-based protein mass spectrum data analysis method and system');
+INSERT INTO patent_cited_by VALUES(2,'CN114091507B','family',1,'北京医准智能科技有限公司','Beijing Yizhun Medical AI','company',NULL,0,'2021-09-02','2022-07-29','Ultrasonic lesion area detection method, device, electronic device and storage medium');
+INSERT INTO patent_cited_by VALUES(2,'WO2023039479A1','family',0,'PrognomIQ, Inc.','PrognomIQ','company',NULL,0,'2021-09-10','2023-03-16','Direct classification of raw biomolecule measurement data');
+INSERT INTO patent_cited_by VALUES(2,'JP2024534992A','family',0,'プログノミック インコーポレイテッド','PrognomIQ','company',NULL,0,'2021-09-13','2024-09-26','Enhanced detection and quantification of biomolecules');
+INSERT INTO patent_cited_by VALUES(2,'CN113921086B','family',1,'上海中科新生命生物科技有限公司','Shanghai Applied Protein Technology','company',NULL,0,'2021-09-14','2024-08-02','Protein de novo peptide sequencing method and system based on mass spectrometry');
+INSERT INTO patent_cited_by VALUES(2,'CN118525336A','family',1,'Dh科技发展私人贸易有限公司','DH Technologies Development','company',NULL,0,'2021-10-05','2024-08-20','Methods for enhancing complete data extraction of DIA data');
+INSERT INTO patent_cited_by VALUES(2,'US20250232842A1','family',1,'Viome Life Sciences, Inc.','Viome Life Sciences','company',NULL,0,'2022-01-19','2025-07-17','Methods for computational analysis of biological samples with machine learning analysis and systems for same');
+INSERT INTO patent_cited_by VALUES(2,'CN114639444B','family',1,'南京医科大学','Nanjing Medical University','academic',NULL,0,'2022-03-31','2022-12-27','Method for improving single-cell proteome identification coverage rate based on deep learning');
+INSERT INTO patent_cited_by VALUES(2,'US12700478B2','family',1,'The Hong Kong Polytechnic University','Hong Kong Polytechnic University','academic',NULL,0,'2022-04-11','2026-08-04','Sequencing data-encoded peptides from tandem mass spectra');
+INSERT INTO patent_cited_by VALUES(2,'CN115050422B','family',1,'昆明理工大学','Kunming University of Science and Technology','academic',NULL,0,'2022-05-09','2025-12-19','Protein mass spectrum data expansion method, system, computer equipment and medium');
+INSERT INTO patent_cited_by VALUES(2,'US20240013860A1','family',1,'Bioinformatics Solutions Inc.','Bioinformatics Solutions','company',NULL,1,'2022-07-06','2024-01-11','Methods and systems for personalized neoantigen prediction');
+INSERT INTO patent_cited_by VALUES(2,'US12632730B2','family',0,'Visa International Service Association','Visa International Service Association','company',NULL,0,'2022-09-14','2026-05-19','Neighborhood-specific loss for correcting score distribution distortion');
+INSERT INTO patent_cited_by VALUES(2,'CN116013407B','family',1,'杭州智科慧创科技有限公司','Hangzhou Zhike Huichuang Technology','company',NULL,0,'2022-12-26','2025-06-27','A property-decoupled protein generation method based on language model');
+INSERT INTO patent_cited_by VALUES(2,'WO2024211060A2','family',1,'PrognomIQ, Inc.','PrognomIQ','company',NULL,0,'2023-03-09','2024-10-10','Methods and systems for classifying pixelated raw mass spectrometry data');
+INSERT INTO patent_cited_by VALUES(2,'CN117171615A','family',1,'徐州光引科技发展有限公司','Xuzhou Guangyin Technology Development','company',NULL,0,'2023-08-31','2023-12-05','A modeling and identification method, device, equipment and medium for human body hydration status');
+INSERT INTO patent_cited_by VALUES(2,'KR102993288B1','family',1,'한양대학교 산학협력단','Hanyang University','academic',NULL,0,'2023-10-19','2026-07-20','Method for idntifying of de novo peptides and feature vector generation method for identification of de novo peptides');
+INSERT INTO patent_cited_by VALUES(2,'CN117746993B','family',1,'中国科学院数学与系统科学研究院','Academy of Mathematics and Systems Science, CAS','academic',NULL,0,'2023-12-19','2025-10-21','Mirror peptide mass spectrum pair identification method');
+INSERT INTO patent_cited_by VALUES(2,'WO2026019631A1','family',1,'Breakbio Corporation','Breakbio','company',NULL,0,'2024-07-15','2026-01-22','Methods and systems for identifying peptide patterns for cancer vaccine');
+INSERT INTO patent_cited_by VALUES(2,'CN122112596B','family',1,'上海计算机软件技术开发中心','Shanghai Development Center of Computer Software Technology','company',NULL,0,'2026-04-24','2026-07-03','Combined alignment and quantification method for large-scale mass spectrum queue');
+INSERT INTO patent_cited_by VALUES(3,'US20200326348A1','patent',1,'Bioinformatics Solutions Inc.','Bioinformatics Solutions','company',4,1,'2019-04-15','2020-10-15','Systems and methods for de novo peptide sequencing using deep learning and spectrum pairs');
+INSERT INTO patent_cited_by VALUES(3,'CN112151191A','patent',1,'山东管理学院','Shandong Management University','academic',NULL,0,'2020-10-16','2020-12-29','Microorganism and disease association relation prediction method and system based on attention mechanism');
+INSERT INTO patent_cited_by VALUES(3,'CN112564974A','patent',1,'武汉大学','Wuhan University','academic',NULL,0,'2020-12-08','2021-03-26','Deep learning-based fingerprint identification method for Internet of things equipment');
+INSERT INTO patent_cited_by VALUES(3,'CN112908421A','patent',1,'普瑞基准生物医药(苏州)有限公司','Prophet Genomics (Suzhou)','company',NULL,0,'2021-03-22','2021-06-04','Tumor neogenesis antigen prediction method, device, equipment and medium');
+INSERT INTO patent_cited_by VALUES(3,'WO2022070131A1','patent',1,'Gsi Technology Inc.','Gsi Technology','company',NULL,0,'2020-10-01','2022-04-07','Functional protein classification for pandemic research');
+INSERT INTO patent_cited_by VALUES(3,'US11309061B1','patent',1,'The Florida International University Board Of Trustees','Florida International University','academic',NULL,0,'2021-07-02','2022-04-19','Systems and methods for peptide identification');
+INSERT INTO patent_cited_by VALUES(3,'WO2022204566A1','patent',1,'Genentech, Inc.','Genentech','company',NULL,0,'2021-03-25','2022-09-29','Using neural networks to predict peptide immunogenicity');
+INSERT INTO patent_cited_by VALUES(3,'WO2022250726A1','patent',1,'Peptilogics, Inc.','Peptilogics','company',NULL,0,'2021-05-25','2022-12-01','Methods and apparatuses for using artificial intelligence trained to generate candidate drug compounds based on dialects');
+INSERT INTO patent_cited_by VALUES(3,'US20220383996A1','patent',1,'Amazon Technologies, Inc.','Amazon Technologies','company',NULL,0,'2021-05-27','2022-12-01','Assigning peptides to peptide groups for vaccine development');
+INSERT INTO patent_cited_by VALUES(3,'JP2023080714A','patent',1,'ダイキン工業株式会社','Daikin Industries','company',NULL,0,'2021-11-30','2023-06-09','Disease or health condition inspection method and inspection system');
+INSERT INTO patent_cited_by VALUES(3,'CN116486907A','patent',1,'湖南工商大学','Hunan University of Technology and Business','academic',NULL,0,'2023-01-10','2023-07-25','A Protein Sequence Tag Sequencing Method Based on A-Star Algorithm');
+INSERT INTO patent_cited_by VALUES(3,'CN116741276A','patent',1,'陕西师范大学','Shaanxi Normal University','academic',NULL,0,'2023-05-09','2023-09-12','A method for prediction and identification of small and medium-sized proteins in marine Streptomyces S187');
+INSERT INTO patent_cited_by VALUES(3,'US11861732B1','patent',1,'Intuit Inc.','Intuit','company',NULL,0,'2022-07-27','2024-01-02','Industry-profile service for fraud detection');
+INSERT INTO patent_cited_by VALUES(3,'JP2024530958A','patent',1,'エヌイーシー ラボラトリーズ アメリカ インク','NEC Laboratories America','company',NULL,0,'2021-09-13','2024-08-27','Peptide search system for immunotherapy');
+INSERT INTO patent_cited_by VALUES(3,'CN120068004A','patent',1,'天津智谱仪器有限公司','Tianjin Zhipu Instrument','company',NULL,0,'2025-04-28','2025-05-30','Mass spectrogram ion fragment peak area identification method and device based on deep learning');
+INSERT INTO patent_cited_by VALUES(3,'US12537072B1','patent',0,'Amazon Technologies, Inc.','Amazon Technologies','company',NULL,0,'2021-05-27','2026-01-27','Immunogenic response prediction based on major histocompatibility complex (MHC) data');
+INSERT INTO patent_cited_by VALUES(3,'WO2026115712A1','patent',1,'中外製薬株式会社','Chugai Pharmaceutical','company',NULL,0,'2024-11-29','2026-06-04','Peptide proposal system, peptide proposal method, peptide proposal program, and method for manufacturing peptide');
+INSERT INTO patent_cited_by VALUES(4,'US11587644B2','family',1,'The Translational Genomics Research Institute','Translational Genomics Research Institute','academic',NULL,0,'2017-07-28','2023-02-21','Methods of profiling mass spectral data using neural networks');
+INSERT INTO patent_cited_by VALUES(4,'CN112464804B','family',1,'北京航空航天大学','Beihang University','academic',NULL,0,'2020-11-26','2022-05-24','A Peptide Signal Matching Method Based on Neural Network Framework');
+INSERT INTO patent_cited_by VALUES(4,'CN113362899B','family',1,'厦门大学','Xiamen University','academic',NULL,0,'2021-04-20','2023-12-19','Deep learning-based protein mass spectrum data analysis method and system');
+INSERT INTO patent_cited_by VALUES(4,'CN113281446B','family',1,'天津国科医工科技发展有限公司','Tianjin Guoke Medical Technology Development','company',NULL,0,'2021-06-29','2022-09-20','Automatic mass spectrometer resolution adjusting method based on RBF network');
+INSERT INTO patent_cited_by VALUES(4,'CN113936742B','family',1,'上海中科新生命生物科技有限公司','Shanghai Applied Protein Technology','company',NULL,0,'2021-09-14','2024-08-02','Peptide spectrum residence time prediction method and system based on mass spectrometry');
+INSERT INTO patent_cited_by VALUES(4,'US12205806B2','family',1,'Sapient Bioanalytics, Llc','Sapient Bioanalytics','company',NULL,0,'2022-05-20','2025-01-21','Mass spectrometry binning pipeline');
+INSERT INTO patent_cited_by VALUES(4,'KR20250078915A','family',1,'제넨테크, 인크.','Genentech','company',NULL,0,'2022-09-27','2025-06-04','Prediction of molecular structure and properties by machine learning');
+INSERT INTO patent_cited_by VALUES(4,'CN116500118B','family',1,'珠海高凌信息科技股份有限公司','Zhuhai Comleader Information Technology','company',NULL,0,'2023-03-10','2026-01-02','A Deep Learning-Based Method and Apparatus for Ion Fragment Peak Region Identification in Voss Mass Spectrometry');
+INSERT INTO patent_cited_by VALUES(4,'CN116825200B','family',1,'浙江大学杭州国际科创中心','Zhejiang University Hangzhou Global Innovation Center','academic',NULL,0,'2023-07-07','2026-06-12','A deep learning-based glycopeptide mass spectrometry prediction device');
+INSERT INTO patent_cited_by VALUES(4,'CN116825198B','family',1,'湖南工商大学','Hunan University of Technology and Business','academic',NULL,0,'2023-07-14','2024-05-10','Peptide sequence tag identification method based on graph annotation mechanism');
+INSERT INTO patent_cited_by VALUES(4,'US12463657B2','family',1,'King Fahd University Of Petroleum And Minerals','King Fahd University of Petroleum and Minerals','academic',NULL,0,'2023-07-20','2025-11-04','System and method for lightweight in-field compression of seismic data');
+INSERT INTO patent_cited_by VALUES(4,'CN117316282B','family',1,'贵州大学','Guizhou University','academic',NULL,0,'2023-09-13','2025-11-11','Multifunctional therapeutic peptide prediction method based on deep space-time neural network');
+INSERT INTO patent_cited_by VALUES(4,'CN119622322B','family',1,'重庆邮电大学','Chongqing University of Posts and Telecommunications','academic',NULL,0,'2024-11-21','2025-11-25','A Mass Spectrum Dimensionality Reduction Method for Large Mass Spectrum Libraries and Its Application');
+INSERT INTO patent_cited_by VALUES(5,'CN120853678A','patent',1,'苏州元脑智能科技有限公司','Suzhou Yuannao Intelligent Technology','company',NULL,0,'2025-09-24','2025-10-28','A method for predicting the sequence structure of biological macromolecules');
+INSERT INTO patent_cited_by VALUES(5,'CN121354744A','patent',1,'安徽大学','Anhui University','academic',NULL,0,'2025-12-19','2026-01-16','A method and apparatus for predicting carbon isotope abundance using multivariate LSTM');
+INSERT INTO patent_cited_by VALUES(6,'US20250363501A1','patent',1,'Honeywell International Inc.','Honeywell International','company',NULL,0,'2024-05-27','2025-11-27','System and method for improved monitoring compliance within an enterprise');
+INSERT INTO patent_cited_by VALUES(6,'TWI921044B','patent',1,'宏碁股份有限公司','Acer','company',NULL,0,'2025-02-12','2026-04-01','Method for generating negative samples based on relationship between amino acids and source proteins');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
