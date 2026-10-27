@@ -780,8 +780,9 @@ to the single key meant a full render anyway.
 
 Every generated page type but two carries a schema.org block from
 `build_pages.json_ld()`: `ScholarlyArticle` for a paper, `Person`,
-`Organization`, `Periodical` and `Dataset`, and the home page a `Dataset` for
-the catalog itself. Family and application-area pages have none.
+`Organization`, `Periodical`, `Dataset` and, for a patent, `CreativeWork`
+(schema.org has no Patent type), and the home page a `Dataset` for the
+catalog itself. Family and application-area pages have none.
 
 **A method page's `@type` follows what the catalog knows**, because the
 `algorithm` rows span software, reviews, benchmarks and written-up workflows
@@ -2165,11 +2166,24 @@ one-match rule, links to its page from the chart (16 do). Genentech does not:
 the catalog holds it twice, as "Genentech" and "Genentech, Inc.", and two
 matches link nothing.
 
-**There is no page per patent.** Google Patents is the patent's page, with
-the claims, the family and the legal events, and a copy here would only go
-stale. A patent appears wherever it meets a page this site has: the method it
-claims, an inventor who is a catalog author, the assignee's institution, and
-every catalogued paper it cites, under **Cited in patents**.
+**Every patent family has a page**, `pages/patents/<number>.html`, and the
+slug is the representative publication number VERBATIM, upper case, not
+slugified: a patent number is an identifier people type. Every link on the
+site leads there first, with Google Patents one ↗ away, the way a paper's
+title leads to its page with the DOI beside it. It shows what Google's page
+cannot: the method claimed, inventors linked to their author pages (by the
+catalog's name for them, not the register's "Ngoc Hieu TRAN"), the
+catalogued papers and patents it cites, the catalogued patents citing it, and
+every citing family grouped by organisation, linked where the organisation is
+an institution here. The assignee is shown by the institution's name, with
+the printed form beside it only where it differs in more than case and
+punctuation. Its JSON-LD is a `CreativeWork`, because schema.org has no
+Patent type. If a family's representative changes, say an application is
+granted, the URL changes with it and `slugs.py --check` fails like any
+rename, wanting a `REDIRECTS` entry. Elsewhere a patent appears wherever it
+meets a page: the method it claims, an inventor who is a catalog author, the
+assignee's institution, and every catalogued paper it cites, under **Cited in
+patents**.
 
 **The home page's Patents section** has the prior-art chart and a table. The
 chart puts each patent at its PRIORITY date, which is what prior art is

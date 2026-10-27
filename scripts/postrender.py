@@ -45,7 +45,7 @@ ACCESSION = re.compile(r"\b(?:PXD\d{6}|MSV\d{9}|IPX\d{7}|PRD\d{6}|JPST\d{6})\b")
 KIND_LABEL = {"publications": "Paper", "authors": "Author", "algorithms": "Method",
               "datasets": "Dataset", "institutions": "Institution", "venues": "Venue",
               "families": "Architecture family", "subdomains": "Application area",
-              "analyses": "Analysis"}
+              "analyses": "Analysis", "patents": "Patent"}
 # Quarto never indexes anything under pages/ itself (search: false), so a
 # record whose href starts there is one of ours, and a rerun replaces them.
 

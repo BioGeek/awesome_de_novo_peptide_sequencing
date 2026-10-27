@@ -371,6 +371,15 @@ ENTITY_QUERIES: dict[str, str] = {
         GROUP BY algorithm_family HAVING COUNT(*) >= 2
         ORDER BY MIN(id)
     """,
+    # A patent FAMILY, keyed by its row and named by its representative
+    # publication number, which is the slug VERBATIM (see all_slugs): a patent
+    # number is an identifier people type, upper case, and slugifying it to
+    # "us11644470b2" would only make it harder to find. If a family's
+    # representative changes (an application is granted), so does the URL,
+    # and --check says so like any rename.
+    "patents": """
+        SELECT id, number FROM patent ORDER BY id
+    """,
 }
 
 
@@ -392,6 +401,16 @@ def all_slugs(conn: sqlite3.Connection) -> dict[str, dict[int, str]]:
     }
 
     for kind, query in ENTITY_QUERIES.items():
+        if kind == "patents":
+            if not conn.execute("SELECT 1 FROM sqlite_master WHERE name = 'patent'").fetchone():
+                out[kind] = {}
+                continue
+            rows = [(int(i), n) for i, n in conn.execute(query)]
+            bad = [n for _i, n in rows if not re.fullmatch(r"[A-Z]{2}\d+[A-Z]\d?", n or "")]
+            if bad:
+                raise SystemExit(f"slugs: patent number(s) unusable as a URL: {bad}")
+            out[kind] = dict(rows)
+            continue
         entries = [(int(i), t) for i, t in conn.execute(query)]
         suffixes = preprint_suffix if kind == "publications" else None
         slugs, fell_back = assign_unique(entries, suffixes)

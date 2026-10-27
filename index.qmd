@@ -670,6 +670,8 @@ _key_sql = {
                     "WHERE journal IS NOT NULL AND journal <> '' GROUP BY journal",
     # Keyed by the dataset NAME, which is what the Every-dataset table carries.
     "datasets":     "SELECT id, name FROM dataset",
+    # Keyed by the representative publication NUMBER, which is also the slug.
+    "patents":      "SELECT id, number FROM patent",
 }
 _rows = []
 for _kind, _sql in _key_sql.items():
@@ -7979,7 +7981,7 @@ lazy_chart("patents_prior_art", () => {
                            stroke: "#d0d7de" }),
       Plot.text(placed, { x: "priority", y: p => 1 + (p.tier + 1) * tierH, text: "text",
                           textAnchor: "start", dx: -4, fontSize: 11, fill: "#24292f",
-                          href: "url", target: "_blank" }),
+                          href: p => page_href("patents", p.number) }),
     ],
     color: { domain: assignees, range: assignees.map(color), legend: true }
   })
@@ -8005,13 +8007,18 @@ Inputs.table(patent_search, {
             cited_by_families: "Cited by" },
   sort: "priority_date", reverse: true, rows: 16,
   format: {
+    // The patent's page here first, Google Patents one click away, the way
+    // a paper's title leads to its page with the DOI beside it.
     number: (n, i, rows) => {
       const r = (rows ?? [])[i]
-      return r?.url ? html`<a href="${r.url}" target="_blank" rel="noopener">${n}</a>` : n
+      const ext = r?.url ? htl.html` <a href="${r.url}" target="_blank" rel="noopener"
+          title="Google Patents" class="ext-link">↗</a>` : ""
+      return htl.html`${page_link("patents", n, n)}${ext}`
     },
+    // The catalog's name for an assignee it knows, not the register's capitals.
     assignee: (a, i, rows) => {
       const r = (rows ?? [])[i]
-      return r?.institution ? page_link("institutions", r.institution, a) : a
+      return r?.institution ? page_link("institutions", r.institution, r.institution) : a
     },
     methods: m => m ? page_links("algorithms", m, { sep: "; " }) : "",
     cited_by_families: n => n == null ? "" : String(n),

@@ -67,7 +67,7 @@ SITE_URL = _site_url()
 OUT_ROOT = Path(__file__).resolve().parent.parent / "pages"
 
 KINDS = ("publications", "authors", "algorithms", "institutions", "venues",
-         "subdomains", "families", "datasets", "analyses")
+         "subdomains", "families", "datasets", "analyses", "patents")
 
 # HAND-WRITTEN analysis pages. pages/ is gitignored and regenerated on every
 # publish, and render_scope.py only re-renders pages under it, so a page outside
@@ -413,18 +413,18 @@ def supplement_lines(supps: list[dict]) -> list[str]:
     return L + [""]
 
 
-def patent_lines(heading: str, patents: list[dict], note: str | None = None) -> list[str]:
-    """A '## Patents' section: one line per patent family, linked to Google
-    Patents, which is the patent's page here. A patent has no page of its own
-    on this site: the claims, the family and the legal events are Google's to
-    show, and a copy would only go stale."""
+def patent_lines(site: "Site", heading: str, patents: list[dict], note: str | None = None,
+                 *, from_kind: str) -> list[str]:
+    """A '## Patents' section: one line per patent family, linked to its page
+    here, with Google Patents one click away for the claims and legal events."""
     if not patents:
         return []
     L = [f"## {heading} ({len(patents)})", ""]
     for p in patents:
         meta = [m for m in (p["assignee"], f"priority {p['priority_date']}" if p["priority_date"] else None,
                             (p["status"] or "").lower() or None) if m]
-        L.append(f"- [{md_escape(p['number'])}]({p['url']}) {md_escape(p['title'] or '')}"
+        L.append(f"- {site.link('patents', p['id'], p['number'], from_kind=from_kind)} "
+                 f"{md_escape(p['title'] or '')} [↗]({p['url']} \"Google Patents\")"
                  + (f" <small>({md_escape(', '.join(meta))})</small>" if meta else ""))
     if note:
         L += ["", note]
@@ -580,7 +580,7 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             )
         L.append("")
 
-    L += patent_lines("Cited in patents", ctx.get("patents", []),
+    L += patent_lines(site, "Cited in patents", ctx.get("patents", []), from_kind=K, note=
                       "Patents that list this paper among the literature they cite, "
                       "whether the applicant or the examiner added it.")
 
@@ -692,7 +692,7 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
               ", ".join(site.link("algorithms", a_id, name, from_kind=K)
                         for a_id, name in ctx["algorithms"]), ""]
 
-    L += patent_lines("Patents", ctx.get("patents", []),
+    L += patent_lines(site, "Patents", ctx.get("patents", []), from_kind=K, note=
                       "Patent families naming this author as an inventor. The link "
                       "is made only where the same person is evident: they wrote a "
                       "paper describing the patented method, or worked at the assignee.")
@@ -1137,7 +1137,7 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                          "the original is the link to cite and to prefer.")
             L += [note, ""]
 
-    L += patent_lines("Patents", ctx.get("patents", []),
+    L += patent_lines(site, "Patents", ctx.get("patents", []), from_kind=K, note=
                       "Patent families that claim this method, matched by hand. A "
                       "patent's status is Google Patents' reading of its legal events.")
 
@@ -1367,7 +1367,7 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
                      + (f" ({md_escape(', '.join(meta))})" if meta else ""))
         L.append("")
 
-    L += patent_lines("Patents", ctx.get("patents", []),
+    L += patent_lines(site, "Patents", ctx.get("patents", []), from_kind=K, note=
                       "Patent families this institution was the original assignee of.")
 
     keys = ["geography", "browse-authors"] if ctx["authors"] else []
@@ -1834,6 +1834,109 @@ def render_family(site: Site, fam: dict, ctx: dict) -> tuple[str, float]:
 # Data loading. One query per relation, all with total ORDER BY clauses.
 # --------------------------------------------------------------------------
 
+def render_patent(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
+    """One patent FAMILY. Google Patents holds the claims and the legal
+    events, and this page links there; what only this site can show is how the
+    patent meets the catalog: the method it claims, inventors who are authors
+    here, the catalogued papers and patents it cites, and who cites it."""
+    K = "patents"
+    L = []
+    year = (row["priority_date"] or "")[:4]
+    shown = row["inst_name"] or row["assignee"]
+    sub = " · ".join(x for x in (row["number"], shown, f"priority {year}" if year else None) if x)
+    desc = (f"Patent {row['number']} ({', '.join(x for x in (shown, row['status']) if x)}): "
+            + (row["abstract"] or row["title"] or ""))
+    L += front_matter(row["title"] or row["number"], sub, clip(desc, 250))
+
+    # CreativeWork and nothing narrower: schema.org has no Patent type, and a
+    # wrong @type is worse than none. The page and Google's copy are the same
+    # work, hence sameAs.
+    ld = {"@context": "https://schema.org", "@type": "CreativeWork",
+          "name": row["title"] or row["number"], "identifier": row["number"],
+          "url": f"{SITE_URL}pages/patents/{row['number']}.html", "sameAs": row["url"]}
+    if row["abstract"]:
+        ld["abstract"] = clip(row["abstract"], 500)
+    if row["priority_date"]:
+        ld["dateCreated"] = row["priority_date"]
+    if row["publication_date"]:
+        ld["datePublished"] = row["publication_date"]
+    if ctx["inventors"]:
+        ld["creator"] = [{"@type": "Person", "name": nm} for _o, nm, _a in ctx["inventors"]]
+    L += json_ld(ld)
+
+    L += ["| | |", "|---|---|",
+          f"| Patent | [{row['number']}]({row['url']} \"Google Patents\") ↗ |"]
+    if row["status"]:
+        L.append(f"| Status | {md_escape(row['status'])} |")
+    for label, value in (("Priority date", row["priority_date"]), ("Filed", row["filing_date"]),
+                         ("Published" + (" (granted)" if row["granted"] else ""), row["publication_date"])):
+        if value:
+            L.append(f"| {label} | {value} |")
+    if row["assignee"]:
+        inst = ctx.get("institution")
+        L.append("| Assignee | " + (site.link("institutions", inst[0], inst[1], from_kind=K)
+                                     + (f" <small>(printed {md_escape(row['assignee'])})</small>"
+                                        # only where it says more than case and punctuation
+                                        if re.sub(r"\W", "", inst[1].casefold())
+                                        != re.sub(r"\W", "", row["assignee"].casefold()) else "")
+                                     if inst else md_escape(row["assignee"])) + " |")
+    if row["assignee_current"] and row["assignee_current"].casefold() != (row["assignee"] or "").casefold():
+        L.append(f"| Current assignee | {md_escape(row['assignee_current'])} |")
+    if ctx["methods"]:
+        L.append("| Claims | " + ", ".join(site.link("algorithms", a, nm, from_kind=K)
+                                          for a, nm, _r, _e in ctx["methods"]) + " |")
+    if row["members"]:
+        L.append("| Also published as | " + ", ".join(
+            f"[{m}](https://patents.google.com/patent/{m}/en)" for m in row["members"].split()) + " |")
+    L.append("")
+
+    if row["abstract"]:
+        L += ["## Abstract", "", md_escape(row["abstract"]), ""]
+    if row["notes"]:
+        L += ["## Why it is here", "", italicise_de_novo(md_escape(row["notes"])), ""]
+
+    if ctx["inventors"]:
+        L += [f"## Inventors ({len(ctx['inventors'])})", "",
+              ", ".join(site.link("authors", a, nm, from_kind=K) if a else md_escape(nm)
+                        for _o, nm, a in ctx["inventors"]), "",
+              "An inventor links to an author page only where the same person is "
+              "evident, never on a name alone.", ""]
+
+    if ctx["cites_papers"]:
+        L += [f"## Catalogued papers it cites ({len(ctx['cites_papers'])})", ""]
+        for pid, title, date, examiner in ctx["cites_papers"]:
+            L.append(f"- {site.link('publications', pid, title, from_kind=K)} ({str(date)[:4]})"
+                     + (" <small>added by the examiner</small>" if examiner else ""))
+        L += ["", f"Matched from the patent's {row['n_npl']} literature citations by the rules "
+              "the paper citation graph uses.", ""]
+    for heading, rows in (("Catalogued patents it cites", ctx["cites_patents"]),
+                          ("Cited by catalogued patents", ctx["cited_by_patents"])):
+        if rows:
+            L += [f"## {heading} ({len(rows)})", ""]
+            for pid, number, title in rows:
+                L.append(f"- {site.link('patents', pid, number, from_kind=K)} {md_escape(title or '')}")
+            L.append("")
+
+    if ctx["citers"]:
+        fams = {c[1] for c in ctx["citers"]}
+        orgs: dict[str, list] = {}
+        for c in ctx["citers"]:
+            orgs.setdefault(c[0], []).append(c)
+        L += [f"## Cited by ({len(fams)} patent families, {len(orgs)} organisations)", ""]
+        for org, cs in sorted(orgs.items(), key=lambda kv: (-len(kv[1]), kv[0])):
+            _o, _n, sector, inst_key, _p, _t, self_ = cs[0]
+            name = site.link("institutions", inst_key, org, from_kind=K) if inst_key else md_escape(org)
+            nums = ", ".join(f"[{n}](https://patents.google.com/patent/{n}/en \"{md_escape(t or '')}\")"
+                             for _o2, n, _s, _k, _p2, t, _f in sorted(cs, key=lambda c: c[4] or ""))
+            L.append(f"- **{name}** <small>{sector or ''}{', its own earlier patent' if self_ else ''}"
+                     f"</small>: {nums}")
+        L += ["", "Every family, of any applicant, that cites this one, as Google Patents lists "
+              "them; an assignee is given its English name.", ""]
+
+    L += site.seen_in(["patents"])
+    return "\n".join(L) + "\n", date_to_mtime(row["publication_date"])
+
+
 def load(conn: sqlite3.Connection) -> dict:
     conn.row_factory = sqlite3.Row
     q = conn.execute
@@ -1953,12 +2056,19 @@ def load(conn: sqlite3.Connection) -> dict:
     # has: the method a patent claims, an inventor who is a catalog author, the
     # assignee's institution, and a paper a patent cites as prior art.
     d["patents"] = {}
+    d["patent_rows"] = []
     for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents"):
         d[key] = defaultdict(list)
     if q("SELECT 1 FROM sqlite_master WHERE name = 'patent'").fetchone():
+        # `assignee` is shown as the catalog names the institution where there
+        # is one ("Bioinformatics Solutions Inc."), not as the register prints
+        # it ("BIOINFORMATICS SOLUTIONS Inc"); the printed form stays on the
+        # patent's own page.
         d["patents"] = {r["id"]: dict(r) for r in q(
-            "SELECT id, number, title, assignee, priority_date, status, url "
-            "  FROM patent ORDER BY priority_date, id")}
+            "SELECT p.id, p.number, p.title, COALESCE(af.name, p.assignee) AS assignee, "
+            "       p.priority_date, p.status, p.url "
+            "  FROM patent p LEFT JOIN affiliation af ON af.id = p.affiliation_id "
+            " ORDER BY p.priority_date, p.id")}
         for sql, key in (
             ("SELECT algorithm_id, patent_id FROM patent_algorithm", "alg_patents"),
             ("SELECT DISTINCT author_id, patent_id FROM patent_inventor "
@@ -1973,6 +2083,44 @@ def load(conn: sqlite3.Connection) -> dict:
         for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents"):
             for v in d[key].values():
                 v.sort(key=lambda p: (p["priority_date"] or "", p["id"]))
+        # Everything a patent's own page shows.
+        d["patent_rows"] = [dict(r) for r in q(
+            "SELECT p.*, af.name AS inst_name FROM patent p "
+            "LEFT JOIN affiliation af ON af.id = p.affiliation_id ORDER BY p.id")]
+        d["patent_inventors"] = defaultdict(list)
+        # A linked inventor is shown by the catalog's name for them ("Ngoc Hieu
+        # Tran", not the register's "Ngoc Hieu TRAN").
+        for r in q("SELECT i.patent_id, i.inventor_order, COALESCE(a.display_name, i.name) AS name, "
+                   "       i.author_id FROM patent_inventor i "
+                   "LEFT JOIN author_display a ON a.id = i.author_id "
+                   "ORDER BY i.patent_id, i.inventor_order"):
+            d["patent_inventors"][r["patent_id"]].append((r["inventor_order"], r["name"], r["author_id"]))
+        d["patent_methods"] = defaultdict(list)
+        for r in q("SELECT x.patent_id, a.id, a.name, x.role, x.evidence FROM patent_algorithm x "
+                   "JOIN algorithm a ON a.id = x.algorithm_id ORDER BY x.patent_id, a.name"):
+            d["patent_methods"][r["patent_id"]].append((r["id"], r["name"], r["role"], r["evidence"]))
+        d["patent_cites_papers"] = defaultdict(list)
+        for r in q("SELECT c.citing_patent_id, pu.id, pu.title, pu.publication_date, c.examiner "
+                   "FROM patent_citation c JOIN publication pu ON pu.id = c.cited_publication_id "
+                   "ORDER BY c.citing_patent_id, pu.publication_date, pu.id"):
+            d["patent_cites_papers"][r["citing_patent_id"]].append(
+                (r["id"], r["title"], r["publication_date"], r["examiner"]))
+        d["patent_cites_patents"] = defaultdict(list)
+        d["patent_cited_by_patents"] = defaultdict(list)
+        for r in q("SELECT DISTINCT c.citing_patent_id AS a, c.cited_patent_id AS b FROM patent_citation c "
+                   "WHERE c.cited_patent_id IS NOT NULL"):
+            pa, pb = d["patents"][r["a"]], d["patents"][r["b"]]
+            d["patent_cites_patents"][r["a"]].append((pb["id"], pb["number"], pb["title"]))
+            d["patent_cited_by_patents"][r["b"]].append((pa["id"], pa["number"], pa["title"]))
+        d["patent_citers"] = defaultdict(list)
+        for r in q("SELECT c.patent_id, c.organisation, c.citing_number, c.sector, "
+                   "       (SELECT MIN(a2.id) FROM affiliation a2 WHERE a2.name = af.name) AS inst_key, "
+                   "       c.priority_date, c.title, c.self_citation "
+                   "FROM patent_cited_by c LEFT JOIN affiliation af ON af.id = c.affiliation_id "
+                   "ORDER BY c.patent_id, c.organisation, c.priority_date"):
+            d["patent_citers"][r["patent_id"]].append(
+                (r["organisation"] or "assignee not given", r["citing_number"], r["sector"],
+                 r["inst_key"], r["priority_date"], r["title"], r["self_citation"]))
 
     d["repos"] = defaultdict(list)
     for r in q("SELECT algorithm_id, url FROM algorithm_repository "
@@ -2490,7 +2638,7 @@ def main() -> int:
     produced: set[Path] = set()
 
     # Per-directory metadata, written by the generator so CI needs nothing
-    # committed under pages/. search: false keeps ~7563 thin pages out of
+    # committed under pages/. search: false keeps ~7569 thin pages out of
     # search.json, which every visitor downloads before their first keystroke.
     # Little is lost: index.qmd's own "Browse all papers" / "Browse all authors"
     # tables already search the same data, with filters, and more usefully.
@@ -2711,6 +2859,22 @@ def main() -> int:
                    "impact": d["journal_impact"].get(name)}
             body, mtime = render_venue(site, name, ctx)
             emit("venues", site.slugs["venues"][key], body, mtime)
+
+    if "patents" in kinds:
+        for row in d["patent_rows"]:
+            pid = row["id"]
+            inst = (d["inst_key"].get(row["inst_name"]), row["inst_name"]) if row["inst_name"] else None
+            ctx = {
+                "institution": inst,
+                "inventors": d["patent_inventors"].get(pid, []),
+                "methods": d["patent_methods"].get(pid, []),
+                "cites_papers": d["patent_cites_papers"].get(pid, []),
+                "cites_patents": d["patent_cites_patents"].get(pid, []),
+                "cited_by_patents": d["patent_cited_by_patents"].get(pid, []),
+                "citers": d["patent_citers"].get(pid, []),
+            }
+            body, mtime = render_patent(site, row, ctx)
+            emit("patents", site.slugs["patents"][pid], body, mtime)
 
     if "datasets" in kinds:
         pub_titles = {p["id"]: p["title"] for p in d["publications"]}
