@@ -489,6 +489,38 @@ CLAIMS += [
 ]
 
 
+# Patents (build_patents.py). A family is one row however many countries it
+# was filed in, so no publication number may sit in two rows; and a row is
+# only half-made until refresh has filled it from its page.
+_PATENT_NUMBERS = ("WITH RECURSIVE split(id, rest, num) AS ("
+                   " SELECT id, COALESCE(members, '') || ' ', number FROM patent"
+                   " UNION ALL SELECT id, substr(rest, instr(rest, ' ') + 1),"
+                   " substr(rest, 1, instr(rest, ' ') - 1) FROM split WHERE rest <> '')"
+                   " SELECT num FROM split WHERE num <> '' GROUP BY num HAVING COUNT(DISTINCT id) > 1")
+CLAIMS += [
+    ("CLAUDE.md", "patent families",
+     r"\*\*(\d+) patent families\*\* from", "SELECT COUNT(*) FROM patent"),
+    ("CLAUDE.md", "patent assignees",
+     r"patent families\*\* from (\d+) assignees", "SELECT COUNT(DISTINCT assignee) FROM patent"),
+    ("CLAUDE.md", "patents claiming a catalog method",
+     r"assignees, (\d+) of them claiming a method",
+     "SELECT COUNT(DISTINCT patent_id) FROM patent_algorithm"),
+    ("CLAUDE.md", "catalog papers cited by patents",
+     r"cite (\d+) catalogued\s+papers\s+between\s+them",
+     "SELECT COUNT(DISTINCT cited_publication_id) FROM patent_citation"),
+    ("CLAUDE.md", "publication numbers in two patent rows",
+     r"(\d+)\s+publication\s+numbers\s+sit\s+in\s+two\s+patent\s+rows",
+     f"SELECT COUNT(*) FROM ({_PATENT_NUMBERS})"),
+    ("CLAUDE.md", "patent rows never refreshed",
+     r"(\d+)\s+patent\s+rows\s+have\s+never\s+been\s+filled",
+     "SELECT COUNT(*) FROM patent WHERE title IS NULL OR fetched_on IS NULL"),
+    ("CLAUDE.md", "patents citing a later paper",
+     r"(\d+)\s+patents\s+cite\s+a\s+paper\s+published\s+after\s+them",
+     "SELECT COUNT(*) FROM patent_citation c JOIN patent p ON p.id = c.citing_patent_id "
+     "JOIN publication pu ON pu.id = c.cited_publication_id "
+     "WHERE pu.publication_date > p.publication_date"),
+]
+
 # INVARIANTS: claims whose prose states the value the data MUST have, always
 # zero. --fix rewrites an ordinary count to match the data; doing that to an
 # invariant turns a failing guard into a passing sentence, and it did: the
@@ -510,6 +542,9 @@ INVARIANTS = frozenset({
     "bylines with two authors in one position",
     "author names stored surname first",
     "README entries naming no script",
+    "publication numbers in two patent rows",
+    "patent rows never refreshed",
+    "patents citing a later paper",
 })
 
 # publication_type is one sentence listing every type with its count.

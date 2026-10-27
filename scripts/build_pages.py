@@ -410,6 +410,24 @@ def supplement_lines(supps: list[dict]) -> list[str]:
     return L + [""]
 
 
+def patent_lines(heading: str, patents: list[dict], note: str | None = None) -> list[str]:
+    """A '## Patents' section: one line per patent family, linked to Google
+    Patents, which is the patent's page here. A patent has no page of its own
+    on this site: the claims, the family and the legal events are Google's to
+    show, and a copy would only go stale."""
+    if not patents:
+        return []
+    L = [f"## {heading} ({len(patents)})", ""]
+    for p in patents:
+        meta = [m for m in (p["assignee"], f"priority {p['priority_date']}" if p["priority_date"] else None,
+                            (p["status"] or "").lower() or None) if m]
+        L.append(f"- [{md_escape(p['number'])}]({p['url']}) {md_escape(p['title'] or '')}"
+                 + (f" <small>({md_escape(', '.join(meta))})</small>" if meta else ""))
+    if note:
+        L += ["", note]
+    return L + [""]
+
+
 def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     K = "publications"
     L = []
@@ -559,6 +577,10 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
             )
         L.append("")
 
+    L += patent_lines("Cited in patents", ctx.get("patents", []),
+                      "Patents that list this paper among the literature they cite, "
+                      "whether the applicant or the examiner added it.")
+
     keys = ["browse-papers"]
     if ctx["cites"] or ctx["cited_by"]:
         keys.append("citations")
@@ -666,6 +688,11 @@ def render_author(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         L += ["## Methods and tools", "",
               ", ".join(site.link("algorithms", a_id, name, from_kind=K)
                         for a_id, name in ctx["algorithms"]), ""]
+
+    L += patent_lines("Patents", ctx.get("patents", []),
+                      "Patent families naming this author as an inventor. The link "
+                      "is made only where the same person is evident: they wrote a "
+                      "paper describing the patented method, or worked at the assignee.")
 
     if ctx["coauthors"]:
         L += [f"## Co-authors ({len(ctx['coauthors'])})", "",
@@ -1107,6 +1134,10 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                          "the original is the link to cite and to prefer.")
             L += [note, ""]
 
+    L += patent_lines("Patents", ctx.get("patents", []),
+                      "Patent families that claim this method, matched by hand. A "
+                      "patent's status is Google Patents' reading of its legal events.")
+
     # Where this method stands on the two public benchmarks, when it was run on
     # them: one line each, carrying the numbers that need no context to read,
     # and a link to the section that supplies the context.
@@ -1325,6 +1356,9 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
             L.append(f"- {site.link('publications', pub_id, title, from_kind=K)}"
                      + (f" ({md_escape(', '.join(meta))})" if meta else ""))
         L.append("")
+
+    L += patent_lines("Patents", ctx.get("patents", []),
+                      "Patent families this institution was the original assignee of.")
 
     L += site.seen_in(["geography", "browse-authors"])
     latest = max((p[2] for p in ctx["pubs"] if p[2]), default=None)
@@ -1891,6 +1925,31 @@ def load(conn: sqlite3.Connection) -> dict:
                "  FROM checkpoint "
                " ORDER BY archival DESC, tool_version, host, id"):
         d["checkpoints"][r["algorithm_id"]].append(r)
+    # Patents (build_patents.py), shown wherever they meet a page this site
+    # has: the method a patent claims, an inventor who is a catalog author, the
+    # assignee's institution, and a paper a patent cites as prior art.
+    d["patents"] = {}
+    for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents"):
+        d[key] = defaultdict(list)
+    if q("SELECT 1 FROM sqlite_master WHERE name = 'patent'").fetchone():
+        d["patents"] = {r["id"]: dict(r) for r in q(
+            "SELECT id, number, title, assignee, priority_date, status, url "
+            "  FROM patent ORDER BY priority_date, id")}
+        for sql, key in (
+            ("SELECT algorithm_id, patent_id FROM patent_algorithm", "alg_patents"),
+            ("SELECT DISTINCT author_id, patent_id FROM patent_inventor "
+             " WHERE author_id IS NOT NULL", "author_patents"),
+            ("SELECT af.name, p.id FROM patent p JOIN affiliation af ON af.id = p.affiliation_id",
+             "inst_patents"),
+            ("SELECT DISTINCT cited_publication_id, citing_patent_id FROM patent_citation "
+             " WHERE cited_publication_id IS NOT NULL", "pub_patents"),
+        ):
+            for k, pid in q(sql):
+                d[key][k].append(d["patents"][pid])
+        for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents"):
+            for v in d[key].values():
+                v.sort(key=lambda p: (p["priority_date"] or "", p["id"]))
+
     d["repos"] = defaultdict(list)
     for r in q("SELECT algorithm_id, url FROM algorithm_repository "
                "ORDER BY algorithm_id, sort_order, url"):
@@ -2498,6 +2557,7 @@ def main() -> int:
                 "supervisors": d["supervisors_of"].get(pid, []),
                 "datasets": d["pub_datasets"].get(pid, []),
                 "supplements": d["supplements"].get(pid, []),
+                "patents": d["pub_patents"].get(pid, []),
             }
             body, mtime = render_publication(site, row, ctx)
             emit("publications", site.slugs["publications"][pid], body, mtime)
@@ -2529,6 +2589,7 @@ def main() -> int:
                 "countries": countries,
                 "algorithms": sorted(algs, key=lambda t: t[1]),
                 "coauthors": d["coauthors"].get(aid, []),
+                "patents": d["author_patents"].get(aid, []),
             }
             body, mtime = render_author(site, row, ctx)
             emit("authors", site.slugs["authors"][aid], body, mtime)
@@ -2584,6 +2645,7 @@ def main() -> int:
                 "used": used,
                 "repos": repos,
                 "checkpoints": d["checkpoints"].get(gid, []),
+                "patents": d["alg_patents"].get(gid, []),
                 "supplements": [x for pub_id, *_r in described
                                 for x in d["supplements"].get(pub_id, [])],
                 "authors": authors,
@@ -2614,6 +2676,7 @@ def main() -> int:
                 "departments": d["inst_depts"].get(name, []),
                 "places": d["inst_places"].get(name, []),
                 "pubs": sorted(pubs, key=lambda t: (str(t[2] or ""), t[0]), reverse=True),
+                "patents": d["inst_patents"].get(name, []),
             }
             body, mtime = render_institution(site, name, ctx)
             emit("institutions", site.slugs["institutions"][key], body, mtime)

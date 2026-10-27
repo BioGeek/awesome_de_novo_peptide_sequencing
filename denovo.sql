@@ -66840,6 +66840,163 @@ INSERT INTO paper_comparison_note VALUES(352,1,'emphasis','column ptm accuracy, 
 INSERT INTO paper_comparison_note VALUES(370,0,'emphasis','column amino acid precision: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).');
 INSERT INTO paper_comparison_note VALUES(370,1,'emphasis','column peptide precision at coverage 1: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.856).');
 INSERT INTO paper_comparison_note VALUES(370,2,'emphasis','column amino acid recall: the original table bolded dIon init., end-to-end, 1,000 peaks; trained on DNL-v1 (0.949).');
+CREATE TABLE patent (
+    id                INTEGER PRIMARY KEY,
+    number            TEXT NOT NULL UNIQUE,  -- representative publication, as Google Patents prints it
+    family_id         TEXT UNIQUE,           -- Google Patents' family id (DOCDB family)
+    title             TEXT,
+    abstract          TEXT,
+    assignee          TEXT,                  -- original assignee(s), as printed, '; '-joined
+    assignee_current  TEXT,
+    affiliation_id    INTEGER REFERENCES affiliation(id),  -- curated: the assignee's catalog row
+    priority_date     TEXT,
+    filing_date       TEXT,
+    publication_date  TEXT,                  -- of the representative publication
+    granted           INTEGER,               -- 1 when the representative is a grant (kind B or C)
+    status            TEXT,                  -- Google's: Active, Pending, Expired, Abandoned, Ceased ...
+    members           TEXT,                  -- the family's other publications, space-separated
+    cpc               TEXT,                  -- CPC codes, space-separated
+    cited_by          INTEGER,               -- publications citing this one, any applicant
+    cited_by_families INTEGER,               -- families citing this family, any applicant
+    n_npl             INTEGER,               -- non-patent literature citations printed
+    url               TEXT,
+    fetched_on        TEXT,
+    notes             TEXT                   -- curated: why it is in scope
+);
+INSERT INTO patent VALUES(1,'US11573239B2','64998837','Methods and systems for de novo peptide sequencing using deep learning','The present systems and methods introduce deep learning to de novo peptide sequencing from tandem mass spectrometry data. The systems and methods achieve improvements in sequencing accuracy over existing systems and methods and enables complete assembly of novel protein sequences without assisting databases. The present systems and methods are re-trainable to adapt to new sources of data and provides a complete end-to-end training and prediction solution, which is advantageous given the growing massive amount of data. The systems and methods combine deep learning and dynamic programming to solve optimization problems.','BIOINFORMATICS SOLUTIONS Inc','BIOINFORMATICS SOLUTIONS Inc',52,'2017-07-17','2018-07-17','2023-02-07',1,'Active','US20190018019A1 WO2020014767A1','G01N33/00 G01N33/48 G01N33/50 G01N33/68 G01N33/6803 G01N33/6818 G01N33/6848 G01N33/6851 G06F17/00 G06F17/10 G06F17/16 G16B20/00 G16B30/00 G16B30/20 G16B40/00 G16B40/10 G16B40/20 G16B50/00 G16B50/10 G16B50/20',1,41,64,'https://patents.google.com/patent/US11573239B2/en','2026-10-27','Claims DeepNovo: deep learning de novo sequencing of DDA spectra; the inventors are the DeepNovo paper''s authors.');
+INSERT INTO patent VALUES(2,'US11694769B2','66432380','Systems and methods for de novo peptide sequencing from data-independent acquisition using deep learning','The present systems and methods introduce deep learning to de novo peptide sequencing from tandem mass spectrometry data, and in particular mass spectrometry data obtained by data-independent acquisition. The systems and methods achieve improvements in sequencing accuracy over existing systems and methods and enables complete assembly of novel protein sequences without assisting databases. To sequence peptides from mass spectrometry data obtained by data-independent acquisition, precursor profiles representing intensities of one or more precursor ion signals associated with a precursor retention time and fragment ion spectra representing signals from fragment ions and fragment retention times are fed into a neural network.','BIOINFORMATICS SOLUTIONS Inc','BIOINFORMATICS SOLUTIONS Inc',52,'2017-07-17','2018-12-19','2023-07-04',1,'Active','US20190147983A1','G01N33/00 G01N33/48 G01N33/50 G01N33/68 G01N33/6803 G01N33/6818 G01N33/6848 G06N3/00 G06N3/02 G16B30/00 G16B30/20 G16B40/00 G16B40/10 G16B40/20 H01J49/00 H01J49/0027 H01J49/0036',0,32,80,'https://patents.google.com/patent/US11694769B2/en','2026-10-27','Claims DeepNovo-DIA: deep learning de novo sequencing of DIA spectra; the inventors are its paper''s authors.');
+INSERT INTO patent VALUES(3,'US20200243164A1','71731524','Systems and methods for patient-specific identification of neoantigens by de novo peptide sequencing for personalized immunotherapy','The present systems and workflows identify neoantigens for cancer immunotherapy by introducing deep learning to de novo peptide sequencing from tandem mass spectrometry data. The systems and workflow allows for patient specific identification of neoantigens for personalized immunotherapy.','BIOINFORMATICS SOLUTIONS Inc','BIOINFORMATICS SOLUTIONS Inc',52,'2019-01-30','2020-01-29','2020-07-30',0,'Abandoned','','G01N33/00 G01N33/48 G01N33/50 G01N33/68 G01N33/6803 G01N33/6848 G16B20/00 G16B20/50 G16B25/00 G16B25/10 G16B30/00 G16B35/00 G16B35/20 G16B40/00 G16B40/10 G16B40/20 G16B50/00 G16B50/30',17,0,9,'https://patents.google.com/patent/US20200243164A1/en','2026-10-27','Claims the DeepNovoAA neoantigen workflow: personalised de novo sequencing of a patient''s immunopeptidome. Abandoned application.');
+INSERT INTO patent VALUES(4,'US11644470B2','72747708','Systems and methods for de novo peptide sequencing using deep learning and spectrum pairs','The present systems and methods are directed to de novo identification of peptide sequences from tandem mass spectrometry data. The systems and methods uses unconverted mass spectrometry data from which features are extracted. Using unconverted mass spectrometry data reduces the loss of information and provides more accurate sequencing of peptides. The systems and methods combine deep learning and neural networks to sequencing of peptides.','BIOINFORMATICS SOLUTIONS Inc','BIOINFORMATICS SOLUTIONS Inc',52,'2019-04-15','2020-04-13','2023-05-09',1,'Active','US20200326348A1','G01N33/00 G01N33/48 G01N33/50 G01N33/68 G01N33/6803 G01N33/6848 G16B20/00 G16B30/00 G16B30/20 G16B40/00 G16B40/10 G16B40/20',0,13,18,'https://patents.google.com/patent/US11644470B2/en','2026-10-27','Claims PointNovo: de novo sequencing from unconverted spectra; the inventors are the PointNovo paper''s authors.');
+INSERT INTO patent VALUES(5,'US12340874B1','96097350','Artificial neural network models for prediction of de novo sequencing of chains of amino acids','The present invention relates to proteomics, and techniques for predicting de novo sequencing of chains of amino acids, such as peptides, proteins, or combinations thereof. Particularly, aspects of the present invention are directed to a computer implemented method that includes obtaining a digital representation of a mass spectrum, the digital representation including a plurality of container elements, encoding, using an encoder portion of a bidirectional recurrent neural network of long short term memory cells and gated recurrent unit cells, each container element as an encoded vector, decoding, using a decoder portion of the bidirectional recurrent neural network, each of the encoded vectors into a sequence of amino acids; and recording the sequence of amino acids as a multi-dimensional data set of amino acids types and a probability of each of the amino acid types in each position of the complete amino acid sequence.','Verily Life Sciences LLC','Verily Health Inc',NULL,'2017-11-03','2018-10-25','2025-06-24',1,'Active','','G06N3/00 G06N3/02 G06N3/04 G06N3/044 G06N3/08 G06N3/084 G06N3/088 G16B30/00 G16B40/00 G16B40/10 G16B40/20',2,0,20,'https://patents.google.com/patent/US12340874B1/en','2026-10-27','Verily: neural-network de novo sequencing of peptides and proteins from MS/MS spectra.');
+INSERT INTO patent VALUES(6,'US20240153587A1','81325442','Workflow to assign putative source to de novo peptide sequence','Methods and systems are described for optimizing search results through querying a plurality of databases according to false discovery, random hit rates are presented herein. Methods and systems adapted to assigning a putative source to a de novo peptide sequence and/or creating a workflow for performing said assignment are presented herein.','Regeneron Pharmaceuticals Inc','Regeneron Pharmaceuticals Inc',780,'2021-03-11','2022-03-11','2024-05-09',0,'Pending','AU2022235287A1 EP4305628A1 JP2024512391A JP2025090717A WO2022192739A1','G16B15/00 G16B15/30 G16B20/00 G16B20/30 G16B30/00 G16B30/10 G16B40/00 G16B40/10',2,0,0,'https://patents.google.com/patent/US20240153587A1/en','2026-10-27','Regeneron: assigns a putative source organism or protein to a de novo peptide sequence by searching databases in order of random hit rate.');
+CREATE TABLE patent_inventor (
+    patent_id      INTEGER NOT NULL REFERENCES patent(id) ON DELETE CASCADE,
+    inventor_order INTEGER NOT NULL,
+    name           TEXT NOT NULL,            -- as printed
+    author_id      INTEGER REFERENCES author(id),
+    PRIMARY KEY (patent_id, inventor_order)
+);
+INSERT INTO patent_inventor VALUES(1,1,'Baozhen SHAN',252);
+INSERT INTO patent_inventor VALUES(1,2,'Ngoc Hieu TRAN',211);
+INSERT INTO patent_inventor VALUES(1,3,'Ming Li',107);
+INSERT INTO patent_inventor VALUES(1,4,'Lei XIN',105);
+INSERT INTO patent_inventor VALUES(1,5,'Xianglilan Zhang',262);
+INSERT INTO patent_inventor VALUES(2,1,'Baozhen SHAN',252);
+INSERT INTO patent_inventor VALUES(2,2,'Ngoc Hieu TRAN',211);
+INSERT INTO patent_inventor VALUES(2,3,'Ming Li',107);
+INSERT INTO patent_inventor VALUES(2,4,'Lei XIN',105);
+INSERT INTO patent_inventor VALUES(2,5,'Rui Qiao',250);
+INSERT INTO patent_inventor VALUES(2,6,'Xin Chen',251);
+INSERT INTO patent_inventor VALUES(2,7,'Chuyi Liu',1154);
+INSERT INTO patent_inventor VALUES(3,1,'Rui Qiao',250);
+INSERT INTO patent_inventor VALUES(3,2,'Ngoc Hieu TRAN',211);
+INSERT INTO patent_inventor VALUES(3,3,'Lei XIN',105);
+INSERT INTO patent_inventor VALUES(3,4,'Xin Chen',251);
+INSERT INTO patent_inventor VALUES(3,5,'Baozhen SHAN',252);
+INSERT INTO patent_inventor VALUES(3,6,'Ming Li',107);
+INSERT INTO patent_inventor VALUES(4,1,'Rui Qiao',250);
+INSERT INTO patent_inventor VALUES(4,2,'Ngoc Hieu TRAN',211);
+INSERT INTO patent_inventor VALUES(4,3,'Lei XIN',105);
+INSERT INTO patent_inventor VALUES(4,4,'Xin Chen',251);
+INSERT INTO patent_inventor VALUES(4,5,'Baozhen SHAN',252);
+INSERT INTO patent_inventor VALUES(4,6,'Ali Ghodsi',161);
+INSERT INTO patent_inventor VALUES(4,7,'Ming Li',107);
+INSERT INTO patent_inventor VALUES(5,1,'Krishnan Palaniappan',NULL);
+INSERT INTO patent_inventor VALUES(5,2,'Peter Cimermancic',NULL);
+INSERT INTO patent_inventor VALUES(5,3,'Roie Levy',NULL);
+INSERT INTO patent_inventor VALUES(6,1,'Lili Blumenberg',NULL);
+INSERT INTO patent_inventor VALUES(6,2,'Kamil Cygan',1930);
+INSERT INTO patent_inventor VALUES(6,3,'Ankur Dhanik',1929);
+INSERT INTO patent_inventor VALUES(6,4,'Robert Salzler',1933);
+CREATE TABLE patent_algorithm (
+    patent_id    INTEGER NOT NULL REFERENCES patent(id) ON DELETE CASCADE,
+    algorithm_id INTEGER NOT NULL REFERENCES algorithm(id),
+    role         TEXT NOT NULL DEFAULT 'describes' CHECK (role IN ('describes', 'uses')),
+    evidence     TEXT NOT NULL,
+    PRIMARY KEY (patent_id, algorithm_id)
+);
+INSERT INTO patent_algorithm VALUES(1,58,'describes','added by hand; see the patent''s notes');
+INSERT INTO patent_algorithm VALUES(2,56,'describes','added by hand; see the patent''s notes');
+INSERT INTO patent_algorithm VALUES(3,52,'describes','added by hand; see the patent''s notes');
+INSERT INTO patent_algorithm VALUES(4,51,'describes','added by hand; see the patent''s notes');
+CREATE TABLE patent_citation (
+    citing_patent_id     INTEGER NOT NULL REFERENCES patent(id) ON DELETE CASCADE,
+    cited_patent_id      INTEGER REFERENCES patent(id) ON DELETE CASCADE,
+    cited_publication_id INTEGER REFERENCES publication(id) ON DELETE CASCADE,
+    via                  TEXT NOT NULL CHECK (via IN ('patent', 'family', 'npl')),
+    examiner             INTEGER NOT NULL DEFAULT 0,  -- the examiner, not the applicant, added it
+    reference            TEXT,                        -- the cited number, or the citation as printed
+    CHECK ((cited_patent_id IS NULL) <> (cited_publication_id IS NULL))
+);
+INSERT INTO patent_citation VALUES(1,NULL,258,'npl',0,'Bandeira, N., Pham, V., Pevzner, P., Amott, D. & Lill, J.R. Automated de novo protein sequencing of monoclonal antibodies. Nat. Biotechnol. 26, 1336-1338 (2008).');
+INSERT INTO patent_citation VALUES(1,NULL,128,'npl',0,'Chen, T., Kao, M.Y., Tepel, M., Rush, J. & Church, G.M. A dynamic programming approach to de novo peptide sequencing via tandem mass spectrometry. J. Comput. Biol. 8, 325-337 (2001).');
+INSERT INTO patent_citation VALUES(1,NULL,71,'npl',0,'Chi, H. et al. pNovo: de novo peptide sequencing and identification using HCD spectra. J. Proteome Res. 9, 2713-2724 (2010).');
+INSERT INTO patent_citation VALUES(1,NULL,72,'npl',0,'Chi, H. et al. pNovo+: de novo peptide sequencing using complementary HCD and ETD tandem mass spectra. J. Proteome Res. 12, 615-625 (2013).');
+INSERT INTO patent_citation VALUES(1,NULL,66,'npl',0,'Dancik, D., Addona, T.A., Clauser, K.R., Vath, J.E. & Pevzner, P.A. De novo peptide sequencing via tandem mass spectrometry. J. Comp. Biol. 6, 327-342 (1999).');
+INSERT INTO patent_citation VALUES(1,NULL,133,'npl',0,'DiMaggio, P.A. & Floudas, C.A.: De novo peptide identification via tandem mass spectrometry and integer linear optimization. Anal. Chem. 79, 1433-1446 (2007).');
+INSERT INTO patent_citation VALUES(1,NULL,69,'npl',0,'Fischer, B., Roth, V., Roos, F., Grossmann, J., Baginsky, S., Widmayer, P., Gruissem, W. & Buhmann, J.M. NovoHMM: a hidden Markov model for de novo peptide sequencing. Anal. Chem. 77, 7265-7273 (2005).');
+INSERT INTO patent_citation VALUES(1,NULL,68,'npl',0,'Frank, A. & Pevzner, P.A. PepNovo: de novo peptide sequencing via probabilistic network modeling. Anal. Chem. 77, 964-973 (2005).');
+INSERT INTO patent_citation VALUES(1,NULL,137,'npl',0,'Guthals, A., Clauser, K.R., Frank, A.M., & Bandeira, N. Sequencing-grade de novo analysis of MS/MS triplets (CID/HCD/ETD) from overlapping peptides. J. Proteome Res. 12, 2846-2857 (2013).');
+INSERT INTO patent_citation VALUES(1,NULL,594,'npl',0,'Hatano, N. & Hamada, T. Proteome analysis of pitcher fluid of the carnivorous plant Nepenthes alata. J. Proteome Res. 7, 809-816 (2008).');
+INSERT INTO patent_citation VALUES(1,NULL,135,'npl',0,'Jeong, K., Kim, S. & Pevzner, P.A. UniNovo: a universal tool for de novo peptide sequencing. Bioinformatics 29, 1953-1962 (2013).');
+INSERT INTO patent_citation VALUES(1,NULL,145,'npl',0,'Ma, B. & Johnson, R. De novo sequencing and homology searching. Mol. Cell Proteomics 11, O111.014902. (2012).');
+INSERT INTO patent_citation VALUES(1,NULL,73,'npl',0,'Ma, B. Novor. real-time peptide de novo sequencing software. J. Amer. Soc. Mass Spectrom. 26, 1885-1894 (2015).');
+INSERT INTO patent_citation VALUES(1,NULL,67,'npl',0,'Ma, B., Zhang, K., Hendrie, C., Liang, C., Li, M., Doherty-Kirby, A. & Lajoie, G. Peaks: powerful software for peptide de novo sequencing by tandem mass spectrometry. Rapid Commun. Mass Spectrom. 17, 2337-2342 (2003).');
+INSERT INTO patent_citation VALUES(1,NULL,70,'npl',0,'Mo, L., Dutta, D., Wan, Y. & Chen, T. MSNovo: a dynamic programming algorithm for de novo peptide sequencing via tandem mass spectrometry. Anal. Chem. 79, 4870-4878 (2007).');
+INSERT INTO patent_citation VALUES(1,NULL,118,'npl',0,'Seidler et al., " De Novo Sequencing of Peptides by MS/MS ", Proteomics Journal, vol. 10, Issue 4, Feb. 18, 2010, pp. 634 to 639.');
+INSERT INTO patent_citation VALUES(1,NULL,311,'npl',1,'Tanner et al. InsPecT: Identification of posttranslationally modified peptides from tandem mass spectra. Analytical Chemistry, vol. 77, pp. 4626-4639. (Year: 2005).');
+INSERT INTO patent_citation VALUES(1,NULL,92,'npl',0,'Taylor, J.A. & Johnson, R.S. Implementation and uses of automated de novo peptide sequencing by tandem mass spectrometry. Anal. Chem. 73, 2594-2604 (2001).');
+INSERT INTO patent_citation VALUES(1,NULL,65,'npl',0,'Taylor, J.A. & Johnson, R.S. Sequence database searches via de novo peptide sequencing by tandem mass spectrometry. Rapid Commun. Mass Spectrom. 11, 1067-1075 (1997).');
+INSERT INTO patent_citation VALUES(1,NULL,62,'npl',1,'Tran et al. De novo peptide sequencing by deep learning. PNAS, vol. 114, Aug. 1, 2017, pp. 8247-8252.');
+INSERT INTO patent_citation VALUES(1,NULL,309,'npl',0,'Tran., N.H., Rahman, M.Z., He, L., Xin, L., Shan, B.Z. & Li, M. Complete de novo assembly of monoclonal antibody sequences. Scientific Reports 6, 31730 (2016).');
+INSERT INTO patent_citation VALUES(1,NULL,88,'npl',0,'Zhang, Z. De novo peptide sequencing based on a divide-and-conquer algorithm and peptide tandem spectrum simulation. Anal. Chem. 76, 6374-6383 (2004).');
+INSERT INTO patent_citation VALUES(2,NULL,258,'npl',0,'Bandeira, N., Pham, V., Pevzner, P., Amott, D. & Lill, J.R. Automated de novo protein sequencing of monoclonal antibodies. Nat. Biotechnol. 26, 1336-1338 (2008).');
+INSERT INTO patent_citation VALUES(2,NULL,128,'npl',0,'Chen, T., Kao, M.Y., Tepel, M., Rush, J. & Church, G.M. A dynamic programming approach to de novo peptide sequencing via tandem mass spectrometry J. Comput. Biol. 8, 325-337 (2001).');
+INSERT INTO patent_citation VALUES(2,NULL,71,'npl',0,'Chi, H. et al. pNovo: de novo peptide sequencing and identification using HCD spectra. J. Proteome Res. 9, 2713-2724 (2010).');
+INSERT INTO patent_citation VALUES(2,NULL,72,'npl',0,'Chi, H. et al. pNovo+: de novo peptide sequencing using complementary HCD and ETD tandem mass spectra. J. Proteome Res. 12, 615-625 (2013).');
+INSERT INTO patent_citation VALUES(2,NULL,66,'npl',0,'Dancik, D., Addona, T.A., Clauser, K.R., Vath, J.E. & Pevzner, P.A. De novo peptide sequencing via tandem mass spectrometry. J. Comp. Biol. 6, 327-342 (1999).');
+INSERT INTO patent_citation VALUES(2,NULL,133,'npl',0,'DiMaggio, P.A. & Floudas, C.A.: De novo peptide identification via tandem mass spectrometry and integer linear optimization. Anal. Chem. 79, 1433-1446 (2007).');
+INSERT INTO patent_citation VALUES(2,NULL,69,'npl',0,'Fischer, B., Roth, V., Roos, F., Grossmann, J., Baginsky, S., Widmayer, P., Gruissem, W. & Buhmann, J.M. NovoHMM: a hidden Markov model for de novo peptide sequencing. Anal. Chem. 77, 7265-7273 (2005).');
+INSERT INTO patent_citation VALUES(2,NULL,68,'npl',0,'Frank, A. & Pevzner, P.A. PepNovo: de novo peptide sequencing via probabilistic network modeling. Anal. Chem. 77, 964-973 (2005).');
+INSERT INTO patent_citation VALUES(2,NULL,137,'npl',0,'Guthals, A., Clauser, K.R., Frank, A.M., & Bandeira, N. Sequencing-grade de novo analysis of MS/MS triplets (CID/HCD/ETD) from overlapping peptides. J. Proteome Res. 12, 2846-2857 (2013).');
+INSERT INTO patent_citation VALUES(2,NULL,594,'npl',0,'Hatano, N. & Hamada, T. Proteome analysis of pitcher fluid of the carnivorous plant Nepenthes alata. J. Proteome Res. 7, 809-816 (2008).');
+INSERT INTO patent_citation VALUES(2,NULL,135,'npl',0,'Jeong, K., Kim, S. & Pevzner, P.A. UniNovo: a universal tool for de novo peptide sequencing. Bioinformatics 29, 1953-1962 (2013).');
+INSERT INTO patent_citation VALUES(2,NULL,145,'npl',0,'Ma, B. & Johnson, R. De novo sequencing and homology searching. Mol. Cell Proteomics 11, O111.014902. (2012).');
+INSERT INTO patent_citation VALUES(2,NULL,73,'npl',0,'Ma, B. Novor: real-time peptide de novo sequencing software. J. Amer. Soc. Mass Spectrom. 26, 1885-1894 (2015).');
+INSERT INTO patent_citation VALUES(2,NULL,67,'npl',0,'Ma, B., Zhang, K., Hendrie, C., Liang, C., Li, M., Doherty-Kirby, A. & Lajoie, G. Peaks: powerful software for peptide de novo sequencing by tandem mass spectrometry. Rapid Commun. Mass Spectrom. 17, 2337-2342 (2003).');
+INSERT INTO patent_citation VALUES(2,NULL,70,'npl',0,'Mo, L., Dutta, D., Wan, Y. & Chen, T. MSNovo: a dynamic programming algorithm for de novo peptide sequencing via tandem mass spectrometry. Anal. Chem. 79, 4870-4878 (2007).');
+INSERT INTO patent_citation VALUES(2,NULL,118,'npl',0,'Seidler et al., " De Novo Sequencing of Peptides by MS/MS ", Proteomics Journal, vol. 10, Issue 4, Feb. 18, 2010, pp. 634 to 639.');
+INSERT INTO patent_citation VALUES(2,NULL,92,'npl',0,'Taylor, J.A. & Johnson, R.S. Implementation and uses of automated de novo peptide sequencing by tandem mass spectrometry. Anal. Chem. 73, 2594-2604 (2001).');
+INSERT INTO patent_citation VALUES(2,NULL,65,'npl',0,'Taylor, J.A. & Johnson, R.S. Sequence database searches via de novo peptide sequencing by tandem mass spectrometry. Rapid Commun. Mass Spectrom. 11, 1067-1075 (1997).');
+INSERT INTO patent_citation VALUES(2,NULL,62,'npl',0,'Tran et al., " De Novo Peptide Sequencing by Deep Learning ", Proceedings of the National Academy of Sciences (PNAS), vol. 114, No. 31, Aug. 1, 2017, pp. 8247-8252.');
+INSERT INTO patent_citation VALUES(2,NULL,225,'npl',0,'Tran et al., " Protein Identification with Deep Learning: From ABC to XYZ ", arXiv: 1710.02765, 2017, pp. 1 to 16.');
+INSERT INTO patent_citation VALUES(2,NULL,309,'npl',0,'Tran., N.H., Rahman, M.Z., He, L., Xin, L., Shan, B.Z. & Li, M. Complete de novo assembly of monoclonal antibody sequences. Scientific Reports 6, 31730 (2016).');
+INSERT INTO patent_citation VALUES(2,NULL,101,'npl',0,'Zhang, J. et al. PEAKS DB: De novo sequencing assisted database search for 223 sensitive and accurate peptide identification. Mol. Cell. Proteomics 11, 224 M111.010587 (2012).225.');
+INSERT INTO patent_citation VALUES(2,NULL,88,'npl',0,'Zhang, Z. De novo peptide sequencing based on a divide-and-conquer algorithm and peptide tandem spectrum simulation. Anal. Chem. 76, 6374-6383 (2004).');
+INSERT INTO patent_citation VALUES(3,NULL,71,'npl',1,'Chi, Hao, et al. " pNovo: de novo peptide sequencing and identification using HCD spectra. " Journal of proteome research 9.5 (2010): 2713-2724. (Year: 2010)');
+INSERT INTO patent_citation VALUES(3,NULL,146,'npl',1,'Medzihradszky, Katalin F., and Robert J. Chalkley. " Lessons in de novo peptide sequencing by tandem mass spectrometry. " Mass spectrometry reviews 34.1 (2015): 43-63. (Year: 2015)');
+INSERT INTO patent_citation VALUES(3,NULL,62,'npl',1,'Tran Supplemental " De novo peptide sequencing by deep learning. " Proceedings of the National Academy of Sciences 114.31 (2017): 8247-8252. (Year: 2017)');
+INSERT INTO patent_citation VALUES(4,NULL,68,'npl',0,'Ari Frank and Pavel Pevzner. Pepnovo: de novo peptide sequencing via probabilistic network modeling. Analytical chemistry, 77(4):964-973, 2005.');
+INSERT INTO patent_citation VALUES(4,NULL,69,'npl',0,'Bernd Fischer, Volker Roth, Franz Roos, Jonas Grossmann, Sacha Baginsky, Peter Widmayer, Wilhelm Gruissem, and Joachim M Buhmann. Novohmm: a hidden markov model for de novo peptide sequencing. Analytical chemistry, 77(22):7265-7273, 2005.');
+INSERT INTO patent_citation VALUES(4,NULL,67,'npl',0,'Bin Ma, Kaizhong Zhang, Christopher Hendrie, Chengzhi Liang, Ming Li, Amanda Doherty-Kirby, and Gilles Lajoie. Peaks: powerful software for peptide de novo sequencing by tandem mass spectrometry. Rapid communications in mass spectrometry, 17(20):2337-2342, 2003.');
+INSERT INTO patent_citation VALUES(4,NULL,92,'npl',0,'J Alex Taylor and Richard S Johnson. Implementation and uses of automated de novo peptide sequencing by tandem mass spectrometry. Analytical chemistry, 73(11):2594-2604, 2001.');
+INSERT INTO patent_citation VALUES(4,NULL,309,'npl',0,'Ngoc Hieu Tran, M Ziaur Rahman, Lin He, Lei Xin, Baozhen Shan, and Ming Li. Complete de novo assembly of monoclonal antibody sequences. Scientific reports, 6:31730, 2016.');
+INSERT INTO patent_citation VALUES(4,NULL,60,'npl',0,'Ngoc Hieu Tran, Rui Qiao, Lei Xin, Xin Chen, Chuyi Liu, Xianglilan Zhang, Baozhen Shan, Ali Ghodsi, and Ming Li. Deep learning enables de novo peptide sequencing from data-independent-acquisition mass spectrometry. Nature methods, 16(1):63-66, 2019.');
+INSERT INTO patent_citation VALUES(4,NULL,62,'npl',0,'Ngoc Hieu Tran, Xianglilan Zhang, Lei Xin, Baozhen Shan, and Ming Li. De novo peptide sequencing by deep learning. Proceedings of the National Academy of Sciences, 114(31):8247-8252, 2017.');
+INSERT INTO patent_citation VALUES(4,NULL,66,'npl',0,'Vlado Dancík, Theresa A Addona, Karl R Clauser, James E Vath, and Pavel A Pevzner. De novo peptide sequencing via tandem mass spectrometry. Journal of computational biology, 6(3-4):327-342, 1999.');
+INSERT INTO patent_citation VALUES(5,NULL,133,'npl',0,'DiMaggio Jr. et al., " De Novo Peptide Identification via Tandem Mass Spectrometry and Integer Linear Optimization ", Analytical Chemistry, vol. 79, No. 4, Feb. 15, 2007, pp. 1433-1446.');
+INSERT INTO patent_citation VALUES(5,NULL,69,'npl',0,'Fischer et al., " NovoHMM: A Hidden Markov Model for De Novo Peptide Sequencing ", Analytical Chemistry, vol. 77, No. 22, Nov. 15, 2005, pp. 7265-7273.');
+INSERT INTO patent_citation VALUES(5,NULL,168,'npl',0,'Kim et al., " Spectral Profiles, a Novel Representation of Tandem Mass Spectra and their Applications for De Novo Peptide Sequencing and Identification ", Molecular & Cellular Proteomics, vol. 8, No. 6, Jun. 2009, pp. 1391-1400.');
+INSERT INTO patent_citation VALUES(5,NULL,67,'npl',0,'Ma et al., " Peaks: Powerful Software for Peptide De Novo Sequencing by Tandem Mass Spectrometry ", Rapid Communications in Mass Spectrometry, vol. 17, No. 20, Aug. 21, 2003, pp. 2337-2342.');
+INSERT INTO patent_citation VALUES(5,NULL,73,'npl',0,'Ma, " Novor: Real-Time Peptide De Novo Sequencing Software ", J. Am. Soc. Mass Spectrom., vol. 26, No. 11, Nov. 2015, pp. 1885-1894.');
+INSERT INTO patent_citation VALUES(5,NULL,132,'npl',0,'Pevtsov et al., " Performance Evaluation of Existing De Novo Sequencing Algorithms ", Journal of Proteome Research, vol. 5, No. 11, Nov. 2006, pp. 3018-3028.');
+INSERT INTO patent_citation VALUES(5,NULL,95,'npl',0,'Robotham et al., " UVnovo: A de Novo Sequencing Algorithm Using Single Series of Fragment lons via Chromophore Tagging and 351 nm Ultraviolet Photodissociation Mass Spectrometry ", Anal. Chem., Apr. 5, 2016, 88 (7), pp. 3990-3997.');
+INSERT INTO patent_citation VALUES(5,NULL,62,'npl',0,'Tran et al., " De novo peptide sequencing by deep learning ", Proceedings of the National Academy of Sciences, vol. 114, No. 31, Aug. 1, 2017, pp. 8247-8252.');
+INSERT INTO patent_citation VALUES(5,NULL,88,'npl',0,'Zhang, " De Novo Peptide Sequencing Based on a Divide-and-Conquer Algorithm and Peptide Tandem Spectrum Simulation ", Analytical Chemistry, vol. 76, No. 21, Nov. 1, 2004, pp. 6374-6383.');
+INSERT INTO patent_citation VALUES(4,1,NULL,'patent',1,'US20190018019A1');
+INSERT INTO patent_citation VALUES(4,2,NULL,'patent',1,'US20190147983A1');
+INSERT INTO patent_citation VALUES(4,3,NULL,'patent',1,'US20200243164A1');
+INSERT INTO patent_citation VALUES(5,1,NULL,'patent',1,'US20190018019A1');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',573);
@@ -66980,4 +67137,8 @@ CREATE INDEX idx_checkpoint_dataset_ds ON checkpoint_dataset(dataset_id);
 CREATE INDEX idx_paper_comparison_pub ON paper_comparison(publication_id);
 CREATE INDEX idx_pcr_comparison ON paper_comparison_result(comparison_id);
 CREATE INDEX idx_pcr_algorithm ON paper_comparison_result(algorithm_id);
+CREATE UNIQUE INDEX ux_patent_citation
+    ON patent_citation (citing_patent_id, IFNULL(cited_patent_id, 0), IFNULL(cited_publication_id, 0));
+CREATE INDEX ix_patent_algorithm_algorithm ON patent_algorithm (algorithm_id);
+CREATE INDEX ix_patent_inventor_author ON patent_inventor (author_id);
 COMMIT;

@@ -214,7 +214,7 @@ true of the single-table version too.
 
 ## Schema shape (read before editing data)
 
-**42 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `publication_supplement`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 3584 of 3822 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers in the query (raised to five by default with each chart's **Min papers per author** slider), so it stays out of the co-authorship graph and the bipartite chart.
+**46 tables and two views.** Core catalog: `author`, `country`, `city`, `affiliation`, `author_affiliation`, `algorithm`, `algorithm_repository`, `publication`, `publication_algorithm`, `publication_author`, `publication_citation`, `publication_version`, `publication_supplement`, `thesis_supervisor`, `subdomain`, `family_note`. Builder-owned tables, one set per refresh workflow: `repository_metrics`, `publication_impact`, `journal_impact`, and the nine `benchmark_*` / `proteobench_*` tables described under **Public benchmarks** below. Seven more hold the comparison tables mined from the papers, under **Comparison tables in the database** below. Plus the `author_display` view, which appends a `disambiguator` in parentheses to the name; **every chart aggregates on `display_name`, not `author.name`**, because distinct researchers share a name (three different people are called Xiang Zhang). The view is defined as `SELECT a.*, ... FROM author a` on purpose: it used to list columns explicitly, which meant every new `author` column had to be hand-added to the view, and forgetting surfaced later as a baffling `no such column` from an unrelated query. `author` carries the external identifiers `orcid`, `openalex_id`, `scholar_id` and `sciprofiles_id`; 3584 of 3822 authors have at least one. One author is **not a person**: `Micromass UK Ltd` carries the vendor manual that documents PepSeq, because vendor documentation has a corporate author and every publication needs at least one (a convention, not a trigger). Both network charts gate on authors with three or more papers in the query (raised to five by default with each chart's **Min papers per author** slider), so it stays out of the co-authorship graph and the bipartite chart.
 
 Authors connect to publications via `publication_author` (with `author_order`) and to affiliations via `author_affiliation`; publications connect to algorithms via `publication_algorithm` (with `role`, see **Describing a method or using it** below); thesis supervision lives in `thesis_supervisor` (`publication_id`, `author_id`) and deliberately NOT in `publication_author`, since a supervisor is not an author and recording them as one would inflate their publication count and forge a co-authorship edge; a trigger enforces that the publication is a thesis and that the supervisor is not also its author. Intra-catalog citation edges live in `publication_citation` (`citing_id`, `cited_id`, `source` ∈ `{crossref, semanticscholar, both}`). `algorithm` has extra denormalized columns (`algorithm_family`, `short_description`, `kind`, `is_deep_learning`, `acquisition_mode`, `aliases`, `subdomain`) added after initial schema creation.
 
@@ -374,14 +374,14 @@ and keeps the full `models` list in each row, so its search box still answers
 
 `build_benchmarks.py` reads
 [bittremieuxlab/denovo_benchmarks](https://github.com/bittremieuxlab/denovo_benchmarks),
-which runs 18 tools in their own containers over 86 public datasets and commits
+which runs 19 tools in their own containers over 86 public datasets and commits
 the evaluation curves. It is the only apples-to-apples comparison the field has,
 and this catalog's own data cannot produce it: everything else here describes
 what a method IS.
 
 Five tables, all written by that one builder and by nothing else:
-`benchmark_dataset` (86 rows), `benchmark_tool` (18), `benchmark_result`
-(1794 = one per tool, dataset and version), `benchmark_curve` (3636 = a
+`benchmark_dataset` (86 rows), `benchmark_tool` (19), `benchmark_result`
+(1881 = one per tool, dataset and version), `benchmark_curve` (3838 = a
 101-point averaged curve per tool and metric level) and `benchmark_source` (the
 upstream commit, its date and the fetch date, which the site quotes).
 
@@ -417,7 +417,7 @@ averaging areas.
 embedded numbers, and the chosen row is flagged `is_latest` because the rule is
 not expressible in SQL. The upstream visualisation PR keeps the highest-AUC
 version instead, which lets a tool use a different version on every dataset;
-measured, the two rules disagree on 83 of 1542 (tool, dataset) pairs with a
+measured, the two rules disagree on 83 of 1629 (tool, dataset) pairs with a
 median AP difference of 0.0000 and a maximum of 0.2088. Note the upstream
 dashboard's own "latest" is `sorted(versions)[-1]`, which picks `12.5_old` over
 `12.5`.
@@ -620,7 +620,7 @@ draw, 0 OJS errors, and a hover on each of the three marks shows its provenance.
 
 ## Benchmark numbers on the method pages
 
-The 14 methods with benchmark results carry a `## Benchmarks` section on their
+The 15 methods with benchmark results carry a `## Benchmarks` section on their
 page: median AP and median rank over the 84 datasets, plus the ProteoBench AUC
 and precision for the 7 that have a submission.
 
@@ -2080,6 +2080,80 @@ Mirroring is therefore a deliberate manual step and **never part of a scheduled
 refresh**: it copies someone else's bytes, publishes them, and commits this
 project to keeping them alive, which a cron job should not decide. `--mirror`
 reports the candidates and what blocks each one.
+
+## Patents
+
+Four tables written by `build_patents.py`: `patent`, one row per patent
+FAMILY; `patent_inventor`; `patent_algorithm`, the catalog method a patent
+claims, with its evidence; and `patent_citation`, what a patent cites that the
+catalog holds. **6 patent families** from 3 assignees, 4 of them claiming a method
+the catalog describes from its paper. Together they cite 29 catalogued papers between them.
+
+**A patent is not a publication here**, and that is the design decision.
+Typing it as a tenth `publication_type` would have reused every page and chart,
+and it would have counted each patent as a paper in the wave, the author
+rankings and both network charts. That is the inflation `'abstract'` was added
+to avoid. Inventors are not authors, an assignee is not a byline affiliation,
+and an examiner adds to a patent's citations, which no paper allows. So the
+tables are separate and link OUT to the catalog: `patent_algorithm` to a method,
+`patent_inventor.author_id` to a person, `patent.affiliation_id` to the
+assignee's institution, `patent_citation` to a paper or another family.
+
+**A row is a family, represented by one publication.** The DeepNovo patent is
+also published as `US20190018019A1` and `WO2020014767A1`; one invention filed
+in several countries is one row, with the others in `members`. The
+representative is the granted US patent where one exists, else a US
+application, else whatever a person chose. 0 publication numbers sit in two
+patent rows, an invariant, and 0 patent rows have never been filled by a refresh.
+
+**Which patents belong is decided by hand**, on the catalog's own bar: the
+claims are about *de novo* sequencing of peptides or proteins by mass
+spectrometry, or about something done with its result. Reading the CLAIMS is
+the test, not the title or the description. Verily's fragment-intensity and
+retention-time patents and Tesorai's identification patent never say *de
+novo* at all, and are out. UCSD's spectral-probability patent (`US8639447B2`)
+is in, on dependent claims 3 and 4, which count *de novo* peptide
+reconstructions, and is linked to MS-Dictionary, its group's *de novo*
+hybrid. `REJECTED` in the builder records the near misses, so `search` does
+not propose them again.
+
+**An inventor becomes an author only on evidence.** A name that matches exactly
+one catalog author is linked if that author wrote a paper describing a method
+the patent claims, or is affiliated with the assignee. Otherwise the inventor
+is left unlinked and the builder prints the near miss. Peter Cimermancic, a
+Verily inventor, shares a name with the author of a 2011 peptidogenomics
+paper. It is very likely the same person, and no claimed method or shared
+institution says so. `INVENTOR_AUTHOR` pins such a case when a person has
+checked it.
+
+**A patent's literature is matched by `build_citations.py`'s own matcher**
+(`match_reference`, as a free-text citation), so prior art resolves to a
+catalog paper by the same rules the citation graph uses. A cited paper must
+also predate the patent's own publication: an examiner can add a paper
+published after the priority date, but not one published after the patent. 0
+patents cite a paper published after them, an invariant.
+
+**Google Patents throttles hard, and the block outlasts the burst.** About
+twenty page and search requests in two minutes earned HTTP 503 with a
+"Sorry..." page, and it was still answering 503 more than twenty-five
+minutes later. The builder paces requests 5 s apart (8 s for searches),
+backs off 60, 300 and 900 s, never caches an error page, and caches every
+good page and query in `.cache/patents/`. Two
+syntax traps in the search endpoint: the `url=` parameter is the query string
+URL-encoded TWICE, and fields are `TI=(...)`. The lower-case `ti:` prefix is
+answered with a syntax error.
+
+**There is no page per patent.** Google Patents is the patent's page, with
+the claims, the family and the legal events, and a copy here would only go
+stale. A patent appears wherever it meets a page this site has: the method it
+claims, an inventor who is a catalog author, the assignee's institution, and
+every catalogued paper it cites, under **Cited in patents**.
+
+**The home page's Patents section** has the prior-art chart and a table. The
+chart puts each patent at its PRIORITY date, which is what prior art is
+judged against, and the papers it cites below, at their publication dates. A
+solid line is a patent citing the paper of the method it claims; an arc along
+the top is one catalogued family citing another.
 
 ## URLs are a lock file
 

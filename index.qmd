@@ -558,6 +558,42 @@ checkpoints = pd.read_sql("""
      ORDER BY a.name, c.archival DESC, c.tool_version, c.id
 """, conn)
 
+# Patents, written by build_patents.py: one row per patent FAMILY. They are
+# kept out of `pubs` on purpose. A patent is not a paper, and counting one as a
+# paper would move every per-year and per-author number on this page.
+# patent_links is the prior-art chart's edge list: what each patent cites that
+# the catalog holds, a paper (matched from its literature citations) or another
+# catalogued patent family.
+patents = pd.read_sql("""
+    SELECT p.id, p.number, p.title, p.assignee, af.name AS institution,
+           p.priority_date, p.publication_date, p.status, p.granted, p.members,
+           p.cited_by, p.cited_by_families, p.n_npl, p.url,
+           (SELECT group_concat(a.name, '; ') FROM patent_algorithm x
+              JOIN algorithm a ON a.id = x.algorithm_id WHERE x.patent_id = p.id) AS methods,
+           (SELECT group_concat(name, '; ') FROM (SELECT name FROM patent_inventor
+             WHERE patent_id = p.id ORDER BY inventor_order)) AS inventors,
+           (SELECT COUNT(*) FROM patent_citation c WHERE c.citing_patent_id = p.id
+               AND c.cited_publication_id IS NOT NULL) AS n_papers_cited
+      FROM patent p LEFT JOIN affiliation af ON af.id = p.affiliation_id
+     ORDER BY p.priority_date, p.id
+""", conn)
+patent_links = pd.read_sql("""
+    SELECT c.citing_patent_id AS patent_id, c.cited_publication_id AS pub_id,
+           c.cited_patent_id AS cited_patent_id, c.via, c.examiner,
+           -- No title: the chart looks the paper up in pub_lookup by id.
+           pu.publication_date AS pub_date,
+           -- The method the cited paper DESCRIBES, so a patent citing the paper
+           -- of the very method it claims can be told apart from prior art.
+           (SELECT group_concat(a.name, '; ') FROM publication_algorithm pa
+              JOIN algorithm a ON a.id = pa.algorithm_id
+             WHERE pa.publication_id = pu.id AND pa.role = 'describes') AS pub_methods,
+           EXISTS (SELECT 1 FROM publication_algorithm pa JOIN patent_algorithm x
+                     ON x.algorithm_id = pa.algorithm_id
+                    WHERE pa.publication_id = pu.id AND pa.role = 'describes'
+                      AND x.patent_id = c.citing_patent_id) AS own_method
+      FROM patent_citation c LEFT JOIN publication pu ON pu.id = c.cited_publication_id
+""", conn)
+
 dataset_addresses = pd.read_sql("""
     SELECT dv.id AS version_id, d.name AS dataset, dv.version,
            a.repository, a.accession, a.url, a.part, a.is_provenance
@@ -810,6 +846,8 @@ _data = dict(
     dataset_versions=dataset_versions,
     dataset_addresses=dataset_addresses,
     checkpoints=checkpoints,
+    patents=patents,
+    patent_links=patent_links,
     proteobench=proteobench,
     proteobench_curves=proteobench_curves,
     proteobench_source=proteobench_source,
@@ -1168,7 +1206,8 @@ lazy_heights = ({
   network_chart: [362, 917], author_algo_network: [405, 1025], citation_arcs: [222, 563],
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
-  lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571]
+  lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
+  patents_prior_art: [360, 360]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -7812,6 +7851,177 @@ lazy_chart("repo_table", () => {
   </div>`
 })
 ```
+
+## Patents
+
+```{ojs}
+//| echo: false
+patents_t = transpose(patents).map(p => ({ ...p, priority: new Date(p.priority_date) }))
+patent_links_t = transpose(patent_links)
+```
+
+```{ojs}
+//| echo: false
+pt_stats = {
+  const n = patents_t.length
+  const assignees = new Set(patents_t.map(p => p.assignee)).size
+  const granted = patents_t.filter(p => p.granted).length
+  const active = patents_t.filter(p => p.status === "Active").length
+  const with_method = patents_t.filter(p => p.methods).length
+  const paper_links = patent_links_t.filter(l => l.pub_id != null)
+  const papers = new Set(paper_links.map(l => l.pub_id)).size
+  const own = patent_links_t.filter(l => l.own_method).length
+  const first = patents_t.reduce((a, b) => a.priority < b.priority ? a : b, patents_t[0])
+  return { n, assignees, granted, active, with_method, papers, own, first,
+           n_paper_links: paper_links.length }
+}
+```
+
+```{ojs}
+//| echo: false
+md`**${pt_stats.n}** patent families on *de novo* sequencing are recorded here,
+from **${pt_stats.assignees}** assignees, the earliest with a priority date in
+${pt_stats.first?.priority_date?.slice(0, 4)}. **${pt_stats.with_method}** claim a
+method this catalog already describes from its paper, and the rest are
+companies' own methods with no published counterpart. A family counts once
+however many countries it was filed in. A patent is not a paper here: none of
+these appear in the paper counts, charts or author totals above.
+
+Patents cite earlier literature as prior art, and that literature overlaps this
+catalog. Between them these patents cite **${pt_stats.papers}** catalogued
+papers. The chart puts each patent at its priority date and draws a line to
+every catalogued paper it cites. A solid line is a patent citing the paper of
+the very method it claims (**${pt_stats.own}** of those). An arc along the top
+is one catalogued patent citing another.`
+```
+
+```{ojs}
+//| echo: false
+lazy_chart("patents_prior_art", () => {
+  const pub = id => pub_lookup.get(id)
+  const assignees = Array.from(new Set(patents_t.map(p => p.assignee)))
+  const color = d3.scaleOrdinal(assignees, d3.schemeTableau10)
+  const by_id = new Map(patents_t.map(p => [p.id, p]))
+  const links = patent_links_t.filter(l => l.pub_id != null && pub(l.pub_id))
+    .map(l => ({ ...l, patent: by_id.get(l.patent_id), paper: pub(l.pub_id),
+                 pdate: new Date(l.pub_date) }))
+  const arcs = patent_links_t.filter(l => l.cited_patent_id != null)
+    .map(l => ({ from: by_id.get(l.cited_patent_id), to: by_id.get(l.patent_id), via: l.via }))
+    .filter(a => a.from && a.to)
+  // One dot per cited paper, sized by how many of these patents cite it.
+  const papers = Array.from(d3.group(links, l => l.pub_id), ([id, ls]) => ({
+    id, paper: ls[0].paper, date: ls[0].pdate, n: new Set(ls.map(l => l.patent_id)).size,
+    methods: ls[0].pub_methods, citing: Array.from(new Set(ls.map(l => l.patent.number)))
+  }))
+  // Patent labels are packed into tiers above the row, so two filed the same
+  // month (DeepNovo and DeepNovo-DIA share a priority date) do not overprint.
+  const W = 1100, ML = 120, MR = 40
+  const x = d3.scaleUtc(d3.extent([...patents_t.map(p => p.priority), ...papers.map(p => p.date)]),
+                        [ML, W - MR]).nice()
+  const label = p => (p.methods ? p.methods.split("; ")[0] : p.assignee.replace(/\b(Inc|LLC|Ltd|Corp(oration)?|Pharmaceuticals?)\b\.?/g, "").replace(/[,\s]+$/, ""))
+  const tiers = []
+  const placed = patents_t.slice().sort((a, b) => a.priority - b.priority).map(p => {
+    const text = label(p)
+    const x0 = x(p.priority) - 4, x1 = x0 + text.length * 6.6 + 12
+    let t = tiers.findIndex(end => end < x0)
+    if (t < 0) { t = tiers.length; tiers.push(0) }
+    tiers[t] = x1
+    return { ...p, text, tier: t }
+  })
+  const nt = Math.max(1, tiers.length)
+  const tierH = 0.11
+  const yTop = 1 + nt * tierH + 0.08
+  return Plot.plot({
+    width: W, height: 300 + nt * 22, marginLeft: ML, marginRight: MR, marginBottom: 40,
+    x: { type: "utc", domain: x.domain(), label: null },
+    y: { domain: [-0.18, yTop], axis: null },
+    marks: [
+      Plot.text([{ y: 1, t: "Patents" }, { y: 0, t: "Papers they cite" }],
+                { x: x.domain()[0], y: "y", text: "t", textAnchor: "end", dx: -14,
+                  fontWeight: 600, fontSize: 12 }),
+      Plot.ruleY([0, 1], { stroke: "#eaeef2" }),
+      // Prior art, faint; the patent's own method's paper, solid.
+      Plot.link(links.filter(l => !l.own_method), {
+        x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
+        stroke: l => l.patent.assignee, strokeOpacity: 0.22 }),
+      Plot.link(links.filter(l => l.own_method), {
+        x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
+        stroke: l => l.patent.assignee, strokeWidth: 2.2, strokeOpacity: 0.95 }),
+      Plot.arrow(arcs, { x1: a => a.from.priority, y1: 1, x2: a => a.to.priority, y2: 1,
+                         bend: -40, stroke: "#57606a", strokeWidth: 1.2, headLength: 6 }),
+      Plot.dot(papers, { x: "date", y: 0, r: p => 2.5 + 2.2 * Math.sqrt(p.n), fill: "#8c959f",
+                         stroke: "white", strokeWidth: 0.8,
+                         channels: { Paper: p => title_html(p.paper.title).textContent,
+                                     Year: p => String(p.paper.year ?? p.date.getUTCFullYear()),
+                                     Describes: p => p.methods ?? "",
+                                     "Cited by": p => p.citing.join(", ") },
+                         tip: { ...plot_tip_style, lineWidth: 60,
+                                format: { x: false, y: false, r: false } } }),
+      Plot.dot(placed, { x: "priority", y: 1, symbol: "square", r: 6, fill: "assignee",
+                         stroke: "white", strokeWidth: 1,
+                         channels: { Patent: "number", Title: "title", Assignee: "assignee",
+                                     Priority: "priority_date", Status: "status",
+                                     Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
+                         tip: { ...plot_tip_style, lineWidth: 60,
+                                format: { x: false, y: false, fill: false } } }),
+      Plot.ruleX(placed, { x: "priority", y1: 1.04, y2: p => 1 + (p.tier + 1) * tierH - 0.02,
+                           stroke: "#d0d7de" }),
+      Plot.text(placed, { x: "priority", y: p => 1 + (p.tier + 1) * tierH, text: "text",
+                          textAnchor: "start", dx: -4, fontSize: 11, fill: "#24292f",
+                          href: "url", target: "_blank" }),
+    ],
+    color: { domain: assignees, range: assignees.map(color), legend: true }
+  })
+})
+```
+
+```{ojs}
+//| echo: false
+viewof patent_search = Inputs.search(patents_t, {
+  placeholder: "Search number, title, assignee, inventor, method…",
+  columns: ["number", "title", "assignee", "inventors", "methods", "members"],
+  width: 520
+})
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(patent_search, {
+  columns: ["number", "title", "assignee", "priority_date", "status", "methods",
+            "n_papers_cited", "cited_by_families"],
+  header: { number: "Patent", title: "Title", assignee: "Assignee", priority_date: "Priority",
+            status: "Status", methods: "Claims", n_papers_cited: "Cites papers",
+            cited_by_families: "Cited by" },
+  sort: "priority_date", reverse: true, rows: 16,
+  format: {
+    number: (n, i, rows) => {
+      const r = (rows ?? [])[i]
+      return r?.url ? html`<a href="${r.url}" target="_blank" rel="noopener">${n}</a>` : n
+    },
+    assignee: (a, i, rows) => {
+      const r = (rows ?? [])[i]
+      return r?.institution ? page_link("institutions", r.institution, a) : a
+    },
+    methods: m => m ? page_links("algorithms", m, { sep: "; " }) : "",
+    cited_by_families: n => n == null ? "" : String(n),
+    status: s => s === "Active" ? s : html`<span style="color:#57606a">${s ?? ""}</span>`
+  },
+  width: { number: 140, title: 360, assignee: 170, priority_date: 90, status: 80,
+           methods: 120, n_papers_cited: 70, cited_by_families: 70 }
+})
+```
+
+::: {.callout-note appearance="simple"}
+**What a patent's numbers mean.** *Priority* is the first filing anywhere,
+which is the date prior art is judged against, and so it is the date the chart
+uses. *Status* is Google Patents' reading of the legal events, not legal advice.
+*Cited by* counts patent families of any applicant that cite this one, which
+is how other companies' filings mark it as prior art. *Cites papers* counts
+only the catalogued papers among its literature citations, matched by the same
+rules as the paper citation graph. Which patents belong is decided by hand: the
+claims must be about *de novo* sequencing of peptides or proteins by mass
+spectrometry, or about something done with its result.
+:::
 
 ## Where it appears
 

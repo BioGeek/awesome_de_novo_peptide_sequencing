@@ -1,7 +1,7 @@
 # Scripts
 
 Everything that builds, refreshes, mines or checks the catalog. This folder
-holds **34 scripts**; every one has an entry below, under a heading that is its
+holds **35 scripts**; every one has an entry below, under a heading that is its
 filename, and `check_counts.py` fails the commit when the two drift apart:
 **0 scripts** lack an entry below, and **0 entries** name a script that does not
 exist.
@@ -93,6 +93,16 @@ from bioRxiv and Crossref relations; uncertain pairs go to
 ### `build_checkpoints.py`
 Checks every recorded model checkpoint link (live, gated, dead,
 unverifiable); `--mirror` reports what could be backed up and what blocks it.
+
+### `build_patents.py`
+The patent tables' builder. `add` catalogues a patent family by one of its
+publication numbers, with the method it claims; `refresh` fills each row from
+its Google Patents page (dates, assignee, status, family members, forward
+citation counts), links inventors to authors only on evidence, and records
+what each patent cites that the catalog holds: other catalogued patent
+families, and catalog papers matched from its literature citations by
+`build_citations.py`'s own matcher. `search` writes `patent_candidates.csv`
+only, from title searches and the citations of every catalogued patent.
 
 ### `build_repository_candidates.py`
 Proposes code repositories for methods that have none, from the URLs their own
