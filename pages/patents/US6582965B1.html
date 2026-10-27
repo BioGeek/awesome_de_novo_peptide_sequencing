@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Patent US6582965B1 (Oxford GlycoSciences, Expired - Fee Related): The present invention relates to a method for generating a library of peptides based on a peptide of a predetermined molecular mass and to a method of determining the amino acid…">
+
+<title>Method for de novo peptide sequence determination – Awesome De Novo Peptide Sequencing</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-9663bb0904c60b45822cbef40c243d14.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- The page description meta tag is deliberately NOT hardcoded
+     here. Quarto emits one per page from the front-matter
+     description field, and every generated entity page now sets its
+     own, so a hardcoded copy in this include produced two of them on
+     every generated page. index.qmd carries its own description
+     instead. (No count here on purpose: the page total moves with
+     the data, and nothing checks a number buried in an HTML
+     comment.) -->
+<meta property="og:title" content="Method for de novo peptide sequence determination – Awesome De Novo Peptide Sequencing">
+<meta property="og:description" content="Patent US6582965B1 (Oxford GlycoSciences, Expired - Fee Related): The present invention relates to a method for generating a library of peptides based on a peptide of a predetermined molecular mass and to a method of determining the amino acid…">
+<style>#title-block-header .description { display: none; }</style>
+<link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/patents/US6582965B1.html">
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Awesome <em>De Novo</em> Peptide Sequencing</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">The map</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#every-paper"> 
+<span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#the-architectures"> 
+<span class="menu-text">Methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#application-areas"> 
+<span class="menu-text">Applications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#the-data-underneath"> 
+<span class="menu-text">Datasets</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#patents"> 
+<span class="menu-text">Patents</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html#browse-all-authors"> 
+<span class="menu-text">Authors</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing"> <i class="bi bi-github" role="img" aria-label="Source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Method for de novo peptide sequence determination</h1>
+<p class="subtitle lead">US6582965B1 · Oxford GlycoSciences · priority 1997</p>
+</div>
+
+<div>
+  <div class="description">
+    Patent US6582965B1 (Oxford GlycoSciences, Expired - Fee Related): The present invention relates to a method for generating a library of peptides based on a peptide of a predetermined molecular mass and to a method of determining the amino acid…
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","abstract":"The present invention relates to a method for generating a library of peptides based on a peptide of a predetermined molecular mass and to a method of determining the amino acid sequence of the peptide from the library. A set of amino acids that can be present in the peptide are defined, and an allowed library of all possible sequences of the amino acids in the set having a total mass equal to the predetermined molecular mass, allowing for water lost in forming peptide bonds and for...","creator":[{"@type":"Person","name":"Robert Reid Townsend"},{"@type":"Person","name":"Raj Bhikhu Parekh"},{"@type":"Person","name":"Sally Barbara Prime"},{"@type":"Person","name":"Nick Sinclair Wedd"}],"dateCreated":"1997-05-22","datePublished":"2003-06-24","identifier":"US6582965B1","name":"Method for de novo peptide sequence determination","sameAs":"https://patents.google.com/patent/US6582965B1/en","url":"https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/patents/US6582965B1.html"}</script>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>Patent</td>
+<td><a href="https://patents.google.com/patent/US6582965B1/en" title="Google Patents">US6582965B1</a> ↗</td>
+</tr>
+<tr class="even">
+<td>Status</td>
+<td>Expired - Fee Related</td>
+</tr>
+<tr class="odd">
+<td>Priority date</td>
+<td>1997-05-22</td>
+</tr>
+<tr class="even">
+<td>Filed</td>
+<td>1997-06-18</td>
+</tr>
+<tr class="odd">
+<td>Published (granted)</td>
+<td>2003-06-24</td>
+</tr>
+<tr class="even">
+<td>Assignee</td>
+<td><a href="../institutions/oxford-glycosciences.html">Oxford GlycoSciences</a> <small>(printed Oxford Glycosciences (UK) Ltd)</small></td>
+</tr>
+<tr class="odd">
+<td>Also published as</td>
+<td><a href="https://patents.google.com/patent/AU7540398A/en">AU7540398A</a>, <a href="https://patents.google.com/patent/CA2290591A1/en">CA2290591A1</a>, <a href="https://patents.google.com/patent/DE69812773D1/en">DE69812773D1</a>, <a href="https://patents.google.com/patent/EP0887646A1/en">EP0887646A1</a>, <a href="https://patents.google.com/patent/EP0887646B1/en">EP0887646B1</a>, <a href="https://patents.google.com/patent/GB2325465A/en">GB2325465A</a>, <a href="https://patents.google.com/patent/GB9710582D0/en">GB9710582D0</a>, <a href="https://patents.google.com/patent/GB9811196D0/en">GB9811196D0</a>, <a href="https://patents.google.com/patent/JP2002505740A/en">JP2002505740A</a>, <a href="https://patents.google.com/patent/WO1998053323A2/en">WO1998053323A2</a>, <a href="https://patents.google.com/patent/WO1998053323A3/en">WO1998053323A3</a></td>
+</tr>
+</tbody>
+</table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>The present invention relates to a method for generating a library of peptides based on a peptide of a predetermined molecular mass and to a method of determining the amino acid sequence of the peptide from the library. A set of amino acids that can be present in the peptide are defined, and an allowed library of all possible sequences of the amino acids in the set having a total mass equal to the predetermined molecular mass, allowing for water lost in forming peptide bonds and for protonation, is generated. The allowed library may be generated by first generating a set of all combinations of amino acids having a total mass equal to the predetermined molecular mass of the peptide and then calculating all linear permutations of all amino acids in each such combination. Generally, the molecular mass is determined using a mass spectrometer. A theoretical fragmentation spectrum for every amino acid sequence in the allowed set may also be calculated for use in determining the amino acid sequence of the peptide. The fragmentation spectra may be of any type known in the art, such as a mass spectrum or a protease or chemical fragmentation spectrum. The theoretical fragmentation spectra calculated for each member of the allowed peptide library may be compared to an experimental fragmentation spectrum for the unknown peptide to determine the amino acid sequence of the unknown peptide.</p>
+</section>
+<section id="why-it-is-here" class="level2">
+<h2 class="anchored" data-anchor-id="why-it-is-here">Why it is here</h2>
+<p>Oxford GlycoSciences: <em>de novo</em> sequencing by scoring the spectrum against theoretical spectra of every sequence with the precursor’s mass. The earliest patent here (priority 1997).</p>
+</section>
+<section id="inventors-4" class="level2">
+<h2 class="anchored" data-anchor-id="inventors-4">Inventors (4)</h2>
+<p>Robert Reid Townsend, Raj Bhikhu Parekh, Sally Barbara Prime, Nick Sinclair Wedd</p>
+<p>An inventor links to an author page only where the same person is evident, never on a name alone.</p>
+</section>
+<section id="catalogued-papers-it-cites-4" class="level2">
+<h2 class="anchored" data-anchor-id="catalogued-papers-it-cites-4">Catalogued papers it cites (4)</h2>
+<ul>
+<li><a href="../publications/paas-3-a-computer-program-to-determine-probable-sequence-of-peptides-from-mass.html">PAAS 3: A computer program to determine probable sequence of peptides from mass spectrometric data</a> (1984)</li>
+<li><a href="../publications/peptide-sequence-determination-from-high-energy-collision-induced-dissociation.html">Peptide sequence determination from high-energy collision-induced dissociation spectra using artificial neural networks</a> (1995)</li>
+<li><a href="../publications/sequence-database-searches-via-de-novo-peptide-sequencing-by-tandem-mass.html">Sequence database searches via de novo peptide sequencing by tandem mass spectrometry</a> (1997)</li>
+<li><a href="../publications/automated-interpretation-of-high-energy-collision-induced-dissociation-spectra.html">Automated interpretation of high-energy collision-induced dissociation spectra of singly protonated peptides by ‘seqms’, a software aid forde novo sequencing by tandem mass spectrometry</a> (1998)</li>
+</ul>
+<p>Matched from the patent’s 48 literature citations by the rules the paper citation graph uses.</p>
+</section>
+<section id="cited-by-18-patent-families-15-organisations" class="level2">
+<h2 class="anchored" data-anchor-id="cited-by-18-patent-families-15-organisations">Cited by (18 patent families, 15 organisations)</h2>
+<ul>
+<li><strong>Micromass</strong> <small>company</small>: <a href="https://patents.google.com/patent/CA2303758C/en" title="Improved methods of identifying peptides and proteins by mass spectrometry">CA2303758C</a>, <a href="https://patents.google.com/patent/CA2303761C/en" title="A method of determining peptide sequences by mass spectrometry">CA2303761C</a></li>
+<li><strong>NEC</strong> <small>company</small>: <a href="https://patents.google.com/patent/JP3534191B1/en" title="Method for analyzing peptide C-terminal amino acid sequence using mass spectrometry">JP3534191B1</a>, <a href="https://patents.google.com/patent/JP4543929B2/en" title="Protein analysis method">JP4543929B2</a></li>
+<li><strong>Oxford BioTherapeutics</strong> <small>company</small>: <a href="https://patents.google.com/patent/EP3118221B1/en" title="Proteins">EP3118221B1</a>, <a href="https://patents.google.com/patent/WO2011054007A1/en" title="Ror1 as therapeutic and diagnostic target">WO2011054007A1</a></li>
+<li><strong>Basf Aktiengesellschaft</strong> <small>company</small>: <a href="https://patents.google.com/patent/AU2001269058A1/en" title="Method for the qualitative and quantitative analysis of complex mixtures of chemical compounds, using maldi-tof mass spectrometry">AU2001269058A1</a></li>
+<li><strong>Chugai Seiyaku Kabushiki Kaisha</strong> <small>company</small>: <a href="https://patents.google.com/patent/WO2008093762A1/en" title="Sensitive determination method for low molecular weight peptide">WO2008093762A1</a></li>
+<li><strong>DH Technologies Development</strong> <small>company</small>: <a href="https://patents.google.com/patent/CN104718449B/en" title="System and method for recognizing compound from MS/MS data in the case where precursor ion information is not used">CN104718449B</a></li>
+<li><strong>Hitachi High-Technologies</strong> <small>company</small>: <a href="https://patents.google.com/patent/JP2008039608A/en" title="Mass spectrometry system">JP2008039608A</a></li>
+<li><strong><a href="../institutions/institute-for-systems-biology.html">Institute for Systems Biology</a></strong> <small>academic</small>: <a href="https://patents.google.com/patent/US6829539B2/en" title="Methods for quantification and de novo polypeptide sequencing by mass spectrometry">US6829539B2</a></li>
+<li><strong>MDS Inc.&nbsp;doing business through its MDS Sciex Division, Concord</strong> <small>company</small>: <a href="https://patents.google.com/patent/DE602004002856T2/en" title="DYNAMIC SIGNAL SELECTION IN A CHROMATOGRAPHY / MASS SPECTROMETER / MASS SPECTROMETRY SYSTEM">DE602004002856T2</a></li>
+<li><strong>Mds Inc., Doing Business Through Its Mds Sciex Division</strong> <small>company</small>: <a href="https://patents.google.com/patent/WO2007079589A1/en" title="Fragmenting ions in mass spectrometry">WO2007079589A1</a></li>
+<li><strong>Medical ProteoScope</strong> <small>company</small>: <a href="https://patents.google.com/patent/JP4541122B2/en" title="Amino acid sequence identification method using mass spectrometry">JP4541122B2</a></li>
+<li><strong>Merck &amp; Co.</strong> <small>company</small>: <a href="https://patents.google.com/patent/JP2006522340A/en" title="Analyzing mass spectrometry data">JP2006522340A</a></li>
+<li><strong>Oxford Genome Sciences (Uk)</strong> <small>company</small>: <a href="https://patents.google.com/patent/WO2008104803A2/en" title="Proteins">WO2008104803A2</a></li>
+<li><strong>Oxford Genome Sciences Uk</strong> <small>company</small>: <a href="https://patents.google.com/patent/GB0611116D0/en" title="Proteins">GB0611116D0</a></li>
+<li><strong>Shimadzu</strong> <small>company</small>: <a href="https://patents.google.com/patent/JP4841414B2/en" title="Amino acid sequence analysis method using mass spectrometry, amino acid sequence analyzer, amino acid sequence analysis program, and recording medium recording the amino acid sequence analysis program">JP4841414B2</a></li>
+</ul>
+<p>Every family, of any applicant, that cites this one, as Google Patents lists them; an assignee is given its English name.</p>
+</section>
+<section id="seen-in-the-charts" class="level2">
+<h2 class="anchored" data-anchor-id="seen-in-the-charts">Seen in the charts</h2>
+<ul>
+<li><a href="../../index.html#patents">Patents</a></li>
+</ul>
+<p><a href="../../index.html">Back to the full map</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jeroen\.vangoey\.be\/awesome_de_novo_peptide_sequencing\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
