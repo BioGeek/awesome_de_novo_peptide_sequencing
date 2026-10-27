@@ -2431,20 +2431,8 @@ body.nav-fixed { padding-top: 62px; }
 </div>
 </div>
 </div>
-<div class="callout callout-style-simple callout-note">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p><strong>What a patent’s numbers mean.</strong> <em>Priority</em> is the first filing anywhere, which is the date prior art is judged against, and so it is the date the chart uses. <em>Status</em> is Google Patents’ reading of the legal events, not legal advice. <em>Cited by</em> counts patent families of any applicant that cite this one, which is how other companies’ filings mark it as prior art. <em>Cites papers</em> counts only the catalogued papers among its literature citations, matched by the same rules as the paper citation graph. Which patents belong is decided by hand: the claims must be about <em>de novo</em> sequencing of peptides or proteins by mass spectrometry, or about something done with its result.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="where-it-appears" class="level2">
-<h2 class="anchored" data-anchor-id="where-it-appears">Where it appears</h2>
-<p>bioRxiv and arXiv are where this field’s preprints appear. Toggle preprints vs.&nbsp;peer-reviewed to see how the venue distribution shifts.</p>
+<section id="who-cites-these-patents" class="level3">
+<h3 class="anchored" data-anchor-id="who-cites-these-patents">Who cites these patents</h3>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
@@ -2456,18 +2444,15 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-151" data-nodetype="expression">
+<div id="ojs-cell-151" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
-<section id="venue-citedness-open-data-analog-of-the-impact-factor" class="level3">
-<h3 class="anchored" data-anchor-id="venue-citedness-open-data-analog-of-the-impact-factor">Venue citedness (open-data analog of the Impact Factor)</h3>
-<p>Two-year mean citedness from <strong>OpenAlex</strong> (<code>summary_stats.2yr_mean_citedness</code>). Methodologically equivalent to the Clarivate Impact Factor formula (mean citations in year <em>t</em> to articles published in years <em>t-1</em> and <em>t-2</em>), but computed over OpenAlex’s open Crossref-aggregated citation graph rather than the paywalled Web of Science one. Conferences and preprint servers are omitted (their non-rolling publication schedule makes the metric misleading). Built offline via <code>build_journal_metrics.py</code>; refresh annually.</p>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-152" data-nodetype="declaration">
+<div id="ojs-cell-152" data-nodetype="expression">
 
 </div>
 </div>
@@ -2480,11 +2465,21 @@ body.nav-fixed { padding-top: 62px; }
 </div>
 </div>
 </div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>What a patent’s numbers mean.</strong> <em>Priority</em> is the first filing anywhere, which is the date prior art is judged against, and so it is the date the chart uses. <em>Status</em> is Google Patents’ reading of the legal events, not legal advice. <em>Cited by</em> counts patent families of any applicant that cite this one, which is how other companies’ filings mark it as prior art. <em>Cites papers</em> counts only the catalogued papers among its literature citations, matched by the same rules as the paper citation graph. Which patents belong is decided by hand: the claims must be about <em>de novo</em> sequencing of peptides or proteins by mass spectrometry, or about something done with its result.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
-<section id="publication-lifecycle" class="level2">
-<h2 class="anchored" data-anchor-id="publication-lifecycle">Publication lifecycle</h2>
-<p>How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv’s own record of where a preprint was published, Crossref’s preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as “post-preprint”. <strong>Show status</strong> picks which rows to list: <strong>paired</strong> (lifecycle complete, the default), <strong>preprint-only</strong> (no later version recorded in the catalog), or <strong>peer-reviewed-only</strong> (published without a preprint we have on file). A Status column appears once more than one is ticked.</p>
+<section id="where-it-appears" class="level2">
+<h2 class="anchored" data-anchor-id="where-it-appears">Where it appears</h2>
+<p>bioRxiv and arXiv are where this field’s preprints appear. Toggle preprints vs.&nbsp;peer-reviewed to see how the venue distribution shifts.</p>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
@@ -2496,11 +2491,14 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-155" data-nodetype="declaration">
+<div id="ojs-cell-155" data-nodetype="expression">
 
 </div>
 </div>
 </div>
+<section id="venue-citedness-open-data-analog-of-the-impact-factor" class="level3">
+<h3 class="anchored" data-anchor-id="venue-citedness-open-data-analog-of-the-impact-factor">Venue citedness (open-data analog of the Impact Factor)</h3>
+<p>Two-year mean citedness from <strong>OpenAlex</strong> (<code>summary_stats.2yr_mean_citedness</code>). Methodologically equivalent to the Clarivate Impact Factor formula (mean citations in year <em>t</em> to articles published in years <em>t-1</em> and <em>t-2</em>), but computed over OpenAlex’s open Crossref-aggregated citation graph rather than the paywalled Web of Science one. Conferences and preprint servers are omitted (their non-rolling publication schedule makes the metric misleading). Built offline via <code>build_journal_metrics.py</code>; refresh annually.</p>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
@@ -2512,36 +2510,36 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-157" data-nodetype="declaration">
-
-</div>
-</div>
-</div>
-<div class="cell">
-
-<div class="cell-output cell-output-display">
-<div id="ojs-cell-158" data-nodetype="expression">
-
-</div>
-</div>
-</div>
-<div class="cell">
-
-<div class="cell-output cell-output-display">
-<div id="ojs-cell-159" data-nodetype="expression">
+<div id="ojs-cell-157" data-nodetype="expression">
 
 </div>
 </div>
 </div>
 </section>
-<section id="browse-all-papers" class="level2">
-<h2 class="anchored" data-anchor-id="browse-all-papers">Browse all papers</h2>
-<section id="recently-added" class="level3">
-<h3 class="anchored" data-anchor-id="recently-added">Recently added</h3>
+</section>
+<section id="publication-lifecycle" class="level2">
+<h2 class="anchored" data-anchor-id="publication-lifecycle">Publication lifecycle</h2>
+<p>How a method goes from arXiv / bioRxiv preprint to a peer-reviewed publication. Each pairing is recorded explicitly rather than inferred from titles or dates, taken from bioRxiv’s own record of where a preprint was published, Crossref’s preprint relations, or hand-checked author overlap. Peer-reviewed, ML-conference and thesis publications all count as “post-preprint”. <strong>Show status</strong> picks which rows to list: <strong>paired</strong> (lifecycle complete, the default), <strong>preprint-only</strong> (no later version recorded in the catalog), or <strong>peer-reviewed-only</strong> (published without a preprint we have on file). A Status column appears once more than one is ticked.</p>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-160" data-nodetype="expression">
+<div id="ojs-cell-158" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-159" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-160" data-nodetype="declaration">
 
 </div>
 </div>
@@ -2557,7 +2555,7 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-162" data-nodetype="declaration">
+<div id="ojs-cell-162" data-nodetype="expression">
 
 </div>
 </div>
@@ -2571,12 +2569,14 @@ body.nav-fixed { padding-top: 62px; }
 </div>
 </div>
 </section>
-<section id="every-paper" class="level3">
-<h3 class="anchored" data-anchor-id="every-paper">Every paper</h3>
+<section id="browse-all-papers" class="level2">
+<h2 class="anchored" data-anchor-id="browse-all-papers">Browse all papers</h2>
+<section id="recently-added" class="level3">
+<h3 class="anchored" data-anchor-id="recently-added">Recently added</h3>
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-164" data-nodetype="declaration">
+<div id="ojs-cell-164" data-nodetype="expression">
 
 </div>
 </div>
@@ -2592,7 +2592,42 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-166" data-nodetype="expression">
+<div id="ojs-cell-166" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-167" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</section>
+<section id="every-paper" class="level3">
+<h3 class="anchored" data-anchor-id="every-paper">Every paper</h3>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-168" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-169" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-170" data-nodetype="expression">
 
 </div>
 </div>
@@ -2616,7 +2651,7 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-167" data-nodetype="declaration">
+<div id="ojs-cell-171" data-nodetype="declaration">
 
 </div>
 </div>
@@ -2624,7 +2659,7 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-168" data-nodetype="declaration">
+<div id="ojs-cell-172" data-nodetype="declaration">
 
 </div>
 </div>
@@ -2632,7 +2667,7 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-169" data-nodetype="expression">
+<div id="ojs-cell-173" data-nodetype="expression">
 
 </div>
 </div>
@@ -2647,7 +2682,7 @@ body.nav-fixed { padding-top: 62px; }
 <ol type="1">
 <li><p>Edit <code>denovo.db</code> with any SQLite tool (<code>sqlite3</code> CLI, <a href="https://sqlitebrowser.org/">DB Browser for SQLite</a>, DataGrip, …). A new paper typically needs rows in <code>publication</code>, <code>publication_author</code>, and <code>publication_algorithm</code> (set <code>role</code> to <code>uses</code> for a tool the paper runs rather than introduces, which keeps it out of that tool’s authors and papers); a new model also needs a row in <code>algorithm</code> (set <code>kind</code>, <code>is_deep_learning</code>, <code>acquisition_mode</code>). Affiliations cascade through <code>country → city → affiliation</code> and link to authors via <code>author_affiliation</code>.</p></li>
 <li><p>Regenerate the human-readable SQL dump so the diff is reviewable:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb170"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> denovo.db .dump <span class="op">&gt;</span> denovo.sql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb174"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb174-1"><a href="#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> denovo.db .dump <span class="op">&gt;</span> denovo.sql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Open a PR with both <code>denovo.db</code> and <code>denovo.sql</code>. The GitHub Action rebuilds the site and publishes to <code>gh-pages</code> on merge; typically live within ~3 minutes.</p></li>
 </ol>
 </section>
@@ -2666,7 +2701,7 @@ body.nav-fixed { padding-top: 62px; }
 <div class="cell">
 
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-170" data-nodetype="expression">
+<div id="ojs-cell-174" data-nodetype="expression">
 
 </div>
 </div>
@@ -2692,7 +2727,7 @@ window._ojs.paths.runtimeToDoc = "../..";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "";
 window._ojs.selfContained = false;
-await Promise.all([["ojs-module-contents", "ojs-module-contents.a2aaa85320d8.json"], ["ojs-define", "ojs-define.30230ab1d92a.json"]].map(async ([type, file]) => {
+await Promise.all([["ojs-module-contents", "ojs-module-contents.cee00cb803a5.json"], ["ojs-define", "ojs-define.46fcdb0eca62.json"]].map(async ([type, file]) => {
   for (const text of await (await fetch("ojs/" + file)).json()) {
     const el = document.createElement("script"); el.type = type; el.text = text;
     document.body.append(el);
