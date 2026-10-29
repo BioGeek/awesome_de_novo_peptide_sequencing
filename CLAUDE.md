@@ -1461,7 +1461,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**486 datasets, 528 versions, 1312 addresses, 949 publication links over 291 papers.**
+**486 datasets, 528 versions, 1312 addresses, 957 publication links over 291 papers.**
 
 ### What a paper did with a dataset
 
@@ -1494,7 +1494,7 @@ invariant. It read 10 when first registered, every one a `uses` beside an
 `trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
 trains on it too, and one paper can hold both of those for one version, its
 training and test splits.
-**0 links are `trains-on` and 106 `evaluates-on`.**
+**0 links are `trains-on` and 109 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
