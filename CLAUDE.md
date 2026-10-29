@@ -1459,9 +1459,42 @@ so with structure rather than prose. Four tables:
 | `dataset` | what people NAME | Nine-species benchmark |
 | `dataset_version` | what models RUN ON | `revised`, `InstaNovo split` |
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
-| `publication_dataset` | what a paper DID with it | `uses`, `introduces` |
+| `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**486 datasets, 528 versions, 1312 addresses, 904 publication links over 276 papers.**
+**486 datasets, 528 versions, 1312 addresses, 894 publication links over 276 papers.**
+
+### What a paper did with a dataset
+
+`publication_dataset.role` takes four values, and two of them say what the
+paper's own method did:
+
+| role | meaning |
+|---|---|
+| `introduces` | the paper deposited this version |
+| `trains-on` | the paper trained, pre-trained or fine-tuned **its own** method on it |
+| `evaluates-on` | the paper reported **its own** method's results on it |
+| `uses` | the paper ran on it, and the catalog has not recorded how |
+
+0 links carry a role outside these four, an invariant.
+
+**"Its own" is the whole rule.** A link joins a paper to a dataset, not a
+method to a dataset, so `trains-on` would mean nothing on a method page if it
+counted data a paper used to retrain a baseline: DiNovo retrains PointNovo on
+eight of the nine species, and that is not DiNovo's training data. Read this
+way, a DESCRIBING paper's links are its method's, and each method page carries
+a `## Data` section: Trained on, Evaluated on, Deposited, and "Also used,
+purpose not recorded", naming which describing paper states each one where
+there are several. Publication and dataset pages split the same way.
+
+**`uses` is the absence of a finding, so it never sits beside one.** Once a
+(paper, dataset, version) has any other role, its `uses` row goes: 0 links
+are `uses` beside another link for the same paper, dataset and version, an
+invariant. It read 10 when first registered, every one a `uses` beside an
+`introduces`, written by the miner bug below. `introduces` does sit beside
+`trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
+trains on it too, and one paper can hold both of those for one version, its
+training and test splits.
+**0 links are `trains-on` and 0 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
@@ -1529,10 +1562,11 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 62 papers use the
-nine-species benchmark; 22 name the original, 16 the revised, 3 the InstaNovo
+**A NULL `dataset_version_id` is the finding, not a gap.** 45 papers use the
+nine-species benchmark; 22 name the original, 15 the revised, 3 the InstaNovo
 split, 1 dIon's retrieval benchmark, and **20 print only a per-species provenance accession**, which does not
-determine which curated version they ran on. Inventing a version for those
+determine which curated version they ran on. A paper naming two versions is counted
+under each, so the parts add up to more than the whole. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
 
 **`dataset.kind` separates the two populations, and they are empirically
@@ -1890,6 +1924,28 @@ Two traps, both hit while writing it:
   a paper listing all nine provenance submissions is one row and nine hits.
   Without deduplication the report claimed 187 rows where `--write` created 86,
   and the report was the wrong number.
+- **A curated link is never second-guessed by an accession.** The miner
+  proposes nothing for a dataset the paper already links, in any version or
+  role: a bare accession can only add a LESS specific version, or repeat as
+  `uses` what a reader recorded as `trains-on`. Its new links are always
+  `uses`, because an accession says a paper touched the data, not why.
+- **`sqlite3.Row` never equals a tuple.** `build_pdf_library.load_publications`
+  sets `row_factory` on the connection it is handed, so every later query in
+  this script returns Rows, and `(pid, vid) in set(rows)` is always False. The
+  introduced-version lookup was a dict keyed by paper, which kept one deposit
+  per paper and proposed every other one again as `uses`: 62 of 83 proposals
+  on 2026-10-29. Build lookup sets with `tuple(r)`.
+- **A corpus's source list is not a use of the corpus.** A version with more
+  than `CORPUS_PROVENANCE` (20) provenance addresses is a training corpus
+  listing its sources, so a paper printing one of MassNet's 647 PRIDE projects
+  used that project, not MassNet; three papers had been proposed as MassNet
+  users. Those claims are dropped before resolving, which also un-blocked 103
+  accessions that are deposits in their own right AND a corpus source: they
+  had been counted unknown as ambiguous, which is most of why the unknown
+  list read 262 rather than 159.
+- **A refusal is recorded, or it comes back.** `REJECTED_LINKS` holds the
+  (paper, accession) pairs a reader turned down, each with the paper's own
+  reason. The first: PepPr prints PXD023419 only to say it did NOT use it.
 
 ## Checkpoints
 

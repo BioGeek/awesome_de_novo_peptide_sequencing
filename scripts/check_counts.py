@@ -140,13 +140,15 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # introduced both. Unscoped, adding it silently moved this count from 16 to
     # 17 and --fix rewrote the prose to match, which is the registry asserting
     # something untrue about the nine-species benchmark.
+    # PAPERS, not links, as the prose says: one paper can now train on a
+    # version and evaluate on it, which is two links.
     ("CLAUDE.md", "nine-species naming the original",
-     r"benchmark; (\d+) name the original", "SELECT COUNT(*) FROM publication_dataset pd "
+     r"benchmark; (\d+) name the original", "SELECT COUNT(DISTINCT pd.publication_id) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version='original (DeepNovo, 2017)'"),
     ("CLAUDE.md", "nine-species naming the revised",
-     r"name the original, (\d+) the revised", "SELECT COUNT(*) FROM publication_dataset pd "
+     r"name the original, (\d+) the revised", "SELECT COUNT(DISTINCT pd.publication_id) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version LIKE 'revised%'"),
@@ -157,11 +159,11 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "WHERE d.name='Nine-species benchmark' AND v.version='revised (build not stated)'"),
     ("CLAUDE.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
-     "SELECT COUNT(*) FROM publication_dataset WHERE dataset_id="
+     "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset WHERE dataset_id="
      "(SELECT id FROM dataset WHERE name='Nine-species benchmark')"),
     ("CLAUDE.md", "nine-species, version not stated",
      r"and \*\*(\d+) print only a per-species provenance accession\*\*",
-     "SELECT COUNT(*) FROM publication_dataset WHERE dataset_version_id IS NULL AND dataset_id="
+     "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset WHERE dataset_version_id IS NULL AND dataset_id="
      "(SELECT id FROM dataset WHERE name='Nine-species benchmark')"),
     ("WATCHLIST.md", "algorithm rows",
      r"Every one of the (\d+) `algorithm` rows",
@@ -365,6 +367,25 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # preprint and its version of record; more than one WORK is a role error,
     # and this read 1 after a duplicate-dataset fold-in silently promoted every
     # citing paper to 'introduces'. Must stay 0.
+    # What a paper did with a dataset. 'uses' means the purpose is not
+    # recorded, so it must never stand beside a recorded purpose for the same
+    # paper, dataset and version: that would say "unknown" and "known" at once.
+    ("CLAUDE.md", "dataset links with an unknown role",
+     r"(\d+) links carry a role outside these four",
+     "SELECT COUNT(*) FROM publication_dataset "
+     "WHERE role NOT IN ('introduces','trains-on','evaluates-on','uses')"),
+    ("CLAUDE.md", "uses links beside another role",
+     r"(\d+) links\s+are `uses` beside another link",
+     "SELECT COUNT(*) FROM publication_dataset u WHERE u.role='uses' AND EXISTS ("
+     " SELECT 1 FROM publication_dataset s WHERE s.publication_id=u.publication_id"
+     " AND s.dataset_id=u.dataset_id AND s.dataset_version_id IS u.dataset_version_id"
+     " AND s.role <> 'uses')"),
+    ("CLAUDE.md", "dataset links trains-on",
+     r"\*\*(\d+) links are `trains-on`",
+     "SELECT COUNT(*) FROM publication_dataset WHERE role='trains-on'"),
+    ("CLAUDE.md", "dataset links evaluates-on",
+     r"`trains-on` and (\d+) `evaluates-on`\.\*\*",
+     "SELECT COUNT(*) FROM publication_dataset WHERE role='evaluates-on'"),
     ("CLAUDE.md", "versions with several introducing works",
      r"must read zero, and\s+does: \*\*(\d+)\*\* dataset versions",
      """WITH canon AS (
@@ -544,6 +565,8 @@ INVARIANTS = frozenset({
     "family pages without a note",
     "notes without a family page",
     "versions with several introducing works",
+    "dataset links with an unknown role",
+    "uses links beside another role",
     "verified tables without the paper's own method",
     "duplicate measurements",
     "results with a subset but no canonical subset",

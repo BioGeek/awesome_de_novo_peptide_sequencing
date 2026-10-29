@@ -535,17 +535,24 @@ def render_publication(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     L += supplement_lines(ctx["supplements"])
 
     # Data, split the way the role column splits it: what this paper put into
-    # the world, and what it consumed. 'introduces' is the deposit; everything
-    # else is use. Dataset names are plain text, not links: there are no dataset
-    # pages yet, and inventing a URL here would commit one.
-    for heading, roles in (("Data deposited", ("introduces",)),
-                           ("Data used", ("uses", "trains-on", "evaluates-on"))):
-        rows = [r for r in ctx.get("datasets", []) if r[4] in roles]
+    # the world, what its own method was trained on, what it reported results
+    # on, and use whose purpose the catalog has not recorded. One dataset can be
+    # under two headings, a benchmark's training and test splits being the
+    # usual case.
+    data = ctx.get("datasets", [])
+    specific = any(r["role"] in ("trains-on", "evaluates-on") for r in data)
+    for heading, role in (("Data deposited", "introduces"), ("Trained on", "trains-on"),
+                          ("Evaluated on", "evaluates-on"), ("Data used", "uses")):
+        rows = [r for r in data if r["role"] == role]
         if not rows:
             continue
         L += [f"## {heading}", ""]
-        for name, kind, version, addrs, _role in rows:
-            line = f"- **{md_escape(name)}**"
+        if role == "uses" and specific:
+            L += ["Data this paper ran on, where the catalog has not recorded "
+                  "whether for training or for evaluation.", ""]
+        for r in rows:
+            version, addrs = r["version"], r["addrs"]
+            line = f"- **{site.link('datasets', r['ds_id'], r['name'], from_kind=K)}**"
             if version:
                 line += f" <small>({md_escape(version)})</small>"
             else:
@@ -1137,6 +1144,41 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                          "the original is the link to cite and to prefer.")
             L += [note, ""]
 
+    # What the method was trained and evaluated on, from the papers that
+    # DESCRIBE it only: a venomics paper that ran it on a snake venom says
+    # nothing about its training data. 'trains-on' is the describing paper's
+    # own model, never a baseline it retrained, which is why the link can be
+    # read as a statement about this method.
+    if ctx.get("data"):
+        L += ["## Data", "",
+              "What the papers describing this method trained it on and reported "
+              "its results on, as each paper states it. A version is named only "
+              "where the paper names one.", ""]
+        n_desc = len(ctx["described"])
+        for heading, role in (("Trained on", "trains-on"), ("Evaluated on", "evaluates-on"),
+                              ("Deposited", "introduces"),
+                              ("Also used, purpose not recorded", "uses")):
+            items: dict = {}
+            for r in ctx["data"]:
+                if r["role"] == role:
+                    items.setdefault((r["name"], r["version"] or "", r["ds_id"]), []).append(r)
+            if not items:
+                continue
+            L += [f"### {heading}", ""]
+            for (name, version, ds_id), rs in sorted(items.items()):
+                line = f"- {site.link('datasets', ds_id, name, from_kind=K)}"
+                line += (f" <small>({md_escape(version)})</small>" if version
+                         else " <small>(version not stated)</small>")
+                # With several describing papers, say which of them state it: a
+                # preprint and its journal version often differ in exactly this.
+                if n_desc > 1:
+                    pubs = sorted({(str(x["date"] or "")[:4], x["pub_id"], x["ptype"]) for x in rs})
+                    line += " <small>· " + ", ".join(
+                        f"[{y or '?'}{' ' + t if t else ''}]({site.href('publications', p, from_kind=K)})"
+                        for y, p, t in pubs) + "</small>"
+                L.append(line)
+            L.append("")
+
     L += patent_lines(site, "Patents", ctx.get("patents", []), from_kind=K, note=
                       "Patent families that claim this method, matched by hand. A "
                       "patent's status is Google Patents' reading of its legal events.")
@@ -1533,15 +1575,23 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                      f"{md_escape(r['cat_group'] or '')} | {r['n_tools']} |")
         L.append("")
 
-    # ---- papers, split on what they did with it
+    # ---- papers, split on what they did with it. A paper that trained on a
+    # benchmark's training split and reported results on its test split is
+    # under both headings.
+    specific = any(r["role"] in ("trains-on", "evaluates-on") for r in ctx["pubs"])
     for heading, roles, blurb in (
         ("Deposited by", ("introduces",), "produced this data"),
-        ("Used by", ("uses", "trains-on", "evaluates-on"), "ran on it"),
+        ("Trained on by", ("trains-on",), "trained their own method on it"),
+        ("Evaluated on by", ("evaluates-on",), "reported their own method's results on it"),
+        ("Used by", ("uses",), "ran on it"),
     ):
         rows = [r for r in ctx["pubs"] if r["role"] in roles]
         if not rows:
             continue
         L += [f"## {heading} ({len({r['pub_id'] for r in rows})})", ""]
+        if heading == "Used by" and specific:
+            L += ["Papers that ran on it where the catalog has not recorded "
+                  "whether for training or for evaluation.", ""]
         if heading == "Deposited by" and len({r["pub_id"] for r in rows}) > 1:
             # TWO DEPOSITORS HAVE TWO LEGITIMATE SHAPES and the note has to say
             # which one this is. Either one work was published twice, a
@@ -2200,16 +2250,17 @@ def load(conn: sqlite3.Connection) -> dict:
                "  JOIN algorithm a ON a.id = pa.algorithm_id "
                " ORDER BY pd.dataset_id, a.name"):
         d["ds_methods"][r["dataset_id"]].append(r)
-    d["pub_datasets"] = defaultdict(list)       # publication id -> [(name, kind, version, addrs, role)]
-    for r in q("SELECT pd.publication_id, pd.role, pd.dataset_version_id, "
+    d["pub_datasets"] = defaultdict(list)       # publication id -> [{ds_id, name, kind, version, addrs, role}]
+    for r in q("SELECT pd.publication_id, pd.role, pd.dataset_id, pd.dataset_version_id, "
                "       ds.name AS ds_name, ds.kind, dv.version "
                "  FROM publication_dataset pd "
                "  JOIN dataset ds ON ds.id = pd.dataset_id "
                "  LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id "
                " ORDER BY ds.name, dv.version"):
         d["pub_datasets"][r["publication_id"]].append(
-            (r["ds_name"], r["kind"], r["version"],
-             addr_of_version.get(r["dataset_version_id"], []), r["role"]))
+            {"ds_id": r["dataset_id"], "name": r["ds_name"], "kind": r["kind"],
+             "version": r["version"], "addrs": addr_of_version.get(r["dataset_version_id"], []),
+             "role": r["role"]})
     d["supervisors_of"] = defaultdict(list)     # publication id -> [(aid, name)]
     d["supervised_by"] = defaultdict(list)      # supervisor id -> [(pub, title, date, student)]
     d["supervisor_for_student"] = defaultdict(list)  # student id -> [(aid, name, pub, title)]
@@ -2817,6 +2868,9 @@ def main() -> int:
                 "used": used,
                 "repos": repos,
                 "checkpoints": d["checkpoints"].get(gid, []),
+                "data": [dict(x, pub_id=pub_id, date=date, ptype=ptype)
+                         for pub_id, _t, date, _j, ptype, _r in described
+                         for x in d["pub_datasets"].get(pub_id, [])],
                 "patents": d["alg_patents"].get(gid, []),
                 "supplements": [x for pub_id, *_r in described
                                 for x in d["supplements"].get(pub_id, [])],

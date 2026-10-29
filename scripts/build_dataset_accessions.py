@@ -80,6 +80,22 @@ NOT_DATA = [
 ]
 DOI_LIKE = re.compile(r"^10\.\d{4,9}/")
 
+# A version with more provenance addresses than this is a training CORPUS
+# listing its source projects, not a benchmark assembled from a few
+# submissions. Printing one of MassNet's 647 PRIDE sources says a paper used
+# that project, not MassNet: three papers (582, 801, 846) were proposed as
+# MassNet users that way. The nine-species benchmark's nine sources stay under
+# it, because a paper printing one of those IS running on the benchmark's data.
+CORPUS_PROVENANCE = 20
+
+# Links a reader has refused, by (publication id, accession), each with the
+# paper's own reason. Without this they come back on every run.
+REJECTED_LINKS = {
+    (996, "PXD023419"): "PepPr names the Herceptin and anti-FLAG-M2 data only to "
+                        "say it did not use them: their cysteines were alkylated with "
+                        "iodoacetic acid, which Casanovo does not support.",
+}
+
 
 def datacite_attributes(doi: str, cache: pathlib.Path) -> dict:
     """The DataCite record's attributes, cached; {} when there is none.
@@ -227,7 +243,19 @@ def main() -> int:
     # one already catalogued. Every accession is keyed in lower case.
     for acc, dsid, vid, prov in rows:
         by_acc[acc.split("#")[0].lower()].append((dsid, vid, prov, "#" in acc))
+    prov_count = collections.Counter(vid for _a, _d, vid, prov in rows if prov)
+    corpus_sources: set[str] = set()
     for acc, claims in by_acc.items():
+        # A corpus's source list is not a use of the corpus (CORPUS_PROVENANCE).
+        # Dropping those claims first also un-blocks an accession that is a
+        # dataset in its own right AND one of a corpus's sources: PXD014877 is
+        # the Kingdoms of Life deposit and one of InstaNovo-FM's 92 sources,
+        # and was left out as ambiguous.
+        kept = [c for c in claims if not (c[2] and prov_count[c[1]] > CORPUS_PROVENANCE)]
+        if not kept:
+            corpus_sources.add(acc)
+            continue
+        claims = kept
         datasets = {d for d, _, _, _ in claims}
         direct = [(d, v) for d, v, p, _ in claims if not p]
         # A PAPER PRINTS THE BARE ACCESSION, never the '#folder' that tells one
@@ -257,8 +285,18 @@ def main() -> int:
     print(f"{len(pub_of)} filed PDFs, {len(known)} known accessions", file=sys.stderr)
     hits = scan(args.dir, only, pub_of)
 
-    introduced = dict(con.execute(
-        "SELECT introduced_by, id FROM dataset_version WHERE introduced_by IS NOT NULL").fetchall())
+    # A SET, not a dict keyed by paper: a paper can introduce several versions,
+    # and the dict kept only the last, so every other deposit of that paper came
+    # back proposed as a second, 'uses' link beside its 'introduces' one (62 of
+    # the 83 proposals when this was found).
+    introduced = {tuple(r) for r in con.execute(
+        "SELECT introduced_by, id FROM dataset_version WHERE introduced_by IS NOT NULL")}
+    # A paper that already links a dataset, in any version and any role, has
+    # had that link curated: a bare accession can only ever add a LESS specific
+    # version ('revised (build not stated)' beside 'revised (MassIVE 2024)'), or
+    # repeat as 'uses' what a reader recorded as 'trains-on' or 'evaluates-on'.
+    # tuple(), because a sqlite3.Row never equals the tuple it is tested against.
+    already = {tuple(r) for r in con.execute("SELECT publication_id, dataset_id FROM publication_dataset")}
 
     linked = skipped = 0
     # Several accessions legitimately resolve to the same link: a paper that
@@ -268,7 +306,17 @@ def main() -> int:
     # the report is the wrong one.
     seen: set[tuple[int, int, int, str]] = set()
     unknown: list[tuple[int, str, str, str]] = []
+    rejected = {(pid, acc.lower()) for pid, acc in REJECTED_LINKS}
+    n_corpus = n_rejected = 0
     for (repo, acc), pids in sorted(hits.items(), key=lambda kv: -len(kv[1])):
+        if acc.lower() in corpus_sources:
+            n_corpus += len(pids)
+            continue
+        refused = {pid for pid in pids if (pid, acc.lower()) in rejected}
+        n_rejected += len(refused)
+        pids = pids - refused
+        if not pids:
+            continue
         target = known.get(acc.lower())
         if target is None:
             title = con.execute("SELECT title FROM publication WHERE id=?",
@@ -278,15 +326,14 @@ def main() -> int:
             continue
         dsid, vid = target
         for pid in sorted(pids):
-            role = "introduces" if introduced.get(pid) == vid and vid else "uses"
+            # The miner cannot tell training from evaluation, so a new link is
+            # 'uses': purpose not recorded. A reader upgrades it.
+            role = "introduces" if (pid, vid) in introduced and vid else "uses"
             key = (pid, dsid, vid if vid is not None else -1, role)
             if key in seen:
                 continue
             seen.add(key)
-            exists = con.execute("""SELECT 1 FROM publication_dataset
-                 WHERE publication_id=? AND dataset_id=? AND IFNULL(dataset_version_id,-1)=?
-                   AND role=?""", key).fetchone()
-            if exists:
+            if (pid, dsid) in already:
                 skipped += 1
                 continue
             if args.write:
@@ -326,7 +373,9 @@ def main() -> int:
     # fact excluded.
     print(f"  of those already known   {len(hits) - len(unknown) - len(excluded)}")
     print(f"  publication_dataset rows {'written' if args.write else 'proposed'}: {linked}"
-          f" ({skipped} already present)")
+          f" ({skipped} already linked to that dataset)")
+    print(f"  not proposed             {n_corpus} hits on a corpus's source projects, "
+          f"{n_rejected} refused in REJECTED_LINKS")
     print(f"  unknown accessions       {len(unknown)}, "
           f"{len(kept)} cited by >= {args.min_papers} papers -> {CANDIDATES.name}")
     print(f"  excluded as not data     {len(excluded)}")
