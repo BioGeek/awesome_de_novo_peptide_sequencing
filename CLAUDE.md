@@ -1461,7 +1461,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**486 datasets, 528 versions, 1312 addresses, 957 publication links over 291 papers.**
+**486 datasets, 528 versions, 1312 addresses, 1227 publication links over 301 papers.**
 
 ### What a paper did with a dataset
 
@@ -1494,7 +1494,7 @@ invariant. It read 10 when first registered, every one a `uses` beside an
 `trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
 trains on it too, and one paper can hold both of those for one version, its
 training and test splits.
-**0 links are `trains-on` and 109 `evaluates-on`.**
+**289 links are `trains-on` and 388 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
@@ -1519,7 +1519,7 @@ ones:
   `... 2024`, addressed as `MSV000090982#peak` and `MSV000090982#updates/...`;
   InstaNovo's `ninespecies_updated` IPC files are a second address of 2023. The
   BARE accession sits on `revised (build not stated)`, which is where a paper
-  printing only MSV000090982, or only "the revised benchmark", belongs: 17 links
+  printing only MSV000090982, or only "the revised benchmark", belongs: 19 links
   do. `build_dataset_accessions.py` resolves a bare accession to the one
   address that is bare, so those links keep landing there, and the miner's
   `VERSION_LEXICON` sends its generic revised cues to the same version. A
@@ -1562,9 +1562,9 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 68 papers use the
-nine-species benchmark; 31 name the original, 25 the revised, 3 the InstaNovo
-split, 1 dIon's retrieval benchmark, and **36 print only a per-species provenance accession**, which does not
+**A NULL `dataset_version_id` is the finding, not a gap.** 80 papers use the
+nine-species benchmark; 49 name the original, 29 the revised, 3 the InstaNovo
+split, 1 dIon's retrieval benchmark, and **34 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. A paper naming two versions is counted
 under each, so the parts add up to more than the whole. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.
