@@ -129,8 +129,8 @@ rejects anything that does not end like an abstract.
 
 ### `build_dataset_accessions.py`
 Finds repository accessions (PXD, MSV, Zenodo, figshare, Hugging Face) in the
-PDFs and links papers to datasets already catalogued; unknown accessions go to
-`dataset_candidates.csv`.
+PDFs and their supplementary files, and links papers to datasets already
+catalogued, always as `uses`; unknown accessions go to `dataset_candidates.csv`.
 
 ### `build_paper_comparisons.py`
 The comparison-table miner: locates benchmark tables in the PDFs, parses them

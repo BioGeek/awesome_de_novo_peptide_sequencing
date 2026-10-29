@@ -42,6 +42,7 @@ import re
 import sqlite3
 import subprocess
 import sys
+import zipfile
 
 DB = (pathlib.Path(__file__).resolve().parent.parent / "denovo.db")
 DEFAULT_DIR = pathlib.Path.home() / "Documents" / "de_novo_peptide_sequencing"  # = build_pdf_library.DEFAULT_DIR
@@ -94,6 +95,8 @@ REJECTED_LINKS = {
     (996, "PXD023419"): "PepPr names the Herceptin and anti-FLAG-M2 data only to "
                         "say it did not use them: their cysteines were alkylated with "
                         "iodoacetic acid, which Casanovo does not support.",
+    (57, "PXD008899"): "A typo in Table 4.4's caption of the PointNovo thesis: the "
+                       "sclera data it searched is PXD008999, linked as such.",
 }
 
 
@@ -185,16 +188,51 @@ def file_to_publication(con: sqlite3.Connection, library: pathlib.Path) -> dict[
     return out
 
 
-def scan(library: pathlib.Path, only: set[int] | None, pub_of: dict[str, int]):
+def sheet_text(path: pathlib.Path) -> str:
+    """The text of an .xlsx, read as the zip of XML it is: an accession in a
+    spreadsheet is a plain shared string, so no spreadsheet library is needed."""
+    try:
+        with zipfile.ZipFile(path) as z:
+            xml = " ".join(z.read(n).decode("utf-8", "replace")
+                           for n in z.namelist() if n.endswith(".xml"))
+    except (OSError, zipfile.BadZipFile) as exc:
+        print(f"  !! {path.name}: {exc}", file=sys.stderr)
+        return ""
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", xml))
+
+
+def supplements_of(pubs: list[dict], library: pathlib.Path) -> list[tuple[int, pathlib.Path]]:
+    """Every file in supplements/ named after a paper: '<paper> - <label>.pdf|.xlsx'.
+
+    Wider than build_pdf_library.supplement_files(), which takes only the
+    numbered PDFs because that is what the table miner reads. An accession
+    list is as likely to sit in 'Supplementary Data 1.xlsx' or 'Source
+    Data.xlsx': MassNet's 647 source projects are a spreadsheet."""
+    import build_pdf_library as bpl
+
+    d = library / bpl.SUPP_DIR
+    if not d.is_dir():
+        return []
+    out = []
+    for pub in pubs:
+        stem = bpl.zotero_name(pub)[:-4] + " - "
+        for f in sorted(d.iterdir()):
+            if f.name.startswith(stem) and f.suffix.lower() in (".pdf", ".xlsx"):
+                out.append((pub["id"], f))
+    return out
+
+
+def scan(library: pathlib.Path, only: set[int] | None, pub_of: dict[str, int],
+         supplements: list[tuple[int, pathlib.Path]] = ()):
     import build_pdf_library as bpl
 
     pdfs = bpl.pdfs(library)
     hits: dict[tuple[str, str], set[int]] = collections.defaultdict(set)
-    for n, pdf in enumerate(pdfs, 1):
-        pid = pub_of.get(pdf.name)
+    sources = [(pub_of.get(pdf.name), pdf) for pdf in pdfs] + list(supplements)
+    for n, (pid, pdf) in enumerate(sources, 1):
         if pid is None or (only and pid not in only):
             continue
-        text = pdf_text(pdf)
+        text = sheet_text(pdf) if pdf.suffix.lower() == ".xlsx" else pdf_text(pdf)
         for repo, rx in PATTERNS.items():
             for m in rx.finditer(text):
                 acc = m.group(1) if rx.groups else m.group(0)
@@ -205,7 +243,7 @@ def scan(library: pathlib.Path, only: set[int] | None, pub_of: dict[str, int]):
                 acc = acc.rstrip(".")
                 hits[(repo, acc)].add(pid)
         if n % 50 == 0:
-            print(f"  {n}/{len(pdfs)}", file=sys.stderr)
+            print(f"  {n}/{len(sources)}", file=sys.stderr)
     return hits
 
 
@@ -244,6 +282,14 @@ def main() -> int:
     for acc, dsid, vid, prov in rows:
         by_acc[acc.split("#")[0].lower()].append((dsid, vid, prov, "#" in acc))
     prov_count = collections.Counter(vid for _a, _d, vid, prov in rows if prov)
+    # accession -> the versions that list it as a source. A paper already linked
+    # to one of those versions has said all an accession of its sources can:
+    # MassNet's own paper prints its 647 projects in a supplementary sheet, and
+    # nine of them are deposits catalogued in their own right.
+    prov_of: dict[str, set[int]] = collections.defaultdict(set)
+    for acc, _d, vid, prov in rows:
+        if prov:
+            prov_of[acc.split("#")[0].lower()].add(vid)
     corpus_sources: set[str] = set()
     for acc, claims in by_acc.items():
         # A corpus's source list is not a use of the corpus (CORPUS_PROVENANCE).
@@ -283,7 +329,10 @@ def main() -> int:
     only = {int(i) for i in args.ids.split(",")} if args.ids else None
     pub_of = file_to_publication(con, args.dir)
     print(f"{len(pub_of)} filed PDFs, {len(known)} known accessions", file=sys.stderr)
-    hits = scan(args.dir, only, pub_of)
+    import build_pdf_library as bpl
+    supps = supplements_of(bpl.load_publications(con), args.dir)
+    print(f"{len(supps)} supplementary files", file=sys.stderr)
+    hits = scan(args.dir, only, pub_of, supps)
 
     # A SET, not a dict keyed by paper: a paper can introduce several versions,
     # and the dict kept only the last, so every other deposit of that paper came
@@ -297,6 +346,9 @@ def main() -> int:
     # repeat as 'uses' what a reader recorded as 'trains-on' or 'evaluates-on'.
     # tuple(), because a sqlite3.Row never equals the tuple it is tested against.
     already = {tuple(r) for r in con.execute("SELECT publication_id, dataset_id FROM publication_dataset")}
+    linked_versions = {tuple(r) for r in con.execute(
+        "SELECT publication_id, dataset_version_id FROM publication_dataset "
+        "WHERE dataset_version_id IS NOT NULL")}
 
     linked = skipped = 0
     # Several accessions legitimately resolve to the same link: a paper that
@@ -333,7 +385,8 @@ def main() -> int:
             if key in seen:
                 continue
             seen.add(key)
-            if (pid, dsid) in already:
+            if (pid, dsid) in already or any(
+                    (pid, v) in linked_versions for v in prov_of.get(acc.lower(), ())):
                 skipped += 1
                 continue
             if args.write:

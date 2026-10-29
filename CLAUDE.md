@@ -1461,7 +1461,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**486 datasets, 528 versions, 1312 addresses, 1227 publication links over 301 papers.**
+**486 datasets, 528 versions, 1312 addresses, 1229 publication links over 301 papers.**
 
 ### What a paper did with a dataset
 
@@ -1494,7 +1494,7 @@ invariant. It read 10 when first registered, every one a `uses` beside an
 `trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
 trains on it too, and one paper can hold both of those for one version, its
 training and test splits.
-**289 links are `trains-on` and 388 `evaluates-on`.**
+**289 links are `trains-on` and 389 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
@@ -1946,6 +1946,13 @@ Two traps, both hit while writing it:
 - **A refusal is recorded, or it comes back.** `REJECTED_LINKS` holds the
   (paper, accession) pairs a reader turned down, each with the paper's own
   reason. The first: PepPr prints PXD023419 only to say it did NOT use it.
+- **Supplements are read too**, PDFs and spreadsheets: every file in
+  `supplements/` named after a paper, wider than `supplement_files()`, which
+  takes only the numbered PDFs the table miner wants. An `.xlsx` is read as
+  the zip of XML it is, with no spreadsheet library. MassNet's 647 source
+  projects are a spreadsheet, so the same paper then printed nine projects
+  that are deposits in their own right; a paper already linked to a version
+  that lists an accession as a source gets no second link for it.
 
 ## Checkpoints
 

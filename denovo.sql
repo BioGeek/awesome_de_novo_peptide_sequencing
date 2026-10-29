@@ -41305,6 +41305,8 @@ INSERT INTO publication_dataset VALUES(1559,26,347,370,'introduces');
 INSERT INTO publication_dataset VALUES(1560,26,346,369,'introduces');
 INSERT INTO publication_dataset VALUES(1561,26,348,371,'introduces');
 INSERT INTO publication_dataset VALUES(1562,62,1,1,'introduces');
+INSERT INTO publication_dataset VALUES(1563,21,18,27,'uses');
+INSERT INTO publication_dataset VALUES(1564,990,284,307,'evaluates-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
