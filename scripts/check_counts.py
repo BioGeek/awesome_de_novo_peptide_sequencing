@@ -128,7 +128,9 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      r"one\.\*\* \d+ of (\d+) versions have none", "SELECT COUNT(*) FROM dataset_version"),
     ("CLAUDE.md", "ProteomeTools versions",
      r"\*\*ProteomeTools has (\w+) versions",
-     lambda db: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight"}.get(
+     # Past the map it falls back to digits: a missing key once wrote "None".
+     lambda db: (lambda n: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight",
+                            9:"nine",10:"ten",11:"eleven",12:"twelve"}.get(n, str(n)))(
          db.execute("SELECT COUNT(*) FROM dataset_version WHERE dataset_id="
                     "(SELECT id FROM dataset WHERE name='ProteomeTools')").fetchone()[0])),
     # BOTH OF THESE MUST NAME THE DATASET, not just the version label. A
@@ -422,6 +424,14 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(DISTINCT algorithm_id) FROM checkpoint"),
     ("CLAUDE.md", "checkpoints recorded",
      r"Measured over the (\d+) recorded checkpoints", "SELECT COUNT(*) FROM checkpoint"),
+    ("CLAUDE.md", "checkpoints live",
+     r"recorded checkpoints: (\d+) live", "SELECT COUNT(*) FROM checkpoint WHERE status='live'"),
+    ("CLAUDE.md", "checkpoints verified",
+     r"recorded checkpoints: \d+ live, (\d+) verified",
+     "SELECT COUNT(*) FROM checkpoint WHERE status='verified'"),
+    ("CLAUDE.md", "checkpoints gated",
+     r"recorded checkpoints: \d+ live, \d+ verified, (\d+) gated",
+     "SELECT COUNT(*) FROM checkpoint WHERE status='gated'"),
     ("WATCHLIST.md", "review entries",
      r"All (\d+) existing review entries",
      "SELECT COUNT(*) FROM algorithm WHERE kind='review'"),

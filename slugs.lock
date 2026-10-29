@@ -822,6 +822,7 @@ algorithms	821	scopenovo
 algorithms	822	bynovo
 algorithms	823	peptidomicsdb
 algorithms	824	peptide-similarity-alignment
+algorithms	825	peppr
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4645,6 +4646,7 @@ authors	3939	jianbo-pan
 authors	3940	cemil-can-saylan
 authors	3941	armin-suleymaniniya
 authors	3942	anil-k-shukla
+authors	3943	samuel-khan
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -5128,6 +5130,9 @@ datasets	491	15-species-benchmark
 datasets	492	scopenovo-a-de-novo-peptide-sequencing-method-using-spectrum-spectrum
 datasets	493	dion-de-novo-labeled-v1-dnl-v1
 datasets	494	a-systematic-evaluation-of-common-yeast-whole-cell-lysate-proteomics-sample
+datasets	495	proteomic-diversity-in-bacteria-insights-and-implications-for-bacterial
+datasets	496	fit-for-purpose-approach-to-evaluate-detection-of-amino-acid-substitutions-in
+datasets	497	benchmark-data-and-evaluation-results-for-peppr
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -7259,6 +7264,7 @@ publications	992	peptidomicsdb-a-unified-resource-of-endogenous-peptidomes-for-p
 publications	993	beyond-best-guesses-a-multi-level-confidence-assessment-framework-for-de-novo
 publications	994	proteomics-of-natural-bacterial-isolates-powered-by-deep-learning-based-de-novo
 publications	995	uncovering-hidden-members-and-functions-of-the-soil-microbiome-using-preprint
+publications	996	peppr-de-novo-peptide-sequencing-with-peptide-priors
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
