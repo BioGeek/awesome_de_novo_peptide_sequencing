@@ -43,7 +43,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-9663bb0904c60b45822cbef40c243d14.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-ab3a364c462236a40817854d0be56221.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -157,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">MassIVE-KB</h1>
-<p class="subtitle lead">training · DDA · 2 versions · 6 papers</p>
+<p class="subtitle lead">training · DDA · 3 versions · 7 papers</p>
 </div>
 
 <div>
@@ -179,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","description":"A repository-wide spectral library of human peptide PSMs, large enough to train on and cited by version number. No single accession stands for it, which is why papers name it rather than an identifier.","identifier":["MSV000081142"],"name":"MassIVE-KB","url":"https://massive.ucsd.edu/ProteoSAFe/static/massive-kb-libraries.jsp"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","description":"A repository-wide spectral library of human peptide PSMs, large enough to train on and cited by version number. No single accession stands for it, which is why papers name it rather than an identifier.","identifier":["MSV000081142","10.5281/zenodo.14967861"],"name":"MassIVE-KB","url":"https://massive.ucsd.edu/ProteoSAFe/static/massive-kb-libraries.jsp"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -216,10 +216,20 @@ ul.task-list li input[type="checkbox"] {
 <p>The later, larger release; papers that say only “MassIVE-KB” are ambiguous between the two.</p>
 <p>No public address: this version is named in the literature but cannot be downloaded.</p>
 </section>
-</section>
-<section id="used-by-6" class="level2">
-<h2 class="anchored" data-anchor-id="used-by-6">Used by (6)</h2>
+<section id="v1-30m-psm-split-casanovo" class="level3">
+<h3 class="anchored" data-anchor-id="v1-30m-psm-split-casanovo">v1 30M-PSM split (Casanovo)</h3>
+<p>Up to the top 100 PSMs for each of the 2,154,269 precursors in the MassIVE-KB v1 spectral library, split peptide-disjoint into training, validation and test sets; deposited by Wout Bittremieux as the data Casanovo is trained on.</p>
+<p>spectra 30,504,897 · train 28,508,636 · validation 1,000,234 · test 996,027 · released 2025-03-10</p>
+<p>Where it lives:</p>
 <ul>
+<li><strong>DOI</strong> · <a href="https://doi.org/10.5281/zenodo.14967861">10.5281/zenodo.14967861</a></li>
+</ul>
+</section>
+</section>
+<section id="used-by-7" class="level2">
+<h2 class="anchored" data-anchor-id="used-by-7">Used by (7)</h2>
+<ul>
+<li><a href="../publications/peppr-de-novo-peptide-sequencing-with-peptide-priors.html">PepPr: De Novo peptide sequencing with peptide priors</a> (2026) <small>preprint</small> <small>v1 30M-PSM split (Casanovo)</small></li>
 <li><a href="../publications/massnet-billion-scale-ai-ready-mass-spectral-corpus-empowering-scalable-deep.html">MassNet: billion-scale AI-ready mass spectral corpus empowering scalable deep learning in proteomics</a> (2026) <small>peer-reviewed</small> <small>version not stated</small></li>
 <li><a href="../publications/pi-helixnovo2-making-accurate-online-de-novo-peptide-sequencing-available-to-all.html">π-HelixNovo2: Making Accurate Online De Novo Peptide Sequencing Available to All</a> (2026) <small>peer-reviewed</small> <small>v1</small></li>
 <li><a href="../publications/massnet-billion-scale-ai-friendly-mass-spectral-corpus-enables-robust-de-novo.html">MassNet: billion-scale AI-friendly mass spectral corpus enables robust de novo peptide sequencing</a> (2025) <small>preprint</small> <small>version not stated</small></li>
@@ -295,9 +305,10 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>π-PrimeNovo</strong> phosphorylation: INHERITED, not direct: fine-tuned from model_massive.ckpt, which was trained on MassIVE-KB. Its own fine-tuning set, 2020-Cell-LUAD, is not in this catalog</li>
 </ul>
 </section>
-<section id="methods-on-these-papers-4" class="level2">
-<h2 class="anchored" data-anchor-id="methods-on-these-papers-4">Methods on these papers (4)</h2>
+<section id="methods-on-these-papers-5" class="level2">
+<h2 class="anchored" data-anchor-id="methods-on-these-papers-5">Methods on these papers (5)</h2>
 <ul>
+<li><a href="../algorithms/peppr.html">PepPr</a> <small>algorithm</small></li>
 <li><a href="../algorithms/powernovo.html">PowerNovo</a> <small>algorithm</small></li>
 <li><a href="../algorithms/xuanjinovo.html">XuanjiNovo</a> <small>algorithm</small></li>
 <li><a href="../algorithms/pi-helixnovo.html">π-HelixNovo</a> <small>algorithm</small></li>

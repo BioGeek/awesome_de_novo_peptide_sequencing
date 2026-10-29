@@ -130,7 +130,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/massive-kb.html</loc>
-    <lastmod>2024-01-01T00:00:00.000Z</lastmod>
+    <lastmod>2025-03-10T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/an-automated-and-fast-sample-preparation-workflow-for-laser-microdissection.html</loc>
@@ -6898,7 +6898,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/daniela-klaproth-andrade.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/a-vertommen.html</loc>
@@ -7742,7 +7742,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/yanik-bruns.html</loc>
-    <lastmod>2025-12-23T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/andrzej-dzionek.html</loc>
@@ -12610,7 +12610,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/technical-university-of-munich.html</loc>
-    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/universidad-nacional-agraria-la-molina.html</loc>
@@ -19290,7 +19290,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/helmholtz-center-munich.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/genentech-inc.html</loc>
@@ -22470,7 +22470,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/mathias-wilhelm.html</loc>
-    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/tingpeng-yang.html</loc>
@@ -23970,7 +23970,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/julien-gagneur.html</loc>
-    <lastmod>2026-03-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/matthys-g-potgieter.html</loc>
@@ -27438,7 +27438,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/biorxiv.html</loc>
-    <lastmod>2026-10-11T00:00:00.000Z</lastmod>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/biocomputing-2006.html</loc>
@@ -30327,5 +30327,33 @@
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
     <lastmod>2026-10-28T12:06:54.907Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
+    <lastmod>2026-10-29T09:48:58.263Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/peppr.html</loc>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/samuel-khan.html</loc>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/benchmark-data-and-evaluation-results-for-peppr.html</loc>
+    <lastmod>2026-10-24T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/fit-for-purpose-approach-to-evaluate-detection-of-amino-acid-substitutions-in.html</loc>
+    <lastmod>2024-01-01T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/proteomic-diversity-in-bacteria-insights-and-implications-for-bacterial.html</loc>
+    <lastmod>2024-01-01T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/peppr-de-novo-peptide-sequencing-with-peptide-priors.html</loc>
+    <lastmod>2026-10-28T00:00:00.000Z</lastmod>
   </url>
 </urlset>
