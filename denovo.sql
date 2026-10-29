@@ -38208,6 +38208,12 @@ INSERT INTO dataset VALUES(494,'A systematic evaluation of common yeast whole ce
 INSERT INTO dataset VALUES(495,'Proteomic diversity in bacteria: Insights and implications for bacterial identification','Proteomic diversity in bacteria: Insights and implications for bacterial identification','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(496,'Fit for Purpose Approach to Evaluate Detection of Amino Acid Substitutions in Shotgun Proteomics','Fit for Purpose Approach to Evaluate Detection of Amino Acid Substitutions in Shotgun Proteomics','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(497,'Benchmark data and evaluation results for PepPr','Benchmark data and evaluation results for PepPr','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(498,'ABRF PRG 2018 HeLa DDA','HeLa DDA runs from the ABRF Proteomics Research Group''s 2018 study, "Evaluation of Data-Independent Acquisition (DIA) for Protein Quantification in Academic and Core Facility Settings". DeepNovoV2 and PointNovo split them into peptide-disjoint training, validation and test sets, and later papers test on PointNovo''s.','benchmark','DDA','Homo sapiens (HeLa)','https://abrf.org/research-group/proteomics-research-group-prg');
+INSERT INTO dataset VALUES(499,'NIST peptide tandem mass spectral libraries','NIST''s consensus libraries of annotated peptide spectra, per organism and per instrument, used as training data by spectrum-to-sequence models since PepNet.','training',NULL,'Homo sapiens and other species','https://chemdata.nist.gov/dokuwiki/doku.php?id=peptidew:cdownload');
+INSERT INTO dataset VALUES(500,'DIA_urine_proteomics_biomarker_discovery_abdominal-pain','Urine DIA from 64 subjects with abdominal pain (Muntel et al. 2015, J Proteome Res), the ''Pain'' set DeepNovo-DIA and its successors train on. Named as PeptideAtlas titles it.','deposit','DIA','Homo sapiens',NULL);
+INSERT INTO dataset VALUES(501,'CPTAC CCRCC Discovery Study - DIA Proteome','CPTAC CCRCC Discovery Study - DIA Proteome','deposit','DIA','Homo sapiens',NULL);
+INSERT INTO dataset VALUES(502,'CPTAC PDA Discovery Study - DIA Proteome','CPTAC PDA Discovery Study - DIA Proteome','deposit','DIA','Homo sapiens',NULL);
+INSERT INTO dataset VALUES(503,'Chorus project 1105','HeLa DIA runs that DIANovo cites to Pecan (Ting et al. 2017, Nature Methods). Chorus has closed, so the project''s own title can no longer be read and it is named by its number.','deposit','DIA','Homo sapiens (HeLa)',NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38749,6 +38755,13 @@ INSERT INTO dataset_version VALUES(536,496,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(537,497,'as deposited','Processed benchmark spectra with ground truth (nine-species, Kingdoms of Life subsets, ProteomeTools SAAV, antibodies, the fusion-head training subset of MassIVE-KB), predictions and evaluation outputs. Restricted to peer reviewers until the paper is published.',NULL,NULL,NULL,NULL,'2026-10-24',996);
 INSERT INTO dataset_version VALUES(538,3,'v1 30M-PSM split (Casanovo)','Up to the top 100 PSMs for each of the 2,154,269 precursors in the MassIVE-KB v1 spectral library, split peptide-disjoint into training, validation and test sets; deposited by Wout Bittremieux as the data Casanovo is trained on.',30504897,28508636,1000234,996027,'2025-03-10',NULL);
 INSERT INTO dataset_version VALUES(539,2,'single amino-acid variants (SAAV)','Synthetic peptides each carrying one residue substitution relative to a human reference peptide, searched with MaxQuant; PepPr evaluates on 74,575 PSMs of it. PRIDE PXD081052 was private on 2026-10-28, available to peer reviewers on request.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(540,498,'PRG 2018 runs','The study''s HeLa DDA runs. No paper here gives them an accession; the address is π-HelixNovo''s processed copy of PointNovo''s test set, in a Zenodo record that also holds its code and weights.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(541,499,'H. sapiens Orbitrap HCD','NIST''s human Orbitrap HCD library. DpNovo trains on its ''Library 1 (best)'', 398,373 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(542,499,'synthetic HCD','NIST''s HCD library of synthetic peptides, which PepNet names beside its human HCD library.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(543,500,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(544,501,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(545,502,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(546,503,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40071,6 +40084,11 @@ INSERT INTO dataset_address VALUES(1322,536,'MassIVE','MSV000092029','https://ma
 INSERT INTO dataset_address VALUES(1323,537,'DOI','10.5281/zenodo.21869640','https://doi.org/10.5281/zenodo.21869640',NULL,0);
 INSERT INTO dataset_address VALUES(1324,538,'DOI','10.5281/zenodo.14967861','https://doi.org/10.5281/zenodo.14967861',NULL,0);
 INSERT INTO dataset_address VALUES(1325,539,'PRIDE','PXD081052','https://www.ebi.ac.uk/pride/archive/projects/PXD081052',NULL,0);
+INSERT INTO dataset_address VALUES(1326,543,'PeptideAtlas','PASS00706','https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/PASS_View?identifier=PASS00706',NULL,0);
+INSERT INTO dataset_address VALUES(1327,544,'PDC','PDC000200','https://pdc.cancer.gov/pdc/study/PDC000200',NULL,0);
+INSERT INTO dataset_address VALUES(1328,545,'PDC','PDC000341','https://pdc.cancer.gov/pdc/study/PDC000341',NULL,0);
+INSERT INTO dataset_address VALUES(1329,546,'Chorus','1105','https://chorusproject.org/pages/dashboard.html#/projects/all/1105/experiments',NULL,0);
+INSERT INTO dataset_address VALUES(1330,540,'DOI','10.5281/zenodo.10405582','https://doi.org/10.5281/zenodo.10405582','datasets.zip: π-HelixNovo''s processed copy of PointNovo''s test set',0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -41307,6 +41325,43 @@ INSERT INTO publication_dataset VALUES(1561,26,348,371,'introduces');
 INSERT INTO publication_dataset VALUES(1562,62,1,1,'introduces');
 INSERT INTO publication_dataset VALUES(1563,21,18,27,'uses');
 INSERT INTO publication_dataset VALUES(1564,990,284,307,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1565,59,498,540,'trains-on');
+INSERT INTO publication_dataset VALUES(1566,59,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1567,52,498,540,'trains-on');
+INSERT INTO publication_dataset VALUES(1568,52,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1569,54,498,540,'trains-on');
+INSERT INTO publication_dataset VALUES(1570,54,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1571,57,498,540,'trains-on');
+INSERT INTO publication_dataset VALUES(1572,57,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1573,18,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1574,34,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1575,114,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1576,219,498,540,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1577,44,499,541,'trains-on');
+INSERT INTO publication_dataset VALUES(1578,44,499,NULL,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1579,39,499,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1580,39,499,542,'trains-on');
+INSERT INTO publication_dataset VALUES(1581,110,499,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1582,110,499,542,'trains-on');
+INSERT INTO publication_dataset VALUES(1583,219,499,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1584,219,499,542,'trains-on');
+INSERT INTO publication_dataset VALUES(1585,28,499,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1586,28,499,NULL,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1587,125,499,NULL,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1588,60,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1589,121,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1590,45,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1591,283,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1592,11,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1593,23,500,543,'trains-on');
+INSERT INTO publication_dataset VALUES(1594,11,503,546,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1595,23,503,546,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1596,29,501,544,'trains-on');
+INSERT INTO publication_dataset VALUES(1597,29,502,545,'trains-on');
+INSERT INTO publication_dataset VALUES(1598,103,501,544,'trains-on');
+INSERT INTO publication_dataset VALUES(1599,103,502,545,'trains-on');
+INSERT INTO publication_dataset VALUES(1600,221,501,544,'trains-on');
+INSERT INTO publication_dataset VALUES(1601,221,501,544,'evaluates-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

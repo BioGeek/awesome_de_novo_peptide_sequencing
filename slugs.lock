@@ -5133,6 +5133,12 @@ datasets	494	a-systematic-evaluation-of-common-yeast-whole-cell-lysate-proteomic
 datasets	495	proteomic-diversity-in-bacteria-insights-and-implications-for-bacterial
 datasets	496	fit-for-purpose-approach-to-evaluate-detection-of-amino-acid-substitutions-in
 datasets	497	benchmark-data-and-evaluation-results-for-peppr
+datasets	498	abrf-prg-2018-hela-dda
+datasets	499	nist-peptide-tandem-mass-spectral-libraries
+datasets	500	dia-urine-proteomics-biomarker-discovery-abdominal-pain
+datasets	501	cptac-ccrcc-discovery-study-dia-proteome
+datasets	502	cptac-pda-discovery-study-dia-proteome
+datasets	503	chorus-project-1105
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
