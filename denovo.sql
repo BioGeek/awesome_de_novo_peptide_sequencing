@@ -41425,7 +41425,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shak
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2pip',51,22,5,82,1,183,'2026-07-13T17:01:59Z','2026-10-26T11:37:56','v4.2.0');
 INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_PhysNovo',3,0,1,0,0,0,'2026-05-13T07:08:03Z','2026-10-16T10:12:43',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,1,0,0,0,0,'2026-08-13T12:53:35Z','2026-10-24T09:52:42','panel30-configs-frozen');
-INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,5,21,2,50,'2026-10-30T11:31:10Z','2026-10-30T11:43:39','v0.3.1');
+INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,5,21,3,50,'2026-10-30T12:01:57Z','2026-10-31T11:17:07','v0.3.1');
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',14,3,1,0,6,15,'2026-10-23T12:10:57Z','2026-10-26T11:37:56','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
@@ -41470,7 +41470,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/fburic/paradias',7,2,N
 INSERT INTO repository_metrics VALUES('https://github.com/rki-mf2/MegaPX',4,0,1,0,1,4,'2026-05-16T13:36:42Z','2026-10-05T12:46:50','v.1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/LoserLus/DBond',1,1,0,0,0,0,'2026-04-29T15:51:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/dIon',1,0,0,0,0,0,'2026-10-12T15:36:25Z','2026-10-13T13:00:39',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/MannLabs/fasta-lake',9,0,0,2,5,6,'2026-10-23T19:29:17Z','2026-10-26T11:37:56','v1.1.0rc2');
+INSERT INTO repository_metrics VALUES('https://github.com/MannLabs/fasta-lake',9,0,0,2,5,8,'2026-10-30T19:05:49Z','2026-10-31T11:17:07','v1.1.0rc2');
 INSERT INTO repository_metrics VALUES('https://github.com/SoSongzhi/ScopeNovo',2,0,0,0,0,0,'2026-06-10T10:02:24Z','2026-10-22T10:43:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/Transformer-DIA/tree/master',2,1,0,0,0,0,'2025-09-20T20:57:39Z','2026-10-26T11:37:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/sadatebrahimi/DiffNovo-DIA',0,0,0,0,0,0,'2025-09-20T20:47:00Z','2026-10-26T11:37:56',NULL);
