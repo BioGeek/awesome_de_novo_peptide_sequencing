@@ -254,7 +254,14 @@ def get_json(cache: Path, key: str, url: str):
 # --------------------------------------------------------------------------
 
 def norm(s) -> str:
-    s = unicodedata.normalize("NFKD", str(s)).encode("ascii", "ignore").decode()
+    # Catalog titles keep the publisher's markup ("<italic>Saccharomyces
+    # pastorianus</italic>"), filenames do not (zotero_name strips it), so
+    # without this the tag names were scored as title words and publication
+    # 673's PDF never reached the title threshold. Same strip as zotero_name.
+    # Safe for the oatitle_ cache keys built from norm(): all 25 titles with
+    # markup have a DOI, and those keys are only used for DOI-less rows.
+    s = html.unescape(re.sub(r"<[^>]+>", "", str(s)))
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9 ]+", " ", s.lower()).strip()
 
 

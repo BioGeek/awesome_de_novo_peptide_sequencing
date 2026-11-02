@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# After a commit that touches the catalogue, queue new papers for denovo_wiki.
+# Reminder only; see .githooks/denovo-wiki-queue.
+"$(git rev-parse --show-toplevel)/.githooks/denovo-wiki-queue" "HEAD~1 HEAD" || true

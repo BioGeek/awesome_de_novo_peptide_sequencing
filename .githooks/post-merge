@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# After a pull/merge that brings catalogue changes, queue new papers for denovo_wiki.
+# Reminder only; see .githooks/denovo-wiki-queue.
+"$(git rev-parse --show-toplevel)/.githooks/denovo-wiki-queue" "ORIG_HEAD HEAD" || true

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Shared by post-commit and post-merge: when the catalogue changed, record the
+# new papers in the denovo_wiki reminder queue and print one line. It never runs
+# LLM work and never fails or blocks git. Silent if the wiki clone is absent
+# (e.g. on another machine); git hooks never run in CI.
+#   $1 = the git revision range or commit whose files to check
+wiki="${DENOVO_WIKI:-$HOME/code/denovo_wiki}"
+[ -f "$wiki/tools/wiki.py" ] || exit 0
+command -v uv >/dev/null 2>&1 || exit 0
+changed=$(git diff --name-only $1 2>/dev/null) || exit 0
+printf '%s\n' "$changed" | grep -qxE 'denovo\.(db|sql)' || exit 0
+uv run --quiet --project "$wiki" python "$wiki/tools/wiki.py" queue --from-awesome \
+  --commit "$(git rev-parse --short HEAD)" 2>&1 || true
+exit 0

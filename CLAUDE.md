@@ -1069,6 +1069,16 @@ failure. The two lists to read it in are `blocked-but-open-in-pmc.txt`, meaning
 a free copy exists and only a browser can take it, and `paywalled.txt`, meaning
 no source reports one at all.
 
+**The PDFs also feed `~/code/denovo_wiki`**, an LLM-compiled, cited knowledge
+base built from them (local only, never published). The `post-commit` and
+`post-merge` hooks call `.githooks/denovo-wiki-queue`, which, when `denovo.db`
+or `denovo.sql` changed, records the new publication ids in
+`~/.local/state/denovo_wiki/pending.tsv` and prints a one-line reminder. It runs
+no LLM work, never fails a commit and is silent when the wiki clone is absent.
+Do not ingest from this repo: the owner runs `/denovo-wiki sync` in
+`denovo_wiki` when they choose. A paper whose PDF is fetched after its commit is
+picked up by that sync once the file is in the library.
+
 **Filenames carry the FULL title**, in the catalog's own casing, with nothing
 cut. The old `[:95]` came from what Zotero happens to export and cost
 information on 154 of 359 papers; the longest full name this catalog can
