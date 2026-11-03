@@ -348,6 +348,11 @@ PREPRINT_BANNER = re.compile(
     r"|Research Square|SSRN Electronic Journal", re.I)
 
 
+# Under this many words a title match is checked against the file's first
+# pages (see identify).
+SHORT_TITLE_WORDS = 6
+
+
 @functools.lru_cache(maxsize=None)
 def first_pages(path: str) -> str:
     try:
@@ -419,6 +424,21 @@ def identify(pubs: list[dict], stem: str, text: str = "",
                               p["title"])).strip()
             return fuzz.ratio(t[:len(raw)], raw[:len(t)])
         top = sorted(top, key=lambda sp: (-exactness(sp[1]), sp[1]["id"]))
+    if top and path is not None and len(top[0][1]["n"].split()) < SHORT_TITLE_WORDS:
+        # A SHORT title is a weak claim, so the file is asked what it is. The
+        # owner's 'Ma - 2016 - De novo Peptide Sequencing.pdf', filed under
+        # Bin Ma's chapter (publication 315), was a copy of the InstaNovo
+        # preprint, whose own title contains those four words. If a longer
+        # catalog title is printed on the first pages, the file is that paper.
+        flat = lambda t: re.sub(r"\s+", " ", t)
+        head = flat(norm(text or first_pages(str(path))))[:1500]
+        own = top[0][1]
+        hits = sorted(((fuzz.partial_ratio(flat(p["n"]), head), p) for p in pubs
+                       if p["id"] != own["id"]
+                       and len(flat(p["n"])) > max(30, len(flat(own["n"])) + 10)),
+                      key=lambda t: -t[0])
+        if hits and hits[0][0] >= 97:
+            return hits[0][1], f"content {hits[0][0]:.0f}, not {own['id']}"
     return (top[0][1], f"title {top[0][0]:.0f}") if top else (None, "")
 
 

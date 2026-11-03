@@ -1105,6 +1105,17 @@ arXiv files while carrying the journal rows' ids (152, 7); neither journal row
 has a PDF of its own, so the 11 sign-offs were re-keyed to the preprint rows,
 224 and 222, along with GA-Novo's registry entries.
 
+**A short title is checked against the file.** A filename names a paper, and
+the owner's Zotero export named one wrongly: `Ma - 2016 - De novo Peptide
+Sequencing.pdf`, filed under Bin Ma's chapter (publication 315), was a second
+copy of the InstaNovo preprint (publication 1), whose own title contains those
+four words. The accession miner had read it as 315 and given that 2016 chapter
+nine dataset links, ProteomeTools and the InstaNovo deposits among them. All nine
+are deleted, and so is the file; the chapter is paywalled. When the title a
+filename matches is under `SHORT_TITLE_WORDS` (6) words, `identify` now reads
+the first two pages and, if a longer catalog title is printed there, files the
+PDF as that paper. Over the whole library this moves this one file and no other.
+
 **Two tie-breaks, and the first one was wrong.** Where two rows differ only in
 a title's capitalisation or punctuation -- publication 108's "NovoBoard: a
 comprehensive framework" against 80's "A Comprehensive Framework", 29's
@@ -1471,7 +1482,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**492 datasets, 535 versions, 1317 addresses, 1266 publication links over 301 papers.**
+**492 datasets, 535 versions, 1317 addresses, 1257 publication links over 300 papers.**
 
 ### What a paper did with a dataset
 
@@ -1572,8 +1583,8 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 80 papers use the
-nine-species benchmark; 49 name the original, 29 the revised, 3 the InstaNovo
+**A NULL `dataset_version_id` is the finding, not a gap.** 79 papers use the
+nine-species benchmark; 48 name the original, 29 the revised, 3 the InstaNovo
 split, 1 dIon's retrieval benchmark, and **34 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. A paper naming two versions is counted
 under each, so the parts add up to more than the whole. Inventing a version for those
