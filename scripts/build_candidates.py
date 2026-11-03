@@ -2,7 +2,7 @@
 """Find papers that probably belong in the catalog but are not in it yet.
 
 The catalog cannot answer this on its own. publication_citation stores ONLY
-intra-catalog edges (verified: 0 of its 6915 rows point outside), so every
+intra-catalog edges (verified: 0 of its 7008 rows point outside), so every
 reference to the outside world is discarded at build time. This script goes and
 gets the outside, from OpenAlex, in both directions:
 
