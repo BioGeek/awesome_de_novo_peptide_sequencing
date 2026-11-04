@@ -755,6 +755,16 @@ def pdf_from_landing(url: str) -> str | None:
 # Commands
 # --------------------------------------------------------------------------
 
+def is_preprint_pdf(body: bytes) -> bool:
+    """Does this PDF carry a preprint server's banner on its first two pages?"""
+    with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
+        tmp.write(body)
+        tmp.flush()
+        text = subprocess.run(["pdftotext", "-f", "1", "-l", "2", tmp.name, "-"],
+                              capture_output=True, text=True, timeout=60).stdout
+    return bool(PREPRINT_BANNER.search(text))
+
+
 def cmd_fetch(args, conn, pubs, root):
     cache = HERE / ".cache" / "pdfs"
     out = pdf_dir(root)
@@ -786,6 +796,14 @@ def cmd_fetch(args, conn, pubs, root):
             detail = "nothing free reported"
         for source, url in cands:
             ok, body = fetch(url)
+            if ok and body.startswith(b"%PDF") and p["publication_type"] not in (
+                    "preprint", "postprint") and is_preprint_pdf(body):
+                # OpenAlex can fold a journal article and its preprint into ONE
+                # work and offer the preprint server's PDF for it: publication
+                # 997, Nature Methods, was filed with its bioRxiv preprint.
+                status, src, detail = "blocked" if free else "paywalled", source, \
+                    f"{url} -> a preprint, not this version of record"
+                continue
             if ok and body.startswith(b"%PDF"):
                 dest = out / zotero_name(p)
                 # NEVER OVERWRITE. A file of this name already belongs to some

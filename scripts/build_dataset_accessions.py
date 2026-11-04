@@ -97,11 +97,11 @@ REJECTED_LINKS = {
                         "iodoacetic acid, which Casanovo does not support.",
     (57, "PXD008899"): "A typo in Table 4.4's caption of the PointNovo thesis: the "
                        "sclera data it searched is PXD008999, linked as such.",
-    # The sequence-ambiguity benchmark, preprint and Nature Methods version.
+    # The sequence-ambiguity benchmark's preprint; the Nature Methods version
+    # corrected the caption.
     (249, "PXD023127"): "A typo in Figure 1's caption, PXD023127 for PXD023217: the "
                         "text and Methods name the CAMPI mock community, PXD023217, "
                         "as the third dataset.",
-    (997, "PXD023127"): "The same caption typo in the Nature Methods version.",
 }
 
 

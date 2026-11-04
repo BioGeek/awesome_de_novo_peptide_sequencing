@@ -38239,6 +38239,7 @@ INSERT INTO dataset VALUES(500,'DIA_urine_proteomics_biomarker_discovery_abdomin
 INSERT INTO dataset VALUES(501,'CPTAC CCRCC Discovery Study - DIA Proteome','CPTAC CCRCC Discovery Study - DIA Proteome','deposit','DIA','Homo sapiens',NULL);
 INSERT INTO dataset VALUES(502,'CPTAC PDA Discovery Study - DIA Proteome','CPTAC PDA Discovery Study - DIA Proteome','deposit','DIA','Homo sapiens',NULL);
 INSERT INTO dataset VALUES(503,'Chorus project 1105','HeLa DIA runs that DIANovo cites to Pecan (Ting et al. 2017, Nature Methods). Chorus has closed, so the project''s own title can no longer be read and it is named by its number.','deposit','DIA','Homo sapiens (HeLa)',NULL);
+INSERT INTO dataset VALUES(504,'Limitations of de novo sequencing in resolving sequence ambiguity','Derived data of the sequence-ambiguity benchmark: the gold-standard database-search identifications, the predictions of all eight de novo models on PXD028735 and PXD023217, post-processing and rescoring outputs, feature tables, FASTA files, and the versions and sources of the checkpoints used. Results, not spectra.','deposit',NULL,NULL,'https://doi.org/10.6084/m9.figshare.30084355');
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38785,6 +38786,7 @@ INSERT INTO dataset_version VALUES(543,500,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(544,501,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(545,502,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(546,503,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(547,504,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-11-03',997);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40110,6 +40112,7 @@ INSERT INTO dataset_address VALUES(1327,544,'PDC','PDC000200','https://pdc.cance
 INSERT INTO dataset_address VALUES(1328,545,'PDC','PDC000341','https://pdc.cancer.gov/pdc/study/PDC000341',NULL,0);
 INSERT INTO dataset_address VALUES(1329,546,'Chorus','1105','https://chorusproject.org/pages/dashboard.html#/projects/all/1105/experiments',NULL,0);
 INSERT INTO dataset_address VALUES(1330,540,'DOI','10.5281/zenodo.10405582','https://doi.org/10.5281/zenodo.10405582','datasets.zip: π-HelixNovo''s processed copy of PointNovo''s test set',0);
+INSERT INTO dataset_address VALUES(1331,547,'figshare','10.6084/m9.figshare.30084355','https://doi.org/10.6084/m9.figshare.30084355',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -41375,6 +41378,7 @@ INSERT INTO publication_dataset VALUES(1600,221,501,544,'trains-on');
 INSERT INTO publication_dataset VALUES(1601,221,501,544,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1602,997,22,31,'uses');
 INSERT INTO publication_dataset VALUES(1603,997,34,43,'uses');
+INSERT INTO publication_dataset VALUES(1604,997,504,547,'introduces');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,

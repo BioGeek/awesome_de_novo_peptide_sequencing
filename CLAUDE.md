@@ -1116,6 +1116,16 @@ filename matches is under `SHORT_TITLE_WORDS` (6) words, `identify` now reads
 the first two pages and, if a longer catalog title is printed there, files the
 PDF as that paper. Over the whole library this moves this one file and no other.
 
+**A version of record is never filed with a preprint's PDF.** OpenAlex can
+fold a journal article and its preprint into one work (38 pairs here share
+an OpenAlex id), and then offers the preprint server's PDF for the article.
+Publication 997, the Nature Methods sequence-ambiguity benchmark, was filed
+with its bioRxiv preprint that way, and a dataset check read the preprint
+twice believing it had read both. `fetch` now refuses, for any row that is
+not a preprint or postprint, a PDF whose first two pages carry a
+`PREPRINT_BANNER`, and moves on to the next candidate: for 997 that is
+Nature's own `citation_pdf_url`.
+
 **Two tie-breaks, and the first one was wrong.** Where two rows differ only in
 a title's capitalisation or punctuation -- publication 108's "NovoBoard: a
 comprehensive framework" against 80's "A Comprehensive Framework", 29's
@@ -1482,7 +1492,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**490 datasets, 533 versions, 1315 addresses, 1258 publication links over 301 papers.**
+**491 datasets, 534 versions, 1316 addresses, 1259 publication links over 301 papers.**
 
 ### What a paper did with a dataset
 
@@ -1642,7 +1652,7 @@ taken from `sed` land somewhere else and a slice silently drops a group (it
 dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 21 of 533 versions have none, counting only addresses
+missing one.** 21 of 534 versions have none, counting only addresses
 that are not provenance. Three shapes: tiers that are not published but are
 reproducible from the raw accessions recorded as their provenance (ACFM, and
 ProteomeTools' all-confidence version, InstaNovo's AC-PT); NIST's peptide
