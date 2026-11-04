@@ -823,6 +823,7 @@ algorithms	822	bynovo
 algorithms	823	peptidomicsdb
 algorithms	824	peptide-similarity-alignment
 algorithms	825	peppr
+algorithms	826	novocrf
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -5138,6 +5139,15 @@ datasets	501	cptac-ccrcc-discovery-study-dia-proteome
 datasets	502	cptac-pda-discovery-study-dia-proteome
 datasets	503	chorus-project-1105
 datasets	504	limitations-of-de-novo-sequencing-in-resolving-sequence-ambiguity
+datasets	505	global-proteomics-of-peroxiredoxin-6-knockdown-a549-cells-subjected-to-ionizing
+datasets	506	functional-diversification-of-the-cephalopod-proteome-by-rna-editing
+datasets	507	proteomic-analysis-of-xenopus-tropicalis-skin-toes-and-claws-using-the-gludc
+datasets	508	peptidomics-mapping-of-proteolysis-highlights-triple-activation-of-sprouted
+datasets	509	protein-related-hydrophobicity-differences-among-strains-belonging-to
+datasets	510	comprehensive-proteogenomic-analysis-identifies-immune-targets-in
+datasets	511	carbamazepine-activates-private-self-and-viral-reactive-tcrs-through-a-drug
+datasets	512	proteomic-data-the-japanese-archipelago-sheltered-cave-lions-not-tigers-during
+datasets	513	hla-class-i-naturally-presented-synovial-tissue-peptides-are-recognized-by-cd8
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -7271,6 +7281,7 @@ publications	994	proteomics-of-natural-bacterial-isolates-powered-by-deep-learni
 publications	995	uncovering-hidden-members-and-functions-of-the-soil-microbiome-using-preprint
 publications	996	peppr-de-novo-peptide-sequencing-with-peptide-priors
 publications	997	limitations-of-de-novo-peptide-sequencing-in-resolving-sequence-ambiguity
+publications	998	novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

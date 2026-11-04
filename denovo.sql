@@ -12109,6 +12109,7 @@ INSERT INTO algorithm VALUES(822,'ByNovo',NULL,NULL,'Transformer (AR)','RankNovo
 INSERT INTO algorithm VALUES(823,'PeptidomicsDB',NULL,'http://www.inbirg.com/ppd/',NULL,'A database of endogenous peptides built by reanalysing 151 public peptidomics projects (3992 samples; global, neuro- and immunopeptidomics, DDA and DIA) with PEAKS Studio 13''s DeepNovo Peptidome workflow, which combines database, DeepNovo de novo and SPIDER homology search: over 4 million unique peptides, linked to precursor proteins, samples, differential abundance and bioactive-peptide similarity.','downstream-application',1,'both',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(824,'Peptide similarity alignment',NULL,NULL,NULL,'Grades de novo sequencing errors against a reference peptide: Levenshtein-distance tiers plus a Needleman-Wunsch alignment aware of block shuffles and isobaric substitutions, so amino-acid accuracy can be split by error type. Paired with a one-class isolation-forest rescorer over Oktoberfest features, which filters identifications without FDR control.','post-processor',0,'DDA','PSA; isolation-forest rescoring',NULL);
 INSERT INTO algorithm VALUES(825,'PepPr',NULL,NULL,'Transformer (AR)','A peptide language model fitted to a reference proteome, fused through a small learned head with the next-residue logits of an autoregressive sequencer (Casanovo or ContraNovo) before beam search, so reference context fills gaps in incomplete spectra without excluding variants.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(826,'NovoCRF',NULL,NULL,'Graph / DP','A conditional random field whose states are prefix masses, so every path is a peptide within 0.06 Da of the precursor; a 310k-parameter scorer of physics-derived ion-match features is trained with exact global normalization over all mass-feasible peptides, decoded by exact k-best search and reranked by two BiGRUs.','algorithm',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13116,6 +13117,7 @@ INSERT INTO publication VALUES(994,'Proteomics of natural bacterial isolates pow
 INSERT INTO publication VALUES(995,'Uncovering hidden members and functions of the soil microbiome using de novo metaproteomics','2020-11-16',NULL,'Cold Spring Harbor Laboratory',replace('Metaproteomics has been increasingly utilized for high-throughput molecular characterization in complex environments and has been demonstrated to provide insights into microbial composition and functional roles in soil systems. Despite its potential for the study of microbiomes, significant challenges remain in data analysis, including the creation of a sample-specific protein sequence database as the taxonomic composition of soil is often unknown. Almost all metaproteome analysis tools require this database and their accuracy and sensitivity suffer when the database is incomplete or contains extraneous sequences from organisms which are not present. Here, we leverage a de novo peptide sequencing approach to identify sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data, and trained it on 5 million peptide-spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified unsequenced soil isolates directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S ribosomal RNA sequencing of the soil samples and also uncovered several additional species which were strongly represented only in proteomic data. Our pipeline offers an alternative and complementary method for metaproteomic data analysis by creating a protein database directly from proteomic data, thus removing the need for metagenomic sequencing.\n\nSignificance StatementProteomic characterization of environmental samples, or metaproteomics, reveals microbial activity critical to our understanding of climate, nutrient cycling and human health. Metaproteomic samples originate from diverse environs, such as soil and oceans. One option for data analysis is a de novo interpretation of the mass spectra. Unfortunately, the current generation of de novo algorithms were primarily trained on data originating from human proteins. Therefore, these algorithms struggle with data from environmental samples, limiting our ability to analyze metaproteomics data. To address this challenge, we trained a new algorithm with data from dozens of diverse environmental bacteria and achieved significant improvements in accuracy across a broad range of organisms. This generality opens proteomics to the world of natural isolates and microbiomes.','\n',char(10)),'https://www.biorxiv.org/content/10.1101/428334v2','bioRxiv','preprint','v2','biorxiv');
 INSERT INTO publication VALUES(996,'PepPr: De Novo peptide sequencing with peptide priors','2026-10-28','10.64898/2026.10.27.762126','Cold Spring Harbor Laboratory','Mass spectrometry-based peptide sequencing underpins proteomics. Database search confines to predefined candidates, whereas de novo peptide sequencing (DNPS) struggles with incomplete spectra. Existing hybrid methods use databases only for post hoc correction or retrieve previously identified spectra to guide decoding. We instead combine DNPS with a peptide prior: a language model fitted to a reference proteome, tolerating variants yet uncertain on strongly divergent sequences. Relative to prior-free DNPS, our implementation, PepPr, improved reference peptide identification and improved rather than suppressed variant identification. Using a related proteome as prior, it matched or outperformed homology-driven database search, and its gain over prior-free DNPS grew with relatedness. In antibody sequencing, it improved recovery of peptides spanning the variable-constant boundary, deamidation calls, and assembly, while preserving recall of hypervariable regions inaccessible to database search. Peptide priors thus bring reference knowledge into DNPS without limiting discovery.','https://www.biorxiv.org/content/10.64898/2026.10.27.762126v1','bioRxiv','preprint','v1','biorxiv');
 INSERT INTO publication VALUES(997,'Limitations of de novo peptide sequencing in resolving sequence ambiguity','2026-11-03','10.1038/s41592-026-03301-9','Springer Science and Business Media LLC','De novo peptide sequencing enables peptide identification from fragmentation spectra without relying on sequence databases. However, incomplete spectra create ambiguity, making unambiguous identification challenging. Recent deep learning advances have produced numerous de novo models that predict sequences and refine peptide-spectrum matches under such conditions. Yet, their relative strengths, weaknesses and ability to handle spectrum ambiguity remain unclear. Here we benchmark eight state-of-the-art models on three publicly available proteomics datasets, comparing performance using established metrics and quantifying inter-model agreement. We assess post-processing approaches, including iterative refinement, rescoring and reranking, for their ability to improve identification accuracy, and perform an error analysis to identify common mispredictions and their causes. Model performance varied, with considerable overlap of correct identifications. Post-processing yielded no or only modest improvements. Most sequencing errors were model-independent and driven by limited fragment ion coverage, a limitation also observed in database searches with large search spaces.','https://www.nature.com/articles/s41592-026-03301-9','Nature Methods','peer-reviewed',NULL,'europepmc');
+INSERT INTO publication VALUES(998,'NovoCRF: Globally Normalized De Novo Peptide Sequencing on a Prefix-Mass Lattice','2026-11-03','10.48550/arXiv.2611.05260','arXiv','De novo peptide sequencing has moved from dynamic programming over hand-designed or generative scores to large transformers that learn the task end to end. We present NovoCRF, a conditional random field (CRF) whose states are prefix masses, so that its paths are exactly the peptides within +/-0.06 Da of the precursor mass. A small network scores each edge from physics-derived ion-match features and is trained with its scores globally normalized over all mass-feasible peptides. To our knowledge, NovoCRF is the first de novo method trained with exact normalization over all mass-feasible peptides. Our software has three modules, each with exactly one job: a precursor mass finder recovers the accurate precursor mass from MS1, the CRF finds the peptides that fit the precursor mass by exact k-best decoding, and two BiGRU rerankers add sequence context and internal-fragment evidence. The model has 310k parameters and trains in about 17 GPU-hours. On seven held-out data-dependent acquisition datasets published in 2026 (126,262 labeled spectra), NovoCRF''s mean peptide recall is 42.4%, against 39.1% for Casanovo v5 with five beams, and its amino-acid recall 64.0% against 53.1%, at 1,746 spectra/s on 18 CPU threads, 55x Casanovo''s throughput on a GPU. Split by fragment evidence, NovoCRF leads on labels with up to three peptide bonds without a b or y ion, and Casanovo only beyond. NovoCRF can also search modifications it was never trained on at their exact mass: it finds 32.1% of the hydroxyproline peptides of a lion bone sample.','https://arxiv.org/abs/2611.05260','arXiv','preprint',NULL,'arxiv');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19518,6 +19520,9 @@ INSERT INTO publication_author VALUES(997,419,4);
 INSERT INTO publication_author VALUES(997,420,6);
 INSERT INTO publication_author VALUES(997,421,5);
 INSERT INTO publication_author VALUES(997,784,8);
+INSERT INTO publication_author VALUES(998,250,1);
+INSERT INTO publication_author VALUES(998,105,2);
+INSERT INTO publication_author VALUES(998,252,3);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -19720,6 +19725,7 @@ INSERT INTO algorithm_repository VALUES(819,'https://github.com/MannLabs/fasta-l
 INSERT INTO algorithm_repository VALUES(821,'https://github.com/SoSongzhi/ScopeNovo',0);
 INSERT INTO algorithm_repository VALUES(97,'https://github.com/sadatebrahimi/DiffNovo-DIA',0);
 INSERT INTO algorithm_repository VALUES(825,'https://github.com/gagneurlab/PepPr',0);
+INSERT INTO algorithm_repository VALUES(826,'https://github.com/volpato30/NovoCRF-release',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -20728,6 +20734,7 @@ INSERT INTO publication_impact VALUES(994,'W4284680271',32,'doi',NULL,2026,'2026
 INSERT INTO publication_impact VALUES(995,NULL,NULL,'unmatched',90.1098901098901023,2026,'2026-11-01T13:38:50+00:00');
 INSERT INTO publication_impact VALUES(996,'W7224081043',0,'doi',NULL,2026,'2026-11-01T13:38:50+00:00');
 INSERT INTO publication_impact VALUES(997,'W4413476733',1,'doi',NULL,2026,'2026-11-04T14:58:36+00:00');
+INSERT INTO publication_impact VALUES(998,NULL,NULL,'unmatched',NULL,2026,'2026-11-04T18:07:24+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27697,6 +27704,9 @@ INSERT INTO publication_author_affiliation VALUES(997,417,174,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(997,420,177,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(997,421,174,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(997,784,508,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(998,250,52,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(998,105,52,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(998,252,52,0,NULL);
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28991,6 +29001,7 @@ INSERT INTO publication_algorithm VALUES(996,825,'describes');
 INSERT INTO publication_algorithm VALUES(996,12,'uses');
 INSERT INTO publication_algorithm VALUES(996,36,'uses');
 INSERT INTO publication_algorithm VALUES(997,220,'describes');
+INSERT INTO publication_algorithm VALUES(998,826,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -38240,6 +38251,15 @@ INSERT INTO dataset VALUES(501,'CPTAC CCRCC Discovery Study - DIA Proteome','CPT
 INSERT INTO dataset VALUES(502,'CPTAC PDA Discovery Study - DIA Proteome','CPTAC PDA Discovery Study - DIA Proteome','deposit','DIA','Homo sapiens',NULL);
 INSERT INTO dataset VALUES(503,'Chorus project 1105','HeLa DIA runs that DIANovo cites to Pecan (Ting et al. 2017, Nature Methods). Chorus has closed, so the project''s own title can no longer be read and it is named by its number.','deposit','DIA','Homo sapiens (HeLa)',NULL);
 INSERT INTO dataset VALUES(504,'Limitations of de novo sequencing in resolving sequence ambiguity','Derived data of the sequence-ambiguity benchmark: the gold-standard database-search identifications, the predictions of all eight de novo models on PXD028735 and PXD023217, post-processing and rescoring outputs, feature tables, FASTA files, and the versions and sources of the checkpoints used. Results, not spectra.','deposit',NULL,NULL,'https://doi.org/10.6084/m9.figshare.30084355');
+INSERT INTO dataset VALUES(505,'Global proteomics of Peroxiredoxin 6 knockdown A549 cells subjected to ionizing radiation','Global proteomics of Peroxiredoxin 6 knockdown A549 cells subjected to ionizing radiation','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(506,'Functional diversification of the cephalopod proteome by RNA-editing','Functional diversification of the cephalopod proteome by RNA-editing','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(507,'Proteomic analysis of Xenopus tropicalis skin, toes, and claws using the GludC protease','Proteomic analysis of Xenopus tropicalis skin, toes, and claws using the GludC protease','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(508,'Peptidomics Mapping of Proteolysis Highlights Triple Activation of Sprouted Seeds by Germination, Homogenisation and Species Mixture.','Peptidomics Mapping of Proteolysis Highlights Triple Activation of Sprouted Seeds by Germination, Homogenisation and Species Mixture.','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(509,'Protein-related hydrophobicity differences among strains belonging to Candidozyma auris (Candida auris) clades.','Protein-related hydrophobicity differences among strains belonging to Candidozyma auris (Candida auris) clades.','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(510,'Comprehensive proteogenomic analysis identifies immune targets in microsatellite stable and unstable colorectal cancers','Comprehensive proteogenomic analysis identifies immune targets in microsatellite stable and unstable colorectal cancers','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(511,'Carbamazepine Activates Private Self and Viral Reactive TCRs Through a Drug-Permissive HLA-B Cleft','Carbamazepine Activates Private Self and Viral Reactive TCRs Through a Drug-Permissive HLA-B Cleft','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(512,'Proteomic data: The Japanese Archipelago sheltered cave lions, not tigers, during the Late Pleistocene','Proteomic data: The Japanese Archipelago sheltered cave lions, not tigers, during the Late Pleistocene','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(513,'HLA class I-naturally presented synovial tissue peptides are recognized by CD8+ T lymphocytes from rheumatoid arthritis patients','HLA class I-naturally presented synovial tissue peptides are recognized by CD8+ T lymphocytes from rheumatoid arthritis patients','deposit',NULL,NULL,NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38787,6 +38807,15 @@ INSERT INTO dataset_version VALUES(544,501,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(545,502,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(546,503,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(547,504,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-11-03',997);
+INSERT INTO dataset_version VALUES(548,505,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-02',NULL);
+INSERT INTO dataset_version VALUES(549,506,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-10-09',NULL);
+INSERT INTO dataset_version VALUES(550,507,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-13',NULL);
+INSERT INTO dataset_version VALUES(551,508,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-05-05',NULL);
+INSERT INTO dataset_version VALUES(552,509,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-03-19',NULL);
+INSERT INTO dataset_version VALUES(553,510,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-05-26',NULL);
+INSERT INTO dataset_version VALUES(554,511,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-18',NULL);
+INSERT INTO dataset_version VALUES(555,512,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-01-26',NULL);
+INSERT INTO dataset_version VALUES(556,513,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-27',NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40113,6 +40142,15 @@ INSERT INTO dataset_address VALUES(1328,545,'PDC','PDC000341','https://pdc.cance
 INSERT INTO dataset_address VALUES(1329,546,'Chorus','1105','https://chorusproject.org/pages/dashboard.html#/projects/all/1105/experiments',NULL,0);
 INSERT INTO dataset_address VALUES(1330,540,'DOI','10.5281/zenodo.10405582','https://doi.org/10.5281/zenodo.10405582','datasets.zip: π-HelixNovo''s processed copy of PointNovo''s test set',0);
 INSERT INTO dataset_address VALUES(1331,547,'figshare','10.6084/m9.figshare.30084355','https://doi.org/10.6084/m9.figshare.30084355',NULL,0);
+INSERT INTO dataset_address VALUES(1332,548,'PRIDE','PXD076585','https://www.ebi.ac.uk/pride/archive/projects/PXD076585',NULL,0);
+INSERT INTO dataset_address VALUES(1333,549,'PRIDE','PXD071561','https://www.ebi.ac.uk/pride/archive/projects/PXD071561',NULL,0);
+INSERT INTO dataset_address VALUES(1334,550,'PRIDE','PXD073929','https://www.ebi.ac.uk/pride/archive/projects/PXD073929',NULL,0);
+INSERT INTO dataset_address VALUES(1335,551,'PRIDE','PXD072115','https://www.ebi.ac.uk/pride/archive/projects/PXD072115',NULL,0);
+INSERT INTO dataset_address VALUES(1336,552,'PRIDE','PXD074750','https://www.ebi.ac.uk/pride/archive/projects/PXD074750',NULL,0);
+INSERT INTO dataset_address VALUES(1337,553,'PRIDE','PXD071022','https://www.ebi.ac.uk/pride/archive/projects/PXD071022',NULL,0);
+INSERT INTO dataset_address VALUES(1338,554,'PRIDE','PXD082505','https://www.ebi.ac.uk/pride/archive/projects/PXD082505',NULL,0);
+INSERT INTO dataset_address VALUES(1339,555,'PRIDE','PXD065297','https://www.ebi.ac.uk/pride/archive/projects/PXD065297',NULL,0);
+INSERT INTO dataset_address VALUES(1340,556,'PRIDE','PXD079646','https://www.ebi.ac.uk/pride/archive/projects/PXD079646',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -41379,6 +41417,18 @@ INSERT INTO publication_dataset VALUES(1601,221,501,544,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1602,997,22,31,'uses');
 INSERT INTO publication_dataset VALUES(1603,997,34,43,'uses');
 INSERT INTO publication_dataset VALUES(1604,997,504,547,'introduces');
+INSERT INTO publication_dataset VALUES(1605,998,505,548,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1606,998,506,549,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1607,998,507,550,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1608,998,508,551,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1609,998,509,552,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1610,998,510,553,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1611,998,511,554,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1612,998,512,555,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1613,998,513,556,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1614,998,3,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1615,998,2,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1616,998,9,15,'trains-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -67778,8 +67828,8 @@ INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',575);
 INSERT INTO sqlite_sequence VALUES('affiliation',1420);
 INSERT INTO sqlite_sequence VALUES('author',3943);
-INSERT INTO sqlite_sequence VALUES('algorithm',825);
-INSERT INTO sqlite_sequence VALUES('publication',997);
+INSERT INTO sqlite_sequence VALUES('algorithm',826);
+INSERT INTO sqlite_sequence VALUES('publication',998);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
