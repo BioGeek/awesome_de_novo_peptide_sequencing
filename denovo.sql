@@ -37973,7 +37973,6 @@ INSERT INTO dataset VALUES(231,'Profiling of Proteome and Ubiquitome Changesin i
 INSERT INTO dataset VALUES(232,'Community Evaluation of Glycoproteomics Informatics Solutions Reveals High-Performance Search Strategies for Glycopeptid','Community Evaluation of Glycoproteomics Informatics Solutions Reveals High-Performance Search Strategies for Glycopeptide Analysis','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(233,'Structural analysis of neurofibromin by crosslinking mass spectrometry','Structural analysis of neurofibromin by crosslinking mass spectrometry','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(234,'Quantitative Analysis of Lysine Acetylation in A549 Cell Line','Quantitative Analysis of Lysine Acetylation in A549 Cell Line','deposit',NULL,'Homo sapiens (human)',NULL);
-INSERT INTO dataset VALUES(235,'A wolf in another wolf’s clothing: Post-genomic regulation dictates venom profiles of medically-important cryptic kraits','A wolf in another wolf’s clothing: Post-genomic regulation dictates venom profiles of medically-important cryptic kraits in India','deposit',NULL,'Bungarus',NULL);
 INSERT INTO dataset VALUES(236,'Staphylococcus aureus responds to physiologically relevant temperature changes by altering its global transcript and pro','Staphylococcus aureus responds to physiologically relevant temperature changes by altering its global transcript and protein profile','deposit',NULL,'Staphylococcus aureus (strain usa300)',NULL);
 INSERT INTO dataset VALUES(237,'An Unbiased Strategy for Selecting Effective Combinations of Therapeutic Targets Supports the Development of a Novel Bis','An Unbiased Strategy for Selecting Effective Combinations of Therapeutic Targets Supports the Development of a Novel Bispecific Antibody with Tumor-Suppressing Properties','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(238,'Combined Protein Signature of ALDH1A1, LGALS3, LGALS3BP Predicts Cancer Recurrence Post-Liver Transplantation Beyond Mil','Combined Protein Signature of ALDH1A1, LGALS3, LGALS3BP Predicts Cancer Recurrence Post-Liver Transplantation Beyond Milan Hepatocellular Carcinoma','deposit',NULL,'Homo sapiens (human)',NULL);
@@ -38029,7 +38028,6 @@ INSERT INTO dataset VALUES(287,'Integrated proteomic analysis of Tumor Necrosis 
 INSERT INTO dataset VALUES(288,'Proteomics Profiling of Arginine Methylation Defines PRMT5 Substarate Specificity','Proteomics Profiling of Arginine Methylation Defines PRMT5 Substarate Specificity','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(289,'Proteomic Analysis of Human Liver Reference Material','Proteomic Analysis of Human Liver Reference Material','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(290,'Proteomic analysis of human sclera tissue using high resolution mass spectrometry','Proteomic analysis of human sclera tissue using high resolution mass spectrometry','deposit',NULL,'Homo sapiens (human)',NULL);
-INSERT INTO dataset VALUES(291,'Re-analysis of Hela phosphoproteome (PXD000612) with TagGraph','Re-analysis of Hela phosphoproteome (PXD000612) with TagGraph','deposit',NULL,'Homo sapiens (human)',NULL);
 INSERT INTO dataset VALUES(292,'Open-pFind enables precise, comprehensive and rapid peptide identification in shotgun proteomics, part 1','Open-pFind enables precise, comprehensive and rapid peptide identification in shotgun proteomics, part 1','deposit',NULL,'Escherichia coli',NULL);
 INSERT INTO dataset VALUES(293,'E. coli mirror LC-MS/MS - Precision de novo peptide sequencing using mirror proteases of Ac-LysargiNase and trypsin for ','E. coli mirror LC-MS/MS - Precision de novo peptide sequencing using mirror proteases of Ac-LysargiNase and trypsin for large-scale proteomics','deposit',NULL,'Escherichia coli',NULL);
 INSERT INTO dataset VALUES(294,'Aggregating sequences that occur in many proteins constitute weak spots of bacterial proteostasis','Aggregating sequences that occur in many proteins constitute weak spots of bacterial proteostasis','deposit',NULL,'Escherichia coli',NULL);
@@ -38501,7 +38499,6 @@ INSERT INTO dataset_version VALUES(254,231,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(255,232,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-02-10',NULL);
 INSERT INTO dataset_version VALUES(256,233,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-01-14',NULL);
 INSERT INTO dataset_version VALUES(257,234,'as deposited',NULL,NULL,NULL,NULL,NULL,'2021-01-08',NULL);
-INSERT INTO dataset_version VALUES(258,235,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-12-14',NULL);
 INSERT INTO dataset_version VALUES(259,236,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-12-10',NULL);
 INSERT INTO dataset_version VALUES(260,237,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-12-10',NULL);
 INSERT INTO dataset_version VALUES(261,238,'as deposited',NULL,NULL,NULL,NULL,NULL,'2020-12-03',NULL);
@@ -38557,7 +38554,6 @@ INSERT INTO dataset_version VALUES(310,287,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(311,288,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-12-17',NULL);
 INSERT INTO dataset_version VALUES(312,289,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-02-23',NULL);
 INSERT INTO dataset_version VALUES(313,290,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-02-21',NULL);
-INSERT INTO dataset_version VALUES(314,291,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-02-08',NULL);
 INSERT INTO dataset_version VALUES(315,292,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-05-31',NULL);
 INSERT INTO dataset_version VALUES(316,293,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-01-16',312);
 INSERT INTO dataset_version VALUES(317,294,'as deposited',NULL,NULL,NULL,NULL,NULL,'2018-01-16',NULL);
@@ -39075,7 +39071,6 @@ INSERT INTO dataset_address VALUES(284,254,'PRIDE','PXD024309','https://www.ebi.
 INSERT INTO dataset_address VALUES(285,255,'PRIDE','PXD024101','https://www.ebi.ac.uk/pride/archive/projects/PXD024101',NULL,0);
 INSERT INTO dataset_address VALUES(286,256,'PRIDE','PXD023593','https://www.ebi.ac.uk/pride/archive/projects/PXD023593',NULL,0);
 INSERT INTO dataset_address VALUES(287,257,'PRIDE','PXD023468','https://www.ebi.ac.uk/pride/archive/projects/PXD023468',NULL,0);
-INSERT INTO dataset_address VALUES(288,258,'PRIDE','PXD023127','https://www.ebi.ac.uk/pride/archive/projects/PXD023127',NULL,0);
 INSERT INTO dataset_address VALUES(289,259,'PRIDE','PXD023039','https://www.ebi.ac.uk/pride/archive/projects/PXD023039',NULL,0);
 INSERT INTO dataset_address VALUES(290,260,'PRIDE','PXD023034','https://www.ebi.ac.uk/pride/archive/projects/PXD023034',NULL,0);
 INSERT INTO dataset_address VALUES(291,261,'PRIDE','PXD022881','https://www.ebi.ac.uk/pride/archive/projects/PXD022881',NULL,0);
@@ -39131,7 +39126,6 @@ INSERT INTO dataset_address VALUES(340,310,'PRIDE','PXD009174','https://www.ebi.
 INSERT INTO dataset_address VALUES(341,311,'PRIDE','PXD009070','https://www.ebi.ac.uk/pride/archive/projects/PXD009070',NULL,0);
 INSERT INTO dataset_address VALUES(342,312,'PRIDE','PXD009021','https://www.ebi.ac.uk/pride/archive/projects/PXD009021',NULL,0);
 INSERT INTO dataset_address VALUES(343,313,'PRIDE','PXD008999','https://www.ebi.ac.uk/pride/archive/projects/PXD008999',NULL,0);
-INSERT INTO dataset_address VALUES(344,314,'PRIDE','PXD008899','https://www.ebi.ac.uk/pride/archive/projects/PXD008899',NULL,0);
 INSERT INTO dataset_address VALUES(345,315,'PRIDE','PXD008782','https://www.ebi.ac.uk/pride/archive/projects/PXD008782',NULL,0);
 INSERT INTO dataset_address VALUES(346,316,'PRIDE','PXD008688','https://www.ebi.ac.uk/pride/archive/projects/PXD008688',NULL,0);
 INSERT INTO dataset_address VALUES(347,317,'PRIDE','PXD008685','https://www.ebi.ac.uk/pride/archive/projects/PXD008685',NULL,0);
