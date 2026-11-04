@@ -231,6 +231,26 @@ REJECTED: dict[str, str] = {
     "US5538897A": "SEQUEST: database search, the field's best-known baseline and not de novo",
     "CN110349621B": "checking the reliability of database-search matches",
     "HK40105650A": "a member of US20240153587A1's family, already catalogued",
+
+    # Screened by claims from issue #3, the monthly search of 2026-11-04.
+    "CA2406356A1": "Rockefeller's Canadian filing of the ladder-sequencing invention catalogued as US6271037B1",
+    "GB9907810D0": "Micromass's GB priority filing behind US6489608B1 and US6489121B1, both catalogued",
+    "CA2302877A1": "York University's Canadian filing of the invention catalogued as US6799121B2",
+    "HK40045541A": "Hong Kong filing of Regeneron's invention catalogued as US11047863B2",
+    "AU4646893A": "thiobenzoylation: Edman-type stepwise degradation, each released residue identified by GC-MS",
+    "US20110186725A1": "claims the conformational state of gas-phase ions (ion mobility, metastable atoms), not sequencing",
+    "EP2798658A4": "SCIEX: claims counting the atoms in an ion from isotope forms; sequencing is only in the title",
+    "US12655176B2": "generating a protein sequence from residue interaction graphs: protein design",
+    "EP4165085A1": "Rapid Novor: CDRH3 peptide enrichment and anti-CDRH3 antibodies; sequencing is an optional later step",
+    "CA3179958A1": "Rapid Novor: CDRH3 peptide enrichment and anti-CDRH3 antibodies; sequencing is an optional later step",
+    "BR112023001045A2": "Genentech: cathepsin cleavage of antibodies for middle-down MS; the claims never sequence de novo",
+    "KR20230148340A": "Regeneron: design-of-experiments tuning of ETD parameters for sequence coverage",
+    "CN113362899B": "DIA pseudo-spectra matched against a protein database; never de novo",
+    "WO2023102255A1": "peptide-encoded small-molecule library conjugates; 'de novo' is drug discovery",
+    "CN120641751A": "a serum peptide enrichment protocol for peptidomics",
+    "KR20250134076A": "a serum peptide enrichment protocol for peptidomics",
+    "CA3277788A1": "a serum peptide enrichment protocol for peptidomics",
+    "FR3159254A1": "short peptides identified by matching against a library of predetermined 2- to 6-mers; never says de novo",
 }
 
 # (patent number, inventor as printed) -> author id, or None to refuse a link
@@ -241,6 +261,42 @@ INVENTOR_AUTHOR: dict[tuple[str, str], int | None] = {
     # to Tesorai, where he is CTO. No claimed method or shared institution could
     # have said so.
     ("US12340874B1", "Peter Cimermancic"): 3203,
+    # Inventors printed in Cyrillic, Hangul or Chinese, whom the name rules
+    # cannot match: each is an author of the paper describing the method the
+    # patent claims (PowerNovo, PowerNovo2, pNovo+, DiNovo), or, for Han Bin Oh,
+    # of Sogang's paper on the bromine-signature sequencing the patents claim.
+    # Tanaka and Iwamoto: Crossref puts both at Shimadzu's Koichi Tanaka Mass
+    # Spectrometry Research Laboratory on their 2018 MALDI de novo paper.
+    ("RU2858180C1", "Денис Витальевич Петровский"): 170,
+    ("RU2858180C1", "Кирилл Сергеевич Никольский"): 171,
+    ("RU2858180C1", "Людмила Ивановна Куликова"): 172,
+    ("RU2858180C1", "Владимир Ремович Руднев"): 173,
+    ("RU2858180C1", "Анна Леонидовна Кайшева"): 177,
+    ("RU2843981C1", "Денис Витальевич Петровский"): 170,
+    ("RU2843981C1", "Кирилл Сергеевич Никольский"): 171,
+    ("RU2843981C1", "Людмила Ивановна Куликова"): 172,
+    ("RU2843981C1", "Владимир Ремович Руднев"): 173,
+    ("RU2843981C1", "Анна Леонидовна Кайшева"): 177,
+    ("CN103852513B", "迟浩"): 40,
+    ("CN103852513B", "陈海丰"): 299,
+    ("CN103852513B", "孙瑞祥"): 290,
+    ("CN103852513B", "董梦秋"): 298,
+    ("CN103852513B", "贺思敏"): 258,
+    ("WO2025156912A1", "徐平"): 50,
+    ("WO2025156912A1", "康荔"): 39,
+    ("WO2025156912A1", "李衍常"): 45,
+    ("WO2025156912A1", "戴嘉兴"): 44,
+    ("WO2025156912A1", "张瑶"): 43,
+    ("KR101500488B1", "오한빈"): 2640,
+    ("KR101658164B1", "오한빈"): 2640,
+    ("KR101938579B1", "오한빈"): 2640,
+    ("JP2007278712A", "Koichi Tanaka"): 1423,
+    # PolyU: the two are the first and last authors of the 2023 review of de
+    # novo algorithms; the evidence rule misses them because the university is
+    # recorded as several department rows and the patent links only one.
+    ("US12700478B2", "Cheuk Chi NG"): 495,
+    ("US12700478B2", "Zhongping YAO"): 497,
+    ("JP2007278712A", "Shinichi Iwamoto"): 1464,
 }
 
 # English names for assignees printed in Chinese, Japanese or Korean, and for
@@ -305,6 +361,10 @@ ASSIGNEE_EN: dict[str, str] = {
     "Общество С Ограниченной Ответственностью \"Интерлаб\"": "Interlab",
     "한국과학기술원": "Korea Advanced Institute of Science and Technology",
     "Univerzita Palackého v Olomouci": "Palacký University Olomouc",
+    "서강대학교산학협력단": "Sogang University",
+    'Федеральное государственное бюджетное научное учреждение "Научно-исследовательский институт биомедицинской химии имени В.Н. Ореховича" (ИБМХ)': 'Institute of Biomedical Chemistry',
+    "Федеральное государственное бюджетное учреждение науки Институт аналитического приборостроения Российской академии наук (ИАП РАН)": "Institute for Analytical Instrumentation",
+    "Федеральное государственное бюджетное учреждение науки институт биоорганической химии им. академиков М.М. Шемякина и Ю.А. Овчинникова Российской академии наук (ИБХ РАН)": "Shemyakin-Ovchinnikov Institute of Bioorganic Chemistry",
     # One organisation filing under several entities.
     "BASF Agricultural Solutions US LLC": "BASF",
     "Oxford Glycosciences (UK) Ltd": "Oxford GlycoSciences",
@@ -454,7 +514,10 @@ def parse(doc: str) -> dict:
         "priority_date": first("priorityDate"),
         "filing_date": first("filingDate"),
         "publication_date": first("publicationDate"),
-        "family_id": fam.group(1) if fam else "",
+        # Some pages (Russian RU…C1 patents) print no family id. Without a
+        # fallback every such patent shares the family "", and add() took the
+        # second for a member of the first.
+        "family_id": fam.group(1) if fam else number.strip(),
         "status": _text(status.group(1)) if status else "",
         "members": sorted({_text(x) for x in re.findall(
             r'<tr itemprop="docdbFamily".*?itemprop="publicationNumber">([^<]*)<', doc, re.S)}),

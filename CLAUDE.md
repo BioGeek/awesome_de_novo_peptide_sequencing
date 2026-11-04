@@ -2197,8 +2197,8 @@ Five tables written by `build_patents.py`: `patent`, one row per patent
 FAMILY; `patent_inventor`; `patent_algorithm`, the catalog method a patent
 claims, with its evidence; `patent_citation`, what a patent cites that the
 catalog holds; and `patent_cited_by`, every family, anyone's, that cites a
-catalogued one. **9 patent families** from 6 assignees, 5 of them claiming a method
-the catalog describes from its paper. Together they cite 33 catalogued papers between them.
+catalogued one. **64 patent families** from 47 assignees, 11 of them claiming a method
+the catalog describes from its paper. Together they cite 45 catalogued papers between them.
 
 **A patent is not a publication here**, and that is the design decision.
 Typing it as a tenth `publication_type` would have reused every page and chart,
@@ -2216,6 +2216,23 @@ in several countries is one row, with the others in `members`. The
 representative is the granted US patent where one exists, else a US
 application, else whatever a person chose. 0 publication numbers sit in two
 patent rows, an invariant, and 0 patent rows have never been filled by a refresh.
+
+**A family is Google's family id, and that id can be missing or too narrow.**
+Russian `RU…C1` pages print none, and two IBMC patents then shared the family
+"", so `add` refused the second as a member of the first; `parse()` now falls
+back to the patent's own number. The opposite case needs `REJECTED`: one
+invention filed in Canada or Hong Kong can carry a family id of its own, or none
+(Rockefeller's `CA2406356A1` beside `US6271037B1`), and only a rejection naming
+it as the same invention stops `search` proposing it. A shared priority date is
+not proof of one invention: Micromass filed two on 1999-04-06, Skilling's MCMC
+search (`US6489608B1`) and his Bayesian scoring (`US6489121B1`), and they are
+two rows.
+
+**Inventors printed in another script are pinned.** The name rules compare
+Latin names, so the IBMC patents' Cyrillic inventors, ICT's and AMMS's Chinese
+and Sogang's Hangul ones never match the PowerNovo, pNovo+, DiNovo and Han Bin
+Oh rows they are. `INVENTOR_AUTHOR` pins them, each on a claimed method's
+describing paper.
 
 **Which patents belong is decided by hand**, on the catalog's own bar: the
 claims are about *de novo* sequencing of peptides or proteins by mass
