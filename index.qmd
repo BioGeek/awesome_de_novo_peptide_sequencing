@@ -1219,7 +1219,7 @@ lazy_heights = ({
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
   lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
-  patents_prior_art: [360, 360], patents_citers: [900, 1500]
+  patents_prior_art: [751, 1201], patents_citers: [1966, 4769]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -8084,9 +8084,17 @@ are folded into one row.`
 //| echo: false
 lazy_chart("patents_citers", () => {
   const by_id = new Map(patents_t.map(p => [p.id, p]))
-  const col = patent_short
   const cited = patents_t.filter(p => patent_citers_t.some(c => c.patent_id === p.id))
+  // A column is a patent, and patent_short names several by one assignee
+  // (Sogang holds four), which on an ordinal axis would merge them into one
+  // column. A shared label gains the patent's number.
+  const shared = new Set(d3.rollups(cited, v => v.length, patent_short).filter(([, n]) => n > 1).map(([s]) => s))
+  const col = p => shared.has(patent_short(p)) ? `${patent_short(p)} · ${p.number}` : patent_short(p)
   const columns = cited.map(col)
+  // The column labels are vertical, so the top margin is the longest one
+  // (10 px text, ~6 px a character); a fixed 140 px clipped "Hunan University
+  // of Technology and Business" once the 2026-11 screening added it.
+  const MT = Math.max(140, Math.ceil(14 + 6 * d3.max(columns, c => c.length)))
   const totals = d3.rollups(patent_citers_t, v => new Set(v.map(c => c.citing_number)).size,
                             c => c.organisation)
     .sort((a, b) => d3.descending(a[1], b[1]) || d3.ascending(a[0], b[0]))
@@ -8106,7 +8114,10 @@ lazy_chart("patents_citers", () => {
   return Plot.plot({
     // Vertical column labels: slanted, nine columns of ~57 px overlapped by
     // up to 45 px once the third assignee arrived.
-    width: 900, height: 140 + rows.length * 17, marginLeft: 360, marginTop: 140, marginRight: 30,
+    // 15 px a column: at a fixed 900 px the 45 columns of 2026-11 were 11 px
+    // apart and their 10 px vertical labels overlapped.
+    width: Math.max(900, 390 + 15 * columns.length), height: MT + rows.length * 17,
+    marginLeft: 360, marginTop: MT, marginRight: 30,
     x: { domain: columns, axis: "top", label: null, tickRotate: -90 },
     r: { type: "identity" },
     // The axis is drawn as text marks, because an axis tick cannot be a link.
