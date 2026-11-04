@@ -13115,6 +13115,7 @@ INSERT INTO publication VALUES(993,'Beyond Best Guesses: A Multi-Level Confidenc
 INSERT INTO publication VALUES(994,'Proteomics of natural bacterial isolates powered by deep learning-based de novo identification','2018-09-27','10.1101/428334','Cold Spring Harbor Laboratory',replace('Metaproteomics has been increasingly utilized for high-throughput molecular characterization in complex environments and has been demonstrated to provide insights into microbial composition and functional roles in soil systems. Despite its potential for the study of microbiomes, significant challenges remain in data analysis, including the creation of a sample-specific protein sequence database as the taxonomic composition of soil is often unknown. Almost all metaproteome analysis tools require this database and their accuracy and sensitivity suffer when the database is incomplete or contains extraneous sequences from organisms which are not present. Here, we leverage a de novo peptide sequencing approach to identify sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data, and trained it on 5 million peptide-spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified unsequenced soil isolates directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S ribosomal RNA sequencing of the soil samples and also uncovered several additional species which were strongly represented only in proteomic data. Our pipeline offers an alternative and complementary method for metaproteomic data analysis by creating a protein database directly from proteomic data, thus removing the need for metagenomic sequencing.\n\nSignificance StatementProteomic characterization of environmental samples, or metaproteomics, reveals microbial activity critical to our understanding of climate, nutrient cycling and human health. Metaproteomic samples originate from diverse environs, such as soil and oceans. One option for data analysis is a de novo interpretation of the mass spectra. Unfortunately, the current generation of de novo algorithms were primarily trained on data originating from human proteins. Therefore, these algorithms struggle with data from environmental samples, limiting our ability to analyze metaproteomics data. To address this challenge, we trained a new algorithm with data from dozens of diverse environmental bacteria and achieved significant improvements in accuracy across a broad range of organisms. This generality opens proteomics to the world of natural isolates and microbiomes.','\n',char(10)),'https://www.biorxiv.org/content/10.1101/428334v1','bioRxiv','preprint','v1','biorxiv');
 INSERT INTO publication VALUES(995,'Uncovering hidden members and functions of the soil microbiome using de novo metaproteomics','2020-11-16',NULL,'Cold Spring Harbor Laboratory',replace('Metaproteomics has been increasingly utilized for high-throughput molecular characterization in complex environments and has been demonstrated to provide insights into microbial composition and functional roles in soil systems. Despite its potential for the study of microbiomes, significant challenges remain in data analysis, including the creation of a sample-specific protein sequence database as the taxonomic composition of soil is often unknown. Almost all metaproteome analysis tools require this database and their accuracy and sensitivity suffer when the database is incomplete or contains extraneous sequences from organisms which are not present. Here, we leverage a de novo peptide sequencing approach to identify sample composition directly from metaproteomic data. First, we created a deep learning model, Kaiko, to predict the peptide sequences from mass spectrometry data, and trained it on 5 million peptide-spectrum matches from 55 phylogenetically diverse bacteria. After training, Kaiko successfully identified unsequenced soil isolates directly from proteomics data. Finally, we created a pipeline for metaproteome database generation using Kaiko. We tested the pipeline on native soils collected in Kansas, showing that the de novo sequencing model can be employed to construct the sample-specific protein database instead of relying on (un)matched metagenomes. Our pipeline identified all highly abundant taxa from 16S ribosomal RNA sequencing of the soil samples and also uncovered several additional species which were strongly represented only in proteomic data. Our pipeline offers an alternative and complementary method for metaproteomic data analysis by creating a protein database directly from proteomic data, thus removing the need for metagenomic sequencing.\n\nSignificance StatementProteomic characterization of environmental samples, or metaproteomics, reveals microbial activity critical to our understanding of climate, nutrient cycling and human health. Metaproteomic samples originate from diverse environs, such as soil and oceans. One option for data analysis is a de novo interpretation of the mass spectra. Unfortunately, the current generation of de novo algorithms were primarily trained on data originating from human proteins. Therefore, these algorithms struggle with data from environmental samples, limiting our ability to analyze metaproteomics data. To address this challenge, we trained a new algorithm with data from dozens of diverse environmental bacteria and achieved significant improvements in accuracy across a broad range of organisms. This generality opens proteomics to the world of natural isolates and microbiomes.','\n',char(10)),'https://www.biorxiv.org/content/10.1101/428334v2','bioRxiv','preprint','v2','biorxiv');
 INSERT INTO publication VALUES(996,'PepPr: De Novo peptide sequencing with peptide priors','2026-10-28','10.64898/2026.10.27.762126','Cold Spring Harbor Laboratory','Mass spectrometry-based peptide sequencing underpins proteomics. Database search confines to predefined candidates, whereas de novo peptide sequencing (DNPS) struggles with incomplete spectra. Existing hybrid methods use databases only for post hoc correction or retrieve previously identified spectra to guide decoding. We instead combine DNPS with a peptide prior: a language model fitted to a reference proteome, tolerating variants yet uncertain on strongly divergent sequences. Relative to prior-free DNPS, our implementation, PepPr, improved reference peptide identification and improved rather than suppressed variant identification. Using a related proteome as prior, it matched or outperformed homology-driven database search, and its gain over prior-free DNPS grew with relatedness. In antibody sequencing, it improved recovery of peptides spanning the variable-constant boundary, deamidation calls, and assembly, while preserving recall of hypervariable regions inaccessible to database search. Peptide priors thus bring reference knowledge into DNPS without limiting discovery.','https://www.biorxiv.org/content/10.64898/2026.10.27.762126v1','bioRxiv','preprint','v1','biorxiv');
+INSERT INTO publication VALUES(997,'Limitations of de novo peptide sequencing in resolving sequence ambiguity','2026-11-03','10.1038/s41592-026-03301-9','Springer Science and Business Media LLC','De novo peptide sequencing enables peptide identification from fragmentation spectra without relying on sequence databases. However, incomplete spectra create ambiguity, making unambiguous identification challenging. Recent deep learning advances have produced numerous de novo models that predict sequences and refine peptide-spectrum matches under such conditions. Yet, their relative strengths, weaknesses and ability to handle spectrum ambiguity remain unclear. Here we benchmark eight state-of-the-art models on three publicly available proteomics datasets, comparing performance using established metrics and quantifying inter-model agreement. We assess post-processing approaches, including iterative refinement, rescoring and reranking, for their ability to improve identification accuracy, and perform an error analysis to identify common mispredictions and their causes. Model performance varied, with considerable overlap of correct identifications. Post-processing yielded no or only modest improvements. Most sequencing errors were model-independent and driven by limited fragment ion coverage, a limitation also observed in database searches with large search spaces.','https://www.nature.com/articles/s41592-026-03301-9','Nature Methods','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19507,6 +19508,16 @@ INSERT INTO publication_author VALUES(996,76,2);
 INSERT INTO publication_author VALUES(996,77,3);
 INSERT INTO publication_author VALUES(996,33,4);
 INSERT INTO publication_author VALUES(996,82,5);
+INSERT INTO publication_author VALUES(997,27,10);
+INSERT INTO publication_author VALUES(997,28,1);
+INSERT INTO publication_author VALUES(997,29,7);
+INSERT INTO publication_author VALUES(997,416,9);
+INSERT INTO publication_author VALUES(997,417,2);
+INSERT INTO publication_author VALUES(997,418,3);
+INSERT INTO publication_author VALUES(997,419,4);
+INSERT INTO publication_author VALUES(997,420,6);
+INSERT INTO publication_author VALUES(997,421,5);
+INSERT INTO publication_author VALUES(997,784,8);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -20716,6 +20727,7 @@ INSERT INTO publication_impact VALUES(993,NULL,NULL,'unmatched',43.8356164383561
 INSERT INTO publication_impact VALUES(994,'W4284680271',32,'doi',NULL,2026,'2026-11-01T13:38:50+00:00');
 INSERT INTO publication_impact VALUES(995,NULL,NULL,'unmatched',90.1098901098901023,2026,'2026-11-01T13:38:50+00:00');
 INSERT INTO publication_impact VALUES(996,'W7224081043',0,'doi',NULL,2026,'2026-11-01T13:38:50+00:00');
+INSERT INTO publication_impact VALUES(997,'W4413476733',1,'doi',NULL,2026,'2026-11-04T14:58:36+00:00');
 CREATE TABLE publication_version (
             preprint_id  INTEGER NOT NULL
                 REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -20785,6 +20797,7 @@ INSERT INTO publication_version VALUES(218,984,'manual');
 INSERT INTO publication_version VALUES(15,989,'manual');
 INSERT INTO publication_version VALUES(994,51,'biorxiv');
 INSERT INTO publication_version VALUES(584,577,'title');
+INSERT INTO publication_version VALUES(249,997,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27676,6 +27689,14 @@ INSERT INTO publication_author_affiliation VALUES(996,82,1420,0,NULL);
 INSERT INTO publication_author_affiliation VALUES(996,82,13,1,NULL);
 INSERT INTO publication_author_affiliation VALUES(996,82,39,2,NULL);
 INSERT INTO publication_author_affiliation VALUES(996,82,40,3,NULL);
+INSERT INTO publication_author_affiliation VALUES(997,27,508,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,28,508,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,29,508,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,416,508,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,417,174,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,420,177,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,421,174,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(997,784,508,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -28969,6 +28990,7 @@ INSERT INTO publication_algorithm VALUES(995,48,'describes');
 INSERT INTO publication_algorithm VALUES(996,825,'describes');
 INSERT INTO publication_algorithm VALUES(996,12,'uses');
 INSERT INTO publication_algorithm VALUES(996,36,'uses');
+INSERT INTO publication_algorithm VALUES(997,220,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -40353,7 +40375,6 @@ INSERT INTO publication_dataset VALUES(481,266,126,149,'uses');
 INSERT INTO publication_dataset VALUES(482,266,296,319,'uses');
 INSERT INTO publication_dataset VALUES(484,341,123,146,'introduces');
 INSERT INTO publication_dataset VALUES(485,342,118,141,'introduces');
-INSERT INTO publication_dataset VALUES(488,249,235,258,'uses');
 INSERT INTO publication_dataset VALUES(493,243,218,241,'uses');
 INSERT INTO publication_dataset VALUES(494,435,257,280,'uses');
 INSERT INTO publication_dataset VALUES(505,218,361,384,'uses');
@@ -41358,6 +41379,8 @@ INSERT INTO publication_dataset VALUES(1598,103,501,544,'trains-on');
 INSERT INTO publication_dataset VALUES(1599,103,502,545,'trains-on');
 INSERT INTO publication_dataset VALUES(1600,221,501,544,'trains-on');
 INSERT INTO publication_dataset VALUES(1601,221,501,544,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1602,997,22,31,'uses');
+INSERT INTO publication_dataset VALUES(1603,997,34,43,'uses');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -67758,7 +67781,7 @@ INSERT INTO sqlite_sequence VALUES('city',575);
 INSERT INTO sqlite_sequence VALUES('affiliation',1420);
 INSERT INTO sqlite_sequence VALUES('author',3943);
 INSERT INTO sqlite_sequence VALUES('algorithm',825);
-INSERT INTO sqlite_sequence VALUES('publication',996);
+INSERT INTO sqlite_sequence VALUES('publication',997);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
