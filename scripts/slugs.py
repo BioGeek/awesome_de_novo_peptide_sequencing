@@ -117,6 +117,9 @@ TRANSLITERATE = {
 # their old forms are still live pages, so they are not retired redirects.)
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
+             # 2026-11-04: 'D.V. Petrovsky' (publication 752, the ICMBB24 BERT
+             # paper) is PowerNovo's first author: same four co-authors, same order.
+             'd-v-petrovsky': 'denis-v-petrovskiy',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
              'calomeno-celso-vitor-alves-queiroz': 'celso-vitor-a-q-calomeno',
              'd-dutta': 'debojyoti-dutta',
