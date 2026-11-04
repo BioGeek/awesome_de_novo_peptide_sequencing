@@ -10322,7 +10322,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/baozhen-shan.html</loc>
-    <lastmod>2026-09-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/philippe-bulet.html</loc>
@@ -11286,7 +11286,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/lei-xin.html</loc>
-    <lastmod>2026-05-19T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/zhonghua-liu.html</loc>
@@ -14790,7 +14790,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/arxiv.html</loc>
-    <lastmod>2026-10-05T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/2012-7th-international-symposium-on-health-informatics-and-bioinformatics.html</loc>
@@ -18666,7 +18666,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/rui-qiao.html</loc>
-    <lastmod>2025-06-02T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/t-sakurai.html</loc>
@@ -26926,7 +26926,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/bioinformatics-solutions-inc.html</loc>
-    <lastmod>2026-09-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/state-key-laboratory-of-genetic-engineering.html</loc>
@@ -27834,7 +27834,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/western-university.html</loc>
-    <lastmod>2026-09-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/xiamen-university.html</loc>
@@ -28366,7 +28366,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/university-of-waterloo.html</loc>
-    <lastmod>2026-09-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/upper-austria-university-of-applied-sciences.html</loc>
@@ -30366,6 +30366,54 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/limitations-of-de-novo-sequencing-in-resolving-sequence-ambiguity.html</loc>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
+    <lastmod>2026-11-04T18:09:19.239Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/novocrf.html</loc>
+    <lastmod>2026-11-03T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/carbamazepine-activates-private-self-and-viral-reactive-tcrs-through-a-drug.html</loc>
+    <lastmod>2026-08-18T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/comprehensive-proteogenomic-analysis-identifies-immune-targets-in.html</loc>
+    <lastmod>2026-05-26T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/functional-diversification-of-the-cephalopod-proteome-by-rna-editing.html</loc>
+    <lastmod>2026-10-09T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/global-proteomics-of-peroxiredoxin-6-knockdown-a549-cells-subjected-to-ionizing.html</loc>
+    <lastmod>2026-08-02T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/hla-class-i-naturally-presented-synovial-tissue-peptides-are-recognized-by-cd8.html</loc>
+    <lastmod>2026-08-27T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/peptidomics-mapping-of-proteolysis-highlights-triple-activation-of-sprouted.html</loc>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/protein-related-hydrophobicity-differences-among-strains-belonging-to.html</loc>
+    <lastmod>2026-03-19T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/proteomic-analysis-of-xenopus-tropicalis-skin-toes-and-claws-using-the-gludc.html</loc>
+    <lastmod>2026-08-13T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/proteomic-data-the-japanese-archipelago-sheltered-cave-lions-not-tigers-during.html</loc>
+    <lastmod>2026-01-26T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice.html</loc>
     <lastmod>2026-11-03T00:00:00.000Z</lastmod>
   </url>
 </urlset>

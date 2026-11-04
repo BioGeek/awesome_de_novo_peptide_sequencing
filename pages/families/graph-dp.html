@@ -157,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Graph / DP</h1>
-<p class="subtitle lead">45 methods · 1990–2022</p>
+<p class="subtitle lead">46 methods · 1990–2026</p>
 </div>
 
 <div>
@@ -180,16 +180,16 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>The classical formulation: peaks become nodes in a spectrum graph whose edges are residue masses, and the peptide is the best-scoring path through it, found by dynamic programming. Nearly every classical sequencer is a version of this.</p>
-<p>The earliest of its 45 methods is <a href="../algorithms/fast-peptide-sequencing-algorithm-bartels.html">Fast peptide sequencing algorithm (Bartels)</a> (1990); 44 more have followed.</p>
+<p>The earliest of its 46 methods is <a href="../algorithms/fast-peptide-sequencing-algorithm-bartels.html">Fast peptide sequencing algorithm (Bartels)</a> (1990); 45 more have followed.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td>Methods</td>
-<td>45</td>
+<td>46</td>
 </tr>
 <tr class="even">
 <td>Papers describing them</td>
-<td>73</td>
+<td>74</td>
 </tr>
 <tr class="odd">
 <td>Authors</td>
@@ -197,24 +197,24 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td>Active</td>
-<td>1990-06-01 to 2022-08-25</td>
+<td>1990-06-01 to 2026-11-03</td>
 </tr>
 <tr class="odd">
 <td>Deep learning</td>
-<td>1 of 45</td>
+<td>2 of 46</td>
 </tr>
 <tr class="even">
 <td>Kinds</td>
-<td>algorithm (44), adjacent</td>
+<td>algorithm (45), adjacent</td>
 </tr>
 <tr class="odd">
 <td>Acquisition</td>
-<td>DDA (42)</td>
+<td>DDA (43)</td>
 </tr>
 </tbody>
 </table>
-<section id="methods-45" class="level2">
-<h2 class="anchored" data-anchor-id="methods-45">Methods (45)</h2>
+<section id="methods-46" class="level2">
+<h2 class="anchored" data-anchor-id="methods-46">Methods (46)</h2>
 <p>Oldest first, by the paper that describes each one.</p>
 <ul>
 <li><a href="../algorithms/fast-peptide-sequencing-algorithm-bartels.html">Fast peptide sequencing algorithm (Bartels)</a> (1990): 1990 graph-theory algorithm that sequences polypeptides from FAB tandem mass spectra by scoring mass differences, without needing the amino acid composition, and proposes amino acid pairs or triples to bridge missing peaks. Sub-quadratic in the number of residues.</li>
@@ -262,10 +262,11 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../algorithms/swpepnovo.html">SWPepNovo</a> (2019): Parallelises a PepNovo-style scoring search across the Sunway many-core architecture, using a two-level task partition and a load-balancing scheme to keep the compute elements busy. Targets the case where the spectrum dataset, not the algorithm, is the bottleneck. From the same Hunan group as MRUniNovo.</li>
 <li><a href="../algorithms/maxnovo.html">MaxNovo</a> (2021): MaxQuant spectrum-graph de novo</li>
 <li><a href="../algorithms/protein-acrobat.html">Protein Acrobat</a> (2022): De novo peptide sequencing tool from the Cindrić group, coupling MALDI-TOF/TOF fragmentation of chemically activated peptides with de novo sequence elucidation and NCBInr alignment for organism identification (bacteria, viruses, meat-species markers).</li>
+<li><a href="../algorithms/novocrf.html">NovoCRF</a> (2026): A conditional random field whose states are prefix masses, so every path is a peptide within 0.06 Da of the precursor; a 310k-parameter scorer of physics-derived ion-match features is trained with exact global normalization over all mass-feasible peptides, decoded by exact k-best search and reranked by two BiGRUs.</li>
 </ul>
 </section>
-<section id="papers-describing-them-73" class="level2">
-<h2 class="anchored" data-anchor-id="papers-describing-them-73">Papers describing them (73)</h2>
+<section id="papers-describing-them-74" class="level2">
+<h2 class="anchored" data-anchor-id="papers-describing-them-74">Papers describing them (74)</h2>
 <ul>
 <li><a href="../publications/fast-algorithm-for-peptide-sequencing-by-mass-spectroscopy.html">Fast algorithm for peptide sequencing by mass spectroscopy</a> (1990, Biological Mass Spectrometry, peer-reviewed)</li>
 <li><a href="../publications/de-novo-peptide-sequencing-via-tandem-mass-spectrometry.html">De novo peptide sequencing via tandem mass spectrometry</a> (1999, Journal of Computational Biology, peer-reviewed)</li>
@@ -340,6 +341,7 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="../publications/application-of-top-down-deconvolution-tools-to-bottom-up-mass-spectrometry-data.html">Application of Top-Down Deconvolution Tools to Bottom-Up Mass Spectrometry Data: Advantages and Limitations</a> (2022, Springer Proceedings in Physics, peer-reviewed)</li>
 <li><a href="../publications/a-streamlined-platform-for-analyzing-tera-scale-dda-and-dia-mass-spectrometry.html">A streamlined platform for analyzing tera-scale DDA and DIA mass spectrometry data enables highly sensitive immunopeptidomics</a> (2022, Nature Communications, peer-reviewed)</li>
 <li><a href="../publications/direct-identification-of-urinary-tract-pathogens-by-maldi-tof-tof-analysis-and.html">Direct Identification of Urinary Tract Pathogens by MALDI-TOF/TOF Analysis and De Novo Peptide Sequencing</a> (2022, Molecules, peer-reviewed)</li>
+<li><a href="../publications/novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice.html">NovoCRF: Globally Normalized De Novo Peptide Sequencing on a Prefix-Mass Lattice</a> (2026, arXiv, preprint)</li>
 </ul>
 </section>
 <section id="authors-191" class="level2">
