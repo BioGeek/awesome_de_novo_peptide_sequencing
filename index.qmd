@@ -1219,7 +1219,7 @@ lazy_heights = ({
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
   lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
-  patents_prior_art: [751, 1201], patents_citers: [1966, 4769]
+  patents_prior_art: [600, 1256], patents_citers: [1966, 4769]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -7907,23 +7907,27 @@ these appear in the paper counts, charts or author totals above.
 
 Patents cite earlier literature as prior art, and that literature overlaps this
 catalog. Between them these patents cite **${pt_stats.papers}** catalogued
-papers. The chart puts each patent at its priority date and draws a line to
-every catalogued paper it cites. A solid line is a patent citing the paper of
-the very method it claims (**${pt_stats.own}** of those). An arc along the top
-is one catalogued patent citing another.`
+papers. Time runs down the chart: each patent sits in the right-hand column
+at its priority date, with a line to every catalogued paper it cites in the
+left-hand column. A solid line is a patent citing the paper of the very method
+it claims (**${pt_stats.own}** of those). An arc beside the patents is one
+catalogued patent citing another.`
 ```
 
 ```{ojs}
 //| echo: false
 lazy_chart("patents_prior_art", () => {
+  // Time runs DOWN the page: papers in a column on the left, patents in one on
+  // the right, each patent labelled on a line of its own. It used to run
+  // across, and 64 patents over 1100 px stacked their labels 29 tiers high.
   const pub = id => pub_lookup.get(id)
-  // Coloured by owner under the catalog's name for it, so the legend does not
-  // read "BIOINFORMATICS SOLUTIONS Inc".
   const owner = p => p.institution ?? p.assignee
-  const assignees = Array.from(new Set(patents_t.map(owner)))
-  const color = d3.scaleOrdinal(assignees, d3.schemeTableau10)
-  const by_id = new Map(patents_t.map(p => [p.id, p]))
-  const links = patent_links_t.filter(l => l.pub_id != null && pub(l.pub_id))
+  // A patent with no date is left out rather than drawn anywhere: one NaN in
+  // the label placement below turns every label's position into NaN, and the
+  // two Russian IBMC patents once arrived with an empty priority date.
+  const pats = patents_t.filter(p => !isNaN(p.priority))
+  const by_id = new Map(pats.map(p => [p.id, p]))
+  const links = patent_links_t.filter(l => l.pub_id != null && pub(l.pub_id) && by_id.has(l.patent_id))
     .map(l => ({ ...l, patent: by_id.get(l.patent_id), paper: pub(l.pub_id),
                  pdate: new Date(l.pub_date) }))
   const arcs = patent_links_t.filter(l => l.cited_patent_id != null)
@@ -7934,46 +7938,71 @@ lazy_chart("patents_prior_art", () => {
     id, paper: ls[0].paper, date: ls[0].pdate, n: new Set(ls.map(l => l.patent_id)).size,
     methods: ls[0].pub_methods, citing: Array.from(new Set(ls.map(l => l.patent.number)))
   }))
-  // Patent labels are packed into tiers above the row, so two filed the same
-  // month (DeepNovo and DeepNovo-DIA share a priority date) do not overprint.
-  const W = 1100, ML = 120, MR = 40
-  const x = d3.scaleUtc(d3.extent([...patents_t.map(p => p.priority), ...papers.map(p => p.date)]),
-                        [ML, W - MR]).nice()
-  const tiers = []
-  const placed = patents_t.slice().sort((a, b) => a.priority - b.priority).map(p => {
-    const text = patent_short(p)
-    const w = text.length * 6.6 + 12
-    // A label that would run past the right edge starts further left; its
-    // leader line still drops from the label to the patent's own date.
-    const x0 = Math.min(x(p.priority) - 4, W - MR - w), x1 = x0 + w
-    let t = tiers.findIndex(end => end < x0)
-    if (t < 0) { t = tiers.length; tiers.push(0) }
-    tiers[t] = x1
-    return { ...p, text, tier: t, lx: x.invert(x0 + 4) }
-  })
-  const nt = Math.max(1, tiers.length)
-  const tierH = 0.11
-  const yTop = 1 + nt * tierH + 0.08
+  // x is in pixels: the year axis, paper labels, the paper column, the band
+  // the links and patent-to-patent arcs cross, the patent column, its labels.
+  const W = 940, PX = 270, TX = 590, LX = 625, MT = 46, MB = 24
+  const H = Math.max(820, 17 * pats.length + MT + MB + 60)
+  const [d0, d1] = d3.extent([...pats.map(p => p.priority), ...papers.map(p => p.date)])
+  const ys = d3.scaleUtc([d3.utcYear.floor(d0), d3.utcYear.offset(d3.utcYear.floor(d1), 1)], [MT, H - MB])
+  // 1-D label placement: labels that would overlap are merged into a block
+  // centred on their dates, then pushed inside the frame.
+  const dodge = (items, h, lo, hi) => {
+    const blocks = []
+    for (const it of items.slice().sort((a, b) => a.t - b.t)) {
+      let b = { items: [it], sum: it.t }
+      b.top = it.t - h / 2
+      while (blocks.length) {
+        const prev = blocks[blocks.length - 1]
+        if (prev.top + prev.items.length * h <= b.top) break
+        blocks.pop()
+        const items2 = [...prev.items, ...b.items], sum = prev.sum + b.sum
+        b = { items: items2, sum, top: sum / items2.length - items2.length * h / 2 }
+      }
+      blocks.push(b)
+    }
+    const out = blocks.flatMap(b => b.items.map((it, i) => ({ it, y: b.top + h * (i + 0.5) })))
+    for (let i = 0; i < out.length; i++) out[i].y = Math.max(out[i].y, i ? out[i - 1].y + h : lo)
+    for (let i = out.length - 1; i >= 0; i--) out[i].y = Math.min(out[i].y, i < out.length - 1 ? out[i + 1].y - h : hi)
+    return new Map(out.map(o => [o.it.key, o.y]))
+  }
+  const tlab = dodge(pats.map(p => ({ key: p.id, t: ys(p.priority) })), 15, MT, H - MB)
+  const placed = pats.map(p => ({ ...p, text: patent_short(p), ly: ys.invert(tlab.get(p.id)) }))
+  // Only a paper cited by two or more patents is named; the rest answer a hover.
+  const clip = (t, k = 32) => t.length > k ? t.slice(0, k - 1) + "…" : t
+  const named = papers.filter(p => p.n >= 2)
+  const plab = dodge(named.map(p => ({ key: p.id, t: ys(p.date) })), 14, MT, H - MB)
+  const plabels = named.map(p => ({ ...p, ly: ys.invert(plab.get(p.id)),
+    text: clip(p.methods ? p.methods.split("; ")[0] : title_html(p.paper.title).textContent) }))
+  const kind = p => p.methods ? "Claims a method in this catalog" : "Claims a method of its own"
   return Plot.plot({
-    width: W, height: 300 + nt * 22, marginLeft: ML, marginRight: MR, marginBottom: 40,
-    x: { type: "utc", domain: x.domain(), label: null },
-    y: { domain: [-0.18, yTop], axis: null },
+    width: W, height: H, marginTop: MT, marginBottom: MB, marginLeft: 0, marginRight: 0,
+    x: { type: "identity", axis: null },
+    y: { type: "utc", domain: ys.domain(), range: ys.range(), axis: null },
     r: { type: "identity" },
+    color: { domain: ["Claims a method in this catalog", "Claims a method of its own"],
+             range: ["#0f766e", "#6e7781"], legend: true },
     marks: [
-      Plot.text([{ y: 1, t: "Patents" }, { y: 0, t: "Papers they cite" }],
-                { x: x.domain()[0], y: "y", text: "t", textAnchor: "end", dx: -14,
-                  fontWeight: 600, fontSize: 12 }),
-      Plot.ruleY([0, 1], { stroke: "#eaeef2" }),
+      // Year rules and labels down the left edge.
+      Plot.ruleY(ys.ticks(d3.utcYear.every(5)), { y: d => d, x1: 40, x2: W - 10, stroke: "#f0f2f4" }),
+      Plot.text(ys.ticks(d3.utcYear.every(5)), { y: d => d, x: 34, text: d => String(d.getUTCFullYear()),
+                                                  textAnchor: "end", fontSize: 10, fill: "#57606a" }),
+      Plot.text([{ x: PX, t: "Papers they cite" }, { x: TX, t: "Patents" }],
+                { x: "x", text: "t", frameAnchor: "top", dy: -30, fontWeight: 600, fontSize: 12 }),
+      Plot.ruleX([PX, TX], { stroke: "#eaeef2" }),
       // Prior art, faint; the patent's own method's paper, solid.
       Plot.link(links.filter(l => !l.own_method), {
-        x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
-        stroke: l => owner(l.patent), strokeOpacity: 0.22 }),
+        x1: PX, y1: "pdate", x2: TX, y2: l => l.patent.priority, curve: "bump-x",
+        stroke: "#8c959f", strokeOpacity: 0.3 }),
       Plot.link(links.filter(l => l.own_method), {
-        x1: "pdate", y1: 0, x2: l => l.patent.priority, y2: 1,
-        stroke: l => owner(l.patent), strokeWidth: 2.2, strokeOpacity: 0.95 }),
-      Plot.arrow(arcs, { x1: a => a.from.priority, y1: 1, x2: a => a.to.priority, y2: 1,
-                         bend: -40, stroke: "#57606a", strokeWidth: 1.2, headLength: 6 }),
-      Plot.dot(papers, { x: "date", y: 0, r: p => 2.5 + 2.2 * Math.sqrt(p.n), fill: "#8c959f",
+        x1: PX, y1: "pdate", x2: TX, y2: l => l.patent.priority, curve: "bump-x",
+        stroke: "#0f766e", strokeWidth: 2.2, strokeOpacity: 0.9 }),
+      // A catalogued patent citing another: an arc bowing into the band.
+      Plot.arrow(arcs, { x1: TX, y1: a => a.from.priority, x2: TX, y2: a => a.to.priority,
+                         bend: -40, stroke: "#9a6700", strokeOpacity: 0.45, strokeWidth: 1, headLength: 5 }),
+      Plot.link(plabels, { x1: PX - 6, y1: "date", x2: PX - 26, y2: "ly", stroke: "#d0d7de" }),
+      Plot.text(plabels, { x: PX - 30, y: "ly", text: "text", textAnchor: "end", fontSize: 10,
+                           fill: "#57606a" }),
+      Plot.dot(papers, { x: PX, y: "date", r: p => 2.5 + 2.2 * Math.sqrt(p.n), fill: "#8c959f",
                          stroke: "white", strokeWidth: 0.8,
                          channels: { Paper: p => title_html(p.paper.title).textContent,
                                      Year: p => String(p.paper.year ?? p.date.getUTCFullYear()),
@@ -7981,20 +8010,21 @@ lazy_chart("patents_prior_art", () => {
                                      "Cited by": p => p.citing.join(", ") },
                          tip: { ...plot_tip_style, lineWidth: 60,
                                 format: { x: false, y: false, r: false } } }),
-      Plot.dot(placed, { x: "priority", y: 1, symbol: "square", r: 6, fill: owner,
+      Plot.link(placed, { x1: TX + 7, y1: "priority", x2: LX - 4, y2: "ly", stroke: "#d0d7de" }),
+      Plot.dot(placed, { x: TX, y: "priority", symbol: "square", r: 5.5, fill: kind,
                          stroke: "white", strokeWidth: 1,
                          channels: { Patent: "number", Title: "title", Assignee: owner,
                                      Priority: "priority_date", Status: "status",
                                      Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
                          tip: { ...plot_tip_style, lineWidth: 60,
                                 format: { x: false, y: false, fill: false } } }),
-      Plot.ruleX(placed, { x: "priority", y1: 1.04, y2: p => 1 + (p.tier + 1) * tierH - 0.02,
-                           stroke: "#d0d7de" }),
-      Plot.text(placed, { x: "lx", y: p => 1 + (p.tier + 1) * tierH, text: "text",
-                          textAnchor: "start", dx: -4, fontSize: 11, fill: "#24292f",
-                          href: p => page_href("patents", p.number) }),
-    ],
-    color: { domain: assignees, range: assignees.map(color), legend: true }
+      // The priority year leads each label: a label can sit well away from its
+      // patent's own row, and the year axis is at the other edge.
+      Plot.text(placed, { x: LX, y: "ly", text: p => p.priority_date.slice(0, 4), textAnchor: "start",
+                          fontSize: 10, fill: "#8c959f" }),
+      Plot.text(placed, { x: LX + 32, y: "ly", text: "text", textAnchor: "start", fontSize: 11,
+                          fill: "#24292f", href: p => page_href("patents", p.number) }),
+    ]
   })
 })
 ```

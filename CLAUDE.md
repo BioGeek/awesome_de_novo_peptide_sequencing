@@ -2310,10 +2310,13 @@ assignee's institution, and every catalogued paper it cites, under **Cited in
 patents**.
 
 **The home page's Patents section** has the prior-art chart and a table. The
-chart puts each patent at its PRIORITY date, which is what prior art is
-judged against, and the papers it cites below, at their publication dates. A
-solid line is a patent citing the paper of the method it claims; an arc along
-the top is one catalogued family citing another.
+chart runs time DOWN the page: each patent in the right-hand column at its
+PRIORITY date, which is what prior art is judged against, and the papers it
+cites in the left-hand column, at their publication dates. A solid line is a
+patent citing the paper of the method it claims; an arc beside the patents is
+one catalogued family citing another. It ran across the page until 64 families
+stacked its labels 29 tiers high; vertical, every patent label has a line of
+its own, placed by a 1-D dodge.
 
 **"Who cites these patents" is the other direction**: a dot for each
 organisation and catalogued patent it cites, coloured company, academic or
