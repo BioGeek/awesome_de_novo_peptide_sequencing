@@ -1412,8 +1412,26 @@ def render_institution(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     L += patent_lines(site, "Patents", ctx.get("patents", []), from_kind=K, note=
                       "Patent families this institution was the original assignee of.")
 
+    if ctx.get("citing"):
+        by_num: dict[str, list] = {}
+        for c in ctx["citing"]:
+            by_num.setdefault(c["citing_number"], []).append(c)
+        L += [f"## Its patents citing catalogued ones ({len(by_num)}) {{#citing-patents}}", ""]
+        for num, cs in by_num.items():
+            c0 = cs[0]
+            cited = ", ".join(site.link("patents", c["patent_id"], c["cited_number"], from_kind=K) for c in cs)
+            meta = [m for m in (f"priority {c0['priority_date']}" if c0["priority_date"] else None,
+                                "its own earlier patent" if any(c["self_citation"] for c in cs) else None)
+                    if m]
+            L.append(f"- [{num}](https://patents.google.com/patent/{num}/en \"Google Patents\") "
+                     f"{md_escape(c0['title'] or '')}"
+                     + (f" <small>({md_escape(', '.join(meta))})</small>" if meta else "")
+                     + f" cites {cited}")
+        L += ["", "Patent families filed by this organisation that cite a patent family "
+              "catalogued here, as Google Patents lists the citations.", ""]
+
     keys = ["geography", "browse-authors"] if ctx["authors"] else []
-    if ctx.get("patents"):
+    if ctx.get("patents") or ctx.get("citing"):
         keys.append("patents")
     L += site.seen_in(keys)
     latest = max((p[2] for p in ctx["pubs"] if p[2]), default=None)
@@ -2109,9 +2127,18 @@ def load(conn: sqlite3.Connection) -> dict:
     # assignee's institution, and a paper a patent cites as prior art.
     d["patents"] = {}
     d["patent_rows"] = []
-    for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents"):
+    for key in ("alg_patents", "author_patents", "inst_patents", "pub_patents", "inst_citing"):
         d[key] = defaultdict(list)
     if q("SELECT 1 FROM sqlite_master WHERE name = 'patent'").fetchone():
+        # An institution's own filings that cite a catalogued patent: the
+        # "Who cites these patents" chart links the organisation to its page,
+        # and the page has to say why.
+        for r in q("SELECT af.name, c.citing_number, c.title, c.priority_date, c.self_citation, "
+                   "       c.patent_id, p.number AS cited_number "
+                   "  FROM patent_cited_by c JOIN affiliation af ON af.id = c.affiliation_id "
+                   "  JOIN patent p ON p.id = c.patent_id "
+                   " ORDER BY c.priority_date DESC, c.citing_number, p.priority_date"):
+            d["inst_citing"][r["name"]].append(dict(r))
         # `assignee` is shown as the catalog names the institution where there
         # is one ("Bioinformatics Solutions Inc."), not as the register prints
         # it ("BIOINFORMATICS SOLUTIONS Inc"); the printed form stays on the
@@ -2905,6 +2932,7 @@ def main() -> int:
                 "places": d["inst_places"].get(name, []),
                 "pubs": sorted(pubs, key=lambda t: (str(t[2] or ""), t[0]), reverse=True),
                 "patents": d["inst_patents"].get(name, []),
+                "citing": d["inst_citing"].get(name, []),
             }
             body, mtime = render_institution(site, name, ctx)
             emit("institutions", site.slugs["institutions"][key], body, mtime)

@@ -2283,12 +2283,13 @@ and Venn Biosciences were held back until Google let their patents be fetched. `
 institution itself when exactly one institution has the assignee's name once
 both are folded by `org_base()`; a curated link is never replaced.
 
-**Citing organisations get no page of their own.** 78 organisations cite
+**Citing organisations get no page of their own.** 257 organisations cite
 these patents, and most of them, from Visa to OPPO, have no other connection
 to the field. A citer that already IS an institution here, by the same
-one-match rule, links to its page from the chart (16 do). Genentech does not:
-the catalog holds it twice, as "Genentech" and "Genentech, Inc.", and two
-matches link nothing.
+one-match rule, links to its page from the chart (38 do), and that page lists
+its citing filings under **Its patents citing catalogued ones**: a link from
+the chart to a page that never mentions patents is a dead end, which Protein
+Metrics' was. Two institutions sharing a folded name link neither.
 
 **Every patent family has a page**, `pages/patents/<number>.html`, and the
 slug is the representative publication number VERBATIM, upper case, not
