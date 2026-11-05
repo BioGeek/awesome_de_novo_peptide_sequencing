@@ -511,7 +511,9 @@ def parse(doc: str) -> dict:
         "inventors": dd("inventor"),
         "assignee": dd("assigneeOriginal"),
         "assignee_current": dd("assigneeCurrent"),
-        "priority_date": first("priorityDate"),
+        # A filing that claims no earlier one (the Russian RU…C1 patents)
+        # prints an empty priorityDate; its own filing date is its priority.
+        "priority_date": first("priorityDate") or first("filingDate"),
         "filing_date": first("filingDate"),
         "publication_date": first("publicationDate"),
         # Some pages (Russian RU…C1 patents) print no family id. Without a
