@@ -567,7 +567,12 @@ checkpoints = pd.read_sql("""
 patents = pd.read_sql("""
     SELECT p.id, p.number, p.title, p.assignee, af.name AS institution,
            p.priority_date, p.publication_date, p.status, p.granted, p.members,
-           p.cited_by, p.cited_by_families, p.n_npl, p.url,
+           p.cited_by, p.n_npl, p.url,
+           -- The citers the patent's page lists, so the table's number and the
+           -- page agree. The stored cited_by_families is Google's family list
+           -- alone, 0 for a patent cited only directly (15 of them).
+           (SELECT COUNT(DISTINCT c.citing_number) FROM patent_cited_by c
+             WHERE c.patent_id = p.id) AS cited_by_families,
            (SELECT group_concat(a.name, '; ') FROM patent_algorithm x
               JOIN algorithm a ON a.id = x.algorithm_id WHERE x.patent_id = p.id) AS methods,
            (SELECT group_concat(name, '; ') FROM (SELECT name FROM patent_inventor
@@ -8079,7 +8084,15 @@ Inputs.table(patent_search, {
       return r?.institution ? page_link("institutions", r.institution, r.institution) : a
     },
     methods: m => m ? page_links("algorithms", m, { sep: "; " }) : "",
-    cited_by_families: n => n == null ? "" : String(n),
+    // A count links to its section on the patent's page.
+    n_papers_cited: (n, i, rows) => {
+      const href = n ? page_href("patents", (rows ?? [])[i]?.number) : null
+      return href ? htl.html`<a href="${href}#cites-papers">${n}</a>` : String(n ?? "")
+    },
+    cited_by_families: (n, i, rows) => {
+      const href = n ? page_href("patents", (rows ?? [])[i]?.number) : null
+      return href ? htl.html`<a href="${href}#cited-by">${n}</a>` : String(n ?? "")
+    },
     status: s => s === "Active" ? s : html`<span style="color:#57606a">${s ?? ""}</span>`
   },
   width: { number: 140, title: 360, assignee: 170, priority_date: 90, status: 80,

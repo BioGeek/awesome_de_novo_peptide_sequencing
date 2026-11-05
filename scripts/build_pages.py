@@ -1953,7 +1953,9 @@ def render_patent(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
               "evident, never on a name alone.", ""]
 
     if ctx["cites_papers"]:
-        L += [f"## Catalogued papers it cites ({len(ctx['cites_papers'])})", ""]
+        # Fixed ids: the home page's patent table links its counts here, and
+        # a heading's own id would change with the count in it.
+        L += [f"## Catalogued papers it cites ({len(ctx['cites_papers'])}) {{#cites-papers}}", ""]
         for pid, title, date, examiner in ctx["cites_papers"]:
             L.append(f"- {site.link('publications', pid, title, from_kind=K)} ({str(date)[:4]})"
                      + (" <small>added by the examiner</small>" if examiner else ""))
@@ -1972,7 +1974,7 @@ def render_patent(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
         orgs: dict[str, list] = {}
         for c in ctx["citers"]:
             orgs.setdefault(c[0], []).append(c)
-        L += [f"## Cited by ({len(fams)} patent families, {len(orgs)} organisations)", ""]
+        L += [f"## Cited by ({len(fams)} patent families, {len(orgs)} organisations) {{#cited-by}}", ""]
         for org, cs in sorted(orgs.items(), key=lambda kv: (-len(kv[1]), kv[0])):
             _o, _n, sector, inst_key, _p, _t, self_ = cs[0]
             name = site.link("institutions", inst_key, org, from_kind=K) if inst_key else md_escape(org)
