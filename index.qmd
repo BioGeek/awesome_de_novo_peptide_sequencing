@@ -1219,7 +1219,7 @@ lazy_heights = ({
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
   lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
-  patents_prior_art: [600, 1256], patents_citers: [1966, 4769]
+  patents_prior_art: [498, 1035], patents_citers: [1966, 4769]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -7941,7 +7941,18 @@ lazy_chart("patents_prior_art", () => {
   // x is in pixels: the year axis, paper labels, the paper column, the band
   // the links and patent-to-patent arcs cross, the patent column, its labels.
   const W = 940, PX = 270, TX = 590, LX = 625, MT = 46, MB = 24
-  const H = Math.max(820, 17 * pats.length + MT + MB + 60)
+  // One label per owner: an assignee with four patents is named once, with a
+  // leader line to each, and its years given as a range. Individual filers
+  // are different people and stay apart.
+  const gkey = p => p.methods || p.institution ? patent_short(p) : `#${p.id}`
+  const groups = Array.from(d3.group(pats, gkey), ([key, ps]) => {
+    const [y0, y1] = d3.extent(ps, p => +p.priority_date.slice(0, 4))
+    return { key, ps, text: patent_short(ps[0]) + (ps.length > 1 ? ` (${ps.length})` : ""),
+             years: y0 === y1 ? String(y0) : `${y0}–${String(y1).slice(2)}`,
+             href: ps.length === 1 ? page_href("patents", ps[0].number)
+                                   : page_href("institutions", ps[0].institution) }
+  })
+  const H = Math.max(820, 17 * groups.length + MT + MB + 60)
   const [d0, d1] = d3.extent([...pats.map(p => p.priority), ...papers.map(p => p.date)])
   const ys = d3.scaleUtc([d3.utcYear.floor(d0), d3.utcYear.offset(d3.utcYear.floor(d1), 1)], [MT, H - MB])
   // 1-D label placement: labels that would overlap are merged into a block
@@ -7965,8 +7976,9 @@ lazy_chart("patents_prior_art", () => {
     for (let i = out.length - 1; i >= 0; i--) out[i].y = Math.min(out[i].y, i < out.length - 1 ? out[i + 1].y - h : hi)
     return new Map(out.map(o => [o.it.key, o.y]))
   }
-  const tlab = dodge(pats.map(p => ({ key: p.id, t: ys(p.priority) })), 15, MT, H - MB)
-  const placed = pats.map(p => ({ ...p, text: patent_short(p), ly: ys.invert(tlab.get(p.id)) }))
+  const tlab = dodge(groups.map(g => ({ key: g.key, t: d3.mean(g.ps, p => ys(p.priority)) })), 15, MT, H - MB)
+  groups.forEach(g => { g.ly = ys.invert(tlab.get(g.key)) })
+  const leaders = groups.flatMap(g => g.ps.map(p => ({ priority: p.priority, ly: g.ly })))
   // Only a paper cited by two or more patents is named; the rest answer a hover.
   const clip = (t, k = 32) => t.length > k ? t.slice(0, k - 1) + "…" : t
   const named = papers.filter(p => p.n >= 2)
@@ -8010,20 +8022,25 @@ lazy_chart("patents_prior_art", () => {
                                      "Cited by": p => p.citing.join(", ") },
                          tip: { ...plot_tip_style, lineWidth: 60,
                                 format: { x: false, y: false, r: false } } }),
-      Plot.link(placed, { x1: TX + 7, y1: "priority", x2: LX - 4, y2: "ly", stroke: "#d0d7de" }),
-      Plot.dot(placed, { x: TX, y: "priority", symbol: "square", r: 5.5, fill: kind,
-                         stroke: "white", strokeWidth: 1,
-                         channels: { Patent: "number", Title: "title", Assignee: owner,
-                                     Priority: "priority_date", Status: "status",
-                                     Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
-                         tip: { ...plot_tip_style, lineWidth: 60,
-                                format: { x: false, y: false, fill: false } } }),
+      Plot.link(leaders, { x1: TX + 7, y1: "priority", x2: LX - 4, y2: "ly", stroke: "#d0d7de" }),
+      // A patent's tip is centred on its square, below it in the top half of
+      // the chart and above it in the bottom half. Left to Plot, it opened to
+      // the left of the square, and a long title ran past the frame's left
+      // edge and was clipped.
+      ...[true, false].map(top => Plot.dot(pats.filter(p => (ys(p.priority) < H / 2) === top), {
+        x: TX, y: "priority", symbol: "square", r: 5.5, fill: kind, stroke: "white", strokeWidth: 1,
+        channels: { Patent: "number", Title: "title", Assignee: owner,
+                    Priority: "priority_date", Status: "status",
+                    Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
+        tip: { ...plot_tip_style, lineWidth: 46, anchor: top ? "top" : "bottom",
+               format: { x: false, y: false, fill: false } } })),
       // The priority year leads each label: a label can sit well away from its
-      // patent's own row, and the year axis is at the other edge.
-      Plot.text(placed, { x: LX, y: "ly", text: p => p.priority_date.slice(0, 4), textAnchor: "start",
+      // patents' own rows, and the year axis is at the other edge. A single
+      // patent links to its page, an owner of several to its institution.
+      Plot.text(groups, { x: LX, y: "ly", text: "years", textAnchor: "start",
                           fontSize: 10, fill: "#8c959f" }),
-      Plot.text(placed, { x: LX + 32, y: "ly", text: "text", textAnchor: "start", fontSize: 11,
-                          fill: "#24292f", href: p => page_href("patents", p.number) }),
+      Plot.text(groups, { x: LX + 46, y: "ly", text: "text", textAnchor: "start", fontSize: 11,
+                          fill: "#24292f", href: "href" }),
     ]
   })
 })
