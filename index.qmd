@@ -8020,25 +8020,10 @@ lazy_chart("patents_prior_art", () => {
       Plot.text(plabels, { x: PX - 30, y: "ly", text: "text", textAnchor: "end", fontSize: 10,
                            fill: "#57606a" }),
       Plot.dot(papers, { x: PX, y: "date", r: p => 2.5 + 2.2 * Math.sqrt(p.n), fill: "#8c959f",
-                         stroke: "white", strokeWidth: 0.8,
-                         channels: { Paper: p => title_html(p.paper.title).textContent,
-                                     Year: p => String(p.paper.year ?? p.date.getUTCFullYear()),
-                                     Describes: p => p.methods ?? "",
-                                     "Cited by": p => p.citing.join(", ") },
-                         tip: { ...plot_tip_style, lineWidth: 60,
-                                format: { x: false, y: false, r: false } } }),
+                         stroke: "white", strokeWidth: 0.8 }),
       Plot.link(leaders, { x1: TX + 7, y1: "priority", x2: LX - 4, y2: "ly", stroke: "#d0d7de" }),
-      // A patent's tip is centred on its square, below it in the top half of
-      // the chart and above it in the bottom half. Left to Plot, it opened to
-      // the left of the square, and a long title ran past the frame's left
-      // edge and was clipped.
-      ...[true, false].map(top => Plot.dot(pats.filter(p => (ys(p.priority) < H / 2) === top), {
-        x: TX, y: "priority", symbol: "square", r: 5.5, fill: kind, stroke: "white", strokeWidth: 1,
-        channels: { Patent: "number", Title: "title", Assignee: owner,
-                    Priority: "priority_date", Status: "status",
-                    Claims: p => p.methods ?? "", "Papers cited": "n_papers_cited" },
-        tip: { ...plot_tip_style, lineWidth: 46, anchor: top ? "top" : "bottom",
-               format: { x: false, y: false, fill: false } } })),
+      Plot.dot(pats, { x: TX, y: "priority", symbol: "square", r: 5.5, fill: kind,
+                       stroke: "white", strokeWidth: 1 }),
       // The priority year leads each label: a label can sit well away from its
       // patents' own rows, and the year axis is at the other edge. A single
       // patent links to its page, an owner of several to its institution.
@@ -8046,6 +8031,23 @@ lazy_chart("patents_prior_art", () => {
                           fontSize: 10, fill: "#8c959f" }),
       Plot.text(groups, { x: LX + 46, y: "ly", text: "text", textAnchor: "start", fontSize: 11,
                           fill: "#24292f", href: "href" }),
+      // ONE tip for papers and patents, as wrapped text. A tip per mark could
+      // open two at once, and at 60 ems a paper's tip (its "Cited by" line
+      // lists every citing patent) was wider than the room on either side of
+      // its column, so it ran past the frame. At 40 ems it fits on one side
+      // of either column, and Plot picks that side.
+      Plot.tip([
+        ...papers.map(p => ({ x: PX, y: p.date, tip: [
+          `Paper: ${title_html(p.paper.title).textContent}`,
+          `Year: ${p.paper.year ?? p.date.getUTCFullYear()}`,
+          ...(p.methods ? [`Describes: ${p.methods}`] : []),
+          `Cited by: ${p.citing.join(", ")}`].join("\n") })),
+        ...pats.map(p => ({ x: TX, y: p.priority, tip: [
+          `Patent: ${p.number}`, `Title: ${p.title}`, `Assignee: ${owner(p)}`,
+          `Priority: ${p.priority_date}`, `Status: ${p.status ?? ""}`,
+          ...(p.methods ? [`Claims: ${p.methods}`] : []),
+          `Papers cited: ${p.n_papers_cited}`].join("\n") }))
+      ], Plot.pointer({ x: "x", y: "y", title: "tip", ...plot_tip_style, lineWidth: 40 })),
     ]
   })
 })
@@ -8163,7 +8165,7 @@ lazy_chart("patents_citers", () => {
   const label = new Map(totals.map(([o, n]) => [o, `${clip(o)} (${n})`]))
   const cells = d3.rollups(patent_citers_t, v => v, c => c.organisation, c => c.patent_id)
     .flatMap(([org, per]) => per.map(([pid, v]) => ({
-      org: label.get(org), patent: col(by_id.get(pid)), number: by_id.get(pid).number,
+      org: label.get(org), name: org, patent: col(by_id.get(pid)), number: by_id.get(pid).number,
       n: v.length, sector: v[0].sector, self: !!v[0].self_citation,
       citing: v.map(c => `${c.citing_number} (${c.priority_date ?? "?"})`).join(", ")
     })))
@@ -8193,10 +8195,17 @@ lazy_chart("patents_citers", () => {
       // string through the colour scale (see the fill trap in CLAUDE.md).
       ...[cells.filter(d => !d.self), cells.filter(d => d.self)].map((data, hollow) => Plot.dot(data, {
         x: "patent", y: "org", r: d => 3.5 + 1.8 * Math.sqrt(d.n),
-        fill: hollow ? "white" : "sector", stroke: "sector", strokeWidth: 1.6,
-        channels: { Organisation: "org", Cites: "number", "Citing patents": "citing" },
-        tip: { ...plot_tip_style, lineWidth: 60,
-               format: { x: false, y: false, r: false, fill: false, stroke: false } }
+        fill: hollow ? "white" : "sector", stroke: "sector", strokeWidth: 1.6
+      })),
+      // ONE tip over every cell. A tip on each of the two dot marks opened
+      // two at once wherever a filled and a hollow dot were both near the
+      // pointer; and at 60 ems a tip on a left-hand column was wider than
+      // the room on either side, so it opened left past the frame's edge.
+      // Wrapped text rather than channels, which Plot truncates: an
+      // organisation can cite one patent from two dozen filings.
+      Plot.tip(cells, Plot.pointer({
+        x: "patent", y: "org", ...plot_tip_style, lineWidth: 40,
+        title: d => `Organisation: ${d.name}\nCites: ${d.number}\nCiting patents: ${d.citing}`
       }))
     ]
   })
