@@ -41481,7 +41481,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/protdb/PowerNovo2',4,0
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo',207,88,24,319,15,352,'2026-11-03T17:30:10Z','2026-11-05T13:33:38','v5.2.1');
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/DiffNovo',2,0,0,0,0,0,'2025-01-08T20:53:03Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/RNovA',6,2,0,2,0,0,'2026-05-24T18:02:30Z','2026-09-07T10:49:15',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',13,8,0,5,0,7,'2026-08-19T05:02:25Z','2026-11-02T13:56:15','v1.1');
+INSERT INTO repository_metrics VALUES('https://github.com/guomics-lab/MassNet-DDA',14,9,0,5,0,7,'2026-08-19T05:02:25Z','2026-11-06T13:17:38','v1.1');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/RefineNovo',32,3,1,7,0,1,'2026-09-20T04:34:25Z','2026-09-20T10:09:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/usr922/LIPNovo',9,1,1,0,0,0,'2025-05-26T03:21:36Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/qiyueliuhuo8/TSARseqNovo',7,1,2,0,0,0,'2024-12-26T15:55:41Z','2026-08-31T11:55:55',NULL);
@@ -41542,7 +41542,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/PHOENIXcenter/pi-MNovo
 INSERT INTO repository_metrics VALUES('https://github.com/navid-naderi/PLMNovo',1,0,0,0,0,0,'2025-10-06T14:23:35Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/warrenlr/PASS',9,2,NULL,NULL,NULL,NULL,'2026-06-04T14:27:36Z','2026-10-05T12:46:50','v0.3.1');
 INSERT INTO repository_metrics VALUES('https://github.com/savastakan/DNML',1,0,0,0,0,0,'2020-04-15T16:42:45Z','2026-10-05T12:46:50',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/savastakan/dnmso',2,0,1,2,1,0,'2021-02-02T08:16:18Z','2026-10-05T12:46:50',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/savastakan/dnmso',3,0,1,2,1,0,'2021-02-02T08:16:18Z','2026-11-06T13:17:38',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/hbckleikamp/NovoLign',3,1,1,0,0,0,'2025-07-23T19:31:27Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/csi-greifflab/Systematic-benchmarking-of-mass-spectrometry-based-antibody-sequencing-reveals-methodological-biases',1,0,0,0,0,4,'2025-11-24T14:24:11Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/lingjunli-research/HyPep-v1.0',3,1,NULL,NULL,NULL,NULL,'2022-10-01T16:17:29Z','2026-10-05T12:46:50',NULL);
