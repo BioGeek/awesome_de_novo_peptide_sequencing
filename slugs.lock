@@ -6605,7 +6605,7 @@ publications	249	limitations-of-de-novo-sequencing-in-resolving-sequence-ambigui
 publications	250	wastewater-metaproteomics-tracking-microbial-and-human-protein-biomarkers
 publications	251	instanovo-p-a-de-novo-peptide-sequencing-model-for-phosphoproteomics
 publications	252	identification-of-unknown-biological-toxin-proteins-using-mass-spectrometry-a
-publications	253	casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de
+publications	253	casanovogui-a-cross-platform-desktop-application-for-deep-learning-preprint
 publications	254	discrete-diffusion-with-physical-mass-constraints-for-de-novo-peptide-sequencing
 publications	255	prime-diffnovo-accurate-peptide-de-novo-sequencing-via-non-autoregressive
 publications	256	a-potential-golden-age-to-come-current-tools-recent-use-cases-and-future
@@ -7351,6 +7351,7 @@ publications	995	uncovering-hidden-members-and-functions-of-the-soil-microbiome-
 publications	996	peppr-de-novo-peptide-sequencing-with-peptide-priors
 publications	997	limitations-of-de-novo-peptide-sequencing-in-resolving-sequence-ambiguity
 publications	998	novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice
+publications	999	casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

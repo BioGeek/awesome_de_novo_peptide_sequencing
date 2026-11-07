@@ -13134,6 +13134,7 @@ INSERT INTO publication VALUES(995,'Uncovering hidden members and functions of t
 INSERT INTO publication VALUES(996,'PepPr: De Novo peptide sequencing with peptide priors','2026-10-28','10.64898/2026.10.27.762126','Cold Spring Harbor Laboratory','Mass spectrometry-based peptide sequencing underpins proteomics. Database search confines to predefined candidates, whereas de novo peptide sequencing (DNPS) struggles with incomplete spectra. Existing hybrid methods use databases only for post hoc correction or retrieve previously identified spectra to guide decoding. We instead combine DNPS with a peptide prior: a language model fitted to a reference proteome, tolerating variants yet uncertain on strongly divergent sequences. Relative to prior-free DNPS, our implementation, PepPr, improved reference peptide identification and improved rather than suppressed variant identification. Using a related proteome as prior, it matched or outperformed homology-driven database search, and its gain over prior-free DNPS grew with relatedness. In antibody sequencing, it improved recovery of peptides spanning the variable-constant boundary, deamidation calls, and assembly, while preserving recall of hypervariable regions inaccessible to database search. Peptide priors thus bring reference knowledge into DNPS without limiting discovery.','https://www.biorxiv.org/content/10.64898/2026.10.27.762126v1','bioRxiv','preprint','v1','biorxiv');
 INSERT INTO publication VALUES(997,'Limitations of de novo peptide sequencing in resolving sequence ambiguity','2026-11-03','10.1038/s41592-026-03301-9','Springer Science and Business Media LLC','De novo peptide sequencing enables peptide identification from fragmentation spectra without relying on sequence databases. However, incomplete spectra create ambiguity, making unambiguous identification challenging. Recent deep learning advances have produced numerous de novo models that predict sequences and refine peptide-spectrum matches under such conditions. Yet, their relative strengths, weaknesses and ability to handle spectrum ambiguity remain unclear. Here we benchmark eight state-of-the-art models on three publicly available proteomics datasets, comparing performance using established metrics and quantifying inter-model agreement. We assess post-processing approaches, including iterative refinement, rescoring and reranking, for their ability to improve identification accuracy, and perform an error analysis to identify common mispredictions and their causes. Model performance varied, with considerable overlap of correct identifications. Post-processing yielded no or only modest improvements. Most sequencing errors were model-independent and driven by limited fragment ion coverage, a limitation also observed in database searches with large search spaces.','https://www.nature.com/articles/s41592-026-03301-9','Nature Methods','peer-reviewed',NULL,'europepmc');
 INSERT INTO publication VALUES(998,'NovoCRF: Globally Normalized De Novo Peptide Sequencing on a Prefix-Mass Lattice','2026-11-03','10.48550/arXiv.2611.05260','arXiv','De novo peptide sequencing has moved from dynamic programming over hand-designed or generative scores to large transformers that learn the task end to end. We present NovoCRF, a conditional random field (CRF) whose states are prefix masses, so that its paths are exactly the peptides within +/-0.06 Da of the precursor mass. A small network scores each edge from physics-derived ion-match features and is trained with its scores globally normalized over all mass-feasible peptides. To our knowledge, NovoCRF is the first de novo method trained with exact normalization over all mass-feasible peptides. Our software has three modules, each with exactly one job: a precursor mass finder recovers the accurate precursor mass from MS1, the CRF finds the peptides that fit the precursor mass by exact k-best decoding, and two BiGRU rerankers add sequence context and internal-fragment evidence. The model has 310k parameters and trains in about 17 GPU-hours. On seven held-out data-dependent acquisition datasets published in 2026 (126,262 labeled spectra), NovoCRF''s mean peptide recall is 42.4%, against 39.1% for Casanovo v5 with five beams, and its amino-acid recall 64.0% against 53.1%, at 1,746 spectra/s on 18 CPU threads, 55x Casanovo''s throughput on a GPU. Split by fragment evidence, NovoCRF leads on labels with up to three peptide bonds without a b or y ion, and Casanovo only beyond. NovoCRF can also search modifications it was never trained on at their exact mass: it finds 32.1% of the hydroxyproline peptides of a lion bone sample.','https://arxiv.org/abs/2611.05260','arXiv','preprint',NULL,'arxiv');
+INSERT INTO publication VALUES(999,'CasanovoGUI: A Cross-Platform Desktop Application for Deep Learning-Based De Novo Peptide Sequencing with Casanovo','2026-11-06','10.1021/acs.jproteome.6c00617','American Chemical Society (ACS)','De novo peptide sequencing detects peptides directly from tandem mass spectra without a protein sequence database, and deep learning has substantially advanced its performance. Casanovo, one such widely used model, is distributed as a Python command-line program. Consequently, installation, GPU and dependency configuration, and manual parametrization can be challenging for many bench scientists and are a recurring source of errors. Interpreting and validating the resulting predictions poses a further challenge. We present CasanovoGUI, an open-source Java-based desktop application that makes all of Casanovo’s main analysis functions available through a point-and-click interface on Windows, macOS, and Linux. On first use, CasanovoGUI automatically installs a private Python environment and Casanovo with a GPU-matched build, requiring no prior software setup. The GUI provides access to Casanovo’s analysis functions and configuration parameters, streams live progress, and integrates results interpretation: annotated spectra with per-residue confidence scores in the PDV viewer and mismatch-tolerant mapping of de novo peptides back to a reference proteome. CasanovoGUI is available at https://github.com/Noble-Lab/CasanovoGUI.','https://pubs.acs.org/doi/10.1021/acs.jproteome.6c00617','Journal of Proteome Research','peer-reviewed',NULL,'crossref');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19539,6 +19540,12 @@ INSERT INTO publication_author VALUES(997,784,8);
 INSERT INTO publication_author VALUES(998,250,1);
 INSERT INTO publication_author VALUES(998,105,2);
 INSERT INTO publication_author VALUES(998,252,3);
+INSERT INTO publication_author VALUES(999,88,3);
+INSERT INTO publication_author VALUES(999,90,1);
+INSERT INTO publication_author VALUES(999,93,4);
+INSERT INTO publication_author VALUES(999,95,5);
+INSERT INTO publication_author VALUES(999,96,6);
+INSERT INTO publication_author VALUES(999,969,2);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -20821,6 +20828,7 @@ INSERT INTO publication_version VALUES(15,989,'manual');
 INSERT INTO publication_version VALUES(994,51,'biorxiv');
 INSERT INTO publication_version VALUES(584,577,'title');
 INSERT INTO publication_version VALUES(249,997,'manual');
+INSERT INTO publication_version VALUES(253,999,'manual');
 CREATE TABLE thesis_supervisor (
     publication_id INTEGER NOT NULL
         REFERENCES publication(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -27723,6 +27731,12 @@ INSERT INTO publication_author_affiliation VALUES(997,784,508,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(998,250,52,0,NULL);
 INSERT INTO publication_author_affiliation VALUES(998,105,52,0,NULL);
 INSERT INTO publication_author_affiliation VALUES(998,252,52,0,NULL);
+INSERT INTO publication_author_affiliation VALUES(999,88,47,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(999,90,47,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(999,93,47,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(999,95,46,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(999,96,47,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(999,969,502,0,'manual');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29018,6 +29032,8 @@ INSERT INTO publication_algorithm VALUES(996,12,'uses');
 INSERT INTO publication_algorithm VALUES(996,36,'uses');
 INSERT INTO publication_algorithm VALUES(997,220,'describes');
 INSERT INTO publication_algorithm VALUES(998,826,'describes');
+INSERT INTO publication_algorithm VALUES(999,12,'uses');
+INSERT INTO publication_algorithm VALUES(999,223,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -68517,7 +68533,7 @@ INSERT INTO sqlite_sequence VALUES('city',577);
 INSERT INTO sqlite_sequence VALUES('affiliation',1435);
 INSERT INTO sqlite_sequence VALUES('author',3943);
 INSERT INTO sqlite_sequence VALUES('algorithm',826);
-INSERT INTO sqlite_sequence VALUES('publication',998);
+INSERT INTO sqlite_sequence VALUES('publication',999);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
