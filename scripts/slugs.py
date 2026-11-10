@@ -121,6 +121,9 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              # paper) is PowerNovo's first author: same four co-authors, same order.
              'd-v-petrovsky': 'denis-v-petrovskiy',
              'binhai-zhu': 'binhai-zhu-montana-state-university',
+             # 2026-11-10: one person split by OpenAlex (A5080688416 under A5025221083):
+             # shared co-authors R.P. Rajesh and Ruchi P. Jain, both at BNHS.
+             'benjamin-franklin-jayaseelan': 'jayaseelan-b-franklin',
              'calomeno-celso-vitor-alves-queiroz': 'celso-vitor-a-q-calomeno',
              'd-dutta': 'debojyoti-dutta',
              'darville-bowleg-lancia-nadinia-fallen': 'lancia-n-f-darville',
