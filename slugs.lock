@@ -824,6 +824,7 @@ algorithms	823	peptidomicsdb
 algorithms	824	peptide-similarity-alignment
 algorithms	825	peppr
 algorithms	826	novocrf
+algorithms	827	pi-specformer
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4647,6 +4648,11 @@ authors	3940	cemil-can-saylan
 authors	3941	armin-suleymaniniya
 authors	3942	anil-k-shukla
 authors	3943	samuel-khan
+authors	3944	tao-liu
+authors	3945	yiming-zhang-ncpsb
+authors	3946	rong-xu
+authors	3947	kaixuan-li
+authors	3948	jun-zhu-tsinghua
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -6290,6 +6296,7 @@ institutions	1432	zhejiang-longji-biotechnology
 institutions	1433	york-university
 institutions	1434	institute-for-analytical-instrumentation
 institutions	1435	medical-proteoscope
+institutions	1437	guangzhou-national-laboratory
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7352,6 +7359,7 @@ publications	996	peppr-de-novo-peptide-sequencing-with-peptide-priors
 publications	997	limitations-of-de-novo-peptide-sequencing-in-resolving-sequence-ambiguity
 publications	998	novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice
 publications	999	casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de
+publications	1000	pi-specformer-a-mass-spectrometry-based-foundation-model-for-decoding-the-dark
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
