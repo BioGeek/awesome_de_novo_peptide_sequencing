@@ -644,32 +644,83 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>A deamidation where the others see an isotope peak.</strong> On <a href="#n-dnb_iso_spectra">44,464</a> spectra that v2 main labels at the M+1 peak, denovo_benchmarks writes the same backbone with one more deamidation in <a href="#n-dnb_iso_deamidation">39,011</a> cases. The carbon-13 reading fits better for <a href="#n-dnb_c13_better">37,982</a> of them (median error <a href="#n-dnb_c13_ppm">0.9 ppm</a> against <a href="#n-dnb_deam_ppm">12.1 ppm</a>), so these labels most likely carry a deamidation that is not there.</li>
 <li><strong>A deposit that does not match its labels in two files.</strong> <a href="#n-dnb_unresolved">1,014</a> labels point past the end of their MGF chunk (<code>BC-2_1</code> holds <a href="#n-dnb_bc2_1_spectra">18,996</a> spectra and is cited up to index <a href="#n-dnb_bc2_1_max_index">19,999</a>), so those chunks are not the files the labels were made from.</li>
 </ul>
+<section id="two-generations-of-labels-and-proteobenchs" class="level3">
+<h3 class="anchored" data-anchor-id="two-generations-of-labels-and-proteobenchs">Two generations of labels, and ProteoBench’s</h3>
+<p>denovo_benchmarks has two sets of nine-species labels. The <a href="#n-census_dnb2024_n">946,155</a> in its MassIVE deposit, from 2024, are the ones this page follows. Its repository’s <code>sample_data/</code> holds newer “consensus labels” for one human and one mouse run, added in commit <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"><code>8a0b8cc</code></a>. The two spell an N-terminal modification differently. The 2024 labels write it as its own token, <code>n[42.0106]AAK</code>. The sample labels add it into the first residue, <code>A[42.011]AK</code>, so a modified N-terminus and a modified first side chain read the same. ProteoBench’s MGF is v2 balanced and writes the N-terminal offset before the first residue, <code>+42.011AAK</code>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>set</th>
+<th style="text-align: right;">labels</th>
+<th style="text-align: right;">with any modification</th>
+<th style="text-align: right;">with an N-terminal modification</th>
+<th style="text-align: right;">residue modifications after the first residue</th>
+<th style="text-align: right;">need a modification ProteoBench’s labels never use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ProteoBench (v2 balanced)</td>
+<td style="text-align: right;"><a href="#n-census_pb_n">779,879</a></td>
+<td style="text-align: right;"><a href="#n-census_pb_mod_pct">31.3%</a></td>
+<td style="text-align: right;"><a href="#n-census_pb_nterm_pct">6.8%</a></td>
+<td style="text-align: right;"><a href="#n-census_pb_res_kinds">4</a></td>
+<td style="text-align: right;">n/a</td>
+</tr>
+<tr class="even">
+<td>denovo_benchmarks, 2024 deposit</td>
+<td style="text-align: right;"><a href="#n-census_dnb2024_n">946,155</a></td>
+<td style="text-align: right;"><a href="#n-census_dnb2024_mod_pct">37.6%</a></td>
+<td style="text-align: right;"><a href="#n-census_dnb2024_nterm_pct">8.0%</a></td>
+<td style="text-align: right;"><a href="#n-census_dnb2024_res_kinds">11</a></td>
+<td style="text-align: right;"><a href="#n-census_dnb2024_not_in_pb_pct">10.1%</a></td>
+</tr>
+<tr class="odd">
+<td>denovo_benchmarks, sample human run</td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_human_n">4,547</a></td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_human_mod_pct">49.4%</a></td>
+<td style="text-align: right;">folded into the first residue</td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_human_res_kinds">6</a></td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_human_not_in_pb_pct">23.6%</a></td>
+</tr>
+<tr class="even">
+<td>denovo_benchmarks, sample mouse run</td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_mouse_n">3,747</a></td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_mouse_mod_pct">43.3%</a></td>
+<td style="text-align: right;">folded into the first residue</td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_mouse_res_kinds">4</a></td>
+<td style="text-align: right;"><a href="#n-census_dnbcur_mouse_not_in_pb_pct">7.8%</a></td>
+</tr>
+</tbody>
+</table>
+<p>Residue modifications are counted as distinct (residue, mass shift) pairs after the first residue, the positions where no spelling folds an N-terminal modification in. ProteoBench’s N-terminal shifts are <a href="#n-census_pb_nterm_kinds">-17.03, +25.98, +42.01, +43.01</a> Da, those of the 2024 deposit <a href="#n-census_dnb2024_nterm_kinds">+12.00, +26.02, +42.01, +57.02</a> Da. A label counts in the last column when one of its residue modifications appears nowhere in ProteoBench’s labels, or when no ProteoBench residue modification plus ProteoBench N-terminal shift adds up to its first residue’s delta. So a score on denovo_benchmarks and a score on ProteoBench are not comparable, even where the spectra come from the same raw files: the two ask a model for different modifications.</p>
+</section>
 </section>
 <section id="splits-and-what-a-model-has-already-seen" class="level2">
 <h2 class="anchored" data-anchor-id="splits-and-what-a-model-has-already-seen">Splits, and what a model has already seen</h2>
 <p><strong>v1’s folds are disjoint on the modified peptide, not on the backbone.</strong> No validation or test label of a fold is a training label of that fold, but <a href="#n-fold_backbone_min">28%</a> to <a href="#n-fold_backbone_max">36%</a> of every fold’s validation and test spectra carry a backbone it trains on, in another modification state. Across species, the held-out species’ spectra whose backbone the fold trained on run from <a href="#n-heldout_min_pct">0.4%</a> (<em>M. mazei</em>) to <a href="#n-heldout_max_pct">22.6%</a> (<em>V. mungo</em>). v2 was built to remove that, and did: <a href="#n-multi_species_zenodo_main">0</a> backbones of v2 main are in two species.</p>
 <p><strong>The InstaNovo split is v1’s yeast fold</strong>, the same training spectra NovoBench retrains on, in v1’s own order: row by row, <a href="#n-instanovo_row_aligned">639,286</a> of its <a href="#n-instanovo_all">639,286</a> records have the precursor and peak count of the v1 record in the same position of the yeast-excluded fold’s train and valid files, and, for its test set, of v1’s whole yeast file. <strong>Training on it and testing on another version outside yeast tests partly on training data</strong>, because the spectra are the same physical scans, re-labelled.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="395" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 394;"><span id="cb6-395"><a href="#cb6-395" aria-hidden="true" tabindex="-1"></a>leak_label <span class="op">=</span> <span class="kw">new</span> <span class="bu">Map</span>([[<span class="st">"InstaNovo test (original yeast file)"</span><span class="op">,</span> <span class="st">"InstaNovo test (v1 yeast)"</span>]<span class="op">,</span></span>
-<span id="cb6-396"><a href="#cb6-396" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"Zenodo main, all species"</span><span class="op">,</span> <span class="st">"v2 main, all species"</span>]<span class="op">,</span> [<span class="st">"Zenodo main, yeast only"</span><span class="op">,</span> <span class="st">"v2 main, yeast only"</span>]<span class="op">,</span></span>
-<span id="cb6-397"><a href="#cb6-397" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"Zenodo balanced = ProteoBench"</span><span class="op">,</span> <span class="st">"v2 balanced = ProteoBench"</span>]<span class="op">,</span> [<span class="st">"dIon test"</span><span class="op">,</span> <span class="st">"dIon test"</span>]<span class="op">,</span></span>
-<span id="cb6-398"><a href="#cb6-398" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"dIon validation"</span><span class="op">,</span> <span class="st">"dIon validation"</span>]<span class="op">,</span> [<span class="st">"denovo_benchmarks selection"</span><span class="op">,</span> <span class="st">"denovo_benchmarks"</span>]])</span>
-<span id="cb6-399"><a href="#cb6-399" aria-hidden="true" tabindex="-1"></a>leak_rows <span class="op">=</span> ns<span class="op">.</span><span class="at">leak</span><span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> leak_label<span class="op">.</span><span class="fu">has</span>(d[<span class="st">"evaluate on"</span>]))<span class="op">.</span><span class="fu">flatMap</span>(d <span class="kw">=&gt;</span> [</span>
-<span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a>  {<span class="kw">set</span><span class="op">:</span> leak_label<span class="op">.</span><span class="fu">get</span>(d[<span class="st">"evaluate on"</span>])<span class="op">,</span> <span class="dt">what</span><span class="op">:</span> <span class="st">"its backbone is in the training split"</span><span class="op">,</span> <span class="dt">pct</span><span class="op">:</span> d[<span class="st">"peptide seen %"</span>]}<span class="op">,</span></span>
-<span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a>  {<span class="kw">set</span><span class="op">:</span> leak_label<span class="op">.</span><span class="fu">get</span>(d[<span class="st">"evaluate on"</span>])<span class="op">,</span> <span class="dt">what</span><span class="op">:</span> <span class="st">"the same scan is in the training split"</span><span class="op">,</span> <span class="dt">pct</span><span class="op">:</span> d[<span class="st">"same spectrum %"</span>]}])</span>
-<span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
-<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(width<span class="op">,</span> <span class="dv">1000</span>)<span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">300</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">220</span><span class="op">,</span> <span class="dt">marginRight</span><span class="op">:</span> <span class="dv">30</span><span class="op">,</span> <span class="dt">marginBottom</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span></span>
-<span id="cb6-404"><a href="#cb6-404" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"Share of the evaluation spectra (%)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">80</span>]<span class="op">,</span> <span class="dt">labelOffset</span><span class="op">:</span> <span class="dv">34</span>}<span class="op">,</span></span>
-<span id="cb6-405"><a href="#cb6-405" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="op">...</span><span class="kw">new</span> <span class="bu">Set</span>(leak_rows<span class="op">.</span><span class="fu">map</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">set</span>))]}<span class="op">,</span></span>
-<span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="st">"its backbone is in the training split"</span><span class="op">,</span> <span class="st">"the same scan is in the training split"</span>]<span class="op">,</span></span>
-<span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a>          <span class="dt">range</span><span class="op">:</span> [<span class="st">"#cbd5e1"</span><span class="op">,</span> <span class="st">"#dc2626"</span>]<span class="op">,</span> <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb6-409"><a href="#cb6-409" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barX</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"its"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"what"</span>})<span class="op">,</span></span>
-<span id="cb6-410"><a href="#cb6-410" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barX</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"the same"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"what"</span><span class="op">,</span> <span class="dt">insetTop</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">insetBottom</span><span class="op">:</span> <span class="dv">5</span>})<span class="op">,</span></span>
-<span id="cb6-411"><a href="#cb6-411" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"its"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">text</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="vs">`</span><span class="sc">${</span>d<span class="op">.</span><span class="at">pct</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs">%`</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">10</span>})<span class="op">,</span></span>
-<span id="cb6-412"><a href="#cb6-412" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
-<span id="cb6-413"><a href="#cb6-413" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb6-414"><a href="#cb6-414" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="426" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 425;"><span id="cb6-426"><a href="#cb6-426" aria-hidden="true" tabindex="-1"></a>leak_label <span class="op">=</span> <span class="kw">new</span> <span class="bu">Map</span>([[<span class="st">"InstaNovo test (original yeast file)"</span><span class="op">,</span> <span class="st">"InstaNovo test (v1 yeast)"</span>]<span class="op">,</span></span>
+<span id="cb6-427"><a href="#cb6-427" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"Zenodo main, all species"</span><span class="op">,</span> <span class="st">"v2 main, all species"</span>]<span class="op">,</span> [<span class="st">"Zenodo main, yeast only"</span><span class="op">,</span> <span class="st">"v2 main, yeast only"</span>]<span class="op">,</span></span>
+<span id="cb6-428"><a href="#cb6-428" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"Zenodo balanced = ProteoBench"</span><span class="op">,</span> <span class="st">"v2 balanced = ProteoBench"</span>]<span class="op">,</span> [<span class="st">"dIon test"</span><span class="op">,</span> <span class="st">"dIon test"</span>]<span class="op">,</span></span>
+<span id="cb6-429"><a href="#cb6-429" aria-hidden="true" tabindex="-1"></a>                      [<span class="st">"dIon validation"</span><span class="op">,</span> <span class="st">"dIon validation"</span>]<span class="op">,</span> [<span class="st">"denovo_benchmarks selection"</span><span class="op">,</span> <span class="st">"denovo_benchmarks"</span>]])</span>
+<span id="cb6-430"><a href="#cb6-430" aria-hidden="true" tabindex="-1"></a>leak_rows <span class="op">=</span> ns<span class="op">.</span><span class="at">leak</span><span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> leak_label<span class="op">.</span><span class="fu">has</span>(d[<span class="st">"evaluate on"</span>]))<span class="op">.</span><span class="fu">flatMap</span>(d <span class="kw">=&gt;</span> [</span>
+<span id="cb6-431"><a href="#cb6-431" aria-hidden="true" tabindex="-1"></a>  {<span class="kw">set</span><span class="op">:</span> leak_label<span class="op">.</span><span class="fu">get</span>(d[<span class="st">"evaluate on"</span>])<span class="op">,</span> <span class="dt">what</span><span class="op">:</span> <span class="st">"its backbone is in the training split"</span><span class="op">,</span> <span class="dt">pct</span><span class="op">:</span> d[<span class="st">"peptide seen %"</span>]}<span class="op">,</span></span>
+<span id="cb6-432"><a href="#cb6-432" aria-hidden="true" tabindex="-1"></a>  {<span class="kw">set</span><span class="op">:</span> leak_label<span class="op">.</span><span class="fu">get</span>(d[<span class="st">"evaluate on"</span>])<span class="op">,</span> <span class="dt">what</span><span class="op">:</span> <span class="st">"the same scan is in the training split"</span><span class="op">,</span> <span class="dt">pct</span><span class="op">:</span> d[<span class="st">"same spectrum %"</span>]}])</span>
+<span id="cb6-433"><a href="#cb6-433" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb6-434"><a href="#cb6-434" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(width<span class="op">,</span> <span class="dv">1000</span>)<span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="dv">300</span><span class="op">,</span> <span class="dt">marginLeft</span><span class="op">:</span> <span class="dv">220</span><span class="op">,</span> <span class="dt">marginRight</span><span class="op">:</span> <span class="dv">30</span><span class="op">,</span> <span class="dt">marginBottom</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span></span>
+<span id="cb6-435"><a href="#cb6-435" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="st">"Share of the evaluation spectra (%)"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">80</span>]<span class="op">,</span> <span class="dt">labelOffset</span><span class="op">:</span> <span class="dv">34</span>}<span class="op">,</span></span>
+<span id="cb6-436"><a href="#cb6-436" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {<span class="dt">label</span><span class="op">:</span> <span class="kw">null</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="op">...</span><span class="kw">new</span> <span class="bu">Set</span>(leak_rows<span class="op">.</span><span class="fu">map</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">set</span>))]}<span class="op">,</span></span>
+<span id="cb6-437"><a href="#cb6-437" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> [<span class="st">"its backbone is in the training split"</span><span class="op">,</span> <span class="st">"the same scan is in the training split"</span>]<span class="op">,</span></span>
+<span id="cb6-438"><a href="#cb6-438" aria-hidden="true" tabindex="-1"></a>          <span class="dt">range</span><span class="op">:</span> [<span class="st">"#cbd5e1"</span><span class="op">,</span> <span class="st">"#dc2626"</span>]<span class="op">,</span> <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb6-439"><a href="#cb6-439" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb6-440"><a href="#cb6-440" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barX</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"its"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"what"</span>})<span class="op">,</span></span>
+<span id="cb6-441"><a href="#cb6-441" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">barX</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"the same"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"what"</span><span class="op">,</span> <span class="dt">insetTop</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">insetBottom</span><span class="op">:</span> <span class="dv">5</span>})<span class="op">,</span></span>
+<span id="cb6-442"><a href="#cb6-442" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(leak_rows<span class="op">.</span><span class="fu">filter</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">what</span><span class="op">.</span><span class="fu">startsWith</span>(<span class="st">"its"</span>))<span class="op">,</span> {<span class="dt">x</span><span class="op">:</span> <span class="st">"pct"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"set"</span><span class="op">,</span> <span class="dt">text</span><span class="op">:</span> d <span class="kw">=&gt;</span> <span class="vs">`</span><span class="sc">${</span>d<span class="op">.</span><span class="at">pct</span><span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="vs">%`</span><span class="op">,</span> <span class="dt">dx</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">textAnchor</span><span class="op">:</span> <span class="st">"start"</span><span class="op">,</span> <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">10</span>})<span class="op">,</span></span>
+<span id="cb6-443"><a href="#cb6-443" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleX</span>([<span class="dv">0</span>])</span>
+<span id="cb6-444"><a href="#cb6-444" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb6-445"><a href="#cb6-445" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-6-1" data-nodetype="declaration">
@@ -2106,16 +2157,225 @@ Code
 <span id="cb129-4"><a href="#cb129-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">int</span>(miss.<span class="bu">filter</span>(pl.col(<span class="st">"spectrum_id"</span>).<span class="bu">str</span>.starts_with(<span class="st">"BC-2_1:"</span>))[<span class="st">"row"</span>].<span class="bu">max</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<div id="n-census_dnb2024_n" class="small">
+<p><strong>946,155</strong> (dnb2024: labels). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_n</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb130"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024', what='n'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_pb_n" class="small">
+<p><strong>779,879</strong> (pb: labels). Reads <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_pb_n</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb131"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='pb', what='n'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_pb_mod_pct" class="small">
+<p><strong>31.3%</strong> (pb: share of labels with any modification). Reads <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_pb_mod_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb132"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='pb', what='mod_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_pb_nterm_pct" class="small">
+<p><strong>6.8%</strong> (pb: share of labels with an N-terminal modification). Reads <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_pb_nterm_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb133"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w):</span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, <span class="st">"nterm_pct"</span>)</span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='pb'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_pb_res_kinds" class="small">
+<p><strong>4</strong> (pb: distinct (residue, mass shift) pairs after the first residue). Reads <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_pb_res_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb134"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='pb', what='res_kinds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnb2024_mod_pct" class="small">
+<p><strong>37.6%</strong> (dnb2024: share of labels with any modification). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_mod_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb135"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024', what='mod_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnb2024_nterm_pct" class="small">
+<p><strong>8.0%</strong> (dnb2024: share of labels with an N-terminal modification). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_nterm_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb136"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w):</span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, <span class="st">"nterm_pct"</span>)</span>
+<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnb2024_res_kinds" class="small">
+<p><strong>11</strong> (dnb2024: distinct (residue, mass shift) pairs after the first residue). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_res_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb137"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024', what='res_kinds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnb2024_not_in_pb_pct" class="small">
+<p><strong>10.1%</strong> (dnb2024: share of labels needing a modification ProteoBench’s labels never use). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>, <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_not_in_pb_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb138"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024', what='not_in_pb_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_human_n" class="small">
+<p><strong>4,547</strong> (dnbcur_human: labels). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_human_n</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb139"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_human', what='n'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_human_mod_pct" class="small">
+<p><strong>49.4%</strong> (dnbcur_human: share of labels with any modification). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_human_mod_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb140"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_human', what='mod_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_human_res_kinds" class="small">
+<p><strong>6</strong> (dnbcur_human: distinct (residue, mass shift) pairs after the first residue). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_human_res_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb141"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_human', what='res_kinds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_human_not_in_pb_pct" class="small">
+<p><strong>23.6%</strong> (dnbcur_human: share of labels needing a modification ProteoBench’s labels never use). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>, <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_human_not_in_pb_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb142"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb142-3"><a href="#cb142-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_human', what='not_in_pb_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_mouse_n" class="small">
+<p><strong>3,747</strong> (dnbcur_mouse: labels). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_mouse_n</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb143"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_mouse', what='n'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_mouse_mod_pct" class="small">
+<p><strong>43.3%</strong> (dnbcur_mouse: share of labels with any modification). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_mouse_mod_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb144"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb144-1"><a href="#cb144-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb144-2"><a href="#cb144-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb144-3"><a href="#cb144-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_mouse', what='mod_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_mouse_res_kinds" class="small">
+<p><strong>4</strong> (dnbcur_mouse: distinct (residue, mass shift) pairs after the first residue). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_mouse_res_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb145"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_mouse', what='res_kinds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnbcur_mouse_not_in_pb_pct" class="small">
+<p><strong>7.8%</strong> (dnbcur_mouse: share of labels needing a modification ProteoBench’s labels never use). Reads <a href="https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data">denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)</a>, <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnbcur_mouse_not_in_pb_pct</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb146"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(w<span class="op">=</span>_w, what<span class="op">=</span>_what):</span>
+<span id="cb146-2"><a href="#cb146-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, what)</span>
+<span id="cb146-3"><a href="#cb146-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnbcur_mouse', what='not_in_pb_pct'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_pb_nterm_kinds" class="small">
+<p><strong>-17.03, +25.98, +42.01, +43.01</strong> (pb: the N-terminal mass shifts its labels use (Da)). Reads <a href="https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz">ProteoBench, nine_species_balanced_De_Novo.mgf.gz</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_pb_nterm_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb147"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _g(w<span class="op">=</span>_w):</span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, <span class="st">"nterm_kinds"</span>)</span>
+<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='pb'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="n-census_dnb2024_nterm_kinds" class="small">
+<p><strong>+12.00, +26.02, +42.01, +57.02</strong> (dnb2024: the N-terminal mass shifts its labels use (Da)). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d">MSV000096182, other/9_species_*_labels.csv and peak/mgf/&lt;raw file&gt;_&lt;chunk&gt;.mgf</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/download_sources.py"><code>download_sources.py</code></a>. Recompute: <code>page_numbers.py --only census_dnb2024_nterm_kinds</code>.</p>
+<details>
+<summary>
+Code
+</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb148"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb148-1"><a href="#cb148-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _g(w<span class="op">=</span>_w):</span>
+<span id="cb148-2"><a href="#cb148-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _census(w, <span class="st">"nterm_kinds"</span>)</span>
+<span id="cb148-3"><a href="#cb148-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with w='dnb2024'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <div id="n-fold_backbone_min" class="small">
 <p><strong>28%</strong> (Lowest share of a v1 fold’s valid or test spectra whose backbone the fold trains on). Reads <a href="https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=b7789710a31f488c9a74eb3e3b6f61eb">MSV000081382, HighResolution/data/cross.9high_80k.exclude_&lt;species&gt;/</a>. Input from <a href="https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/nine_species/make_jobs.py"><code>make_jobs.py</code></a>. Recompute: <code>page_numbers.py --only fold_backbone_min</code>.</p>
 <details>
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb130"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"fold_backbone_min"</span>, <span class="st">"Lowest share of a v1 fold's valid or test spectra whose backbone the fold trains on"</span>, [<span class="st">"v1_folds"</span>],</span>
-<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"make_jobs.py"</span>], fmt<span class="op">=</span><span class="st">".0f"</span>, suffix<span class="op">=</span><span class="st">"%"</span>)</span>
-<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
-<span id="cb130-4"><a href="#cb130-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">min</span>(_fold_backbone())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb149"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"fold_backbone_min"</span>, <span class="st">"Lowest share of a v1 fold's valid or test spectra whose backbone the fold trains on"</span>, [<span class="st">"v1_folds"</span>],</span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"make_jobs.py"</span>], fmt<span class="op">=</span><span class="st">".0f"</span>, suffix<span class="op">=</span><span class="st">"%"</span>)</span>
+<span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
+<span id="cb149-4"><a href="#cb149-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">min</span>(_fold_backbone())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-fold_backbone_max" class="small">
@@ -2124,9 +2384,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb131"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"fold_backbone_max"</span>, <span class="st">"Highest such share"</span>, [<span class="st">"v1_folds"</span>], [<span class="st">"make_jobs.py"</span>], fmt<span class="op">=</span><span class="st">".0f"</span>, suffix<span class="op">=</span><span class="st">"%"</span>)</span>
-<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
-<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">max</span>(_fold_backbone())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb150"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb150-1"><a href="#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"fold_backbone_max"</span>, <span class="st">"Highest such share"</span>, [<span class="st">"v1_folds"</span>], [<span class="st">"make_jobs.py"</span>], fmt<span class="op">=</span><span class="st">".0f"</span>, suffix<span class="op">=</span><span class="st">"%"</span>)</span>
+<span id="cb150-2"><a href="#cb150-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
+<span id="cb150-3"><a href="#cb150-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">max</span>(_fold_backbone())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-heldout_min_pct" class="small">
@@ -2135,9 +2395,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb132"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(h<span class="op">=</span>_h):</span>
-<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__original_folds"</span>), <span class="st">"peptide trained on %"</span>, <span class="op">**</span>{<span class="st">"held-out species"</span>: h}))</span>
-<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with h='M. mazei'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb151"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(h<span class="op">=</span>_h):</span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__original_folds"</span>), <span class="st">"peptide trained on %"</span>, <span class="op">**</span>{<span class="st">"held-out species"</span>: h}))</span>
+<span id="cb151-3"><a href="#cb151-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with h='M. mazei'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-heldout_max_pct" class="small">
@@ -2146,9 +2406,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb133"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(h<span class="op">=</span>_h):</span>
-<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__original_folds"</span>), <span class="st">"peptide trained on %"</span>, <span class="op">**</span>{<span class="st">"held-out species"</span>: h}))</span>
-<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with h='V. mungo'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb152"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb152-1"><a href="#cb152-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(h<span class="op">=</span>_h):</span>
+<span id="cb152-2"><a href="#cb152-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__original_folds"</span>), <span class="st">"peptide trained on %"</span>, <span class="op">**</span>{<span class="st">"held-out species"</span>: h}))</span>
+<span id="cb152-3"><a href="#cb152-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with h='V. mungo'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-instanovo_row_aligned" class="small">
@@ -2157,22 +2417,22 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb134"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"instanovo_row_aligned"</span>, <span class="st">"InstaNovo split records whose precursor and peak count equal the v1 record in the same "</span></span>
-<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">"position (v1's yeast-excluded fold files for train and valid, v1's yeast file for test)"</span>,</span>
-<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"instanovo_split"</span>, <span class="st">"v1"</span>, <span class="st">"v1_folds"</span>], [<span class="st">"extract_tabular.py"</span>, <span class="st">"make_jobs.py"</span>])</span>
-<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
-<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> split <span class="kw">in</span> (<span class="st">"train"</span>, <span class="st">"valid"</span>, <span class="st">"test"</span>):</span>
-<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> release(<span class="st">"instanovo_split"</span>, [<span class="st">"split"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(pl.col(<span class="st">"split"</span>) <span class="op">==</span> split).collect()</span>
-<span id="cb134-8"><a href="#cb134-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> split <span class="op">==</span> <span class="st">"test"</span>:</span>
-<span id="cb134-9"><a href="#cb134-9" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> original(<span class="st">"orig_species"</span>, [<span class="st">"species"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(</span>
-<span id="cb134-10"><a href="#cb134-10" aria-hidden="true" tabindex="-1"></a>                pl.col(<span class="st">"species"</span>) <span class="op">==</span> <span class="st">"Saccharomyces-cerevisiae"</span>).collect()</span>
-<span id="cb134-11"><a href="#cb134-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb134-12"><a href="#cb134-12" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> original(<span class="st">"orig_fold"</span>, [<span class="st">"fold"</span>, <span class="st">"split"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(</span>
-<span id="cb134-13"><a href="#cb134-13" aria-hidden="true" tabindex="-1"></a>                (pl.col(<span class="st">"fold"</span>) <span class="op">==</span> <span class="st">"Saccharomyces-cerevisiae"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"split"</span>) <span class="op">==</span> split)).collect()</span>
-<span id="cb134-14"><a href="#cb134-14" aria-hidden="true" tabindex="-1"></a>        j <span class="op">=</span> a.join(b.select(<span class="st">"row"</span>, pl.col(<span class="st">"pepmass"</span>).alias(<span class="st">"pm_b"</span>), pl.col(<span class="st">"n_peaks"</span>).alias(<span class="st">"np_b"</span>)), on<span class="op">=</span><span class="st">"row"</span>)</span>
-<span id="cb134-15"><a href="#cb134-15" aria-hidden="true" tabindex="-1"></a>        n <span class="op">+=</span> j.<span class="bu">filter</span>(((pl.col(<span class="st">"pepmass"</span>) <span class="op">-</span> pl.col(<span class="st">"pm_b"</span>)).<span class="bu">abs</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"n_peaks"</span>) <span class="op">==</span> pl.col(<span class="st">"np_b"</span>))).height</span>
-<span id="cb134-16"><a href="#cb134-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb153"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="at">@number</span>(<span class="st">"instanovo_row_aligned"</span>, <span class="st">"InstaNovo split records whose precursor and peak count equal the v1 record in the same "</span></span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">"position (v1's yeast-excluded fold files for train and valid, v1's yeast file for test)"</span>,</span>
+<span id="cb153-3"><a href="#cb153-3" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"instanovo_split"</span>, <span class="st">"v1"</span>, <span class="st">"v1_folds"</span>], [<span class="st">"extract_tabular.py"</span>, <span class="st">"make_jobs.py"</span>])</span>
+<span id="cb153-4"><a href="#cb153-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _():</span>
+<span id="cb153-5"><a href="#cb153-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb153-6"><a href="#cb153-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> split <span class="kw">in</span> (<span class="st">"train"</span>, <span class="st">"valid"</span>, <span class="st">"test"</span>):</span>
+<span id="cb153-7"><a href="#cb153-7" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> release(<span class="st">"instanovo_split"</span>, [<span class="st">"split"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(pl.col(<span class="st">"split"</span>) <span class="op">==</span> split).collect()</span>
+<span id="cb153-8"><a href="#cb153-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> split <span class="op">==</span> <span class="st">"test"</span>:</span>
+<span id="cb153-9"><a href="#cb153-9" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> original(<span class="st">"orig_species"</span>, [<span class="st">"species"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(</span>
+<span id="cb153-10"><a href="#cb153-10" aria-hidden="true" tabindex="-1"></a>                pl.col(<span class="st">"species"</span>) <span class="op">==</span> <span class="st">"Saccharomyces-cerevisiae"</span>).collect()</span>
+<span id="cb153-11"><a href="#cb153-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb153-12"><a href="#cb153-12" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> original(<span class="st">"orig_fold"</span>, [<span class="st">"fold"</span>, <span class="st">"split"</span>, <span class="st">"row"</span>, <span class="st">"pepmass"</span>, <span class="st">"n_peaks"</span>]).<span class="bu">filter</span>(</span>
+<span id="cb153-13"><a href="#cb153-13" aria-hidden="true" tabindex="-1"></a>                (pl.col(<span class="st">"fold"</span>) <span class="op">==</span> <span class="st">"Saccharomyces-cerevisiae"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"split"</span>) <span class="op">==</span> split)).collect()</span>
+<span id="cb153-14"><a href="#cb153-14" aria-hidden="true" tabindex="-1"></a>        j <span class="op">=</span> a.join(b.select(<span class="st">"row"</span>, pl.col(<span class="st">"pepmass"</span>).alias(<span class="st">"pm_b"</span>), pl.col(<span class="st">"n_peaks"</span>).alias(<span class="st">"np_b"</span>)), on<span class="op">=</span><span class="st">"row"</span>)</span>
+<span id="cb153-15"><a href="#cb153-15" aria-hidden="true" tabindex="-1"></a>        n <span class="op">+=</span> j.<span class="bu">filter</span>(((pl.col(<span class="st">"pepmass"</span>) <span class="op">-</span> pl.col(<span class="st">"pm_b"</span>)).<span class="bu">abs</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"n_peaks"</span>) <span class="op">==</span> pl.col(<span class="st">"np_b"</span>))).height</span>
+<span id="cb153-16"><a href="#cb153-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-leak_pb_mouse_pct" class="small">
@@ -2181,10 +2441,10 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb135"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(sp<span class="op">=</span>_sp):</span>
-<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> csv(<span class="st">"leak__instanovo_train_to_proteobench_by_species"</span>).<span class="bu">filter</span>(pl.col(<span class="st">"species"</span>) <span class="op">==</span> sp)</span>
-<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">100</span> <span class="op">*</span> r[<span class="st">"same spectrum"</span>][<span class="dv">0</span>] <span class="op">/</span> r[<span class="st">"spectra"</span>][<span class="dv">0</span>]</span>
-<span id="cb135-4"><a href="#cb135-4" aria-hidden="true" tabindex="-1"></a><span class="co"># called with sp='Mus-musculus'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb154"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb154-1"><a href="#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(sp<span class="op">=</span>_sp):</span>
+<span id="cb154-2"><a href="#cb154-2" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> csv(<span class="st">"leak__instanovo_train_to_proteobench_by_species"</span>).<span class="bu">filter</span>(pl.col(<span class="st">"species"</span>) <span class="op">==</span> sp)</span>
+<span id="cb154-3"><a href="#cb154-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">100</span> <span class="op">*</span> r[<span class="st">"same spectrum"</span>][<span class="dv">0</span>] <span class="op">/</span> r[<span class="st">"spectra"</span>][<span class="dv">0</span>]</span>
+<span id="cb154-4"><a href="#cb154-4" aria-hidden="true" tabindex="-1"></a><span class="co"># called with sp='Mus-musculus'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-leak_pb_human_pct" class="small">
@@ -2193,10 +2453,10 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb136"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(sp<span class="op">=</span>_sp):</span>
-<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> csv(<span class="st">"leak__instanovo_train_to_proteobench_by_species"</span>).<span class="bu">filter</span>(pl.col(<span class="st">"species"</span>) <span class="op">==</span> sp)</span>
-<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">100</span> <span class="op">*</span> r[<span class="st">"same spectrum"</span>][<span class="dv">0</span>] <span class="op">/</span> r[<span class="st">"spectra"</span>][<span class="dv">0</span>]</span>
-<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a><span class="co"># called with sp='H.-sapiens'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb155"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(sp<span class="op">=</span>_sp):</span>
+<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> csv(<span class="st">"leak__instanovo_train_to_proteobench_by_species"</span>).<span class="bu">filter</span>(pl.col(<span class="st">"species"</span>) <span class="op">==</span> sp)</span>
+<span id="cb155-3"><a href="#cb155-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">100</span> <span class="op">*</span> r[<span class="st">"same spectrum"</span>][<span class="dv">0</span>] <span class="op">/</span> r[<span class="st">"spectra"</span>][<span class="dv">0</span>]</span>
+<span id="cb155-4"><a href="#cb155-4" aria-hidden="true" tabindex="-1"></a><span class="co"># called with sp='H.-sapiens'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-leak_main_pct" class="small">
@@ -2205,9 +2465,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb137"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(e<span class="op">=</span>_e):</span>
-<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"same spectrum %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
-<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='Zenodo main, all species'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb156"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb156-1"><a href="#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _f(e<span class="op">=</span>_e):</span>
+<span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"same spectrum %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
+<span id="cb156-3"><a href="#cb156-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='Zenodo main, all species'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-leak_main_pct_backbone" class="small">
@@ -2216,9 +2476,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb138"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _b(e<span class="op">=</span>_e):</span>
-<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"peptide seen %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
-<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='Zenodo main, all species'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb157"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _b(e<span class="op">=</span>_e):</span>
+<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"peptide seen %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
+<span id="cb157-3"><a href="#cb157-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='Zenodo main, all species'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div id="n-leak_dnb_pct_backbone" class="small">
@@ -2227,9 +2487,9 @@ Code
 <summary>
 Code
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb139"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _b(e<span class="op">=</span>_e):</span>
-<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"peptide seen %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
-<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='denovo_benchmarks selection'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb158"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb158-1"><a href="#cb158-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _b(e<span class="op">=</span>_e):</span>
+<span id="cb158-2"><a href="#cb158-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(row(csv(<span class="st">"leak__cross_version"</span>), <span class="st">"peptide seen %"</span>, <span class="op">**</span>{<span class="st">"evaluate on"</span>: e}))</span>
+<span id="cb158-3"><a href="#cb158-3" aria-hidden="true" tabindex="-1"></a><span class="co"># called with e='denovo_benchmarks selection'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 
