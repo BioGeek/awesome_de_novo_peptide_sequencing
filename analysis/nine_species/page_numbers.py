@@ -539,6 +539,101 @@ def _():
     miss = _dnb_unresolved()[0]
     return int(miss.filter(pl.col("spectrum_id").str.starts_with("BC-2_1:"))["row"].max())
 
+# ---- denovo_benchmarks' labels against ProteoBench's -------------------------------------------------
+
+# denovo_benchmarks' sample-data labels, the newer "consensus labels", one run per species, pinned to the commit
+# that added them. Read straight from raw/, so these numbers need no pipeline step.
+DNB_SAMPLE = {"human": "9_species_human", "mouse": "9_species_mus_musculus"}
+
+
+def _parse_label(seq, style):
+    """(N-terminal delta, [(residue, delta), ...]) for one label, in one of three spellings:
+    'pb'   ProteoBench's SEQ=: N-terminal offsets before the first residue, '+43.006-17.027QAATM+15.995K';
+    'n'    denovo_benchmarks' 2024 labels: 'n[42.0106]AAM[15.9949]K';
+    'fold' its current sample labels, which add an N-terminal delta into the first residue: 'A[42.011]AK'."""
+    nt = 0.0
+    if style == "pb":
+        m = re.match(r"^((?:[-+][0-9.]+)+)", seq)
+        if m:
+            nt = sum(float(x) for x in re.findall(r"[-+][0-9.]+", m.group(1))); seq = seq[m.end():]
+        toks = re.findall(r"([A-Z])([-+][0-9.]+)?", seq)
+    else:
+        m = re.match(r"^n\[([-+]?[0-9.]+)\]", seq)
+        if m:
+            nt = float(m.group(1)); seq = seq[m.end():]
+        toks = re.findall(r"([A-Z])(?:\[([-+]?[0-9.]+)\])?", seq)
+    return nt, [(a, float(d) if d else 0.0) for a, d in toks]
+
+
+@functools.cache
+def _labels(which):
+    """Every label of a set, parsed. which: 'pb', 'dnb2024', or 'dnbcur_<human|mouse>'."""
+    if which == "pb":
+        import gzip
+        with gzip.open(f"{T}/../raw/nine_species_balanced_De_Novo.mgf.gz", "rt") as fh:
+            return [_parse_label(l[4:].strip(), "pb") for l in fh if l.startswith("SEQ=")]
+    if which == "dnb2024":
+        files = sorted(glob.glob(f"{T}/../raw/dnb_labels/9_species_*_labels.csv"))
+        return [_parse_label(s, "n") for f in files for s in pl.read_csv(f)["seq"].to_list()]
+    run = DNB_SAMPLE[which.split("_", 1)[1]]
+    return [_parse_label(s, "fold") for s in pl.read_csv(f"{T}/../raw/dnb_sample_{run}_labels.csv")["seq"].to_list()]
+
+
+def _residue_mods(toks):
+    """(residue, delta) pairs after the first residue, where no spelling folds an N-terminal delta in."""
+    return {(a, round(d, 2)) for a, d in toks[1:] if abs(d) > 0.005}
+
+
+def _census(which, what):
+    labels = _labels(which); n = len(labels)
+    if what == "n":
+        return n
+    if what == "mod_pct":
+        return 100 * sum(1 for nt, toks in labels if abs(nt) > 0.005 or any(abs(d) > 0.005 for _, d in toks)) / n
+    if what == "nterm_pct":
+        return 100 * sum(1 for nt, _ in labels if abs(nt) > 0.005) / n
+    if what == "res_kinds":
+        return len(set().union(*(_residue_mods(toks) for _, toks in labels)))
+    if what == "nterm_kinds":
+        return ", ".join(f"{d:+.2f}" for d in sorted({round(nt, 2) for nt, _ in labels if abs(nt) > 0.005}))
+    if what == "not_in_pb_pct":
+        # A label needs a modification ProteoBench's labels never use: a residue modification after the first
+        # residue that ProteoBench has nowhere, or a first residue whose total delta (N-terminal delta folded in)
+        # no ProteoBench residue modification plus ProteoBench N-terminal delta adds up to.
+        pb = _labels("pb")
+        res = set().union(*(_residue_mods(toks) for _, toks in pb))
+        nts = {0.0} | {round(nt, 2) for nt, _ in pb}
+        first = {}
+        for a, d in res:
+            first.setdefault(a, {0.0}).add(d)
+        def needs(nt, toks):
+            if _residue_mods(toks) - res:
+                return True
+            a, d = toks[0]
+            return not any(abs(d + nt - r - x) < 0.015 for r in first.get(a, {0.0}) for x in nts)
+        return 100 * sum(needs(nt, toks) for nt, toks in labels) / n
+
+
+for _w, _src in (("pb", ["proteobench"]), ("dnb2024", ["dnb"]), ("dnbcur_human", ["dnb_sample"]), ("dnbcur_mouse", ["dnb_sample"])):
+    for _what, _fmt, _suf, _desc in (("n", ",d", "", "labels"),
+                                     ("mod_pct", ".1f", "%", "share of labels with any modification"),
+                                     ("res_kinds", ",d", "", "distinct (residue, mass shift) pairs after the first residue"),
+                                     ("not_in_pb_pct", ".1f", "%", "share of labels needing a modification ProteoBench's labels never use")):
+        if _w == "pb" and _what == "not_in_pb_pct":
+            continue
+        def _f(w=_w, what=_what):
+            return _census(w, what)
+        number(f"census_{_w}_{_what}", f"{_w}: {_desc}", _src + (["proteobench"] if _what == "not_in_pb_pct" else []),
+               ["download_sources.py"], fmt=_fmt, suffix=_suf)(_f)
+for _w, _src in (("pb", ["proteobench"]), ("dnb2024", ["dnb"])):
+    def _f(w=_w):
+        return _census(w, "nterm_pct")
+    number(f"census_{_w}_nterm_pct", f"{_w}: share of labels with an N-terminal modification", _src, ["download_sources.py"], fmt=".1f", suffix="%")(_f)
+    def _g(w=_w):
+        return _census(w, "nterm_kinds")
+    number(f"census_{_w}_nterm_kinds", f"{_w}: the N-terminal mass shifts its labels use (Da)", _src, ["download_sources.py"], fmt="s")(_g)
+
+
 # ---- splits and leakage -----------------------------------------------------------------------------
 
 @functools.cache

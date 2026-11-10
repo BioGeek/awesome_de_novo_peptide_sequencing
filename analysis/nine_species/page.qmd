@@ -359,6 +359,37 @@ at most 20,000 charged spectra.
   {{n:dnb_bc2_1_max_index}}), so those chunks are not the files the labels were
   made from.
 
+### Two generations of labels, and ProteoBench's
+
+denovo_benchmarks has two sets of nine-species labels. The {{n:census_dnb2024_n}}
+in its MassIVE deposit, from 2024, are the ones this page follows. Its
+repository's `sample_data/` holds newer "consensus labels" for one human and one
+mouse run, added in commit
+[`8a0b8cc`](https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data).
+The two spell an N-terminal modification differently. The 2024 labels write it
+as its own token, `n[42.0106]AAK`. The sample labels add it into the first
+residue, `A[42.011]AK`, so a modified N-terminus and a modified first side chain
+read the same. ProteoBench's MGF is v2 balanced and writes the N-terminal offset
+before the first residue, `+42.011AAK`.
+
+| set | labels | with any modification | with an N-terminal modification | residue modifications after the first residue | need a modification ProteoBench's labels never use |
+|---|---:|---:|---:|---:|---:|
+| ProteoBench (v2 balanced) | {{n:census_pb_n}} | {{n:census_pb_mod_pct}} | {{n:census_pb_nterm_pct}} | {{n:census_pb_res_kinds}} | n/a |
+| denovo_benchmarks, 2024 deposit | {{n:census_dnb2024_n}} | {{n:census_dnb2024_mod_pct}} | {{n:census_dnb2024_nterm_pct}} | {{n:census_dnb2024_res_kinds}} | {{n:census_dnb2024_not_in_pb_pct}} |
+| denovo_benchmarks, sample human run | {{n:census_dnbcur_human_n}} | {{n:census_dnbcur_human_mod_pct}} | folded into the first residue | {{n:census_dnbcur_human_res_kinds}} | {{n:census_dnbcur_human_not_in_pb_pct}} |
+| denovo_benchmarks, sample mouse run | {{n:census_dnbcur_mouse_n}} | {{n:census_dnbcur_mouse_mod_pct}} | folded into the first residue | {{n:census_dnbcur_mouse_res_kinds}} | {{n:census_dnbcur_mouse_not_in_pb_pct}} |
+
+Residue modifications are counted as distinct (residue, mass shift) pairs after
+the first residue, the positions where no spelling folds an N-terminal
+modification in. ProteoBench's N-terminal shifts are {{n:census_pb_nterm_kinds}} Da,
+those of the 2024 deposit {{n:census_dnb2024_nterm_kinds}} Da. A label counts in
+the last column when one of its residue modifications appears nowhere in
+ProteoBench's labels, or when no ProteoBench residue modification plus
+ProteoBench N-terminal shift adds up to its first residue's delta. So a score on
+denovo_benchmarks and a score on ProteoBench are not comparable, even where the
+spectra come from the same raw files: the two ask a model for different
+modifications.
+
 ## Splits, and what a model has already seen
 
 **v1's folds are disjoint on the modified peptide, not on the backbone.** No

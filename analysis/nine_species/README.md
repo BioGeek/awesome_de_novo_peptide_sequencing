@@ -39,6 +39,7 @@ reach the page, so do not type one into `page.qmd`.
 | key | `percolator_keyed.py` | Percolator's `PSMId` to (raw file, scan), via the file-index lines in `percolator.log.txt` |
 | compare | `a_*.py` | one script per question; `ns.py` (loading, label normalisation, masses) and `compare.py` (spectrum-level diff) are shared |
 | denovo_benchmarks | `make_jobs_dnb.py` → `run_jobs.py`, then `a_dnb.py` | its nine-species MGF chunks in MSV000096182, keyed through its own `9_species_*_labels.csv` (`<raw>_<chunk>:<index>`) |
+| label census | `page_numbers.py` (`census_*`) | ProteoBench's `SEQ=` lines, denovo_benchmarks' 2024 labels and its newer sample-data labels (pinned to commit `8a0b8cc`, fetched by `download_sources.py`), read straight from `raw/`: how often each set modifies a peptide and which modifications it uses |
 | site | `export_site_data.py` | the small `site_data.json` the site page's charts read, Sankey flows included; `page.qmd` is that page's source, copied to `pages/analyses/` by `scripts/build_pages.py` |
 | numbers | `page_numbers.py` | every number the page prints, into `page_numbers.json` |
 

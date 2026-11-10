@@ -2763,5 +2763,324 @@
     "url": "https://zenodo.org/records/13685813/files/nine-species-balanced.zip"
    }
   ]
+ },
+ "census_pb_n": {
+  "value": 779879,
+  "text": "779,879",
+  "desc": "pb: labels",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='pb', what='n'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_pb_mod_pct": {
+  "value": 31.29600873981733,
+  "text": "31.3%",
+  "desc": "pb: share of labels with any modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='pb', what='mod_pct'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_pb_res_kinds": {
+  "value": 4,
+  "text": "4",
+  "desc": "pb: distinct (residue, mass shift) pairs after the first residue",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='pb', what='res_kinds'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_dnb2024_n": {
+  "value": 946155,
+  "text": "946,155",
+  "desc": "dnb2024: labels",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnb2024', what='n'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "census_dnb2024_mod_pct": {
+  "value": 37.56255581802136,
+  "text": "37.6%",
+  "desc": "dnb2024: share of labels with any modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnb2024', what='mod_pct'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "census_dnb2024_res_kinds": {
+  "value": 11,
+  "text": "11",
+  "desc": "dnb2024: distinct (residue, mass shift) pairs after the first residue",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnb2024', what='res_kinds'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "census_dnb2024_not_in_pb_pct": {
+  "value": 10.121386030830044,
+  "text": "10.1%",
+  "desc": "dnb2024: share of labels needing a modification ProteoBench's labels never use",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnb2024', what='not_in_pb_pct'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   },
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_dnbcur_human_n": {
+  "value": 4547,
+  "text": "4,547",
+  "desc": "dnbcur_human: labels",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_human', what='n'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_human_mod_pct": {
+  "value": 49.3512205850011,
+  "text": "49.4%",
+  "desc": "dnbcur_human: share of labels with any modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_human', what='mod_pct'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_human_res_kinds": {
+  "value": 6,
+  "text": "6",
+  "desc": "dnbcur_human: distinct (residue, mass shift) pairs after the first residue",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_human', what='res_kinds'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_human_not_in_pb_pct": {
+  "value": 23.57598416538377,
+  "text": "23.6%",
+  "desc": "dnbcur_human: share of labels needing a modification ProteoBench's labels never use",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_human', what='not_in_pb_pct'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   },
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_dnbcur_mouse_n": {
+  "value": 3747,
+  "text": "3,747",
+  "desc": "dnbcur_mouse: labels",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_mouse', what='n'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_mouse_mod_pct": {
+  "value": 43.28796370429677,
+  "text": "43.3%",
+  "desc": "dnbcur_mouse: share of labels with any modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_mouse', what='mod_pct'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_mouse_res_kinds": {
+  "value": 4,
+  "text": "4",
+  "desc": "dnbcur_mouse: distinct (residue, mass shift) pairs after the first residue",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_mouse', what='res_kinds'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   }
+  ]
+ },
+ "census_dnbcur_mouse_not_in_pb_pct": {
+  "value": 7.792900987456632,
+  "text": "7.8%",
+  "desc": "dnbcur_mouse: share of labels needing a modification ProteoBench's labels never use",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w, what=_what):\n    return _census(w, what)\n# called with w='dnbcur_mouse', what='not_in_pb_pct'\n",
+  "sources": [
+   {
+    "key": "dnb_sample",
+    "label": "denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+    "url": "https://github.com/bittremieuxlab/denovo_benchmarks/tree/8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8/sample_data"
+   },
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_pb_nterm_pct": {
+  "value": 6.783488207786079,
+  "text": "6.8%",
+  "desc": "pb: share of labels with an N-terminal modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w):\n    return _census(w, \"nterm_pct\")\n# called with w='pb'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_pb_nterm_kinds": {
+  "value": "-17.03, +25.98, +42.01, +43.01",
+  "text": "-17.03, +25.98, +42.01, +43.01",
+  "desc": "pb: the N-terminal mass shifts its labels use (Da)",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _g(w=_w):\n    return _census(w, \"nterm_kinds\")\n# called with w='pb'\n",
+  "sources": [
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, nine_species_balanced_De_Novo.mgf.gz",
+    "url": "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+   }
+  ]
+ },
+ "census_dnb2024_nterm_pct": {
+  "value": 7.97660002853655,
+  "text": "8.0%",
+  "desc": "dnb2024: share of labels with an N-terminal modification",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _f(w=_w):\n    return _census(w, \"nterm_pct\")\n# called with w='dnb2024'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
+ },
+ "census_dnb2024_nterm_kinds": {
+  "value": "+12.00, +26.02, +42.01, +57.02",
+  "text": "+12.00, +26.02, +42.01, +57.02",
+  "desc": "dnb2024: the N-terminal mass shifts its labels use (Da)",
+  "made_by": [
+   "download_sources.py"
+  ],
+  "code": "def _g(w=_w):\n    return _census(w, \"nterm_kinds\")\n# called with w='dnb2024'\n",
+  "sources": [
+   {
+    "key": "dnb",
+    "label": "MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
+    "url": "https://massive.ucsd.edu/ProteoSAFe/dataset_files.jsp?task=0411b1453d124decb7dc27351db4658d"
+   }
+  ]
  }
 }

@@ -27,6 +27,8 @@ ZENODO_DOI = "10.5281/zenodo.13685813"
 HF_INSTANOVO = "InstaDeepAI/ms_ninespecies_benchmark"
 HF_DION = "alfred-n/dIon-datasets"
 PROTEOBENCH_MGF = "https://proteobench.cubimed.rub.de/raws/DeNovo-HCD/nine_species_balanced_De_Novo.mgf.gz"
+# denovo_benchmarks' commit that added the "consensus labels" to sample_data/
+DNB_SAMPLE_COMMIT = "8a0b8cc999e1ca03bfc905c1dbefcef0efa61cb8"
 
 
 def zenodo_file(name):
@@ -70,6 +72,8 @@ SOURCES = {
              hf_tree(HF_DION, "representation_benchmarks/ninespecies"), "HTTP"),
     "dnb": ("MSV000096182, other/9_species_*_labels.csv and peak/mgf/<raw file>_<chunk>.mgf",
             massive_files(MASSIVE["MSV000096182"][0]), "FTPS, make_jobs_dnb.py"),
+    "dnb_sample": ("denovo_benchmarks, sample_data/9_species_{human,mus_musculus}/labels.csv (consensus labels)",
+                   f"https://github.com/bittremieuxlab/denovo_benchmarks/tree/{DNB_SAMPLE_COMMIT}/sample_data", "HTTP"),
     "wen_noble": ("Wen & Noble 2024, Scientific Data 11:1207", "https://doi.org/10.1038/s41597-024-04068-4", "paper"),
 }
 
@@ -83,4 +87,6 @@ HTTP_DOWNLOADS = (
     + [(hf_file(HF_INSTANOVO, f"data/ninespecies_updated/{s}.ipc"), f"{s}.ipc") for s in SPECIES_FILES]
     + [(hf_file(HF_DION, f"representation_benchmarks/ninespecies/{split}/retrieval.parquet"),
         f"dion_{split}_retrieval.parquet") for split in ("test", "validation")]
+    + [(f"https://raw.githubusercontent.com/bittremieuxlab/denovo_benchmarks/{DNB_SAMPLE_COMMIT}/sample_data/{run}/labels.csv",
+        f"dnb_sample_{run}_labels.csv") for run in ("9_species_human", "9_species_mus_musculus")]
 )
