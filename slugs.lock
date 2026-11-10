@@ -825,6 +825,7 @@ algorithms	824	peptide-similarity-alignment
 algorithms	825	peppr
 algorithms	826	novocrf
 algorithms	827	pi-specformer
+algorithms	828	conus-monile-acyclic-peptide-mo1659
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4653,6 +4654,10 @@ authors	3945	yiming-zhang-ncpsb
 authors	3946	rong-xu
 authors	3947	kaixuan-li
 authors	3948	jun-zhu-tsinghua
+authors	3949	govindaswamy-singaravadivelan
+authors	3950	palanisamy-ramasamy
+authors	3951	kuppanna-ananda
+authors	3952	sujit-k-sikdar
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -6297,6 +6302,7 @@ institutions	1433	york-university
 institutions	1434	institute-for-analytical-instrumentation
 institutions	1435	medical-proteoscope
 institutions	1437	guangzhou-national-laboratory
+institutions	1439	tata-institute-of-fundamental-research
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7360,6 +7366,7 @@ publications	997	limitations-of-de-novo-peptide-sequencing-in-resolving-sequence
 publications	998	novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-prefix-mass-lattice
 publications	999	casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de
 publications	1000	pi-specformer-a-mass-spectrometry-based-foundation-model-for-decoding-the-dark
+publications	1001	a-novel-13-residue-acyclic-peptide-from-the-marine-snail-conus-monile-targets
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

@@ -1583,7 +1583,7 @@ INSERT INTO author VALUES(1656,'Ning Liu',NULL,NULL,NULL,NULL,'0000-0002-7925-85
 INSERT INTO author VALUES(1657,'Ningning Sun',NULL,NULL,NULL,NULL,NULL,'A5112142709');
 INSERT INTO author VALUES(1658,'Ohgew Kweon',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(1659,'P. Arjun',NULL,NULL,NULL,NULL,'0000-0002-3244-930X',NULL);
-INSERT INTO author VALUES(1660,'Padmanabhan Balaram',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(1660,'Padmanabhan Balaram',NULL,NULL,NULL,NULL,'0000-0002-6577-933X','A5065728901');
 INSERT INTO author VALUES(1661,'Paige Vinson',NULL,NULL,NULL,NULL,'0000-0003-0285-3376','A5050726251');
 INSERT INTO author VALUES(1662,'Paul F. Alewood',NULL,NULL,NULL,NULL,'0000-0001-7454-6522','A5058316270');
 INSERT INTO author VALUES(1663,'Paul M. Thomas',NULL,NULL,NULL,NULL,'0000-0003-2887-4765','A5030033275');
@@ -3833,6 +3833,10 @@ INSERT INTO author VALUES(3945,'Yiming Zhang',NULL,NULL,'NCPSB',NULL,NULL,NULL);
 INSERT INTO author VALUES(3946,'Rong Xu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3947,'Kaixuan Li',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3948,'Jun Zhu',NULL,NULL,'Tsinghua',NULL,NULL,NULL);
+INSERT INTO author VALUES(3949,'Govindaswamy Singaravadivelan',NULL,NULL,NULL,NULL,NULL,'A5060715329');
+INSERT INTO author VALUES(3950,'Palanisamy Ramasamy',NULL,NULL,NULL,NULL,'0000-0003-0393-0417','A5133720785');
+INSERT INTO author VALUES(3951,'Kuppanna Ananda',NULL,NULL,NULL,NULL,NULL,'A5103542800');
+INSERT INTO author VALUES(3952,'Sujit K. Sikdar',NULL,NULL,NULL,NULL,'0000-0001-9161-5868','A5006520474');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4701,7 +4705,7 @@ INSERT INTO affiliation VALUES(236,'Genentech, Inc.','Department of Protein Chem
 INSERT INTO affiliation VALUES(237,'Genentech, Inc.','Department of Antibody Engineering',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(238,'Genentech, Inc.','Department of Molecular Biology',8,105,'https://ror.org/04gndp242','Genentech',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(239,'Vellore Institute of Technology','Department of Biotechnology',28,106,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO affiliation VALUES(240,'Indian Institute of Science','Molecular Biophysics Unit',28,107,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(240,'Indian Institute of Science','Molecular Biophysics Unit',28,107,'https://ror.org/04dese585','Indian Institute of Science Bangalore',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(241,'University of Wisconsin-Madison','School of Pharmacy and Department of Chemistry',8,108,'https://ror.org/01y2jtd41','University of Wisconsin–Madison',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(242,'Massachusetts Institute of Technology','Department of Chemistry',8,57,'https://ror.org/042nb2s44','Massachusetts Institute of Technology',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(243,'Medical University of South Carolina','Department of Biometry and Epidemiology',8,109,'https://ror.org/012jban78','Medical University of South Carolina',NULL,NULL,NULL);
@@ -5855,6 +5859,7 @@ INSERT INTO affiliation VALUES(1435,'Medical ProteoScope',NULL,29,411,'https://r
 INSERT INTO affiliation VALUES(1436,'Westlake University','Westlake Institute for Advanced Studies',2,15,'https://ror.org/05hfa4n20',NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1437,'Guangzhou National Laboratory',NULL,2,16,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1438,'Tsinghua University','Tsinghua-Peking Joint Center for Life Sciences, School of Life Sciences',2,9,'https://ror.org/03cve4549',NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1439,'Tata Institute of Fundamental Research','Department of Biological Sciences',28,323,'https://ror.org/03ht1xw27','Tata Institute of Fundamental Research',NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11317,6 +11322,15 @@ INSERT INTO author_affiliation VALUES(146,532);
 INSERT INTO author_affiliation VALUES(3948,1438);
 INSERT INTO author_affiliation VALUES(3948,532);
 INSERT INTO author_affiliation VALUES(157,1436);
+INSERT INTO author_affiliation VALUES(881,240);
+INSERT INTO author_affiliation VALUES(3949,1439);
+INSERT INTO author_affiliation VALUES(3950,240);
+INSERT INTO author_affiliation VALUES(3951,240);
+INSERT INTO author_affiliation VALUES(3663,240);
+INSERT INTO author_affiliation VALUES(3952,240);
+INSERT INTO author_affiliation VALUES(1609,1439);
+INSERT INTO author_affiliation VALUES(1609,1108);
+INSERT INTO author_affiliation VALUES(1660,240);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12146,6 +12160,7 @@ INSERT INTO algorithm VALUES(824,'Peptide similarity alignment',NULL,NULL,NULL,'
 INSERT INTO algorithm VALUES(825,'PepPr',NULL,NULL,'Transformer (AR)','A peptide language model fitted to a reference proteome, fused through a small learned head with the next-residue logits of an autoregressive sequencer (Casanovo or ContraNovo) before beam search, so reference context fills gaps in incomplete spectra without excluding variants.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(826,'NovoCRF',NULL,NULL,'Graph / DP','A conditional random field whose states are prefix masses, so every path is a peptide within 0.06 Da of the precursor; a 310k-parameter scorer of physics-derived ion-match features is trained with exact global normalization over all mass-feasible peptides, decoded by exact k-best search and reranked by two BiGRUs.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(827,'π-SPECFormer',NULL,NULL,'Transformer (AR)','Mass-spectrometry foundation model: a 21M-parameter Transformer spectrum encoder pre-trained contrastively (MoCo-style, InfoNCE over masked-peak views) on 178M unidentified spectra, then refined on 114M PSMs grouped by precursor. For de novo sequencing the frozen encoder feeds a task-specific Transformer encoder and autoregressive peptide decoder; the same embeddings serve spectrum clustering and, fine-tuned, PTM detection. Applied to mine single-amino-acid variants from dark spectra in a 103-patient lung adenocarcinoma cohort.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(828,'Conus monile acyclic peptide Mo1659',NULL,NULL,NULL,'De novo sequences Mo1659, a 13-residue disulfide-free aromatic peptide from Conus monile venom, from MALDI and ESI MS/MS, confirms it by synthesis and Edman sequencing, and shows it targets non-inactivating potassium channels.','downstream-application',0,'DDA',NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13156,6 +13171,7 @@ INSERT INTO publication VALUES(997,'Limitations of de novo peptide sequencing in
 INSERT INTO publication VALUES(998,'NovoCRF: Globally Normalized De Novo Peptide Sequencing on a Prefix-Mass Lattice','2026-11-03','10.48550/arXiv.2611.05260','arXiv','De novo peptide sequencing has moved from dynamic programming over hand-designed or generative scores to large transformers that learn the task end to end. We present NovoCRF, a conditional random field (CRF) whose states are prefix masses, so that its paths are exactly the peptides within +/-0.06 Da of the precursor mass. A small network scores each edge from physics-derived ion-match features and is trained with its scores globally normalized over all mass-feasible peptides. To our knowledge, NovoCRF is the first de novo method trained with exact normalization over all mass-feasible peptides. Our software has three modules, each with exactly one job: a precursor mass finder recovers the accurate precursor mass from MS1, the CRF finds the peptides that fit the precursor mass by exact k-best decoding, and two BiGRU rerankers add sequence context and internal-fragment evidence. The model has 310k parameters and trains in about 17 GPU-hours. On seven held-out data-dependent acquisition datasets published in 2026 (126,262 labeled spectra), NovoCRF''s mean peptide recall is 42.4%, against 39.1% for Casanovo v5 with five beams, and its amino-acid recall 64.0% against 53.1%, at 1,746 spectra/s on 18 CPU threads, 55x Casanovo''s throughput on a GPU. Split by fragment evidence, NovoCRF leads on labels with up to three peptide bonds without a b or y ion, and Casanovo only beyond. NovoCRF can also search modifications it was never trained on at their exact mass: it finds 32.1% of the hydroxyproline peptides of a lion bone sample.','https://arxiv.org/abs/2611.05260','arXiv','preprint',NULL,'arxiv');
 INSERT INTO publication VALUES(999,'CasanovoGUI: A Cross-Platform Desktop Application for Deep Learning-Based De Novo Peptide Sequencing with Casanovo','2026-11-06','10.1021/acs.jproteome.6c00617','American Chemical Society (ACS)','De novo peptide sequencing detects peptides directly from tandem mass spectra without a protein sequence database, and deep learning has substantially advanced its performance. Casanovo, one such widely used model, is distributed as a Python command-line program. Consequently, installation, GPU and dependency configuration, and manual parametrization can be challenging for many bench scientists and are a recurring source of errors. Interpreting and validating the resulting predictions poses a further challenge. We present CasanovoGUI, an open-source Java-based desktop application that makes all of Casanovo’s main analysis functions available through a point-and-click interface on Windows, macOS, and Linux. On first use, CasanovoGUI automatically installs a private Python environment and Casanovo with a GPU-matched build, requiring no prior software setup. The GUI provides access to Casanovo’s analysis functions and configuration parameters, streams live progress, and integrates results interpretation: annotated spectra with per-residue confidence scores in the PDV viewer and mismatch-tolerant mapping of de novo peptides back to a reference proteome. CasanovoGUI is available at https://github.com/Noble-Lab/CasanovoGUI.','https://pubs.acs.org/doi/10.1021/acs.jproteome.6c00617','Journal of Proteome Research','peer-reviewed',NULL,'crossref');
 INSERT INTO publication VALUES(1000,'π-SPECFormer: A Mass Spectrometry-based Foundation Model for Decoding the Dark Proteome','2026-11-09','10.64898/2026.11.06.764812','Cold Spring Harbor Laboratory','In mass-spectrometry-based proteomics, a substantial proportion of acquired spectra remain unidentified, concealing a vast reservoir of biological variations commonly termed the "dark proteome", potentially obscuring sequence mutations, non-canonical peptides and post-translational modifications. Existing deep-learning methods largely rely on supervised training with peptide-spectrum matches (PSMs), limiting their ability to learn from the much larger pool of unannotated spectra. Here we introduce π-SPECFormer, a mass-spectrometry foundation model pre-trained on 291 million spectra through a two-stage framework that combines self-supervised and PSMs-guided representation learning. π-SPECFormer transfers effectively to de novo peptide sequencing, spectrum clustering and modification detection, consistently outperforming task-specific baselines. When applied to proteomic profiles from 103 individuals with lung adenocarcinoma, the model identified nine high-confidence mutated peptides, including six that were absent from the reference databases. π-SPECFormer thus enables unbiased decoding of molecular complexity beyond the boundaries of the canonical proteome.','https://www.biorxiv.org/content/10.64898/2026.11.06.764812v1','bioRxiv','preprint','','biorxiv');
+INSERT INTO publication VALUES(1001,'A novel 13 residue acyclic peptide from the marine snail, Conus monile, targets potassium channels','2004-05-01','10.1016/j.bbrc.2004.03.100','Elsevier BV','A novel 13-residue peptide Mo1659 has been isolated from the venom of a vermivorous cone snail, Conus monile. HPLC fractions of the venom extract yielded an intense UV absorbing fraction with a mass of 1659Da. De novo sequencing using both matrix assisted laser desorption and ionization and electrospray MS/MS methods together with analysis of proteolytic fragments successfully yielded the amino acid sequence, FHGGSWYRFPWGY-NH(2). This was further confirmed by comparison with the chemically synthesized peptide and by conventional Edman sequencing. Mo1659 has an unusual sequence with a preponderance of aromatic residues and the absence of apolar, aliphatic residues like Ala, Val, Leu, and Ile. Mo1659 has no disulfide bridges distinguishing it from the conotoxins and bears no sequence similarity with any of the acyclic peptides isolated thus far from the venom of cone snails. Electrophysiological studies on the effect of Mo1659 on measured currents in dorsal root ganglion neurons suggest that the peptide targets non-inactivating voltage-dependent potassium channels.','https://doi.org/10.1016/j.bbrc.2004.03.100','Biochemical and Biophysical Research Communications','peer-reviewed','','europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19585,6 +19601,14 @@ INSERT INTO publication_author VALUES(1000,157,15);
 INSERT INTO publication_author VALUES(1000,188,16);
 INSERT INTO publication_author VALUES(1000,163,17);
 INSERT INTO publication_author VALUES(1000,151,18);
+INSERT INTO publication_author VALUES(1001,881,1);
+INSERT INTO publication_author VALUES(1001,3949,2);
+INSERT INTO publication_author VALUES(1001,3950,3);
+INSERT INTO publication_author VALUES(1001,3951,4);
+INSERT INTO publication_author VALUES(1001,3663,5);
+INSERT INTO publication_author VALUES(1001,3952,6);
+INSERT INTO publication_author VALUES(1001,1609,7);
+INSERT INTO publication_author VALUES(1001,1660,8);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27800,6 +27824,15 @@ INSERT INTO publication_author_affiliation VALUES(1000,188,532,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1000,188,167,1,'manual');
 INSERT INTO publication_author_affiliation VALUES(1000,163,75,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1000,151,532,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,881,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,3949,1439,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,3950,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,3951,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,3663,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,3952,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,1609,1439,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,1609,1108,1,'manual');
+INSERT INTO publication_author_affiliation VALUES(1001,1660,240,0,'manual');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29098,6 +29131,7 @@ INSERT INTO publication_algorithm VALUES(998,826,'describes');
 INSERT INTO publication_algorithm VALUES(999,12,'uses');
 INSERT INTO publication_algorithm VALUES(999,223,'describes');
 INSERT INTO publication_algorithm VALUES(1000,827,'describes');
+INSERT INTO publication_algorithm VALUES(1001,828,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -68597,10 +68631,10 @@ INSERT INTO patent_cited_by VALUES(59,'CN118033144A','family',1,'中国人民解
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',577);
-INSERT INTO sqlite_sequence VALUES('affiliation',1438);
-INSERT INTO sqlite_sequence VALUES('author',3948);
-INSERT INTO sqlite_sequence VALUES('algorithm',827);
-INSERT INTO sqlite_sequence VALUES('publication',1000);
+INSERT INTO sqlite_sequence VALUES('affiliation',1439);
+INSERT INTO sqlite_sequence VALUES('author',3952);
+INSERT INTO sqlite_sequence VALUES('algorithm',828);
+INSERT INTO sqlite_sequence VALUES('publication',1001);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
