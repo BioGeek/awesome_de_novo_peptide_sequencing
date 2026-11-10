@@ -28,7 +28,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 1001 against 1000 publications today --
+a deleted row does not give its id back -- 1002 against 1001 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -78,7 +78,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 109 of 824 methods have a row, 55 of the 76 deep-learning
+incomplete: 109 of 825 methods have a row, 55 of the 76 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.

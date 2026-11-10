@@ -4461,6 +4461,7 @@ INSERT INTO city VALUES(573,'Praia',102,14.9116999999999997,-23.5260999999999995
 INSERT INTO city VALUES(575,'Abingdon',7,51.6707999999999998,-1.28299999999999991,NULL,NULL);
 INSERT INTO city VALUES(576,'Santa Clara',8,37.3541099999999985,-121.955240000000003,'ror','ror');
 INSERT INTO city VALUES(577,'Tucson',8,32.2217399999999969,-110.926479999999997,'geonames','geonames');
+INSERT INTO city VALUES(578,'Chidambaram',28,11.3993300000000008,79.69144,'ror','ror');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5859,6 +5860,8 @@ INSERT INTO affiliation VALUES(1436,'Westlake University','Westlake Institute fo
 INSERT INTO affiliation VALUES(1437,'Guangzhou National Laboratory',NULL,2,16,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1438,'Tsinghua University','Tsinghua-Peking Joint Center for Life Sciences, School of Life Sciences',2,9,'https://ror.org/03cve4549',NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1439,'Tata Institute of Fundamental Research','Department of Biological Sciences',28,323,'https://ror.org/03ht1xw27','Tata Institute of Fundamental Research',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1440,'Annamalai University','Centre of Advanced Study in Marine Biology',28,578,'https://ror.org/01x24z140','Annamalai University',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1441,'Tata Institute of Fundamental Research',NULL,28,323,'https://ror.org/03ht1xw27','Tata Institute of Fundamental Research',NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11330,6 +11333,9 @@ INSERT INTO author_affiliation VALUES(3952,240);
 INSERT INTO author_affiliation VALUES(1609,1439);
 INSERT INTO author_affiliation VALUES(1609,1108);
 INSERT INTO author_affiliation VALUES(1660,240);
+INSERT INTO author_affiliation VALUES(1613,1441);
+INSERT INTO author_affiliation VALUES(1588,1440);
+INSERT INTO author_affiliation VALUES(1609,1441);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12160,6 +12166,7 @@ INSERT INTO algorithm VALUES(825,'PepPr',NULL,NULL,'Transformer (AR)','A peptide
 INSERT INTO algorithm VALUES(826,'NovoCRF',NULL,NULL,'Graph / DP','A conditional random field whose states are prefix masses, so every path is a peptide within 0.06 Da of the precursor; a 310k-parameter scorer of physics-derived ion-match features is trained with exact global normalization over all mass-feasible peptides, decoded by exact k-best search and reranked by two BiGRUs.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(827,'π-SPECFormer',NULL,NULL,'Transformer (AR)','Mass-spectrometry foundation model: a 21M-parameter Transformer spectrum encoder pre-trained contrastively (MoCo-style, InfoNCE over masked-peak views) on 178M unidentified spectra, then refined on 114M PSMs grouped by precursor. For de novo sequencing the frozen encoder feeds a task-specific Transformer encoder and autoregressive peptide decoder; the same embeddings serve spectrum clustering and, fine-tuned, PTM detection. Applied to mine single-amino-acid variants from dark spectra in a 103-patient lung adenocarcinoma cohort.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(828,'Conus monile acyclic peptide Mo1659',NULL,NULL,NULL,'De novo sequences Mo1659, a 13-residue disulfide-free aromatic peptide from Conus monile venom, from MALDI and ESI MS/MS, confirms it by synthesis and Edman sequencing, and shows it targets non-inactivating potassium channels.','downstream-application',0,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(829,'Conus araneosus chi-conotoxin Ar1312',NULL,NULL,NULL,'De novo sequences Ar1312, a two-disulfide conotoxin from Conus araneosus venom, by MALDI MS/MS, and resolves between two candidate sequences by comparing the natural and synthetic peptides'' fragmentation, placing it in the chi-conotoxin class.','downstream-application',0,'DDA',NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13171,6 +13178,7 @@ INSERT INTO publication VALUES(998,'NovoCRF: Globally Normalized De Novo Peptide
 INSERT INTO publication VALUES(999,'CasanovoGUI: A Cross-Platform Desktop Application for Deep Learning-Based De Novo Peptide Sequencing with Casanovo','2026-11-06','10.1021/acs.jproteome.6c00617','American Chemical Society (ACS)','De novo peptide sequencing detects peptides directly from tandem mass spectra without a protein sequence database, and deep learning has substantially advanced its performance. Casanovo, one such widely used model, is distributed as a Python command-line program. Consequently, installation, GPU and dependency configuration, and manual parametrization can be challenging for many bench scientists and are a recurring source of errors. Interpreting and validating the resulting predictions poses a further challenge. We present CasanovoGUI, an open-source Java-based desktop application that makes all of Casanovo’s main analysis functions available through a point-and-click interface on Windows, macOS, and Linux. On first use, CasanovoGUI automatically installs a private Python environment and Casanovo with a GPU-matched build, requiring no prior software setup. The GUI provides access to Casanovo’s analysis functions and configuration parameters, streams live progress, and integrates results interpretation: annotated spectra with per-residue confidence scores in the PDV viewer and mismatch-tolerant mapping of de novo peptides back to a reference proteome. CasanovoGUI is available at https://github.com/Noble-Lab/CasanovoGUI.','https://pubs.acs.org/doi/10.1021/acs.jproteome.6c00617','Journal of Proteome Research','peer-reviewed',NULL,'crossref');
 INSERT INTO publication VALUES(1000,'π-SPECFormer: A Mass Spectrometry-based Foundation Model for Decoding the Dark Proteome','2026-11-09','10.64898/2026.11.06.764812','Cold Spring Harbor Laboratory','In mass-spectrometry-based proteomics, a substantial proportion of acquired spectra remain unidentified, concealing a vast reservoir of biological variations commonly termed the "dark proteome", potentially obscuring sequence mutations, non-canonical peptides and post-translational modifications. Existing deep-learning methods largely rely on supervised training with peptide-spectrum matches (PSMs), limiting their ability to learn from the much larger pool of unannotated spectra. Here we introduce π-SPECFormer, a mass-spectrometry foundation model pre-trained on 291 million spectra through a two-stage framework that combines self-supervised and PSMs-guided representation learning. π-SPECFormer transfers effectively to de novo peptide sequencing, spectrum clustering and modification detection, consistently outperforming task-specific baselines. When applied to proteomic profiles from 103 individuals with lung adenocarcinoma, the model identified nine high-confidence mutated peptides, including six that were absent from the reference databases. π-SPECFormer thus enables unbiased decoding of molecular complexity beyond the boundaries of the canonical proteome.','https://www.biorxiv.org/content/10.64898/2026.11.06.764812v1','bioRxiv','preprint','','biorxiv');
 INSERT INTO publication VALUES(1001,'A novel 13 residue acyclic peptide from the marine snail, Conus monile, targets potassium channels','2004-05-01','10.1016/j.bbrc.2004.03.100','Elsevier BV','A novel 13-residue peptide Mo1659 has been isolated from the venom of a vermivorous cone snail, Conus monile. HPLC fractions of the venom extract yielded an intense UV absorbing fraction with a mass of 1659Da. De novo sequencing using both matrix assisted laser desorption and ionization and electrospray MS/MS methods together with analysis of proteolytic fragments successfully yielded the amino acid sequence, FHGGSWYRFPWGY-NH(2). This was further confirmed by comparison with the chemically synthesized peptide and by conventional Edman sequencing. Mo1659 has an unusual sequence with a preponderance of aromatic residues and the absence of apolar, aliphatic residues like Ala, Val, Leu, and Ile. Mo1659 has no disulfide bridges distinguishing it from the conotoxins and bears no sequence similarity with any of the acyclic peptides isolated thus far from the venom of cone snails. Electrophysiological studies on the effect of Mo1659 on measured currents in dorsal root ganglion neurons suggest that the peptide targets non-inactivating voltage-dependent potassium channels.','https://doi.org/10.1016/j.bbrc.2004.03.100','Biochemical and Biophysical Research Communications','peer-reviewed','','europepmc');
+INSERT INTO publication VALUES(1002,'‘De novo’ sequencing by mass spectrometry and confirmation by chemical synthesis','2006-09-01',NULL,'Indian Society for Mass Spectrometry','‘De novo’ peptide sequencing of natural peptides using mass spectrometry is becoming increasingly accessible. The peptide sequence is deduced from the mass spectrum through an iterative process by recognizing fragment ions corresponding to the b and y-series. The mass difference between the adjacent ions in each series gives the cleavage mass of the amino acid residue that is lost, leading to the sequence of peptide. Ambiguity in sequencing arise from the presence of isobaric residue masses (leucine, isoleucine, hydroxyproline, lysine and glutamine) and also from presence of residue pairs which differ in mass by 1Da sometimes leading to sequencing errors when data is collected on instruments with limited mass resolution. The confirmation of the sequence derived from mass spectrum is best achieved by chemical synthesis and comparison of fragmentation patterns of the natural and synthetic peptides. This approach is illustrated in the determination of the sequence of a new class of conotoxins isolated from the venom of Conus araneosus. Conotoxins are particularly attractive targets for ‘de novo’ mass spectral sequencing because of the high degree of posttranslational modifications in these peptides. In this study, a two-disulfide bond containing conotoxin has been sequenced by mass spectrometry. A distinction between two possible sequences of the peptide Ar1312 has been achieved by comparing the MS/MS pattern for the natural and synthetic sequences. Confirmation of the derived sequence RCCGYKMCHOC and disulfide bond pattern suggest that Ar1312 is a χ-conotoxin, a class known to inhibit the norepinephrine transporter (NET).','https://www.researchgate.net/publication/200723922','Proceedings of the 10th ISMAS Symposium','peer-reviewed','','pdf');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19608,6 +19616,11 @@ INSERT INTO publication_author VALUES(1001,3663,5);
 INSERT INTO publication_author VALUES(1001,3952,6);
 INSERT INTO publication_author VALUES(1001,1609,7);
 INSERT INTO publication_author VALUES(1001,1660,8);
+INSERT INTO publication_author VALUES(1002,1613,1);
+INSERT INTO publication_author VALUES(1002,881,2);
+INSERT INTO publication_author VALUES(1002,1588,3);
+INSERT INTO publication_author VALUES(1002,1609,4);
+INSERT INTO publication_author VALUES(1002,1660,5);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27832,6 +27845,12 @@ INSERT INTO publication_author_affiliation VALUES(1001,3952,240,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1001,1609,1439,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1001,1609,1108,1,'manual');
 INSERT INTO publication_author_affiliation VALUES(1001,1660,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,1613,1441,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,881,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,1588,1440,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,1609,1441,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,1609,1108,1,'manual');
+INSERT INTO publication_author_affiliation VALUES(1002,1660,240,0,'manual');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29131,6 +29150,7 @@ INSERT INTO publication_algorithm VALUES(999,12,'uses');
 INSERT INTO publication_algorithm VALUES(999,223,'describes');
 INSERT INTO publication_algorithm VALUES(1000,827,'describes');
 INSERT INTO publication_algorithm VALUES(1001,828,'describes');
+INSERT INTO publication_algorithm VALUES(1002,829,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -68629,11 +68649,11 @@ INSERT INTO patent_cited_by VALUES(56,'CN117607307A','patent',1,'深圳市药品
 INSERT INTO patent_cited_by VALUES(59,'CN118033144A','family',1,'中国人民解放军军事科学院军事医学研究院','中国人民解放军军事科学院军事医学研究院','academic',59,0,'2024-01-22','2024-05-14','A direct-reading protein and proteome accurate de novo sequencing method based on identifiable daughter ion types and full daughter ion coverage',NULL);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',577);
-INSERT INTO sqlite_sequence VALUES('affiliation',1439);
+INSERT INTO sqlite_sequence VALUES('city',578);
+INSERT INTO sqlite_sequence VALUES('affiliation',1441);
 INSERT INTO sqlite_sequence VALUES('author',3952);
-INSERT INTO sqlite_sequence VALUES('algorithm',828);
-INSERT INTO sqlite_sequence VALUES('publication',1001);
+INSERT INTO sqlite_sequence VALUES('algorithm',829);
+INSERT INTO sqlite_sequence VALUES('publication',1002);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

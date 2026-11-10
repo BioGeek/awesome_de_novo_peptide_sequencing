@@ -826,6 +826,7 @@ algorithms	825	peppr
 algorithms	826	novocrf
 algorithms	827	pi-specformer
 algorithms	828	conus-monile-acyclic-peptide-mo1659
+algorithms	829	conus-araneosus-chi-conotoxin-ar1312
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -6302,6 +6303,7 @@ institutions	1434	institute-for-analytical-instrumentation
 institutions	1435	medical-proteoscope
 institutions	1437	guangzhou-national-laboratory
 institutions	1439	tata-institute-of-fundamental-research
+institutions	1440	annamalai-university
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7366,6 +7368,7 @@ publications	998	novocrf-globally-normalized-de-novo-peptide-sequencing-on-a-pre
 publications	999	casanovogui-a-cross-platform-desktop-application-for-deep-learning-based-de
 publications	1000	pi-specformer-a-mass-spectrometry-based-foundation-model-for-decoding-the-dark
 publications	1001	a-novel-13-residue-acyclic-peptide-from-the-marine-snail-conus-monile-targets
+publications	1002	de-novo-sequencing-by-mass-spectrometry-and-confirmation-by-chemical-synthesis
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -7686,3 +7689,4 @@ venues	977	journal-of-the-brazilian-chemical-society
 venues	979	neurips-2025
 venues	986	journal-of-king-saud-university-science
 venues	993	hupo-2026-world-congress
+venues	1002	proceedings-of-the-10th-ismas-symposium
