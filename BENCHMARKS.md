@@ -20,7 +20,7 @@ Every benchmark below is also a catalogued `algorithm` row with
 
 Both are polled weekly by `refresh-benchmarks.yml`, which no-ops when the
 upstream commit has not moved. The metric definitions, and the three ways they
-are easy to misread, are in CLAUDE.md under **Public benchmarks** and
+are easy to misread, are in `docs/benchmarks.md` under **Public benchmarks** and
 **ProteoBench**.
 
 ## The ones it does not chart, and what would have to change

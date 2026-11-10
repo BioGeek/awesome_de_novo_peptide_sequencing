@@ -3370,7 +3370,7 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
     # PXD003868, PXD004467, all already in dataset_address). Going to those
     # submissions directly does not say which curated version was used, so
     # these resolve the dataset and leave the version NULL, which is the same
-    # finding CLAUDE.md records for the other papers that cite provenance
+    # finding docs/datasets.md records for the other papers that cite provenance
     # accessions. They map to the SAME label as the nine-species cue, so they
     # add no ambiguity to the caption path.
     (re.compile(r"(?i)\bV\.?\s?mungo\b|Vigna mungo"), "Nine-species"),
@@ -3382,7 +3382,7 @@ DATASET_CUES: list[tuple[re.Pattern, str]] = [
 
 # HC-PT is NovoBench's 10% subsample of the high-confidence InstaNovo split of
 # ProteomeTools, so naming it pins both grains at once. See 'Datasets, at three
-# grains' in CLAUDE.md for why it is a version and not a dataset.
+# grains' in docs/datasets.md for why it is a version and not a dataset.
 DATASET_TARGETS: dict[str, tuple[str, str | None]] = {
     # dIon's two test sets (COLUMN_DATASET_OVERRIDE). Kingdoms de novo is its
     # own run-disjoint split of 'The Proteome Landscape of the Kingdoms of

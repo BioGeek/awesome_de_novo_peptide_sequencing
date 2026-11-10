@@ -610,7 +610,7 @@ def candidates(cache: Path, pub: dict) -> tuple[list[tuple[str, str]], bool]:
             out.append((src, url))
 
     # A row whose url pins a bioRxiv version is THAT version and no other (see
-    # 'Preprint versions' in CLAUDE.md), so it is the only candidate. The DOI
+    # 'Preprint versions' in docs/data-entry.md), so it is the only candidate. The DOI
     # is shared by every version and lists the newest first, and OpenAlex's
     # locations name whichever version it saw: the Kaiko preprint's v1 and v2
     # rows (994, 995) each came back holding the other's PDF that way. A failed

@@ -143,7 +143,7 @@ jobs:
           line = lambda r: (f"- [ ] [{r['number']}](https://patents.google.com/patent/{r['number']}/en) "
                             f"**{r['title']}** ({r['assignee'] or 'assignee unknown'}, "
                             f"priority {r['priority'] or '?'}) <sub>{r['found_by']}</sub>")
-          footer = ("\n\nDecide each against the bar in CLAUDE.md's Patents section (the CLAIMS "
+          footer = ("\n\nDecide each against the bar in docs/patents.md (the CLAIMS "
                     "are about de novo sequencing of peptides or proteins by mass spectrometry, "
                     "or about something done with its result): catalogue it with "
                     "`uv run python scripts/build_patents.py add <number>`, or add it to "

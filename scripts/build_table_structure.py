@@ -23,7 +23,7 @@ review into `build_paper_comparisons.py`.
 **Never in CI.** It needs the network and the PDF library.
 
 Fetching is `curl`, for the reason recorded under 'The local PDF library' in
-CLAUDE.md: HTTPS here is intercepted by a gateway whose certificates Python
+docs/pdf-library.md: HTTPS here is intercepted by a gateway whose certificates Python
 rejects and curl accepts. Sources are cached under `.cache/arxiv-src/`.
 
 The matching problem is real and is why this reports rather than writes. A

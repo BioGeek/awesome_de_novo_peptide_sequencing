@@ -15,7 +15,7 @@ python3 scripts/check_counts.py               # a few are stdlib-only
 ```
 
 The background on each, including the traps met while writing it, is in
-`CLAUDE.md`. Three rules hold across the folder:
+`CLAUDE.md` and the topic docs under `docs/` it indexes. Three rules hold across the folder:
 
 - **CI or local.** Scripts marked *CI* run on a schedule in
   `.github/workflows/` and commit only when their data changed. Scripts marked

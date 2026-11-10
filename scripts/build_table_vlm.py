@@ -33,7 +33,7 @@ page is the place to look.
 **Report only, and never in CI**: it needs a GPU, a 2 GB local model and the
 PDF library. The model is loaded from a LOCAL CLONE, because the Hugging Face
 Python client cannot reach the Hub through this machine's TLS gateway while
-`git` can -- the same split recorded under 'Checkpoints' in CLAUDE.md.
+`git` can -- the same split recorded under 'Checkpoints' in docs/checkpoints.md.
 
 The crops it reads are the ones `review_comparisons.py` already renders, so the
 two tools see exactly the same picture a human does.

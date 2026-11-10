@@ -8,8 +8,8 @@ Crossref all have nothing for.
 The text is taken between an "Abstract" heading and whatever ends it, then
 de-hyphenated and re-flowed. Conservative on purpose: anything that does not
 start with a capital, runs shorter than 200 characters or longer than 4000, or
-still carries column debris is REJECTED rather than written, because CLAUDE.md's
-rule about build_abstracts.py applies here too -- a fragment presented as an
+still carries column debris is REJECTED rather than written, because the
+rule (docs/data-entry.md, **Abstracts**) about build_abstracts.py applies here too -- a fragment presented as an
 abstract is worse than no abstract.
 """
 import argparse, re, sqlite3, subprocess, sys

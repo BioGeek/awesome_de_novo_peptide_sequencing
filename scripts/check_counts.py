@@ -93,40 +93,40 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     ("CLAUDE.md", "authors total",
      r"; \d+ of (\d+) authors have at least one",
      "SELECT COUNT(*) FROM author"),
-    ("CLAUDE.md", "abstracts present",
+    ("docs/data-entry.md", "abstracts present",
      r"Coverage is (\d+)/\d+", 
      "SELECT COUNT(*) FROM publication WHERE COALESCE(abstract,'')<>''"),
-    ("CLAUDE.md", "publications total (abstract coverage)",
+    ("docs/data-entry.md", "publications total (abstract coverage)",
      r"Coverage is \d+/(\d+)", "SELECT COUNT(*) FROM publication"),
-    ("CLAUDE.md", "abstracts missing",
+    ("docs/data-entry.md", "abstracts missing",
      r"The (\d+) without one are mostly theses",
      "SELECT COUNT(*) FROM publication WHERE COALESCE(abstract,'')=''"),
-    ("CLAUDE.md", "rows dated day 01",
+    ("docs/data-entry.md", "rows dated day 01",
      r"(\d+) rows use day",
      "SELECT COUNT(*) FROM publication WHERE publication_date LIKE '%-01'"),
-    ("CLAUDE.md", "day-01 rows in non-January months",
+    ("docs/data-entry.md", "day-01 rows in non-January months",
      r"and (\d+) of those are in non-January months",
      "SELECT COUNT(*) FROM publication WHERE publication_date LIKE '%-01' "
      "AND substr(publication_date,6,2)<>'01'"),
-    ("CLAUDE.md", "datasets",
+    ("docs/datasets.md", "datasets",
      r"\*\*(\d+) datasets, \d+ versions", "SELECT COUNT(*) FROM dataset"),
-    ("CLAUDE.md", "dataset versions",
+    ("docs/datasets.md", "dataset versions",
      r"\*\*\d+ datasets, (\d+) versions", "SELECT COUNT(*) FROM dataset_version"),
-    ("CLAUDE.md", "dataset addresses",
+    ("docs/datasets.md", "dataset addresses",
      r"versions, (\d+) addresses", "SELECT COUNT(*) FROM dataset_address"),
-    ("CLAUDE.md", "publication_dataset rows",
+    ("docs/datasets.md", "publication_dataset rows",
      r"addresses, (\d+) publication links", "SELECT COUNT(*) FROM publication_dataset"),
-    ("CLAUDE.md", "publications with a dataset",
+    ("docs/datasets.md", "publications with a dataset",
      r"publication links over (\d+) papers",
      "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset"),
-    ("CLAUDE.md", "versions with no address",
+    ("docs/datasets.md", "versions with no address",
      r"one\.\*\* (\d+) of \d+ versions have none",
      "SELECT COUNT(*) FROM dataset_version v WHERE NOT EXISTS"
      "(SELECT 1 FROM dataset_address WHERE dataset_version_id=v.id"
      " AND is_provenance = 0)"),
-    ("CLAUDE.md", "versions total (no-address context)",
+    ("docs/datasets.md", "versions total (no-address context)",
      r"one\.\*\* \d+ of (\d+) versions have none", "SELECT COUNT(*) FROM dataset_version"),
-    ("CLAUDE.md", "ProteomeTools versions",
+    ("docs/datasets.md", "ProteomeTools versions",
      r"\*\*ProteomeTools has (\w+) versions",
      # Past the map it falls back to digits: a missing key once wrote "None".
      lambda db: (lambda n: {2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight",
@@ -142,26 +142,26 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # something untrue about the nine-species benchmark.
     # PAPERS, not links, as the prose says: one paper can now train on a
     # version and evaluate on it, which is two links.
-    ("CLAUDE.md", "nine-species naming the original",
+    ("docs/datasets.md", "nine-species naming the original",
      r"benchmark; (\d+) name the original", "SELECT COUNT(DISTINCT pd.publication_id) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version='original (DeepNovo, 2017)'"),
-    ("CLAUDE.md", "nine-species naming the revised",
+    ("docs/datasets.md", "nine-species naming the revised",
      r"name the original, (\d+) the revised", "SELECT COUNT(DISTINCT pd.publication_id) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version LIKE 'revised%'"),
-    ("CLAUDE.md", "nine-species, revised build not stated",
+    ("docs/datasets.md", "nine-species, revised build not stated",
      r"belongs: (\d+) links\s+do\.", "SELECT COUNT(*) FROM publication_dataset pd "
      "JOIN dataset_version v ON v.id=pd.dataset_version_id "
      "JOIN dataset d ON d.id=v.dataset_id "
      "WHERE d.name='Nine-species benchmark' AND v.version='revised (build not stated)'"),
-    ("CLAUDE.md", "nine-species papers",
+    ("docs/datasets.md", "nine-species papers",
      r"(\d+) papers use the\s+nine-species benchmark",
      "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset WHERE dataset_id="
      "(SELECT id FROM dataset WHERE name='Nine-species benchmark')"),
-    ("CLAUDE.md", "nine-species, version not stated",
+    ("docs/datasets.md", "nine-species, version not stated",
      r"and \*\*(\d+) print only a per-species provenance accession\*\*",
      "SELECT COUNT(DISTINCT publication_id) FROM publication_dataset WHERE dataset_version_id IS NULL AND dataset_id="
      "(SELECT id FROM dataset WHERE name='Nine-species benchmark')"),
@@ -221,51 +221,51 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(*) FROM publication_algorithm"),
     # Public benchmarks. These move whenever the upstream repository adds a
     # tool or a dataset, which is exactly why they are registered.
-    ("CLAUDE.md", "benchmark tools",
+    ("docs/benchmarks.md", "benchmark tools",
      r"which runs (\d+) tools in their own containers",
      "SELECT COUNT(*) FROM benchmark_tool"),
-    ("CLAUDE.md", "benchmark datasets",
+    ("docs/benchmarks.md", "benchmark datasets",
      r"containers over (\d+) public datasets",
      "SELECT COUNT(*) FROM benchmark_dataset"),
-    ("CLAUDE.md", "benchmark_dataset rows",
+    ("docs/benchmarks.md", "benchmark_dataset rows",
      r"`benchmark_dataset` \((\d+) rows\)",
      "SELECT COUNT(*) FROM benchmark_dataset"),
-    ("CLAUDE.md", "benchmark_tool rows",
+    ("docs/benchmarks.md", "benchmark_tool rows",
      r"`benchmark_tool` \((\d+)\)",
      "SELECT COUNT(*) FROM benchmark_tool"),
-    ("CLAUDE.md", "benchmark_result rows",
+    ("docs/benchmarks.md", "benchmark_result rows",
      r"`benchmark_result`\n\((\d+) = one per tool",
      "SELECT COUNT(*) FROM benchmark_result"),
-    ("CLAUDE.md", "benchmark_curve rows",
+    ("docs/benchmarks.md", "benchmark_curve rows",
      r"`benchmark_curve` \((\d+) = a",
      "SELECT COUNT(*) FROM benchmark_curve"),
-    ("CLAUDE.md", "benchmark rows on the latest version",
+    ("docs/benchmarks.md", "benchmark rows on the latest version",
      r"disagree on \d+ of (\d+) \(tool, dataset\) pairs",
      "SELECT COUNT(*) FROM benchmark_result WHERE is_latest = 1"),
-    ("CLAUDE.md", "proteobench submissions",
+    ("docs/benchmarks.md", "proteobench submissions",
      r"`proteobench_submission`\n\((\d+) rows\)",
      "SELECT COUNT(*) FROM proteobench_submission"),
-    ("CLAUDE.md", "proteobench metric rows",
+    ("docs/benchmarks.md", "proteobench metric rows",
      r"`proteobench_metric` \((\d+) = one per submission",
      "SELECT COUNT(*) FROM proteobench_metric"),
-    ("CLAUDE.md", "proteobench runs (prose)",
+    ("docs/benchmarks.md", "proteobench runs (prose)",
      r"peptide-level precision of the (\w+) runs",
      lambda db: ("one two three four five six seven eight nine ten".split()
                  [db.execute("SELECT COUNT(*) FROM proteobench_submission")
                     .fetchone()[0] - 1])),
-    ("CLAUDE.md", "methods with a benchmark section",
+    ("docs/benchmarks.md", "methods with a benchmark section",
      r"The (\d+) methods with benchmark results carry",
      "SELECT COUNT(DISTINCT algorithm_id) FROM benchmark_tool "
      "WHERE algorithm_id IS NOT NULL AND n_datasets = "
      "(SELECT COUNT(*) FROM benchmark_dataset)"),
-    ("CLAUDE.md", "methods with a proteobench submission",
+    ("docs/benchmarks.md", "methods with a proteobench submission",
      r"precision for the (\d+) that have a submission",
      "SELECT COUNT(DISTINCT algorithm_id) FROM proteobench_submission "
      "WHERE algorithm_id IS NOT NULL"),
-    ("CLAUDE.md", "highest publication id",
+    ("docs/site.md", "highest publication id",
      r"-- (\d+) against \d+ publications today",
      "SELECT MAX(id) FROM publication"),
-    ("CLAUDE.md", "publications behind that id",
+    ("docs/site.md", "publications behind that id",
      r"-- \d+ against (\d+) publications today",
      "SELECT COUNT(*) FROM publication"),
     ("CLAUDE.md", "application areas",
@@ -287,41 +287,41 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # The family-page threshold, from four angles. These are the numbers that
     # justify not giving all 49 families a page, so a drift in any of them is a
     # drift in the argument.
-    ("CLAUDE.md", "families with a page",
+    ("docs/site.md", "families with a page",
      r"\*\*(\d+) of \d+\*\* families that hold two or more",
      "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' "
      "GROUP BY algorithm_family HAVING COUNT(*) >= 2)"),
-    ("CLAUDE.md", "families in all",
+    ("docs/site.md", "families in all",
      r"\*\*\d+ of (\d+)\*\* families that hold two or more",
      "SELECT COUNT(DISTINCT algorithm_family) FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> ''"),
-    ("CLAUDE.md", "single-method families",
+    ("docs/site.md", "single-method families",
      r"The other \*\*(\d+)\*\* hold\s*\n?exactly one method",
      "SELECT COUNT(*) FROM (SELECT 1 FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' "
      "GROUP BY algorithm_family HAVING COUNT(*) = 1)"),
-    ("CLAUDE.md", "methods in a family with a page",
+    ("docs/site.md", "methods in a family with a page",
      r"cover \*\*(\d+)\*\* of the \*\*\d+\*\*\s*\n?methods that carry a family",
      "SELECT COUNT(*) FROM algorithm WHERE algorithm_family IN "
      "(SELECT algorithm_family FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' "
      "GROUP BY algorithm_family HAVING COUNT(*) >= 2)"),
-    ("CLAUDE.md", "methods that carry a family",
+    ("docs/site.md", "methods that carry a family",
      r"cover \*\*\d+\*\* of the \*\*(\d+)\*\*\s*\n?methods that carry a family",
      "SELECT COUNT(*) FROM algorithm WHERE COALESCE(algorithm_family,'') <> ''"),
-    ("CLAUDE.md", "families with a note",
+    ("docs/site.md", "families with a note",
      r"All (\d+) families with a page have a note",
      "SELECT COUNT(*) FROM family_note"),
     # Two invariants that must read zero, the same shape as the subdomain pair
     # above: a family page with no note falls back silently to the generated
     # sentence, and a note for a family with no page is prose nothing renders.
-    ("CLAUDE.md", "family pages without a note",
+    ("docs/site.md", "family pages without a note",
      r"(\d+) pages without a note",
      "SELECT COUNT(*) FROM (SELECT algorithm_family f FROM algorithm "
      "WHERE COALESCE(algorithm_family,'') <> '' GROUP BY algorithm_family "
      "HAVING COUNT(*) >= 2) x WHERE x.f NOT IN (SELECT name FROM family_note)"),
-    ("CLAUDE.md", "notes without a family page",
+    ("docs/site.md", "notes without a family page",
      r"(\d+) notes without a page",
      "SELECT COUNT(*) FROM family_note WHERE name NOT IN "
      "(SELECT algorithm_family FROM algorithm "
@@ -370,23 +370,23 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # What a paper did with a dataset. 'uses' means the purpose is not
     # recorded, so it must never stand beside a recorded purpose for the same
     # paper, dataset and version: that would say "unknown" and "known" at once.
-    ("CLAUDE.md", "dataset links with an unknown role",
+    ("docs/datasets.md", "dataset links with an unknown role",
      r"(\d+) links carry a role outside these four",
      "SELECT COUNT(*) FROM publication_dataset "
      "WHERE role NOT IN ('introduces','trains-on','evaluates-on','uses')"),
-    ("CLAUDE.md", "uses links beside another role",
+    ("docs/datasets.md", "uses links beside another role",
      r"(\d+) links\s+are `uses` beside another link",
      "SELECT COUNT(*) FROM publication_dataset u WHERE u.role='uses' AND EXISTS ("
      " SELECT 1 FROM publication_dataset s WHERE s.publication_id=u.publication_id"
      " AND s.dataset_id=u.dataset_id AND s.dataset_version_id IS u.dataset_version_id"
      " AND s.role <> 'uses')"),
-    ("CLAUDE.md", "dataset links trains-on",
+    ("docs/datasets.md", "dataset links trains-on",
      r"\*\*(\d+) links are `trains-on`",
      "SELECT COUNT(*) FROM publication_dataset WHERE role='trains-on'"),
-    ("CLAUDE.md", "dataset links evaluates-on",
+    ("docs/datasets.md", "dataset links evaluates-on",
      r"`trains-on` and (\d+) `evaluates-on`\.\*\*",
      "SELECT COUNT(*) FROM publication_dataset WHERE role='evaluates-on'"),
-    ("CLAUDE.md", "versions with several introducing works",
+    ("docs/datasets.md", "versions with several introducing works",
      r"must read zero, and\s+does: \*\*(\d+)\*\* dataset versions",
      """WITH canon AS (
           SELECT pd.dataset_version_id AS vid,
@@ -398,25 +398,25 @@ CLAIMS: list[tuple[str, str, str, object]] = [
     # The mined comparison tables. Counts first, then three invariants that
     # must read zero: each is a guard of the miner restated in SQL, so a
     # loosened guard fails the commit rather than shipping.
-    ("CLAUDE.md", "verified comparison tables",
+    ("docs/comparison-tables.md", "verified comparison tables",
      r"\*\*(\d+) verified tables from \d+ papers",
      "SELECT COUNT(*) FROM paper_comparison WHERE review_status='verified'"),
-    ("CLAUDE.md", "papers with a verified comparison table",
+    ("docs/comparison-tables.md", "papers with a verified comparison table",
      r"verified tables from (\d+) papers",
      "SELECT COUNT(DISTINCT publication_id) FROM paper_comparison "
      "WHERE review_status='verified'"),
-    ("CLAUDE.md", "comparison measurements",
+    ("docs/comparison-tables.md", "comparison measurements",
      r"papers, (\d+) measurements\.\*\*",
      "SELECT COUNT(*) FROM paper_comparison_result"),
-    ("CLAUDE.md", "rejected comparison tables",
+    ("docs/comparison-tables.md", "rejected comparison tables",
      r"The (\d+) refusals the\s+reviewer confirmed",
      "SELECT COUNT(*) FROM paper_comparison WHERE review_status='rejected'"),
-    ("CLAUDE.md", "verified tables without the paper's own method",
+    ("docs/comparison-tables.md", "verified tables without the paper's own method",
      r"(\d+) verified tables without a result for the paper's own method",
      "SELECT COUNT(*) FROM paper_comparison c WHERE review_status='verified' "
      "AND NOT EXISTS (SELECT 1 FROM paper_comparison_result r "
      "WHERE r.comparison_id = c.id AND r.is_self = 1)"),
-    ("CLAUDE.md", "duplicate measurements",
+    ("docs/comparison-tables.md", "duplicate measurements",
      r"(\d+) duplicate\s+measurements within a table",
      # The DATASET VERSION is part of a measurement: RankNovo's arXiv Table 1
      # stacks a V1 block over a V2 block, one method in each.
@@ -424,7 +424,7 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "GROUP BY comparison_id, algorithm_id, COALESCE(variant_printed,''), metric, "
      "level, COALESCE(subset_printed,''), COALESCE(dataset_version_id,''), basis "
      "HAVING COUNT(*) > 1)"),
-    ("CLAUDE.md", "methods with a Reported comparisons section",
+    ("docs/comparison-tables.md", "methods with a Reported comparisons section",
      r"\*\*(\d+) methods carry a `## Reported comparisons` section\*\*",
      # kind = 'comparison' only: an own-results table compares nothing and is
      # kept off the method pages, so InstaNovo and InstaNovo+, whose only
@@ -432,25 +432,25 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      "SELECT COUNT(DISTINCT r.algorithm_id) FROM paper_comparison_result r "
      "JOIN paper_comparison c ON c.id = r.comparison_id "
      "WHERE r.is_self = 1 AND c.review_status = 'verified' AND c.kind = 'comparison'"),
-    ("CLAUDE.md", "results with a subset but no canonical subset",
+    ("docs/comparison-tables.md", "results with a subset but no canonical subset",
      r"(\d+) results with a printed subset and no canonical one",
      "SELECT COUNT(*) FROM paper_comparison_result "
      "WHERE COALESCE(subset_printed,'') <> '' AND COALESCE(subset_canonical,'') = ''"),
-    ("CLAUDE.md", "quoted results without a cue",
+    ("docs/comparison-tables.md", "quoted results without a cue",
      r"(\d+) quoted results without a cue",
      "SELECT COUNT(*) FROM paper_comparison_result "
      "WHERE basis='quoted' AND basis_cue IS NULL"),
-    ("CLAUDE.md", "methods with a checkpoint",
+    ("docs/checkpoints.md", "methods with a checkpoint",
      r"The (\d+) methods with a recorded checkpoint",
      "SELECT COUNT(DISTINCT algorithm_id) FROM checkpoint"),
-    ("CLAUDE.md", "checkpoints recorded",
+    ("docs/checkpoints.md", "checkpoints recorded",
      r"Measured over the (\d+) recorded checkpoints", "SELECT COUNT(*) FROM checkpoint"),
-    ("CLAUDE.md", "checkpoints live",
+    ("docs/checkpoints.md", "checkpoints live",
      r"recorded checkpoints: (\d+) live", "SELECT COUNT(*) FROM checkpoint WHERE status='live'"),
-    ("CLAUDE.md", "checkpoints verified",
+    ("docs/checkpoints.md", "checkpoints verified",
      r"recorded checkpoints: \d+ live, (\d+) verified",
      "SELECT COUNT(*) FROM checkpoint WHERE status='verified'"),
-    ("CLAUDE.md", "checkpoints gated",
+    ("docs/checkpoints.md", "checkpoints gated",
      r"recorded checkpoints: \d+ live, \d+ verified, (\d+) gated",
      "SELECT COUNT(*) FROM checkpoint WHERE status='gated'"),
     ("WATCHLIST.md", "review entries",
@@ -477,16 +477,16 @@ CLAIMS += [
 
 # The Code filter's caveat quotes how incomplete algorithm_repository is.
 CLAIMS += [
-    ("CLAUDE.md", "methods with a repository",
+    ("docs/site.md", "methods with a repository",
      r"incomplete: (\d+) of \d+ methods have a row",
      "SELECT COUNT(DISTINCT algorithm_id) FROM algorithm_repository"),
-    ("CLAUDE.md", "methods (Code filter)",
+    ("docs/site.md", "methods (Code filter)",
      r"incomplete: \d+ of (\d+) methods have a row", "SELECT COUNT(*) FROM algorithm"),
-    ("CLAUDE.md", "DL algorithms with a repository",
+    ("docs/site.md", "DL algorithms with a repository",
      r"a row, (\d+) of the \d+ deep-learning\s+algorithms",
      "SELECT COUNT(*) FROM algorithm a WHERE kind='algorithm' AND is_deep_learning=1 "
      "AND EXISTS (SELECT 1 FROM algorithm_repository r WHERE r.algorithm_id=a.id)"),
-    ("CLAUDE.md", "DL algorithms",
+    ("docs/site.md", "DL algorithms",
      r"a row, \d+ of the (\d+) deep-learning\s+algorithms",
      "SELECT COUNT(*) FROM algorithm WHERE kind='algorithm' AND is_deep_learning=1"),
 ]
@@ -529,23 +529,23 @@ _PATENT_NUMBERS = ("WITH RECURSIVE split(id, rest, num) AS ("
                    " substr(rest, 1, instr(rest, ' ') - 1) FROM split WHERE rest <> '')"
                    " SELECT num FROM split WHERE num <> '' GROUP BY num HAVING COUNT(DISTINCT id) > 1")
 CLAIMS += [
-    ("CLAUDE.md", "patent families",
+    ("docs/patents.md", "patent families",
      r"\*\*(\d+) patent families\*\* from", "SELECT COUNT(*) FROM patent"),
-    ("CLAUDE.md", "patent assignees",
+    ("docs/patents.md", "patent assignees",
      r"patent families\*\* from (\d+) assignees", "SELECT COUNT(DISTINCT assignee) FROM patent"),
-    ("CLAUDE.md", "patents claiming a catalog method",
+    ("docs/patents.md", "patents claiming a catalog method",
      r"assignees, (\d+) of them claiming a method",
      "SELECT COUNT(DISTINCT patent_id) FROM patent_algorithm"),
-    ("CLAUDE.md", "catalog papers cited by patents",
+    ("docs/patents.md", "catalog papers cited by patents",
      r"cite (\d+) catalogued\s+papers\s+between\s+them",
      "SELECT COUNT(DISTINCT cited_publication_id) FROM patent_citation"),
-    ("CLAUDE.md", "publication numbers in two patent rows",
+    ("docs/patents.md", "publication numbers in two patent rows",
      r"(\d+)\s+publication\s+numbers\s+sit\s+in\s+two\s+patent\s+rows",
      f"SELECT COUNT(*) FROM ({_PATENT_NUMBERS})"),
-    ("CLAUDE.md", "patent rows never refreshed",
+    ("docs/patents.md", "patent rows never refreshed",
      r"(\d+)\s+patent\s+rows\s+have\s+never\s+been\s+filled",
      "SELECT COUNT(*) FROM patent WHERE title IS NULL OR fetched_on IS NULL"),
-    ("CLAUDE.md", "patents citing a later paper",
+    ("docs/patents.md", "patents citing a later paper",
      r"(\d+)\s+patents\s+cite\s+a\s+paper\s+published\s+after\s+them",
      "SELECT COUNT(*) FROM patent_citation c JOIN patent p ON p.id = c.citing_patent_id "
      "JOIN publication pu ON pu.id = c.cited_publication_id "

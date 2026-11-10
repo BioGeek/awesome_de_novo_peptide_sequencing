@@ -18,9 +18,9 @@ name: check-counts
 on:
   push:
     branches: [main]
-    paths: ['denovo.db', 'CLAUDE.md', 'WATCHLIST.md', 'scripts/**']
+    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**']
   pull_request:
-    paths: ['denovo.db', 'CLAUDE.md', 'WATCHLIST.md', 'scripts/**']
+    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**']
   workflow_dispatch:
 
 permissions:

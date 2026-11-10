@@ -54,7 +54,7 @@ the catalog does not hold is a different paper, a short title matches only
 exactly, and a long one must appear as one span that starts a title.
 
 Transport is curl, for the reason recorded under 'The local PDF library' in
-CLAUDE.md. Google Patents answers a burst of requests with HTTP 503 and a
+docs/pdf-library.md. Google Patents answers a burst of requests with HTTP 503 and a
 "Sorry..." page; that is never cached, and the script backs off and retries.
 Pages and query results are cached in .cache/patents/.
 

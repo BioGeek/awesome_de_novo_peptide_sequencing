@@ -15,7 +15,7 @@ invariant it relies on is sole ownership.
 
 What it does NOT do is decide which checkpoints exist. Reading a paper's data
 availability statement and resolving it to a method is a judgement call, so rows
-are added by hand (see 'Checkpoints' in CLAUDE.md); this fills in status,
+are added by hand (see docs/checkpoints.md); this fills in status,
 http_code and last_checked, and with --mirror copies the at-risk ones.
 
     uv run python scripts/build_checkpoints.py                # check liveness
@@ -38,7 +38,7 @@ download is stronger evidence than any HEAD request. It does NOT override
 when a backup exists.
 
 **Liveness is checked with curl, not requests**, for the reason recorded under
-'The local PDF library' in CLAUDE.md: HTTPS on the machine this was written for
+'The local PDF library' in docs/pdf-library.md: HTTPS on the machine this was written for
 is intercepted by a gateway whose re-signed certificates carry no Authority Key
 Identifier, which Python rejects and curl accepts.
 
@@ -209,7 +209,7 @@ def main() -> int:
             print(f"\n  {len(blocked)} of them state NO LICENCE and are not mirrored.")
             print("  Redistribution needs permission, and silence is not permission.")
         print("\n  Mirroring is not implemented as an automatic step: see")
-        print("  'Checkpoints' in CLAUDE.md for the procedure and why it is manual.")
+        print("  docs/checkpoints.md for the procedure and why it is manual.")
     elif not args.write:
         print("\nReport only. Re-run with --write to record these verdicts.")
     return 0

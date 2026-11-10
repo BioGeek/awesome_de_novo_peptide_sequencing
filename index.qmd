@@ -8192,7 +8192,7 @@ lazy_chart("patents_citers", () => {
         y: "label", text: "label", frameAnchor: "left", textAnchor: "end", dx: -8, fontSize: 10,
         fill: linked ? "#0969da" : "#24292f", href: linked ? "href" : undefined })),
       // Two marks, not a fill function returning "white": Plot would map that
-      // string through the colour scale (see the fill trap in CLAUDE.md).
+      // string through the colour scale (see the fill trap in docs/datasets.md).
       ...[cells.filter(d => !d.self), cells.filter(d => d.self)].map((data, hollow) => Plot.dot(data, {
         x: "patent", y: "org", r: d => 3.5 + 1.8 * Math.sqrt(d.n),
         fill: hollow ? "white" : "sector", stroke: "sector", strokeWidth: 1.6
