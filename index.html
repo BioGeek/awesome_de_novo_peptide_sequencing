@@ -2738,7 +2738,7 @@ window._ojs.paths.runtimeToDoc = "../..";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "";
 window._ojs.selfContained = false;
-await Promise.all([["ojs-module-contents", "ojs-module-contents.cb9ea8ea356f.json"], ["ojs-define", "ojs-define.aeb2184f15f5.json"]].map(async ([type, file]) => {
+await Promise.all([["ojs-module-contents", "ojs-module-contents.cb9ea8ea356f.json"], ["ojs-define", "ojs-define.dec6d55f3b27.json"]].map(async ([type, file]) => {
   for (const text of await (await fetch("ojs/" + file)).json()) {
     const el = document.createElement("script"); el.type = type; el.text = text;
     document.body.append(el);
