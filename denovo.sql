@@ -41669,7 +41669,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/MyPhuongLe/2DMSMSPepti
 INSERT INTO repository_metrics VALUES('https://github.com/yc386/orthrus_metaproteomics',6,2,4,0,1,1,'2025-10-06T15:40:46Z','2026-10-13T13:00:39','vstable_v1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/AIMS-Lab-HKUSTGZ/MemNovo',1,0,0,2,0,0,'2026-08-05T11:38:51Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/SamvPy/DeNovo_Benchmark',5,1,6,0,1,0,'2026-09-10T20:02:19Z','2026-11-10T13:50:07',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/CasanovoGUI',9,2,0,1,0,2,'2026-10-20T17:28:48Z','2026-10-30T11:43:39','v1.4.0');
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/CasanovoGUI',10,2,0,1,0,2,'2026-10-20T17:28:48Z','2026-11-15T13:00:17','v1.4.0');
 INSERT INTO repository_metrics VALUES('https://github.com/bittremieux-lab/denovo_benchmarks',23,13,NULL,NULL,NULL,NULL,'2026-11-13T12:33:52Z','2026-11-13T13:29:06',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/tschager/denovort',1,0,0,0,0,0,'2017-11-06T14:20:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/database_search_scaling',2,0,0,0,0,0,'2026-06-23T09:40:03Z','2026-10-05T12:46:50',NULL);
