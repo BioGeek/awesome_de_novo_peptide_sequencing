@@ -169,6 +169,29 @@ alone and exits 1 under `--fix` as well, so the remedy has to be to the data.
 A label in `INVARIANTS` that names no claim is an error, so a renamed claim
 cannot drop out of the set unnoticed.
 
+**A URL cannot leave the lock without somewhere to go.** The lock alone did
+not guarantee that: `--write` accepted a removal, and the next `--check`
+compared against the new baseline, so a rename passed every check once
+someone had run `--write`. Search Console reported 13 such URLs as 404 on
+2026-11-16, retired between September and November by author merges, two
+venue corrections and the removal of software recorded as datasets, and
+`--history` found three more. Now:
+
+- `--write` refuses to drop a slug that is neither in `REDIRECTS` (or
+  `ALIAS_URLS`) nor in `GONE`, and leaves the lock untouched. The pre-commit
+  hook's automatic `--write` cannot drop one either.
+- `GONE` lists the pages deliberately left as 404s, each with a reason:
+  an entity that left the catalog with nothing carrying it now (TensorFlow,
+  recorded as a dataset). A redirect to an unrelated page would only earn a
+  "soft 404".
+- A `REDIRECTS` value may name another kind as `kind/slug`: a Zenodo code
+  release recorded as a dataset redirects to its method's page. The alias on
+  the target page is then `../datasets/<old>.html`.
+- `--history` replays the lock's git history and fails on any slug it ever
+  held that is now neither live, redirected nor `GONE`. `check-slugs.yml`
+  runs it with `fetch-depth: 0`, so a lock edited by hand, or by an older
+  copy of the script, is still caught.
+
 **A renamed URL redirects; it is never just dropped.** `REDIRECTS` in
 `slugs.py` maps each retired slug to its successor, and `build_pages.py`
 gives the successor page a Quarto `aliases:` entry, which writes a redirect

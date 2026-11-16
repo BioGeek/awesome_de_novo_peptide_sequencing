@@ -171,6 +171,8 @@ dataset, family and application area, from `denovo.db`.
 ### `slugs.py`
 The URL of every generated page, shared by `build_pages.py` and `index.qmd`;
 `--check` guards `slugs.lock`, and `REDIRECTS` keeps renamed URLs working.
+`--write` refuses to drop a URL that has no `REDIRECTS` or `GONE` entry, and
+`--history` (run in CI) checks every URL the lock has ever held.
 
 ### `render_scope.py`
 Decides before a publish whether it needs a full, partial or index-only

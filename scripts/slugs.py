@@ -28,6 +28,20 @@ time and expensive months later.
 `slugs.lock` is a committed record of every (type, id) -> slug. `--check` is a
 backstop in CI and in the pre-commit hook; `--write` is deliberate and manual.
 
+A URL may leave the lock only with somewhere to go: `--write` refuses to drop a
+slug that is neither a REDIRECTS (or ALIAS_URLS) entry nor listed in GONE, the
+short list of pages deliberately left to 404. That closes the hole the lock had
+on its own, where `--write` accepted a removal and the next `--check` compared
+against the new baseline: 13 retired URLs reached Search Console that way, and
+`--history` found three more.
+
+    python3 scripts/slugs.py --history   # every URL the lock EVER held still resolves
+
+`--history` replays the lock's git history (it needs the full history, so CI
+checks out with fetch-depth 0) and fails on any slug that was ever published and
+is now neither live, redirected nor GONE. It is the backstop for a lock edited by
+hand or by an older copy of this script.
+
 It is deliberately NOT auto-refreshed by the hook, unlike check_counts.py.
 Rewriting the baseline automatically is exactly the failure being guarded
 against: it would turn a URL change from a loud error into a silent one. When a
@@ -124,6 +138,11 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'hammed-khakzad': 'hamed-khakzad',
              'frode-s-berven-1248': 'frode-s-berven',
              'lennard-j-m-dekker-1268': 'lennard-j-m-dekker',
+             # Found by --history the same day: two more from the September ORCID
+             # sweep and one from the 28-row merge, retired without an entry.
+             'gilles-a-lajoie': 'gilles-lajoie',
+             'matthew-j-collins': 'matthew-james-collins',
+             'd-wunderlich': 'dirk-wunderlich',
              # 2026-11-04: 'D.V. Petrovsky' (publication 752, the ICMBB24 BERT
              # paper) is PowerNovo's first author: same four co-authors, same order.
              'd-v-petrovsky': 'denis-v-petrovskiy',
@@ -172,8 +191,8 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
               # into its twin on 2026-10-03, and five of the eight software or
               # model-weight records removed that day, each sent to the page
               # that now carries it (a value naming another kind is a
-              # cross-kind redirect). TensorFlow, Fine-Tuning Scheduler and
-              # DiNovo's misread DOI have no counterpart and stay 404.
+              # cross-kind redirect). TensorFlow and Fine-Tuning Scheduler
+              # have no counterpart and are in GONE.
               'casanovo-data-set-and-model-weights-10-5281-zenodo-6791263': 'casanovo-data-set-and-model-weights',
               'instanovo': 'algorithms/instanovo',
               'casanovo': 'algorithms/casanovo',
@@ -234,6 +253,57 @@ ALIAS_URLS: dict[str, dict[str, str]] = {
 }
 
 
+# DELIBERATE 404s. kind -> {old slug: why}. A URL whose entity left the catalog
+# and has no page that carries it now; redirecting it somewhere unrelated would
+# only earn a "soft 404". Every retired URL must be here or in REDIRECTS:
+# `--write` and `--history` both refuse one that is in neither.
+GONE: dict[str, dict[str, str]] = {
+    "datasets": {
+        # 2026-10-03: third-party software recorded as datasets, removed.
+        "tensorflow": "TensorFlow, a software release, not a dataset",
+        "fine-tuning-scheduler": "a PyTorch Lightning extension, not a dataset",
+    },
+}
+
+
+def unresolved(retired: set[tuple[str, str]],
+               slugs: dict[str, dict[int, str]]) -> list[tuple[str, str]]:
+    """The (kind, slug) pairs in `retired` that would 404: not a live page of
+    that kind, not redirected, and not declared GONE."""
+    live = {(k, s) for k, ids in slugs.items() for s in ids.values()}
+    return sorted((k, s) for k, s in retired
+                  if (k, s) not in live
+                  and s not in REDIRECTS.get(k, {})
+                  and s not in ALIAS_URLS.get(k, {})
+                  and s not in GONE.get(k, {}))
+
+
+def report_unresolved(missing: list[tuple[str, str]]) -> None:
+    for kind, slug in missing:
+        print(f"  URL WOULD 404  pages/{kind}/{slug}.html")
+    print(f"\n{len(missing)} published URL(s) with nowhere to go. Give each a")
+    print("REDIRECTS entry in scripts/slugs.py pointing at the page that carries it")
+    print("now (\"kind/slug\" for another kind), or, if nothing does, a GONE entry")
+    print("saying why. Then run --write again.")
+
+
+def history_slugs() -> set[tuple[str, str]]:
+    """Every (kind, slug) slugs.lock has ever held, from its git history."""
+    import subprocess
+    out = subprocess.run(
+        ["git", "log", "--format=", "-p", "--no-renames", "--", LOCK_PATH.name],
+        cwd=LOCK_PATH.parent, capture_output=True, text=True, check=True).stdout
+    if not out:
+        raise SystemExit("no git history for slugs.lock (a shallow clone? "
+                         "check out with fetch-depth: 0)")
+    found = set()
+    for line in out.splitlines():
+        if line[:1] in "+-" and line.count("\t") == 2 and not line.startswith(("+++", "---")):
+            kind, _, slug = line[1:].split("\t")
+            found.add((kind, slug))
+    return found
+
+
 def redirect_target(kind: str, new: str) -> tuple[str, str]:
     """A REDIRECTS value is a slug of the same kind, or "kind/slug" for a page
     that moved to another kind (a software record that was never a dataset
@@ -251,6 +321,8 @@ def redirect_problems(slugs: dict[str, dict[int, str]]) -> list[str]:
             for old, new in pairs.items():
                 if old in live:
                     problems.append(f"{name} {kind}/{old} is a live page; its redirect would overwrite it")
+                if old in GONE.get(kind, {}):
+                    problems.append(f"{name} {kind}/{old} is also in GONE; pick one")
                 to_kind, to_slug = redirect_target(kind, new)
                 if to_slug not in set(slugs.get(to_kind, {}).values()):
                     problems.append(f"{name} {kind}/{old} points at {new}, which is not a page")
@@ -532,8 +604,9 @@ def check_lock(slugs: dict[str, dict[int, str]], quiet: bool = False) -> int:
         print(f"\n{len(changed)} changed, {len(removed)} removed, "
               f"{len(added)} added.")
         print("Each one breaks a published, probably-indexed URL.")
-        print("If the rename is intended, run `python3 scripts/slugs.py --write` and "
-              "commit the lock diff alongside it.")
+        print("If the rename is intended, give each old URL a REDIRECTS entry in "
+              "scripts/slugs.py (or a GONE entry), then run "
+              "`python3 scripts/slugs.py --write` and commit the lock diff alongside it.")
         return 1
 
     if not quiet:
@@ -542,6 +615,11 @@ def check_lock(slugs: dict[str, dict[int, str]], quiet: bool = False) -> int:
 
 
 def write_lock(slugs: dict[str, dict[int, str]]) -> int:
+    missing = unresolved({(k, s) for (k, _), s in read_lock().items()}, slugs)
+    if missing:
+        print(f"refusing to rewrite {LOCK_PATH.name}:")
+        report_unresolved(missing)
+        return 1
     lines = lock_lines(slugs)
     LOCK_PATH.write_text(LOCK_HEADER + "\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {LOCK_PATH.name}: {len(lines)} slugs")
@@ -555,7 +633,10 @@ def main() -> int:
     group.add_argument("--check", action="store_true",
                        help="fail if an existing page's URL changed or vanished")
     group.add_argument("--write", action="store_true",
-                       help="accept the current slugs as the new baseline")
+                       help="accept the current slugs as the new baseline "
+                            "(refuses to drop a URL with no redirect)")
+    group.add_argument("--history", action="store_true",
+                       help="fail if any URL slugs.lock ever held would now 404")
     parser.add_argument("--quiet", action="store_true",
                         help="with --check, print nothing unless a URL changed")
     args = parser.parse_args()
@@ -563,6 +644,20 @@ def main() -> int:
     conn = sqlite3.connect(DB_PATH)
     result = all_slugs(conn)
     fallbacks = result.pop("__fallbacks__", {})  # type: ignore[arg-type]
+
+    if args.history:
+        missing = unresolved(history_slugs(), result)
+        rc = 0
+        if missing:
+            report_unresolved(missing)
+            rc = 1
+        elif not args.quiet:
+            print("Every URL slugs.lock has ever held is live, redirected or GONE.")
+        for problem in redirect_problems(result):
+            print(f"  REDIRECT BROKEN  {problem}")
+            rc = 1
+        conn.close()
+        return rc
 
     if args.check or args.write:
         # A fallback to an id suffix is a URL too, so the lock records it either

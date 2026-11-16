@@ -88,7 +88,8 @@ fi
 if [ -f scripts/slugs.py ] && command -v python3 >/dev/null 2>&1; then
   if ! python3 scripts/slugs.py --check --quiet; then
     echo "pre-commit: refusing this commit, it would change a published URL." >&2
-    echo "  If the rename is intended:" >&2
+    echo "  If the rename is intended, give each old URL a REDIRECTS (or GONE) entry" >&2
+    echo "  in scripts/slugs.py, then:" >&2
     echo "    python3 scripts/slugs.py --write && git add slugs.lock" >&2
     exit 1
   fi

@@ -10,8 +10,10 @@
 # (`git config core.hooksPath .githooks`) and a commit made through the GitHub
 # web UI bypasses it entirely. This is the backstop.
 #
-# The fix for a legitimate rename is `python3 scripts/slugs.py --write`, committed
-# alongside the change, so the lock diff records the URL that moved.
+# The fix for a legitimate rename is a REDIRECTS entry for the old URL (or a GONE
+# entry, if nothing carries it any more), then `python3 scripts/slugs.py --write`,
+# committed alongside the change, so the lock diff records the URL that moved.
+# --write refuses to drop a URL that has neither.
 name: check-slugs
 
 on:
@@ -30,7 +32,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # --history replays slugs.lock's git log, so it needs all of it.
+          fetch-depth: 0
 
       # scripts/slugs.py is stdlib-only, so no uv sync and no dependency install.
       - name: Check published URLs against slugs.lock
         run: python3 scripts/slugs.py --check
+
+      # --check compares against the lock in THIS commit, so a commit that
+      # rewrote the lock to drop a URL passes it. This compares against every
+      # URL the lock has ever held: each must be live, redirected or in GONE.
+      - name: Check that no URL ever published now 404s
+        run: python3 scripts/slugs.py --history
