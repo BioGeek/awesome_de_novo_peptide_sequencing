@@ -49,7 +49,7 @@ from statistics import median
 from datetime import datetime, timezone
 from pathlib import Path
 
-from slugs import ALIAS_URLS, REDIRECTS, all_slugs
+from slugs import ALIAS_URLS, REDIRECTS, all_slugs, redirect_target
 
 DB_PATH = Path(__file__).resolve().parent.parent / "denovo.db"
 
@@ -2753,8 +2753,12 @@ def main() -> int:
         # A retired URL, or a second name, redirects here: Quarto writes a
         # redirect page at each alias, so a renamed slug costs nobody a 404.
         # See REDIRECTS and ALIAS_URLS in slugs.py.
-        olds = sorted(o for table in (REDIRECTS, ALIAS_URLS)
-                      for o, n in table.get(kind, {}).items() if n == slug)
+        # An alias is relative to this page, so one retired under another
+        # kind (datasets/instanovo -> algorithms/instanovo) goes up a level.
+        olds = sorted(o if k == kind else f"../{k}/{o}"
+                      for table in (REDIRECTS, ALIAS_URLS)
+                      for k, pairs in table.items() for o, n in pairs.items()
+                      if redirect_target(k, n) == (kind, slug))
         if olds:
             end = body.index("\n---\n")
             body = (body[:end] + "\naliases:\n"

@@ -117,6 +117,13 @@ TRANSLITERATE = {
 # their old forms are still live pages, so they are not retired redirects.)
 REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-novo-genomic-mining': 'genomic-peptide-finder'},
  'authors': {'beatrix-m-ueberheide': 'beatrix-ueberheide',
+             # 2026-11-16, flagged by Search Console: three author URLs retired
+             # in September without a redirect. "Hammed" was a typo the ORCID
+             # sweep corrected; the two "-1248"/"-1268" rows were merged into
+             # the person they duplicated.
+             'hammed-khakzad': 'hamed-khakzad',
+             'frode-s-berven-1248': 'frode-s-berven',
+             'lennard-j-m-dekker-1268': 'lennard-j-m-dekker',
              # 2026-11-04: 'D.V. Petrovsky' (publication 752, the ICMBB24 BERT
              # paper) is PowerNovo's first author: same four co-authors, same order.
              'd-v-petrovsky': 'denis-v-petrovskiy',
@@ -161,6 +168,18 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang',
              'zomaya-albert-y': 'albert-y-zomaya'},
  'datasets': {'instadeepai-ms-proteometools': 'proteometools',
+              # 2026-11-16, flagged by Search Console. A DOI duplicate folded
+              # into its twin on 2026-10-03, and five of the eight software or
+              # model-weight records removed that day, each sent to the page
+              # that now carries it (a value naming another kind is a
+              # cross-kind redirect). TensorFlow, Fine-Tuning Scheduler and
+              # DiNovo's misread DOI have no counterpart and stay 404.
+              'casanovo-data-set-and-model-weights-10-5281-zenodo-6791263': 'casanovo-data-set-and-model-weights',
+              'instanovo': 'algorithms/instanovo',
+              'casanovo': 'algorithms/casanovo',
+              'casanovo-model-weights-on-nine-species-benchmark': 'algorithms/casanovo',
+              'hold-one-out-generalisation-models': 'algorithms/winnow',
+              'ppbenchmark-palaeoproteomics-releases': 'publications/benchmarking-the-identification-of-a-single-degraded-protein-to-explore-optimal',
               '10-5281-zenodo-1841428343': '10-5281-zenodo-19347248',
               'instadeepai-instanovo-p': 'instanovo-p-fine-tuning-data',
               'ipx0000937000': 'proteomics-identifies-new-therapeutic-targets-of-early-stage-hepatocellular',
@@ -189,6 +208,11 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
                   'genentech': 'genentech-inc',
                   'regeneron-united-states': 'regeneron-pharmaceuticals-inc'},
  'venues': {'molecular-amp-cellular-proteomics': 'molecular-cellular-proteomics',
+            # 2026-11-16, flagged by Search Console: two venues that were
+            # wrong. AdaNovo was a NeurIPS 2024 paper, not ICML 2024, and
+            # "ICLR 2026" was a withdrawn OpenReview submission.
+            'icml-2024': 'neurips-2024',
+            'iclr-2026': 'openreview',
             'pnas': 'proceedings-of-the-national-academy-of-sciences',
             'protein-amp-peptide-letters': 'protein-peptide-letters'}}
 
@@ -210,6 +234,13 @@ ALIAS_URLS: dict[str, dict[str, str]] = {
 }
 
 
+def redirect_target(kind: str, new: str) -> tuple[str, str]:
+    """A REDIRECTS value is a slug of the same kind, or "kind/slug" for a page
+    that moved to another kind (a software record that was never a dataset
+    redirects to its method's page)."""
+    return tuple(new.split("/", 1)) if "/" in new else (kind, new)
+
+
 def redirect_problems(slugs: dict[str, dict[int, str]]) -> list[str]:
     """Every REDIRECTS and ALIAS_URLS entry must point at a live page and must
     not BE one: Quarto would write the redirect stub over the real page."""
@@ -220,7 +251,8 @@ def redirect_problems(slugs: dict[str, dict[int, str]]) -> list[str]:
             for old, new in pairs.items():
                 if old in live:
                     problems.append(f"{name} {kind}/{old} is a live page; its redirect would overwrite it")
-                if new not in live:
+                to_kind, to_slug = redirect_target(kind, new)
+                if to_slug not in set(slugs.get(to_kind, {}).values()):
                     problems.append(f"{name} {kind}/{old} points at {new}, which is not a page")
     return problems
 
