@@ -5158,6 +5158,14 @@ datasets	510	comprehensive-proteogenomic-analysis-identifies-immune-targets-in
 datasets	511	carbamazepine-activates-private-self-and-viral-reactive-tcrs-through-a-drug
 datasets	512	proteomic-data-the-japanese-archipelago-sheltered-cave-lions-not-tigers-during
 datasets	513	hla-class-i-naturally-presented-synovial-tissue-peptides-are-recognized-by-cd8
+datasets	514	dinovo-mirror-protease-training-data
+datasets	515	foxnovo-hla-i-immunopeptidomics-training-corpus
+datasets	516	full-factorial-lc-ms-ms-benchmark-wessels-et-al-2012
+datasets	517	pnnl-salmonella-typhimurium-dataset-80292
+datasets	518	one-hour-yeast-proteome-hebert-et-al-2014
+datasets	519	reference-high-energy-cid-spectra-scarberry-et-al-1995
+datasets	520	pi-mnovo-gut-isolate-spectral-resource
+datasets	521	smsnet-wistarcu-ms-training-data
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar

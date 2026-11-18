@@ -38412,6 +38412,14 @@ INSERT INTO dataset VALUES(510,'Comprehensive proteogenomic analysis identifies 
 INSERT INTO dataset VALUES(511,'Carbamazepine Activates Private Self and Viral Reactive TCRs Through a Drug-Permissive HLA-B Cleft','Carbamazepine Activates Private Self and Viral Reactive TCRs Through a Drug-Permissive HLA-B Cleft','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(512,'Proteomic data: The Japanese Archipelago sheltered cave lions, not tigers, during the Late Pleistocene','Proteomic data: The Japanese Archipelago sheltered cave lions, not tigers, during the Late Pleistocene','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(513,'HLA class I-naturally presented synovial tissue peptides are recognized by CD8+ T lymphocytes from rheumatoid arthritis patients','HLA class I-naturally presented synovial tissue peptides are recognized by CD8+ T lymphocytes from rheumatoid arthritis patients','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(514,'DiNovo mirror-protease training data','Trypsin and LysargiNase mirror-protease LC-MS/MS of Vero cells, Mycolicibacterium smegmatis MC2 155 and human testis, annotated with pFind at 1% FDR and paired into mirror spectra to train MirrorNovo and GCNovo. Not deposited: the paper''s PXD059331 holds its E. coli and yeast evaluation data.','training','DDA','Chlorocebus sabaeus (Vero); Mycolicibacterium smegmatis; Homo sapiens',NULL);
+INSERT INTO dataset VALUES(515,'FoxNovo HLA-I immunopeptidomics training corpus','3,386 raw files from 122 public HLA class I immunopeptidomics projects (PRIDE and MassIVE), listed in FoxNovo''s Supplementary Table 1, re-searched into one corpus of 20.4 million PSMs. The two mono-allelic projects held out for testing are not part of it.','training','DDA','Homo sapiens',NULL);
+INSERT INTO dataset VALUES(516,'Full factorial LC-MS/MS benchmark (Wessels et al. 2012)','Escherichia coli K12 digest measured in 59 LC-MS/MS analyses under a full factorial design of acquisition settings (Proteomics 12:2276-81), used to train QuasiNovo''s ion classifiers.','benchmark','DDA','Escherichia coli K-12','https://doi.org/10.1002/pmic.201100284');
+INSERT INTO dataset VALUES(517,'PNNL Salmonella Typhimurium dataset 80292','A Salmonella Typhimurium LC-MS/MS run of 8,610 spectra from PNNL''s omics.pnl.gov archive, split in half for QuasiNovo''s two-fold cross-validation.','deposit','DDA','Salmonella enterica serovar Typhimurium','http://omics.pnl.gov/view/dataset_80292.html');
+INSERT INTO dataset VALUES(518,'One-hour yeast proteome (Hebert et al. 2014)','Saccharomyces cerevisiae measured in one hour on an Orbitrap Fusion (MCP 13:339-347). The deep-learning primer searched it with PEAKS DB at 1% FDR into 347,047 PSMs and trained DeepNovo on 90% of them.','deposit','DDA','Saccharomyces cerevisiae','https://doi.org/10.1074/mcp.M113.034769');
+INSERT INTO dataset VALUES(519,'Reference high-energy CID spectra (Scarberry et al. 1995)','43 preclassified high-energy CID spectra of reference peptides, mostly from a JEOL HX110/HX110 tandem instrument, used in four-fold cross-validation to train the neural-network sequencer. Not deposited.','training',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(520,'π-MNovo gut isolate spectral resource','Orbitrap Exploris 480 DDA data from 72 cultured human gut bacterial isolates (351 MGF files), with peptide-disjoint training, validation and test partitions. Not yet deposited.','training','DDA','72 human gut bacterial isolates',NULL);
+INSERT INTO dataset VALUES(521,'SMSNet WISTARCU-MS training data','PSMs from the Wistar Institute proteomics core facility''s Q Exactive HF and Q Exactive Plus runs, about a million unique peptides, released on figshare to train SMSNet.','training','DDA','mixed',NULL);
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38968,6 +38976,16 @@ INSERT INTO dataset_version VALUES(553,510,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(554,511,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-18',NULL);
 INSERT INTO dataset_version VALUES(555,512,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-01-26',NULL);
 INSERT INTO dataset_version VALUES(556,513,'as deposited',NULL,NULL,NULL,NULL,NULL,'2026-08-27',NULL);
+INSERT INTO dataset_version VALUES(557,514,'as described','Split 9:1 into training and validation by peptide sequence (Supplementary Table 5).',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(558,515,'as published','Training and validation part, Supplementary Table 1.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(559,516,'as published',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(560,517,'as published',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(561,518,'as published',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(562,519,'as published',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(563,520,'training partition','9,144,192 spectra; π-MNovo used a 1,000,000-spectrum subset to adapt its backbone and a peptide-disjoint 996,518 to train the rankers and router.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(564,521,'WCU-MS-M','Unmodified and Met-oxidised peptides: 25,174,942 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(565,521,'WCU-MS-P','WCU-MS-M plus phosphopeptides: 26,943,975 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(566,521,'WCU-MS-BEST','Best-scoring spectrum per unmodified peptide and charge: 1,239,045 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40303,6 +40321,9 @@ INSERT INTO dataset_address VALUES(1337,553,'PRIDE','PXD071022','https://www.ebi
 INSERT INTO dataset_address VALUES(1338,554,'PRIDE','PXD082505','https://www.ebi.ac.uk/pride/archive/projects/PXD082505',NULL,0);
 INSERT INTO dataset_address VALUES(1339,555,'PRIDE','PXD065297','https://www.ebi.ac.uk/pride/archive/projects/PXD065297',NULL,0);
 INSERT INTO dataset_address VALUES(1340,556,'PRIDE','PXD079646','https://www.ebi.ac.uk/pride/archive/projects/PXD079646',NULL,0);
+INSERT INTO dataset_address VALUES(1341,564,'figshare','10.6084/m9.figshare.9738839','https://doi.org/10.6084/m9.figshare.9738839',NULL,0);
+INSERT INTO dataset_address VALUES(1342,565,'figshare','10.6084/m9.figshare.9738839','https://doi.org/10.6084/m9.figshare.9738839',NULL,0);
+INSERT INTO dataset_address VALUES(1343,566,'figshare','10.6084/m9.figshare.9734105','https://doi.org/10.6084/m9.figshare.9734105',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -40605,7 +40626,6 @@ INSERT INTO publication_dataset VALUES(582,108,151,174,'introduces');
 INSERT INTO publication_dataset VALUES(583,62,379,403,'introduces');
 INSERT INTO publication_dataset VALUES(584,78,379,404,'introduces');
 INSERT INTO publication_dataset VALUES(585,78,2,405,'introduces');
-INSERT INTO publication_dataset VALUES(586,7,379,404,'uses');
 INSERT INTO publication_dataset VALUES(587,16,379,404,'evaluates-on');
 INSERT INTO publication_dataset VALUES(588,17,379,404,'evaluates-on');
 INSERT INTO publication_dataset VALUES(589,22,379,404,'evaluates-on');
@@ -40616,7 +40636,6 @@ INSERT INTO publication_dataset VALUES(593,254,379,404,'evaluates-on');
 INSERT INTO publication_dataset VALUES(594,280,379,404,'uses');
 INSERT INTO publication_dataset VALUES(596,354,379,404,'evaluates-on');
 INSERT INTO publication_dataset VALUES(597,432,379,404,'evaluates-on');
-INSERT INTO publication_dataset VALUES(598,7,2,405,'uses');
 INSERT INTO publication_dataset VALUES(599,16,2,405,'evaluates-on');
 INSERT INTO publication_dataset VALUES(600,17,2,405,'evaluates-on');
 INSERT INTO publication_dataset VALUES(601,22,2,405,'evaluates-on');
@@ -41131,7 +41150,6 @@ INSERT INTO publication_dataset VALUES(1163,15,491,520,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1164,19,3,8,'trains-on');
 INSERT INTO publication_dataset VALUES(1165,19,1,402,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1166,19,142,165,'evaluates-on');
-INSERT INTO publication_dataset VALUES(1167,28,3,8,'trains-on');
 INSERT INTO publication_dataset VALUES(1168,28,3,8,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1169,28,8,14,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1170,28,5,11,'evaluates-on');
@@ -41503,7 +41521,7 @@ INSERT INTO publication_dataset VALUES(1535,432,379,404,'trains-on');
 INSERT INTO publication_dataset VALUES(1536,432,2,405,'trains-on');
 INSERT INTO publication_dataset VALUES(1537,432,79,102,'trains-on');
 INSERT INTO publication_dataset VALUES(1538,432,25,NULL,'trains-on');
-INSERT INTO publication_dataset VALUES(1539,439,1,1,'trains-on');
+INSERT INTO publication_dataset VALUES(1539,439,1,3,'trains-on');
 INSERT INTO publication_dataset VALUES(1540,439,379,404,'trains-on');
 INSERT INTO publication_dataset VALUES(1541,439,2,405,'trains-on');
 INSERT INTO publication_dataset VALUES(1542,439,25,NULL,'trains-on');
@@ -41584,6 +41602,50 @@ INSERT INTO publication_dataset VALUES(1616,998,9,15,'trains-on');
 INSERT INTO publication_dataset VALUES(1617,1000,1,1,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1618,1000,43,66,'trains-on');
 INSERT INTO publication_dataset VALUES(1619,1000,43,66,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1620,7,2,405,'trains-on');
+INSERT INTO publication_dataset VALUES(1621,7,1,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1622,7,379,404,'trains-on');
+INSERT INTO publication_dataset VALUES(1623,269,1,532,'trains-on');
+INSERT INTO publication_dataset VALUES(1624,269,1,1,'trains-on');
+INSERT INTO publication_dataset VALUES(1625,269,3,NULL,'trains-on');
+INSERT INTO publication_dataset VALUES(1626,270,3,538,'trains-on');
+INSERT INTO publication_dataset VALUES(1627,270,120,143,'trains-on');
+INSERT INTO publication_dataset VALUES(1628,270,377,400,'trains-on');
+INSERT INTO publication_dataset VALUES(1629,271,24,33,'trains-on');
+INSERT INTO publication_dataset VALUES(1630,271,3,8,'trains-on');
+INSERT INTO publication_dataset VALUES(1631,271,3,9,'trains-on');
+INSERT INTO publication_dataset VALUES(1632,17,1,3,'trains-on');
+INSERT INTO publication_dataset VALUES(1633,33,25,34,'trains-on');
+INSERT INTO publication_dataset VALUES(1634,125,3,9,'trains-on');
+INSERT INTO publication_dataset VALUES(1635,28,3,9,'trains-on');
+INSERT INTO publication_dataset VALUES(1636,49,1,1,'trains-on');
+INSERT INTO publication_dataset VALUES(1637,981,347,370,'trains-on');
+INSERT INTO publication_dataset VALUES(1638,46,498,540,'trains-on');
+INSERT INTO publication_dataset VALUES(1639,46,12,21,'trains-on');
+INSERT INTO publication_dataset VALUES(1640,46,16,25,'trains-on');
+INSERT INTO publication_dataset VALUES(1641,46,11,20,'trains-on');
+INSERT INTO publication_dataset VALUES(1642,46,13,22,'trains-on');
+INSERT INTO publication_dataset VALUES(1643,46,14,23,'trains-on');
+INSERT INTO publication_dataset VALUES(1644,46,15,24,'trains-on');
+INSERT INTO publication_dataset VALUES(1645,54,21,30,'trains-on');
+INSERT INTO publication_dataset VALUES(1646,45,17,26,'trains-on');
+INSERT INTO publication_dataset VALUES(1647,60,17,26,'trains-on');
+INSERT INTO publication_dataset VALUES(1648,127,27,36,'trains-on');
+INSERT INTO publication_dataset VALUES(1649,302,1,1,'trains-on');
+INSERT INTO publication_dataset VALUES(1650,5,514,557,'trains-on');
+INSERT INTO publication_dataset VALUES(1651,302,514,557,'trains-on');
+INSERT INTO publication_dataset VALUES(1652,264,515,558,'trains-on');
+INSERT INTO publication_dataset VALUES(1653,196,516,559,'trains-on');
+INSERT INTO publication_dataset VALUES(1654,196,517,560,'trains-on');
+INSERT INTO publication_dataset VALUES(1655,225,518,561,'trains-on');
+INSERT INTO publication_dataset VALUES(1656,161,519,562,'trains-on');
+INSERT INTO publication_dataset VALUES(1657,353,520,563,'trains-on');
+INSERT INTO publication_dataset VALUES(1658,77,521,564,'trains-on');
+INSERT INTO publication_dataset VALUES(1659,77,521,565,'trains-on');
+INSERT INTO publication_dataset VALUES(1660,77,521,566,'trains-on');
+INSERT INTO publication_dataset VALUES(1661,494,521,564,'trains-on');
+INSERT INTO publication_dataset VALUES(1662,494,521,565,'trains-on');
+INSERT INTO publication_dataset VALUES(1663,494,521,566,'trains-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
