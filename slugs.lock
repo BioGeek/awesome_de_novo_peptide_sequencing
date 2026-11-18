@@ -827,6 +827,8 @@ algorithms	826	novocrf
 algorithms	827	pi-specformer
 algorithms	828	conus-monile-acyclic-peptide-mo1659
 algorithms	829	conus-araneosus-chi-conotoxin-ar1312
+algorithms	830	casanovo-tmt
+algorithms	831	seminovo
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4658,6 +4660,14 @@ authors	3949	govindaswamy-singaravadivelan
 authors	3950	palanisamy-ramasamy
 authors	3951	kuppanna-ananda
 authors	3952	sujit-k-sikdar
+authors	3953	han-byeol-kim
+authors	3954	kwang-eun-kim
+authors	3955	pan-liu
+authors	3956	yusen-tan
+authors	3957	yifan-li
+authors	3958	hai-tao-yu
+authors	3959	yunhua-zhong
+authors	3960	zikun-wang
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -5166,6 +5176,12 @@ datasets	518	one-hour-yeast-proteome-hebert-et-al-2014
 datasets	519	reference-high-energy-cid-spectra-scarberry-et-al-1995
 datasets	520	pi-mnovo-gut-isolate-spectral-resource
 datasets	521	smsnet-wistarcu-ms-training-data
+datasets	522	casanovo-tmt-training-corpus
+datasets	523	complex-i-inhibition-combined-with-tlr-activation-in-the-breast-tumor
+datasets	524	transcriptomic-profiling-of-epigenetic-regulators-and-metabolic-reprogramming
+datasets	525	serial-multi-omics-uncovers-anti-glioblastoma-responses-not-evident-by-routine
+datasets	526	19s-proteasome-loss-regulates-mitotic-spindle-assembly-through-a-ubiquitin
+datasets	527	darkspec
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -6312,6 +6328,7 @@ institutions	1435	medical-proteoscope
 institutions	1437	guangzhou-national-laboratory
 institutions	1439	tata-institute-of-fundamental-research
 institutions	1440	annamalai-university
+institutions	1442	yonsei-university
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7377,6 +7394,8 @@ publications	999	casanovogui-a-cross-platform-desktop-application-for-deep-learn
 publications	1000	pi-specformer-a-mass-spectrometry-based-foundation-model-for-decoding-the-dark
 publications	1001	a-novel-13-residue-acyclic-peptide-from-the-marine-snail-conus-monile-targets
 publications	1002	de-novo-sequencing-by-mass-spectrometry-and-confirmation-by-chemical-synthesis
+publications	1003	casanovo-tmt-deep-learning-based-de-novo-sequencing-of-tmtpro-labeled-peptides
+publications	1004	seminovo-learning-beyond-search-identified-spectra-for-de-novo-peptide
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

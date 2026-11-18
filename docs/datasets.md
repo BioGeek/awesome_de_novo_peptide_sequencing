@@ -14,7 +14,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**508 datasets, 553 versions, 1328 addresses, 1315 publication links over 311 papers.**
+**514 datasets, 559 versions, 1333 addresses, 1328 publication links over 313 papers.**
 
 ### What a paper did with a dataset
 
@@ -47,7 +47,7 @@ invariant. It read 10 when first registered, every one a `uses` beside an
 `trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
 trains on it too, and one paper can hold both of those for one version, its
 training and test splits.
-**359 links are `trains-on` and 414 `evaluates-on`.**
+**364 links are `trains-on` and 421 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
@@ -115,7 +115,7 @@ real datasets about honeybees and tomatoes that happen to be where these
 spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
-**A NULL `dataset_version_id` is the finding, not a gap.** 84 papers use the
+**A NULL `dataset_version_id` is the finding, not a gap.** 85 papers use the
 nine-species benchmark; 51 name the original, 30 the revised, 3 the InstaNovo
 split, 1 dIon's retrieval benchmark, and **35 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. A paper naming two versions is counted
@@ -174,7 +174,7 @@ taken from `sed` land somewhere else and a slice silently drops a group (it
 dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 28 of 553 versions have none, counting only addresses
+missing one.** 29 of 559 versions have none, counting only addresses
 that are not provenance. Three shapes: tiers that are not published but are
 reproducible from the raw accessions recorded as their provenance (ACFM, and
 ProteomeTools' all-confidence version, InstaNovo's AC-PT); NIST's peptide
@@ -263,7 +263,7 @@ same paper**, an invariant, also enforced by two triggers on insert and update.
 A count with no link (`publication_dataset_id` NULL) is a total the paper gives
 over all its training data without splitting it by dataset.
 
-**117 training counts over 59 papers.**
+**122 training counts over 61 papers.**
 
 Three rules, each learned from a paper that breaks the simple reading:
 

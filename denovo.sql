@@ -3836,6 +3836,14 @@ INSERT INTO author VALUES(3949,'Govindaswamy Singaravadivelan',NULL,NULL,NULL,NU
 INSERT INTO author VALUES(3950,'Palanisamy Ramasamy',NULL,NULL,NULL,NULL,'0000-0003-0393-0417','A5133720785');
 INSERT INTO author VALUES(3951,'Kuppanna Ananda',NULL,NULL,NULL,NULL,NULL,'A5103542800');
 INSERT INTO author VALUES(3952,'Sujit K. Sikdar',NULL,NULL,NULL,NULL,'0000-0001-9161-5868','A5006520474');
+INSERT INTO author VALUES(3953,'Han Byeol Kim',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3954,'Kwang-eun Kim',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3955,'Pan Liu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3956,'Yusen Tan',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3957,'Yifan Li',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3958,'Hai-tao Yu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3959,'Yunhua Zhong',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3960,'Zikun Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4462,6 +4470,7 @@ INSERT INTO city VALUES(575,'Abingdon',7,51.6707999999999998,-1.2829999999999999
 INSERT INTO city VALUES(576,'Santa Clara',8,37.3541099999999985,-121.955240000000003,'ror','ror');
 INSERT INTO city VALUES(577,'Tucson',8,32.2217399999999969,-110.926479999999997,'geonames','geonames');
 INSERT INTO city VALUES(578,'Chidambaram',28,11.3993300000000008,79.69144,'ror','ror');
+INSERT INTO city VALUES(579,'Wonju',13,37.351390000000002,127.945279999999996,'ror','ror');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5862,6 +5871,11 @@ INSERT INTO affiliation VALUES(1438,'Tsinghua University','Tsinghua-Peking Joint
 INSERT INTO affiliation VALUES(1439,'Tata Institute of Fundamental Research','Department of Biological Sciences',28,323,'https://ror.org/03ht1xw27','Tata Institute of Fundamental Research',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1440,'Annamalai University','Centre of Advanced Study in Marine Biology',28,578,'https://ror.org/01x24z140','Annamalai University',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1441,'Tata Institute of Fundamental Research',NULL,28,323,'https://ror.org/03ht1xw27','Tata Institute of Fundamental Research',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1442,'Yonsei University','Organelle Medicine Research Center, Wonju College of Medicine',13,579,'https://ror.org/01wjejq96','Yonsei University',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1443,'Yonsei University','Department of Convergence Medicine, Wonju College of Medicine',13,579,'https://ror.org/01wjejq96','Yonsei University',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1444,'The Hong Kong University of Science and Technology (Guangzhou)','Information Hub',2,16,'https://ror.org/050h0vm43','The Hong Kong University of Science and Technology (Guangzhou)',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1445,'Westlake University','Institute of Engineering',2,15,'https://ror.org/05hfa4n20','Westlake University',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1446,'The University of Hong Kong','Department of Chemistry',2,17,'https://ror.org/02zhqgq86','University of Hong Kong',NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11336,6 +11350,16 @@ INSERT INTO author_affiliation VALUES(1660,240);
 INSERT INTO author_affiliation VALUES(1613,1441);
 INSERT INTO author_affiliation VALUES(1588,1440);
 INSERT INTO author_affiliation VALUES(1609,1441);
+INSERT INTO author_affiliation VALUES(3953,1442);
+INSERT INTO author_affiliation VALUES(3954,1443);
+INSERT INTO author_affiliation VALUES(3955,1444);
+INSERT INTO author_affiliation VALUES(669,1445);
+INSERT INTO author_affiliation VALUES(3956,1444);
+INSERT INTO author_affiliation VALUES(3957,1444);
+INSERT INTO author_affiliation VALUES(3958,1444);
+INSERT INTO author_affiliation VALUES(3959,1446);
+INSERT INTO author_affiliation VALUES(3960,1444);
+INSERT INTO author_affiliation VALUES(57,1444);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12167,6 +12191,8 @@ INSERT INTO algorithm VALUES(826,'NovoCRF',NULL,NULL,'Graph / DP','A conditional
 INSERT INTO algorithm VALUES(827,'π-SPECFormer',NULL,NULL,'Transformer (AR)','Mass-spectrometry foundation model: a 21M-parameter Transformer spectrum encoder pre-trained contrastively (MoCo-style, InfoNCE over masked-peak views) on 178M unidentified spectra, then refined on 114M PSMs grouped by precursor. For de novo sequencing the frozen encoder feeds a task-specific Transformer encoder and autoregressive peptide decoder; the same embeddings serve spectrum clustering and, fine-tuned, PTM detection. Applied to mine single-amino-acid variants from dark spectra in a 103-patient lung adenocarcinoma cohort.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(828,'Conus monile acyclic peptide Mo1659',NULL,NULL,NULL,'De novo sequences Mo1659, a 13-residue disulfide-free aromatic peptide from Conus monile venom, from MALDI and ESI MS/MS, confirms it by synthesis and Edman sequencing, and shows it targets non-inactivating potassium channels.','downstream-application',0,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(829,'Conus araneosus chi-conotoxin Ar1312',NULL,NULL,NULL,'De novo sequences Ar1312, a two-disulfide conotoxin from Conus araneosus venom, by MALDI MS/MS, and resolves between two candidate sequences by comparing the natural and synthetic peptides'' fragmentation, placing it in the chi-conotoxin class.','downstream-application',0,'DDA',NULL,'venomics');
+INSERT INTO algorithm VALUES(830,'Casanovo-TMT',NULL,NULL,'Transformer (AR)','Casanovo fine-tuned with TMTpro tags and phosphorylation in its residue vocabulary on 21 million mostly TMTpro-labeled spectra, with beam candidates re-ranked by agreement with the precursor mass.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(831,'SemiNovo',NULL,NULL,'Transformer (AR)','Semi-supervised training on identified and 4.5 million unlabeled spectra (DarkSpec), pseudo-labelled by stepwise mass-constrained autoregressive decoding with cumulative path confidence, plus head-wise chemical-evidence gating of spectral attention.','algorithm',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13179,6 +13205,8 @@ INSERT INTO publication VALUES(999,'CasanovoGUI: A Cross-Platform Desktop Applic
 INSERT INTO publication VALUES(1000,'π-SPECFormer: A Mass Spectrometry-based Foundation Model for Decoding the Dark Proteome','2026-11-09','10.64898/2026.11.06.764812','Cold Spring Harbor Laboratory','In mass-spectrometry-based proteomics, a substantial proportion of acquired spectra remain unidentified, concealing a vast reservoir of biological variations commonly termed the "dark proteome", potentially obscuring sequence mutations, non-canonical peptides and post-translational modifications. Existing deep-learning methods largely rely on supervised training with peptide-spectrum matches (PSMs), limiting their ability to learn from the much larger pool of unannotated spectra. Here we introduce π-SPECFormer, a mass-spectrometry foundation model pre-trained on 291 million spectra through a two-stage framework that combines self-supervised and PSMs-guided representation learning. π-SPECFormer transfers effectively to de novo peptide sequencing, spectrum clustering and modification detection, consistently outperforming task-specific baselines. When applied to proteomic profiles from 103 individuals with lung adenocarcinoma, the model identified nine high-confidence mutated peptides, including six that were absent from the reference databases. π-SPECFormer thus enables unbiased decoding of molecular complexity beyond the boundaries of the canonical proteome.','https://www.biorxiv.org/content/10.64898/2026.11.06.764812v1','bioRxiv','preprint','','biorxiv');
 INSERT INTO publication VALUES(1001,'A novel 13 residue acyclic peptide from the marine snail, Conus monile, targets potassium channels','2004-05-01','10.1016/j.bbrc.2004.03.100','Elsevier BV','A novel 13-residue peptide Mo1659 has been isolated from the venom of a vermivorous cone snail, Conus monile. HPLC fractions of the venom extract yielded an intense UV absorbing fraction with a mass of 1659Da. De novo sequencing using both matrix assisted laser desorption and ionization and electrospray MS/MS methods together with analysis of proteolytic fragments successfully yielded the amino acid sequence, FHGGSWYRFPWGY-NH(2). This was further confirmed by comparison with the chemically synthesized peptide and by conventional Edman sequencing. Mo1659 has an unusual sequence with a preponderance of aromatic residues and the absence of apolar, aliphatic residues like Ala, Val, Leu, and Ile. Mo1659 has no disulfide bridges distinguishing it from the conotoxins and bears no sequence similarity with any of the acyclic peptides isolated thus far from the venom of cone snails. Electrophysiological studies on the effect of Mo1659 on measured currents in dorsal root ganglion neurons suggest that the peptide targets non-inactivating voltage-dependent potassium channels.','https://doi.org/10.1016/j.bbrc.2004.03.100','Biochemical and Biophysical Research Communications','peer-reviewed','','europepmc');
 INSERT INTO publication VALUES(1002,'‘De novo’ sequencing by mass spectrometry and confirmation by chemical synthesis','2006-09-01',NULL,'Indian Society for Mass Spectrometry','‘De novo’ peptide sequencing of natural peptides using mass spectrometry is becoming increasingly accessible. The peptide sequence is deduced from the mass spectrum through an iterative process by recognizing fragment ions corresponding to the b and y-series. The mass difference between the adjacent ions in each series gives the cleavage mass of the amino acid residue that is lost, leading to the sequence of peptide. Ambiguity in sequencing arise from the presence of isobaric residue masses (leucine, isoleucine, hydroxyproline, lysine and glutamine) and also from presence of residue pairs which differ in mass by 1Da sometimes leading to sequencing errors when data is collected on instruments with limited mass resolution. The confirmation of the sequence derived from mass spectrum is best achieved by chemical synthesis and comparison of fragmentation patterns of the natural and synthetic peptides. This approach is illustrated in the determination of the sequence of a new class of conotoxins isolated from the venom of Conus araneosus. Conotoxins are particularly attractive targets for ‘de novo’ mass spectral sequencing because of the high degree of posttranslational modifications in these peptides. In this study, a two-disulfide bond containing conotoxin has been sequenced by mass spectrometry. A distinction between two possible sequences of the peptide Ar1312 has been achieved by comparing the MS/MS pattern for the natural and synthetic sequences. Confirmation of the derived sequence RCCGYKMCHOC and disulfide bond pattern suggest that Ar1312 is a χ-conotoxin, a class known to inhibit the norepinephrine transporter (NET).','https://www.researchgate.net/publication/200723922','Proceedings of the 10th ISMAS Symposium','peer-reviewed','','pdf');
+INSERT INTO publication VALUES(1003,'Casanovo-TMT: deep learning-based de novo sequencing of TMTpro-labeled peptides and phosphopeptides','2026-11-17','10.64898/2026.11.15.766634','Cold Spring Harbor Laboratory','De novo peptide sequencing reads peptides directly from tandem mass spectra, but none of the released deep learning models can sequence peptides labeled with isobaric tags such as TMTpro, which are widely used for multiplexed quantitative proteomics. We extended the residue vocabulary of Casanovo with TMTpro tags and phosphorylation, fine-tuned it on 21 million spectra from our laboratory, most of them TMTpro-labeled, and re-ranked the candidates in the beam by their agreement with the measured precursor mass. The resulting model, Casanovo-TMT, predicted the exact peptidoform for 84.7% of the TMTpro-labeled spectra in our test set and for 87.4 and 79.6% of the spectra in two public global-proteome datasets from other laboratories, whereas the extended vocabulary without fine-tuning gave 0.3%. Discarding the lowest-scoring predictions raised precision to 95% while retaining 81.7% of the test spectra. Casanovo-TMT also predicted the exact peptidoform for 69.2% of the spectra in a public phosphopeptide-enriched dataset and for 66 to 72% of the phosphopeptide spectra in three phosphoproteomic studies from our laboratory that were not used for training. In these studies, it identified numbers of phosphopeptides comparable to or larger than those of database search engines, and proportionally more where database search identified fewer. For the phosphopeptides identified only by Casanovo-TMT, entrapment estimated that more than 90% were correct, and an independent search engine assigned the same sequence to 95 to 98% of the spectra that it identified with confidence. Casanovo-TMT can therefore extend database search in TMTpro-based quantitative proteomics, particularly in studies in which database search identifies few phosphopeptides.','https://www.biorxiv.org/content/10.64898/2026.11.15.766634v1','bioRxiv','preprint',NULL,'biorxiv');
+INSERT INTO publication VALUES(1004,'SemiNovo: Learning Beyond Search-Identified Spectra for De Novo Peptide Sequencing','2026-11-16','10.48550/arXiv.2611.21079','arXiv','Sensitive peptide identification is fundamental to protein characterization and novel protein discovery, for which de novo peptide sequencing (DNPS) from tandem mass spectra provides an important database-independent approach. Although deep learning has substantially advanced de novo sequencing, existing models are predominantly trained on high-confidence peptide-spectrum matches obtained through database search. This search-conditioned supervision excludes a large fraction of unidentified spectra, creating a distribution mismatch between the selectively labeled training data and the complete spectrum stream encountered at inference time, thereby limiting peptide identification performance. To address this challenge, we propose SemiNovo, a semi-supervised framework that learns jointly from identified and unlabeled spectra. SemiNovo first constructs DarkSpec, a large-scale quality-controlled corpus of unlabeled spectra collected from diverse public proteomics projects, thereby extending training beyond search-identified spectra and mitigating the resulting shift in DNPS supervision. It then combines stepwise mass-constrained autoregressive decoding with cumulative path confidence to derive reliable supervision from unlabeled spectra. Moreover, SemiNovo introduces head-wise chemical-evidence gating to improve spectral evidence aggregation under noisy and incomplete fragmentation. Experiments show that SemiNovo performs favorably against state-of-the-art methods on multiple benchmarks. Code and dataset are publicly available.','https://arxiv.org/abs/2611.21079','arXiv','preprint',NULL,'arxiv');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19621,6 +19649,17 @@ INSERT INTO publication_author VALUES(1002,881,2);
 INSERT INTO publication_author VALUES(1002,1588,3);
 INSERT INTO publication_author VALUES(1002,1609,4);
 INSERT INTO publication_author VALUES(1002,1660,5);
+INSERT INTO publication_author VALUES(1003,3953,1);
+INSERT INTO publication_author VALUES(1003,3954,2);
+INSERT INTO publication_author VALUES(1004,3955,1);
+INSERT INTO publication_author VALUES(1004,669,2);
+INSERT INTO publication_author VALUES(1004,3956,3);
+INSERT INTO publication_author VALUES(1004,3957,4);
+INSERT INTO publication_author VALUES(1004,3958,5);
+INSERT INTO publication_author VALUES(1004,3959,6);
+INSERT INTO publication_author VALUES(1004,3960,7);
+INSERT INTO publication_author VALUES(1004,143,8);
+INSERT INTO publication_author VALUES(1004,57,9);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -19824,6 +19863,8 @@ INSERT INTO algorithm_repository VALUES(821,'https://github.com/SoSongzhi/ScopeN
 INSERT INTO algorithm_repository VALUES(97,'https://github.com/sadatebrahimi/DiffNovo-DIA',0);
 INSERT INTO algorithm_repository VALUES(825,'https://github.com/gagneurlab/PepPr',0);
 INSERT INTO algorithm_repository VALUES(826,'https://github.com/volpato30/NovoCRF-release',0);
+INSERT INTO algorithm_repository VALUES(830,'https://github.com/existstar4-gif/casanovo-tmtpro',0);
+INSERT INTO algorithm_repository VALUES(831,'https://github.com/grandOrgan/Seminovo',0);
 CREATE TABLE publication_impact (
             publication_id INTEGER PRIMARY KEY,
             openalex_id TEXT,
@@ -27854,6 +27895,17 @@ INSERT INTO publication_author_affiliation VALUES(1002,1588,1440,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1002,1609,1441,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1002,1609,1108,1,'manual');
 INSERT INTO publication_author_affiliation VALUES(1002,1660,240,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1003,3953,1442,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1003,3954,1443,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3955,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,669,1445,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3956,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3957,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3958,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3959,1446,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,3960,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,143,69,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1004,57,1444,0,'manual');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29154,6 +29206,8 @@ INSERT INTO publication_algorithm VALUES(999,223,'describes');
 INSERT INTO publication_algorithm VALUES(1000,827,'describes');
 INSERT INTO publication_algorithm VALUES(1001,828,'describes');
 INSERT INTO publication_algorithm VALUES(1002,829,'describes');
+INSERT INTO publication_algorithm VALUES(1003,830,'describes');
+INSERT INTO publication_algorithm VALUES(1004,831,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -38420,6 +38474,12 @@ INSERT INTO dataset VALUES(518,'One-hour yeast proteome (Hebert et al. 2014)','S
 INSERT INTO dataset VALUES(519,'Reference high-energy CID spectra (Scarberry et al. 1995)','43 preclassified high-energy CID spectra of reference peptides, mostly from a JEOL HX110/HX110 tandem instrument, used in four-fold cross-validation to train the neural-network sequencer. Not deposited.','training',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(520,'π-MNovo gut isolate spectral resource','Orbitrap Exploris 480 DDA data from 72 cultured human gut bacterial isolates (351 MGF files), with peptide-disjoint training, validation and test partitions. Not yet deposited.','training','DDA','72 human gut bacterial isolates',NULL);
 INSERT INTO dataset VALUES(521,'SMSNet WISTARCU-MS training data','PSMs from the Wistar Institute proteomics core facility''s Q Exactive HF and Q Exactive Plus runs, about a million unique peptides, released on figshare to train SMSNet.','training','DDA','mixed',NULL);
+INSERT INTO dataset VALUES(522,'Casanovo-TMT training corpus','27,075,536 spectra from 2,146 Orbitrap Exploris 480 runs acquired in one laboratory, 85.6% of them TMTpro-labeled and many phosphopeptide-enriched, split by peptide 80/10/10. Not deposited yet: the paper says it will be released on publication.','training','DDA',NULL,NULL);
+INSERT INTO dataset VALUES(523,'Complex I Inhibition combined with TLR Activation in the Breast Tumor Microenvironment Educates Cytotoxic Neutrophils','Complex I Inhibition combined with TLR Activation in the Breast Tumor Microenvironment Educates Cytotoxic Neutrophils','deposit',NULL,'Mus musculus',NULL);
+INSERT INTO dataset VALUES(524,'Transcriptomic profiling of epigenetic regulators and metabolic reprogramming in human cholangiocarcinoma','Transcriptomic profiling of epigenetic regulators and metabolic reprogramming in human cholangiocarcinoma','deposit',NULL,'Mus musculus',NULL);
+INSERT INTO dataset VALUES(525,'Serial Multi-omics Uncovers Anti-Glioblastoma Responses Not Evident by Routine Clinical Analyses (Phosphoproteomics)','Serial Multi-omics Uncovers Anti-Glioblastoma Responses Not Evident by Routine Clinical Analyses (Phosphoproteomics)','deposit',NULL,'Homo sapiens',NULL);
+INSERT INTO dataset VALUES(526,'19S proteasome loss regulates mitotic spindle assembly through a ubiquitin-independent degradation mechanism','19S proteasome loss regulates mitotic spindle assembly through a ubiquitin-independent degradation mechanism','deposit',NULL,'Homo sapiens',NULL);
+INSERT INTO dataset VALUES(527,'DarkSpec','Unlabeled tandem mass spectra, identified or not, pooled from 43 public PRIDE projects (44,963,379 spectra), quality-filtered and near-duplicate-reduced to 4,500,000 for semi-supervised de novo training.','training','DDA','mixed','https://huggingface.co/datasets/PanLiu/DarkSpec');
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -38986,6 +39046,12 @@ INSERT INTO dataset_version VALUES(563,520,'training partition','9,144,192 spect
 INSERT INTO dataset_version VALUES(564,521,'WCU-MS-M','Unmodified and Met-oxidised peptides: 25,174,942 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(565,521,'WCU-MS-P','WCU-MS-M plus phosphopeptides: 26,943,975 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(566,521,'WCU-MS-BEST','Best-scoring spectrum per unmodified peptide and charge: 1,239,045 spectra.',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(567,522,'as described','Peptide-disjoint partitions as printed in the preprint.',27075536,21688803,2717217,2669516,NULL,1003);
+INSERT INTO dataset_version VALUES(568,523,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(569,524,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(570,525,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(571,526,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(572,527,'v1','The 4,500,000-spectrum release used to train SemiNovo.',4500000,4500000,NULL,NULL,'2026-11-16',1004);
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40324,6 +40390,11 @@ INSERT INTO dataset_address VALUES(1340,556,'PRIDE','PXD079646','https://www.ebi
 INSERT INTO dataset_address VALUES(1341,564,'figshare','10.6084/m9.figshare.9738839','https://doi.org/10.6084/m9.figshare.9738839',NULL,0);
 INSERT INTO dataset_address VALUES(1342,565,'figshare','10.6084/m9.figshare.9738839','https://doi.org/10.6084/m9.figshare.9738839',NULL,0);
 INSERT INTO dataset_address VALUES(1343,566,'figshare','10.6084/m9.figshare.9734105','https://doi.org/10.6084/m9.figshare.9734105',NULL,0);
+INSERT INTO dataset_address VALUES(1344,568,'PRIDE','PXD054085','https://www.ebi.ac.uk/pride/archive/projects/PXD054085',NULL,0);
+INSERT INTO dataset_address VALUES(1345,569,'PRIDE','PXD072211','https://www.ebi.ac.uk/pride/archive/projects/PXD072211',NULL,0);
+INSERT INTO dataset_address VALUES(1346,570,'PRIDE','PXD063976','https://www.ebi.ac.uk/pride/archive/projects/PXD063976',NULL,0);
+INSERT INTO dataset_address VALUES(1347,571,'PRIDE','PXD065357','https://www.ebi.ac.uk/pride/archive/projects/PXD065357',NULL,0);
+INSERT INTO dataset_address VALUES(1348,572,'Hugging Face','PanLiu/DarkSpec','https://huggingface.co/datasets/PanLiu/DarkSpec',NULL,0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -41646,6 +41717,19 @@ INSERT INTO publication_dataset VALUES(1660,77,521,566,'trains-on');
 INSERT INTO publication_dataset VALUES(1661,494,521,564,'trains-on');
 INSERT INTO publication_dataset VALUES(1662,494,521,565,'trains-on');
 INSERT INTO publication_dataset VALUES(1663,494,521,566,'trains-on');
+INSERT INTO publication_dataset VALUES(1664,1003,522,567,'trains-on');
+INSERT INTO publication_dataset VALUES(1665,1003,523,568,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1666,1003,524,569,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1667,1003,525,570,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1668,1003,526,571,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1669,1004,527,572,'introduces');
+INSERT INTO publication_dataset VALUES(1670,1004,527,572,'trains-on');
+INSERT INTO publication_dataset VALUES(1671,1004,1,3,'trains-on');
+INSERT INTO publication_dataset VALUES(1672,1004,1,3,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1673,1004,2,405,'trains-on');
+INSERT INTO publication_dataset VALUES(1674,1004,2,405,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1675,1004,379,404,'trains-on');
+INSERT INTO publication_dataset VALUES(1676,1004,379,404,'evaluates-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -68848,13 +68932,18 @@ INSERT INTO training_size VALUES(114,494,1661,'SMSNet-M','train',25174942,'spect
 INSERT INTO training_size VALUES(115,494,1662,'SMSNet-P','train',26943975,'spectra',0,'WISTARCU-MS-P, which consists of 26,943,975 MS/MS spectra that correspond to unmodified peptides, peptides containing oxidized Methionine, and peptides containing phosphorylated','Methods, Data acquisition; dataset size, from which 50,000 validation and 50,000 test spectra were held out');
 INSERT INTO training_size VALUES(116,77,1658,'SMSNet-M','train',25174942,'spectra',0,'WCU-MS-M, which consists of 25,174,942 MS/MS spectra that correspond to unmodified peptides and peptides containing oxidized Methionine','Experimental Procedures, Data Acquisition; dataset size, from which validation and test spectra were held out');
 INSERT INTO training_size VALUES(117,77,1659,'SMSNet-P','train',26943975,'spectra',0,'WCU-MS-P, which consists of 26,943,975 MS/MS spectra that correspond to unmodified peptides, peptides containing oxidized Methionine, and peptides containing phosphorylated','Experimental Procedures, Data Acquisition; dataset size, from which validation and test spectra were held out');
+INSERT INTO training_size VALUES(118,1003,1664,NULL,'fine-tune',21036675,'spectra',0,'when the training partition was loaded for fine-tuning, the 652,128 spectra with a precursor charge above 4 or fewer than 20 peaks were excluded, leaving 21,036,675.','Results, training corpus');
+INSERT INTO training_size VALUES(119,1004,1670,NULL,'train',4500000,'spectra',0,'A deterministic subset of 4,500,000 representatives forms the final training corpus, controlling redundancy and computational cost.','Section 3, DarkSpec construction; unlabeled spectra');
+INSERT INTO training_size VALUES(120,1004,1671,NULL,'train',499402,'spectra',0,'Train 499,402','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
+INSERT INTO training_size VALUES(121,1004,1673,NULL,'train',213284,'spectra',0,'Train 213,284','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
+INSERT INTO training_size VALUES(122,1004,1675,NULL,'train',317009,'spectra',0,'Train 317,009','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',578);
-INSERT INTO sqlite_sequence VALUES('affiliation',1441);
-INSERT INTO sqlite_sequence VALUES('author',3952);
-INSERT INTO sqlite_sequence VALUES('algorithm',829);
-INSERT INTO sqlite_sequence VALUES('publication',1002);
+INSERT INTO sqlite_sequence VALUES('city',579);
+INSERT INTO sqlite_sequence VALUES('affiliation',1446);
+INSERT INTO sqlite_sequence VALUES('author',3960);
+INSERT INTO sqlite_sequence VALUES('algorithm',831);
+INSERT INTO sqlite_sequence VALUES('publication',1004);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
