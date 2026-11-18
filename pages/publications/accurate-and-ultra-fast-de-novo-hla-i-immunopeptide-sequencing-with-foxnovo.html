@@ -43,7 +43,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-3b21e698e89b2f3bb4d6742b04fd75dc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-063b3e7794cda6d3948bed00b5e060a3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -230,6 +230,12 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
 <ul>
 <li><a href="../algorithms/foxnovo.html">FoxNovo</a>: Non-autoregressive de novo sequencer specialised for HLA-I immunopeptides. Uses dual-token m/z encoding (integer + decimal vocabularies, ~4k tokens instead of ~3M fine-grained bins) in the spectrum encoder, then dynamic-programming top-K decoding over the NAR probability matrix to enforce exact precursor-mass constraints. Reaches &gt;90% peptide accuracy at ~2,800 spectra/s, over 100x faster than the beam-search baseline, and was used to re-analyse 168M spectra from 4,423 raw files in 18 h on one GPU, recovering 41 of 42 targeted-MS-validated non-canonical peptides.</li>
+</ul>
+</section>
+<section id="trained-on" class="level2">
+<h2 class="anchored" data-anchor-id="trained-on">Trained on</h2>
+<ul>
+<li><strong><a href="../datasets/foxnovo-hla-i-immunopeptidomics-training-corpus.html">FoxNovo HLA-I immunopeptidomics training corpus</a></strong> <small>(as published)</small> <small>· no public address</small></li>
 </ul>
 </section>
 <section id="evaluated-on" class="level2">
