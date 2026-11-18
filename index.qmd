@@ -544,6 +544,50 @@ dataset_versions = pd.read_sql("""
      ORDER BY d.name, dv.id
 """, conn)
 
+# What every deep-learning sequencer was trained on, for "What the models were
+# trained on". One row per trains-on link of a paper DESCRIBING the method,
+# joined to the counts the paper itself states (training_size), so a link with
+# no stated count is still a row, with n NULL. A paper that states one total
+# over all its training data contributes a row with no dataset (link_id NULL).
+# A count belongs to a (paper, model variant): InstaNovo v1.0 and v1.1, or a
+# base model and its fine-tune, were trained on different data, so `model` is
+# kept rather than collapsed to the method.
+training_data = pd.read_sql("""
+    WITH dl AS (
+        SELECT DISTINCT a.name AS method, pa.publication_id AS pub_id
+          FROM algorithm a
+          JOIN publication_algorithm pa ON pa.algorithm_id = a.id AND pa.role = 'describes'
+         WHERE a.is_deep_learning = 1 AND a.kind = 'algorithm')
+    SELECT dl.method, dl.pub_id, p.publication_date AS date, p.publication_type AS type,
+           pd.id AS link_id, d.name AS dataset, dv.version,
+           ts.model, ts.stage, ts.n, ts.unit, ts.derived, ts.quote, ts.location
+      FROM dl
+      JOIN publication p ON p.id = dl.pub_id
+      JOIN publication_dataset pd ON pd.publication_id = dl.pub_id AND pd.role = 'trains-on'
+      JOIN dataset d ON d.id = pd.dataset_id
+      LEFT JOIN dataset_version dv ON dv.id = pd.dataset_version_id
+      LEFT JOIN training_size ts ON ts.publication_dataset_id = pd.id
+    UNION ALL
+    SELECT dl.method, dl.pub_id, p.publication_date, p.publication_type,
+           NULL, NULL, NULL,
+           ts.model, ts.stage, ts.n, ts.unit, ts.derived, ts.quote, ts.location
+      FROM dl
+      JOIN publication p ON p.id = dl.pub_id
+      JOIN training_size ts ON ts.publication_id = dl.pub_id AND ts.publication_dataset_id IS NULL
+     ORDER BY 1, 3, 2
+""", conn)
+# Every deep-learning sequencer, so the section can count the ones with no
+# training data recorded at all instead of silently leaving them out.
+dl_methods = pd.read_sql("""
+    SELECT a.name AS method,
+           MIN(p.publication_date) AS first_date
+      FROM algorithm a
+      JOIN publication_algorithm pa ON pa.algorithm_id = a.id AND pa.role = 'describes'
+      JOIN publication p ON p.id = pa.publication_id
+     WHERE a.is_deep_learning = 1 AND a.kind = 'algorithm'
+     GROUP BY a.id ORDER BY a.name
+""", conn)
+
 # Checkpoints, for the cross-method table. This is the ONLY place the whole set
 # is visible at once: the algorithm pages each show their own, and the Hugging
 # Face mirror README covers only the files that were copied. Generated here, in
@@ -862,6 +906,8 @@ _data = dict(
     dataset_versions=dataset_versions,
     dataset_addresses=dataset_addresses,
     checkpoints=checkpoints,
+    training_data=training_data,
+    dl_methods=dl_methods,
     patents=patents,
     patent_links=patent_links,
     patent_citers=patent_citers,
@@ -890,7 +936,7 @@ DATA_FILES = {
     "pubs", "pub_authorship", "coauth_edges", "algorithms", "author_details",
     "citations", "entity_slugs", "publication_impact", "benchmark_results",
     "benchmark_curves", "dataset_usage", "dataset_versions", "dataset_addresses",
-    "proteobench_curves", "perf_points",
+    "proteobench_curves", "perf_points", "training_data",
 }
 INLINE_MAX = 100_000
 
@@ -1123,6 +1169,7 @@ dataset_versions = { first_frame; return FileAttachment("data/dataset_versions.j
 dataset_addresses = { first_frame; return FileAttachment("data/dataset_addresses.json").json() }
 proteobench_curves = { first_frame; return FileAttachment("data/proteobench_curves.json").json() }
 perf_points = { first_frame; return FileAttachment("data/perf_points.json").json() }
+training_data = { first_frame; return FileAttachment("data/training_data.json").json() }
 ```
 
 ```{ojs}
@@ -1224,7 +1271,8 @@ lazy_heights = ({
   impact_table: [681, 681], repo_bars: [189, 480], repo_scatter: [278, 515],
   repo_table: [571, 571], venues: [244, 360], venue_table: [681, 681],
   lifecycle_table: [571, 571], lifecycle_bars: [800, 1180], authors_table: [571, 571],
-  patents_prior_art: [498, 1035], patents_citers: [1966, 4769]
+  patents_prior_art: [498, 1035], patents_citers: [1966, 4769],
+  training_scale: [520, 520], training_datasets: [400, 420]
 })
 lazy_chart = (key, build) => (function* () {
   const [lo, hi] = lazy_heights[key] ?? [480, 480]
@@ -4698,6 +4746,326 @@ licence says. Cite the paper and prefer the original link; the copy exists for
 the day the original stops answering. Only weights are mirrored, never training
 data, and only where a licence permits it.
 :::
+
+### What the models were trained on {#training-data}
+
+```{ojs}
+//| echo: false
+training_t = transpose(training_data)
+dl_methods_t = transpose(dl_methods)
+```
+
+```{ojs}
+//| echo: false
+// One point per (method, paper, model variant, stage): how much labelled data
+// that model learned from, as its own paper states it. Peptide counts are left
+// out, because a unique-peptide count is not a number of training examples and
+// cannot sit on the same axis.
+//
+// A total the paper states over all its training data wins over a sum of its
+// per-dataset counts, since it is what the paper says it trained on. Without a
+// total, the per-dataset counts are summed, and a paper that leaves one of its
+// training datasets uncounted is marked `partial`: its point is a floor.
+training_points = {
+  const counted = training_t.filter(r => r.n != null && r.unit !== "peptides")
+  const links_of = d3.group(training_t.filter(r => r.link_id != null),
+                            r => `${r.method}|${r.pub_id}`)
+  const out = []
+  for (const [, rs] of d3.group(counted, r => `${r.method}|${r.pub_id}|${r.model ?? ""}|${r.stage}`)) {
+    const r0 = rs[0]
+    const total = rs.find(r => r.link_id == null)
+    const parts = rs.filter(r => r.link_id != null)
+    const all_links = links_of.get(`${r0.method}|${r0.pub_id}`) ?? []
+    // The datasets behind the point: the counted ones, or every training link
+    // of the paper when the count is a stated total.
+    const datasets = Array.from(new Set((total ? all_links : parts).map(r => r.dataset)))
+    const biggest = total ? null : d3.greatest(parts, r => r.n)
+    const counted_links = new Set(parts.map(r => r.link_id))
+    out.push({
+      method: r0.method, pub_id: r0.pub_id, model: r0.model, stage: r0.stage,
+      date: new Date(r0.date), n: total ? total.n : d3.sum(parts, r => r.n),
+      datasets, main: biggest?.dataset ?? datasets[0] ?? "not split by dataset",
+      partial: !total && Array.from(new Set(all_links.map(r => r.link_id)))
+                 .some(id => !counted_links.has(id)),
+      quote: total?.quote ?? (parts.length === 1 ? parts[0].quote : null)
+    })
+  }
+  // A preprint and its journal version usually state the same count for the
+  // same model: that is one model, so it keeps one point, at the earlier date.
+  out.sort((a, b) => a.date - b.date || b.n - a.n)
+  const seen = new Set()
+  return out.filter(p => {
+    const k = `${p.method}|${p.model ?? ""}|${p.stage}|${p.n}`
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+}
+```
+
+```{ojs}
+//| echo: false
+training_stats = {
+  const with_links = new Set(training_t.filter(r => r.link_id != null).map(r => r.method))
+  const with_n = new Set(training_points.map(p => p.method))
+  const max = d3.greatest(training_points, p => p.n)
+  const min = d3.least(training_points, p => p.n)
+  return { methods: dl_methods_t.length, with_links: with_links.size, with_n: with_n.size,
+           points: training_points.length, max, min,
+           missing: dl_methods_t.filter(m => !with_links.has(m.method)).map(m => m.method) }
+}
+```
+
+```{ojs}
+//| echo: false
+md`**${training_stats.with_links}** of the **${training_stats.methods}** deep-learning
+*de novo* sequencers here have their training data recorded, and for
+**${training_stats.with_n}** of them the paper states how many spectra that
+was. The largest is ${number_word(Math.floor(Math.log10((training_stats.max?.n ?? 1) / (training_stats.min?.n ?? 1))))} orders of magnitude bigger than the smallest:
+${d3.format(",")(training_stats.min?.n ?? 0)} labelled spectra
+(${training_stats.min?.method}) against ${d3.format(",")(training_stats.max?.n ?? 0)}
+(${training_stats.max?.method}${training_stats.max?.model ? `, ${training_stats.max.model}` : ""}).
+
+Every number is the one the paper itself prints, quoted in the table below,
+not the size of the dataset it names: most papers train on a split or a
+filtered subset, and two papers that both "trained on MassIVE-KB" can differ
+tenfold. A method gets a point per model it trained, because versions of one
+method are often trained on different data, and a pre-training run and a
+fine-tune are separate points. For the weights that were actually released,
+and what each was trained on, see [the checkpoints table](#the-weights-behind-the-numbers).`
+```
+
+```{ojs}
+//| echo: false
+// The four datasets that are the largest contributor to the most points get a
+// colour; the rest share one. Derived, so a new corpus that becomes common
+// takes a colour without an edit here.
+training_palette = {
+  const top = d3.rollups(training_points, v => v.length, p => p.main)
+    .filter(([k]) => k !== "not split by dataset")
+    .sort((a, b) => d3.descending(a[1], b[1]) || d3.ascending(a[0], b[0]))
+    .slice(0, 4).map(([k]) => k)
+  const colors = ["#2563eb", "#d97706", "#059669", "#9333ea"]
+  const group = p => top.includes(p.main) ? p.main : "other or several"
+  return { domain: [...top, "other or several"], range: [...colors.slice(0, top.length), "#9ca3af"], group }
+}
+```
+
+```{ojs}
+//| echo: false
+lazy_chart("training_scale", () => {
+  const items = training_points.map(p => ({ ...p, group: training_palette.group(p) }))
+  const w = Math.max(640, width)
+  const decades = d3.range(Math.floor(Math.log10(d3.min(items, d => d.n) ?? 1)),
+                           Math.ceil(Math.log10(d3.max(items, d => d.n) ?? 10)) + 1)
+  const chart = Plot.plot({
+    width: w, height: 460, marginLeft: 70, marginRight: 30, marginTop: 20, marginBottom: 40,
+    x: { type: "utc", label: "Paper date", grid: true },
+    // Powers of ten only: a log scale's default ticks label every minor step
+    // (800, 900, 1k), which collide at this height.
+    // The domain is whole decades so every tick lies inside the frame (a tick
+    // past the data's extent was drawn and clipped), and a billion reads B, not
+    // SI's G.
+    y: { type: "log", label: "Training spectra (as stated)", grid: true,
+         domain: [10 ** decades[0], 10 ** decades[decades.length - 1]],
+         ticks: decades.map(e => 10 ** e),
+         tickFormat: d => d >= 1e9 ? `${d / 1e9}B` : d >= 1e6 ? `${d / 1e6}M` : d >= 1e3 ? `${d / 1e3}k` : String(d) },
+    color: { domain: training_palette.domain, range: training_palette.range, legend: true },
+    symbol: { domain: ["train", "pre-train", "fine-tune"], range: ["circle", "square", "triangle"], legend: true },
+    marks: [
+      Plot.dot(items, { x: "date", y: "n", fill: "group", symbol: "stage", r: 5,
+                        stroke: "white", strokeWidth: 0.8, fillOpacity: 0.9 })
+    ]
+  })
+  const svg = chart.tagName === "svg" ? chart : chart.querySelector("svg:not([class$='-swatch'])") ?? chart.querySelector("svg")
+  const xs = chart.scale("x"), ys = chart.scale("y")
+
+  // Labels, placed greedily from the biggest point down and skipped where they
+  // would collide with one already placed or run off the frame: with a hundred
+  // points, labelling all of them would make none legible. The tooltip names
+  // every point.
+  const plot_svg = Array.from(chart.querySelectorAll("svg")).find(s => s.querySelector('g[aria-label="dot"]'))
+  // getBBox measures nothing on a detached node, so the chart is parked
+  // off-screen in the document while its labels are measured.
+  const holder = html`<div style="position:absolute; left:-10000px; top:0; visibility:hidden"></div>`
+  document.body.append(holder)
+  holder.append(chart)
+  // text-anchor is set explicitly: Plot's root svg says "middle", which would
+  // centre each label on its own dot.
+  const g = d3.select(plot_svg).append("g").attr("font-size", 11).attr("fill", "#24292f")
+    .attr("text-anchor", "start")
+  const placed = []
+  const by_size = [...items].sort((a, b) => b.n - a.n)
+  const seen = new Set()
+  for (const d of by_size) {
+    // A variant label that already names the method stands alone
+    // ("XuanjiNovo-100M"); one that does not ("Astral") gets the method.
+    const stem = d.method.toLowerCase().slice(0, 5)
+    const label = !d.model ? d.method
+      : d.model.toLowerCase().includes(stem) ? d.model : `${d.method} (${d.model})`
+    if (seen.has(label)) continue
+    const x = xs.apply(d.date), y = ys.apply(d.n)
+    const t = g.append("text").attr("x", x + 7).attr("y", y + 4).text(label)
+    const b = t.node().getBBox()
+    const box = { x0: b.x - 2, x1: b.x + b.width + 2, y0: b.y - 1, y1: b.y + b.height + 1 }
+    const clash = placed.some(p => box.x0 < p.x1 && box.x1 > p.x0 && box.y0 < p.y1 && box.y1 > p.y0)
+      || box.x1 > w - 4 || box.y0 < 2 || box.y1 > 460 - 40
+      || items.some(o => o !== d && Math.abs(xs.apply(o.date) - (box.x0 + box.x1) / 2) < (box.x1 - box.x0) / 2 + 5
+                                 && Math.abs(ys.apply(o.n) - (box.y0 + box.y1) / 2) < (box.y1 - box.y0) / 2 + 5)
+    if (clash) { t.remove(); continue }
+    placed.push(box); seen.add(label)
+  }
+  holder.remove()
+
+  const tip = html`<div class="map-tooltip" role="tooltip" aria-hidden="true"></div>`
+  const move = ev => {
+    const pad = 12, box = tip.getBoundingClientRect()
+    tip.style.left = `${Math.max(pad, Math.min(ev.clientX + pad, window.innerWidth - box.width - pad))}px`
+    tip.style.top = `${Math.max(pad, Math.min(ev.clientY + pad, window.innerHeight - box.height - pad))}px`
+  }
+  plot_svg.querySelectorAll('g[aria-label="dot"] > *').forEach((el, i) => {
+    const d = items[i]
+    if (!d) return
+    el.style.cursor = "pointer"
+    el.setAttribute("aria-label", `${d.method}${d.model ? `, ${d.model}` : ""}: ${d3.format(",")(d.n)} spectra`)
+    el.addEventListener("mouseenter", ev => {
+      tip.replaceChildren(html`<div>
+        <div class="map-tooltip-title">${d.method}${d.model ? html` <span style="font-weight:400">· ${d.model}</span>` : ""}</div>
+        <div class="map-tooltip-meta">${d.date.toISOString().slice(0, 10)} · ${d.stage}</div>
+        <div class="map-tooltip-row"><b>${d3.format(",")(d.n)}</b>&nbsp;spectra${d.partial ? " or more" : ""}</div>
+        <div class="map-tooltip-meta" style="max-width:300px; white-space:normal;">${d.datasets.join("; ")}</div>
+        ${d.partial ? html`<div class="map-tooltip-meta" style="max-width:300px; white-space:normal;">The paper gives no count for every dataset it trained on, so this is a floor.</div>` : ""}
+      </div>`)
+      tip.classList.add("visible"); tip.setAttribute("aria-hidden", "false"); move(ev)
+    })
+    el.addEventListener("mousemove", move)
+    el.addEventListener("mouseleave", () => { tip.classList.remove("visible"); tip.setAttribute("aria-hidden", "true") })
+  })
+
+  return html`<div class="chart-wrap">
+    <button class="fs-btn" onclick="
+      const el = this.parentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else el.requestFullscreen();
+    ">⛶ Fullscreen</button>
+    <div class="chart-scroll">${chart}</div>
+    ${tip}
+  </div>`
+})
+```
+
+```{ojs}
+//| echo: false
+// The datasets the most deep-learning sequencers trained on, counted in
+// METHODS, not papers: a method with a preprint and a journal version is one
+// method that trained on it, not two.
+training_dataset_rows = {
+  const rows = d3.rollups(training_t.filter(r => r.link_id != null), v => ({
+      methods: new Set(v.map(r => r.method)).size,
+      unstated: new Set(v.filter(r => r.version == null).map(r => r.method)).size
+    }), r => r.dataset)
+    .map(([dataset, v]) => ({ dataset, ...v }))
+    .sort((a, b) => d3.descending(a.methods, b.methods) || d3.ascending(a.dataset, b.dataset))
+  return rows.filter(r => r.methods >= 2).slice(0, 15)
+}
+```
+
+```{ojs}
+//| echo: false
+lazy_chart("training_datasets", () => {
+  const long = training_dataset_rows.flatMap(r => [
+    { dataset: r.dataset, part: "version named", n: r.methods - r.unstated },
+    { dataset: r.dataset, part: "version not stated", n: r.unstated }
+  ])
+  const chart = Plot.plot({
+    width: Math.max(640, width), height: 40 + 24 * training_dataset_rows.length,
+    marginLeft: 300, marginRight: 40, marginBottom: 44,
+    // Centred below the ticks: at the default right-hand anchor the label
+    // sat on the last three tick labels.
+    x: { label: "Deep-learning methods trained on it", grid: true, tickFormat: "d",
+         labelAnchor: "center", labelOffset: 38 },
+    y: { label: null, domain: training_dataset_rows.map(r => r.dataset),
+         tickFormat: d => d.length > 44 ? d.slice(0, 43) + "…" : d },
+    color: { domain: ["version named", "version not stated"], range: ["#2563eb", "#93c5fd"], legend: true },
+    marks: [
+      Plot.barX(long, { x: "n", y: "dataset", fill: "part",
+                        title: d => `${d.dataset}\n${d.n} method${d.n === 1 ? "" : "s"}, ${d.part}` }),
+      Plot.text(training_dataset_rows, { x: "methods", y: "dataset", text: d => String(d.methods),
+                                         textAnchor: "start", dx: 4, fill: "#57606a" }),
+      Plot.ruleX([0])
+    ]
+  })
+  return html`<div class="chart-wrap"><div class="chart-scroll">${chart}</div></div>`
+})
+```
+
+```{ojs}
+//| echo: false
+// The table: one row per (method, training link, model variant), and one per
+// stated total that the paper does not split by dataset. A link with no stated
+// count is still a row, with the Spectra cell empty, so the table answers
+// "what was it trained on" even where it cannot answer "how much".
+training_table_rows = training_t.map(r => ({
+  Method: r.method,
+  Model: r.model ?? "",
+  Year: r.date ? +r.date.slice(0, 4) : null,
+  pub_id: r.pub_id,
+  "Trained on": r.dataset ?? "(total over its training data)",
+  Version: r.version ?? (r.link_id != null ? "not stated" : ""),
+  Stage: r.stage ?? "",
+  Count: r.n,
+  unit: r.n != null ? r.unit + (r.derived ? ", summed" : "") : "",
+  Evidence: r.quote ? `"${r.quote}"${r.location ? ` (${r.location})` : ""}` : ""
+}))
+```
+
+```{ojs}
+//| echo: false
+viewof training_search = Inputs.search(training_table_rows, {
+  placeholder: "Search method, model, dataset, version…",
+  columns: ["Method", "Model", "Trained on", "Version", "Evidence"],
+  width: 520
+})
+```
+
+```{ojs}
+//| echo: false
+Inputs.table(training_search, {
+  columns: ["Method", "Model", "Year", "Count", "Trained on", "Version", "Stage", "Evidence"],
+  sort: "Count", reverse: true, rows: 16,
+  format: {
+    Method: m => page_link("algorithms", m),
+    Year: (y, i, rows) => {
+      const href = page_href("publications", (rows ?? [])[i]?.pub_id)
+      return href ? html`<a href=${href}>${y}</a>` : y
+    },
+    "Trained on": d => {
+      const label = d.length > 34 ? d.slice(0, 33) + "…" : d
+      const href = page_href("datasets", d)
+      return href ? html`<a href=${href} title=${d}>${label}</a>` : html`<span title=${d}>${label}</span>`
+    },
+    Version: d => html`<span title=${d}>${d.length > 22 ? d.slice(0, 21) + "…" : d}</span>`,
+    // The unit rides with the number: PSMs, spectra, spectrum pairs and
+    // peptides are different quantities and must not read as one column.
+    Count: (d, i, rows) => d == null ? "" : html`${d3.format(",")(d)} <span style="color:#57606a">${(rows ?? [])[i]?.unit}</span>`,
+    Evidence: d => html`<span title=${d} style="color:#57606a">${d.length > 90 ? d.slice(0, 89) + "…" : d}</span>`
+  },
+  width: { Method: 120, Model: 130, Year: 50, Count: 190, "Trained on": 220, Version: 150,
+           Stage: 70, Evidence: 360 }
+})
+```
+
+```{ojs}
+//| echo: false
+html`<p style="color:#57606a; margin-top:0.4rem;">
+${training_stats.missing.length
+  ? html`No training data is recorded yet for ${training_stats.missing.length}
+    deep-learning sequencer${training_stats.missing.length === 1 ? "" : "s"}:
+    ${training_stats.missing.join(", ")}.`
+  : html`Every deep-learning sequencer in the catalog has its training data recorded.`}
+<i>Summed</i> under a count means the paper prints the parts (per species, per run) and the
+count is their total.</p>`
+```
 
 ### The dataset network
 

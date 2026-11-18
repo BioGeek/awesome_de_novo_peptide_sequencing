@@ -110,7 +110,7 @@ GitHub runner (`lighthouse.yml`, 3 runs, median): score 6, first paint 10.4 s,
 largest paint 14.0 s, 15.0 s of blocking time, interactive at 40.5 s.
 
 **The big datasets are files now.** `DATA_FILES` in the first Python chunk
-names the 15 that are written to `data/<name>.json` (gitignored, regenerated
+names the 16 that are written to `data/<name>.json` (gitignored, regenerated
 every render) with Quarto's own DataFrame conversion copied verbatim, and one
 OJS block of `FileAttachment(...).json()` cells loads them, so every chart
 reads exactly the value it read before. Quarto copies a file referenced by

@@ -254,6 +254,48 @@ PepPr evaluates on (PXD081052, private until its paper is published). Instrument
 ladder a model has to read, so "trained on ProteomeTools" is as
 under-determined as "evaluated on nine-species", for a different reason.
 
+### How much a model was trained on
+
+`training_size` holds the number of training spectra a paper **states** for one
+of its `trains-on` links, with the sentence it states it in (`quote`,
+`location`). **0 counts sit on a link that is not a `trains-on` link of the
+same paper**, an invariant, also enforced by two triggers on insert and update.
+A count with no link (`publication_dataset_id` NULL) is a total the paper gives
+over all its training data without splitting it by dataset.
+
+**117 training counts over 59 papers.**
+
+Three rules, each learned from a paper that breaks the simple reading:
+
+- **The paper's number, never the dataset's.** `dataset_version.n_train` is
+  the size of a published split; a paper that "trained on MassIVE-KB" may have
+  used all 28.5M spectra of Casanovo's split or a 2M subsample. Only what the
+  paper prints goes here, and `derived = 1` marks a total of parts it prints
+  (per-species rows of a table).
+- **A count belongs to a model, not to a method.** Versions of one method are
+  trained on different data, and so are a base model and its fine-tune, so
+  `model` names the variant the paper trained (`NULL` when it trains one) and
+  `stage` says `train`, `pre-train` or `fine-tune`. One link can therefore
+  hold several counts.
+- **A peptide count is not a spectrum count.** `unit` is `spectra`, `PSMs`,
+  `spectrum pairs` or `peptides`; the homepage section plots the first two and
+  lists the others. `spectrum pairs` exists for DiNovo's MirrorNovo, which
+  trains on mirror-protease PAIRS of spectra.
+
+What was deliberately left out: fine-tuning budget sweeps (pi-PrimeNovo's 100
+to 100,000 points are a data-efficiency ablation, not a model), counts of
+protein or peptide SEQUENCES that trained a language-model block, auxiliary
+heads that do not sequence (spectrum quality, chimericity), and a total that
+merely repeats a link's count. dIon's DNL-v1 carries its own count and its
+component datasets do not, since the chart sums a model's links.
+
+The homepage's **What the models were trained on** section reads this table
+through the `training_data` file: a chart of training size against paper date,
+one point per (method, model, stage, count), so a preprint and its journal
+version stating the same number are one point, at the earlier date; the
+datasets the most methods
+trained on, and a searchable table with the quote behind every number.
+
 ### The two dataset charts
 
 **"The data underneath"** holds the version-ambiguity bars and the nine-species

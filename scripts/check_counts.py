@@ -380,6 +380,20 @@ CLAIMS: list[tuple[str, str, str, object]] = [
      " SELECT 1 FROM publication_dataset s WHERE s.publication_id=u.publication_id"
      " AND s.dataset_id=u.dataset_id AND s.dataset_version_id IS u.dataset_version_id"
      " AND s.role <> 'uses')"),
+    # A stated training count must hang off a trains-on link of its own paper.
+    # The triggers check this on insert and update, but not when the LINK is
+    # later re-roled or deleted, which is what this catches.
+    ("docs/datasets.md", "training counts on a wrong link",
+     r"\*\*(\d+) counts sit on a link that is not",
+     "SELECT COUNT(*) FROM training_size t LEFT JOIN publication_dataset pd"
+     " ON pd.id = t.publication_dataset_id WHERE t.publication_dataset_id IS NOT NULL"
+     " AND (pd.id IS NULL OR pd.role <> 'trains-on' OR pd.publication_id <> t.publication_id)"),
+    ("docs/datasets.md", "training counts",
+     r"\*\*(\d+) training counts over \d+ papers",
+     "SELECT COUNT(*) FROM training_size"),
+    ("docs/datasets.md", "papers with training counts",
+     r"\*\*\d+ training counts over (\d+) papers",
+     "SELECT COUNT(DISTINCT publication_id) FROM training_size"),
     ("docs/datasets.md", "dataset links trains-on",
      r"\*\*(\d+) links are `trains-on`",
      "SELECT COUNT(*) FROM publication_dataset WHERE role='trains-on'"),
@@ -566,6 +580,7 @@ INVARIANTS = frozenset({
     "notes without a family page",
     "versions with several introducing works",
     "dataset links with an unknown role",
+    "training counts on a wrong link",
     "uses links beside another role",
     "verified tables without the paper's own method",
     "duplicate measurements",
