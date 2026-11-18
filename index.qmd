@@ -2082,7 +2082,20 @@ n_papers_filtered = pubs_filtered.length
 
 ```{ojs}
 //| echo: false
-lazy_chart("wave", () => Plot.plot({
+// Publication types the wave chart gives a hue, largest first; anything else
+// is drawn as "other".
+wave_types = ["peer-reviewed", "preprint", "ML conference", "thesis", "abstract",
+              "presentation", "postprint", "resource"]
+```
+
+```{ojs}
+//| echo: false
+lazy_chart("wave", () => { const wave_rows = pubs_filtered
+    .filter(p => Number.isFinite(p.year) && p.kind !== "meta")
+    .map(p => ({ ...p, type: wave_types.includes(p.type) ? p.type : "other" }))
+  // "other" joins the legend only when something is drawn in it.
+  const wave_domain = [...wave_types, ...(wave_rows.some(p => p.type === "other") ? ["other"] : [])]
+  return Plot.plot({
   marginLeft: 50,
   width: 1100,
   height: 360,
@@ -2092,22 +2105,36 @@ lazy_chart("wave", () => Plot.plot({
   // where it touched the 2005 tick by 3 px.
   x: { label: "Year", tickFormat: "d", interval: 1, labelOffset: 40 },
   y: { label: `Papers (${n_papers_filtered} shown)`, grid: true },
-  color: { legend: true, scheme: "blues", domain: ["preprint", "postprint", "peer-reviewed", "ML conference", "thesis", "commentary", "abstract", "presentation"] },
+  // A categorical palette, not a ramp: publication type is identity, not
+  // magnitude. It was scheme "blues", which made preprints, first in the
+  // domain, the palest step and nearly invisible against the page. The eight
+  // hues are the validated categorical order, assigned by size so the largest
+  // neighbouring segments (peer-reviewed, preprint) get the most distinct
+  // pair; validate_palette.js passes it on adjacent pairs. A ninth type
+  // folds into grey "other" rather than getting a generated hue: commentary
+  // is the one today, and its only paper is a kind='meta' row this chart
+  // drops anyway. "resource" was missing from the old domain, so its one
+  // non-meta paper had no colour at all.
+  color: { legend: true, domain: wave_domain,
+           range: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948", "#9ca3af"] },
   marks: [
     Plot.barY(
       // Drop kind='meta' rows: the catalog's self-entry (no
       // publication_type, no real venue) plus any other meta artefacts
       // like commentaries-without-method. They'd otherwise render as
       // transparent stack segments and skew the publication-volume story.
-      pubs_filtered.filter(p => Number.isFinite(p.year) && p.kind !== "meta"),
+      wave_rows,
       Plot.groupX(
         { y: "count" },
-        { x: "year", fill: "type", tip: plot_tip_style }
+        // Stacked in legend order, peer-reviewed at the base, with a 1px
+        // white gap so touching segments stay separate.
+        { x: "year", fill: "type", order: wave_domain,
+          stroke: "white", strokeWidth: 1, tip: plot_tip_style }
       )
     ),
     Plot.ruleY([0])
   ]
-}))
+}) })
 ```
 
 ## The architectures
