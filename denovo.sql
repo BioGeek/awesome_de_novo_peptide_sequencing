@@ -41782,11 +41782,11 @@ INSERT INTO repository_metrics VALUES('https://github.com/cmb-chula/SMSNet',12,7
 INSERT INTO repository_metrics VALUES('https://github.com/junxia97/SearchNovo',3,1,0,0,0,0,'2025-03-08T02:41:41Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/nh2tran/NovoBoard',4,2,0,0,1,0,'2024-08-28T03:38:58Z','2026-05-26T12:38:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Yan98/DPST',4,2,2,1,0,0,'2022-08-18T04:30:03Z','2026-05-26T12:38:15',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,1,0,0,1,0,'2026-04-30T08:03:10Z','2026-06-22T08:15:24',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/ddz-icb/DLDN-Bench',1,1,0,0,1,0,'2026-11-19T11:27:21Z','2026-11-19T14:45:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/denovogui',16,9,6,44,1,2,'2024-03-11T14:07:59Z','2026-10-26T11:37:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/searchgui',48,16,18,360,1,5,'2025-08-15T14:01:55Z','2026-06-24T08:16:11',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/jingbo02/Awesome-Denovo-Peptide-Sequencing',24,2,0,0,0,0,'2025-02-05T08:15:47Z','2026-06-24T10:46:19',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-tl',1,0,1,0,0,0,'2026-08-19T22:27:40Z','2026-10-12T13:37:53',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/casanovo-tl',2,0,1,0,0,0,'2026-08-19T22:27:40Z','2026-11-19T14:45:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/kusterlab/prosit',91,45,23,76,1,4,'2023-08-17T15:33:19Z','2026-09-11T10:03:54','v1.1.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/ms2rescore',67,23,17,109,1,133,'2026-10-09T10:10:30Z','2026-10-26T11:37:56','v4.0.2');
 INSERT INTO repository_metrics VALUES('https://github.com/compomics/peptide-shaker',57,21,48,505,1,18,'2026-09-28T21:18:13Z','2026-10-26T11:37:56',NULL);
@@ -41795,7 +41795,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/WanyuGroup/ICML2026_Ph
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/borgonovo',3,1,0,0,0,0,'2026-08-13T12:53:35Z','2026-10-24T09:52:42','panel30-configs-frozen');
 INSERT INTO repository_metrics VALUES('https://github.com/Multiomics-Analytics-Group/InstaNexus',1,3,9,21,4,51,'2026-11-16T14:01:22Z','2026-11-16T14:04:36','v0.3.1');
 INSERT INTO repository_metrics VALUES('https://github.com/fennomix/fennomix.novo',4,0,0,3,0,24,'2026-08-25T06:32:35Z','2026-09-18T10:07:12',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',14,3,3,1,7,19,'2026-11-18T12:58:31Z','2026-11-18T14:39:18','v0.1.0');
+INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/InstaNovo-FM',14,3,3,1,8,19,'2026-11-19T07:00:46Z','2026-11-19T14:45:24','v0.1.0');
 INSERT INTO repository_metrics VALUES('https://github.com/cguetot/cms',0,0,0,0,0,0,'2025-03-27T16:18:12Z','2026-09-22T15:22:30',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/snijderlab/stitch',33,3,22,238,0,2,'2024-10-15T11:26:17Z','2026-11-18T14:39:18','v1.5.0');
 INSERT INTO repository_metrics VALUES('https://github.com/BEAM-Labs/denovo/tree/main/OmniNovo',32,3,1,7,0,1,'2026-09-20T04:34:25Z','2026-10-05T12:46:50',NULL);
@@ -41819,7 +41819,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/yc386/orthrus_metaprot
 INSERT INTO repository_metrics VALUES('https://github.com/AIMS-Lab-HKUSTGZ/MemNovo',1,0,0,2,0,0,'2026-08-05T11:38:51Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/SamvPy/DeNovo_Benchmark',6,1,6,0,1,0,'2026-09-10T20:02:19Z','2026-11-16T14:04:36',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Noble-Lab/CasanovoGUI',10,2,0,1,0,2,'2026-10-20T17:28:48Z','2026-11-15T13:00:17','v1.4.0');
-INSERT INTO repository_metrics VALUES('https://github.com/bittremieux-lab/denovo_benchmarks',24,13,NULL,NULL,NULL,NULL,'2026-11-17T14:10:49Z','2026-11-18T14:39:18',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/bittremieux-lab/denovo_benchmarks',24,13,NULL,NULL,NULL,NULL,'2026-11-18T15:52:10Z','2026-11-19T14:45:24',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/tschager/denovort',1,0,0,0,0,0,'2017-11-06T14:20:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/instadeepai/database_search_scaling',2,0,0,0,0,0,'2026-06-23T09:40:03Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/zqq66/DeepGlycan',2,1,0,0,0,0,'2026-07-14T02:05:33Z','2026-10-22T10:43:15','publication');
@@ -41844,6 +41844,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-
 INSERT INTO repository_metrics VALUES('https://github.com/sadatebrahimi/DiffNovo-DIA',0,0,0,0,0,0,'2025-09-20T20:47:00Z','2026-10-26T11:37:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/gagneurlab/PepPr',0,0,0,0,0,14,'2026-09-24T07:58:43Z','2026-10-29T11:50:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/volpato30/NovoCRF-release',0,0,0,0,0,0,'2026-11-17T15:59:07Z','2026-11-18T14:39:18',NULL);
+INSERT INTO repository_metrics VALUES('https://github.com/grandOrgan/Seminovo',2,0,0,0,0,0,'2026-07-27T08:59:16Z','2026-11-19T14:45:24',NULL);
 CREATE TABLE checkpoint (
     id           INTEGER PRIMARY KEY,
     algorithm_id INTEGER NOT NULL REFERENCES algorithm(id),
