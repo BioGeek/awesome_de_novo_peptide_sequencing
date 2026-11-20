@@ -578,6 +578,38 @@ force strengths. `wall_probe.js` (in the scratchpad, not the repo) counts nodes
 within 4 px of the frame and reports the position spread, which is the number to
 tune against -- the label-overlap audit passes happily on a ring.
 
+**A fixed frame breaks again as the catalog grows.** By 2026-11-20 the bipartite
+held 552 nodes, 378 of them model diamonds, in the 1000 px frame tuned for 360:
+42 nodes pinned to the frame, on all four sides, and 61 of 378 model names
+visible. Three changes, in this order of effect:
+
+- **A Models switch, defaulting to sequencing methods** (algorithms and
+  post-processors). Only 157 of the 378 diamonds were methods; the rest were
+  application workflows (111), adjacent tools (64), reviews (32), benchmarks
+  (10) and catalogs (4), nearly all with one or two author links, and they
+  brought the legend to 40 families, most of them kind-based pseudo-families.
+  The default view is 300 nodes; **Everything** restores the old picture.
+- **The frame height scales with the square root of the node count**
+  (`1200 * sqrt(n / 360)`, never below 800), so area per node holds. The
+  dataset network does the same. The layout is also centred on the plot band,
+  `(TITLE_PX + PLOT_H) / 2`, not `PLOT_H / 2`, which had lined nodes up under
+  the title.
+- **Retuned forces, against labels as well as the frame.** Family targets at
+  0.40 x 0.28 of the frame instead of 0.50 x 0.30 (at 0.50 the outermost
+  target sat on the edge), charge -260 / -100 capped at 220 px, diamonds
+  `7 + 11 * sqrt` instead of `9 + 14 * sqrt`. The setting that cleared the
+  frame best hid a third of the model names, so both numbers were measured.
+
+Measured after, default view: 3 of 300 nodes pinned, 81 of 157 model names and
+95 of 143 author names shown. Every slider setting pins at most 4 nodes, except
+3 papers per author with Everything (958 nodes), which pins 19.
+
+The tuning loop was a Node script, not the browser. d3-force is deterministic
+(fixed initial positions, seeded jiggle), so replaying a cell's forces, clamp
+and label pass on the page's `data/*.json` reproduces the browser's layout to
+within a node or two, in about a second per setting against a minute for a
+render and a headless-Chrome probe.
+
 ### Plot tooltips truncate the value, not the label
 
 `Plot`'s `tip` renders each line as "label value" and truncates it at

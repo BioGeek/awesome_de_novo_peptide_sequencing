@@ -7074,7 +7074,7 @@ network_chart = lazy_chart("network_chart", () => {
 
 ### Models and the authors behind them
 
-This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. **Max authors/paper** drops consortium papers, each of which would otherwise link all of its authors to one model. There is no min strength here: that measures ties between co-authors, and this chart has none. Algorithm nodes are diamonds colored by their architecture family, so you can see which architecture families each group of authors has published in.
+This second view rewires the same network as a **bipartite** graph: every prolific author (≥ ${bip_min_papers} papers, set by the slider) is linked to the **models** they helped publish. **Models** starts on the sequencing methods themselves, algorithms and post-processors; **Everything** adds the application workflows, adjacent tools, reviews and benchmarks those authors also published, which more than doubles the diamonds. **Max authors/paper** drops consortium papers, each of which would otherwise link all of its authors to one model. There is no min strength here: that measures ties between co-authors, and this chart has none. Algorithm nodes are diamonds colored by their architecture family, so you can see which architecture families each group of authors has published in.
 
 ```{ojs}
 //| echo: false
@@ -7082,6 +7082,20 @@ This second view rewires the same network as a **bipartite** graph: every prolif
 // charts are a section apart, so one shared control would be off screen.
 viewof bip_min_papers = Inputs.range([3, 15], {
   value: 5, step: 1, label: "Min papers per author"
+})
+```
+
+```{ojs}
+//| echo: false
+// Sequencing methods by default. At 5 papers per author the chart drew 378
+// model diamonds, and only 157 were algorithms or post-processors: the rest
+// were 111 application workflows, 64 adjacent tools, 32 reviews, 10
+// benchmarks and 4 catalogs, nearly all with one or two author links. They
+// filled the frame, pinned rows of nodes to its top and bottom edges and
+// pushed the legend to 40 families, most of them kind-based pseudo-families.
+// "Everything" keeps the full picture one click away.
+viewof bip_scope = Inputs.radio(["Sequencing methods", "Everything"], {
+  value: "Sequencing methods", label: "Models"
 })
 ```
 
@@ -7110,12 +7124,16 @@ author_algo_network = lazy_chart("author_algo_network", () => {
   // the density alone pushed 19 nodes onto the top and bottom edges however the
   // forces were tuned; at 820, once the link forces were strong enough to pull
   // groups into knots, 29 were pinned there. 1400 x 1000 gives each node about
-  // 3900 px2 and the knots somewhere to be.
-  const PLOT_H = 1000
+  // 3900 px2 and the knots somewhere to be. PLOT_H is set below, from the node
+  // count, so that area per node holds when the graph grows.
   const legend_cols_per_row = 5
   const legend_col_w = 260
   const legend_row_h = 22
   const LEGEND_TITLE_PX = 22
+  // The plot band runs from under the title to PLOT_H, so its middle is
+  // MID_Y, not PLOT_H / 2. Centring on PLOT_H / 2 put every target 17 px too
+  // high and the clamp lined 16 nodes up under the title.
+  const TITLE_PX = 34
 
   // Same prolific-author filter as the co-auth network (authors with ≥ 3 papers).
   // Filter-independent: the co-auth network above has reactive strength/size
@@ -7132,11 +7150,15 @@ author_algo_network = lazy_chart("author_algo_network", () => {
   // model", so a paper that merely ran PEAKS must not make its authors PEAKS
   // authors. That edge set is what the algorithm pages show as a method's
   // authors, and it took PEAKS from 107 of them to 6.
+  const METHOD_KINDS = new Set(["algorithm", "post-processor"])
+  const kind_of_model = new Map(algorithms_t.map(a => [a.model, a.kind]))
+  const in_scope = m => bip_scope === "Everything" || METHOD_KINDS.has(kind_of_model.get(m))
   for (const p of pubs_t) {
     if (!p.authors || !p.models_described) continue
     const authors = String(p.authors).split(",").map(s => s.trim()).filter(Boolean)
     if (authors.length > bip_max_authors) continue
     const models  = String(p.models_described).split(",").map(s => s.trim()).filter(Boolean)
+      .filter(in_scope)
     for (const a of authors) {
       if (!prolific.has(a)) continue
       for (const m of models) {
@@ -7183,6 +7205,13 @@ author_algo_network = lazy_chart("author_algo_network", () => {
       return { id: name, kind: "algo", family: resolveFamily(meta), degree: 0 }
     })
   ]
+  // The height GROWS WITH THE GRAPH, as the square root of the node count,
+  // so area per node holds as authors and models are added: 1100 px for the
+  // 300 nodes of the default view, never below 800. A fixed 1000 held the
+  // 360-node graph it was tuned on and then pinned 28 nodes to the top edge
+  // once "Everything" reached 552.
+  const PLOT_H = Math.max(800, Math.round(1200 * Math.sqrt(nodes.length / 360) / 10) * 10)
+  const MID_Y = (TITLE_PX + PLOT_H) / 2
   const node_by_name = new Map(nodes.map(n => [n.id, n]))
   for (const l of links) {
     node_by_name.get(l.source).degree += l.weight
@@ -7202,7 +7231,9 @@ author_algo_network = lazy_chart("author_algo_network", () => {
   const max_auth_deg = d3.max(nodes.filter(n => n.kind === "author"), n => n.degree) || 1
   const nodeR = d => d.kind === "author"
     ? 5 + 8 * Math.sqrt(d.degree / max_auth_deg)
-    : 9 + 14 * Math.sqrt(d.degree / max_algo_deg)
+    // 7 + 11, down from 9 + 14: a diamond is only a marker, and every pixel
+    // of it is a pixel no label can use. Measured, it shows more names.
+    : 7 + 11 * Math.sqrt(d.degree / max_algo_deg)
 
   // Pull algorithm nodes toward a central ring so they cluster by family.
   // families_seen is only the families that ACTUALLY have a diamond on the
@@ -7218,15 +7249,19 @@ author_algo_network = lazy_chart("author_algo_network", () => {
   const height = PLOT_H + LEGEND_H
   // Family targets on a phyllotaxis disc, for the reason spelled out on the
   // co-authorship chart above: on a ring they left the middle empty and, with
-  // unbounded repulsion, pushed the network onto the frame.
+  // unbounded repulsion, pushed the network onto the frame. The disc spans
+  // 0.40 of the width and 0.28 of the height either side of the middle, not
+  // 0.50 and 0.30: at 0.50 the outermost family's target sat ON the left or
+  // right edge, and its diamonds were clamped there. Tighter than 0.40 cleared
+  // the edges but packed the middle and hid a third of the model names.
   const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
   const family_target = new Map()
   families_seen.forEach((f, i) => {
     const r = Math.sqrt((i + 0.5) / families_seen.length)
     const a = i * GOLDEN_ANGLE
     family_target.set(f, [
-      width / 2 + Math.cos(a) * r * width * 0.50,
-      PLOT_H / 2 + Math.sin(a) * r * PLOT_H * 0.30
+      width / 2 + Math.cos(a) * r * width * 0.40,
+      MID_Y + Math.sin(a) * r * PLOT_H * 0.28
     ])
   })
 
@@ -7252,7 +7287,7 @@ author_algo_network = lazy_chart("author_algo_network", () => {
       if (!t) continue
       sx += t[0] * w; sy += t[1] * w; sw += w
     }
-    author_target.set(n.id, sw ? [sx / sw, sy / sw] : [width / 2, PLOT_H / 2])
+    author_target.set(n.id, sw ? [sx / sw, sy / sw] : [width / 2, MID_Y])
   }
   const target_of = d => d.kind === "algo"
     ? family_target.get(d.family) : author_target.get(d.id)
@@ -7271,10 +7306,19 @@ author_algo_network = lazy_chart("author_algo_network", () => {
     // up within 4 px of an edge, lining the top and bottom. 260 px rather than
     // that fix's 200: with per-node targets holding the layout together,
     // neighbouring clusters need enough range to push each other apart.
+    //
+    // -260 and -100 capped at 220 px, down from -300, -110 and 300. Measured
+    // on 2026-11-20 by replaying this cell's forces and its label placement
+    // in Node (d3-force is deterministic). The old values left 42 of the
+    // default view's 300 nodes clamped to the frame, on all four sides. These
+    // leave 3 and show 82 model and 96 author names; the slider settings
+    // leave at most 4, except 3 papers per author with Everything (958
+    // nodes in a 1400 px width), which leaves 19. Tuned against BOTH numbers:
+    // the setting that cleared the frame best hid a third of the model names.
     .force("charge", d3.forceManyBody()
-      .strength(d => d.kind === "algo" ? -300 : -110).distanceMax(300))
+      .strength(d => d.kind === "algo" ? -260 : -100).distanceMax(220))
     .force("collide", d3.forceCollide().radius(d => nodeR(d) + 5))
-    .force("center", d3.forceCenter(width / 2, PLOT_H / 2))
+    .force("center", d3.forceCenter(width / 2, MID_Y))
     // The family target is now a NUDGE, not the layout: it decides roughly
     // where a group lands so the picture is stable between renders, and the
     // links decide the shape. Pulled hard (0.14) it fought the link forces and
@@ -7438,7 +7482,6 @@ author_algo_network = lazy_chart("author_algo_network", () => {
   }
 
   // Same containment as the co-authorship chart above; see the note there.
-  const TITLE_PX = 34
   let tick_n = 0
   sim.on("tick", () => {
     for (const d of nodes) {
