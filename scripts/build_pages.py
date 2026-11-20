@@ -1541,6 +1541,11 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                            ("validation", "n_validation"), ("test", "n_test")):
             if v[key]:
                 facts.append(f"{label} {v[key]:,}")
+                # Every count the 2026-11-20 sweep added carries the page it
+                # was read from; the older hand-entered ones are sourced in
+                # the version's description instead.
+                if key == "n_spectra" and v["n_spectra_source"]:
+                    facts[-1] += f" ([source]({v['n_spectra_source']}))"
         if v["released"]:
             facts.append(f"released {str(v['released'])[:10]}")
         if v["introduced_by"]:
@@ -2235,8 +2240,8 @@ def load(conn: sqlite3.Connection) -> dict:
     d["datasets"] = q("SELECT id, name, short_description, kind, acquisition_mode, "
                       "       organisms, homepage FROM dataset ORDER BY name")
     d["ds_versions"] = defaultdict(list)
-    for r in q("SELECT dataset_id, id, version, description, n_spectra, n_train, "
-               "       n_validation, n_test, released, introduced_by "
+    for r in q("SELECT dataset_id, id, version, description, n_spectra, n_spectra_source, "
+               "       n_train, n_validation, n_test, released, introduced_by "
                "  FROM dataset_version ORDER BY dataset_id, id"):
         d["ds_versions"][r["dataset_id"]].append(r)
     d["ds_addrs"] = defaultdict(list)          # version id -> addresses

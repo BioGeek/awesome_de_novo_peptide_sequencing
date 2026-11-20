@@ -426,6 +426,59 @@ uses across 34 distinct papers. The axis said "Papers naming this dataset" and
 the table beside it said 34, and the two disagreeing was a labelling bug, caught
 by reading both at once.
 
+### Spectrum counts, and where each one comes from
+
+`dataset_version.n_spectra` is the table's **Spectra** column: the MS/MS spectra
+in that version. For a benchmark or training set that means its labelled
+spectra (the PSMs that made it into the set, as nine-species counts them); for
+a repository deposit, the MS/MS spectra acquired in the deposited runs. An
+identified-spectrum, PSM, peptide or precursor count is NOT a spectrum count
+and never goes in this column.
+
+**Every count carries its source.** `n_spectra_source` is the URL it was read
+from (a DOI, a repository project page, a dataset card) and `n_spectra_note`
+says where in it, quotes the sentence or table cell, and says what was summed
+or counted. The dataset page shows the source as a link beside the count. The
+older hand-entered counts predate the two columns and are sourced in the
+version's `description`.
+
+On 2026-11-20 only 10 of 514 datasets had a count. A sweep of seven agents
+went through the 527 versions without one (54 benchmark and training versions,
+86 deposits outside PRIDE, 387 PRIDE deposits) under one brief: a number with no
+locator is worthless, never estimate, and report other units as what they are.
+They proposed a count for 187 versions and another unit for 50; 290 had
+nothing. **85 were written**, the ones resting on solid evidence:
+
+- stated in a paper (51), including sums of per-run or per-split figures the
+  paper prints in full;
+- the `MS/MS` column of a MaxQuant `summary.txt` or the scan total of a pFind
+  `.summary` the depositors uploaded, matched to the deposited raw files by name
+  (26). The agents read only that member of each zip, by HTTP range request;
+- exact row counts of a Hugging Face dataset or parquet release (5);
+- three more stated plainly enough to be marked high confidence.
+
+**What was held back, and why**, kept with the agents' full output beside the
+PDF library in `spectra-sweep-2026-11-20/` (`held_back.csv`, never in the repo):
+
+- **MassIVE's own "Spectra" figure** (50 deposits, including PRIDE deposits
+  MassIVE mirrors, found via `QueryPXD?id=PXD...`). MassIVE does not say what it
+  counts: one cross-check matched, one read 15% high, and on MSV000082287
+  π-PrimeNovo reports more PSMs than MassIVE reports spectra.
+- **Counts the agents made from deposited peak lists** (15). Some deposits hold
+  filtered exports, not every scan: PXD005043's MGF covers queries 7491-8953 of
+  a run whose scans go to 17,720.
+- low-confidence rows, subsets of a deposit (a version is the whole deposit
+  unless it says otherwise), and every other unit.
+
+What the sweep learned about the sources: PRIDE's project API has no spectrum
+count, and papers almost never print a deposit's total, so for PRIDE the counts
+came from the depositors' own search outputs or from later papers that reused
+the data. Europe PMC's full-text API timed out repeatedly; NCBI's ID converter
+plus `efetch db=pmc` worked for most open-access papers. A deposit missing from
+PRIDE's API may still be in ProteomeCentral's PROXI API
+(`proteomecentral.proteomexchange.org/api/proxi/v0.1/datasets/PXD...`), which
+says where it is really hosted (MassIVE, iProX, jPOST, Panorama Public).
+
 ### build_dataset_accessions.py
 
 Mines the LOCAL PDF library for accessions and links them. It **never** creates
