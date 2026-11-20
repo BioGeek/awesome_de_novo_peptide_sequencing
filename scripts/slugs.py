@@ -186,7 +186,8 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              'yi-liu-western-ontario': 'yi-liu',
              'yuanliang-zhang-hong-kong-polytechnic-university': 'yuanliang-zhang',
              'zomaya-albert-y': 'albert-y-zomaya'},
- 'datasets': {'instadeepai-ms-proteometools': 'proteometools',
+ 'datasets': {'ipx0001804000': 'integrative-proteomic-characterization-of-human-lung-adenocarcinoma',
+              'instadeepai-ms-proteometools': 'proteometools',
               # 2026-11-16, flagged by Search Console. A DOI duplicate folded
               # into its twin on 2026-10-03, and five of the eight software or
               # model-weight records removed that day, each sent to the page

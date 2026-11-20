@@ -38008,7 +38008,7 @@ INSERT INTO dataset VALUES(39,'Benchmarking DIA data analysis workflows','UPS2 p
 INSERT INTO dataset VALUES(40,'IPRG2015','iPRG2015: Saccharomyces cerevisiae spiked at differing concentrations.','benchmark','DDA',NULL,NULL);
 INSERT INTO dataset VALUES(41,'De novo peptide sequencing tools benchmark','The benchmark''s own ProteomeXchange deposit, which is where its public evaluation data lives as one citable object.','benchmark','DDA',NULL,NULL);
 INSERT INTO dataset VALUES(42,'Living-proteomics benchmark private holdouts','Evaluation data held back so that no published model can have trained on it. Results are reported against these, and none of them can be downloaded, so the numbers are not independently reproducible. Recorded for exactly that reason.','benchmark',NULL,'various',NULL);
-INSERT INTO dataset VALUES(43,'IPX0001804000','IPX0001804000','deposit',NULL,NULL,NULL);
+INSERT INTO dataset VALUES(43,'Integrative proteomic characterization of human lung adenocarcinoma','Proteomes and phosphoproteomes of 103 lung adenocarcinoma tumours and their paired non-cancerous adjacent tissues (Xu et al., Cell 2020), deposited at iProX. Named after the study, because iProX returns no title; pi-PrimeNovo calls it 2020-Cell-LUAD and fine-tuned its phosphorylation model on part of the phospho-enriched data.','deposit',NULL,'Homo sapiens',NULL);
 INSERT INTO dataset VALUES(44,'Proteomics identifies new therapeutic targets of early-stage hepatocellular carcinoma','Tumour and non-tumour liver proteomes from early-stage hepatocellular carcinoma patients (Jiang et al., Nature 2019), deposited at iProX. Named after the study, because iProX returns no title; pi-PrimeNovo evaluates on it as HCC.','deposit',NULL,'Homo sapiens',NULL);
 INSERT INTO dataset VALUES(45,'Bottom-up data - sequencing','Bottom-up data - sequencing','deposit',NULL,NULL,NULL);
 INSERT INTO dataset VALUES(47,'Generalizable direct protein sequencing with InstaNexus','Generalizable direct protein sequencing with InstaNexus','deposit',NULL,NULL,NULL);
@@ -48923,9 +48923,10 @@ INSERT INTO checkpoint_dataset VALUES(14,3,9,'trained_on: ''~2M PSMs from MassIV
 INSERT INTO checkpoint_dataset VALUES(5,1,NULL,'the Zenodo record is titled ''Casanovo model weights on nine-species benchmark''; it does not say WHICH version of the benchmark, so none is asserted');
 INSERT INTO checkpoint_dataset VALUES(2,1,NULL,'the Zenodo record is titled ''PhysNovo Model Weights Trained on the Nine-Species Benchmark Dataset''; it does not say which version');
 INSERT INTO checkpoint_dataset VALUES(18,3,NULL,'trained_on: ''MassIVE-KB'', with no version given');
-INSERT INTO checkpoint_dataset VALUES(19,3,NULL,'INHERITED, not direct: fine-tuned from model_massive.ckpt, which was trained on MassIVE-KB. Its own fine-tuning set, 2020-Cell-LUAD, is not in this catalog');
+INSERT INTO checkpoint_dataset VALUES(19,3,NULL,'INHERITED, not direct: fine-tuned from model_massive.ckpt, which was trained on MassIVE-KB. Its own fine-tuning set is linked directly');
 INSERT INTO checkpoint_dataset VALUES(20,3,NULL,'the FILENAME, model_massivekb.ckpt; BEAM-Labs/denovo states no training set for it');
 INSERT INTO checkpoint_dataset VALUES(11,3,8,'trained_on: ''MassIVE-KB v1'', from ProteoBench discussion 356');
+INSERT INTO checkpoint_dataset VALUES(19,43,66,'the pi-PrimeNovo-PTM README: "finetuning it on the 2020-Cell-LUAD dataset"; the pi-PrimeNovo paper identifies that dataset as Xu et al., Cell 2020, downloaded from iProX IPX0001804000, and fine-tuned on all of its phospho-enriched PSMs except 3,389 held out for testing');
 CREATE TABLE publication_supplement (
     id             INTEGER PRIMARY KEY,
     publication_id INTEGER NOT NULL REFERENCES publication(id),

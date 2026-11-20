@@ -216,14 +216,20 @@ v2.0.15`, `the default --model orbitrap selector from v5.2.0 onward` and
 would link a selector flag to nothing and miss the checkpoints whose only
 evidence is a FILENAME.
 
-8 links over 2 datasets, and the evidence differs per row, which is the reason
+9 links over 3 datasets, and the evidence differs per row, which is the reason
 the column exists: a paper's own words for Casanovo 4.0.0 and 4.2.0, a Zenodo
 record title for the two nine-species ones, the filename `model_massivekb.ckpt`
-for RefineNovo-30M, and for π-PrimeNovo's phosphorylation model an **inherited**
-link, since it was fine-tuned from `model_massive.ckpt` and its own fine-tuning
-set, 2020-Cell-LUAD, is not in this catalog.
+for RefineNovo-30M, and for π-PrimeNovo's phosphorylation model two: an
+**inherited** link to MassIVE-KB, since it was fine-tuned from
+`model_massive.ckpt`, and a direct one to its fine-tuning set, 2020-Cell-LUAD.
+That set was in the catalog all along as dataset 43, named only by its iProX
+accession `IPX0001804000`, because iProX returns no title, so nothing matched
+"2020-Cell-LUAD" to it. The π-PrimeNovo paper's data-availability section
+names the accession and its reference names the study (Xu et al., Cell 2020,
+not the CPTAC lung adenocarcinoma cohort of the same year), and the dataset now
+carries the study's title, as the hepatocellular carcinoma set beside it does.
 
-**Six of the eight assert no VERSION**, because the sources name the dataset and
+**Five of the nine assert no VERSION**, because the sources name the dataset and
 not which of its versions, which is the same ambiguity the version list on the
 page exists to expose. The page prints *not stated* rather than picking one.
 
