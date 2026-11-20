@@ -458,4 +458,4 @@ uv run quarto render         # one-shot build into _site/
 
 ### Updating data → updating the site
 
-Edit `denovo.db` directly (sqlite3 CLI / DB Browser / any SQLite tool) → `sqlite3 denovo.db .dump > denovo.sql` → commit both `denovo.db` and `denovo.sql` → push to `main`. The Action rebuilds and republishes within ~2-3 minutes. **No manual `plt.savefig` step anymore.**
+Edit `denovo.db` directly (sqlite3 CLI / DB Browser / any SQLite tool) → `sqlite3 denovo.db .dump > denovo.sql` → commit both `denovo.db` and `denovo.sql` → push to `main`. The Action renders only the pages the change touches and republishes, usually within 10 to 20 minutes for a data change, about an hour when more than 60 pages change and everything is re-rendered, and about 2 minutes for a change to `index.qmd` alone. **No manual `plt.savefig` step anymore.**
