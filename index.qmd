@@ -9353,7 +9353,7 @@ The site is generated from `denovo.db` (SQLite, the source of truth). If you're 
    ```bash
    sqlite3 denovo.db .dump > denovo.sql
    ```
-3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge; typically live within ~3 minutes.
+3. Open a PR with both `denovo.db` and `denovo.sql`. The GitHub Action rebuilds the site and publishes to `gh-pages` on merge. It renders only the pages your change touches, so it is usually live within 10 to 20 minutes, or about an hour if the change touches more than 60 pages.
 
 ## Cite this catalog {#cite}
 

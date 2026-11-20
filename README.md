@@ -54,7 +54,7 @@ sqlite3 denovo.db .dump > denovo.sql
 git add denovo.db denovo.sql
 ```
 
-Open a PR with both files. The GitHub Action rebuilds the site and pushes to `gh-pages` on merge; typically live within ~10-15 minutes, most of it spent generating and rendering the per-entity detail pages.
+Open a PR with both files. The GitHub Action rebuilds the site and pushes to `gh-pages` on merge. It renders only the pages the change touches, so it is usually live within 10 to 20 minutes, or about an hour if the change touches more than 60 pages and every page is re-rendered.
 
 **One-time setup per clone**: run `git config core.hooksPath .githooks` to activate the tracked pre-commit hook. Whenever you stage `denovo.db` it regenerates `denovo.sql`, so the two cannot drift apart in a commit, and it refreshes the row counts quoted in the documentation.
 
