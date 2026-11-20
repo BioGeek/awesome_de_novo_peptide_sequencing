@@ -361,32 +361,45 @@ page grew to 39.
 
 ### The dataset network and the dataset table
 
-**The network holds a dataset once two or more papers link to it**: 83 datasets,
-93 papers, 279 links, 176 nodes. A deposit cited only by the study that made it
-says nothing about reuse, and several hundred are in that state. Edges are
-UNWEIGHTED, because a paper either used a dataset or did not and there is no
-spectrum count to scale by, so "weighted by reuse" is carried by node radius.
+**The network holds a dataset once two or more papers link to it**: 159
+datasets, 205 papers, 706 links, 364 nodes (it was 83, 93, 279 and 176 when the
+chart was added). A deposit cited only by the study that made it says nothing
+about reuse, and several hundred are in that state. Edges are UNWEIGHTED,
+because a paper either used a dataset or did not and there is no spectrum count
+to scale by, so "weighted by reuse" is carried by node radius.
 
-Three force settings were measured rather than guessed, and the number to tune
-against is **node spread**, not the label audit, which passes happily on a
-compact knot:
+**The graph doubled under a fixed frame, and nothing said so.** The trains-on
+and evaluates-on links of 2026-10-29 took it from 176 nodes to 364. The chart
+was still drawn in the 1250 x 800 frame tuned for 176, so the clamp in the tick
+handler flattened 31 nodes against the top and bottom edges and the middle
+closed into one knot: the page looked collapsed. The label audit passed
+throughout, because a pinned node with its label hidden collides with nothing.
 
-- **1250 px wide, not the 1400 the other two force charts use.** At 1400 the
-  nodes filled 69% of the frame with nothing within 179 px of the right edge.
-  Narrowing the frame to the content beats pushing the content at the frame.
-- **Link distance 78 and charge -240**, up from 58 and -170. The layout
-  converged at the tighter values but did not fill: the deposit cluster holds
-  about 150 of the 176 nodes and a charge capped at 190 px cannot separate a
-  ball that dense.
+The settings are measured rather than guessed, and the number to tune against
+is **node spread**, not the label audit:
+
+- **The height grows with the graph**, as the square root of the node count,
+  anchored at 1250 px for 364 nodes and never below 800. Area per node then
+  stays roughly constant as links are added, instead of the next import
+  pinning nodes again. Width is 1400, like the other two force charts; the old
+  1250 was chosen when the 176-node graph filled only 69% of a 1400 frame.
+- **Link distance 90, charge -300, capped at 220 px**, up from 78, -240 and 210.
+  The taller frame alone cleared the border but left the median
+  nearest-neighbour gap at 29 px, against 37 px for the 176-node graph; these
+  bring it to 33.
 - **The cluster centroid is WEIGHTED by group size.** A phyllotaxis walk of
   three points is not symmetric about the origin, and subtracting a plain mean
-  moved the targets without moving the network, because 72 of 83 datasets are
+  moved the targets without moving the network, because most datasets are
   deposits and the centre of mass sits at that group's target. Weighting puts
   the heaviest group near the middle, which is what centring a lopsided graph
   means.
 
-Final measurement: 176 nodes, **0 within 4 px of the frame**, 75% of the width
-filled (against 76% and 79% for the other two), 101 labels shown, 0 overlaps.
+Final measurement (2026-11-20, 364 nodes): **0 within 4 px of the frame**,
+80% of the width and 91% of the height filled, median nearest-neighbour gap
+33 px, 0 label collisions. The tuning was done offline: d3-force is
+deterministic (fixed initial positions, seeded jiggle), so a Node script that
+replays the cell's forces and clamp gives the browser's layout exactly. Rerun
+that kind of check when the node count moves by much.
 
 It carries the same **fullscreen button and `.map-tooltip`** as the other force
 charts. The SVG `<title>` it shipped with was not good enough: the native
