@@ -102,6 +102,16 @@ Every generated page type but two carries a schema.org block from
 (schema.org has no Patent type), and the home page a `Dataset` for the
 catalog itself. Family and application-area pages have none.
 
+**A dataset page's `Dataset` block is held to Google's rules.** Its
+`description` must be 50 to 5000 characters or Search Console rejects it as a
+critical error, so a `short_description` under 50 (often just the accession)
+is padded with what the catalog knows: kind, acquisition, versions, papers
+(`dataset_description()`). `creator` is the authors of the paper that
+DEPOSITED the data, and is left out when no depositing paper is recorded.
+`license` is left out everywhere: the catalog does not record the terms a
+third-party deposit was released under, and the catalog's own CC BY 4.0 does
+not cover the spectra. Search Console reports both as non-critical.
+
 **A method page's `@type` follows what the catalog knows**, because the
 `algorithm` rows span software, reviews, benchmarks and written-up workflows
 and no one type is honest for all of them. A recorded repository makes it

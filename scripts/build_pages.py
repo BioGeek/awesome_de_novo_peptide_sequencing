@@ -1475,6 +1475,35 @@ def render_venue(site: Site, name: str, ctx: dict) -> tuple[str, float]:
     return "\n".join(L) + "\n", date_to_mtime(latest)
 
 
+DATASET_KIND_PHRASE = {"benchmark": "a benchmark", "deposit": "a data deposit",
+                       "training": "a training dataset"}
+
+
+def dataset_description(row: dict, n_versions: int, n_pubs: int) -> str:
+    """The dataset's description, padded with catalog facts when it is short.
+
+    Google rejects a schema.org Dataset whose description is under 50
+    characters, a critical error that drops the page from Dataset Search. 98
+    datasets had a short_description that was just their accession or a
+    four-word title ("PXD042704", "Bottom-up data - sequencing"), so those get
+    a sentence saying what the catalog knows about them.
+    """
+    sd = " ".join((row["short_description"] or "").split())
+    if len(sd) >= 50:
+        return sd
+    name = row["name"]
+    what = DATASET_KIND_PHRASE.get(row["kind"], f"a {row['kind']}")
+    if row["acquisition_mode"]:
+        what += f" of {row['acquisition_mode']} data"
+    counts = f"{n_versions} version{'s' if n_versions != 1 else ''}"
+    if n_pubs:
+        counts += f" and {n_pubs} paper{'s' if n_pubs != 1 else ''} using it"
+    fact = f"{name} is {what} in the de novo peptide sequencing catalog, with {counts}."
+    if sd and sd.casefold() != name.casefold():
+        return f"{sd.rstrip('.')}. {fact}"
+    return fact
+
+
 def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     """One dataset: its versions, where each version lives, and who used it.
 
@@ -1497,7 +1526,7 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     bits.append(f"{len(ctx['versions'])} version{'s' if len(ctx['versions']) != 1 else ''}")
     if n_pubs:
         bits.append(f"{n_pubs} paper{'s' if n_pubs != 1 else ''}")
-    desc = row["short_description"] or f"{row['name']}, a {row['kind']} in the de novo peptide sequencing catalog."
+    desc = dataset_description(row, len(ctx["versions"]), n_pubs)
     L += front_matter(row["name"], " · ".join(bits), clip(desc, 250))
     for slug, a in ANALYSES.items():
         if a["dataset"] == row["name"]:
@@ -1514,6 +1543,27 @@ def render_dataset(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
     accs = [a["accession"] for v in ctx["versions"] for a in ctx["addrs"].get(v["id"], [])]
     if accs:
         ld["identifier"] = accs[:10]
+    # creator: the authors of the paper(s) that DEPOSITED the data, never the
+    # papers that only ran on it. A deposit with no recorded depositing paper
+    # gets no creator: Google lists that as a non-critical gap, and naming the
+    # wrong people is worse. license is left out for the same reason: the
+    # catalog does not record the terms a third-party deposit was released
+    # under, and the catalog's own CC BY 4.0 does not cover the spectra.
+    creators, seen = [], set()
+    for r in ctx["pubs"]:
+        if r["role"] != "introduces":
+            continue
+        for aid, name in ctx["pub_authors"].get(r["pub_id"], []):
+            if aid in seen:
+                continue
+            seen.add(aid)
+            person = {"@type": "Person", "name": name}
+            slug = site.slugs["authors"].get(aid)
+            if slug:
+                person["url"] = f"{SITE_URL}pages/authors/{slug}.html"
+            creators.append(person)
+    if creators:
+        ld["creator"] = creators
     L += json_ld(ld)
 
     L.append("| | |")
@@ -2980,6 +3030,7 @@ def main() -> int:
                 "methods": d["ds_methods"].get(did, []),
                 "checkpoints": d["ds_checkpoints"].get(did, []),
                 "pub_titles": pub_titles,
+                "pub_authors": d["pub_authors"],
                 "bench_list": d["bench_datasets"] if did == d["bench_ds_id"] else [],
             }
             body, mtime = render_dataset(site, row, ctx)
