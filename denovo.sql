@@ -53,7 +53,7 @@ INSERT INTO author VALUES(45,'Yanchang Li',NULL,NULL,NULL,NULL,'0000-0002-4177-3
 INSERT INTO author VALUES(46,'Lijin Yao',NULL,NULL,NULL,NULL,NULL,'A5112921142');
 INSERT INTO author VALUES(47,'Xinming Li',NULL,NULL,NULL,NULL,'0000-0003-3117-9421','A5100688678');
 INSERT INTO author VALUES(48,'Jinghan Yang',NULL,NULL,NULL,NULL,'0000-0003-4203-4367','A5059372161');
-INSERT INTO author VALUES(49,'Haipeng Wang','hpwang@sdut.edu.cn',NULL,NULL,NULL,'0000-0002-2366-7946',NULL);
+INSERT INTO author VALUES(49,'Haipeng Wang','hpwang@sdut.edu.cn',NULL,NULL,NULL,'0000-0002-2366-7946','A5128213023');
 INSERT INTO author VALUES(50,'Ping Xu','xuping_bprc@126.com',NULL,NULL,NULL,'0000-0002-0628-6981','A5089378821');
 INSERT INTO author VALUES(51,'Yan Fu','yfu@amss.ac.cn',NULL,NULL,NULL,'0000-0001-6896-5931','A5110082043');
 INSERT INTO author VALUES(52,'Yuqi Chang',NULL,NULL,NULL,NULL,'0000-0001-7487-370X','A5077722217');
@@ -3844,6 +3844,9 @@ INSERT INTO author VALUES(3957,'Yifan Li',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3958,'Hai-tao Yu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3959,'Yunhua Zhong',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3960,'Zikun Wang',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3961,'Xinglong Zhu',NULL,NULL,NULL,NULL,'0009-0004-5570-5486','A5073964714');
+INSERT INTO author VALUES(3962,'Zejiang Chen',NULL,NULL,NULL,NULL,NULL,'A5162608399');
+INSERT INTO author VALUES(3963,'Zihao Huang',NULL,NULL,NULL,NULL,NULL,'A5136514473');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -11360,6 +11363,9 @@ INSERT INTO author_affiliation VALUES(3958,1444);
 INSERT INTO author_affiliation VALUES(3959,1446);
 INSERT INTO author_affiliation VALUES(3960,1444);
 INSERT INTO author_affiliation VALUES(57,1444);
+INSERT INTO author_affiliation VALUES(3961,16);
+INSERT INTO author_affiliation VALUES(3962,16);
+INSERT INTO author_affiliation VALUES(3963,16);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12193,6 +12199,7 @@ INSERT INTO algorithm VALUES(828,'Conus monile acyclic peptide Mo1659',NULL,NULL
 INSERT INTO algorithm VALUES(829,'Conus araneosus chi-conotoxin Ar1312',NULL,NULL,NULL,'De novo sequences Ar1312, a two-disulfide conotoxin from Conus araneosus venom, by MALDI MS/MS, and resolves between two candidate sequences by comparing the natural and synthetic peptides'' fragmentation, placing it in the chi-conotoxin class.','downstream-application',0,'DDA',NULL,'venomics');
 INSERT INTO algorithm VALUES(830,'Casanovo-TMT',NULL,NULL,'Transformer (AR)','Casanovo fine-tuned with TMTpro tags and phosphorylation in its residue vocabulary on 21 million mostly TMTpro-labeled spectra, with beam candidates re-ranked by agreement with the precursor mass.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(831,'SemiNovo',NULL,NULL,'Transformer (AR)','Semi-supervised training on identified and 4.5 million unlabeled spectra (DarkSpec), pseudo-labelled by stepwise mass-constrained autoregressive decoding with cumulative path confidence, plus head-wise chemical-evidence gating of spectral attention.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(832,'EncNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive sequencer built on a BERT-style encoder-only Transformer: precursor attributes, spectral peaks and the sequence-prediction tokens are encoded together in one encoder, with residual attention and a peak mass-difference bias added to self-attention.','algorithm',1,'DDA',NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13207,6 +13214,7 @@ INSERT INTO publication VALUES(1001,'A novel 13 residue acyclic peptide from the
 INSERT INTO publication VALUES(1002,'‘De novo’ sequencing by mass spectrometry and confirmation by chemical synthesis','2006-09-01',NULL,'Indian Society for Mass Spectrometry','‘De novo’ peptide sequencing of natural peptides using mass spectrometry is becoming increasingly accessible. The peptide sequence is deduced from the mass spectrum through an iterative process by recognizing fragment ions corresponding to the b and y-series. The mass difference between the adjacent ions in each series gives the cleavage mass of the amino acid residue that is lost, leading to the sequence of peptide. Ambiguity in sequencing arise from the presence of isobaric residue masses (leucine, isoleucine, hydroxyproline, lysine and glutamine) and also from presence of residue pairs which differ in mass by 1Da sometimes leading to sequencing errors when data is collected on instruments with limited mass resolution. The confirmation of the sequence derived from mass spectrum is best achieved by chemical synthesis and comparison of fragmentation patterns of the natural and synthetic peptides. This approach is illustrated in the determination of the sequence of a new class of conotoxins isolated from the venom of Conus araneosus. Conotoxins are particularly attractive targets for ‘de novo’ mass spectral sequencing because of the high degree of posttranslational modifications in these peptides. In this study, a two-disulfide bond containing conotoxin has been sequenced by mass spectrometry. A distinction between two possible sequences of the peptide Ar1312 has been achieved by comparing the MS/MS pattern for the natural and synthetic sequences. Confirmation of the derived sequence RCCGYKMCHOC and disulfide bond pattern suggest that Ar1312 is a χ-conotoxin, a class known to inhibit the norepinephrine transporter (NET).','https://www.researchgate.net/publication/200723922','Proceedings of the 10th ISMAS Symposium','peer-reviewed','','pdf');
 INSERT INTO publication VALUES(1003,'Casanovo-TMT: deep learning-based de novo sequencing of TMTpro-labeled peptides and phosphopeptides','2026-11-17','10.64898/2026.11.15.766634','Cold Spring Harbor Laboratory','De novo peptide sequencing reads peptides directly from tandem mass spectra, but none of the released deep learning models can sequence peptides labeled with isobaric tags such as TMTpro, which are widely used for multiplexed quantitative proteomics. We extended the residue vocabulary of Casanovo with TMTpro tags and phosphorylation, fine-tuned it on 21 million spectra from our laboratory, most of them TMTpro-labeled, and re-ranked the candidates in the beam by their agreement with the measured precursor mass. The resulting model, Casanovo-TMT, predicted the exact peptidoform for 84.7% of the TMTpro-labeled spectra in our test set and for 87.4 and 79.6% of the spectra in two public global-proteome datasets from other laboratories, whereas the extended vocabulary without fine-tuning gave 0.3%. Discarding the lowest-scoring predictions raised precision to 95% while retaining 81.7% of the test spectra. Casanovo-TMT also predicted the exact peptidoform for 69.2% of the spectra in a public phosphopeptide-enriched dataset and for 66 to 72% of the phosphopeptide spectra in three phosphoproteomic studies from our laboratory that were not used for training. In these studies, it identified numbers of phosphopeptides comparable to or larger than those of database search engines, and proportionally more where database search identified fewer. For the phosphopeptides identified only by Casanovo-TMT, entrapment estimated that more than 90% were correct, and an independent search engine assigned the same sequence to 95 to 98% of the spectra that it identified with confidence. Casanovo-TMT can therefore extend database search in TMTpro-based quantitative proteomics, particularly in studies in which database search identifies few phosphopeptides.','https://www.biorxiv.org/content/10.64898/2026.11.15.766634v1','bioRxiv','preprint',NULL,'biorxiv');
 INSERT INTO publication VALUES(1004,'SemiNovo: Learning Beyond Search-Identified Spectra for De Novo Peptide Sequencing','2026-11-16','10.48550/arXiv.2611.21079','arXiv','Sensitive peptide identification is fundamental to protein characterization and novel protein discovery, for which de novo peptide sequencing (DNPS) from tandem mass spectra provides an important database-independent approach. Although deep learning has substantially advanced de novo sequencing, existing models are predominantly trained on high-confidence peptide-spectrum matches obtained through database search. This search-conditioned supervision excludes a large fraction of unidentified spectra, creating a distribution mismatch between the selectively labeled training data and the complete spectrum stream encountered at inference time, thereby limiting peptide identification performance. To address this challenge, we propose SemiNovo, a semi-supervised framework that learns jointly from identified and unlabeled spectra. SemiNovo first constructs DarkSpec, a large-scale quality-controlled corpus of unlabeled spectra collected from diverse public proteomics projects, thereby extending training beyond search-identified spectra and mitigating the resulting shift in DNPS supervision. It then combines stepwise mass-constrained autoregressive decoding with cumulative path confidence to derive reliable supervision from unlabeled spectra. Moreover, SemiNovo introduces head-wise chemical-evidence gating to improve spectral evidence aggregation under noisy and incomplete fragmentation. Experiments show that SemiNovo performs favorably against state-of-the-art methods on multiple benchmarks. Code and dataset are publicly available.','https://arxiv.org/abs/2611.21079','arXiv','preprint',NULL,'arxiv');
+INSERT INTO publication VALUES(1005,'EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures','2026-11-16','10.1002/rcm.70211','Wiley','Rationale De novo peptide sequencing enables interpretation of tandem mass spectrometry (MS/MS) data without relying on sequence databases and is valuable for analyzing proteins from unknown species. However, existing Transformer-based approaches may not fully exploit interactions among precursor information, spectral features, and sequence prediction tokens, potentially limiting sequencing performance. Methods We developed EncNovo, a nonautoregressive de novo peptide sequencing model based on a BERT-inspired encoder-only Transformer architecture. Precursor attributes, spectral peaks, and sequence prediction tokens are jointly encoded within a unified encoder, enabling continuous interaction among the three throughout the encoding process. A residual attention mechanism and a peak mass-difference inductive bias were further incorporated into the self-attention framework to encode amino acid residue mass relationships between spectral peaks. Results Experimental results on the nine-species benchmark dataset demonstrate that EncNovo improves peptide recall at 100% coverage by 5.10 and 4.18 percentage points on average compared with Casanovo and RefineNovo, respectively. The model also achieved higher amino acid recall and demonstrated faster convergence during training. Conclusions Experimental results demonstrate that the proposed encoder-only framework, combined with residual attention and a peak mass-difference inductive bias, effectively improves peptide recall and accelerates model convergence. Collectively, these advantages make EncNovo a reliable framework for de novo peptide sequencing in proteomics.','https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/rcm.70211','Rapid Communications in Mass Spectrometry','peer-reviewed',NULL,'crossref');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19660,6 +19668,10 @@ INSERT INTO publication_author VALUES(1004,3959,6);
 INSERT INTO publication_author VALUES(1004,3960,7);
 INSERT INTO publication_author VALUES(1004,143,8);
 INSERT INTO publication_author VALUES(1004,57,9);
+INSERT INTO publication_author VALUES(1005,3961,1);
+INSERT INTO publication_author VALUES(1005,3962,2);
+INSERT INTO publication_author VALUES(1005,3963,3);
+INSERT INTO publication_author VALUES(1005,49,4);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27908,6 +27920,10 @@ INSERT INTO publication_author_affiliation VALUES(1004,3959,1446,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1004,3960,1444,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1004,143,69,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1004,57,1444,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1005,49,16,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1005,3961,16,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1005,3962,16,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1005,3963,16,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29210,6 +29226,7 @@ INSERT INTO publication_algorithm VALUES(1001,828,'describes');
 INSERT INTO publication_algorithm VALUES(1002,829,'describes');
 INSERT INTO publication_algorithm VALUES(1003,830,'describes');
 INSERT INTO publication_algorithm VALUES(1004,831,'describes');
+INSERT INTO publication_algorithm VALUES(1005,832,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -41732,6 +41749,7 @@ INSERT INTO publication_dataset VALUES(1673,1004,2,405,'trains-on');
 INSERT INTO publication_dataset VALUES(1674,1004,2,405,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1675,1004,379,404,'trains-on');
 INSERT INTO publication_dataset VALUES(1676,1004,379,404,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1677,1005,1,NULL,'evaluates-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -68945,9 +68963,9 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',579);
 INSERT INTO sqlite_sequence VALUES('affiliation',1446);
-INSERT INTO sqlite_sequence VALUES('author',3960);
-INSERT INTO sqlite_sequence VALUES('algorithm',831);
-INSERT INTO sqlite_sequence VALUES('publication',1004);
+INSERT INTO sqlite_sequence VALUES('author',3963);
+INSERT INTO sqlite_sequence VALUES('algorithm',832);
+INSERT INTO sqlite_sequence VALUES('publication',1005);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

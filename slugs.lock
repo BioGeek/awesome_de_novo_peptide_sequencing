@@ -829,6 +829,7 @@ algorithms	828	conus-monile-acyclic-peptide-mo1659
 algorithms	829	conus-araneosus-chi-conotoxin-ar1312
 algorithms	830	casanovo-tmt
 algorithms	831	seminovo
+algorithms	832	encnovo
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4668,6 +4669,9 @@ authors	3957	yifan-li
 authors	3958	hai-tao-yu
 authors	3959	yunhua-zhong
 authors	3960	zikun-wang
+authors	3961	xinglong-zhu
+authors	3962	zejiang-chen
+authors	3963	zihao-huang
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7396,6 +7400,7 @@ publications	1001	a-novel-13-residue-acyclic-peptide-from-the-marine-snail-conus
 publications	1002	de-novo-sequencing-by-mass-spectrometry-and-confirmation-by-chemical-synthesis
 publications	1003	casanovo-tmt-deep-learning-based-de-novo-sequencing-of-tmtpro-labeled-peptides
 publications	1004	seminovo-learning-beyond-search-identified-spectra-for-de-novo-peptide
+publications	1005	encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
