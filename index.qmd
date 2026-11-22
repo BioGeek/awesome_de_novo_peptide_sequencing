@@ -9006,15 +9006,10 @@ lazy_chart("lifecycle_bars", () => {
 
 ```{ojs}
 //| echo: false
-md`The catalog stores no "date added"
-column, but \`publication.id\` is handed out in insertion order, so ordering by
-it descending IS the order things arrived. The
-${recent_pubs.length} newest are below, and that same id is the sortable **#**
-column in [the full table](#every-paper), which is the way to see further back.
-The date beside each one is the paper's own publication date, not when it was
-catalogued: ${recent_pubs.filter(d => d.date && d.date > new Date(Date.now() - 200 * 864e5)).length}
-of these ${recent_pubs.length} appeared in the last six months, and the rest are
-older work that turned up in a citation sweep.`
+md`The ${recent_pubs.length} papers added to the catalog most recently, newest
+first. The date is when each paper was published, not when it was added. To
+see further back, sort [the full table](#every-paper) by its **#** column,
+which numbers the papers in the order they were added.`
 ```
 
 ```{ojs}
@@ -9023,8 +9018,8 @@ older work that turned up in a citation sweep.`
 // heading, so a reader following a link to the papers section used to land on a
 // screenful of the newest arrivals rather than on the table they asked for.
 // Every link that means "the table" now points at #every-paper, and this list
-// is short enough not to be in the way. The count is read back out of this
-// array by the prose above, so changing the 3 cannot leave the text lying.
+// is short enough not to be in the way. The prose above reads the count from
+// this array, so changing the 3 cannot leave the text lying.
 recent_pubs = pubs_t.slice().sort((a, b) => d3.descending(+a.id, +b.id)).slice(0, 3)
 ```
 
