@@ -9006,7 +9006,7 @@ lazy_chart("lifecycle_bars", () => {
 
 ```{ojs}
 //| echo: false
-md`What changed since you last looked. The catalog stores no "date added"
+md`The catalog stores no "date added"
 column, but \`publication.id\` is handed out in insertion order, so ordering by
 it descending IS the order things arrived. The
 ${recent_pubs.length} newest are below, and that same id is the sortable **#**
