@@ -38898,7 +38898,7 @@ INSERT INTO dataset_version VALUES(395,372,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(396,373,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(397,374,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(398,375,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO dataset_version VALUES(399,376,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO dataset_version VALUES(399,376,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,137,NULL,NULL);
 INSERT INTO dataset_version VALUES(400,377,'as deposited',NULL,11067914,9589434,741816,736664,'2025-09-09',10,'https://huggingface.co/datasets/gagneurlab/Modanovo-development-dataset','Hugging Face datasets-server: /size num_rows and /statistics frequencies of the ''split'' column. "num_rows: 11067914; split frequencies {''train'': 9589434, ''test'': 736664, ''val'': 741816}; data_type {''MULTI-PTM'': 8434903, ''MassIVE-KB'': 2633011}" Exact row counts of the published parquet (one row per labelled PSM: peptide_proforma, precursor_mz, precursor_z, title). Paper (Modanovo preprint) says ''approximately 11 million PSMs''. The HF config exposes everything as one ''train'' split; the real split is the ''split'' column. Counts from the Hugging Face datasets-server statistics for each split.');
 INSERT INTO dataset_version VALUES(402,1,'revised (balanced)','The same re-curation, cut to 150 whole raw files of main, taken in random order per species until it reached about 100,000 spectra (human, mouse and Candidatus endoloripes are kept whole). Shipped in the same Zenodo record as the main variant, so "the revised benchmark" is still two different things.',779879,NULL,NULL,NULL,'2024-11-08',98,NULL,NULL);
 INSERT INTO dataset_version VALUES(403,379,'original (DeepNovo, 2017)','The low-resolution seven-species set as DeepNovo defined and used it, scored leave-one-out over the seven species. No single accession is published for it: the seven constituent datasets come from seven separate prior publications.',NULL,NULL,NULL,NULL,NULL,62,NULL,NULL);
@@ -40569,7 +40569,7 @@ INSERT INTO publication_dataset VALUES(356,211,111,134,'introduces');
 INSERT INTO publication_dataset VALUES(357,209,318,341,'uses');
 INSERT INTO publication_dataset VALUES(359,301,153,176,'uses');
 INSERT INTO publication_dataset VALUES(360,301,145,168,'uses');
-INSERT INTO publication_dataset VALUES(361,137,376,399,'uses');
+INSERT INTO publication_dataset VALUES(361,137,376,399,'introduces');
 INSERT INTO publication_dataset VALUES(362,159,372,395,'introduces');
 INSERT INTO publication_dataset VALUES(363,275,251,274,'uses');
 INSERT INTO publication_dataset VALUES(364,275,314,337,'uses');
