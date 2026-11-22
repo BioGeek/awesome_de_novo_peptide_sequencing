@@ -2535,6 +2535,13 @@ Everything above is what the methods ARE. This is how they do, on the field's tw
 public benchmarks. Neither is a leaderboard someone can game by reporting their
 own numbers: both run the tools themselves and publish the results as data.
 
+::: {.callout-tip appearance="simple"}
+**[How *de novo* sequencing is scored](pages/analyses/metrics.html)** compares
+what the papers say they measured with what each tool's evaluation code
+computes, version by version: where amino-acid precision and recall are swapped,
+which spectra count, and why "peptide precision" is usually a recall.
+:::
+
 ```{ojs}
 //| echo: false
 // The two benchmarks' DATA link to their dataset pages: denovo_benchmarks'

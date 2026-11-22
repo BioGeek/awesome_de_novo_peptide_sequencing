@@ -393,8 +393,23 @@ paths. Instead its source is committed under `analysis/<name>/` and
 kind, from the `ANALYSES` registry. Its `site_data.json` is INLINED as the OJS
 value `ns`, so a change to the numbers changes the page's hash and the next
 publish re-renders it. `postrender.py` gives it a search record ("Analysis"),
-and the dataset page named in the registry links to it. One so far:
-`nine-species-versions`, linked from the homepage's *The data underneath*.
+and the dataset page named in the registry links to it. Two so far:
+`nine-species-versions`, linked from the homepage's *The data underneath*, and
+`metrics`, linked from *How they score*, whose registry entry names no dataset
+(`"dataset": None`) because it is about how every benchmark is scored.
+
+The metrics page's inputs are curated, not downloaded. `papers.jsonl` records,
+per deep-learning method paper, each metric it reports with its definition
+QUOTED and the section it came from, read from the full text in the PDF library;
+`implementations.json` records one row per tool or version range with the commit
+and file its behaviour was read at. `build_site_data.py` summarises the two and
+`page_numbers.py` computes the counts and runs transcriptions of each tool's
+matching loop for the worked examples, each naming the commit it was copied
+from. A new paper or a new tool version is a row in one of the two files, then
+`run_all.sh`. One trap met building it: classify a paper's matching rule from
+its ACCURACY metrics only. An "exact match against the protein database" in an
+FDR section is not how the paper scores recall, and reading it as one labelled
+the InstaNovo paper "exact sequence".
 
 **Every number on an analysis page is computed, never typed.** The analysis's
 `page_numbers.py` registers one function per number, with the public sources

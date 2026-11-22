@@ -1,0 +1,613 @@
+{
+ "n_papers": {
+  "value": 124,
+  "text": "124",
+  "desc": "Deep-learning method papers in the catalog considered here",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_papers\", \"Deep-learning method papers in the catalog considered here\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return len(all_papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_read": {
+  "value": 115,
+  "text": "115",
+  "desc": "Of those, papers whose full text was read",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_read\", \"Of those, papers whose full text was read\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return len(papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_unread": {
+  "value": 9,
+  "text": "9",
+  "desc": "Papers with no full text in the library (paywalled or not yet fetched)",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_unread\", \"Papers with no full text in the library (paywalled or not yet fetched)\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return len(all_papers()) - len(papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_pep": {
+  "value": 97,
+  "text": "97",
+  "desc": "Papers reporting a peptide-level figure (recall or precision, under any name)",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_pep\", \"Papers reporting a peptide-level figure (recall or precision, under any name)\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"peptide_recall\", \"peptide_precision\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_aa": {
+  "value": 78,
+  "text": "78",
+  "desc": "Papers reporting amino-acid precision or recall",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_aa\", \"Papers reporting amino-acid precision or recall\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"aa_precision\", \"aa_recall\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_curve": {
+  "value": 54,
+  "text": "54",
+  "desc": "Papers reporting a precision-coverage curve or its area",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_curve\", \"Papers reporting a precision-coverage curve or its area\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"precision_coverage_curve\", \"AUC_of_precision_coverage\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_fdr": {
+  "value": 25,
+  "text": "25",
+  "desc": "Papers reporting an FDR-based figure",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_fdr\", \"Papers reporting an FDR-based figure\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"FDR-based\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_ptm": {
+  "value": 21,
+  "text": "21",
+  "desc": "Papers reporting PTM precision or recall",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_ptm\", \"Papers reporting PTM precision or recall\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"PTM_precision/recall\", \"PTM_precision\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_calib": {
+  "value": 9,
+  "text": "9",
+  "desc": "Papers reporting a calibration metric",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_calib\", \"Papers reporting a calibration metric\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(reports(r, \"calibration metric\") for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_rule_mass": {
+  "value": 43,
+  "text": "43",
+  "desc": "Papers that state the 0.1 Da residue / 0.5 Da prefix rule",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_rule_mass\", \"Papers that state the 0.1 Da residue / 0.5 Da prefix rule\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return _rule_count(\"0.1 / 0.5 Da mass rule\")\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_rule_exact": {
+  "value": 17,
+  "text": "17",
+  "desc": "Papers that count a residue or peptide correct only on an exact sequence match",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_rule_exact\", \"Papers that count a residue or peptide correct only on an exact sequence match\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return _rule_count(\"Exact sequence\")\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_rule_none": {
+  "value": 51,
+  "text": "51",
+  "desc": "Papers that state no matching rule at all",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_rule_none\", \"Papers that state no matching rule at all\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return _rule_count(\"Not stated\")\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_rule_other": {
+  "value": 4,
+  "text": "4",
+  "desc": "Papers with a stricter mass rule or position-by-position matching",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_rule_other\", \"Papers with a stricter mass rule or position-by-position matching\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return _rule_count(\"Stricter mass rule\") + _rule_count(\"Position by position\")\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_il_equal": {
+  "value": 24,
+  "text": "24",
+  "desc": "Papers that say I and L are counted as equal",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_il_equal\", \"Papers that say I and L are counted as equal\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return sum(p[\"il\"] == \"Equal\" for p in site()[\"papers\"] if p[\"read\"])\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_il_unstated": {
+  "value": 88,
+  "text": "88",
+  "desc": "Papers that do not say how I and L are counted",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_il_unstated\", \"Papers that do not say how I and L are counted\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return sum(p[\"il\"] == \"Not stated\" for p in site()[\"papers\"] if p[\"read\"])\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_prec_named_recall": {
+  "value": 12,
+  "text": "12",
+  "desc": "Papers that call a peptide figure 'precision' and define it over all spectra",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_prec_named_recall\", \"Papers that call a peptide figure 'precision' and define it over all spectra\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return sum(p[\"naming\"] == \"precision over all spectra\" for p in site()[\"papers\"])\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_recall_named_prec": {
+  "value": 3,
+  "text": "3",
+  "desc": "Papers that call a peptide figure 'recall' and define it over predicted peptides",
+  "made_by": [
+   "papers.jsonl",
+   "build_site_data.py"
+  ],
+  "code": "@number(\"n_recall_named_prec\", \"Papers that call a peptide figure 'recall' and define it over predicted peptides\", [\"papers\"], [\"papers.jsonl\", \"build_site_data.py\"])\ndef _():\n    return sum(p[\"naming\"] == \"recall over predictions\" for p in site()[\"papers\"])\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_new_metric": {
+  "value": 23,
+  "text": "23",
+  "desc": "Papers that introduce a metric of their own",
+  "made_by": [
+   "papers.jsonl"
+  ],
+  "code": "@number(\"n_new_metric\", \"Papers that introduce a metric of their own\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return sum(bool(r.get(\"new_metrics\")) for r in papers())\n",
+  "sources": [
+   {
+    "key": "papers",
+    "label": "papers.jsonl: every metric each paper reports, with its definition quoted",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl"
+   }
+  ]
+ },
+ "n_impl": {
+  "value": 45,
+  "text": "45",
+  "desc": "Implementations compared (a tool, or one version range of it)",
+  "made_by": [
+   "implementations.json"
+  ],
+  "code": "@number(\"n_impl\", \"Implementations compared (a tool, or one version range of it)\", [\"code\"], [\"implementations.json\"])\ndef _():\n    return len(code())\n",
+  "sources": [
+   {
+    "key": "code",
+    "label": "implementations.json: one row per tool and version range, with the commit read",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/implementations.json"
+   }
+  ]
+ },
+ "n_swapped_now": {
+  "value": 9,
+  "text": "9",
+  "desc": "Entries in the table whose latest code still swaps amino-acid precision and recall",
+  "made_by": [
+   "implementations.json"
+  ],
+  "code": "@number(\"n_swapped_now\", \"Entries in the table whose latest code still swaps amino-acid precision and recall\", [\"code\"], [\"implementations.json\"])\ndef _():\n    latest = {}\n    for c in code():\n        latest[c[\"tool\"]] = c  # rows are in version order, so the last one per tool is the latest\n    return sum(c[\"order\"] == \"swapped\" for c in latest.values())\n",
+  "sources": [
+   {
+    "key": "code",
+    "label": "implementations.json: one row per tool and version range, with the commit read",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/implementations.json"
+   }
+  ]
+ },
+ "n_forward_only": {
+  "value": 12,
+  "text": "12",
+  "desc": "Implementations that match residues in a forward pass only, with no suffix pass",
+  "made_by": [
+   "implementations.json"
+  ],
+  "code": "@number(\"n_forward_only\", \"Implementations that match residues in a forward pass only, with no suffix pass\", [\"code\"], [\"implementations.json\"])\ndef _():\n    return sum(\"forward only\" in c[\"rule\"] for c in code())\n",
+  "sources": [
+   {
+    "key": "code",
+    "label": "implementations.json: one row per tool and version range, with the commit read",
+    "url": "https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/implementations.json"
+   }
+  ]
+ },
+ "ex_fwd": {
+  "value": 3,
+  "text": "3",
+  "desc": "PEPTIDEK against PEPGTIDEK: residues matched forward only (DeepNovo, InstaNovo 1.x)",
+  "made_by": [],
+  "code": "@number(\"ex_fwd\", \"PEPTIDEK against PEPGTIDEK: residues matched forward only (DeepNovo, InstaNovo 1.x)\", [\"deepnovo\", \"instanovo_100\"])\ndef _():\n    return forward_only(\"PEPTIDEK\", \"PEPGTIDEK\")\n",
+  "sources": [
+   {
+    "key": "deepnovo",
+    "label": "DeepNovo, deepnovo_worker_test.py (_match_AA_novor)",
+    "url": "https://github.com/nh2tran/DeepNovo/blob/8b0ec83/deepnovo_worker_test.py"
+   },
+   {
+    "key": "instanovo_100",
+    "label": "InstaNovo 1.0.0, instanovo/utils/metrics.py (_novor_match)",
+    "url": "https://github.com/instadeepai/instanovo/blob/971c367/instanovo/utils/metrics.py"
+   }
+  ]
+ },
+ "ex_best": {
+  "value": 8,
+  "text": "8",
+  "desc": "PEPTIDEK against PEPGTIDEK: residues matched with Casanovo's prefix-then-suffix rule",
+  "made_by": [],
+  "code": "@number(\"ex_best\", \"PEPTIDEK against PEPGTIDEK: residues matched with Casanovo's prefix-then-suffix rule\", [\"casanovo_eval\"])\ndef _():\n    return sum(casanovo_best(\"PEPTIDEK\", \"PEPGTIDEK\"))\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   }
+  ]
+ },
+ "ex_inv_10": {
+  "value": 7,
+  "text": "7",
+  "desc": "GGPEPTIDE against NPEPTIDE: residues matched by InstaNovo 1.0 and later",
+  "made_by": [],
+  "code": "@number(\"ex_inv_10\", \"GGPEPTIDE against NPEPTIDE: residues matched by InstaNovo 1.0 and later\", [\"instanovo_100\"])\ndef _():\n    return forward_only(\"GGPEPTIDE\", \"NPEPTIDE\")\n",
+  "sources": [
+   {
+    "key": "instanovo_100",
+    "label": "InstaNovo 1.0.0, instanovo/utils/metrics.py (_novor_match)",
+    "url": "https://github.com/instadeepai/instanovo/blob/971c367/instanovo/utils/metrics.py"
+   }
+  ]
+ },
+ "ex_inv_01": {
+  "value": 0,
+  "text": "0",
+  "desc": "GGPEPTIDE against NPEPTIDE: residues matched by InstaNovo 0.1.x",
+  "made_by": [],
+  "code": "@number(\"ex_inv_01\", \"GGPEPTIDE against NPEPTIDE: residues matched by InstaNovo 0.1.x\", [\"instanovo_010\"])\ndef _():\n    return forward_only(\"GGPEPTIDE\", \"NPEPTIDE\", inverted=True)\n",
+  "sources": [
+   {
+    "key": "instanovo_010",
+    "label": "InstaNovo 0.1.0, instanovo/utils/metrics.py (_novor_match)",
+    "url": "https://github.com/instadeepai/instanovo/blob/43671f0/instanovo/utils/metrics.py"
+   }
+  ]
+ },
+ "ex_swap_prec": {
+  "value": 1.0,
+  "text": "1.000",
+  "desc": "Truth PEPTIDEK, prediction PEPTIDE: amino-acid precision, correctly computed",
+  "made_by": [],
+  "code": "@number(\"ex_swap_prec\", \"Truth PEPTIDEK, prediction PEPTIDE: amino-acid precision, correctly computed\", [\"casanovo_eval\"], fmt=\"{:.3f}\")\ndef _():\n    return sum(casanovo_best(\"PEPTIDEK\", \"PEPTIDE\")) / len(\"PEPTIDE\")\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   }
+  ]
+ },
+ "ex_swap_rec": {
+  "value": 0.875,
+  "text": "0.875",
+  "desc": "Truth PEPTIDEK, prediction PEPTIDE: amino-acid recall, which swapped code prints as precision",
+  "made_by": [],
+  "code": "@number(\"ex_swap_rec\", \"Truth PEPTIDEK, prediction PEPTIDE: amino-acid recall, which swapped code prints as precision\", [\"casanovo_eval\", \"casanovo_v35\"], fmt=\"{:.3f}\")\ndef _():\n    return sum(casanovo_best(\"PEPTIDEK\", \"PEPTIDE\")) / len(\"PEPTIDEK\")\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   },
+   {
+    "key": "casanovo_v35",
+    "label": "Casanovo v3.5.0, casanovo/denovo/model.py (validation_step)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/ea2e875/casanovo/denovo/model.py"
+   }
+  ]
+ },
+ "d_kq": {
+  "value": 0.036385,
+  "text": "0.036",
+  "desc": "Mass difference between K and Q, in Da",
+  "made_by": [],
+  "code": "@number(\"d_kq\", \"Mass difference between K and Q, in Da\", [\"casanovo_masses\"], fmt=\"{:.3f}\")\ndef _():\n    return _da(\"K\", \"Q\")\n",
+  "sources": [
+   {
+    "key": "casanovo_masses",
+    "label": "Casanovo v4.0.0 residue masses, casanovo/config.yaml",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/3c2d3f5/casanovo/config.yaml"
+   }
+  ]
+ },
+ "d_fm": {
+  "value": 0.033051,
+  "text": "0.033",
+  "desc": "Mass difference between F and oxidised M, in Da",
+  "made_by": [],
+  "code": "@number(\"d_fm\", \"Mass difference between F and oxidised M, in Da\", [\"casanovo_masses\"], fmt=\"{:.3f}\")\ndef _():\n    return _da(\"F\", \"m\")\n",
+  "sources": [
+   {
+    "key": "casanovo_masses",
+    "label": "Casanovo v4.0.0 residue masses, casanovo/config.yaml",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/3c2d3f5/casanovo/config.yaml"
+   }
+  ]
+ },
+ "d_nd": {
+  "value": 0.0,
+  "text": "0.000",
+  "desc": "Mass difference between deamidated N and D, in Da",
+  "made_by": [],
+  "code": "@number(\"d_nd\", \"Mass difference between deamidated N and D, in Da\", [\"casanovo_masses\"], fmt=\"{:.3f}\")\ndef _():\n    return _da(\"n\", \"D\")\n",
+  "sources": [
+   {
+    "key": "casanovo_masses",
+    "label": "Casanovo v4.0.0 residue masses, casanovo/config.yaml",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/3c2d3f5/casanovo/config.yaml"
+   }
+  ]
+ },
+ "ppm_kq": {
+  "value": 284.047078,
+  "text": "284",
+  "desc": "K against Q in ppm of K's mass (ProteoBench allows 20 ppm per residue)",
+  "made_by": [],
+  "code": "@number(\"ppm_kq\", \"K against Q in ppm of K's mass (ProteoBench allows 20 ppm per residue)\", [\"casanovo_masses\", \"proteobench\"], fmt=\"{:,.0f}\")\ndef _():\n    return _da(\"K\", \"Q\") / MASS[\"K\"] * 1e6\n",
+  "sources": [
+   {
+    "key": "casanovo_masses",
+    "label": "Casanovo v4.0.0 residue masses, casanovo/config.yaml",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/3c2d3f5/casanovo/config.yaml"
+   },
+   {
+    "key": "proteobench",
+    "label": "ProteoBench, proteobench/score/denovoscores.py (20 and 50 ppm)",
+    "url": "https://github.com/Proteobench/ProteoBench/blob/9a886036/proteobench/score/denovoscores.py"
+   }
+  ]
+ },
+ "ex_kq_pep": {
+  "value": 1,
+  "text": "1",
+  "desc": "Truth PEPTIDEK, prediction PEPTIDEQ: does the 0.1 / 0.5 Da rule count the peptide correct? (1 = yes)",
+  "made_by": [],
+  "code": "@number(\"ex_kq_pep\", \"Truth PEPTIDEK, prediction PEPTIDEQ: does the 0.1 / 0.5 Da rule count the peptide correct? (1 = yes)\", [\"casanovo_eval\"])\ndef _():\n    return int(all(casanovo_best(\"PEPTIDEK\", \"PEPTIDEQ\")))\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   }
+  ]
+ },
+ "ex_auc_half_nb": {
+  "value": 0.499,
+  "text": "0.50",
+  "desc": "NovoBench's AUC for 1,000 spectra, half right and all of those ranked first",
+  "made_by": [],
+  "code": "@number(\"ex_auc_half_nb\", \"NovoBench's AUC for 1,000 spectra, half right and all of those ranked first\", [\"novobench\"], fmt=\"{:.2f}\")\ndef _():\n    return novobench_auc(HALF)\n",
+  "sources": [
+   {
+    "key": "novobench",
+    "label": "NovoBench, novobench/metrics/evaluate.py (curve_auc)",
+    "url": "https://github.com/jingbo02/NovoBench/blob/d1eff5b/novobench/metrics/evaluate.py"
+   }
+  ]
+ },
+ "ex_auc_half_cov": {
+  "value": 0.845574,
+  "text": "0.85",
+  "desc": "Area under precision against coverage for the same 1,000 spectra (trapezoid, coverage = rank / N)",
+  "made_by": [],
+  "code": "@number(\"ex_auc_half_cov\", \"Area under precision against coverage for the same 1,000 spectra (trapezoid, coverage = rank / N)\", [\"novobench\"], fmt=\"{:.2f}\")\ndef _():\n    n = len(HALF)\n    cs = list(accumulate(int(c) for c in HALF))\n    prec = [c / (k + 1) for k, c in enumerate(cs)]\n    cov = [(k + 1) / n for k in range(n)]\n    return sum((cov[k] - cov[k - 1]) * (prec[k] + prec[k - 1]) / 2 for k in range(1, n))\n",
+  "sources": [
+   {
+    "key": "novobench",
+    "label": "NovoBench, novobench/metrics/evaluate.py (curve_auc)",
+    "url": "https://github.com/jingbo02/NovoBench/blob/d1eff5b/novobench/metrics/evaluate.py"
+   }
+  ]
+ },
+ "pmd_gg_n": {
+  "value": 2.108854,
+  "text": "2.11",
+  "desc": "RankNovo PMD between GG and N, which have the same total mass (units of 51.4238 Da)",
+  "made_by": [],
+  "code": "@number(\"pmd_gg_n\", \"RankNovo PMD between GG and N, which have the same total mass (units of 51.4238 Da)\", [\"ranknovo\"], fmt=\"{:.2f}\")\ndef _():\n    return ranknovo_pmd(\"PEPGGK\", \"PEPNK\")\n",
+  "sources": [
+   {
+    "key": "ranknovo",
+    "label": "RankNovo, RankNovo/RankNovo/msa/tokenizer.py (TMmass, Greedymass)",
+    "url": "https://github.com/BEAM-Labs/denovo/blob/437f3c7/RankNovo/RankNovo/msa/tokenizer.py"
+   }
+  ]
+ },
+ "pmd_kq": {
+  "value": 0.000708,
+  "text": "0.0007",
+  "desc": "RankNovo PMD between PEPTIDEK and PEPTIDEQ (units of 51.4238 Da)",
+  "made_by": [],
+  "code": "@number(\"pmd_kq\", \"RankNovo PMD between PEPTIDEK and PEPTIDEQ (units of 51.4238 Da)\", [\"ranknovo\"], fmt=\"{:.4f}\")\ndef _():\n    return ranknovo_pmd(\"PEPTIDEK\", \"PEPTIDEQ\")\n",
+  "sources": [
+   {
+    "key": "ranknovo",
+    "label": "RankNovo, RankNovo/RankNovo/msa/tokenizer.py (TMmass, Greedymass)",
+    "url": "https://github.com/BEAM-Labs/denovo/blob/437f3c7/RankNovo/RankNovo/msa/tokenizer.py"
+   }
+  ]
+ },
+ "pmd_del": {
+  "value": 1.0,
+  "text": "1",
+  "desc": "RankNovo PMD for a missing residue, whatever its mass (units of 51.4238 Da)",
+  "made_by": [],
+  "code": "@number(\"pmd_del\", \"RankNovo PMD for a missing residue, whatever its mass (units of 51.4238 Da)\", [\"ranknovo\"], fmt=\"{:.0f}\")\ndef _():\n    return ranknovo_pmd(\"PEPTDE\", \"PEPTIDE\")\n",
+  "sources": [
+   {
+    "key": "ranknovo",
+    "label": "RankNovo, RankNovo/RankNovo/msa/tokenizer.py (TMmass, Greedymass)",
+    "url": "https://github.com/BEAM-Labs/denovo/blob/437f3c7/RankNovo/RankNovo/msa/tokenizer.py"
+   }
+  ]
+ },
+ "rmd_gg_last": {
+  "value": 1e-06,
+  "text": "0.00",
+  "desc": "RankNovo RMD at the last residue of PEPGGK against PEPNK, in Da (0: the masses have realigned)",
+  "made_by": [],
+  "code": "@number(\"rmd_gg_last\", \"RankNovo RMD at the last residue of PEPGGK against PEPNK, in Da (0: the masses have realigned)\", [\"ranknovo\"], fmt=\"{:.2f}\")\ndef _():\n    return abs(ranknovo_rmd(\"PEPGGK\", \"PEPNK\")[-1] * GAP)\n",
+  "sources": [
+   {
+    "key": "ranknovo",
+    "label": "RankNovo, RankNovo/RankNovo/msa/tokenizer.py (TMmass, Greedymass)",
+    "url": "https://github.com/BEAM-Labs/denovo/blob/437f3c7/RankNovo/RankNovo/msa/tokenizer.py"
+   }
+  ]
+ },
+ "rmd_gg_mid": {
+  "value": -57.021463,
+  "text": "-57.02",
+  "desc": "RankNovo RMD at the first G of PEPGGK against PEPNK, in Da",
+  "made_by": [],
+  "code": "@number(\"rmd_gg_mid\", \"RankNovo RMD at the first G of PEPGGK against PEPNK, in Da\", [\"ranknovo\"], fmt=\"{:.2f}\")\ndef _():\n    return ranknovo_rmd(\"PEPGGK\", \"PEPNK\")[3] * GAP\n",
+  "sources": [
+   {
+    "key": "ranknovo",
+    "label": "RankNovo, RankNovo/RankNovo/msa/tokenizer.py (TMmass, Greedymass)",
+    "url": "https://github.com/BEAM-Labs/denovo/blob/437f3c7/RankNovo/RankNovo/msa/tokenizer.py"
+   }
+  ]
+ }
+}
