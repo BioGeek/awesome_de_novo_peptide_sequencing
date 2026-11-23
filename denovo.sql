@@ -33198,9 +33198,9 @@ CREATE TABLE benchmark_source (
     value TEXT NOT NULL
 );
 INSERT INTO benchmark_source VALUES('repo','bittremieuxlab/denovo_benchmarks');
-INSERT INTO benchmark_source VALUES('commit','2bbc12ab99180f52b0c2070db07264e85d63f7b9');
-INSERT INTO benchmark_source VALUES('commit_date','2026-11-15T17:16:18Z');
-INSERT INTO benchmark_source VALUES('fetched','2026-11-16');
+INSERT INTO benchmark_source VALUES('commit','53422da2897d951ba23d9fc9b85257cda519b9d7');
+INSERT INTO benchmark_source VALUES('commit_date','2026-11-17T13:30:44Z');
+INSERT INTO benchmark_source VALUES('fetched','2026-11-23');
 INSERT INTO benchmark_source VALUES('n_datasets','86');
 INSERT INTO benchmark_source VALUES('n_tools','19');
 CREATE TABLE benchmark_result (
