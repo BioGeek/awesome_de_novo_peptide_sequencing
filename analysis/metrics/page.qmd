@@ -21,8 +21,8 @@ computed, and against the evaluation code of {{n:n_impl}} implementations,
 version by version.
 
 **How it was done.** The papers are the catalog's {{n:n_papers}} deep-learning
-method papers; {{n:n_unread}} of them have no full text in the catalog's PDF
-library and are left out. Every metric a paper reports, with its definition
+method papers; {{n:n_unread}} of them could not be read in full and are left
+out. Every metric a paper reports, with its definition
 quoted and the section it came from, is in
 [`papers.jsonl`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl).
 The code was read at the commit each row of the
@@ -33,7 +33,7 @@ transcriptions of each tool's matching loop, and the entry names the file and
 commit each was copied from.
 
 ::: {.callout-important appearance="simple"}
-**Four things to know before putting two numbers side by side.**
+**Five things to know before putting two numbers side by side.**
 
 1. **"Peptide precision" is usually a recall.** Casanovo's code calls its
    peptide figure `pep_precision` and divides it by every spectrum, and
@@ -54,6 +54,10 @@ commit each was copied from.
    precision against recall, which can never exceed the peptide recall; others
    integrate against coverage. For the same 1,000 predictions, half of them
    right and ranked first, the two give {{n:ex_auc_half_nb}} and {{n:ex_auc_half_cov}}.
+5. **The "truth" is a search engine's answer.** The labels are database-search
+   identifications accepted at a false discovery rate, typically 1%, so some of
+   them are wrong, and only spectra a search could identify are labelled at all.
+   Every figure here measures agreement with the search, not correctness.
 :::
 
 ## What the papers report
@@ -109,6 +113,37 @@ equal to D and scores its deamidation calls on identity instead;
 reason and requires the exact peptidoform. ProteoBench keeps the rule's shape but
 in ppm: 20 ppm per residue and 50 ppm on the prefix. K and Q are
 {{n:ppm_kq}} ppm apart, so there they count as different.
+
+### The truth is a search engine's answer
+
+Every one of these figures compares a prediction with a label, and the label is
+not the peptide that produced the spectrum. It is the peptide a database search
+assigned to it, kept if it passed a false discovery rate threshold, typically 1%.
+That has three consequences for what "precision" and "recall" mean here.
+
+- **Some labels are wrong.** At 1% FDR about one accepted identification in a
+  hundred is expected to be false, and the FDR is itself an estimate from decoys,
+  not a count. Where a *de novo* call disagrees with a wrong label, the call is
+  scored as an error although it may be the right one. A perfect sequencer would
+  not score 1, and two models that differ by less than the label error rate
+  cannot be told apart on that evidence alone.
+- **Only the identifiable spectra are labelled.** A spectrum enters the test set
+  only if a search engine found a confident match in its database. That leaves out
+  most of what *de novo* sequencing is for: peptides absent from the database,
+  unexpected modifications, poor or chimeric spectra. Recall over labelled spectra
+  says how well a model reproduces the search on the spectra the search could
+  already do, not how it fares on the rest.
+- **The labels carry the search's own choices.** Which engine, which database,
+  which modifications were allowed and which threshold was applied all differ
+  between benchmarks, and change between versions of the same benchmark: the
+  [nine-species versions](nine-species-versions.html) relabel the same spectra
+  differently. A search engine also cannot tell I from L, so neither can its labels.
+
+So the field's "precision" and "recall" are agreement rates with a reference
+that is itself uncertain. Precision in the strict sense, the share of
+predictions that are right, cannot be measured on the unlabelled spectra at all,
+which is why estimates of the error rate that need no search engine are now
+appearing ([below](#error-rates-without-a-search-engine)).
 
 ### What the papers say about it
 
