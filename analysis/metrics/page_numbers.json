@@ -404,6 +404,34 @@
    }
   ]
  },
+ "ex_pep_prec": {
+  "value": 0.75,
+  "text": "0.75",
+  "desc": "100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)",
+  "made_by": [],
+  "code": "@number(\"ex_pep_prec\", \"100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)\", [\"casanovo_eval\"], fmt=\"{:.2f}\")\ndef _():\n    tp, predicted = 60, 80\n    return tp / predicted\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   }
+  ]
+ },
+ "ex_pep_rec": {
+  "value": 0.6,
+  "text": "0.60",
+  "desc": "The same spectra: peptide recall, TP / (TP + FN), which Casanovo prints as pep_precision",
+  "made_by": [],
+  "code": "@number(\"ex_pep_rec\", \"The same spectra: peptide recall, TP / (TP + FN), which Casanovo prints as pep_precision\", [\"casanovo_eval\"], fmt=\"{:.2f}\")\ndef _():\n    tp, labelled = 60, 100\n    return tp / labelled\n",
+  "sources": [
+   {
+    "key": "casanovo_eval",
+    "label": "Casanovo v5.2.1, casanovo/denovo/evaluate.py (aa_match_prefix, aa_match_prefix_suffix)",
+    "url": "https://github.com/Noble-Lab/casanovo/blob/40f4e97/casanovo/denovo/evaluate.py"
+   }
+  ]
+ },
  "ex_swap_prec": {
   "value": 1.0,
   "text": "1.000",

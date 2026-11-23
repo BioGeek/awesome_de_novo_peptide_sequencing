@@ -300,6 +300,16 @@ def _():
 def _():
     return forward_only("GGPEPTIDE", "NPEPTIDE", inverted=True)
 
+@number("ex_pep_prec", "100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)", ["casanovo_eval"], fmt="{:.2f}")
+def _():
+    tp, predicted = 60, 80
+    return tp / predicted
+
+@number("ex_pep_rec", "The same spectra: peptide recall, TP / (TP + FN), which Casanovo prints as pep_precision", ["casanovo_eval"], fmt="{:.2f}")
+def _():
+    tp, labelled = 60, 100
+    return tp / labelled
+
 @number("ex_swap_prec", "Truth PEPTIDEK, prediction PEPTIDE: amino-acid precision, correctly computed", ["casanovo_eval"], fmt="{:.3f}")
 def _():
     return sum(casanovo_best("PEPTIDEK", "PEPTIDE")) / len("PEPTIDE")

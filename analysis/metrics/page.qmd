@@ -35,11 +35,17 @@ commit each was copied from.
 ::: {.callout-important appearance="simple"}
 **Five things to know before putting two numbers side by side.**
 
-1. **"Peptide precision" is usually a recall.** Casanovo's code calls its
-   peptide figure `pep_precision` and divides it by every spectrum, and
-   NovoBench, denovo_benchmarks and PowerNovo2 do the same. {{n:n_prec_named_recall}}
-   papers define a "peptide precision" over all spectra; {{n:n_recall_named_prec}}
-   define a "peptide recall" over predicted peptides only.
+1. **"Peptide precision" is usually a recall.** Precision is TP / (TP + FP): the
+   correct peptides over the predictions the model made. Recall is
+   TP / (TP + FN): the correct peptides over all labelled spectra, a spectrum the
+   model got wrong or left blank being a false negative. Casanovo's code calls its
+   peptide figure `pep_precision` but divides by every labelled spectrum, which
+   is the recall; NovoBench, denovo_benchmarks and PowerNovo2 do the same. The
+   two agree only when the model predicts every spectrum
+   ([why](#precision-recall-and-the-spectra-left-blank)).
+   {{n:n_prec_named_recall}} papers define a "peptide precision" over all
+   spectra; {{n:n_recall_named_prec}} define a "peptide recall" over predicted
+   peptides only.
 2. **Amino-acid precision and recall are swapped in a whole family of models.**
    Casanovo v3.0 to v3.5 passed the prediction where the truth belonged, and
    v4.0 fixed it. The models that copied the v3 code did not:
@@ -99,10 +105,37 @@ is correct when it has as many residues as the truth and every one is correct.
 
 From those matches come the usual figures. **Amino-acid precision** divides the
 correct residues by the predicted residues, **amino-acid recall** by the true
-residues. **Peptide recall** divides the correct peptides by all labelled
-spectra, **peptide precision** by the spectra that got a prediction. Sorting the
-predictions by the model's confidence and computing precision at each depth gives
-**precision against coverage**.
+residues. Sorting the predictions by the model's confidence and computing
+precision at each depth gives **precision against coverage**.
+
+### Precision, recall, and the spectra left blank
+
+At peptide level, precision is TP / (TP + FP) and recall is TP / (TP + FN).
+Every labelled spectrum ends one of three ways:
+
+- the model predicts the label's peptide: a **true positive**;
+- it predicts a different peptide: a **false positive**, because it asserted
+  something wrong, and also a **false negative**, because the right peptide was
+  not found;
+- it predicts nothing, because it abstained, no candidate fitted the precursor
+  mass, or the prediction fell below a confidence threshold: a **false
+  negative** only.
+
+So **peptide precision** = correct / predictions made, and **peptide recall** =
+correct / all labelled spectra. They differ only by the blanks. Take 100 labelled
+spectra on which a model predicts 80 and gets 60 right: precision is
+{{n:ex_pep_prec}}, recall is {{n:ex_pep_rec}}. If it predicts all 100, both are
+the share it gets right.
+
+Casanovo's `evaluate.py` returns a figure named `pep_precision` computed as
+correct / all spectra passed to it. Since v4.0 every labelled spectrum is passed,
+blanks included, so for the example above it prints {{n:ex_pep_rec}}: the recall.
+Several papers call it "precision at coverage 1" (Pairwise, Modanovo), which is
+accurate only when the model has predicted every spectrum; once it leaves some
+blank, it is the recall. NovoBench, denovo_benchmarks and PowerNovo2 compute the same quantity
+under the name "peptide precision", and so do the papers that use their code.
+The reverse also happens: a few papers divide by the predictions made, which is
+a precision, and call it recall.
 
 Two things follow from matching on mass. I and L weigh the same, so they always
 match, with no I/L rule needed. And so do pairs that differ by less than 0.1 Da:
