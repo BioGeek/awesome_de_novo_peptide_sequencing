@@ -833,6 +833,9 @@ algorithms	832	encnovo
 algorithms	833	masspec
 algorithms	834	mass-spectrometric-peptide-sequencing-biemann-1959
 algorithms	835	computer-aided-peptide-sequencing-biemann-1966
+algorithms	836	automatic-peptide-sequencing-senn-and-mclafferty-1966
+algorithms	837	computer-interpretation-of-high-resolution-mass-spectra-barber-1966
+algorithms	838	mass-spectrometric-sequencing-of-permethylated-peptides-morris-1969
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4682,6 +4685,15 @@ authors	3967	josef-seibl
 authors	3968	c-cone
 authors	3969	b-r-webster
 authors	3970	guy-p-arsenault
+authors	3971	martin-senn
+authors	3972	m-barber
+authors	3973	p-powers
+authors	3974	m-j-wallington
+authors	3975	w-a-wolstenholme
+authors	3976	howard-r-morris
+authors	3977	alexander-j-geddes
+authors	3978	g-n-graham
+authors	3979	f-lucas
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -6345,6 +6357,9 @@ institutions	1439	tata-institute-of-fundamental-research
 institutions	1440	annamalai-university
 institutions	1442	yonsei-university
 institutions	1447	national-biomedical-research-foundation
+institutions	1448	university-of-leeds
+institutions	1449	shirley-institute
+institutions	1450	gec-aei-electronics-ltd
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7417,6 +7432,10 @@ publications	1006	masspec-a-computer-program-for-complete-sequence-analysis-of-l
 publications	1007	application-of-mass-spectrometry-to-structure-problems-i-amino-acid-sequence-in
 publications	1008	computer-aided-interpretation-of-high-resolution-mass-spectra-ii-amino-acid
 publications	1009	determination-of-the-amino-acid-sequence-in-oligopeptides-by-computer
+publications	1010	automatic-amino-acid-sequence-determination-in-peptides
+publications	1011	computer-interpretation-of-high-resolution-mass-spectra
+publications	1012	some-problems-associated-with-the-amino-acid-sequence-analysis-of-proteins-by
+publications	1013	mass-spectrometric-determination-of-the-amino-acid-sequences-in-peptides
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -7739,3 +7758,4 @@ venues	986	journal-of-king-saud-university-science
 venues	993	hupo-2026-world-congress
 venues	1002	proceedings-of-the-10th-ismas-symposium
 venues	1006	computers-in-biology-and-medicine
+venues	1012	biochemical-journal

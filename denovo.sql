@@ -3854,6 +3854,15 @@ INSERT INTO author VALUES(3967,'Josef Seibl',NULL,NULL,NULL,NULL,NULL,'A51116907
 INSERT INTO author VALUES(3968,'C. Cone',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3969,'B. R. Webster',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3970,'Guy P. Arsenault',NULL,NULL,NULL,NULL,NULL,'A5059166927');
+INSERT INTO author VALUES(3971,'Martin Senn',NULL,NULL,NULL,NULL,NULL,'A5109277836');
+INSERT INTO author VALUES(3972,'M. Barber',NULL,NULL,NULL,NULL,NULL,'A5033634719');
+INSERT INTO author VALUES(3973,'P. Powers',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3974,'M. J. Wallington',NULL,NULL,NULL,NULL,NULL,'A5085607362');
+INSERT INTO author VALUES(3975,'W. A. Wolstenholme',NULL,NULL,NULL,NULL,NULL,'A5054415860');
+INSERT INTO author VALUES(3976,'Howard R. Morris',NULL,NULL,NULL,NULL,NULL,'A5108419311');
+INSERT INTO author VALUES(3977,'Alexander J. Geddes',NULL,NULL,NULL,NULL,NULL,'A5082049075');
+INSERT INTO author VALUES(3978,'G. N. Graham',NULL,NULL,NULL,NULL,NULL,'A5103684536');
+INSERT INTO author VALUES(3979,'F. Lucas',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4482,6 +4491,7 @@ INSERT INTO city VALUES(577,'Tucson',8,32.2217399999999969,-110.926479999999997,
 INSERT INTO city VALUES(578,'Chidambaram',28,11.3993300000000008,79.69144,'ror','ror');
 INSERT INTO city VALUES(579,'Wonju',13,37.351390000000002,127.945279999999996,'ror','ror');
 INSERT INTO city VALUES(580,'Silver Spring',8,38.9906700000000014,-77.0260899999999964,'geonames','geonames');
+INSERT INTO city VALUES(581,'Leeds',7,53.7964800000000025,-1.54784999999999994,'geonames','geonames');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5888,6 +5898,9 @@ INSERT INTO affiliation VALUES(1444,'The Hong Kong University of Science and Tec
 INSERT INTO affiliation VALUES(1445,'Westlake University','Institute of Engineering',2,15,'https://ror.org/05hfa4n20','Westlake University',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1446,'The University of Hong Kong','Department of Chemistry',2,17,'https://ror.org/02zhqgq86','University of Hong Kong',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1447,'National Biomedical Research Foundation',NULL,8,580,NULL,NULL,'openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1448,'University of Leeds','Astbury Department of Biophysics',7,581,'https://ror.org/024mrxd33','University of Leeds',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1449,'Shirley Institute',NULL,7,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1450,'GEC-AEI (Electronics) Ltd.','Consultant Laboratory',7,2,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11379,6 +11392,12 @@ INSERT INTO author_affiliation VALUES(3964,1447);
 INSERT INTO author_affiliation VALUES(3965,1447);
 INSERT INTO author_affiliation VALUES(3966,242);
 INSERT INTO author_affiliation VALUES(3967,242);
+INSERT INTO author_affiliation VALUES(3976,1448);
+INSERT INTO author_affiliation VALUES(3977,1448);
+INSERT INTO author_affiliation VALUES(3978,1448);
+INSERT INTO author_affiliation VALUES(3979,1449);
+INSERT INTO author_affiliation VALUES(3972,1450);
+INSERT INTO author_affiliation VALUES(3975,1450);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -11765,7 +11784,7 @@ INSERT INTO algorithm VALUES(380,'LIPNovo+',NULL,NULL,'Latent imputation','Self-
 INSERT INTO algorithm VALUES(381,'RT-GCTnovo',NULL,NULL,'Transformer (NAR)','Combines Transformer encoders with convolutional layers to capture global and local spectral features, fuses them through a sigmoid gate, adds retention time as a constraint, and decodes semi-autoregressively with dynamic mass masks.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(382,'PLMNovo',NULL,NULL,'Transformer (AR)','Casts peptide-spectrum matching as a constrained optimisation that aligns the spectrum encoder''s embeddings with those of a pre-trained protein language model, and trains encoder and decoder with a Lagrangian primal-dual algorithm, optionally fine-tuning the language model.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(383,'De novo FDR control procedure',NULL,NULL,NULL,'False discovery rate control for the de novo setting, where target-decoy competition does not apply: reported to be at least as powerful as database search, with empirical evidence of statistical validity on a set of common de novo applications.','post-processor',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(384,'PAAS',NULL,NULL,'Heuristic','The 1981 original of the Osaka group''s lineage, and the earliest de novo peptide sequencing program in this catalog after Biemann''s 1966 program and Dayhoff and Eck''s MASSPEC (1970): a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(384,'PAAS',NULL,NULL,'Heuristic','The 1981 original of the Osaka group''s lineage, and the earliest de novo peptide sequencing program in this catalog after the 1966 programs of Senn and McLafferty and of Biemann''s group, and Dayhoff and Eck''s MASSPEC (1970): a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(385,'Improved PAAS',NULL,NULL,'Heuristic','The 1983 revision of PAAS, by the same Osaka group with Wollnik added. Sits between the 1981 original and PAAS 3, so the lineage spans three papers in four years.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(386,'Parallel synthesis + de novo peptide screening',NULL,NULL,NULL,'Joint technique pairing de novo sequencing of a simulated-digestion hydrolysate with parallel peptide synthesis, so each predicted sequence is synthesised, screened for activity and checked against the standard''s retention time and MS/MS spectrum. Applied to sea cucumber and seahorse.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(387,'Lactobacillus reuteri peptide deep mining',NULL,NULL,NULL,'Combines GNPS library search, de novo sequencing and feature-based molecular networking to profile the peptides of Lactobacillus reuteri: 184 peptides, among them four cyclic dipeptides not reported before.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
@@ -12215,7 +12234,10 @@ INSERT INTO algorithm VALUES(831,'SemiNovo',NULL,NULL,'Transformer (AR)','Semi-s
 INSERT INTO algorithm VALUES(832,'EncNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive sequencer built on a BERT-style encoder-only Transformer: precursor attributes, spectral peaks and the sequence-prediction tokens are encoded together in one encoder, with residual attention and a peak mass-difference bias added to self-attention.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(833,'MASSPEC',NULL,NULL,'Heuristic','Margaret Dayhoff and Richard Eck''s 1970 proposal, and the programs behind it, for sequencing a whole protein from one high-resolution mass spectrum of a near-random partial hydrolysate: the spectrometer separates and weighs the volatile peptide fragments, each exact mass gives a composition, and the sequence is the one set of overlapping fragments that stays mutually consistent among thousands of spurious candidates. Demonstrated in simulation on ideal data, reconstructing bovine insulin from the masses of all its fragments up to nine residues long; it converged at a mass accuracy of 0.02 Da but not 0.05 Da. The programs (PEPMS, FRAGEN, MASFRG, MSPEC with its PRUNE, WEED and OVERLAP phases, and SEQ) appear to be lost; only the paper survives.','algorithm',0,NULL,NULL,NULL);
 INSERT INTO algorithm VALUES(834,'Mass spectrometric peptide sequencing (Biemann, 1959)',NULL,NULL,'Manual interpretation','The first amino acid sequencing of peptides by mass spectrometry. Klaus Biemann, F. Gapp and Josef Seibl reduced small peptides with lithium aluminium hydride to polyamino alcohols, which are volatile, and read the sequence by hand from the electron-ionization mass spectrum, which breaks preferentially at the carbon-carbon bond next to each amino group. They worked it out on the N-acetyl ethyl esters of nine dipeptides and three tripeptides, two decades before tandem MS, and already foresaw its use on partial hydrolysates of natural peptides.','adjacent',0,NULL,'Biemann 1959',NULL);
-INSERT INTO algorithm VALUES(835,'Computer-aided peptide sequencing (Biemann, 1966)',NULL,NULL,'Heuristic','Klaus Biemann''s group at MIT handed the reading of a peptide''s high-resolution mass spectrum to a computer: a short communication in June 1966, then the full paper that December, in which a program determines the amino acid sequence of oligopeptides from their high-resolution mass spectra. The earliest computer program for peptide sequencing in this catalog, four years before Dayhoff and Eck''s MASSPEC and two decades before tandem MS.','algorithm',0,NULL,'Biemann 1966',NULL);
+INSERT INTO algorithm VALUES(835,'Computer-aided peptide sequencing (Biemann, 1966)',NULL,NULL,'Heuristic','Klaus Biemann''s group at MIT handed the reading of a peptide''s high-resolution mass spectrum to a computer: a short communication in June 1966, then the full paper that December, in which a program determines the amino acid sequence of oligopeptides from their high-resolution mass spectra. With Senn and McLafferty''s of a month earlier, the first computer programs for peptide sequencing in this catalog, four years before Dayhoff and Eck''s MASSPEC and two decades before tandem MS.','algorithm',0,NULL,'Biemann 1966',NULL);
+INSERT INTO algorithm VALUES(836,'Automatic peptide sequencing (Senn and McLafferty, 1966)',NULL,NULL,'Heuristic','Martin Senn and Fred McLafferty''s program for determining a peptide''s amino acid sequence automatically from its mass spectrum, published in May 1966, a month before Biemann''s group reported theirs. With it, the earliest computer program for peptide sequencing in this catalog, two decades before tandem MS.','algorithm',0,NULL,'Senn and McLafferty 1966',NULL);
+INSERT INTO algorithm VALUES(837,'Computer interpretation of high-resolution mass spectra (Barber, 1966)',NULL,NULL,'Heuristic','M. Barber, P. Powers, M. J. Wallington and W. A. Wolstenholme''s 1966 Nature paper on interpreting high-resolution mass spectra by computer. Barber and Wolstenholme, of GEC-AEI in Manchester, are also authors of the 1969 mass-spectrometric sequencing of silk fibroin peptides, which cites it.','adjacent',0,NULL,'Barber 1966',NULL);
+INSERT INTO algorithm VALUES(838,'Mass spectrometric sequencing of permethylated peptides (Morris, 1969)',NULL,NULL,'Manual interpretation','Howard Morris, A. J. Geddes and G. N. Graham at Leeds, with F. Lucas of the Shirley Institute and M. Barber and W. A. Wolstenholme of GEC-AEI, read the sequences of peptides from a chymotryptic digest of Bombyx mori silk fibroin from their mass spectra, after permethylating the N-acetyl peptide methyl esters to make them volatile. Three sequences confirmed earlier chemical work and a fourth, previously only partly known, was established; the authors call it the first use of mass spectrometry to sequence peptides from a protein hydrolysate. The Leeds group''s Biochemical Society abstract earlier that year is on the problems of sequencing proteins by mass spectrometry.','adjacent',0,NULL,'Morris 1969',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13235,6 +13257,10 @@ INSERT INTO publication VALUES(1006,'MASSPEC: A computer program for complete se
 INSERT INTO publication VALUES(1007,'Application of Mass Spectrometry to Structure Problems. I. Amino Acid Sequence in Peptides','1959-05-01','10.1021/ja01518a069','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ja01518a069','Journal of the American Chemical Society','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(1008,'Computer-Aided Interpretation of High-Resolution Mass Spectra. II. Amino Acid Sequence of Peptides','1966-06-01','10.1021/ja00963a046','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ja00963a046','Journal of the American Chemical Society','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(1009,'Determination of the Amino Acid Sequence in Oligopeptides by Computer Interpretation of Their High-Resolution Mass Spectra','1966-12-01','10.1021/ja00975a045','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ja00975a045','Journal of the American Chemical Society','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(1010,'Automatic amino-acid-sequence determination in peptides','1966-05-01','10.1016/0006-291x(66)90737-6','Elsevier BV',NULL,'https://doi.org/10.1016/0006-291x(66)90737-6','Biochemical and Biophysical Research Communications','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(1011,'Computer Interpretation of High Resolution Mass Spectra','1966-11-19','10.1038/212784a0','Springer Science and Business Media LLC',NULL,'https://doi.org/10.1038/212784a0','Nature','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(1012,'Some problems associated with the amino acid-sequence analysis of proteins by mass spectrometry','1969-03-01','10.1042/bj1110038p','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1110038p','Biochemical Journal','abstract',NULL,NULL);
+INSERT INTO publication VALUES(1013,'Mass-spectrometric determination of the amino acid sequences in peptides isolated from protein silk fibroin of <i>Bombyx mori</i>','1969-10-01','10.1042/bj1140695','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1140695','Biochemical Journal','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19704,6 +19730,21 @@ INSERT INTO publication_author VALUES(1009,532,1);
 INSERT INTO publication_author VALUES(1009,3968,2);
 INSERT INTO publication_author VALUES(1009,3969,3);
 INSERT INTO publication_author VALUES(1009,3970,4);
+INSERT INTO publication_author VALUES(1010,3971,1);
+INSERT INTO publication_author VALUES(1010,2865,2);
+INSERT INTO publication_author VALUES(1011,3972,1);
+INSERT INTO publication_author VALUES(1011,3973,2);
+INSERT INTO publication_author VALUES(1011,3974,3);
+INSERT INTO publication_author VALUES(1011,3975,4);
+INSERT INTO publication_author VALUES(1012,3976,1);
+INSERT INTO publication_author VALUES(1012,3977,2);
+INSERT INTO publication_author VALUES(1012,3978,3);
+INSERT INTO publication_author VALUES(1013,3977,1);
+INSERT INTO publication_author VALUES(1013,3978,2);
+INSERT INTO publication_author VALUES(1013,3976,3);
+INSERT INTO publication_author VALUES(1013,3979,4);
+INSERT INTO publication_author VALUES(1013,3972,5);
+INSERT INTO publication_author VALUES(1013,3975,6);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27961,6 +28002,15 @@ INSERT INTO publication_author_affiliation VALUES(1006,3965,1447,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(1007,532,242,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1007,3966,242,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1007,3967,242,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1012,3976,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1012,3977,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1012,3978,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3977,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3978,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3976,1448,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3979,1449,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3972,1450,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1013,3975,1450,0,'crossref');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29268,6 +29318,10 @@ INSERT INTO publication_algorithm VALUES(1006,833,'describes');
 INSERT INTO publication_algorithm VALUES(1007,834,'describes');
 INSERT INTO publication_algorithm VALUES(1008,835,'describes');
 INSERT INTO publication_algorithm VALUES(1009,835,'describes');
+INSERT INTO publication_algorithm VALUES(1010,836,'describes');
+INSERT INTO publication_algorithm VALUES(1011,837,'describes');
+INSERT INTO publication_algorithm VALUES(1012,838,'describes');
+INSERT INTO publication_algorithm VALUES(1013,838,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -69004,11 +69058,11 @@ INSERT INTO training_size VALUES(121,1004,1673,NULL,'train',213284,'spectra',0,'
 INSERT INTO training_size VALUES(122,1004,1675,NULL,'train',317009,'spectra',0,'Train 317,009','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',580);
-INSERT INTO sqlite_sequence VALUES('affiliation',1447);
-INSERT INTO sqlite_sequence VALUES('author',3970);
-INSERT INTO sqlite_sequence VALUES('algorithm',835);
-INSERT INTO sqlite_sequence VALUES('publication',1009);
+INSERT INTO sqlite_sequence VALUES('city',581);
+INSERT INTO sqlite_sequence VALUES('affiliation',1450);
+INSERT INTO sqlite_sequence VALUES('author',3979);
+INSERT INTO sqlite_sequence VALUES('algorithm',838);
+INSERT INTO sqlite_sequence VALUES('publication',1013);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

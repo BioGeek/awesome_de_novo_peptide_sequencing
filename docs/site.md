@@ -28,7 +28,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 1009 against 1008 publications today --
+a deleted row does not give its id back -- 1013 against 1012 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -78,7 +78,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 111 of 831 methods have a row, 57 of the 79 deep-learning
+incomplete: 111 of 834 methods have a row, 57 of the 79 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -367,13 +367,13 @@ The chart, its table and the `family_firsts` query are gone. Measured: 52
 dots in 1,412 px against 231 in 6,768, and 0 collisions in either mode. The
 **twenty-four years of quiet between 1966 and 1990** still read as a gap,
 because the x axis is still time: `Manual interpretation` arrives with Biemann
-in May 1959, `Heuristic` with Biemann's computer-aided sequencing in June 1966,
+in May 1959, `Heuristic` with Senn and McLafferty's automatic sequencing in May 1966,
 and the next family, `Graph / DP`, not until Bartels in June 1990.
 
 That gap was written here as 1984 to 1994, then as 1981 to 1990 once the
 catalog gained PAAS (1981) and Improved PAAS (1983), and it moved again twice
 for issue #4: to 1970 with Dayhoff and Eck's MASSPEC and Biemann's 1959 paper,
-then to 1966 with Biemann's two 1966 JACS papers. **PAAS 3 was the earliest
+then to 1966 with Senn and McLafferty's program and Biemann's two JACS papers, all from that year. **PAAS 3 was the earliest
 row in the catalog and was never the earliest program**: its own name says it is
 the third, and the Osaka group published PAAS in 1981 and Improved PAAS in 1983,
 neither of which was here. Its `short_description` said "one of the earliest",
@@ -441,7 +441,7 @@ takes a page path: `check_chart_overlap.py pages/analyses/nine-species-versions.
 **34 of 50** families that hold two or more methods. The other **16** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **348** of the **364**
+already exists, on a permanent indexed URL. Those cover **351** of the **367**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
