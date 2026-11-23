@@ -87,7 +87,7 @@ metric_counts = ns.groups
   .sort((a, b) => b.n - a.n)
 Plot.plot({
   width: Math.min(width, 860), height: 28 * metric_counts.length + 50,
-  marginLeft: 200, marginRight: 50, marginBottom: 40,
+  marginLeft: 250, marginRight: 50, marginBottom: 40,
   x: {label: `Papers (of ${papers_read.length} read)`, grid: true, labelOffset: 34},
   y: {label: null, domain: metric_counts.map(d => d.metric)},
   marks: [
@@ -229,7 +229,7 @@ rule_order = ["0.1 / 0.5 Da mass rule", "Exact sequence", "Stricter mass rule", 
 rule_counts = rule_order.map(r => ({rule: r, n: papers_read.filter(d => d.rule === r).length}))
 Plot.plot({
   width: Math.min(width, 860), height: 28 * rule_counts.length + 50,
-  marginLeft: 200, marginRight: 50, marginBottom: 40,
+  marginLeft: 250, marginRight: 50, marginBottom: 40,
   x: {label: "Papers, by how they say a residue or peptide is matched", grid: true, labelOffset: 34},
   y: {label: null, domain: rule_order},
   marks: [
