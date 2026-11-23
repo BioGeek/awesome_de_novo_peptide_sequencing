@@ -515,8 +515,8 @@
   "items_kind": "papers"
  },
  "n_read": {
-  "value": 115,
-  "text": "115",
+  "value": 116,
+  "text": "116",
   "desc": "Of those, papers whose full text was read",
   "made_by": [
    "papers.jsonl"
@@ -899,6 +899,10 @@
     "href": "../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-preprint.html"
    },
    {
+    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
+    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
+   },
+   {
     "label": "FDR control for AI-based de novo sequencing (2026): False discovery rate control for trustworthy AI-based de novo peptide sequencing",
     "href": "../publications/false-discovery-rate-control-for-trustworthy-ai-based-de-novo-peptide-sequencing.html"
    },
@@ -994,8 +998,8 @@
   "items_kind": "papers"
  },
  "n_unread": {
-  "value": 9,
-  "text": "9",
+  "value": 8,
+  "text": "8",
   "desc": "Papers with no full text in the library (paywalled or not yet fetched)",
   "made_by": [
    "papers.jsonl"
@@ -1040,17 +1044,13 @@
    {
     "label": "TF-GCNNovo (2025): TF-GCNNovo: A Peptide Sequence Prediction Model Integrating Transformer and Graph Convolutional Network",
     "href": "../publications/tf-gcnnovo-a-peptide-sequence-prediction-model-integrating-transformer-and.html"
-   },
-   {
-    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
-    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
    }
   ],
   "items_kind": "papers"
  },
  "n_pep": {
-  "value": 97,
-  "text": "97",
+  "value": 98,
+  "text": "98",
   "desc": "Papers reporting a peptide-level figure (recall or precision, under any name)",
   "made_by": [
    "papers.jsonl"
@@ -1365,6 +1365,10 @@
     "href": "../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-preprint.html"
    },
    {
+    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
+    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
+   },
+   {
     "label": "FoxNovo (2026): Accurate and ultra-fast de novo HLA-I immunopeptide sequencing with FoxNovo",
     "href": "../publications/accurate-and-ultra-fast-de-novo-hla-i-immunopeptide-sequencing-with-foxnovo.html"
    },
@@ -1456,8 +1460,8 @@
   "items_kind": "papers"
  },
  "n_aa": {
-  "value": 78,
-  "text": "78",
+  "value": 79,
+  "text": "79",
   "desc": "Papers reporting amino-acid precision or recall",
   "made_by": [
    "papers.jsonl"
@@ -1722,6 +1726,10 @@
    {
     "label": "DiffuNovo (2026): Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control",
     "href": "../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-preprint.html"
+   },
+   {
+    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
+    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
    },
    {
     "label": "GyroNovo (2026): GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing",
@@ -2299,8 +2307,8 @@
   "items_kind": "papers"
  },
  "n_rule_mass": {
-  "value": 43,
-  "text": "43",
+  "value": 44,
+  "text": "44",
   "desc": "Papers that state the 0.1 Da residue / 0.5 Da prefix rule",
   "made_by": [
    "papers.jsonl",
@@ -2442,6 +2450,10 @@
    {
     "label": "RT-GCTnovo (2025): RT-GCTnovo: A Peptide De Novo Sequencing Model Incorporating Gated Multi-scale Features and Dynamic Mass Masks",
     "href": "../publications/rt-gctnovo-a-peptide-de-novo-sequencing-model-incorporating-gated-multi-scale.html"
+   },
+   {
+    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
+    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
    },
    {
     "label": "GyroNovo (2026): GyroNovo: Error-Guided Fragment Imputation with Mass-Aware Attention for De Novo Peptide Sequencing",
@@ -2955,8 +2967,8 @@
   "items_kind": "papers"
  },
  "n_il_unstated": {
-  "value": 88,
-  "text": "88",
+  "value": 89,
+  "text": "89",
   "desc": "Papers that do not say how I and L are counted",
   "made_by": [
    "papers.jsonl",
@@ -3278,6 +3290,10 @@
    {
     "label": "DiffuNovo (2026): Regressor-guided Diffusion Model for De Novo Peptide Sequencing with Explicit Mass Control",
     "href": "../publications/regressor-guided-diffusion-model-for-de-novo-peptide-sequencing-with-preprint.html"
+   },
+   {
+    "label": "EncNovo (2026): EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures",
+    "href": "../publications/encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures.html"
    },
    {
     "label": "FDR control for AI-based de novo sequencing (2026): False discovery rate control for trustworthy AI-based de novo peptide sequencing",
