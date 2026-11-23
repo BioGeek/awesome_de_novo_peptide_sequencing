@@ -136,6 +136,9 @@ REDIRECTS: dict[str, dict[str, str]] = {'algorithms': {'genomicpeptidefinder-de-
              # sweep corrected; the two "-1248"/"-1268" rows were merged into
              # the person they duplicated.
              'hammed-khakzad': 'hamed-khakzad',
+             # 2026-11-23: Crossref gives Biemann's 1959 co-author as "G. Gapp";
+             # the printed byline (JACS 81, 2275) reads F. Gapp.
+             'g-gapp': 'f-gapp',
              'frode-s-berven-1248': 'frode-s-berven',
              'lennard-j-m-dekker-1268': 'lennard-j-m-dekker',
              # Found by --history the same day: two more from the September ORCID
