@@ -114,7 +114,7 @@ pubs = pd.read_sql(
            -- names. `models` above stays the full list, because the table and
            -- the BibTeX are about what a paper involved; the author-to-model
            -- graph needs the narrower one, or every venomics author becomes a
-           -- PEAKS author. 266 of 1282 publication_algorithm links are 'uses',
+           -- PEAKS author. 266 of 1284 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
            (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
@@ -2138,7 +2138,7 @@ lazy_chart("wave", () => { const wave_rows = pubs_filtered
 
 ## The architectures
 
-*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it. Switch on **First appearance only** for the field's history at a glance: each family shrinks to the method that introduced it, sized by how many methods followed, which is where the twenty quiet years between MASSPEC (1970) and the next family (1990) show.
+*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it. Switch on **First appearance only** for the field's history at a glance: each family shrinks to the method that introduced it, sized by how many methods followed, which is where the twenty-four quiet years between Biemann's first sequencing program (1966) and the next family (1990) show.
 
 ```{ojs}
 //| echo: false

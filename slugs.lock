@@ -832,6 +832,7 @@ algorithms	831	seminovo
 algorithms	832	encnovo
 algorithms	833	masspec
 algorithms	834	mass-spectrometric-peptide-sequencing-biemann-1959
+algorithms	835	computer-aided-peptide-sequencing-biemann-1966
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4678,6 +4679,9 @@ authors	3964	margaret-o-dayhoff
 authors	3965	richard-v-eck
 authors	3966	f-gapp
 authors	3967	josef-seibl
+authors	3968	c-cone
+authors	3969	b-r-webster
+authors	3970	guy-p-arsenault
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -7411,6 +7415,8 @@ publications	1004	seminovo-learning-beyond-search-identified-spectra-for-de-novo
 publications	1005	encnovo-de-novo-peptide-sequencing-with-an-encoder-only-architectures
 publications	1006	masspec-a-computer-program-for-complete-sequence-analysis-of-large-proteins
 publications	1007	application-of-mass-spectrometry-to-structure-problems-i-amino-acid-sequence-in
+publications	1008	computer-aided-interpretation-of-high-resolution-mass-spectra-ii-amino-acid
+publications	1009	determination-of-the-amino-acid-sequence-in-oligopeptides-by-computer
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics

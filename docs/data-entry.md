@@ -16,8 +16,8 @@ down anywhere, and worth following so the timeline stays comparable:
   any nominal "issue" it is later bundled into can postdate the article by
   months: Proteome Science 8:24 went online 2010-05-10 but sits in a Dec 2010
   issue.
-- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 439 rows use day
-  `01` and 390 of those are in non-January months, so a first-of-the-month date is
+- **Coarser precision.** Month-only sources get `YYYY-MM-01`; 441 rows use day
+  `01` and 392 of those are in non-January months, so a first-of-the-month date is
   normal here and not a red flag by itself.
 
 **The trap:** OpenAlex reports `publication_date` as `YYYY-01-01` whenever it
@@ -117,11 +117,11 @@ in `publication.abstract_source`. A NULL `abstract_source` alongside a non-empty
 `abstract` means the text was entered by hand and is authoritative: the script
 skips those rows unless `--force`, so don't pass `--force` casually.
 
-Coverage is 937/1006, of which 5 came from the PDFs themselves via
+Coverage is 937/1008, of which 5 came from the PDFs themselves via
 `build_pdf_abstracts.py` (`abstract_source = 'pdf'`). Four more carry
 `abstract_source = 'proceedings'`: the ICML and NeurIPS rows 438 to 441, whose
 abstracts were copied from the proceedings page itself.
-The 69 without one are mostly theses, conference pages and records with no DOI,
+The 71 without one are mostly theses, conference pages and records with no DOI,
 where neither an API nor the PDF yields a clean abstract.
 
 **`build_pdf_abstracts.py` rejects more than it accepts, 13 of 18, and the
