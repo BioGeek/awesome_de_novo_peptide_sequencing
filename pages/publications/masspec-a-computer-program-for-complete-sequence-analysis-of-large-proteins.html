@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.">
+<meta name="description" content="peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.&nbsp;A new method is suggested here for determining the amino acid sequence of proteins from the mass spectrum of…">
 
 <title>MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.">
+<meta property="og:description" content="peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.&nbsp;A new method is suggested here for determining the amino acid sequence of proteins from the mass spectrum of…">
 <style>#title-block-header .description { display: none; }</style>
 <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/masspec-a-computer-program-for-complete-sequence-analysis-of-large-proteins.html">
 
@@ -162,7 +162,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.
+    peer-reviewed · Computers in Biology and Medicine · 1970. Margaret O. Dayhoff et al.&nbsp;A new method is suggested here for determining the amino acid sequence of proteins from the mass spectrum of…
   </div>
 </div>
 
@@ -179,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","author":[{"@type":"Person","name":"Margaret O. Dayhoff"},{"@type":"Person","name":"Richard V. Eck"}],"datePublished":"1970-08-01","headline":"MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample","identifier":"https://doi.org/10.1016/0010-4825(70)90013-2","isPartOf":{"@type":"Periodical","name":"Computers in Biology and Medicine"},"name":"MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample","publisher":{"@type":"Organization","name":"Elsevier BV"},"sameAs":"https://doi.org/10.1016/0010-4825(70)90013-2"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"A new method is suggested here for determining the amino acid sequence of proteins from the mass spectrum of a single solution. A computer simulation of the reconstruction of the sequence from ideal mass-spectrometer data is presented. The method requires first the random fragmentation of a protein, as by partial acid hydrolysis. Volatile derivatives of the fragments, still mixed together, must next be made. The mass measurements are performed on the mixture of volatile derivatives. All the...","author":[{"@type":"Person","name":"Margaret O. Dayhoff"},{"@type":"Person","name":"Richard V. Eck"}],"datePublished":"1970-08-01","headline":"MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample","identifier":"https://doi.org/10.1016/0010-4825(70)90013-2","isPartOf":{"@type":"Periodical","name":"Computers in Biology and Medicine"},"name":"MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample","publisher":{"@type":"Organization","name":"Elsevier BV"},"sameAs":"https://doi.org/10.1016/0010-4825(70)90013-2"}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -208,6 +208,10 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>A new method is suggested here for determining the amino acid sequence of proteins from the mass spectrum of a single solution. A computer simulation of the reconstruction of the sequence from ideal mass-spectrometer data is presented. The method requires first the random fragmentation of a protein, as by partial acid hydrolysis. Volatile derivatives of the fragments, still mixed together, must next be made. The mass measurements are performed on the mixture of volatile derivatives. All the required chemical treatments would be simple and of such nature that the whole analysis, beginning with a sample of purified protein and ending with the computer printout of the amino acid sequences, could be made rapidly. The required amount of volatile derivative protein sample is expected to be very small, of the order of 1 mg. This should make feasible various experiments, for example with single organisms which are impossible at present.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">
@@ -218,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="methods-and-tools" class="level2">
 <h2 class="anchored" data-anchor-id="methods-and-tools">Methods and tools</h2>
 <ul>
-<li><a href="../algorithms/masspec.html">MASSPEC</a>: Margaret Dayhoff and Richard Eck’s 1970 program for complete sequence analysis of a protein from the mass spectrometry data of a single sample: the sequence is assembled from the overlapping peptide fragments of a partial hydrolysate, all measured in one mass spectrum, rather than from tandem MS. The earliest de novo sequencing program in this catalog. The software itself appears to be lost; only the paper survives.</li>
+<li><a href="../algorithms/masspec.html">MASSPEC</a>: Margaret Dayhoff and Richard Eck’s 1970 proposal, and the programs behind it, for sequencing a whole protein from one high-resolution mass spectrum of a near-random partial hydrolysate: the spectrometer separates and weighs the volatile peptide fragments, each exact mass gives a composition, and the sequence is the one set of overlapping fragments that stays mutually consistent among thousands of spurious candidates. Demonstrated in simulation on ideal data, reconstructing bovine insulin from the masses of all its fragments up to nine residues long; it converged at a mass accuracy of 0.02 Da but not 0.05 Da. The programs (PEPMS, FRAGEN, MASFRG, MSPEC with its PRUNE, WEED and OVERLAP phases, and SEQ) appear to be lost; only the paper survives.</li>
 </ul>
 </section>
 <section id="seen-in-the-charts" class="level2">
