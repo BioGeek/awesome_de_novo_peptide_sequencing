@@ -192,95 +192,95 @@ def ranknovo_rmd(query, target):
 
 @number("n_papers", "Deep-learning method papers in the catalog considered here", ["papers"], ["papers.jsonl"])
 def _():
-    return len(all_papers())
+    return [r["pub_id"] for r in all_papers()]
 
 @number("n_read", "Of those, papers whose full text was read", ["papers"], ["papers.jsonl"])
 def _():
-    return len(papers())
+    return [r["pub_id"] for r in papers()]
 
 @number("n_unread", "Papers with no full text in the library (paywalled or not yet fetched)", ["papers"], ["papers.jsonl"])
 def _():
-    return len(all_papers()) - len(papers())
+    return [r["pub_id"] for r in all_papers() if r.get("skipped_reason")]
 
 @number("n_pep", "Papers reporting a peptide-level figure (recall or precision, under any name)", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "peptide_recall", "peptide_precision") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "peptide_recall", "peptide_precision")]
 
 @number("n_aa", "Papers reporting amino-acid precision or recall", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "aa_precision", "aa_recall") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "aa_precision", "aa_recall")]
 
 @number("n_curve", "Papers reporting a precision-coverage curve or its area", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "precision_coverage_curve", "AUC_of_precision_coverage") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "precision_coverage_curve", "AUC_of_precision_coverage")]
 
 @number("n_fdr", "Papers reporting an FDR-based figure", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "FDR-based") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "FDR-based")]
 
 @number("n_ptm", "Papers reporting PTM precision or recall", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "PTM_precision/recall", "PTM_precision") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "PTM_precision/recall", "PTM_precision")]
 
 @number("n_calib", "Papers reporting a calibration metric", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(reports(r, "calibration metric") for r in papers())
+    return [r["pub_id"] for r in papers() if reports(r, "calibration metric")]
 
-def _rule_count(rule):
-    return sum(p["rule"] == rule for p in site()["papers"] if p["read"])
+def _rule_papers(rule):
+    return [p["id"] for p in site()["papers"] if p["read"] and p["rule"] == rule]
 
 @number("n_rule_mass", "Papers that state the 0.1 Da residue / 0.5 Da prefix rule", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return _rule_count("0.1 / 0.5 Da mass rule")
+    return _rule_papers("0.1 / 0.5 Da mass rule")
 
 @number("n_rule_exact", "Papers that count a residue or peptide correct only on an exact sequence match", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return _rule_count("Exact sequence")
+    return _rule_papers("Exact sequence")
 
 @number("n_rule_none", "Papers that state no matching rule at all", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return _rule_count("Not stated")
+    return _rule_papers("Not stated")
 
 @number("n_rule_other", "Papers with a stricter mass rule or position-by-position matching", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return _rule_count("Stricter mass rule") + _rule_count("Position by position")
+    return _rule_papers("Stricter mass rule") + _rule_papers("Position by position")
 
 @number("n_il_equal", "Papers that say I and L are counted as equal", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return sum(p["il"] == "Equal" for p in site()["papers"] if p["read"])
+    return [p["id"] for p in site()["papers"] if p["read"] and p["il"] == "Equal"]
 
 @number("n_il_unstated", "Papers that do not say how I and L are counted", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return sum(p["il"] == "Not stated" for p in site()["papers"] if p["read"])
+    return [p["id"] for p in site()["papers"] if p["read"] and p["il"] == "Not stated"]
 
 @number("n_prec_named_recall", "Papers that call a peptide figure 'precision' and define it over all spectra", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return sum(p["naming"] == "precision over all spectra" for p in site()["papers"])
+    return [p["id"] for p in site()["papers"] if p["naming"] == "precision over all spectra"]
 
 @number("n_recall_named_prec", "Papers that call a peptide figure 'recall' and define it over predicted peptides", ["papers"], ["papers.jsonl", "build_site_data.py"])
 def _():
-    return sum(p["naming"] == "recall over predictions" for p in site()["papers"])
+    return [p["id"] for p in site()["papers"] if p["naming"] == "recall over predictions"]
 
 @number("n_new_metric", "Papers that introduce a metric of their own", ["papers"], ["papers.jsonl"])
 def _():
-    return sum(bool(r.get("new_metrics")) for r in papers())
+    return [r["pub_id"] for r in papers() if r.get("new_metrics")]
 
 # ---- the code ------------------------------------------------------------------------------
 
 @number("n_impl", "Implementations compared (a tool, or one version range of it)", ["code"], ["implementations.json"])
 def _():
-    return len(code())
+    return Rows(code())
 
 @number("n_swapped_now", "Entries in the table whose latest code still swaps amino-acid precision and recall", ["code"], ["implementations.json"])
 def _():
     latest = {}
     for c in code():
         latest[c["tool"]] = c  # rows are in version order, so the last one per tool is the latest
-    return sum(c["order"] == "swapped" for c in latest.values())
+    return Rows(c for c in latest.values() if c["order"] == "swapped")
 
 @number("n_forward_only", "Implementations that match residues in a forward pass only, with no suffix pass", ["code"], ["implementations.json"])
 def _():
-    return sum("forward only" in c["rule"] for c in code())
+    return Rows(c for c in code() if "forward only" in c["rule"])
 
 # ---- worked examples -----------------------------------------------------------------------
 
@@ -378,13 +378,43 @@ def _():
 
 # ---- driver --------------------------------------------------------------------------------
 
+class Rows(list):
+    """Implementation rows a count is made of, as opposed to a list of publication ids."""
+
+
+def paper_items(ids):
+    """The papers a count is made of, as appendix entries: method (year): title, linked."""
+    by_id = {p["id"]: p for p in site()["papers"]}
+    out = []
+    for pid in sorted(set(ids), key=lambda x: (by_id[x]["year"] or 0, by_id[x]["methods"], x)):
+        p = by_id[pid]
+        out.append({"label": f"{p['methods']} ({p['year']}): {p['title']}",
+                    "href": f"../publications/{p['slug']}.html" if p["slug"] else None})
+    return out
+
+
 def compute(i):
+    """A number, and when it is a count of papers or implementations, the list it counts: the
+    appendix prints that list under the number, so a reader can check every member."""
     r = REG[i]
     v = r["f"]()
+    items = None
+    if isinstance(v, Rows):
+        items = [{"label": f"{c['tool']}, {c['versions']}", "href": f"{GH}{c['repo']}/blob/{c['ref']}/{c['path']}"}
+                 for c in v]
+        v = len(v)
+    elif isinstance(v, list):
+        assert len(set(v)) == len(v), f"{i}: a paper counted twice"
+        items = paper_items(v)
+        v = len(v)
     v = round(v, 6) if isinstance(v, float) else v
-    return {"value": v, "text": r["fmt"].format(v), "desc": r["desc"], "made_by": r["made_by"],
-            "code": textwrap.dedent(inspect.getsource(r["f"])),
-            "sources": [{"key": k, "label": SOURCES[k][0], "url": SOURCES[k][1]} for k in r["sources"]]}
+    out = {"value": v, "text": r["fmt"].format(v), "desc": r["desc"], "made_by": r["made_by"],
+           "code": textwrap.dedent(inspect.getsource(r["f"])),
+           "sources": [{"key": k, "label": SOURCES[k][0], "url": SOURCES[k][1]} for k in r["sources"]]}
+    if items is not None:
+        out["items"] = items
+        out["items_kind"] = "implementations" if isinstance(r["f"](), Rows) else "papers"
+    return out
 
 
 def main():

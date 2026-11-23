@@ -355,9 +355,17 @@ def with_numbers(body: str, src: Path, slug: str) -> str:
         esc = lambda t: re.sub(r"([\\`*_{}\[\]<>#|])", r"\\\1", t)
         srcs = ", ".join(f"[{esc(s['label'])}]({s['url']})" for s in n["sources"])
         made = ", ".join(f"[`{m}`]({base}{m})" for m in n["made_by"])
+        # A count of papers or implementations carries what it counts ('items'), so the reader
+        # can check each member rather than take the total on trust.
+        members = []
+        if n.get("items"):
+            members = [f"<details><summary>The {len(n['items'])} {n.get('items_kind', 'counted')}</summary>", ""]
+            members += [f"- [{esc(it['label'])}]({it['href']})" if it.get("href") else f"- {esc(it['label'])}"
+                        for it in n["items"]]
+            members += ["", "</details>", ""]
         L += [f"::: {{#n-{i} .small}}",
               f"**{n['text']}** ({n['desc']}). Reads {srcs}." + (f" Input from {made}." if made else ""),
-              f" Recompute: `page_numbers.py --only {i}`.", "",
+              f" Recompute: `page_numbers.py --only {i}`.", "", *members,
               "<details><summary>Code</summary>", "", "```python", n["code"].rstrip(), "```", "", "</details>",
               ":::", ""]
     return body.replace("{{appendix}}", "\n".join(L))

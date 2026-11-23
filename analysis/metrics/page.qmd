@@ -80,6 +80,7 @@ FDR ({{n:n_fdr}}), PTM precision or recall ({{n:n_ptm}}) or calibration
 ```{ojs}
 //| echo: false
 papers_read = ns.papers.filter(d => d.read)
+pub_href = slug => ["..", "publications", `${slug}.html`].join("/")
 metric_counts = ns.groups
   .map(g => ({metric: g, n: papers_read.filter(d => d.reports.includes(g)).length}))
   .filter(d => d.n > 0)
@@ -254,7 +255,9 @@ htl.html`<div class="wrap-table">${Inputs.table(paper_rows, {
            il: "I and L", naming: "Name against denominator"},
   format: {
     methods: (m, i, data) => data[i].slug
-      ? htl.html`<a href="../publications/${data[i].slug}.html" title="${data[i].title}">${m}</a>` : m,
+      // The URL is built in code: written as a literal href template, check_links.py read
+      // `../publications/${data[i].slug}.html` as a link to a page of that name and failed CI.
+      ? htl.html`<a href=${pub_href(data[i].slug)} title="${data[i].title}">${m}</a>` : m,
     year: y => y == null ? "" : String(y),
     naming: v => v ?? ""
   },
