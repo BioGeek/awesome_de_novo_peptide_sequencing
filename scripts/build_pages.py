@@ -1096,6 +1096,14 @@ def render_algorithm(site: Site, row: dict, ctx: dict) -> tuple[str, float]:
                   "from the GitHub API, and this link is not a GitHub "
                   "repository.", ""]
 
+    if ctx.get("reimplementations"):
+        L += ["## Reimplementations", "",
+              "Not the original code: written by others from the published "
+              "description of the method.", ""]
+        for url, note in ctx["reimplementations"]:
+            L.append(f"- <{url}>: {md_escape(note)}")
+        L.append("")
+
     # WHERE THE WEIGHTS ARE. A benchmark number is only reproducible if the
     # checkpoint behind it can still be downloaded, and one method name covers
     # several models: the version and the training data are part of the
@@ -2274,6 +2282,16 @@ def load(conn: sqlite3.Connection) -> dict:
                "ORDER BY algorithm_id, sort_order, url"):
         d["repos"][r["algorithm_id"]].append(r["url"])
 
+    # Code written by someone else from a method's paper, kept apart from
+    # algorithm_repository on purpose: a row there counts the method as having
+    # code (the homepage's counts, the Code filter, the papers table's Code
+    # column, the daily metrics, the page's codeRepository), and a
+    # reproduction of a lost 1970 program is none of those.
+    d["reimplementations"] = defaultdict(list)
+    for r in q("SELECT algorithm_id, url, note FROM reimplementation "
+               "ORDER BY algorithm_id, url"):
+        d["reimplementations"][r["algorithm_id"]].append((r["url"], r["note"]))
+
     # Which repo URLs build_repo_metrics.py could actually resolve. It uses the
     # gh CLI, so a PyPI page, a lab website, an anonymous-review link, a
     # Hugging Face Space or a not-yet-public GitHub repo will never have a row,
@@ -2968,6 +2986,7 @@ def main() -> int:
                 "described": described,
                 "used": used,
                 "repos": repos,
+                "reimplementations": d["reimplementations"].get(gid, []),
                 "checkpoints": d["checkpoints"].get(gid, []),
                 "data": [dict(x, pub_id=pub_id, date=date, ptype=ptype)
                          for pub_id, _t, date, _j, ptype, _r in described

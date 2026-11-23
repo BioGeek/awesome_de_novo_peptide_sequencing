@@ -69056,6 +69056,14 @@ INSERT INTO training_size VALUES(119,1004,1670,NULL,'train',4500000,'spectra',0,
 INSERT INTO training_size VALUES(120,1004,1671,NULL,'train',499402,'spectra',0,'Train 499,402','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
 INSERT INTO training_size VALUES(121,1004,1673,NULL,'train',213284,'spectra',0,'Train 213,284','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
 INSERT INTO training_size VALUES(122,1004,1675,NULL,'train',317009,'spectra',0,'Train 317,009','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
+CREATE TABLE reimplementation (
+  algorithm_id INTEGER NOT NULL
+      REFERENCES algorithm(id) ON DELETE CASCADE,
+  url          TEXT NOT NULL,
+  note         TEXT NOT NULL,  -- who wrote it, from what, and what it does; shown beside the link
+  PRIMARY KEY (algorithm_id, url)
+);
+INSERT INTO reimplementation VALUES(833,'https://github.com/BioGeek/MASSPEC','A reproduction written in 2026 by this catalog''s maintainer from the paper''s description and appendix, not Dayhoff and Eck''s code, which appears to be lost. It reproduces the paper''s insulin experiment and its figures, and runs the method on present-day data.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
 INSERT INTO sqlite_sequence VALUES('city',581);
