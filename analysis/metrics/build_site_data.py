@@ -69,8 +69,28 @@ def il_rule(metrics):
     return "Not stated"
 
 
-def main():
-    con = sqlite3.connect(REPO / "denovo.db")
+# Which papers the page covers: every paper that DESCRIBES a deep-learning sequencing method,
+# post-processor or benchmark. check_metrics.py holds papers.jsonl to exactly this set.
+DL_METHOD_PAPERS = (
+    "SELECT DISTINCT p.id, p.title FROM publication p "
+    "JOIN publication_algorithm pa ON pa.publication_id = p.id AND pa.role = 'describes' "
+    "JOIN algorithm a ON a.id = pa.algorithm_id "
+    "WHERE a.is_deep_learning = 1 AND a.kind IN ('algorithm', 'post-processor', 'benchmark') "
+    "ORDER BY p.id")
+
+
+def dl_method_papers():
+    """{publication id: title} of every paper the page should cover."""
+    con = sqlite3.connect(f"file:{REPO / 'denovo.db'}?mode=ro", uri=True)
+    try:
+        return dict(con.execute(DL_METHOD_PAPERS).fetchall())
+    finally:
+        con.close()
+
+
+def build():
+    """The site_data.json the page reads, as a dict. Pure: writes nothing."""
+    con = sqlite3.connect(f"file:{REPO / 'denovo.db'}?mode=ro", uri=True)
     meta = {}
     for pid, name, date in con.execute(
             "SELECT p.id, a.name, p.publication_date FROM publication p "
@@ -111,10 +131,18 @@ def main():
     for c in code:
         c["url"] = f"https://github.com/{c['repo']}/blob/{c['ref']}/{c['path']}"
 
-    out = {"groups": list(dict.fromkeys(GROUPS.values())), "papers": papers, "code": code}
-    (HERE / "site_data.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")) + "\n",
-                                         encoding="utf-8")
-    print(f"site_data.json: {len(papers)} papers, {len(code)} implementations")
+    con.close()
+    return {"groups": list(dict.fromkeys(GROUPS.values())), "papers": papers, "code": code}
+
+
+def serialise(data):
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
+def main():
+    data = build()
+    (HERE / "site_data.json").write_text(serialise(data), encoding="utf-8")
+    print(f"site_data.json: {len(data['papers'])} papers, {len(data['code'])} implementations")
 
 
 if __name__ == "__main__":

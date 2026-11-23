@@ -18,9 +18,9 @@ name: check-counts
 on:
   push:
     branches: [main]
-    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**']
+    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**', 'analysis/metrics/**', 'slugs.lock']
   pull_request:
-    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**']
+    paths: ['denovo.db', 'CLAUDE.md', 'docs/**', 'WATCHLIST.md', 'scripts/**', 'analysis/metrics/**', 'slugs.lock']
   workflow_dispatch:
 
 permissions:
@@ -35,3 +35,10 @@ jobs:
       # scripts/check_counts.py is stdlib-only, so no uv sync and no dependency install.
       - name: Check documented counts against denovo.db
         run: python3 scripts/check_counts.py
+
+      # The metrics page covers every deep-learning method paper: fails when one has no
+      # row in analysis/metrics/papers.jsonl, or when the page's data no longer rebuilds
+      # to what is committed. The pre-commit hook fixes both; this is the backstop for a
+      # clone without it. Stdlib-only, like the step above.
+      - name: Check the metrics page against denovo.db
+        run: python3 analysis/metrics/check_metrics.py

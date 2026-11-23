@@ -406,7 +406,12 @@ and file its behaviour was read at. `build_site_data.py` summarises the two and
 `page_numbers.py` computes the counts and runs transcriptions of each tool's
 matching loop for the worked examples, each naming the commit it was copied
 from. A new paper or a new tool version is a row in one of the two files, then
-`run_all.sh`. One trap met building it: classify a paper's matching rule from
+`run_all.sh`; `analysis/metrics/README.md` says how. Three things keep it from
+going stale silently: `check_metrics.py --fix` in the pre-commit hook gives a
+new deep-learning method paper a "not yet read" row and rebuilds the data (CI's
+check-counts job runs it bare), `pending.py` lists the unread papers with their
+full text, and the weekly `watch-metric-code` workflow keeps one issue open
+listing pinned evaluation code that changed upstream. One trap met building it: classify a paper's matching rule from
 its ACCURACY metrics only. An "exact match against the protein database" in an
 FDR section is not how the paper scores recall, and reading it as one labelled
 the InstaNovo paper "exact sequence".

@@ -198,7 +198,7 @@ def _():
 def _():
     return [r["pub_id"] for r in papers()]
 
-@number("n_unread", "Papers with no full text in the library (paywalled or not yet fetched)", ["papers"], ["papers.jsonl"])
+@number("n_unread", "Papers not read for this page: no full text in the library, or added since it was last read", ["papers"], ["papers.jsonl"])
 def _():
     return [r["pub_id"] for r in all_papers() if r.get("skipped_reason")]
 
@@ -417,6 +417,11 @@ def compute(i):
     return out
 
 
+def render():
+    """page_numbers.json's text: every number, computed now."""
+    return json.dumps({i: compute(i) for i in REG}, indent=1, ensure_ascii=False) + "\n"
+
+
 def main():
     args = sys.argv[1:]
     if "--only" in args:
@@ -433,7 +438,7 @@ def main():
         return 1 if bad else 0
     for i, v in out.items():
         print(f"{i:22s} {v['text']:>10s}  {v['desc']}")
-    path.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(render(), encoding="utf-8")
     return 0
 
 

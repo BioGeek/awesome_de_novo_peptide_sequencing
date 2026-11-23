@@ -21,8 +21,8 @@ computed, and against the evaluation code of {{n:n_impl}} implementations,
 version by version.
 
 **How it was done.** The papers are the catalog's {{n:n_papers}} deep-learning
-method papers; {{n:n_unread}} of them could not be read in full and are left
-out. Every metric a paper reports, with its definition
+method papers; {{n:n_unread}} of them are left out, because their full text is
+not in the catalog's PDF library or they were added after it was last read. Every metric a paper reports, with its definition
 quoted and the section it came from, is in
 [`papers.jsonl`](https://github.com/BioGeek/awesome_de_novo_peptide_sequencing/blob/main/analysis/metrics/papers.jsonl).
 The code was read at the commit each row of the

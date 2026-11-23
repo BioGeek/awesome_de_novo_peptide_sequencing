@@ -1,0 +1,49 @@
+# Watch the evaluation code the metrics page describes.
+#
+# analysis/metrics/implementations.json pins each tool's metric code to the commit it was read
+# at. When a tool's current file changes upstream, the page may describe code that no longer
+# runs. watch_code.py compares the pinned blob with the default branch (or the row's `watch`
+# branch) and this job keeps ONE open issue listing what changed, closing it when nothing is
+# left. It never commits, so it cannot join the push race the refresh-* workflows guard
+# against; Monday 10:00 UTC sits after refresh-benchmarks (09:00) all the same.
+name: watch-metric-code
+
+on:
+  schedule:
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TITLE: "Metric code changed upstream since the metrics page read it"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare the pinned evaluation files with upstream
+        id: watch
+        run: |
+          rc=0
+          python3 analysis/metrics/watch_code.py --out report.md || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then exit "$rc"; fi
+          echo "changed=$([ "$rc" -eq 3 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Open, update or close the tracking issue
+        run: |
+          number=$(gh issue list --state open --limit 100 --json number,title \
+                     --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
+          if [ "${{ steps.watch.outputs.changed }}" = "true" ]; then
+            if [ -n "$number" ]; then
+              gh issue edit "$number" --body-file report.md
+            else
+              gh issue create --title "$TITLE" --body-file report.md
+            fi
+          elif [ -n "$number" ]; then
+            gh issue close "$number" --comment "Every tracked evaluation file now matches implementations.json."
+          fi

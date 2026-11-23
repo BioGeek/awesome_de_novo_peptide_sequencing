@@ -1000,11 +1000,11 @@
  "n_unread": {
   "value": 8,
   "text": "8",
-  "desc": "Papers with no full text in the library (paywalled or not yet fetched)",
+  "desc": "Papers not read for this page: no full text in the library, or added since it was last read",
   "made_by": [
    "papers.jsonl"
   ],
-  "code": "@number(\"n_unread\", \"Papers with no full text in the library (paywalled or not yet fetched)\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return [r[\"pub_id\"] for r in all_papers() if r.get(\"skipped_reason\")]\n",
+  "code": "@number(\"n_unread\", \"Papers not read for this page: no full text in the library, or added since it was last read\", [\"papers\"], [\"papers.jsonl\"])\ndef _():\n    return [r[\"pub_id\"] for r in all_papers() if r.get(\"skipped_reason\")]\n",
   "sources": [
    {
     "key": "papers",
@@ -3642,8 +3642,8 @@
     "href": "https://github.com/Biocomputing-Research-Group/Transformer-DIA/blob/1530fc3/casanovo_dia/denovo/model.py"
    },
    {
-    "label": "π-HelixNovo, every tag",
-    "href": "https://github.com/PHOENIXcenter/pi-HelixNovo/blob/49c0673/denovo/model.py"
+    "label": "π-HelixNovo, every tag, and the pi-HelixNovoV2 branch",
+    "href": "https://github.com/PHOENIXcenter/pi-HelixNovo/blob/d72474e/denovo/model.py"
    },
    {
     "label": "π-MNovo, v0.1.0",
@@ -3743,7 +3743,7 @@
    },
    {
     "label": "denovo_benchmarks, 2026-09-26 and later",
-    "href": "https://github.com/bittremieuxlab/denovo_benchmarks/blob/3a92eba/evaluation/evaluate.py"
+    "href": "https://github.com/bittremieuxlab/denovo_benchmarks/blob/53422da/evaluation/evaluate.py"
    },
    {
     "label": "ProteoBench, current",
@@ -3793,8 +3793,8 @@
     "href": "https://github.com/Biocomputing-Research-Group/Transformer-DIA/blob/1530fc3/casanovo_dia/denovo/model.py"
    },
    {
-    "label": "π-HelixNovo, every tag",
-    "href": "https://github.com/PHOENIXcenter/pi-HelixNovo/blob/49c0673/denovo/model.py"
+    "label": "π-HelixNovo, every tag, and the pi-HelixNovoV2 branch",
+    "href": "https://github.com/PHOENIXcenter/pi-HelixNovo/blob/d72474e/denovo/model.py"
    },
    {
     "label": "TSARseqNovo, latest",

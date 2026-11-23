@@ -107,6 +107,31 @@ if [ -f scripts/slugs.py ] && command -v python3 >/dev/null 2>&1; then
   fi
 fi
 
+# The metrics analysis page (analysis/metrics/) covers every deep-learning method
+# paper, and nothing else would tell it one was added. --fix gives a new paper a
+# 'not yet read' row in papers.jsonl and rebuilds the page's data, so the page
+# counts it as unread instead of silently leaving it out. Filling the row needs
+# the full text (analysis/metrics/pending.py lists them). A row for a paper that
+# no longer describes a deep-learning method is never removed automatically, and
+# refuses the commit. Stdlib-only, instant, so it runs on every commit. It runs
+# AFTER the URL guard because the page links each paper by its slug, which a new
+# paper only gets when slugs.lock is written above; run earlier, it committed a
+# new paper with no link and the CI check found the data stale.
+if [ -f analysis/metrics/check_metrics.py ] && command -v python3 >/dev/null 2>&1; then
+  metrics_rc=0
+  python3 analysis/metrics/check_metrics.py --fix --quiet || metrics_rc=$?
+  for f in analysis/metrics/papers.jsonl analysis/metrics/site_data.json analysis/metrics/page_numbers.json; do
+    if ! git diff --quiet -- "$f" 2>/dev/null; then
+      git add "$f"
+      echo "pre-commit: refreshed $f."
+    fi
+  done
+  if [ "$metrics_rc" -ne 0 ]; then
+    echo "pre-commit: refusing this commit, the metrics page is out of step (see above)." >&2
+    exit 1
+  fi
+fi
+
 # Report so the user knows why an extra file joined their commit.
 if [ -n "$DB_STAGED" ]; then
   echo "pre-commit: regenerated denovo.sql from staged denovo.db."
