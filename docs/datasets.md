@@ -14,7 +14,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**514 datasets, 559 versions, 1333 addresses, 1329 publication links over 314 papers.**
+**514 datasets, 559 versions, 1333 addresses, 1330 publication links over 314 papers.**
 
 ### What a paper did with a dataset
 
@@ -47,7 +47,7 @@ invariant. It read 10 when first registered, every one a `uses` beside an
 `trains-on` and `evaluates-on`, since a paper that deposits a corpus usually
 trains on it too, and one paper can hold both of those for one version, its
 training and test splits.
-**364 links are `trains-on` and 422 `evaluates-on`.**
+**365 links are `trains-on` and 422 `evaluates-on`.**
 
 **The nine-species benchmark has a version per build anyone ran on**, and
 they are distinguishable by number, which is the only reliable way. The main
@@ -116,8 +116,8 @@ spectra came from, and treating them as nine catalog datasets would be wrong
 twice: it would invent nine rows and lose the fact that they are one benchmark.
 
 **A NULL `dataset_version_id` is the finding, not a gap.** 86 papers use the
-nine-species benchmark; 51 name the original, 30 the revised, 3 the InstaNovo
-split, 1 dIon's retrieval benchmark, and **36 print only a per-species provenance accession**, which does not
+nine-species benchmark; 52 name the original, 30 the revised, 3 the InstaNovo
+split, 1 dIon's retrieval benchmark, and **35 print only a per-species provenance accession**, which does not
 determine which curated version they ran on. A paper naming two versions is counted
 under each, so the parts add up to more than the whole. Inventing a version for those
 would hide exactly the ambiguity the table exists to expose.

@@ -41749,7 +41749,8 @@ INSERT INTO publication_dataset VALUES(1673,1004,2,405,'trains-on');
 INSERT INTO publication_dataset VALUES(1674,1004,2,405,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1675,1004,379,404,'trains-on');
 INSERT INTO publication_dataset VALUES(1676,1004,379,404,'evaluates-on');
-INSERT INTO publication_dataset VALUES(1677,1005,1,NULL,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1677,1005,1,1,'evaluates-on');
+INSERT INTO publication_dataset VALUES(1678,1005,1,1,'trains-on');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
