@@ -300,7 +300,7 @@ def _():
 def _():
     return forward_only("GGPEPTIDE", "NPEPTIDE", inverted=True)
 
-@number("ex_pep_prec", "100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)", ["casanovo_eval"], fmt="{:.2f}")
+@number("ex_pep_prec", "100 labelled spectra, 80 predicted, 60 matching their label: peptide precision, TP / (TP + FP)", ["casanovo_eval"], fmt="{:.2f}")
 def _():
     tp, predicted = 60, 80
     return tp / predicted

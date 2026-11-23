@@ -35,10 +35,11 @@ commit each was copied from.
 ::: {.callout-important appearance="simple"}
 **Five things to know before putting two numbers side by side.**
 
-1. **"Peptide precision" is usually a recall.** Precision is TP / (TP + FP): the
-   correct peptides over the predictions the model made. Recall is
-   TP / (TP + FN): the correct peptides over all labelled spectra, a spectrum the
-   model got wrong or left blank being a false negative. Casanovo's code calls its
+1. **"Peptide precision" is usually a recall.** Scored against the search
+   labels, precision is TP / (TP + FP): the predictions that match their label
+   over the predictions made. Recall is TP / (TP + FN): the matches over all
+   labelled spectra, a spectrum the model got wrong or left blank being a false
+   negative. Casanovo's code calls its
    peptide figure `pep_precision` but divides by every labelled spectrum, which
    is the recall; NovoBench, denovo_benchmarks and PowerNovo2 do the same. The
    two agree only when the model predicts every spectrum
@@ -111,21 +112,41 @@ precision at each depth gives **precision against coverage**.
 ### Precision, recall, and the spectra left blank
 
 At peptide level, precision is TP / (TP + FP) and recall is TP / (TP + FN).
-Every labelled spectrum ends one of three ways:
+In practice the evaluation code scores each **labelled** spectrum against its
+label, and counts it one of three ways:
 
-- the model predicts the label's peptide: a **true positive**;
-- it predicts a different peptide: a **false positive**, because it asserted
-  something wrong, and also a **false negative**, because the right peptide was
-  not found;
+- the model predicts the label's peptide: **counted as** a true positive;
+- it predicts a different peptide: **counted as** a false positive, because it
+  asserted something other than the label, and also as a false negative, because
+  the label's peptide was not found;
 - it predicts nothing, because it abstained, no candidate fitted the precursor
-  mass, or the prediction fell below a confidence threshold: a **false
-  negative** only.
+  mass, or the prediction fell below a confidence threshold: **counted as** a
+  false negative only.
 
-So **peptide precision** = correct / predictions made, and **peptide recall** =
-correct / all labelled spectra. They differ only by the blanks. Take 100 labelled
-spectra on which a model predicts 80 and gets 60 right: precision is
+So **peptide precision** = matches / predictions made, and **peptide recall** =
+matches / all labelled spectra. They differ only by the blanks. Take 100 labelled
+spectra on which a model predicts 80 and matches the label on 60: precision is
 {{n:ex_pep_prec}}, recall is {{n:ex_pep_rec}}. If it predicts all 100, both are
-the share it gets right.
+the share that matches.
+
+"Counted as" is doing work there, because the label is a database-search
+identification, not the peptide that produced the spectrum
+([more below](#the-truth-is-a-search-engines-answer)). Two things the counting
+cannot see:
+
+- **A wrong label turns the counts around.** If the search mislabelled a
+  spectrum and the model agrees with it, a false positive is counted as a true
+  positive. If the model gets the real peptide, a true positive is counted as a
+  false positive and a false negative. At a 1% FDR about one label in a hundred
+  is expected to be wrong, and nothing in the evaluation says which.
+- **Spectra the search did not identify are not counted at all.** The sample
+  holds peptides that produced spectra but that the search missed: not in its
+  database, carrying a modification it did not allow, or scoring below its
+  threshold. They are in neither denominator. A model that sequences them
+  correctly gains nothing, and a model that gets them wrong loses nothing. So
+  "recall" is recall over what the search found, not over the peptides in the
+  sample, and "precision" says nothing about the model's calls on the spectra
+  *de novo* sequencing is most often used for.
 
 Casanovo's `evaluate.py` returns a figure named `pep_precision` computed as
 correct / all spectra passed to it. Since v4.0 every labelled spectrum is passed,

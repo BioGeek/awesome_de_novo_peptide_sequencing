@@ -407,9 +407,9 @@
  "ex_pep_prec": {
   "value": 0.75,
   "text": "0.75",
-  "desc": "100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)",
+  "desc": "100 labelled spectra, 80 predicted, 60 matching their label: peptide precision, TP / (TP + FP)",
   "made_by": [],
-  "code": "@number(\"ex_pep_prec\", \"100 labelled spectra, 80 predicted, 60 right: peptide precision, TP / (TP + FP)\", [\"casanovo_eval\"], fmt=\"{:.2f}\")\ndef _():\n    tp, predicted = 60, 80\n    return tp / predicted\n",
+  "code": "@number(\"ex_pep_prec\", \"100 labelled spectra, 80 predicted, 60 matching their label: peptide precision, TP / (TP + FP)\", [\"casanovo_eval\"], fmt=\"{:.2f}\")\ndef _():\n    tp, predicted = 60, 80\n    return tp / predicted\n",
   "sources": [
    {
     "key": "casanovo_eval",
