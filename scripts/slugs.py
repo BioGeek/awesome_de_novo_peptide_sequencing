@@ -424,8 +424,8 @@ def assign_unique(
 # --------------------------------------------------------------------------
 # The catalog's seven entity types, and how each is keyed.
 #
-# Institutions are keyed by NAME, not by affiliation row: 1391 affiliation rows
-# collapse to 1114 institutions because one institution has many departments,
+# Institutions are keyed by NAME, not by affiliation row: 1392 affiliation rows
+# collapse to 1115 institutions because one institution has many departments,
 # and every chart groups on `af.name` (index.qmd projects `af.name AS
 # affiliation` with no department). A page per row would leave a click on
 # "Utrecht University" ambiguous across three targets.
@@ -473,7 +473,7 @@ ENTITY_QUERIES: dict[str, str] = {
     # a method.
     #
     # HAVING COUNT(*) >= 2 is the whole page policy, in SQL, on purpose.
-    # 17 of 50 families hold exactly one method, and a page for one of those
+    # 16 of 50 families hold exactly one method, and a page for one of those
     # would carry that method's papers, that method's authors and its dates:
     # a duplicate of a page that already exists. A family earns a page when it
     # has something to aggregate. The threshold is derived rather than curated,

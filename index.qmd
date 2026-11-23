@@ -114,7 +114,7 @@ pubs = pd.read_sql(
            -- names. `models` above stays the full list, because the table and
            -- the BibTeX are about what a paper involved; the author-to-model
            -- graph needs the narrower one, or every venomics author becomes a
-           -- PEAKS author. 266 of 1280 publication_algorithm links are 'uses',
+           -- PEAKS author. 266 of 1282 publication_algorithm links are 'uses',
            -- and 18 of PEAKS's own 21 papers are applications of it.
            (SELECT GROUP_CONCAT(alg.name, ', ' ORDER BY alg.name)
               FROM publication_algorithm pal JOIN algorithm alg ON alg.id = pal.algorithm_id
@@ -1549,8 +1549,8 @@ page_link = (type, key, label) => {
 // A repo can back two algorithms, so `model` reads "A / B"; link the first.
 algo_href = m => page_href("algorithms", String(m ?? "").split(" / ")[0].trim())
 
-// Where a family label should go. 33 of 50 families have a page of their own;
-// the other 17 hold exactly one method, so their page would have carried that
+// Where a family label should go. 34 of 50 families have a page of their own;
+// the other 16 hold exactly one method, so their page would have carried that
 // method's papers, authors and dates and nothing else. Rather than leave a
 // lane label dead, a singleton family links straight to its one method: every
 // label in the swim lane is clickable, and
@@ -2138,7 +2138,7 @@ lazy_chart("wave", () => { const wave_rows = pubs_filtered
 
 ## The architectures
 
-*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it. Switch on **First appearance only** for the field's history at a glance: each family shrinks to the method that introduced it, sized by how many methods followed, which is where the nine quiet years between PAAS (1981) and the next family (1990) show.
+*De novo* sequencing has cycled through several methodological families: first hand-engineered dynamic programming and learning-to-rank, then a long stretch of CNN+RNN models, then transformers, GNNs, NAR variants, and most recently diffusion. Use the filters to focus on one slice of the field; hover a dot to read the method's signature contribution, or click a family name on the left for every method in it. Switch on **First appearance only** for the field's history at a glance: each family shrinks to the method that introduced it, sized by how many methods followed, which is where the twenty quiet years between MASSPEC (1970) and the next family (1990) show.
 
 ```{ojs}
 //| echo: false

@@ -28,7 +28,7 @@ Two things to keep straight. The date shown beside each entry is the PAPER's
 publication date, not when it was catalogued, and the list says so, because
 several additions each month are older work that surfaced in a
 `build_candidates.py` sweep. And the highest id can exceed the row count, since
-a deleted row does not give its id back -- 1005 against 1004 publications today --
+a deleted row does not give its id back -- 1007 against 1006 publications today --
 so the id is an ordering, never a count.
 
 A real `added_at` column would be better and is not worth it: the value only
@@ -78,7 +78,7 @@ the filter panel opens so the change is reversible.
 **The Code filter says "No repository recorded", never "closed source".**
 It is the fourth control in the sticky filter bar, beside Kind, Approach and
 Acquisition, and it reads `algorithm_repository`, which is curated and
-incomplete: 111 of 828 methods have a row, 57 of the 79 deep-learning
+incomplete: 111 of 830 methods have a row, 57 of the 79 deep-learning
 algorithms. A method whose code exists but is not catalogued lands in the
 second bucket, so the label states what the catalog knows rather than a fact
 about the method. `repository_candidates.csv` is where the gap closes.
@@ -365,12 +365,14 @@ time. The **First appearance only** toggle does that removal instead:
 
 The chart, its table and the `family_firsts` query are gone. Measured: 52
 dots in 1,412 px against 231 in 6,768, and 0 collisions in either mode. The
-**nine years of quiet between 1981 and 1990** still read as a gap, because
-the x axis is still time: `Heuristic` arrives with PAAS in April 1981 and the
-second family, `Graph / DP`, not until Bartels in June 1990.
+**twenty years of quiet between 1970 and 1990** still read as a gap, because
+the x axis is still time: `Manual interpretation` arrives with Biemann in May
+1959, `Heuristic` with Dayhoff and Eck's MASSPEC in August 1970, and the next
+family, `Graph / DP`, not until Bartels in June 1990.
 
-That gap used to be written here as 1984 to 1994, and it moved because the
-catalog gained PAAS (1981) and Improved PAAS (1983). **PAAS 3 was the earliest
+That gap was written here as 1984 to 1994, then as 1981 to 1990 once the
+catalog gained PAAS (1981) and Improved PAAS (1983), and it moved again when
+issue #4 brought in MASSPEC and Biemann's 1959 paper. **PAAS 3 was the earliest
 row in the catalog and was never the earliest program**: its own name says it is
 the third, and the Osaka group published PAAS in 1981 and Improved PAAS in 1983,
 neither of which was here. Its `short_description` said "one of the earliest",
@@ -435,10 +437,10 @@ takes a page path: `check_chart_overlap.py pages/analyses/nine-species-versions.
 ### A family page needs two methods
 
 `build_pages.py` generates a page per architecture family, but only for the
-**33 of 50** families that hold two or more methods. The other **17** hold
+**34 of 50** families that hold two or more methods. The other **16** hold
 exactly one method, and a page for one of those would have carried that method's
 papers, that method's authors and that method's dates: a copy of a page that
-already exists, on a permanent indexed URL. Those cover **344** of the **361**
+already exists, on a permanent indexed URL. Those cover **347** of the **363**
 methods that carry a family. Contrast the application areas, where five
 singletons still got a page each, because even a one-workflow area aggregates
 papers, authors and countries that no other page collects.
@@ -476,7 +478,7 @@ repeat it on all 37 Transformer (AR) rows with nothing keeping the copies equal.
 It holds nothing but prose on purpose: membership is still the HAVING clause and
 the URL is still `MIN(id)`, so a note cannot invent a family or move its page.
 
-All 33 families with a page have a note. The two ways that can rot are
+All 34 families with a page have a note. The two ways that can rot are
 registered in `check_counts.py` as invariants that must read zero, the same
 shape as the `subdomain` pair: 0 pages without a note, 0 notes without a page.
 A missing note is otherwise invisible, because the page simply falls back to the

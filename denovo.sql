@@ -3847,6 +3847,10 @@ INSERT INTO author VALUES(3960,'Zikun Wang',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3961,'Xinglong Zhu',NULL,NULL,NULL,NULL,'0009-0004-5570-5486','A5073964714');
 INSERT INTO author VALUES(3962,'Zejiang Chen',NULL,NULL,NULL,NULL,NULL,'A5162608399');
 INSERT INTO author VALUES(3963,'Zihao Huang',NULL,NULL,NULL,NULL,NULL,'A5136514473');
+INSERT INTO author VALUES(3964,'Margaret O. Dayhoff',NULL,NULL,NULL,NULL,NULL,'A5053765003');
+INSERT INTO author VALUES(3965,'Richard V. Eck',NULL,NULL,NULL,NULL,NULL,'A5025011281');
+INSERT INTO author VALUES(3966,'G. Gapp',NULL,NULL,NULL,NULL,NULL,'A5016701626');
+INSERT INTO author VALUES(3967,'Josef Seibl',NULL,NULL,NULL,NULL,NULL,'A5111690786');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4474,6 +4478,7 @@ INSERT INTO city VALUES(576,'Santa Clara',8,37.3541099999999985,-121.95524000000
 INSERT INTO city VALUES(577,'Tucson',8,32.2217399999999969,-110.926479999999997,'geonames','geonames');
 INSERT INTO city VALUES(578,'Chidambaram',28,11.3993300000000008,79.69144,'ror','ror');
 INSERT INTO city VALUES(579,'Wonju',13,37.351390000000002,127.945279999999996,'ror','ror');
+INSERT INTO city VALUES(580,'Silver Spring',8,38.9906700000000014,-77.0260899999999964,'geonames','geonames');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5879,6 +5884,7 @@ INSERT INTO affiliation VALUES(1443,'Yonsei University','Department of Convergen
 INSERT INTO affiliation VALUES(1444,'The Hong Kong University of Science and Technology (Guangzhou)','Information Hub',2,16,'https://ror.org/050h0vm43','The Hong Kong University of Science and Technology (Guangzhou)',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1445,'Westlake University','Institute of Engineering',2,15,'https://ror.org/05hfa4n20','Westlake University',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1446,'The University of Hong Kong','Department of Chemistry',2,17,'https://ror.org/02zhqgq86','University of Hong Kong',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1447,'National Biomedical Research Foundation',NULL,8,580,NULL,NULL,'openalex',NULL,'openalex');
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11366,6 +11372,8 @@ INSERT INTO author_affiliation VALUES(57,1444);
 INSERT INTO author_affiliation VALUES(3961,16);
 INSERT INTO author_affiliation VALUES(3962,16);
 INSERT INTO author_affiliation VALUES(3963,16);
+INSERT INTO author_affiliation VALUES(3964,1447);
+INSERT INTO author_affiliation VALUES(3965,1447);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -11752,7 +11760,7 @@ INSERT INTO algorithm VALUES(380,'LIPNovo+',NULL,NULL,'Latent imputation','Self-
 INSERT INTO algorithm VALUES(381,'RT-GCTnovo',NULL,NULL,'Transformer (NAR)','Combines Transformer encoders with convolutional layers to capture global and local spectral features, fuses them through a sigmoid gate, adds retention time as a constraint, and decodes semi-autoregressively with dynamic mass masks.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(382,'PLMNovo',NULL,NULL,'Transformer (AR)','Casts peptide-spectrum matching as a constrained optimisation that aligns the spectrum encoder''s embeddings with those of a pre-trained protein language model, and trains encoder and decoder with a Lagrangian primal-dual algorithm, optionally fine-tuning the language model.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(383,'De novo FDR control procedure',NULL,NULL,NULL,'False discovery rate control for the de novo setting, where target-decoy competition does not apply: reported to be at least as powerful as database search, with empirical evidence of statistical validity on a set of common de novo applications.','post-processor',0,'DDA',NULL,NULL);
-INSERT INTO algorithm VALUES(384,'PAAS',NULL,NULL,'Heuristic','The 1981 original, and the earliest de novo peptide sequencing program in this catalog: a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.','algorithm',0,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(384,'PAAS',NULL,NULL,'Heuristic','The 1981 original of the Osaka group''s lineage, and the earliest de novo peptide sequencing program in this catalog after Dayhoff and Eck''s MASSPEC (1970): a computer program that estimates the possible amino acid sequences of a peptide from its mass spectrum, with no database to search. It could also read a sequence from the PTH amino acids released by Edman degradation, which is what sequencing looked like before tandem MS.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(385,'Improved PAAS',NULL,NULL,'Heuristic','The 1983 revision of PAAS, by the same Osaka group with Wollnik added. Sits between the 1981 original and PAAS 3, so the lineage spans three papers in four years.','algorithm',0,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(386,'Parallel synthesis + de novo peptide screening',NULL,NULL,NULL,'Joint technique pairing de novo sequencing of a simulated-digestion hydrolysate with parallel peptide synthesis, so each predicted sequence is synthesised, screened for activity and checked against the standard''s retention time and MS/MS spectrum. Applied to sea cucumber and seahorse.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
 INSERT INTO algorithm VALUES(387,'Lactobacillus reuteri peptide deep mining',NULL,NULL,NULL,'Combines GNPS library search, de novo sequencing and feature-based molecular networking to profile the peptides of Lactobacillus reuteri: 184 peptides, among them four cyclic dipeptides not reported before.','downstream-application',0,'DDA',NULL,'bioactive-peptides');
@@ -12200,6 +12208,8 @@ INSERT INTO algorithm VALUES(829,'Conus araneosus chi-conotoxin Ar1312',NULL,NUL
 INSERT INTO algorithm VALUES(830,'Casanovo-TMT',NULL,NULL,'Transformer (AR)','Casanovo fine-tuned with TMTpro tags and phosphorylation in its residue vocabulary on 21 million mostly TMTpro-labeled spectra, with beam candidates re-ranked by agreement with the precursor mass.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(831,'SemiNovo',NULL,NULL,'Transformer (AR)','Semi-supervised training on identified and 4.5 million unlabeled spectra (DarkSpec), pseudo-labelled by stepwise mass-constrained autoregressive decoding with cumulative path confidence, plus head-wise chemical-evidence gating of spectral attention.','algorithm',1,'DDA',NULL,NULL);
 INSERT INTO algorithm VALUES(832,'EncNovo',NULL,NULL,'Transformer (NAR)','Non-autoregressive sequencer built on a BERT-style encoder-only Transformer: precursor attributes, spectral peaks and the sequence-prediction tokens are encoded together in one encoder, with residual attention and a peak mass-difference bias added to self-attention.','algorithm',1,'DDA',NULL,NULL);
+INSERT INTO algorithm VALUES(833,'MASSPEC',NULL,NULL,'Heuristic','Margaret Dayhoff and Richard Eck''s 1970 program for complete sequence analysis of a protein from the mass spectrometry data of a single sample: the sequence is assembled from the overlapping peptide fragments of a partial hydrolysate, all measured in one mass spectrum, rather than from tandem MS. The earliest de novo sequencing program in this catalog. The software itself appears to be lost; only the paper survives.','algorithm',0,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(834,'Mass spectrometric peptide sequencing (Biemann, 1959)',NULL,NULL,'Manual interpretation','The first amino acid sequencing of peptides by mass spectrometry: Klaus Biemann, G. Gapp and Josef Seibl read the sequence of small peptides from their mass spectra, by hand, before computers were brought to the problem and two decades before tandem MS. The paper already foresaw the use on partial hydrolysates of natural peptides.','adjacent',0,NULL,'Biemann 1959',NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13215,6 +13225,8 @@ INSERT INTO publication VALUES(1002,'‘De novo’ sequencing by mass spectromet
 INSERT INTO publication VALUES(1003,'Casanovo-TMT: deep learning-based de novo sequencing of TMTpro-labeled peptides and phosphopeptides','2026-11-17','10.64898/2026.11.15.766634','Cold Spring Harbor Laboratory','De novo peptide sequencing reads peptides directly from tandem mass spectra, but none of the released deep learning models can sequence peptides labeled with isobaric tags such as TMTpro, which are widely used for multiplexed quantitative proteomics. We extended the residue vocabulary of Casanovo with TMTpro tags and phosphorylation, fine-tuned it on 21 million spectra from our laboratory, most of them TMTpro-labeled, and re-ranked the candidates in the beam by their agreement with the measured precursor mass. The resulting model, Casanovo-TMT, predicted the exact peptidoform for 84.7% of the TMTpro-labeled spectra in our test set and for 87.4 and 79.6% of the spectra in two public global-proteome datasets from other laboratories, whereas the extended vocabulary without fine-tuning gave 0.3%. Discarding the lowest-scoring predictions raised precision to 95% while retaining 81.7% of the test spectra. Casanovo-TMT also predicted the exact peptidoform for 69.2% of the spectra in a public phosphopeptide-enriched dataset and for 66 to 72% of the phosphopeptide spectra in three phosphoproteomic studies from our laboratory that were not used for training. In these studies, it identified numbers of phosphopeptides comparable to or larger than those of database search engines, and proportionally more where database search identified fewer. For the phosphopeptides identified only by Casanovo-TMT, entrapment estimated that more than 90% were correct, and an independent search engine assigned the same sequence to 95 to 98% of the spectra that it identified with confidence. Casanovo-TMT can therefore extend database search in TMTpro-based quantitative proteomics, particularly in studies in which database search identifies few phosphopeptides.','https://www.biorxiv.org/content/10.64898/2026.11.15.766634v1','bioRxiv','preprint',NULL,'biorxiv');
 INSERT INTO publication VALUES(1004,'SemiNovo: Learning Beyond Search-Identified Spectra for De Novo Peptide Sequencing','2026-11-16','10.48550/arXiv.2611.21079','arXiv','Sensitive peptide identification is fundamental to protein characterization and novel protein discovery, for which de novo peptide sequencing (DNPS) from tandem mass spectra provides an important database-independent approach. Although deep learning has substantially advanced de novo sequencing, existing models are predominantly trained on high-confidence peptide-spectrum matches obtained through database search. This search-conditioned supervision excludes a large fraction of unidentified spectra, creating a distribution mismatch between the selectively labeled training data and the complete spectrum stream encountered at inference time, thereby limiting peptide identification performance. To address this challenge, we propose SemiNovo, a semi-supervised framework that learns jointly from identified and unlabeled spectra. SemiNovo first constructs DarkSpec, a large-scale quality-controlled corpus of unlabeled spectra collected from diverse public proteomics projects, thereby extending training beyond search-identified spectra and mitigating the resulting shift in DNPS supervision. It then combines stepwise mass-constrained autoregressive decoding with cumulative path confidence to derive reliable supervision from unlabeled spectra. Moreover, SemiNovo introduces head-wise chemical-evidence gating to improve spectral evidence aggregation under noisy and incomplete fragmentation. Experiments show that SemiNovo performs favorably against state-of-the-art methods on multiple benchmarks. Code and dataset are publicly available.','https://arxiv.org/abs/2611.21079','arXiv','preprint',NULL,'arxiv');
 INSERT INTO publication VALUES(1005,'EncNovo: De Novo Peptide Sequencing With an Encoder-Only Architectures','2026-11-16','10.1002/rcm.70211','Wiley','Rationale De novo peptide sequencing enables interpretation of tandem mass spectrometry (MS/MS) data without relying on sequence databases and is valuable for analyzing proteins from unknown species. However, existing Transformer-based approaches may not fully exploit interactions among precursor information, spectral features, and sequence prediction tokens, potentially limiting sequencing performance. Methods We developed EncNovo, a nonautoregressive de novo peptide sequencing model based on a BERT-inspired encoder-only Transformer architecture. Precursor attributes, spectral peaks, and sequence prediction tokens are jointly encoded within a unified encoder, enabling continuous interaction among the three throughout the encoding process. A residual attention mechanism and a peak mass-difference inductive bias were further incorporated into the self-attention framework to encode amino acid residue mass relationships between spectral peaks. Results Experimental results on the nine-species benchmark dataset demonstrate that EncNovo improves peptide recall at 100% coverage by 5.10 and 4.18 percentage points on average compared with Casanovo and RefineNovo, respectively. The model also achieved higher amino acid recall and demonstrated faster convergence during training. Conclusions Experimental results demonstrate that the proposed encoder-only framework, combined with residual attention and a peak mass-difference inductive bias, effectively improves peptide recall and accelerates model convergence. Collectively, these advantages make EncNovo a reliable framework for de novo peptide sequencing in proteomics.','https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/rcm.70211','Rapid Communications in Mass Spectrometry','peer-reviewed',NULL,'crossref');
+INSERT INTO publication VALUES(1006,'MASSPEC: A computer program for complete sequence analysis of large proteins from mass spectrometry data of a single sample','1970-08-01','10.1016/0010-4825(70)90013-2','Elsevier BV',NULL,'https://doi.org/10.1016/0010-4825(70)90013-2','Computers in Biology and Medicine','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(1007,'Application of Mass Spectrometry to Structure Problems. I. Amino Acid Sequence in Peptides','1959-05-01','10.1021/ja01518a069','American Chemical Society (ACS)',NULL,'https://doi.org/10.1021/ja01518a069','Journal of the American Chemical Society','peer-reviewed',NULL,NULL);
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19672,6 +19684,11 @@ INSERT INTO publication_author VALUES(1005,3961,1);
 INSERT INTO publication_author VALUES(1005,3962,2);
 INSERT INTO publication_author VALUES(1005,3963,3);
 INSERT INTO publication_author VALUES(1005,49,4);
+INSERT INTO publication_author VALUES(1006,3964,1);
+INSERT INTO publication_author VALUES(1006,3965,2);
+INSERT INTO publication_author VALUES(1007,532,1);
+INSERT INTO publication_author VALUES(1007,3966,2);
+INSERT INTO publication_author VALUES(1007,3967,3);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -27924,6 +27941,8 @@ INSERT INTO publication_author_affiliation VALUES(1005,49,16,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(1005,3961,16,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(1005,3962,16,0,'openalex');
 INSERT INTO publication_author_affiliation VALUES(1005,3963,16,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1006,3964,1447,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1006,3965,1447,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29227,6 +29246,8 @@ INSERT INTO publication_algorithm VALUES(1002,829,'describes');
 INSERT INTO publication_algorithm VALUES(1003,830,'describes');
 INSERT INTO publication_algorithm VALUES(1004,831,'describes');
 INSERT INTO publication_algorithm VALUES(1005,832,'describes');
+INSERT INTO publication_algorithm VALUES(1006,833,'describes');
+INSERT INTO publication_algorithm VALUES(1007,834,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -37976,6 +37997,7 @@ INSERT INTO family_note VALUES('Genetic algorithm','Candidate sequences evolved 
 INSERT INTO family_note VALUES('Peak selection','Deciding which peaks in a spectrum are real fragment ions before sequencing starts, by learned or evolved filters that remove noise and so shrink the search the sequencer faces.');
 INSERT INTO family_note VALUES('Spectral profile','Each spectrum summarised as a probability profile over residues or fragment positions, from which the sequence is read as the most likely path rather than by matching peaks one at a time.');
 INSERT INTO family_note VALUES('Template-guided assembly','De novo peptide reads assembled into full-length proteins against a related reference, which supplies the order of the pieces and fills the gaps the reads cannot cover.');
+INSERT INTO family_note VALUES('Manual interpretation','A person, not a program, reads the sequence from the spectrum: the ladder of fragment masses, the residue each gap corresponds to, the precursor that has to add up. Where the field began, with Biemann in 1959, and still how a disputed call is checked.');
 CREATE TABLE dataset (
     id                INTEGER PRIMARY KEY,
     name              TEXT NOT NULL UNIQUE,
@@ -68962,11 +68984,11 @@ INSERT INTO training_size VALUES(121,1004,1673,NULL,'train',213284,'spectra',0,'
 INSERT INTO training_size VALUES(122,1004,1675,NULL,'train',317009,'spectra',0,'Train 317,009','Appendix, Table 6: data-level overlap between DarkSpec and NovoBench');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',579);
-INSERT INTO sqlite_sequence VALUES('affiliation',1446);
-INSERT INTO sqlite_sequence VALUES('author',3963);
-INSERT INTO sqlite_sequence VALUES('algorithm',832);
-INSERT INTO sqlite_sequence VALUES('publication',1005);
+INSERT INTO sqlite_sequence VALUES('city',580);
+INSERT INTO sqlite_sequence VALUES('affiliation',1447);
+INSERT INTO sqlite_sequence VALUES('author',3967);
+INSERT INTO sqlite_sequence VALUES('algorithm',834);
+INSERT INTO sqlite_sequence VALUES('publication',1007);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''
