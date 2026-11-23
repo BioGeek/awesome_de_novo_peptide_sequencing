@@ -3791,7 +3791,7 @@ selection and so only under *Average*.
 
 ::: {.callout-warning appearance="simple"}
 **Amino-acid precision and recall are swapped in a whole family of models.**
-Casanovo v3.0 to v3.5 passed the prediction where the truth belonged, so what it
+Casanovo v3.0 to v3.5 passed the prediction where the label belonged, so what it
 printed as amino-acid precision was amino-acid recall; v4.0 fixed it. Models
 that copied the v3 code still swap them today: ContraNovo, PrimeNovo and its
 copies, RefineNovo, RankNovo, DiffNovo, Transformer-DIA and π-HelixNovo. So an

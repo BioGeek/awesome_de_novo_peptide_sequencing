@@ -15,8 +15,8 @@ description: "Peptide recall, amino-acid precision, precision against coverage a
 
 Nearly every deep-learning *de novo* sequencing paper reports the same few
 numbers: peptide recall, amino-acid precision and, more and more often, a curve
-of precision against coverage. They read like one standard. This page checks
-whether they are, twice over: against what {{n:n_read}} papers say they
+of precision against coverage. The names are the same from paper to paper; this
+page checks whether the definitions are, twice over: against what {{n:n_read}} papers say they
 computed, and against the evaluation code of {{n:n_impl}} implementations,
 version by version.
 
@@ -48,15 +48,17 @@ commit each was copied from.
    spectra; {{n:n_recall_named_prec}} define a "peptide recall" over predicted
    peptides only.
 2. **Amino-acid precision and recall are swapped in a whole family of models.**
-   Casanovo v3.0 to v3.5 passed the prediction where the truth belonged, and
+   Casanovo v3.0 to v3.5 passed the prediction where the label belonged, and
    v4.0 fixed it. The models that copied the v3 code did not:
    {{n:n_swapped_now}} entries in the table below still swap the two, among them
    ContraNovo, PrimeNovo, RefineNovo, RankNovo and π-HelixNovo. denovo_benchmarks
    swapped them from April 2024 to September 2026.
-3. **"Correct" means the right mass, not the right sequence.** The standard rule
-   accepts K for Q ({{n:d_kq}} Da apart), F for oxidised M ({{n:d_fm}} Da) and D
-   for deamidated N ({{n:d_nd}} Da), at peptide level too. ProteoBench's ppm
-   tolerances and Casanovo-TMT's exact-peptidoform rule do not.
+3. **The 0.1 Da mass rule counts some different residues as matches.** Under
+   the matching rule DeepNovo introduced, which {{n:n_rule_mass}} of the papers
+   state, K predicted for Q ({{n:d_kq}} Da apart), F for oxidised M
+   ({{n:d_fm}} Da) and D for deamidated N ({{n:d_nd}} Da) count as matches, and
+   so does a peptide containing them. ProteoBench's ppm tolerances and
+   Casanovo-TMT's exact-peptidoform rule do not count them.
 4. **"Peptide AUC" names at least three different areas.** NovoBench integrates
    precision against recall, which can never exceed the peptide recall; others
    integrate against coverage. For the same 1,000 predictions, half of them
@@ -95,17 +97,18 @@ Plot.plot({
 })
 ```
 
-## The rule most of them share
+## The mass-matching rule
 
-The rule comes from [DeepNovo](../algorithms/deepnovo.html) (2017). A predicted
-residue is **correct** when its mass is within **0.1 Da** of the true residue's
-and the prefix mass up to and including it is within **0.5 Da** of the true
-prefix's. [Casanovo](../algorithms/casanovo.html) added a second pass from the
+The rule was introduced with [DeepNovo](../algorithms/deepnovo.html) (2017). A
+predicted residue counts as a **match** when its mass is within **0.1 Da** of the
+label's residue and the prefix mass up to and including it is within **0.5 Da**
+of the label's prefix. [Casanovo](../algorithms/casanovo.html) added a second pass from the
 C-terminus, so a residue can also be matched on its suffix mass. A **peptide**
-is correct when it has as many residues as the truth and every one is correct.
+counts as a match when it has as many residues as the label and every one is
+matched.
 
 From those matches come the usual figures. **Amino-acid precision** divides the
-correct residues by the predicted residues, **amino-acid recall** by the true
+matched residues by the predicted residues, **amino-acid recall** by the label's
 residues. Sorting the predictions by the model's confidence and computing
 precision at each depth gives **precision against coverage**.
 
@@ -160,7 +163,7 @@ a precision, and call it recall.
 
 Two things follow from matching on mass. I and L weigh the same, so they always
 match, with no I/L rule needed. And so do pairs that differ by less than 0.1 Da:
-under the rule, PEPTIDEQ is a correct call for PEPTIDEK ({{n:ex_kq_pep}} means
+under the rule, PEPTIDEQ counts as a match for PEPTIDEK ({{n:ex_kq_pep}} means
 yes). [PepPr](../algorithms/peppr.html) points out that this makes deamidated N
 equal to D and scores its deamidation calls on identity instead;
 [Casanovo-TMT](../algorithms/casanovo-tmt.html) rejects the rule for the same
@@ -266,7 +269,7 @@ htl.html`<div class="wrap-table">${Inputs.table(paper_rows, {
 Nearly every implementation descends from one of two loops: DeepNovo's, which
 walks forward only, and Casanovo's `evaluate.py`, which adds the pass from the
 C-terminus. What separates the numbers is mostly not the rule but what happens
-around it: which argument is the truth, which spectra are counted, and which
+around it: which argument is the label, which spectra are counted, and which
 version of the code ran.
 
 ```{ojs}
@@ -386,10 +389,10 @@ integrated precision against coverage at every distinct score.
 
 ### Smaller differences that still change a number
 
-- **DeepNovo's peptide rule ignores the prediction's length**: a peptide counts as
-  correct when every true residue is matched, so PEPTIDEK is a correct call for
-  PEPTIDE. Its DIA and PointNovo descendants, given more than one candidate per
-  spectrum, keep the candidate closest to the truth; with the default of one it
+- **DeepNovo's peptide rule ignores the prediction's length**: a peptide counts as a
+  match when every residue of the label is matched, so PEPTIDEK counts as a
+  match for PEPTIDE. Its DIA and PointNovo descendants, given more than one candidate per
+  spectrum, keep the candidate closest to the label; with the default of one it
   makes no difference.
 - **DiffNovo** logs, per batch, the better of its two decoders, which no deployed
   system could choose, and its peptide slot holds an amino-acid value.
@@ -428,7 +431,7 @@ On the same predictions the first two give {{n:ex_auc_half_nb}} and
 
 [RankNovo](../algorithms/ranknovo.html) reranks the candidates of several
 sequencers, and to train the reranker it introduced two measures of how far a
-candidate is from the truth. Both are training targets, not evaluation metrics:
+candidate is from the label. Both are training targets, not evaluation metrics:
 the paper still reports peptide recall and amino-acid precision, and the released
 code computes those with the swapped Casanovo v3 call.
 
@@ -440,7 +443,7 @@ the two peptides' masses: GG against N, which weigh the same, costs
 weighs, and K for Q costs {{n:pmd_kq}}.
 
 **RMD, Residual Mass Deviation**, gives each residue of the candidate the signed
-offset between its prefix mass and the nearest prefix mass of the truth. For
+offset between its prefix mass and the nearest prefix mass of the label. For
 PEPGGK against PEPNK it is {{n:rmd_gg_mid}} Da at the first G and
 {{n:rmd_gg_last}} Da at the end, where the masses agree again. In the released
 inference code only the PMD head chooses the candidate; the RMD head is computed
