@@ -3789,6 +3789,19 @@ outlined: **denovo_benchmarks**, the living proteomics benchmark, per species
 and as the mean of the nine, and **ProteoBench**, on the pooled nine-species
 selection and so only under *Average*.
 
+::: {.callout-warning appearance="simple"}
+**Amino-acid precision and recall are swapped in a whole family of models.**
+Casanovo v3.0 to v3.5 passed the prediction where the truth belonged, so what it
+printed as amino-acid precision was amino-acid recall; v4.0 fixed it. Models
+that copied the v3 code still swap them today: ContraNovo, PrimeNovo and its
+copies, RefineNovo, RankNovo, DiffNovo, Transformer-DIA and π-HelixNovo. So an
+amino-acid precision those papers print, and the point drawn here from it, may
+be a recall. The benchmark points are unaffected: denovo_benchmarks swapped the
+two as well, from April 2024, but fixed it on 26 September 2026, before the
+results charted here.
+[Which code swaps them, and how](pages/analyses/metrics.html#precision-and-recall-swapped).
+:::
+
 Nine-species is several datasets under one name, so the chart opens on the
 *revised* benchmark, which removed the peptides the original 2017 release
 leaked from training into test, in every build of it, since most papers do not
