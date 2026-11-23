@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="thesis · 2025. Zheng Ma">
+<meta name="description" content="thesis · 2025. Zheng Ma. Proteomic analysis plays a central role in unraveling the complex molecular underpinnings of biological…">
 
 <title>Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing</title>
 <style>
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
      the data, and nothing checks a number buried in an HTML
      comment.) -->
 <meta property="og:title" content="Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing – Awesome De Novo Peptide Sequencing">
-<meta property="og:description" content="thesis · 2025. Zheng Ma">
+<meta property="og:description" content="thesis · 2025. Zheng Ma. Proteomic analysis plays a central role in unraveling the complex molecular underpinnings of biological…">
 <style>#title-block-header .description { display: none; }</style>
 <link rel="canonical" href="https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/advancing-proteomic-analyses-with-graph-based-deep-learning-protein-inference.html">
 
@@ -162,7 +162,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    thesis · 2025. Zheng Ma
+    thesis · 2025. Zheng Ma. Proteomic analysis plays a central role in unraveling the complex molecular underpinnings of biological…
   </div>
 </div>
 
@@ -179,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","author":[{"@type":"Person","name":"Zheng Ma"}],"datePublished":"2025-08-15","headline":"Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing","name":"Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing","publisher":{"@type":"Organization","name":"PhD thesis"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ScholarlyArticle","abstract":"Proteomic analysis plays a central role in unraveling the complex molecular underpinnings of biological systems. However, traditional approaches to protein inference and peptide sequencing have been hampered by challenges such as data complexity, label scarcity, and spectral noise. In this thesis, we leverage advanced deep learning techniques to address these challenges, thereby expanding the efficacy of proteomic analyses. Our work is organized around three major contributions. First, we...","author":[{"@type":"Person","name":"Zheng Ma"}],"datePublished":"2025-08-15","headline":"Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing","name":"Advancing Proteomic Analyses with Graph-Based Deep Learning: Protein Inference and DIA De Novo Peptide Sequencing","publisher":{"@type":"Organization","name":"PhD thesis"}}</script>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
@@ -212,6 +212,10 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Proteomic analysis plays a central role in unraveling the complex molecular underpinnings of biological systems. However, traditional approaches to protein inference and peptide sequencing have been hampered by challenges such as data complexity, label scarcity, and spectral noise. In this thesis, we leverage advanced deep learning techniques to address these challenges, thereby expanding the efficacy of proteomic analyses. Our work is organized around three major contributions. First, we introduce GraphPI, a novel protein inference framework that redefines the inference problem as a node classification task within a tripartite graph structure. In GraphPI, proteins, peptides, and peptide-spectrum matches (PSMs) are modeled as interconnected nodes, while edges incorporate features such as peptide identification scores and a specialized peptide-sharing attribute. By harnessing a tailored graph neural network (GNN) architecture inspired by GraphSAGE, our approach effectively aggregates and propagates information across heterogeneous node types. Critically, GraphPI is trained in a semi-supervised manner using pseudo-labels generated from established protein inference methods, combined with hard negative decoy information. This training process not only circumvents the typical bottleneck of limited labeled data but also yields protein scores that generalize across diverse datasets, all while substantially reducing computational overhead relative to Bayesian network–based approaches. Experimental evaluations on multiple benchmark datasets demonstrate that GraphPI delivers competitive accuracy with significant speed improvements, thus paving the way for real-time applications in large-scale proteomic studies. Second, we present DIANovo, an innovative deep learning method designed to tackle the inherent complexities of Data-Independent Acquisition (DIA) data for de novo peptide sequencing. Unlike conventional de novo approaches that often struggle with the multiplexed nature of DIA spectra, DIANovo incorporates a suite of strategies to manage coelution and spectral noise. Our approach begins by constructing a spectrum graph that captures the mass differences between peaks. Next, a Transformer-based encoder, enhanced with Rotary Positional Embeddings (RoPE), processes the graph by encoding these mass differences along its edges, effectively treating the spectrum graph as fully connected. Furthermore, DIANovo introduces a coelution-aware pretraining stage, where the model is first optimized to predict ion types from coeluting peptides. This pretraining step equips the network with a nuanced understanding of spectral interferences, thereby improving the fidelity of subsequent peptide sequence predictions. In addition, a two-stage decoding strategy is employed: the first stage identifies an optimal path through the spectrum graph, while the second refines this path to generate a final amino acid sequence by filling in mass tags. Comparative analyses against state-of-the-art methods reveal that DIANovo achieves significant improvements in both amino acid and peptide recall, especially when applied to high-quality narrow-window DIA data obtained from next-generation instruments such as the Orbitrap Astral. Moreover, we investigate whether DIA identifies more peptides than DDA in de novo sequencing by comparing their performance on the same biological sample under varying acquisition modes and parameters. Our results demonstrate that DIA only outperforms DDA when employing narrower isolation windows. The third component of this thesis presents a comprehensive theoretical analysis that sheds light on the performance limits of peptide identification methods. By linking the signal-to-noise profile to peptide identification accuracy, our study elucidates the inherent trade-offs between Data-Dependent Acquisition (DDA) and DIA strategies. We derive quantitative metrics to predict peptide identification performance under a range of experimental conditions, and these predictions are validated against empirical data. This framework not only explains why Astral DIA data can provide superior peptide coverage in certain scenarios but also delineates the conditions under which peptide identification is most favorable. These insights are crucial for guiding the design of future mass spectrometry experiments and for optimizing computational pipelines in proteomic research. Collectively, the three contributions of this thesis demonstrate the transformative potential of integrating deep learning with advanced computational frameworks in proteomics. GraphPI and DIANovo both showcase how novel neural network architectures can overcome longstanding challenges in protein inference and de novo peptide sequencing, while the theoretical analysis provides a foundation for understanding and further refining these methodologies. The experimental results across multiple datasets underscore the robustness, efficiency, and generalizability of our approaches, suggesting that deep learning–based strategies will play an increasingly central role in the future of proteomic analysis. In conclusion, this work not only advances the state-of-the-art in protein and peptide identification but also offers practical solutions for handling large-scale, complex proteomic data. By bridging the gap between theoretical insights and practical implementations, our integrated framework lays the groundwork for enhanced biomarker discovery, more accurate disease diagnosis, and a deeper understanding of biological systems at the molecular level.</p>
+</section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ol type="1">
