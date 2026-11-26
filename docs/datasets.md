@@ -14,7 +14,7 @@ so with structure rather than prose. Four tables:
 | `dataset_address` | where a version LIVES | `MSV000090982`, a Hugging Face repo |
 | `publication_dataset` | what a paper DID with it | `introduces`, `trains-on`, `evaluates-on`, `uses` |
 
-**514 datasets, 559 versions, 1333 addresses, 1330 publication links over 314 papers.**
+**515 datasets, 561 versions, 1335 addresses, 1332 publication links over 315 papers.**
 
 ### What a paper did with a dataset
 
@@ -174,7 +174,7 @@ taken from `sed` land somewhere else and a slice silently drops a group (it
 dropped 15 of InstaNovo-FM's 24 metadata-gap accessions).
 
 **A version may have NO address, and that is a recorded fact rather than a
-missing one.** 29 of 559 versions have none, counting only addresses
+missing one.** 29 of 561 versions have none, counting only addresses
 that are not provenance. Three shapes: tiers that are not published but are
 reproducible from the raw accessions recorded as their provenance (ACFM, and
 ProteomeTools' all-confidence version, InstaNovo's AC-PT); NIST's peptide

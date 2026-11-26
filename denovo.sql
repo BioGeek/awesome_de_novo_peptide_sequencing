@@ -3863,6 +3863,10 @@ INSERT INTO author VALUES(3976,'Howard R. Morris',NULL,NULL,NULL,NULL,NULL,'A510
 INSERT INTO author VALUES(3977,'Alexander J. Geddes',NULL,NULL,NULL,NULL,NULL,'A5082049075');
 INSERT INTO author VALUES(3978,'G. N. Graham',NULL,NULL,NULL,NULL,NULL,'A5103684536');
 INSERT INTO author VALUES(3979,'F. Lucas',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3980,'Christopher Grams',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3981,'Yu Gao',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3982,'Chang Liu',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3983,'Michael E. Papka',NULL,NULL,NULL,NULL,NULL,NULL);
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4492,6 +4496,7 @@ INSERT INTO city VALUES(578,'Chidambaram',28,11.3993300000000008,79.69144,'ror',
 INSERT INTO city VALUES(579,'Wonju',13,37.351390000000002,127.945279999999996,'ror','ror');
 INSERT INTO city VALUES(580,'Silver Spring',8,38.9906700000000014,-77.0260899999999964,'geonames','geonames');
 INSERT INTO city VALUES(581,'Leeds',7,53.7964800000000025,-1.54784999999999994,'geonames','geonames');
+INSERT INTO city VALUES(582,'Lemont',8,41.6736399999999989,-88.0017299999999949,'geonames','geonames');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5901,6 +5906,7 @@ INSERT INTO affiliation VALUES(1447,'National Biomedical Research Foundation',NU
 INSERT INTO affiliation VALUES(1448,'University of Leeds','Astbury Department of Biophysics',7,581,'https://ror.org/024mrxd33','University of Leeds',NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1449,'Shirley Institute',NULL,7,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1450,'GEC-AEI (Electronics) Ltd.','Consultant Laboratory',7,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1451,'Argonne National Laboratory',NULL,8,582,'https://ror.org/05gvnxz63','Argonne National Laboratory',NULL,NULL,NULL);
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11398,6 +11404,11 @@ INSERT INTO author_affiliation VALUES(3978,1448);
 INSERT INTO author_affiliation VALUES(3979,1449);
 INSERT INTO author_affiliation VALUES(3972,1450);
 INSERT INTO author_affiliation VALUES(3975,1450);
+INSERT INTO author_affiliation VALUES(3980,925);
+INSERT INTO author_affiliation VALUES(3981,925);
+INSERT INTO author_affiliation VALUES(3982,925);
+INSERT INTO author_affiliation VALUES(3983,925);
+INSERT INTO author_affiliation VALUES(3983,1451);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12238,6 +12249,7 @@ INSERT INTO algorithm VALUES(835,'Computer-aided peptide sequencing (Biemann, 19
 INSERT INTO algorithm VALUES(836,'Automatic peptide sequencing (Senn and McLafferty, 1966)',NULL,NULL,'Heuristic','Martin Senn and Fred McLafferty''s program for determining a peptide''s amino acid sequence automatically from its mass spectrum, published in May 1966, a month before Biemann''s group reported theirs. With it, the earliest computer program for peptide sequencing in this catalog, two decades before tandem MS.','algorithm',0,NULL,'Senn and McLafferty 1966',NULL);
 INSERT INTO algorithm VALUES(837,'Computer interpretation of high-resolution mass spectra (Barber, 1966)',NULL,NULL,'Heuristic','M. Barber, P. Powers, M. J. Wallington and W. A. Wolstenholme''s 1966 Nature paper on interpreting high-resolution mass spectra by computer. Barber and Wolstenholme, of GEC-AEI in Manchester, are also authors of the 1969 mass-spectrometric sequencing of silk fibroin peptides, which cites it.','adjacent',0,NULL,'Barber 1966',NULL);
 INSERT INTO algorithm VALUES(838,'Mass spectrometric sequencing of permethylated peptides (Morris, 1969)',NULL,NULL,'Manual interpretation','Howard Morris, A. J. Geddes and G. N. Graham at Leeds, with F. Lucas of the Shirley Institute and M. Barber and W. A. Wolstenholme of GEC-AEI, read the sequences of peptides from a chymotryptic digest of Bombyx mori silk fibroin from their mass spectra, after permethylating the N-acetyl peptide methyl esters to make them volatile. Three sequences confirmed earlier chemical work and a fourth, previously only partly known, was established; the authors call it the first use of mass spectrometry to sequence peptides from a protein hydrolysate. The Leeds group''s Biochemical Society abstract earlier that year is on the problems of sequencing proteins by mass spectrometry.','adjacent',0,NULL,'Morris 1969',NULL);
+INSERT INTO algorithm VALUES(839,'MSConsensus',NULL,NULL,NULL,'Hundred-million-scale dataset and benchmark for proteomics machine learning: consensus spectra distilled from 1,549 PRIDE projects by Weighted-Score Binning, which keeps only peaks most replicates share to suppress per-instrument batch effects, served in a random-access binary format, with a three-task leaderboard whose peptide-identification task runs InstaNovo and Casanovo on one held-out split.','benchmark',NULL,NULL,NULL,NULL);
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13261,6 +13273,7 @@ INSERT INTO publication VALUES(1010,'Automatic amino-acid-sequence determination
 INSERT INTO publication VALUES(1011,'Computer Interpretation of High Resolution Mass Spectra','1966-11-19','10.1038/212784a0','Springer Science and Business Media LLC',NULL,'https://doi.org/10.1038/212784a0','Nature','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(1012,'Some problems associated with the amino acid-sequence analysis of proteins by mass spectrometry','1969-03-01','10.1042/bj1110038p','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1110038p','Biochemical Journal','abstract',NULL,NULL);
 INSERT INTO publication VALUES(1013,'Mass-spectrometric determination of the amino acid sequences in peptides isolated from protein silk fibroin of <i>Bombyx mori</i>','1969-10-01','10.1042/bj1140695','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1140695','Biochemical Journal','peer-reviewed',NULL,NULL);
+INSERT INTO publication VALUES(1014,'MSConsensus: A Hundred-Million-Scale, Batch-Effect–Suppressed Dataset and Benchmark for Proteomics Machine Learning','2026-12-06',NULL,NULL,'Computational proteomics has been growing rapidly in recent years, and the rapid growth of machine learning, especially of data size, brings new challenges: (i) noisy mass-spectrometry (MS) data with per-instrument batch effects, (ii) slow data loading from XML-based and text-based file formats, and (iii) a fragmented and inconsistent evaluation landscape that complicates cross-study comparisons. Here we try to address some aspects of these challenges with MSConsensus, a hundred-million-scale, multi-task dataset and benchmark distilled from more than 1 petabyte of publicly available mass spectrometry data spanning 1,549 contributing projects. A new Weighted-Score Binning (WSBIN) consensus algorithm is introduced to produce multiple consensus spectra per precursor to suppress noise and batch effects, while preserving true signals, achieving an average +3.86 dB SNR improvement (range +0.57 to +10.47 dB) across five held-out PRIDE projects. We also introduce a new binary format “msz” that compresses to 45% of mzML size while delivering 25,378 random-access spectra/sec (3.2× HDF5) through a drop-in PyTorch loader. In addition, we have designed a unified leaderboard with three core tasks: (i) spectrum embedding, (ii) intensity prediction, and (iii) peptide identification. When MSConsensus replaces the original training data of the same size, Prosit’s spectral angle similarity improves from 0.6964 to 0.8137 on a raw 2025 holdout dataset (and from 0.5879 to 0.6983 on a 2026 holdout), and MSConsensus improves Spec2Vec top-1 retrieval by +7.66 points (+16.2% relative) over a medoid-selected MassIVE-KB v2 library. To facilitate different downstream applications, we provide two versions: v1.0 (110 million spectra, anonymous) and an extended v1.1 (186 million spectra, with per-spectrum data provenance). Both versions are released on Harvard Dataverse (doi:10.7910/DVN/NUCT4N) under CC BY 4.0.','https://openreview.net/forum?id=egB7UnD256','NeurIPS 2026','ML conference',NULL,'pdf');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19745,6 +19758,10 @@ INSERT INTO publication_author VALUES(1013,3976,3);
 INSERT INTO publication_author VALUES(1013,3979,4);
 INSERT INTO publication_author VALUES(1013,3972,5);
 INSERT INTO publication_author VALUES(1013,3975,6);
+INSERT INTO publication_author VALUES(1014,3980,1);
+INSERT INTO publication_author VALUES(1014,3981,2);
+INSERT INTO publication_author VALUES(1014,3982,3);
+INSERT INTO publication_author VALUES(1014,3983,4);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -28011,6 +28028,11 @@ INSERT INTO publication_author_affiliation VALUES(1013,3976,1448,0,'crossref');
 INSERT INTO publication_author_affiliation VALUES(1013,3979,1449,0,'crossref');
 INSERT INTO publication_author_affiliation VALUES(1013,3972,1450,0,'crossref');
 INSERT INTO publication_author_affiliation VALUES(1013,3975,1450,0,'crossref');
+INSERT INTO publication_author_affiliation VALUES(1014,3980,925,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1014,3981,925,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1014,3982,925,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1014,3983,925,0,'manual');
+INSERT INTO publication_author_affiliation VALUES(1014,3983,1451,1,'manual');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29322,6 +29344,11 @@ INSERT INTO publication_algorithm VALUES(1010,836,'describes');
 INSERT INTO publication_algorithm VALUES(1011,837,'describes');
 INSERT INTO publication_algorithm VALUES(1012,838,'describes');
 INSERT INTO publication_algorithm VALUES(1013,838,'describes');
+INSERT INTO publication_algorithm VALUES(1014,839,'describes');
+INSERT INTO publication_algorithm VALUES(1014,1,'uses');
+INSERT INTO publication_algorithm VALUES(1014,12,'uses');
+INSERT INTO publication_algorithm VALUES(1014,183,'uses');
+INSERT INTO publication_algorithm VALUES(1014,188,'uses');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -38595,6 +38622,7 @@ INSERT INTO dataset VALUES(524,'Transcriptomic profiling of epigenetic regulator
 INSERT INTO dataset VALUES(525,'Serial Multi-omics Uncovers Anti-Glioblastoma Responses Not Evident by Routine Clinical Analyses (Phosphoproteomics)','Serial Multi-omics Uncovers Anti-Glioblastoma Responses Not Evident by Routine Clinical Analyses (Phosphoproteomics)','deposit',NULL,'Homo sapiens',NULL);
 INSERT INTO dataset VALUES(526,'19S proteasome loss regulates mitotic spindle assembly through a ubiquitin-independent degradation mechanism','19S proteasome loss regulates mitotic spindle assembly through a ubiquitin-independent degradation mechanism','deposit',NULL,'Homo sapiens',NULL);
 INSERT INTO dataset VALUES(527,'DarkSpec','Unlabeled tandem mass spectra, identified or not, pooled from 43 public PRIDE projects (44,963,379 spectra), quality-filtered and near-duplicate-reduced to 4,500,000 for semi-supervised de novo training.','training','DDA','mixed','https://huggingface.co/datasets/PanLiu/DarkSpec');
+INSERT INTO dataset VALUES(528,'MSConsensus','Consensus MS/MS spectra for machine learning, distilled from public PRIDE projects: every (peptidoform, charge) cluster of PSMs found by both Sage and MSFragger yields up to 225 consensus spectra by Weighted-Score Binning, with per-peak b/y annotations. CC BY 4.0 on Harvard Dataverse.','training',NULL,NULL,'https://doi.org/10.7910/DVN/NUCT4N');
 CREATE TABLE dataset_version (
     id            INTEGER PRIMARY KEY,
     dataset_id    INTEGER NOT NULL REFERENCES dataset(id),
@@ -39167,6 +39195,8 @@ INSERT INTO dataset_version VALUES(569,524,'as deposited',NULL,NULL,NULL,NULL,NU
 INSERT INTO dataset_version VALUES(570,525,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(571,526,'as deposited',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO dataset_version VALUES(572,527,'v1','The 4,500,000-spectrum release used to train SemiNovo.',4500000,4500000,NULL,NULL,'2026-11-16',1004,NULL,NULL);
+INSERT INTO dataset_version VALUES(573,528,'v1.0','110,209,043 consensus spectra from 76,615 runs of 1,549 PRIDE projects (projects with at least 20 raw files and at least 100 identified proteins per file; 71% Orbitrap, 22% timsTOF), in 90 shards of msz and Parquet with per-peak b/y annotations. Train and test were split at random by spectrum row, so draws of one peptidoform fall on both sides; the paper calls results on that consensus holdout optimistic for models trained on the matching train split (Section 3.4).',110209043,NULL,NULL,NULL,NULL,1014,'https://openreview.net/forum?id=egB7UnD256','Conclusion (p. 10): "We release MSConsensus, v1.0 (110,209,043 spectra) and the larger, provenance-complete v1.1 (186,614,685 spectra)". These are consensus spectra, up to 225 per (peptidoform, charge) cluster, not distinct acquired MS/MS scans: v1.0 is distilled from 76,615 runs and the whole build processed 3.36 billion spectra from 97,102 runs (Section 3.1).');
+INSERT INTO dataset_version VALUES(574,528,'v1.1','186,614,685 consensus spectra: v1.0''s source plus 20,487 further runs, as 1,024 Parquet parts with build parameters in each file, a run table (PRIDE project, raw file, instrument model, licence), per-cluster support and pair-level q-values. Splits are grouped by peptide backbone (modifications stripped, I/L collapsed), so all forms and draws of a peptide fall on one side.',186614685,NULL,NULL,NULL,NULL,1014,'https://openreview.net/forum?id=egB7UnD256','Conclusion (p. 10): "We release MSConsensus, v1.0 (110,209,043 spectra) and the larger, provenance-complete v1.1 (186,614,685 spectra)". These are consensus spectra, up to 225 per (peptidoform, charge) cluster, not distinct acquired MS/MS scans: v1.0 is distilled from 76,615 runs and the whole build processed 3.36 billion spectra from 97,102 runs (Section 3.1).');
 CREATE TABLE dataset_address (
     id                 INTEGER PRIMARY KEY,
     dataset_version_id INTEGER NOT NULL REFERENCES dataset_version(id),
@@ -40510,6 +40540,8 @@ INSERT INTO dataset_address VALUES(1345,569,'PRIDE','PXD072211','https://www.ebi
 INSERT INTO dataset_address VALUES(1346,570,'PRIDE','PXD063976','https://www.ebi.ac.uk/pride/archive/projects/PXD063976',NULL,0);
 INSERT INTO dataset_address VALUES(1347,571,'PRIDE','PXD065357','https://www.ebi.ac.uk/pride/archive/projects/PXD065357',NULL,0);
 INSERT INTO dataset_address VALUES(1348,572,'Hugging Face','PanLiu/DarkSpec','https://huggingface.co/datasets/PanLiu/DarkSpec',NULL,0);
+INSERT INTO dataset_address VALUES(1349,573,'DOI','10.7910/DVN/NUCT4N','https://doi.org/10.7910/DVN/NUCT4N','Harvard Dataverse, both versions',0);
+INSERT INTO dataset_address VALUES(1350,574,'DOI','10.7910/DVN/NUCT4N','https://doi.org/10.7910/DVN/NUCT4N','Harvard Dataverse, both versions',0);
 CREATE TABLE publication_dataset (
     id                 INTEGER PRIMARY KEY,
     publication_id     INTEGER NOT NULL REFERENCES publication(id),
@@ -41847,6 +41879,8 @@ INSERT INTO publication_dataset VALUES(1675,1004,379,404,'trains-on');
 INSERT INTO publication_dataset VALUES(1676,1004,379,404,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1677,1005,1,1,'evaluates-on');
 INSERT INTO publication_dataset VALUES(1678,1005,1,1,'trains-on');
+INSERT INTO publication_dataset VALUES(1679,1014,528,573,'introduces');
+INSERT INTO publication_dataset VALUES(1680,1014,528,574,'introduces');
 CREATE TABLE repository_metrics (
             url            TEXT PRIMARY KEY,
             stars          INTEGER,
@@ -69066,11 +69100,11 @@ CREATE TABLE reimplementation (
 INSERT INTO reimplementation VALUES(833,'https://github.com/BioGeek/MASSPEC','A reproduction written in 2026 by this catalog''s maintainer from the paper''s description and appendix, not Dayhoff and Eck''s code, which appears to be lost. It reproduces the paper''s insulin experiment and its figures, and runs the method on present-day data.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',581);
-INSERT INTO sqlite_sequence VALUES('affiliation',1450);
-INSERT INTO sqlite_sequence VALUES('author',3979);
-INSERT INTO sqlite_sequence VALUES('algorithm',838);
-INSERT INTO sqlite_sequence VALUES('publication',1013);
+INSERT INTO sqlite_sequence VALUES('city',582);
+INSERT INTO sqlite_sequence VALUES('affiliation',1451);
+INSERT INTO sqlite_sequence VALUES('author',3983);
+INSERT INTO sqlite_sequence VALUES('algorithm',839);
+INSERT INTO sqlite_sequence VALUES('publication',1014);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

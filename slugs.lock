@@ -836,6 +836,7 @@ algorithms	835	computer-aided-peptide-sequencing-biemann-1966
 algorithms	836	automatic-peptide-sequencing-senn-and-mclafferty-1966
 algorithms	837	computer-interpretation-of-high-resolution-mass-spectra-barber-1966
 algorithms	838	mass-spectrometric-sequencing-of-permethylated-peptides-morris-1969
+algorithms	839	msconsensus
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4694,6 +4695,10 @@ authors	3976	howard-r-morris
 authors	3977	alexander-j-geddes
 authors	3978	g-n-graham
 authors	3979	f-lucas
+authors	3980	christopher-grams
+authors	3981	yu-gao
+authors	3982	chang-liu
+authors	3983	michael-e-papka
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -5208,6 +5213,7 @@ datasets	524	transcriptomic-profiling-of-epigenetic-regulators-and-metabolic-rep
 datasets	525	serial-multi-omics-uncovers-anti-glioblastoma-responses-not-evident-by-routine
 datasets	526	19s-proteasome-loss-regulates-mitotic-spindle-assembly-through-a-ubiquitin
 datasets	527	darkspec
+datasets	528	msconsensus
 families	1	transformer-ar
 families	2	diffusion
 families	8	transformer-nar
@@ -6360,6 +6366,7 @@ institutions	1447	national-biomedical-research-foundation
 institutions	1448	university-of-leeds
 institutions	1449	shirley-institute
 institutions	1450	gec-aei-electronics-ltd
+institutions	1451	argonne-national-laboratory
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7436,6 +7443,7 @@ publications	1010	automatic-amino-acid-sequence-determination-in-peptides
 publications	1011	computer-interpretation-of-high-resolution-mass-spectra
 publications	1012	some-problems-associated-with-the-amino-acid-sequence-analysis-of-proteins-by
 publications	1013	mass-spectrometric-determination-of-the-amino-acid-sequences-in-peptides
+publications	1014	msconsensus-a-hundred-million-scale-batch-effect-suppressed-dataset-and
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
@@ -7759,3 +7767,4 @@ venues	993	hupo-2026-world-congress
 venues	1002	proceedings-of-the-10th-ismas-symposium
 venues	1006	computers-in-biology-and-medicine
 venues	1012	biochemical-journal
+venues	1014	neurips-2026
