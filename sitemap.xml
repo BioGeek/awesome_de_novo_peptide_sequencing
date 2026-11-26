@@ -10186,7 +10186,7 @@
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/university-of-illinois-chicago.html</loc>
-    <lastmod>2012-01-01T00:00:00.000Z</lastmod>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/national-center-for-agricultural-utilization-research.html</loc>
@@ -31071,5 +31071,45 @@
   <url>
     <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
     <lastmod>2026-11-25T16:38:17.655Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/</loc>
+    <lastmod>2026-11-26T09:12:13.243Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/algorithms/msconsensus.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/chang-liu.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/christopher-grams.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/michael-e-papka.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/authors/yu-gao.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/datasets/msconsensus.html</loc>
+    <lastmod>2024-01-01T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/institutions/argonne-national-laboratory.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/publications/msconsensus-a-hundred-million-scale-batch-effect-suppressed-dataset-and.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jeroen.vangoey.be/awesome_de_novo_peptide_sequencing/pages/venues/neurips-2026.html</loc>
+    <lastmod>2026-12-06T00:00:00.000Z</lastmod>
   </url>
 </urlset>
