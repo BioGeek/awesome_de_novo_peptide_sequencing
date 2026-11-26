@@ -3867,6 +3867,10 @@ INSERT INTO author VALUES(3980,'Christopher Grams',NULL,NULL,NULL,NULL,NULL,NULL
 INSERT INTO author VALUES(3981,'Yu Gao',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3982,'Chang Liu',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO author VALUES(3983,'Michael E. Papka',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO author VALUES(3984,'Michell García-García',NULL,NULL,NULL,NULL,'0009-0000-3206-5050','A5014462256');
+INSERT INTO author VALUES(3985,'Lorena Hernández-Orihuela',NULL,NULL,NULL,NULL,'0009-0009-8634-5678','A5075865792');
+INSERT INTO author VALUES(3986,'Antonio Romo-Mancillas',NULL,NULL,NULL,NULL,'0000-0003-2869-588X','A5048056798');
+INSERT INTO author VALUES(3987,'José Alejandro García-Arredondo',NULL,NULL,NULL,NULL,'0000-0003-0002-8436','A5099517988');
 CREATE TABLE country (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
@@ -4497,6 +4501,7 @@ INSERT INTO city VALUES(579,'Wonju',13,37.351390000000002,127.945279999999996,'r
 INSERT INTO city VALUES(580,'Silver Spring',8,38.9906700000000014,-77.0260899999999964,'geonames','geonames');
 INSERT INTO city VALUES(581,'Leeds',7,53.7964800000000025,-1.54784999999999994,'geonames','geonames');
 INSERT INTO city VALUES(582,'Lemont',8,41.6736399999999989,-88.0017299999999949,'geonames','geonames');
+INSERT INTO city VALUES(583,'Querétaro',91,20.5880599999999986,-100.388059999999995,'geonames','geonames');
 CREATE TABLE affiliation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -5907,6 +5912,8 @@ INSERT INTO affiliation VALUES(1448,'University of Leeds','Astbury Department of
 INSERT INTO affiliation VALUES(1449,'Shirley Institute',NULL,7,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1450,'GEC-AEI (Electronics) Ltd.','Consultant Laboratory',7,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO affiliation VALUES(1451,'Argonne National Laboratory',NULL,8,582,'https://ror.org/05gvnxz63','Argonne National Laboratory',NULL,NULL,NULL);
+INSERT INTO affiliation VALUES(1452,'Universidad Autónoma de Querétaro','Posgrado en Ciencias Químico-Biológicas, Facultad de Química',91,583,'https://ror.org/00v8fdc16','Universidad Autónoma de Querétaro','openalex',NULL,'openalex');
+INSERT INTO affiliation VALUES(1453,'Universidad Nacional Autónoma de México','Departamento de Medicina Molecular y Bioprocesos, Instituto de Biotecnología',91,490,'https://ror.org/01tmp8f25','Universidad Nacional Autónoma de México','openalex',NULL,'openalex');
 CREATE TABLE author_affiliation (
     author_id INTEGER, -- NOT NULL,
     affiliation_id INTEGER, -- NOT NULL,
@@ -11409,6 +11416,10 @@ INSERT INTO author_affiliation VALUES(3981,925);
 INSERT INTO author_affiliation VALUES(3982,925);
 INSERT INTO author_affiliation VALUES(3983,925);
 INSERT INTO author_affiliation VALUES(3983,1451);
+INSERT INTO author_affiliation VALUES(3984,1452);
+INSERT INTO author_affiliation VALUES(3985,1453);
+INSERT INTO author_affiliation VALUES(3986,1452);
+INSERT INTO author_affiliation VALUES(3987,1452);
 CREATE TABLE algorithm (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -12250,6 +12261,7 @@ INSERT INTO algorithm VALUES(836,'Automatic peptide sequencing (Senn and McLaffe
 INSERT INTO algorithm VALUES(837,'Computer interpretation of high-resolution mass spectra (Barber, 1966)',NULL,NULL,'Heuristic','M. Barber, P. Powers, M. J. Wallington and W. A. Wolstenholme''s 1966 Nature paper on interpreting high-resolution mass spectra by computer. Barber and Wolstenholme, of GEC-AEI in Manchester, are also authors of the 1969 mass-spectrometric sequencing of silk fibroin peptides, which cites it.','adjacent',0,NULL,'Barber 1966',NULL);
 INSERT INTO algorithm VALUES(838,'Mass spectrometric sequencing of permethylated peptides (Morris, 1969)',NULL,NULL,'Manual interpretation','Howard Morris, A. J. Geddes and G. N. Graham at Leeds, with F. Lucas of the Shirley Institute and M. Barber and W. A. Wolstenholme of GEC-AEI, read the sequences of peptides from a chymotryptic digest of Bombyx mori silk fibroin from their mass spectra, after permethylating the N-acetyl peptide methyl esters to make them volatile. Three sequences confirmed earlier chemical work and a fourth, previously only partly known, was established; the authors call it the first use of mass spectrometry to sequence peptides from a protein hydrolysate. The Leeds group''s Biochemical Society abstract earlier that year is on the problems of sequencing proteins by mass spectrometry.','adjacent',0,NULL,'Morris 1969',NULL);
 INSERT INTO algorithm VALUES(839,'MSConsensus',NULL,NULL,NULL,'Hundred-million-scale dataset and benchmark for proteomics machine learning: consensus spectra distilled from 1,549 PRIDE projects by Weighted-Score Binning, which keeps only peaks most replicates share to suppress per-instrument batch effects, served in a random-access binary format, with a three-task leaderboard whose peptide-identification task runs InstaNovo and Casanovo on one held-out split.','benchmark',NULL,NULL,NULL,NULL);
+INSERT INTO algorithm VALUES(840,'Poecilotheria regalis venom proteomics',NULL,NULL,NULL,'De novo sequences tryptic peptides from the high-molecular-weight bands (37, 50, 55 and 100 kDa) of Poecilotheria regalis tarantula venom that two Mexican fabotherapeutics recognise, after a bite treated with an anti-Latrodectus antivenom, and finds them similar to CRISP-like, hyaluronidase-like, neprilysin-like, latrotoxin-like and other arachnid venom proteins.','downstream-application',0,NULL,NULL,'venomics');
 CREATE TABLE publication (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -13274,6 +13286,7 @@ INSERT INTO publication VALUES(1011,'Computer Interpretation of High Resolution 
 INSERT INTO publication VALUES(1012,'Some problems associated with the amino acid-sequence analysis of proteins by mass spectrometry','1969-03-01','10.1042/bj1110038p','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1110038p','Biochemical Journal','abstract',NULL,NULL);
 INSERT INTO publication VALUES(1013,'Mass-spectrometric determination of the amino acid sequences in peptides isolated from protein silk fibroin of <i>Bombyx mori</i>','1969-10-01','10.1042/bj1140695','Portland Press Ltd.',NULL,'https://doi.org/10.1042/bj1140695','Biochemical Journal','peer-reviewed',NULL,NULL);
 INSERT INTO publication VALUES(1014,'MSConsensus: A Hundred-Million-Scale, Batch-Effect–Suppressed Dataset and Benchmark for Proteomics Machine Learning','2026-12-06',NULL,NULL,'Computational proteomics has been growing rapidly in recent years, and the rapid growth of machine learning, especially of data size, brings new challenges: (i) noisy mass-spectrometry (MS) data with per-instrument batch effects, (ii) slow data loading from XML-based and text-based file formats, and (iii) a fragmented and inconsistent evaluation landscape that complicates cross-study comparisons. Here we try to address some aspects of these challenges with MSConsensus, a hundred-million-scale, multi-task dataset and benchmark distilled from more than 1 petabyte of publicly available mass spectrometry data spanning 1,549 contributing projects. A new Weighted-Score Binning (WSBIN) consensus algorithm is introduced to produce multiple consensus spectra per precursor to suppress noise and batch effects, while preserving true signals, achieving an average +3.86 dB SNR improvement (range +0.57 to +10.47 dB) across five held-out PRIDE projects. We also introduce a new binary format “msz” that compresses to 45% of mzML size while delivering 25,378 random-access spectra/sec (3.2× HDF5) through a drop-in PyTorch loader. In addition, we have designed a unified leaderboard with three core tasks: (i) spectrum embedding, (ii) intensity prediction, and (iii) peptide identification. When MSConsensus replaces the original training data of the same size, Prosit’s spectral angle similarity improves from 0.6964 to 0.8137 on a raw 2025 holdout dataset (and from 0.5879 to 0.6983 on a 2026 holdout), and MSConsensus improves Spec2Vec top-1 retrieval by +7.66 points (+16.2% relative) over a medoid-selected MassIVE-KB v2 library. To facilitate different downstream applications, we provide two versions: v1.0 (110 million spectra, anonymous) and an extended v1.1 (186 million spectra, with per-spectrum data provenance). Both versions are released on Harvard Dataverse (doi:10.7910/DVN/NUCT4N) under CC BY 4.0.','https://openreview.net/forum?id=egB7UnD256','NeurIPS 2026','ML conference',NULL,'pdf');
+INSERT INTO publication VALUES(1015,'Unveiling the proteomic complexity of Poecilotheria regalis venom','2026-11-01','10.1016/j.toxicon.2026.109372','Elsevier BV','Tarantula bites are usually considered low risk, but Poecilotheria envenomation can cause more severe clinical effects, and there is currently no specific treatment or antivenom available. In Mexico, a 31-year-old male bitten by P. regalis was treated with Aracmyn Plus®, a monovalent anti-Latrodectus mactans fabotherapeutic, resolving most symptoms except muscle cramps and suggesting possible cross-immunoreactivity. Subsequent studies showed that Aracmyn Plus® and Alacramyn® (polyvalent anti-Centruroides fabotherapeutic) recognize high-molecular-weight components of P. regalis venom and significantly reduce its hyaluronidase activity. Therefore, this study aims to characterize these immunoreactive components, particularly the bands at 37, 50, 55, and 100 kDa. P. regalis venom was separated by discontinuous SDS-PAGE under non-reducing conditions. The tryptic peptides generated from the selected bands were analyzed by liquid chromatography-mass spectrometry (LC-MS), and peptides obtained by de novo sequencing were processed in RStudio. The analysis identified peptide sequences showing similarity to reference proteins and peptides annotated as CRISP-like proteins, allergen/PR-1-like proteins, latarcin-like peptides, cathepsin-like proteins, dipeptidyl peptidase IV-like proteins, hyaluronidase-like proteins, neprilysin-like proteins, huwentoxin-like peptides, latrotoxin-like proteins, Mu-theraphotoxin-Cg2a-like peptides, and putative toxins with uncharacterized functions. These sequence similarities suggest that high-molecular-weight components of P. regalis venom may be related to proteins reported in the venoms of other arachnids.','https://doi.org/10.1016/j.toxicon.2026.109372','Toxicon','peer-reviewed',NULL,'europepmc');
 CREATE TABLE publication_author (
     publication_id INTEGER NOT NULL,
     author_id INTEGER NOT NULL,
@@ -19762,6 +19775,10 @@ INSERT INTO publication_author VALUES(1014,3980,1);
 INSERT INTO publication_author VALUES(1014,3981,2);
 INSERT INTO publication_author VALUES(1014,3982,3);
 INSERT INTO publication_author VALUES(1014,3983,4);
+INSERT INTO publication_author VALUES(1015,3984,1);
+INSERT INTO publication_author VALUES(1015,3985,2);
+INSERT INTO publication_author VALUES(1015,3986,3);
+INSERT INTO publication_author VALUES(1015,3987,4);
 CREATE TABLE journal_impact (
     journal           TEXT PRIMARY KEY,
     openalex_id       TEXT,
@@ -28033,6 +28050,10 @@ INSERT INTO publication_author_affiliation VALUES(1014,3981,925,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1014,3982,925,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1014,3983,925,0,'manual');
 INSERT INTO publication_author_affiliation VALUES(1014,3983,1451,1,'manual');
+INSERT INTO publication_author_affiliation VALUES(1015,3984,1452,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1015,3985,1453,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1015,3986,1452,0,'openalex');
+INSERT INTO publication_author_affiliation VALUES(1015,3987,1452,0,'openalex');
 CREATE TABLE publication_algorithm (
     publication_id INTEGER NOT NULL,
     algorithm_id INTEGER NOT NULL,
@@ -29349,6 +29370,7 @@ INSERT INTO publication_algorithm VALUES(1014,1,'uses');
 INSERT INTO publication_algorithm VALUES(1014,12,'uses');
 INSERT INTO publication_algorithm VALUES(1014,183,'uses');
 INSERT INTO publication_algorithm VALUES(1014,188,'uses');
+INSERT INTO publication_algorithm VALUES(1015,840,'describes');
 CREATE TABLE benchmark_tool (
     tool         TEXT PRIMARY KEY,  -- upstream algorithms/<tool> folder
     display_name TEXT NOT NULL,     -- this catalog's name for it, where known
@@ -69100,11 +69122,11 @@ CREATE TABLE reimplementation (
 INSERT INTO reimplementation VALUES(833,'https://github.com/BioGeek/MASSPEC','A reproduction written in 2026 by this catalog''s maintainer from the paper''s description and appendix, not Dayhoff and Eck''s code, which appears to be lost. It reproduces the paper''s insulin experiment and its figures, and runs the method on present-day data.');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('country',102);
-INSERT INTO sqlite_sequence VALUES('city',582);
-INSERT INTO sqlite_sequence VALUES('affiliation',1451);
-INSERT INTO sqlite_sequence VALUES('author',3983);
-INSERT INTO sqlite_sequence VALUES('algorithm',839);
-INSERT INTO sqlite_sequence VALUES('publication',1014);
+INSERT INTO sqlite_sequence VALUES('city',583);
+INSERT INTO sqlite_sequence VALUES('affiliation',1453);
+INSERT INTO sqlite_sequence VALUES('author',3987);
+INSERT INTO sqlite_sequence VALUES('algorithm',840);
+INSERT INTO sqlite_sequence VALUES('publication',1015);
 CREATE VIEW author_display AS
 SELECT a.*,
        CASE WHEN a.disambiguator IS NOT NULL AND a.disambiguator <> ''

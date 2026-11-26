@@ -837,6 +837,7 @@ algorithms	836	automatic-peptide-sequencing-senn-and-mclafferty-1966
 algorithms	837	computer-interpretation-of-high-resolution-mass-spectra-barber-1966
 algorithms	838	mass-spectrometric-sequencing-of-permethylated-peptides-morris-1969
 algorithms	839	msconsensus
+algorithms	840	poecilotheria-regalis-venom-proteomics
 authors	1	kevin-eloff
 authors	2	konstantinos-kalogeropoulos
 authors	3	amandla-mabona
@@ -4699,6 +4700,10 @@ authors	3980	christopher-grams
 authors	3981	yu-gao
 authors	3982	chang-liu
 authors	3983	michael-e-papka
+authors	3984	michell-garcia-garcia
+authors	3985	lorena-hernandez-orihuela
+authors	3986	antonio-romo-mancillas
+authors	3987	jose-alejandro-garcia-arredondo
 datasets	1	nine-species-benchmark
 datasets	2	proteometools
 datasets	3	massive-kb
@@ -6367,6 +6372,8 @@ institutions	1448	university-of-leeds
 institutions	1449	shirley-institute
 institutions	1450	gec-aei-electronics-ltd
 institutions	1451	argonne-national-laboratory
+institutions	1452	universidad-autonoma-de-queretaro
+institutions	1453	universidad-nacional-autonoma-de-mexico
 patents	1	US11573239B2
 patents	2	US11694769B2
 patents	3	US20200243164A1
@@ -7444,6 +7451,7 @@ publications	1011	computer-interpretation-of-high-resolution-mass-spectra
 publications	1012	some-problems-associated-with-the-amino-acid-sequence-analysis-of-proteins-by
 publications	1013	mass-spectrometric-determination-of-the-amino-acid-sequences-in-peptides
 publications	1014	msconsensus-a-hundred-million-scale-batch-effect-suppressed-dataset-and
+publications	1015	unveiling-the-proteomic-complexity-of-poecilotheria-regalis-venom
 subdomains	1	general-proteomics
 subdomains	2	venomics
 subdomains	3	immunopeptidomics
