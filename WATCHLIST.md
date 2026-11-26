@@ -421,6 +421,25 @@ FastaLake's reference list.
   stays out and so does the rest of that field). Deciding per paper is how a
   catalog ends up with one arbitrary member of a field it does not cover.
 
+- **"Applications of Liquid Chromatography-Tandem Mass Spectrometry (LC-MS/MS)
+  in Protein Structural Analysis"** (`10.1080/00032719.2026.2766423`,
+  *Analytical Letters*, online 2026-11-23, 42 pages; Xu, Gao, Chen and Wu,
+  State Key Laboratory of Food Science and Resources, Nanchang University).
+  Proposed as a downstream application; it is a review, of LC-MS/MS for
+  primary structure, modifications, cross-links and spatial structure, mostly
+  in food science. *De novo* sequencing is not its subject: the abstract closes
+  on "three developments that mitigate, without removing" the dependence on
+  sequence databases, one of them "deep-learning de novo sequencing and learned
+  PTM (post-translational modification) localization".
+
+  More than the one-sentence mentions above, so it is out by the review bar
+  rather than by the passing-mention rule, and **undecided rather than
+  refused**: the bar's own exception (a review that compares de novo tools,
+  names software, or presents de novo-derived sequences as evidence) may hold
+  for that closing assessment, and only the full text can say. Taylor &
+  Francis, paywalled; checked from the abstract alone on 2026-11-26. Read the
+  closing section before deciding.
+
 ## Published elsewhere, already handled
 
 `build_versions.py` reports any tracked preprint whose bioRxiv `published` field
