@@ -42011,7 +42011,7 @@ INSERT INTO repository_metrics VALUES('https://github.com/fburic/paradias',7,2,N
 INSERT INTO repository_metrics VALUES('https://github.com/rki-mf2/MegaPX',4,1,0,1,1,5,'2026-11-21T14:14:31Z','2026-11-27T15:40:56','v.1.0.0');
 INSERT INTO repository_metrics VALUES('https://github.com/LoserLus/DBond',1,1,0,0,0,0,'2026-04-29T15:51:42Z','2026-10-05T12:46:50',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/statisticalbiotechnology/dIon',1,0,0,0,0,0,'2026-10-12T15:36:25Z','2026-10-13T13:00:39',NULL);
-INSERT INTO repository_metrics VALUES('https://github.com/MannLabs/fasta-lake',9,0,0,2,9,10,'2026-11-20T19:05:40Z','2026-11-21T13:46:18','v1.1.0rc2');
+INSERT INTO repository_metrics VALUES('https://github.com/MannLabs/fasta-lake',9,0,0,2,9,12,'2026-11-27T19:05:05Z','2026-11-28T14:37:06','v1.1.0rc2');
 INSERT INTO repository_metrics VALUES('https://github.com/SoSongzhi/ScopeNovo',2,0,0,0,0,0,'2026-06-10T10:02:24Z','2026-10-22T10:43:15',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/Biocomputing-Research-Group/Transformer-DIA/tree/master',2,1,0,0,0,0,'2025-09-20T20:57:39Z','2026-10-26T11:37:56',NULL);
 INSERT INTO repository_metrics VALUES('https://github.com/sadatebrahimi/DiffNovo-DIA',0,0,0,0,0,0,'2025-09-20T20:47:00Z','2026-10-26T11:37:56',NULL);
